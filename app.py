@@ -131,4 +131,4 @@ if pref_name:
                 filtered_results = filter_by_building_age(results, age_filter)
                 st.info(f"🔍 フィルター後の件数：{len(filtered_results)} 件")
                 display_results_table(filtered_results)
-\"\"\")
+""")
