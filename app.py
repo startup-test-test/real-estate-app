@@ -1,6 +1,6 @@
 # ファイルとして保存（最新版：平均価格・築年フィルター・グラフ付き）
-with open("app.py", "w") as f:
-    f.write(\"\"\" 
+with open("app.py", "w", encoding="utf-8") as f:
+    f.write("""
 import streamlit as st
 import requests
 from datetime import datetime
