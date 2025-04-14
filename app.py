@@ -1,6 +1,5 @@
-# ファイルとして保存（最新版：平均価格・築年フィルター・グラフ付き）
-with open("app.py", "w", encoding="utf-8") as f:
-    f.write("""
+# ✅ 1. Streamlit アプリコードを書き出し
+app_code = """
 import streamlit as st
 import requests
 from datetime import datetime
@@ -131,4 +130,28 @@ if pref_name:
                 filtered_results = filter_by_building_age(results, age_filter)
                 st.info(f"🔍 フィルター後の件数：{len(filtered_results)} 件")
                 display_results_table(filtered_results)
-""")
+"""
+
+# ✅ 保存
+with open("app.py", "w", encoding="utf-8") as f:
+    f.write(app_code)
+
+# ✅ 2. GitHubにアップロード
+from github import Github
+
+ACCESS_TOKEN = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # あなたのトークン
+REPO_NAME = "startup-test-test/real-estate-app"
+
+g = Github(ACCESS_TOKEN)
+repo = g.get_repo(REPO_NAME)
+
+with open("app.py", "r", encoding="utf-8") as f:
+    content = f.read()
+
+try:
+    contents = repo.get_contents("app.py")
+    repo.update_file(contents.path, "update: 最新版アプリをアップ", content, contents.sha)
+    print("✅ app.py を更新しました！")
+except:
+    repo.create_file("app.py", "create: 初回アップロード", content)
+    print("🆕 app.py を新規作成しました！")
