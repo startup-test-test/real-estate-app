@@ -5,7 +5,11 @@ from typing import List, Dict, Optional
 import matplotlib.pyplot as plt
 import pandas as pd
 
-api_key = "b491308188504fa98cab52d5cab3da63"
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv("REAL_ESTATE_API_KEY")
 
 pref_map = {
     "北海道": "01", "青森県": "02", "岩手県": "03", "宮城県": "04", "秋田県": "05",
