@@ -103,7 +103,8 @@
   </table>
 
   <script>
-    const apiBase = "https://real-estate-app-fast-api.onrender.com";
+    // 現在のページのURLからAPIのベースURLを生成（ローカルとRenderの両方で動作）
+    const apiBase = window.location.origin;
 
     // 都道府県選択時に市区町村リスト更新
     document.getElementById("prefSelect").addEventListener("change", async () => {
@@ -201,11 +202,19 @@
         const filtered = data.filter(item => {
           if (!yearLimit || yearLimit === 100) return true;
           
-          const buildYear = parseInt(item["築年"]);
-          if (isNaN(buildYear)) return false;
+          // APIは "BuildingYear" というキーで返す
+          const buildingYearStr = item["BuildingYear"] || item["築年"] || "";
+          console.log("BuildingYear:", buildingYearStr);
           
+          // "2023年" のような形式から年を抽出
+          const yearMatch = buildingYearStr.match(/(\d{4})/);
+          if (!yearMatch) return false;
+          
+          const buildYear = parseInt(yearMatch[1]);
           const currentYear = new Date().getFullYear();
           const age = currentYear - buildYear;
+          
+          console.log(`Building: ${buildingYearStr}, Year: ${buildYear}, Age: ${age}, Filter: ${yearLimit}`);
           return age <= yearLimit;
         });
 
