@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
 from typing import List, Dict, Optional
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 from datetime import datetime
 import requests
@@ -25,6 +27,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+# テンプレートディレクトリを指定
+templates = Jinja2Templates(directory="templates")
 
 # 都道府県マッピング
 pref_map = {
@@ -207,3 +212,20 @@ def analyze_transaction_data(
         "age_distribution": age_distribution,
         "data": filtered_data
     }
+
+# ----------------------
+# HTMLページ表示エンドポイント
+# ----------------------
+@app.get("/", response_class=HTMLResponse)
+async def show_home_page(request: Request):
+    """
+    メインページ（test.html）を表示します。
+    """
+    return templates.TemplateResponse("test.html", {"request": request})
+
+@app.get("/test", response_class=HTMLResponse)
+async def show_test_page(request: Request):
+    """
+    テストページ（test.html）を表示します。
+    """
+    return templates.TemplateResponse("test.html", {"request": request})
