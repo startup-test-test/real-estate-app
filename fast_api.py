@@ -26,6 +26,20 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# 都道府県マッピング
+pref_map = {
+    "北海道": "01", "青森県": "02", "岩手県": "03", "宮城県": "04", "秋田県": "05",
+    "山形県": "06", "福島県": "07", "茨城県": "08", "栃木県": "09", "群馬県": "10",
+    "埼玉県": "11", "千葉県": "12", "東京都": "13", "神奈川県": "14", "新潟県": "15",
+    "富山県": "16", "石川県": "17", "福井県": "18", "山梨県": "19", "長野県": "20",
+    "岐阜県": "21", "静岡県": "22", "愛知県": "23", "三重県": "24", "滋賀県": "25",
+    "京都府": "26", "大阪府": "27", "兵庫県": "28", "奈良県": "29", "和歌山県": "30",
+    "鳥取県": "31", "島根県": "32", "岡山県": "33", "広島県": "34", "山口県": "35",
+    "徳島県": "36", "香川県": "37", "愛媛県": "38", "高知県": "39", "福岡県": "40",
+    "佐賀県": "41", "長崎県": "42", "熊本県": "43", "大分県": "44", "宮崎県": "45",
+    "鹿児島県": "46", "沖縄県": "47"
+}
+
 # ----------------------
 # 市区町村リスト取得API
 # ----------------------
@@ -97,3 +111,99 @@ def get_transaction_data(pref_code: str, city_name: str):
         return results
     except Exception as e:
         return {"error": f"取引データ取得エラー: {str(e)}"}
+
+# ----------------------
+# 都道府県リスト取得API
+# ----------------------
+@app.get("/prefecture-list", summary="都道府県リスト取得")
+def get_prefecture_list():
+    """
+    都道府県名とコードの一覧を取得します。
+    """
+    return [{"name": name, "code": code} for name, code in pref_map.items()]
+
+# ----------------------
+# 取引データ分析API
+# ----------------------
+@app.get("/transaction-analysis", summary="取引データ分析")
+def analyze_transaction_data(
+    pref_code: str,
+    city_name: str,
+    age_filter: Optional[str] = Query(None, description="築年フィルター: 〜10年, 〜20年, 20年以上")
+):
+    """
+    取引データを取得し、平均価格と築年数分布を分析します。
+    """
+    # 取引データを取得
+    transaction_data = get_transaction_data(pref_code, city_name)
+    
+    # エラーチェック
+    if isinstance(transaction_data, dict) and "error" in transaction_data:
+        return transaction_data
+    
+    # 築年フィルター適用
+    if age_filter:
+        now = datetime.now().year
+        filtered_data = []
+        
+        for item in transaction_data:
+            building_year = item.get("BuildingYear", "")
+            if not building_year or "年以前" in building_year:
+                continue
+            
+            try:
+                year = int(building_year.replace("年", ""))
+                age = now - year
+                
+                if age_filter == "〜10年" and age <= 10:
+                    filtered_data.append(item)
+                elif age_filter == "〜20年" and age <= 20:
+                    filtered_data.append(item)
+                elif age_filter == "20年以上" and age > 20:
+                    filtered_data.append(item)
+            except:
+                continue
+    else:
+        filtered_data = transaction_data
+    
+    # 価格データ分析
+    trade_prices = []
+    for item in filtered_data:
+        try:
+            price_str = item.get("TradePrice", "")
+            # カンマと"万円"を除去して数値に変換
+            price = int(price_str.replace(",", "").replace("万円", ""))
+            trade_prices.append(price)
+        except:
+            continue
+    
+    # 築年数分布データ作成
+    building_ages = []
+    now = datetime.now().year
+    
+    for item in filtered_data:
+        building_year = item.get("BuildingYear", "")
+        if building_year and "年" in building_year and "年以前" not in building_year:
+            try:
+                year = int(building_year.replace("年", ""))
+                age = now - year
+                if 0 <= age <= 100:  # 現実的な築年数のみ
+                    building_ages.append(age)
+            except:
+                continue
+    
+    # 築年数分布を5年ごとにグループ化
+    age_distribution = {}
+    for age in building_ages:
+        group = f"{(age // 5) * 5}〜{(age // 5) * 5 + 4}年"
+        age_distribution[group] = age_distribution.get(group, 0) + 1
+    
+    # 結果を返す
+    return {
+        "total_count": len(transaction_data),
+        "filtered_count": len(filtered_data),
+        "average_price": round(sum(trade_prices) / len(trade_prices)) if trade_prices else 0,
+        "price_count": len(trade_prices),
+        "age_distribution": age_distribution,
+        "data": filtered_data
+    }
