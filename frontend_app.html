@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大家DX - 不動産投資シミュレーター</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* ヘッダー */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* コンテナ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* タブ */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e0e0e0;
+        }
+
+        /* コンテンツエリア */
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* フォーム */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        input, select {
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* ボタン */
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 結果表示 */
+        .result-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .metric-card h4 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .metric-card .value.good {
+            color: #28a745;
+        }
+
+        .metric-card .value.warning {
+            color: #ffc107;
+        }
+
+        .metric-card .value.danger {
+            color: #dc3545;
+        }
+
+        /* テーブル */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* ローディング */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* エラー */
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1 1 calc(50% - 0.5rem);
+                text-align: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏢 大家DX</h1>
+        <p>AI搭載 不動産投資シミュレーター</p>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('input')">📝 物件情報入力</button>
+            <button class="tab" onclick="showTab('simulation')">📊 シミュレーション結果</button>
+            <button class="tab" onclick="showTab('market')">🏠 市場分析</button>
+        </div>
+
+        <div class="content">
+            <!-- 物件情報入力タブ -->
+            <div id="input-tab" class="tab-content active">
+                <form id="property-form">
+                    <!-- 物件基本情報 -->
+                    <div class="form-section">
+                        <h3>🏠 物件基本情報</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>物件名</label>
+                                <input type="text" name="property_name" value="東京都品川区投資物件" required>
+                            </div>
+                            <div class="form-group">
+                                <label>所在地</label>
+                                <input type="text" name="location" value="東京都品川区東品川4-5-8" required>
+                            </div>
+                            <div class="form-group">
+                                <label>建築年</label>
+                                <input type="number" name="year_built" value="1987" required>
+                            </div>
+                            <div class="form-group">
+                                <label>物件種別</label>
+                                <select name="property_type" required>
+                                    <option value="戸建">戸建</option>
+                                    <option value="区分マンション" selected>区分マンション</option>
+                                    <option value="一棟アパート">一棟アパート</option>
+                                    <option value="一棟マンション">一棟マンション</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>土地面積(㎡)</label>
+                                <input type="number" name="land_area" value="135" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>建物面積(㎡)</label>
+                                <input type="number" name="building_area" value="150" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>路線価(円/㎡)</label>
+                                <input type="number" name="road_price" value="250000" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 取得費用 -->
+                    <div class="form-section">
+                        <h3>💰 取得費用</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>購入価格(万円)</label>
+                                <input type="number" name="purchase_price" value="6980" step="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label>建物価格(万円)</label>
+                                <input type="number" name="building_price" value="1000" step="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label>諸経費(万円)</label>
+                                <input type="number" name="other_costs" value="300" step="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label>改装費(万円)</label>
+                                <input type="number" name="renovation_cost" value="200" step="10" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 収支条件 -->
+                    <div class="form-section">
+                        <h3>📈 収支条件</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>月額賃料(円)</label>
+                                <input type="number" name="monthly_rent" value="250000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>管理費(月額円)</label>
+                                <input type="number" name="management_fee" value="5000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>その他固定費(月額円)</label>
+                                <input type="number" name="fixed_cost" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>固定資産税(円/年)</label>
+                                <input type="number" name="property_tax" value="100000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>空室率(%)</label>
+                                <input type="number" name="vacancy_rate" value="5" step="0.5" required>
+                            </div>
+                            <div class="form-group">
+                                <label>家賃下落率(%/年)</label>
+                                <input type="number" name="rent_decline" value="1" step="0.1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 借入条件 -->
+                    <div class="form-section">
+                        <h3>🏦 借入条件</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>借入形式</label>
+                                <select name="loan_type" required>
+                                    <option value="元利均等" selected>元利均等</option>
+                                    <option value="元金均等">元金均等</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>借入額(万円)</label>
+                                <input type="number" name="loan_amount" value="6500" step="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label>金利(%)</label>
+                                <input type="number" name="interest_rate" value="0.7" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>返済年数</label>
+                                <input type="number" name="loan_years" value="35" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 出口戦略 -->
+                    <div class="form-section">
+                        <h3>🎯 出口戦略</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>保有年数(年)</label>
+                                <input type="number" name="holding_years" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label>売却CapRate(%)</label>
+                                <input type="number" name="exit_cap_rate" value="6" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>想定売却価格(万円)</label>
+                                <input type="number" name="market_value" value="8000" step="10" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">シミュレーション実行</button>
+                </form>
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>計算中...</p>
+                </div>
+
+                <div class="error"></div>
+            </div>
+
+            <!-- シミュレーション結果タブ -->
+            <div id="simulation-tab" class="tab-content">
+                <div id="simulation-results"></div>
+            </div>
+
+            <!-- 市場分析タブ -->
+            <div id="market-tab" class="tab-content">
+                <button class="btn" onclick="runMarketAnalysis()">市場分析を実行</button>
+                <div class="loading" id="market-loading">
+                    <div class="spinner"></div>
+                    <p>類似物件を検索中...</p>
+                </div>
+                <div id="market-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
+        let currentPropertyData = null;
+        let currentSimulationResults = null;
+
+        // タブ切り替え
+        function showTab(tabName) {
+            // タブボタンの切り替え
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // コンテンツの切り替え
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // フォーム送信
+        document.getElementById('property-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {};
+            
+            // フォームデータを適切な型に変換
+            formData.forEach((value, key) => {
+                if (['year_built', 'road_price', 'monthly_rent', 'management_fee', 'fixed_cost', 'property_tax', 'loan_years', 'holding_years'].includes(key)) {
+                    data[key] = parseInt(value);
+                } else if (['land_area', 'building_area', 'purchase_price', 'building_price', 'other_costs', 'renovation_cost', 'vacancy_rate', 'rent_decline', 'loan_amount', 'interest_rate', 'exit_cap_rate', 'market_value'].includes(key)) {
+                    data[key] = parseFloat(value);
+                } else {
+                    data[key] = value;
+                }
+            });
+            
+            currentPropertyData = data;
+            
+            // ローディング表示
+            document.querySelector('.loading').classList.add('show');
+            document.querySelector('.error').classList.remove('show');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/simulate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('シミュレーションエラー');
+                }
+                
+                const result = await response.json();
+                currentSimulationResults = result;
+                
+                // 結果を表示
+                displaySimulationResults(result);
+                
+                // シミュレーション結果タブに切り替え
+                document.querySelectorAll('.tab')[1].click();
+                
+            } catch (error) {
+                document.querySelector('.error').textContent = `エラー: ${error.message}`;
+                document.querySelector('.error').classList.add('show');
+            } finally {
+                document.querySelector('.loading').classList.remove('show');
+            }
+        });
+
+        // シミュレーション結果表示
+        function displaySimulationResults(data) {
+            const resultsDiv = document.getElementById('simulation-results');
+            
+            // 主要指標
+            const metrics = data.results;
+            let metricsHTML = '<div class="result-section show"><h3>📊 投資パフォーマンス指標</h3><div class="result-metrics">';
+            
+            // 表面利回り
+            const surfaceYield = metrics['表面利回り（%）'];
+            metricsHTML += `
+                <div class="metric-card">
+                    <h4>表面利回り</h4>
+                    <div class="value ${surfaceYield > 5 ? 'good' : 'warning'}">${surfaceYield}%</div>
+                </div>
+            `;
+            
+            // IRR
+            const irr = metrics['IRR（%）'];
+            if (irr !== null) {
+                metricsHTML += `
+                    <div class="metric-card">
+                        <h4>IRR（内部収益率）</h4>
+                        <div class="value ${irr > 10 ? 'good' : irr > 5 ? 'warning' : 'danger'}">${irr}%</div>
+                    </div>
+                `;
+            }
+            
+            // CCR
+            const ccr = metrics['CCR（%）'];
+            metricsHTML += `
+                <div class="metric-card">
+                    <h4>CCR（自己資金回収率）</h4>
+                    <div class="value ${ccr > 8 ? 'good' : 'warning'}">${ccr}%</div>
+                </div>
+            `;
+            
+            // DSCR
+            const dscr = metrics['DSCR（返済余裕率）'];
+            metricsHTML += `
+                <div class="metric-card">
+                    <h4>DSCR（返済余裕率）</h4>
+                    <div class="value ${dscr > 1.3 ? 'good' : 'danger'}">${dscr.toFixed(2)}</div>
+                </div>
+            `;
+            
+            // 月間キャッシュフロー
+            const monthlyCF = metrics['月間キャッシュフロー（円）'];
+            metricsHTML += `
+                <div class="metric-card">
+                    <h4>月間キャッシュフロー</h4>
+                    <div class="value">${monthlyCF.toLocaleString()}円</div>
+                </div>
+            `;
+            
+            // 年間キャッシュフロー
+            const annualCF = metrics['年間キャッシュフロー（円）'];
+            metricsHTML += `
+                <div class="metric-card">
+                    <h4>年間キャッシュフロー</h4>
+                    <div class="value">${annualCF.toLocaleString()}円</div>
+                </div>
+            `;
+            
+            metricsHTML += '</div>';
+            
+            // キャッシュフロー表
+            if (data.cash_flow_table && data.cash_flow_table.length > 0) {
+                metricsHTML += `
+                    <h3>📋 年次キャッシュフロー詳細</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>年次</th>
+                                    <th>満室想定収入</th>
+                                    <th>空室率</th>
+                                    <th>実効収入</th>
+                                    <th>経費</th>
+                                    <th>大規模修繕</th>
+                                    <th>ローン返済</th>
+                                    <th>営業CF</th>
+                                    <th>累計CF</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                data.cash_flow_table.forEach(row => {
+                    metricsHTML += `
+                        <tr>
+                            <td>${row['年次']}</td>
+                            <td>${row['満室想定収入'].toLocaleString()}円</td>
+                            <td>${row['空室率（%）']}%</td>
+                            <td>${row['実効収入'].toLocaleString()}円</td>
+                            <td>${row['経費'].toLocaleString()}円</td>
+                            <td>${row['大規模修繕'].toLocaleString()}円</td>
+                            <td>${row['ローン返済'].toLocaleString()}円</td>
+                            <td>${row['営業CF'].toLocaleString()}円</td>
+                            <td>${row['累計CF'].toLocaleString()}円</td>
+                        </tr>
+                    `;
+                });
+                
+                metricsHTML += '</tbody></table></div>';
+            }
+            
+            metricsHTML += '</div>';
+            resultsDiv.innerHTML = metricsHTML;
+        }
+
+        // 市場分析実行
+        async function runMarketAnalysis() {
+            if (!currentPropertyData) {
+                alert('先にシミュレーションを実行してください');
+                return;
+            }
+            
+            const loadingDiv = document.getElementById('market-loading');
+            const resultsDiv = document.getElementById('market-results');
+            
+            loadingDiv.classList.add('show');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/market-analysis`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        location: currentPropertyData.location,
+                        land_area: currentPropertyData.land_area,
+                        year_built: currentPropertyData.year_built,
+                        purchase_price: currentPropertyData.purchase_price
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('市場分析エラー');
+                }
+                
+                const result = await response.json();
+                displayMarketResults(result);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error show">エラー: ${error.message}</div>`;
+            } finally {
+                loadingDiv.classList.remove('show');
+            }
+        }
+
+        // 市場分析結果表示
+        function displayMarketResults(data) {
+            const resultsDiv = document.getElementById('market-results');
+            const stats = data.statistics;
+            
+            let html = '<div class="result-section show">';
+            
+            // 価格評価
+            html += '<h3>📊 価格評価</h3><div class="result-metrics">';
+            
+            html += `
+                <div class="metric-card">
+                    <h4>市場中央値</h4>
+                    <div class="value">${stats.median_price}万円/㎡</div>
+                </div>
+                <div class="metric-card">
+                    <h4>あなたの物件</h4>
+                    <div class="value">${stats.user_price}万円/㎡</div>
+                </div>
+                <div class="metric-card">
+                    <h4>乖離率</h4>
+                    <div class="value ${stats.deviation < 0 ? 'good' : 'warning'}">${stats.deviation}%</div>
+                </div>
+                <div class="metric-card">
+                    <h4>価格評価</h4>
+                    <div class="value">${stats.evaluation}</div>
+                </div>
+            `;
+            
+            html += '</div>';
+            
+            // 類似物件一覧
+            if (data.similar_properties && data.similar_properties.length > 0) {
+                html += `
+                    <h3>📋 類似物件一覧</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>取引時期</th>
+                                    <th>所在地</th>
+                                    <th>面積(㎡)</th>
+                                    <th>築年</th>
+                                    <th>構造</th>
+                                    <th>取引価格(万円)</th>
+                                    <th>平米単価(万円/㎡)</th>
+                                    <th>最寄駅</th>
+                                    <th>駅距離</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                data.similar_properties.slice(0, 10).forEach(prop => {
+                    html += `
+                        <tr>
+                            <td>${prop['取引時期']}</td>
+                            <td>${prop['所在地']}</td>
+                            <td>${prop['面積(㎡)']}</td>
+                            <td>${prop['築年'] || 'N/A'}</td>
+                            <td>${prop['構造']}</td>
+                            <td>${prop['取引価格(万円)'].toLocaleString()}</td>
+                            <td>${prop['平米単価(万円/㎡)']}</td>
+                            <td>${prop['最寄駅']}</td>
+                            <td>${prop['駅距離']}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+            }
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

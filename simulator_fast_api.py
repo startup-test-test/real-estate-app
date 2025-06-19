@@ -16,7 +16,7 @@ import requests
 import time
 import re
 import random
-import pandas as pd
+# import pandas as pd  # 一時的に無効化
 
 # .envファイルの読み込み
 load_dotenv()
@@ -448,9 +448,12 @@ def market_analysis(request: MarketAnalysisRequest):
     
     # 統計を計算
     prices = [prop['平米単価(万円/㎡)'] for prop in similar_properties]
-    median_price = pd.Series(prices).median()
-    mean_price = pd.Series(prices).mean()
-    std_price = pd.Series(prices).std()
+    prices.sort()
+    n = len(prices)
+    median_price = prices[n//2] if n % 2 == 1 else (prices[n//2-1] + prices[n//2]) / 2
+    mean_price = sum(prices) / len(prices)
+    variance = sum((x - mean_price) ** 2 for x in prices) / len(prices)
+    std_price = variance ** 0.5
     
     # 価格評価
     deviation = ((user_unit_price - median_price) / median_price * 100) if median_price > 0 else 0
