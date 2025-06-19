@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>不動産取引データ検索ツール</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    select, button {
+      margin: 5px 0;
+      padding: 8px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 10px 20px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 20px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .loading {
+      color: #666;
+      font-style: italic;
+    }
+    .error {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    .success {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>不動産取引データ検索ツール</h1>
+  <p>FastAPI URL: <a href="https://real-estate-app-fast-api.onrender.com" target="_blank">https://real-estate-app-fast-api.onrender.com</a></p>
+
+  <label>都道府県を選択<br />
+    <select id="prefSelect">
+      <option value="">選択してください</option>
+      <option value="11">埼玉県</option>
+      <option value="13">東京都</option>
+      <option value="14">神奈川県</option>
+      <option value="27">大阪府</option>
+    </select>
+  </label><br />
+
+  <label>市区町村を選択<br />
+    <select id="citySelect"><option>読み込み中...</option></select>
+  </label><br />
+
+  <label>築年フィルター<br />
+    <select id="yearFilter">
+      <option value="">-- すべて --</option>
+      <option value="5">〜5年</option>
+      <option value="10">〜10年</option>
+      <option value="20">〜20年</option>
+      <option value="30">〜30年</option>
+    </select>
+  </label><br />
+
+  <button id="searchBtn" onclick="searchData()">検索する</button>
+
+  <div id="resultInfo"></div>
+  <table id="resultTable" style="display: none;">
+    <thead>
+      <tr>
+        <th>種類</th><th>地区名</th><th>価格(万円)</th><th>面積</th>
+        <th>築年</th><th>時期</th><th>間取り</th><th>構造</th><th>用途</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const apiBase = "https://real-estate-app-fast-api.onrender.com";
+
+    // 都道府県選択時に市区町村リスト更新
+    document.getElementById("prefSelect").addEventListener("change", async () => {
+      const prefCode = document.getElementById("prefSelect").value;
+      const citySelect = document.getElementById("citySelect");
+      
+      if (!prefCode) {
+        citySelect.innerHTML = "<option>都道府県を選択してください</option>";
+        citySelect.disabled = true;
+        return;
+      }
+      
+      citySelect.innerHTML = "<option>読み込み中...</option>";
+      citySelect.disabled = true;
+      
+      try {
+        console.log(`Fetching cities for prefecture code: ${prefCode}`);
+        const response = await fetch(`${apiBase}/city-list?pref_code=${prefCode}`);
+        console.log(`Response status: ${response.status}`);
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        console.log("Received data:", data);
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        citySelect.innerHTML = "";
+        citySelect.disabled = false;
+        
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach(city => {
+            const opt = document.createElement("option");
+            opt.value = city;
+            opt.textContent = city;
+            citySelect.appendChild(opt);
+          });
+          console.log(`Loaded ${data.length} cities`);
+        } else {
+          citySelect.innerHTML = "<option>市区町村が見つかりません</option>";
+        }
+      } catch (error) {
+        console.error("市区町村リスト取得エラー:", error);
+        citySelect.innerHTML = "<option>読み込みエラー</option>";
+        citySelect.disabled = false;
+      }
+    });
+
+    // 初期ロード
+    window.addEventListener("load", () => {
+      const citySelect = document.getElementById("citySelect");
+      citySelect.innerHTML = "<option>都道府県を選択してください</option>";
+      citySelect.disabled = true;
+    });
+
+    // 検索実行
+    async function searchData() {
+      const prefCode = document.getElementById("prefSelect").value;
+      const city = document.getElementById("citySelect").value;
+      const yearLimit = parseInt(document.getElementById("yearFilter").value || "100");
+      const searchBtn = document.getElementById("searchBtn");
+      const resultInfo = document.getElementById("resultInfo");
+      const resultTable = document.getElementById("resultTable");
+      
+      // ボタンを無効化
+      searchBtn.disabled = true;
+      searchBtn.textContent = "検索中...";
+      resultInfo.innerHTML = '<span class="loading">データを取得しています...</span>';
+      resultTable.style.display = "none";
+
+      try {
+        const response = await fetch(`${apiBase}/transaction-data?pref_code=${prefCode}&city_name=${encodeURIComponent(city)}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        console.log("Transaction data:", data);
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        if (!Array.isArray(data)) {
+          throw new Error("データ形式が不正です");
+        }
+
+        // 最初のデータ項目を確認してキー名を表示
+        if (data.length > 0) {
+          console.log("Data keys:", Object.keys(data[0]));
+          console.log("First item:", data[0]);
+        }
+
+        // 築年フィルタリング
+        const filtered = data.filter(item => {
+          if (!yearLimit || yearLimit === 100) return true;
+          
+          const buildYear = parseInt(item["築年"]);
+          if (isNaN(buildYear)) return false;
+          
+          const currentYear = new Date().getFullYear();
+          const age = currentYear - buildYear;
+          return age <= yearLimit;
+        });
+
+        // テーブルに表示
+        const tbody = document.querySelector("#resultTable tbody");
+        tbody.innerHTML = "";
+
+        if (filtered.length === 0) {
+          resultInfo.innerHTML = '<span class="error">該当するデータが見つかりませんでした。</span>';
+          resultTable.style.display = "none";
+        } else {
+          filtered.forEach(row => {
+            const tr = document.createElement("tr");
+            
+            // APIから返されるキー名に基づいてマッピング
+            const mappings = {
+              "Type": "種類",
+              "DistrictName": "地区名", 
+              "TradePrice": "価格(万円)",
+              "Area": "面積",
+              "BuildingYear": "築年",
+              "Period": "時期",
+              "FloorPlan": "間取り",
+              "Structure": "構造",
+              "Use": "用途"
+            };
+            
+            // 日本語のキー名でデータを取得（APIが日本語キーを返す場合）
+            const jpKeys = ["種類", "地区名", "価格(万円)", "面積", "築年", "時期", "間取り", "構造", "用途"];
+            
+            jpKeys.forEach(key => {
+              const td = document.createElement("td");
+              // まず日本語キーを試し、なければ英語キーを試す
+              let value = row[key];
+              
+              // 英語キーから日本語キーへのマッピングを試す
+              if (!value) {
+                for (const [enKey, jpKey] of Object.entries(mappings)) {
+                  if (jpKey === key && row[enKey]) {
+                    value = row[enKey];
+                    break;
+                  }
+                }
+              }
+              
+              // 価格の場合、万円単位に変換
+              if (key === "価格(万円)" && value && !isNaN(value)) {
+                value = Math.round(value / 10000) + "万円";
+              }
+              
+              td.textContent = value || "-";
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+
+          resultInfo.innerHTML = `<span class="success">✅ ${filtered.length}件のデータが取得されました。</span>`;
+          resultTable.style.display = "table";
+        }
+      } catch (error) {
+        console.error("検索エラー:", error);
+        resultInfo.innerHTML = `<span class="error">❌ データ取得に失敗しました: ${error.message}</span>`;
+        resultTable.style.display = "none";
+      } finally {
+        // ボタンを再度有効化
+        searchBtn.disabled = false;
+        searchBtn.textContent = "検索する";
+      }
+    }
+  </script>
+</body>
+</html>
