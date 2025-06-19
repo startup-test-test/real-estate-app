@@ -4,7 +4,6 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
 from math import pow
 from datetime import datetime
@@ -38,42 +37,8 @@ app.add_middleware(
 openai_api_key = os.getenv("OPENAI_API_KEY", "")
 real_estate_api_key = os.getenv("REAL_ESTATE_API_KEY", "")
 
-# リクエスト・レスポンスモデル
-class PropertyData(BaseModel):
-    property_name: str = Field(..., description="物件名")
-    location: str = Field(..., description="所在地")
-    year_built: int = Field(..., description="建築年")
-    property_type: str = Field(..., description="物件種別")
-    land_area: float = Field(..., description="土地面積(㎡)")
-    building_area: float = Field(..., description="建物面積(㎡)")
-    road_price: int = Field(..., description="路線価(円/㎡)")
-    purchase_price: float = Field(..., description="購入価格(万円)")
-    building_price: float = Field(..., description="建物価格(万円)")
-    other_costs: float = Field(..., description="諸経費(万円)")
-    renovation_cost: float = Field(..., description="改装費(万円)")
-    monthly_rent: int = Field(..., description="月額賃料(円)")
-    management_fee: int = Field(..., description="管理費(月額円)")
-    fixed_cost: int = Field(..., description="その他固定費(月額円)")
-    property_tax: int = Field(..., description="固定資産税(円/年)")
-    vacancy_rate: float = Field(..., description="空室率(%)")
-    rent_decline: float = Field(..., description="家賃下落率(%/年)")
-    loan_type: str = Field(..., description="借入形式")
-    loan_amount: float = Field(..., description="借入額(万円)")
-    interest_rate: float = Field(..., description="金利(%)")
-    loan_years: int = Field(..., description="返済年数")
-    holding_years: int = Field(..., description="保有年数(年)")
-    exit_cap_rate: float = Field(..., description="売却CapRate(%)")
-    market_value: float = Field(..., description="想定売却価格(万円)")
-
-class SimulationResult(BaseModel):
-    results: Dict[str, Optional[float]]
-    cash_flow_table: List[Dict[str, Optional[float]]]
-
-class MarketAnalysisRequest(BaseModel):
-    location: str = Field(..., description="所在地")
-    land_area: float = Field(..., description="土地面積(㎡)")
-    year_built: int = Field(..., description="建築年")
-    purchase_price: float = Field(..., description="購入価格(万円)")
+# データ型定義（Pydanticなしのシンプル版）
+# リクエストはJSONとして直接受け取る
 
 # ヘルスチェックエンドポイント
 @app.get("/")
@@ -122,29 +87,29 @@ def calculate_irr(annual_cf, years, sale_profit, self_funding, annual_loan):
         return None
 
 # シミュレーションエンドポイント
-@app.post("/api/simulate", response_model=SimulationResult)
-def run_simulation(property_data: PropertyData):
+@app.post("/api/simulate")
+def run_simulation(property_data: dict):
     """収益シミュレーションを実行"""
     # プロパティデータから値を取得
-    monthly_rent = property_data.monthly_rent
-    vacancy_rate = property_data.vacancy_rate
-    management_fee = property_data.management_fee
-    fixed_cost = property_data.fixed_cost
-    property_tax = property_data.property_tax
-    purchase_price = property_data.purchase_price
-    loan_amount = property_data.loan_amount
-    other_costs = property_data.other_costs
-    renovation_cost = property_data.renovation_cost
-    interest_rate = property_data.interest_rate
-    loan_years = property_data.loan_years
-    loan_type = property_data.loan_type
-    exit_cap_rate = property_data.exit_cap_rate
-    land_area = property_data.land_area
-    road_price = property_data.road_price
-    building_area = property_data.building_area
-    market_value = property_data.market_value
-    holding_years = property_data.holding_years
-    rent_decline = property_data.rent_decline
+    monthly_rent = property_data.get('monthly_rent', 0)
+    vacancy_rate = property_data.get('vacancy_rate', 0)
+    management_fee = property_data.get('management_fee', 0)
+    fixed_cost = property_data.get('fixed_cost', 0)
+    property_tax = property_data.get('property_tax', 0)
+    purchase_price = property_data.get('purchase_price', 0)
+    loan_amount = property_data.get('loan_amount', 0)
+    other_costs = property_data.get('other_costs', 0)
+    renovation_cost = property_data.get('renovation_cost', 0)
+    interest_rate = property_data.get('interest_rate', 0)
+    loan_years = property_data.get('loan_years', 0)
+    loan_type = property_data.get('loan_type', '元利均等')
+    exit_cap_rate = property_data.get('exit_cap_rate', 0)
+    land_area = property_data.get('land_area', 0)
+    road_price = property_data.get('road_price', 0)
+    building_area = property_data.get('building_area', 0)
+    market_value = property_data.get('market_value', 0)
+    holding_years = property_data.get('holding_years', 0)
+    rent_decline = property_data.get('rent_decline', 0)
     
     # キャッシュフロー計算
     annual_rent = monthly_rent * 12 * (1 - vacancy_rate/100)
@@ -248,16 +213,16 @@ def run_simulation(property_data: PropertyData):
             "累計CF": int(cum)
         })
     
-    return SimulationResult(results=results, cash_flow_table=cf_data)
+    return {"results": results, "cash_flow_table": cf_data}
 
 # 市場分析エンドポイント
 @app.post("/api/market-analysis")
-def market_analysis(request: MarketAnalysisRequest):
+def market_analysis(request: dict):
     """類似物件の市場分析を実行"""
-    location = request.location
-    land_area = request.land_area
-    year_built = request.year_built
-    purchase_price = request.purchase_price
+    location = request.get('location', '')
+    land_area = request.get('land_area', 0)
+    year_built = request.get('year_built', 2000)
+    purchase_price = request.get('purchase_price', 0)
     
     # ユーザー物件の平米単価を計算
     user_unit_price = purchase_price * 10000 / land_area / 10000 if land_area > 0 else 0
