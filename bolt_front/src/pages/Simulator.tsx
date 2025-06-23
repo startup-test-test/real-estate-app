@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Save,
   Zap,
   CheckCircle,
   AlertCircle
@@ -301,12 +300,6 @@ const Simulator: React.FC = () => {
     }
   };
 
-  const handleSaveDraft = () => {
-    // 下書き保存処理
-    console.log('下書き保存:', inputs);
-    setSaveMessage('下書きを保存しました');
-    setTimeout(() => setSaveMessage(null), 3000);
-  };
 
   // 必須項目のチェック
   const isFormValid = inputs.propertyName && inputs.purchasePrice > 0;
@@ -615,18 +608,11 @@ const Simulator: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="border-t pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <button 
-                onClick={handleSaveDraft}
-                className="flex items-center justify-center px-4 py-2 text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                下書き保存
-              </button>
+            <div className="flex justify-center">
               <button 
                 onClick={handleSimulation}
                 disabled={isSimulating || !isFormValid}
-                className={`flex items-center justify-center px-4 py-3 rounded-lg font-medium text-lg transition-all duration-200 ${
+                className={`flex items-center justify-center px-8 py-4 rounded-lg font-medium text-lg transition-all duration-200 ${
                   isSimulating || !isFormValid
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
