@@ -201,15 +201,29 @@ const Simulator: React.FC = () => {
         console.log('⚠️ 35年のキャッシュフローを要求中...');
       }
       
-      // FAST API呼び出し
+      // FAST API呼び出し（タイムアウト対応）
       const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
+      
+      // 最初にAPIを起動させる（Health Check）
+      try {
+        await fetch(`${API_BASE_URL}/`, { method: 'GET' });
+      } catch (e) {
+        console.log('API起動中...');
+      }
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
+      
       const response = await fetch(`${API_BASE_URL}/api/simulate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(apiData)
+        body: JSON.stringify(apiData),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error(`HTTPエラー: ${response.status}`);
@@ -293,7 +307,16 @@ const Simulator: React.FC = () => {
       
     } catch (error) {
       console.error('シミュレーションエラー:', error);
-      const errorMessage = error instanceof Error ? error.message : '不明なエラー';
+      let errorMessage = '不明なエラー';
+      
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
     } finally {
       setIsSimulating(false);
