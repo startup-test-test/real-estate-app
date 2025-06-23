@@ -222,6 +222,9 @@ const Simulator: React.FC = () => {
       console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
       
       if (result.results) {
+        console.log('受信したキャッシュフローテーブル長:', result.cash_flow_table?.length);
+        console.log('最初の5行:', result.cash_flow_table?.slice(0, 5));
+        console.log('最後の5行:', result.cash_flow_table?.slice(-5));
         setSimulationResults(result);
         
         // 結果表示後に自動スクロール
