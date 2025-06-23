@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# dist  # 一時的にコメントアウト（Xserverデプロイ用）
 dist-ssr
 *.local
 
