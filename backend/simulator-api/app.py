@@ -183,7 +183,7 @@ def run_simulation(property_data: dict):
     }
     
     # 年次キャッシュフロー表
-    years_list = list(range(1, min(holding_years + 1, 11)))
+    years_list = list(range(1, holding_years + 1))
     cum = 0
     cf_data = []
     
@@ -195,7 +195,7 @@ def run_simulation(property_data: dict):
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax
         
         repair = 0
-        if i % 5 == 0:
+        if i % 10 == 0:  # 10年ごとに大規模修繕
             repair = building_area * 10000
         
         cf_i = eff - annual_expenses - annual_loan - repair
