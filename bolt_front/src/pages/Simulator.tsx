@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Save,
   Zap,
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
+import { useLocation } from 'react-router-dom';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -35,11 +36,15 @@ interface SimulationResult {
 
 const Simulator: React.FC = () => {
   const { user } = useAuthContext();
-  const { saveSimulation, loading: dbLoading } = useSupabaseData();
+  const { saveSimulation, getSimulations, loading: dbLoading } = useSupabaseData();
+  const location = useLocation();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState({
     // 物件基本情報
@@ -74,6 +79,79 @@ const Simulator: React.FC = () => {
     holdingYears: 10, // 年
     exitCapRate: 6.00 // %
   });
+
+  // URLパラメータから編集IDを取得
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const editId = searchParams.get('edit');
+    if (editId) {
+      setEditingId(editId);
+      loadExistingData(editId);
+    }
+  }, [location.search]);
+
+  // 既存データを読み込む
+  const loadExistingData = async (simulationId: string) => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      const { data, error } = await getSimulations();
+      
+      if (error) {
+        setSaveError(`データ読み込みエラー: ${error}`);
+        return;
+      }
+      
+      const simulation = data?.find(sim => sim.id === simulationId);
+      if (simulation && simulation.simulation_data) {
+        const simData = simulation.simulation_data;
+        setInputs({
+          propertyName: simData.propertyName || '品川区投資物件',
+          landArea: simData.landArea || 135.00,
+          buildingArea: simData.buildingArea || 150.00,
+          roadPrice: simData.roadPrice || 250000,
+          marketValue: simData.marketValue || 8000,
+          purchasePrice: simData.purchasePrice || 6980,
+          otherCosts: simData.otherCosts || 300,
+          renovationCost: simData.renovationCost || 200,
+          monthlyRent: simData.monthlyRent || 250000,
+          managementFee: simData.managementFee || 5000,
+          fixedCost: simData.fixedCost || 0,
+          propertyTax: simData.propertyTax || 100000,
+          vacancyRate: simData.vacancyRate || 5.00,
+          rentDecline: simData.rentDecline || 1.00,
+          loanAmount: simData.loanAmount || 6500,
+          interestRate: simData.interestRate || 0.70,
+          loanYears: simData.loanTerm || 35,
+          loanType: simData.loanType || '元利均等',
+          holdingYears: simData.holdingYears || 10,
+          exitCapRate: simData.exitCapRate || 6.00
+        });
+        
+        // 既存の結果も表示
+        if (simulation.results) {
+          setSimulationResults({
+            results: {
+              '表面利回り（%）': simulation.results.surfaceYield,
+              'IRR（%）': simulation.results.irr,
+              'CCR（%）': simulation.results.ccr,
+              'DSCR（返済余裕率）': simulation.results.dscr,
+              '月間キャッシュフロー（円）': simulation.results.monthlyCashFlow,
+              '年間キャッシュフロー（円）': simulation.results.annualCashFlow
+            },
+            cash_flow_table: simulation.cash_flow_table
+          });
+        }
+        
+        setSaveMessage('✏️ 編集モード：既存のデータを読み込みました');
+      }
+    } catch (err: any) {
+      setSaveError(`データ読み込みエラー: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleInputChange = (field: string, value: string | number) => {
     setInputs(prev => ({
@@ -116,6 +194,13 @@ const Simulator: React.FC = () => {
       };
       
       console.log('FAST API送信データ:', apiData);
+      console.log('ローン期間:', apiData.loan_years, '年');
+      console.log('保有年数:', apiData.holding_years, '年');
+      
+      // テスト: 最大期間でのリクエスト
+      if (apiData.holding_years > 10) {
+        console.log('⚠️ 35年のキャッシュフローを要求中...');
+      }
       
       // FAST API呼び出し
       const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -133,34 +218,72 @@ const Simulator: React.FC = () => {
       
       const result = await response.json();
       console.log('FAST APIレスポンス:', result);
+      console.log('キャッシュフローテーブルの詳細:', result.cash_flow_table);
+      console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
       
       if (result.results) {
         setSimulationResults(result);
         
+        // 結果表示後に自動スクロール
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+        
         // ユーザーがログインしている場合はSupabaseに保存
         if (user) {
           try {
+            // Supabaseスキーマに合わせたデータ形式
             const simulationData = {
-              simulation_data: apiData,
-              results: {
-                surface_yield: result.results['表面利回り（%）'],
-                irr: result.results['IRR（%）'],
-                ccr: result.results['CCR（%）'],
-                dscr: result.results['DSCR（返済余裕率）'],
-                monthly_cash_flow: result.results['月間キャッシュフロー（円）'],
-                annual_cash_flow: result.results['年間キャッシュフロー（円）']
+              // simulation_data (JSONB) - 入力データ
+              simulation_data: {
+                propertyName: apiData.property_name || '無題の物件',
+                location: apiData.location,
+                propertyType: apiData.property_type,
+                purchasePrice: apiData.purchase_price,
+                monthlyRent: apiData.monthly_rent,
+                managementFee: apiData.management_fee || 0,
+                loanTerm: apiData.loan_years,
+                interestRate: apiData.interest_rate,
+                loanAmount: apiData.loan_amount,
+                holdingYears: apiData.holding_years,
+                vacancyRate: apiData.vacancy_rate,
+                propertyTax: apiData.property_tax
               },
+              // results (JSONB) - 計算結果
+              results: {
+                surfaceYield: result.results['表面利回り（%）'] || 0,
+                netYield: result.results['実質利回り（%）'] || 0,
+                irr: result.results['IRR（%）'] || 0,
+                ccr: result.results['CCR（%）'] || 0,
+                dscr: result.results['DSCR（返済余裕率）'] || 0,
+                monthlyCashFlow: result.results['月間キャッシュフロー（円）'] || 0,
+                annualCashFlow: result.results['年間キャッシュフロー（円）'] || 0
+              },
+              // cash_flow_table (JSONB) - キャッシュフローテーブル
               cash_flow_table: result.cash_flow_table || []
             };
             
-            await saveSimulation(simulationData);
-            setSaveMessage('シミュレーション結果を保存しました！');
+            console.log('保存データ:', simulationData);
+            const { data, error: saveError } = await saveSimulation(simulationData);
+            
+            if (saveError) {
+              throw new Error(saveError);
+            }
+            
+            setSaveMessage('✅ シミュレーション結果を保存しました！');
+            console.log('保存成功:', data);
+            
           } catch (saveError) {
             console.error('保存エラー:', saveError);
-            setSaveMessage('シミュレーションは完了しましたが、保存に失敗しました。');
+            setSaveMessage('⚠️ シミュレーションは完了しましたが、保存に失敗しました。');
           }
         } else {
-          setSaveMessage('シミュレーションが正常に完了しました！（ログインすると結果を保存できます）');
+          setSaveMessage('ℹ️ シミュレーションが正常に完了しました！（ログインすると結果を保存できます）');
         }
       } else {
         throw new Error('APIから予期しない形式のレスポンスが返されました');
@@ -185,20 +308,52 @@ const Simulator: React.FC = () => {
   // 必須項目のチェック
   const isFormValid = inputs.propertyName && inputs.purchasePrice > 0;
 
+  if (isLoading) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">既存データを読み込み中...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">AI物件シミュレーター</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                AI物件シミュレーター
+                {editingId && (
+                  <span className="ml-3 text-lg text-orange-600 bg-orange-100 px-3 py-1 rounded-full">
+                    編集モード
+                  </span>
+                )}
+              </h1>
+            </div>
             <div className="flex items-center space-x-3">
-              <button className="px-4 py-2 text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50">
+              <button 
+                onClick={() => window.history.back()}
+                className="px-4 py-2 text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50"
+              >
                 物件一覧へ戻る
               </button>
             </div>
           </div>
-          <p className="text-gray-600">AIを活用した収益シミュレーションで、最適な投資判断をサポートします。</p>
+          <p className="text-gray-600">
+            {editingId 
+              ? '既存の物件データを編集して、新しいシミュレーションを実行できます。'
+              : 'AIを活用した収益シミュレーションで、最適な投資判断をサポートします。'
+            }
+          </p>
         </div>
 
         {/* Success/Error Messages */}
@@ -490,10 +645,47 @@ const Simulator: React.FC = () => {
           </div>
         </div>
 
+        {/* 保存状況表示 */}
+        {(saveMessage || saveError) && (
+          <div className="mt-6">
+            {saveMessage && (
+              <div className={`p-4 rounded-lg border flex items-center ${
+                saveMessage.includes('✅') ? 'text-green-700 bg-green-50 border-green-200' :
+                saveMessage.includes('⚠️') ? 'text-yellow-700 bg-yellow-50 border-yellow-200' :
+                'text-blue-700 bg-blue-50 border-blue-200'
+              }`}>
+                <span>{saveMessage}</span>
+              </div>
+            )}
+            {saveError && (
+              <div className="p-4 rounded-lg border flex items-center text-red-700 bg-red-50 border-red-200">
+                <AlertCircle className="h-4 w-4 mr-2" />
+                <span>{saveError}</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* シミュレーション結果表示 */}
         {simulationResults && (
-          <div className="mt-6 bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">📊 シミュレーション結果</h2>
+          <div 
+            ref={resultsRef}
+            className="mt-6 bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 scroll-mt-4"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+                <div className="ml-3 bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full animate-pulse">
+                  NEW!
+                </div>
+              </div>
+              {user && saveMessage?.includes('✅') && (
+                <span className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                  ✓ マイページに保存済み
+                </span>
+              )}
+            </div>
             
             {/* 投資パフォーマンス指標 */}
             <div className="mb-6">
@@ -582,7 +774,12 @@ const Simulator: React.FC = () => {
             {/* キャッシュフロー表 */}
             {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">📋 年次キャッシュフロー詳細</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
+                  <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
+                    {simulationResults.cash_flow_table.length}年分のデータ
+                  </span>
+                </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full bg-white border border-gray-300">
                     <thead className="bg-gray-50">

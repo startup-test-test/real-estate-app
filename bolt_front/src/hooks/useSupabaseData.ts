@@ -105,7 +105,7 @@ export function useSupabaseData() {
   }
 
   // Simulations CRUD operations
-  const saveSimulation = async (simulationData: Omit<Simulation, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  const saveSimulation = async (simulationData: any) => {
     setLoading(true)
     setError(null)
     
@@ -113,6 +113,30 @@ export function useSupabaseData() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
+      // ユーザーが public.users テーブルに存在するか確認
+      const { data: existingUser, error: userCheckError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      // ユーザーが存在しない場合は作成
+      if (userCheckError || !existingUser) {
+        console.log('Creating user in public.users table...')
+        const { error: userCreateError } = await supabase
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.email || '',
+            full_name: user.user_metadata?.full_name || ''
+          })
+        
+        if (userCreateError) {
+          console.log('User creation error (might already exist):', userCreateError)
+        }
+      }
+
+      // シミュレーションデータを保存
       const { data, error } = await supabase
         .from('simulations')
         .insert({
@@ -122,10 +146,16 @@ export function useSupabaseData() {
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Simulation save error:', error)
+        throw error
+      }
+      
+      console.log('Simulation saved successfully:', data)
       return { data, error: null }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      console.error('Save simulation error:', err)
       setError(errorMessage)
       return { data: null, error: errorMessage }
     } finally {

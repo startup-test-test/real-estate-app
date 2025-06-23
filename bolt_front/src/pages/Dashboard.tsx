@@ -1,4 +1,6 @@
 import React from 'react';
+import { useSupabaseData } from '../hooks/useSupabaseData';
+import { useAuthContext } from '../components/AuthProvider';
 import { 
   Calculator, 
   LogOut, 
@@ -33,6 +35,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const { getSimulations, deleteSimulation } = useSupabaseData();
   
   // Mock data for simulations
   const mockSimulations = [
@@ -101,47 +105,100 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  // Mock state management
-  const [simulations] = React.useState(mockSimulations);
-  const [loading] = React.useState(false);
-  const [error] = React.useState(null);
+  // Supabase state management
+  const [simulations, setSimulations] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
   const [sortBy, setSortBy] = React.useState('newest');
   const [filterStatus, setFilterStatus] = React.useState('all');
   const [searchTerm, setSearchTerm] = React.useState('');
   
-  const refetch = () => {
-    // Mock refetch function - in a real app this would refresh data
-    console.log('Refreshing data...');
+  // データ読み込み関数
+  const loadSimulations = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const { data, error: fetchError } = await getSimulations();
+      
+      if (fetchError) {
+        console.error('データ取得エラー:', fetchError);
+        setError(fetchError);
+        setSimulations([]);
+      } else {
+        console.log('Supabaseから取得したデータ:', data);
+        // 最初のデータの詳細構造をログ出力
+        if (data && data.length > 0) {
+          console.log('最初のシミュレーションデータの詳細:', JSON.stringify(data[0], null, 2));
+        }
+        setSimulations(data || []);
+      }
+    } catch (err: any) {
+      console.error('データ読み込みエラー:', err);
+      setError(err.message);
+      setSimulations([]);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const refetch = () => {
+    loadSimulations();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('この物件データを削除しますか？')) {
+      try {
+        setLoading(true);
+        const { error } = await deleteSimulation(id);
+        if (error) {
+          setError(error);
+        } else {
+          // 削除成功後、データを再読み込み
+          loadSimulations();
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  // 初回読み込み
+  React.useEffect(() => {
+    loadSimulations();
+  }, [user]);
 
   // Supabaseデータを表示用フォーマットに変換
   const formatSimulationData = (simulations: any[]) => {
     return simulations.map(sim => {
-      const propertyData = sim.property_data || {};
-      const simulationResults = sim.simulation_results || {};
-      // aiAnalysis is not currently used but available for future features
+      // スキーマに合わせてデータを取得
+      const simulationData = sim.simulation_data || {};
+      const results = sim.results || {};
       
       return {
         id: sim.id,
-        propertyName: sim.property_name || '無題の物件',
-        location: propertyData.location || '住所未設定',
-        propertyType: propertyData.propertyType || '一棟アパート/マンション',
-        acquisitionPrice: propertyData.purchasePrice || 0,
-        annualIncome: (simulationResults.monthlyLoan || 0) * 12 / 10000, // 万円に変換
-        managementFee: propertyData.managementFee || 0,
-        surfaceYield: simulationResults.grossYield || 0,
-        netYield: simulationResults.netYield || 0,
-        cashFlow: simulationResults.monthlyLoan || 0,
+        propertyName: simulationData.propertyName || '無題の物件',
+        location: simulationData.location || '住所未設定',
+        propertyType: simulationData.propertyType || '一棟アパート/マンション',
+        acquisitionPrice: simulationData.purchasePrice || 0, // 既に万円単位で保存されている
+        annualIncome: ((simulationData.monthlyRent || 0) * 12) / 10000, // 月額家賃から年間収入を計算、万円に変換
+        managementFee: ((simulationData.managementFee || 0) * 12) / 10000, // 月額管理費×12を万円に変換
+        surfaceYield: results.surfaceYield || 0,
+        netYield: results.netYield || 0,
+        cashFlow: results.monthlyCashFlow || 0,
         date: new Date(sim.created_at).toLocaleDateString('ja-JP'),
-        status: sim.status || 'completed',
+        status: 'completed',
         thumbnail: 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
         radarData: {
-          shortTermProfitability: Math.min(10, Math.max(1, Math.round((simulationResults.grossYield || 0) / 2))),
-          longTermProfitability: Math.min(10, Math.max(1, Math.round((simulationResults.irr || 0) / 2))),
-          shortTermRisk: Math.min(10, Math.max(1, 10 - Math.round((simulationResults.dscr || 1) * 3))),
+          shortTermProfitability: Math.min(10, Math.max(1, Math.round((results.surfaceYield || 0) / 2))),
+          longTermProfitability: Math.min(10, Math.max(1, Math.round((results.irr || 0) / 2))),
+          shortTermRisk: Math.min(10, Math.max(1, 10 - Math.round((results.dscr || 1) * 3))),
           longTermRisk: Math.min(10, Math.max(1, Math.round(Math.random() * 5 + 3))),
-          relativeFinancialPressure: Math.min(10, Math.max(1, Math.round((simulationResults.selfFunding || 1000) / 200))),
-          longTermAssetValue: Math.min(10, Math.max(1, Math.round((simulationResults.netYield || 0) / 1.5)))
+          relativeFinancialPressure: Math.min(10, Math.max(1, Math.round((simulationData.selfFunding || 1000) / 200))),
+          longTermAssetValue: Math.min(10, Math.max(1, Math.round((results.netYield || 0) / 1.5)))
         }
       };
     });
@@ -561,7 +618,10 @@ const Dashboard: React.FC = () => {
 
                       {/* Action Buttons */}
                       <div className="flex space-x-2">
-                        <button className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200 transition-colors">
+                        <button 
+                          onClick={() => navigate(`/simulator?edit=${sim.id}`)}
+                          className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200 transition-colors"
+                        >
                           編集
                         </button>
                         <button 
@@ -569,6 +629,12 @@ const Dashboard: React.FC = () => {
                           className="flex-1 px-3 py-2 bg-orange-500 text-white text-sm rounded hover:bg-orange-600 transition-colors"
                         >
                           詳細表示
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(sim.id)}
+                          className="px-3 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
