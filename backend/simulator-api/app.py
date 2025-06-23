@@ -182,8 +182,8 @@ def run_simulation(property_data: dict):
         "自己資金（万円）": round(self_funding, 2)
     }
     
-    # 年次キャッシュフロー表
-    years_list = list(range(1, holding_years + 1))
+    # 年次キャッシュフロー表（最大35年対応）
+    years_list = list(range(1, holding_years + 1))  # 制限なしで保有年数分のデータを生成
     cum = 0
     cf_data = []
     
