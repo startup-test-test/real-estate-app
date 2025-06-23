@@ -771,6 +771,50 @@ const Simulator: React.FC = () => {
                     </div>
                   </div>
                 )}
+                
+                {/* 自己資金 */}
+                {simulationResults.results['自己資金（万円）'] !== null && (
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">自己資金</h4>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {simulationResults.results['自己資金（万円）']}万円
+                    </div>
+                  </div>
+                )}
+                
+                {/* 売却益 */}
+                {simulationResults.results['売却益（万円）'] !== null && (
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">売却益</h4>
+                    <div className={`text-2xl font-bold ${
+                      simulationResults.results['売却益（万円）']! >= 0 
+                        ? 'text-green-600' 
+                        : 'text-red-600'
+                    }`}>
+                      {simulationResults.results['売却益（万円）']! >= 0 ? '+' : ''}{simulationResults.results['売却益（万円）']}万円
+                    </div>
+                  </div>
+                )}
+                
+                {/* NOI */}
+                {simulationResults.results['NOI（円）'] !== null && (
+                  <div className="bg-purple-50 rounded-lg p-4 text-center">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">NOI（営業純利益）</h4>
+                    <div className="text-2xl font-bold text-purple-600">
+                      {simulationResults.results['NOI（円）']!.toLocaleString()}円
+                    </div>
+                  </div>
+                )}
+                
+                {/* 年間ローン返済額 */}
+                {simulationResults.results['年間ローン返済額（円）'] !== null && (
+                  <div className="bg-orange-50 rounded-lg p-4 text-center">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">年間ローン返済額</h4>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {simulationResults.results['年間ローン返済額（円）']!.toLocaleString()}円
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             
