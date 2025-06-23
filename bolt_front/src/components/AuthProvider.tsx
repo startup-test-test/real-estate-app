@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react'
-import { useAuth } from '../hooks/useAuth'
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 
 interface AuthContextType {
   user: any
@@ -26,10 +26,20 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const auth = useAuth()
+  const { user, session, loading, signIn, signUp, signOut } = useSupabaseAuth()
+
+  const authValue = {
+    user,
+    session,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+    isAuthenticated: !!user
+  }
 
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={authValue}>
       {children}
     </AuthContext.Provider>
   )

@@ -5,6 +5,8 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { useSupabaseData } from '../hooks/useSupabaseData';
+import { useAuthContext } from '../components/AuthProvider';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -32,6 +34,8 @@ interface SimulationResult {
 }
 
 const Simulator: React.FC = () => {
+  const { user } = useAuthContext();
+  const { saveSimulation, loading: dbLoading } = useSupabaseData();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
@@ -132,7 +136,32 @@ const Simulator: React.FC = () => {
       
       if (result.results) {
         setSimulationResults(result);
-        setSaveMessage('シミュレーションが正常に完了しました！');
+        
+        // ユーザーがログインしている場合はSupabaseに保存
+        if (user) {
+          try {
+            const simulationData = {
+              simulation_data: apiData,
+              results: {
+                surface_yield: result.results['表面利回り（%）'],
+                irr: result.results['IRR（%）'],
+                ccr: result.results['CCR（%）'],
+                dscr: result.results['DSCR（返済余裕率）'],
+                monthly_cash_flow: result.results['月間キャッシュフロー（円）'],
+                annual_cash_flow: result.results['年間キャッシュフロー（円）']
+              },
+              cash_flow_table: result.cash_flow_table || []
+            };
+            
+            await saveSimulation(simulationData);
+            setSaveMessage('シミュレーション結果を保存しました！');
+          } catch (saveError) {
+            console.error('保存エラー:', saveError);
+            setSaveMessage('シミュレーションは完了しましたが、保存に失敗しました。');
+          }
+        } else {
+          setSaveMessage('シミュレーションが正常に完了しました！（ログインすると結果を保存できます）');
+        }
       } else {
         throw new Error('APIから予期しない形式のレスポンスが返されました');
       }
