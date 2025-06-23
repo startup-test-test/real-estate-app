@@ -23,15 +23,31 @@ const Login: React.FC = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await signUp(formData.email, formData.password, formData.fullName);
+        const { data, error } = await signUp(formData.email, formData.password, formData.fullName);
+        console.log('サインアップ結果:', { data, error });
         if (error) throw error;
-        // モックモードでは自動的にログイン
+        
+        // サインアップ成功時のメッセージ
+        if (data?.user && !data.session) {
+          setError('アカウントが作成されました。メールアドレスに送信された確認リンクをクリックしてアカウントを有効化してください。');
+          return;
+        }
+        
         console.log('サインアップ成功、自動ログイン');
         navigate('/');
       } else {
-        const { error } = await signIn(formData.email, formData.password);
-        console.log('ログイン結果:', { error });
-        if (error) throw error;
+        const { data, error } = await signIn(formData.email, formData.password);
+        console.log('ログイン結果:', { data, error });
+        if (error) {
+          // 具体的なエラーメッセージを表示
+          if (error.message.includes('Email not confirmed')) {
+            throw new Error('メールアドレスが確認されていません。メールボックスを確認し、確認リンクをクリックしてください。');
+          } else if (error.message.includes('Invalid login credentials')) {
+            throw new Error('メールアドレスまたはパスワードが正しくありません。');
+          } else {
+            throw error;
+          }
+        }
         console.log('ログイン成功、ダッシュボードへリダイレクト');
         navigate('/');
       }

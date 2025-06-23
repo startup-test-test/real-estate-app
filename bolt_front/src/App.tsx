@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuthContext } from './components/AuthProvider';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import AuthCallback from './pages/AuthCallback';
 import Dashboard from './pages/Dashboard';
 import Simulator from './pages/Simulator';
 import PropertyDetail from './pages/PropertyDetail';
@@ -31,6 +32,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />

@@ -59,6 +59,7 @@ export function useSupabaseAuth() {
           data: {
             full_name: fullName,
           },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
       return { data, error }
@@ -75,7 +76,10 @@ export function useSupabaseAuth() {
         const mockUser = {
           id: 'mock-user-id',
           email,
-          user_metadata: { full_name: 'デモユーザー' }
+          user_metadata: { full_name: 'デモユーザー' },
+          app_metadata: {},
+          aud: 'authenticated',
+          created_at: new Date().toISOString()
         } as User
         setUser(mockUser)
         setSession({ user: mockUser } as Session)

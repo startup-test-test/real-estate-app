@@ -1,5 +1,6 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useAuthContext } from './AuthProvider';
 import { 
   Calculator, 
   User,
@@ -12,12 +13,26 @@ import {
   Search,
   HelpCircle,
   Crown,
-  Database
+  Database,
+  LogOut
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
   // 認証機能を削除してシンプル化
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { user, signOut } = useAuthContext();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('ログアウトエラー:', error);
+      // エラーが発生してもログインページにリダイレクト
+      navigate('/login', { replace: true });
+    }
+  };
 
   const navigation = [
     { name: 'マイページ', href: '/', icon: Home },
@@ -82,7 +97,7 @@ const Layout: React.FC = () => {
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div>
-                  <div className="text-white font-medium text-sm">東後 吾郎 さん</div>
+                  <div className="text-white font-medium text-sm">{user?.email || 'ゲストユーザー'}</div>
                 </div>
               </div>
               <button className="p-1 text-white hover:bg-white/10 rounded transition-colors">
@@ -147,6 +162,17 @@ const Layout: React.FC = () => {
             </div>
 
           </nav>
+
+          {/* Logout Button */}
+          <div className="p-4 border-t border-slate-600/30">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white rounded-lg transition-colors"
+            >
+              <LogOut className="mr-3 h-5 w-5" />
+              ログアウト
+            </button>
+          </div>
 
           {/* Contact Info */}
           <div className="p-4 border-t border-slate-600/30">
