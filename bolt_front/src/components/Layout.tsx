@@ -38,7 +38,6 @@ const Layout: React.FC = () => {
     { name: 'マイページ', href: '/', icon: Home },
     { name: 'AI物件シミュレーター', href: '/simulator', icon: Calculator },
     { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
-    { name: 'MLIT取引データ検索', href: '/mlit-data-search', icon: Database },
     { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
   ];
 

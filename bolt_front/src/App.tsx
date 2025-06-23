@@ -10,7 +10,6 @@ import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
 import MarketAnalysis from './pages/MarketAnalysis';
 import TransactionSearch from './pages/TransactionSearch';
-import MLITDataSearch from './pages/MLITDataSearch';
 import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
 
@@ -43,7 +42,6 @@ function App() {
             <Route path="faq" element={<FAQ />} />
             <Route path="premium-plan" element={<PremiumPlan />} />
             <Route path="transaction-search" element={<TransactionSearch />} />
-            <Route path="mlit-data-search" element={<MLITDataSearch />} />
             <Route path="simulator" element={<Simulator />} />
             <Route path="market-analysis" element={<MarketAnalysis />} />
             <Route path="property-detail/:id" element={<PropertyDetail />} />
