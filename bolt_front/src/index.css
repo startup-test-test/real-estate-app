@@ -1,3 +1,89 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* PDF印刷用スタイル */
+@media print {
+  /* ページ設定 */
+  @page {
+    margin: 0.5in;
+    size: A4;
+  }
+  
+  /* 印刷時に非表示にする要素 */
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  /* レイアウト調整 */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* 背景色を印刷 */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* 改ページを制御 */
+  .print\:break-before {
+    break-before: page;
+  }
+  
+  .print\:break-after {
+    break-after: page;
+  }
+  
+  /* 印刷時のフォントサイズ調整 */
+  .print\:text-sm {
+    font-size: 0.875rem !important;
+  }
+  
+  /* 印刷時のマージン調整 */
+  .print\:m-0 {
+    margin: 0 !important;
+  }
+  
+  .print\:p-4 {
+    padding: 1rem !important;
+  }
+  
+  /* Canvasグラフの印刷対応 */
+  canvas {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* グラフコンテナの印刷時調整 */
+  .chart-container {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* シミュレーション結果の印刷時レイアウト */
+  .simulation-results {
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  /* グリッドレイアウトの調整 */
+  .print\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .print\:grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+  
+  /* 色の調整 */
+  .print\:text-black {
+    color: black !important;
+  }
+  
+  .print\:bg-white {
+    background-color: white !important;
+  }
+}

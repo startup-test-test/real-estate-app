@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Zap,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
+import CashFlowChart from '../components/CashFlowChart';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -323,6 +325,18 @@ const Simulator: React.FC = () => {
     }
   };
 
+  // PDF保存機能
+  const handleSaveToPDF = () => {
+    // PDFの印刷時に表示するタイトル
+    const originalTitle = document.title;
+    document.title = `${inputs.propertyName} - 不動産投資シミュレーション結果`;
+    
+    // 印刷ダイアログを表示
+    window.print();
+    
+    // タイトルを元に戻す
+    document.title = originalTitle;
+  };
 
   // 必須項目のチェック
   const isFormValid = inputs.propertyName && inputs.purchasePrice > 0;
@@ -682,7 +696,7 @@ const Simulator: React.FC = () => {
         {simulationResults && (
           <div 
             ref={resultsRef}
-            className="mt-6 bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 scroll-mt-4"
+            className="mt-6 bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none"
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
@@ -692,11 +706,21 @@ const Simulator: React.FC = () => {
                   NEW!
                 </div>
               </div>
-              {user && saveMessage?.includes('✅') && (
-                <span className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                  ✓ マイページに保存済み
-                </span>
-              )}
+              <div className="flex items-center space-x-3">
+                {user && saveMessage?.includes('✅') && (
+                  <span className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                    ✓ マイページに保存済み
+                  </span>
+                )}
+                <button
+                  onClick={handleSaveToPDF}
+                  className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
+                  title="PDFとして保存"
+                >
+                  <Download size={18} />
+                  <span>PDF保存</span>
+                </button>
+              </div>
             </div>
             
             {/* 投資パフォーマンス指標 */}
@@ -835,6 +859,11 @@ const Simulator: React.FC = () => {
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
                     {simulationResults.cash_flow_table.length}年分のデータ
                   </span>
+                </div>
+                
+                {/* キャッシュフローグラフ */}
+                <div className="mb-6">
+                  <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full bg-white border border-gray-300">
