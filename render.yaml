@@ -2,6 +2,7 @@ services:
   - type: web
     name: real-estate-app
     env: python
+    runtime: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn backend.simulator-api.app:app --host 0.0.0.0 --port $PORT"
     envVars:
