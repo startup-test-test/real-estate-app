@@ -176,6 +176,33 @@ if simulate_button:
                         file_name=f"{property_name}_キャッシュフロー.csv",
                         mime="text/csv"
                     )
+                    
+                    # PDF保存ボタン
+                    st.markdown("""
+                    <button onclick="window.print()" style="
+                        background-color: #FF4B4B;
+                        color: white;
+                        padding: 0.5rem 1rem;
+                        border: none;
+                        border-radius: 0.25rem;
+                        cursor: pointer;
+                        font-size: 14px;
+                        margin-left: 8px;
+                    ">
+                        📄 PDFとして保存
+                    </button>
+                    
+                    <style>
+                    @media print {
+                        .stSidebar {display: none !important;}
+                        .css-1y0tads {display: none !important;}
+                        header {display: none !important;}
+                        .main > div:first-child {display: none !important;}
+                        .css-zt5igj {display: none !important;}
+                        button {display: none !important;}
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
                 
             else:
                 st.error(f"エラーが発生しました: {response.status_code}")
