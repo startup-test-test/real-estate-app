@@ -14,13 +14,26 @@ import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, loading } = useAuthContext();
+  const { isAuthenticated, loading, user } = useAuthContext();
+  
+  console.log('ProtectedRoute状態:', {
+    isAuthenticated,
+    loading,
+    user: user ? { id: user.id, email: user.email } : null
+  })
   
   if (loading) {
+    console.log('ProtectedRoute: 認証ローディング中')
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
   
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    console.log('ProtectedRoute: 認証されていないためログインページへリダイレクト')
+    return <Navigate to="/login" replace />;
+  }
+  
+  console.log('ProtectedRoute: 認証済み、ページを表示')
+  return <>{children}</>;
 };
 // Loginページも削除
 // APITestページを削除

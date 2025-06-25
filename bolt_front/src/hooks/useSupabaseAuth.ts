@@ -7,10 +7,59 @@ export function useSupabaseAuth() {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // モック認証状態をlocalStorageから復元する関数
+  const restoreMockAuth = () => {
+    try {
+      const savedUser = localStorage.getItem('mock_user')
+      const savedSession = localStorage.getItem('mock_session')
+      
+      if (savedUser && savedSession) {
+        const mockUser = JSON.parse(savedUser) as User
+        const mockSession = JSON.parse(savedSession) as Session
+        setUser(mockUser)
+        setSession(mockSession)
+        console.log('モック認証状態を復元しました:', mockUser.email)
+        return true
+      }
+    } catch (error) {
+      console.error('モック認証状態の復元に失敗:', error)
+      localStorage.removeItem('mock_user')
+      localStorage.removeItem('mock_session')
+    }
+    return false
+  }
+
+  // モック認証状態をlocalStorageに保存する関数
+  const saveMockAuth = (user: User, session: Session) => {
+    try {
+      localStorage.setItem('mock_user', JSON.stringify(user))
+      localStorage.setItem('mock_session', JSON.stringify(session))
+      console.log('モック認証状態を保存しました:', user.email)
+    } catch (error) {
+      console.error('モック認証状態の保存に失敗:', error)
+    }
+  }
+
+  // モック認証状態をクリアする関数
+  const clearMockAuth = () => {
+    try {
+      localStorage.removeItem('mock_user')
+      localStorage.removeItem('mock_session')
+      console.log('モック認証状態をクリアしました')
+    } catch (error) {
+      console.error('モック認証状態のクリアに失敗:', error)
+    }
+  }
+
   useEffect(() => {
     // Check if Supabase is configured
     if (!import.meta.env.VITE_SUPABASE_URL) {
       console.log('Supabase not configured, using mock auth')
+      // モック認証状態を復元
+      const restored = restoreMockAuth()
+      if (!restored) {
+        console.log('復元可能なモック認証状態がありません')
+      }
       setLoading(false)
       return
     }
@@ -44,11 +93,28 @@ export function useSupabaseAuth() {
       const mockUser = {
         id: 'mock-user-id',
         email,
-        user_metadata: { full_name: fullName }
+        user_metadata: { full_name: fullName || 'ユーザー' },
+        app_metadata: {},
+        aud: 'authenticated',
+        created_at: new Date().toISOString()
       } as User
+      const mockSession = { 
+        user: mockUser,
+        access_token: 'mock-access-token',
+        refresh_token: 'mock-refresh-token',
+        expires_in: 3600,
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        token_type: 'bearer'
+      } as Session
+      
       setUser(mockUser)
-      setSession({ user: mockUser } as Session)
-      return { data: { user: mockUser }, error: null }
+      setSession(mockSession)
+      
+      // モック認証状態を永続化
+      saveMockAuth(mockUser, mockSession)
+      
+      console.log('モックサインアップ成功:', email)
+      return { data: { user: mockUser, session: mockSession }, error: null }
     }
 
     try {
@@ -81,9 +147,23 @@ export function useSupabaseAuth() {
           aud: 'authenticated',
           created_at: new Date().toISOString()
         } as User
+        const mockSession = { 
+          user: mockUser,
+          access_token: 'mock-access-token',
+          refresh_token: 'mock-refresh-token',
+          expires_in: 3600,
+          expires_at: Math.floor(Date.now() / 1000) + 3600,
+          token_type: 'bearer'
+        } as Session
+        
         setUser(mockUser)
-        setSession({ user: mockUser } as Session)
-        return { data: { user: mockUser }, error: null }
+        setSession(mockSession)
+        
+        // モック認証状態を永続化
+        saveMockAuth(mockUser, mockSession)
+        
+        console.log('モックサインイン成功:', email)
+        return { data: { user: mockUser, session: mockSession }, error: null }
       } else {
         return { data: null, error: new Error('無効なメールアドレスまたはパスワードです') }
       }
@@ -117,6 +197,8 @@ export function useSupabaseAuth() {
       // Mock sign out
       setUser(null)
       setSession(null)
+      clearMockAuth()
+      console.log('モックサインアウト成功')
       return { error: null }
     }
 

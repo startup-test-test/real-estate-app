@@ -35,8 +35,17 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, isAuthenticated, loading: authLoading } = useAuthContext();
   const { getSimulations, deleteSimulation } = useSupabaseData();
+  
+  // 認証状態をログに記録
+  React.useEffect(() => {
+    console.log('Dashboard認証状態:', {
+      user: user ? { id: user.id, email: user.email } : null,
+      isAuthenticated,
+      authLoading
+    })
+  }, [user, isAuthenticated, authLoading])
   
   // Mock data for simulations
   const mockSimulations = [
@@ -115,7 +124,12 @@ const Dashboard: React.FC = () => {
   
   // データ読み込み関数
   const loadSimulations = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('loadSimulations: ユーザーが登録されていません')
+      return;
+    }
+    
+    console.log('loadSimulations: データ読み込み開始, ユーザー:', user.email)
     
     try {
       setLoading(true);
@@ -168,8 +182,11 @@ const Dashboard: React.FC = () => {
 
   // 初回読み込み
   React.useEffect(() => {
-    loadSimulations();
-  }, [user]);
+    console.log('Dashboard useEffect: 初回読み込み', { user: user?.email, authLoading })
+    if (!authLoading) {
+      loadSimulations();
+    }
+  }, [user, authLoading]);
 
   // Supabaseデータを表示用フォーマットに変換
   const formatSimulationData = (simulations: any[]) => {
