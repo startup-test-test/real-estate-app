@@ -13,6 +13,8 @@ import SliderInput from '../components/SliderInput';
 import Tooltip from '../components/Tooltip';
 import MetricCard from '../components/MetricCard';
 import Tutorial from '../components/Tutorial';
+import BackButton from '../components/BackButton';
+import Breadcrumb from '../components/Breadcrumb';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -502,6 +504,9 @@ const Simulator: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb */}
+        <Breadcrumb />
+        
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -523,12 +528,7 @@ const Simulator: React.FC = () => {
                 <span>使い方を見る</span>
                 <span className="text-sm">📖</span>
               </button>
-              <button 
-                onClick={() => window.history.back()}
-                className="px-4 py-2 text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50"
-              >
-                物件一覧へ戻る
-              </button>
+              <BackButton />
             </div>
           </div>
           <p className="text-gray-600">

@@ -30,6 +30,8 @@ import {
   Layers
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
+import Breadcrumb from '../components/Breadcrumb';
 
 const PropertyDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -323,17 +325,14 @@ const PropertyDetail: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb */}
+        <Breadcrumb />
+        
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => navigate('/property-list')}
-                className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                物件一覧へ戻る
-              </button>
+              <BackButton />
               <h1 className="text-2xl font-bold text-gray-900">投資用物件詳細</h1>
             </div>
             <div className="flex items-center space-x-3">

@@ -117,15 +117,19 @@ const Layout: React.FC = () => {
                     to={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-4 text-base font-medium rounded-lg transition-colors ${
+                      `flex items-center px-4 py-4 text-base font-medium rounded-lg transition-colors relative ${
                         isActive
-                          ? 'bg-white/10 text-white'
+                          ? 'bg-white/10 text-white border-l-4 border-white'
                           : 'text-white/80 hover:bg-white/5 hover:text-white'
                       }`
                     }
                   >
                     <Icon className="mr-4 h-6 w-6" />
                     {item.name}
+                    {/* Active indicator dot */}
+                    <div className="ml-auto">
+                      <div className="w-2 h-2 bg-white rounded-full opacity-0 group-[.bg-white\/10]:opacity-100 transition-opacity" />
+                    </div>
                   </NavLink>
                 );
               })}

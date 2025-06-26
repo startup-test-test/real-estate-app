@@ -18,6 +18,8 @@ import {
   Loader,
   ExternalLink
 } from 'lucide-react';
+import BackButton from '../components/BackButton';
+import Breadcrumb from '../components/Breadcrumb';
 
 const TransactionSearch: React.FC = () => {
   const [addressForm, setAddressForm] = useState({
@@ -317,11 +319,17 @@ const TransactionSearch: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb */}
+        <Breadcrumb />
+        
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center mb-4">
-            <Search className="h-8 w-8 text-green-600 mr-3" />
-            <h1 className="text-2xl font-bold text-gray-900">AI取引事例検索</h1>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <Search className="h-8 w-8 text-green-600 mr-3" />
+              <h1 className="text-2xl font-bold text-gray-900">AI取引事例検索</h1>
+            </div>
+            <BackButton />
           </div>
           <p className="text-gray-600">
             国土交通省の不動産取引価格情報データベースから、指定エリアの実際の取引事例を検索・分析します。
