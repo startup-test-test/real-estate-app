@@ -13,13 +13,20 @@
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background: #6366f1;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: all 0.3s;
+}
+
+@media (min-width: 640px) {
+  .slider::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .slider::-webkit-slider-thumb:hover {
@@ -28,14 +35,21 @@
 }
 
 .slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background: #6366f1;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: all 0.3s;
   border: none;
+}
+
+@media (min-width: 640px) {
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .slider::-moz-range-thumb:hover {
@@ -127,4 +141,44 @@
   .print\:bg-white {
     background-color: white !important;
   }
+}
+
+/* モバイルタッチ操作最適化 */
+@media (max-width: 768px) {
+  /* タッチターゲットの最小サイズ確保 */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* ボタンのタッチ最適化 */
+  .touch-button {
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+  
+  /* 入力フィールドのタッチ最適化 */
+  .touch-input {
+    padding: 12px;
+    font-size: 16px; /* iOS Safariでズームを防ぐ */
+    min-height: 44px;
+  }
+  
+  /* セレクトボックスの最適化 */
+  select {
+    min-height: 44px;
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+/* 全デバイス共通のタッチフィードバック */
+.touch-feedback:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+/* iOS Safariの300msタップ遅延を無効化 */
+.touch-manipulation {
+  touch-action: manipulation;
 }

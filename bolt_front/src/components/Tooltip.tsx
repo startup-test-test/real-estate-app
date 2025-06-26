@@ -15,10 +15,11 @@ const Tooltip: React.FC<TooltipProps> = ({ content, children, className = '' }) 
       <div
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
-        className="cursor-help"
+        onClick={() => setIsVisible(!isVisible)}
+        className="cursor-help p-2 -m-2 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
       >
         {children || (
-          <HelpCircle className="w-4 h-4 text-gray-400 hover:text-indigo-500 transition-colors" />
+          <HelpCircle className="w-4 h-4 text-gray-400 hover:text-indigo-500 active:text-indigo-600 transition-colors" />
         )}
       </div>
       

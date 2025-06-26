@@ -39,6 +39,7 @@ interface SimulationResult {
   }[];
 }
 
+
 // サンプル物件データ
 const sampleProperties = {
   default: {
@@ -210,6 +211,9 @@ const Simulator: React.FC = () => {
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState(sampleProperties.default.data);
+
+
+
 
   // 初回アクセス時にチュートリアルを表示
   useEffect(() => {
@@ -571,7 +575,7 @@ const Simulator: React.FC = () => {
               <button
                 key={key}
                 onClick={() => setInputs(property.data)}
-                className="text-left p-3 bg-white border border-blue-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-left p-4 sm:p-3 bg-white border border-blue-200 rounded-lg hover:border-blue-400 hover:shadow-md active:scale-[0.98] active:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] touch-manipulation"
               >
                 <div className="font-medium text-blue-900 mb-1">{property.name}</div>
                 <div className="text-xs text-blue-600">{property.description}</div>
@@ -610,7 +614,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.landArea}
                     onChange={(e) => handleInputChange('landArea', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">㎡</span>
                 </div>
@@ -626,7 +630,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.buildingArea}
                     onChange={(e) => handleInputChange('buildingArea', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">㎡</span>
                 </div>
@@ -795,7 +799,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.vacancyRate}
                     onChange={(e) => handleInputChange('vacancyRate', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">%</span>
                 </div>
@@ -811,7 +815,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.rentDecline}
                     onChange={(e) => handleInputChange('rentDecline', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">%/年</span>
                 </div>
@@ -850,7 +854,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.interestRate}
                     onChange={(e) => handleInputChange('interestRate', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">%</span>
                 </div>
@@ -865,7 +869,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.loanYears}
                     onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">年</span>
                 </div>
@@ -901,7 +905,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.holdingYears}
                     onChange={(e) => handleInputChange('holdingYears', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">年</span>
                 </div>
@@ -917,7 +921,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.exitCapRate}
                     onChange={(e) => handleInputChange('exitCapRate', Number(e.target.value))}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
                   <span className="text-sm text-gray-500">%</span>
                 </div>
@@ -931,10 +935,10 @@ const Simulator: React.FC = () => {
               <button 
                 onClick={handleSimulation}
                 disabled={isSimulating || !isFormValid}
-                className={`flex items-center justify-center px-8 py-4 rounded-lg font-medium text-lg transition-all duration-200 ${
+                className={`flex items-center justify-center px-8 py-4 rounded-lg font-medium text-lg transition-all duration-200 min-h-[56px] touch-manipulation ${
                   isSimulating || !isFormValid
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                    : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:from-purple-800 active:to-indigo-800 active:scale-[0.98] text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                 }`}
               >
                 {isSimulating ? (
@@ -1151,6 +1155,7 @@ const Simulator: React.FC = () => {
             )}
           </div>
         )}
+
 
         {/* チュートリアル */}
         <Tutorial 
