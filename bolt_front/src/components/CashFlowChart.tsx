@@ -58,43 +58,45 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     datasets: [
       {
         type: 'bar' as const,
-        label: '年次キャッシュフロー',
+        label: '💰 年次キャッシュフロー',
         data: annualCashFlow,
-        backgroundColor: 'rgba(59, 130, 246, 0.7)', // blue-500 with opacity
-        borderColor: 'rgb(59, 130, 246)',
-        borderWidth: 1,
+        backgroundColor: 'rgba(34, 197, 94, 0.8)', // green-500 より鮮明
+        borderColor: 'rgb(22, 163, 74)',
+        borderWidth: 2,
         yAxisID: 'y',
       },
       {
         type: 'line' as const,
-        label: '累計キャッシュフロー',
+        label: '📈 累計キャッシュフロー',
         data: cumulativeCashFlow,
-        borderColor: 'rgb(239, 68, 68)', // red-500
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        borderWidth: 3,
-        pointBackgroundColor: 'rgb(239, 68, 68)',
-        pointBorderColor: 'rgb(239, 68, 68)',
-        pointBorderWidth: 2,
-        pointRadius: 5,
+        borderColor: 'rgb(220, 38, 127)', // pink-600 より目立つ色
+        backgroundColor: 'rgba(220, 38, 127, 0.1)',
+        borderWidth: 4,
+        pointBackgroundColor: 'rgb(220, 38, 127)',
+        pointBorderColor: 'rgb(255, 255, 255)',
+        pointBorderWidth: 3,
+        pointRadius: 6,
+        pointHoverRadius: 8,
         fill: false,
         yAxisID: 'y1',
+        tension: 0.2, // 線をなめらかに
       },
       {
         type: 'bar' as const,
-        label: '実効収入',
+        label: '💵 実効収入',
         data: income,
-        backgroundColor: 'rgba(34, 197, 94, 0.5)', // green-500 with opacity
-        borderColor: 'rgb(34, 197, 94)',
-        borderWidth: 1,
+        backgroundColor: 'rgba(59, 130, 246, 0.6)', // blue-500 収入は青系
+        borderColor: 'rgb(37, 99, 235)',
+        borderWidth: 2,
         yAxisID: 'y',
       },
       {
         type: 'bar' as const,
-        label: '総支出',
+        label: '💸 総支出',
         data: expenses,
-        backgroundColor: 'rgba(249, 115, 22, 0.5)', // orange-500 with opacity
-        borderColor: 'rgb(249, 115, 22)',
-        borderWidth: 1,
+        backgroundColor: 'rgba(239, 68, 68, 0.6)', // red-500 支出は赤系
+        borderColor: 'rgb(220, 38, 38)',
+        borderWidth: 2,
         yAxisID: 'y',
       },
     ],
@@ -105,13 +107,40 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
+        display: true,
         position: 'top' as const,
+        align: 'start' as const,
         labels: {
           usePointStyle: true,
-          padding: 20,
+          pointStyle: 'rectRounded',
+          padding: 25,
+          boxWidth: 15,
+          boxHeight: 15,
           font: {
-            size: 12,
+            size: 13,
+            weight: '600',
+            family: 'system-ui, -apple-system, sans-serif',
           },
+          color: '#374151', // gray-700
+          generateLabels: function(chart) {
+            const datasets = chart.data.datasets;
+            return datasets.map((dataset, i) => ({
+              text: dataset.label,
+              fillStyle: dataset.backgroundColor,
+              strokeStyle: dataset.borderColor,
+              lineWidth: dataset.borderWidth,
+              pointStyle: dataset.type === 'line' ? 'line' : 'rect',
+              hidden: !chart.isDatasetVisible(i),
+              datasetIndex: i
+            }));
+          },
+        },
+        onClick: function(e, legendItem, legend) {
+          const index = legendItem.datasetIndex;
+          const chart = legend.chart;
+          const meta = chart.getDatasetMeta(index);
+          meta.hidden = meta.hidden === null ? !chart.data.datasets[index].hidden : null;
+          chart.update();
         },
       },
       title: {
@@ -150,11 +179,12 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         display: true,
         title: {
           display: true,
-          text: '経過年数',
+          text: '経過年数（年）',
           font: {
-            size: 14,
+            size: 13,
             weight: 'bold',
           },
+          color: '#6b7280', // gray-500
         },
         grid: {
           display: false,
@@ -166,14 +196,16 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         position: 'left' as const,
         title: {
           display: true,
-          text: '年次CF・収支（万円）',
+          text: '年次キャッシュフロー・収支（万円）',
           font: {
-            size: 14,
+            size: 13,
             weight: 'bold',
           },
+          color: '#6b7280', // gray-500
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: 'rgba(156, 163, 175, 0.3)', // gray-400 with opacity
+          lineWidth: 1,
         },
         ticks: {
           callback: function(value) {
@@ -187,14 +219,17 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         position: 'right' as const,
         title: {
           display: true,
-          text: '累計CF（万円）',
+          text: '累計キャッシュフロー（万円）',
           font: {
-            size: 14,
+            size: 13,
             weight: 'bold',
           },
+          color: '#6b7280', // gray-500
         },
         grid: {
           drawOnChartArea: false,
+          color: 'rgba(156, 163, 175, 0.3)',
+          lineWidth: 1,
         },
         ticks: {
           callback: function(value) {
@@ -214,11 +249,31 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       <div className="h-96 w-full">
         <Chart type="bar" data={chartData} options={options} />
       </div>
-      <div className="mt-4 text-sm text-gray-600">
-        <p>
-          <span className="font-medium">📊 グラフの見方:</span>
-          棒グラフは年次の収支状況、赤い線は累計キャッシュフローの推移を表示しています。
-        </p>
+      <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+        <div className="text-sm text-gray-700">
+          <p className="font-semibold mb-2">📊 グラフの見方</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span>💰 年次キャッシュフロー: 毎年の手取り収益</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-pink-600 rounded"></div>
+              <span>📈 累計キャッシュフロー: 投資開始からの累積</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span>💵 実効収入: 空室を考慮した収入</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-red-500 rounded"></div>
+              <span>💸 総支出: 経費・修繕・ローン返済</span>
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-gray-600">
+            ※ 凡例をクリックして表示/非表示を切り替えできます
+          </p>
+        </div>
       </div>
     </div>
   );
