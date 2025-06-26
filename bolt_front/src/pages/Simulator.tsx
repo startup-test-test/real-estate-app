@@ -9,6 +9,7 @@ import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
 import CashFlowChart from '../components/CashFlowChart';
+import SliderInput from '../components/SliderInput';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -428,45 +429,42 @@ const Simulator: React.FC = () => {
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏠 物件情報</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">土地面積(㎡)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.landArea}
-                  onChange={(e) => handleInputChange('landArea', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">建物面積(㎡)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.buildingArea}
-                  onChange={(e) => handleInputChange('buildingArea', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">路線価(円/㎡)</label>
-                <input
-                  type="number"
-                  value={inputs.roadPrice}
-                  onChange={(e) => handleInputChange('roadPrice', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">想定売却価格(万円)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.marketValue}
-                  onChange={(e) => handleInputChange('marketValue', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+              <SliderInput
+                label="土地面積"
+                value={inputs.landArea}
+                onChange={(value) => handleInputChange('landArea', value)}
+                min={10}
+                max={500}
+                step={0.01}
+                unit="㎡"
+              />
+              <SliderInput
+                label="建物面積"
+                value={inputs.buildingArea}
+                onChange={(value) => handleInputChange('buildingArea', value)}
+                min={10}
+                max={500}
+                step={0.01}
+                unit="㎡"
+              />
+              <SliderInput
+                label="路線価"
+                value={inputs.roadPrice}
+                onChange={(value) => handleInputChange('roadPrice', value)}
+                min={10000}
+                max={1000000}
+                step={1000}
+                unit="円/㎡"
+              />
+              <SliderInput
+                label="想定売却価格"
+                value={inputs.marketValue}
+                onChange={(value) => handleInputChange('marketValue', value)}
+                min={100}
+                max={50000}
+                step={10}
+                unit="万円"
+              />
             </div>
           </div>
 
@@ -474,36 +472,33 @@ const Simulator: React.FC = () => {
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 取得・初期費用</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">購入価格(万円)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.purchasePrice}
-                  onChange={(e) => handleInputChange('purchasePrice', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">諸経費(万円)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.otherCosts}
-                  onChange={(e) => handleInputChange('otherCosts', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">改装費(万円)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.renovationCost}
-                  onChange={(e) => handleInputChange('renovationCost', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+              <SliderInput
+                label="購入価格"
+                value={inputs.purchasePrice}
+                onChange={(value) => handleInputChange('purchasePrice', value)}
+                min={100}
+                max={50000}
+                step={10}
+                unit="万円"
+              />
+              <SliderInput
+                label="諸経費"
+                value={inputs.otherCosts}
+                onChange={(value) => handleInputChange('otherCosts', value)}
+                min={0}
+                max={2000}
+                step={10}
+                unit="万円"
+              />
+              <SliderInput
+                label="改装費"
+                value={inputs.renovationCost}
+                onChange={(value) => handleInputChange('renovationCost', value)}
+                min={0}
+                max={2000}
+                step={10}
+                unit="万円"
+              />
             </div>
           </div>
 
@@ -547,26 +542,24 @@ const Simulator: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">空室率(%)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.vacancyRate}
-                  onChange={(e) => handleInputChange('vacancyRate', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">家賃下落率(%/年)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.rentDecline}
-                  onChange={(e) => handleInputChange('rentDecline', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+              <SliderInput
+                label="空室率"
+                value={inputs.vacancyRate}
+                onChange={(value) => handleInputChange('vacancyRate', value)}
+                min={0}
+                max={30}
+                step={0.5}
+                unit="%"
+              />
+              <SliderInput
+                label="家賃下落率（年）"
+                value={inputs.rentDecline}
+                onChange={(value) => handleInputChange('rentDecline', value)}
+                min={0}
+                max={5}
+                step={0.1}
+                unit="%"
+              />
             </div>
           </div>
 
@@ -574,35 +567,33 @@ const Simulator: React.FC = () => {
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏦 借入条件</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">借入額(万円)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.loanAmount}
-                  onChange={(e) => handleInputChange('loanAmount', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">金利(%)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.interestRate}
-                  onChange={(e) => handleInputChange('interestRate', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">返済期間(年)</label>
-                <input
-                  type="number"
-                  value={inputs.loanYears}
-                  onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+              <SliderInput
+                label="借入額"
+                value={inputs.loanAmount}
+                onChange={(value) => handleInputChange('loanAmount', value)}
+                min={0}
+                max={50000}
+                step={100}
+                unit="万円"
+              />
+              <SliderInput
+                label="金利"
+                value={inputs.interestRate}
+                onChange={(value) => handleInputChange('interestRate', value)}
+                min={0}
+                max={5}
+                step={0.1}
+                unit="%"
+              />
+              <SliderInput
+                label="返済期間"
+                value={inputs.loanYears}
+                onChange={(value) => handleInputChange('loanYears', value)}
+                min={1}
+                max={40}
+                step={1}
+                unit="年"
+              />
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">借入形式</label>
                 <select
@@ -621,25 +612,24 @@ const Simulator: React.FC = () => {
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 出口戦略</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">保有年数(年)</label>
-                <input
-                  type="number"
-                  value={inputs.holdingYears}
-                  onChange={(e) => handleInputChange('holdingYears', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">売却CapRate(%)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={inputs.exitCapRate}
-                  onChange={(e) => handleInputChange('exitCapRate', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+              <SliderInput
+                label="保有年数"
+                value={inputs.holdingYears}
+                onChange={(value) => handleInputChange('holdingYears', value)}
+                min={1}
+                max={30}
+                step={1}
+                unit="年"
+              />
+              <SliderInput
+                label="売却CapRate"
+                value={inputs.exitCapRate}
+                onChange={(value) => handleInputChange('exitCapRate', value)}
+                min={1}
+                max={20}
+                step={0.1}
+                unit="%"
+              />
             </div>
           </div>
 
