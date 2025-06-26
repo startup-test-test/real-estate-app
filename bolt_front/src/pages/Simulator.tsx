@@ -12,6 +12,7 @@ import CashFlowChart from '../components/CashFlowChart';
 import SliderInput from '../components/SliderInput';
 import Tooltip from '../components/Tooltip';
 import MetricCard from '../components/MetricCard';
+import Tutorial from '../components/Tutorial';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -37,6 +38,140 @@ interface SimulationResult {
     '累計CF': number;
   }[];
 }
+
+// サンプル物件データ
+const sampleProperties = {
+  default: {
+    name: 'オリジナル設定',
+    description: '自由に設定してください',
+    data: {
+      propertyName: '物件名を入力してください',
+      landArea: 100.00,
+      buildingArea: 120.00,
+      roadPrice: 200000,
+      marketValue: 6000,
+      purchasePrice: 5000,
+      otherCosts: 250,
+      renovationCost: 150,
+      monthlyRent: 180000,
+      managementFee: 9000,
+      fixedCost: 0,
+      propertyTax: 80000,
+      vacancyRate: 5.00,
+      rentDecline: 1.00,
+      loanAmount: 4500,
+      interestRate: 0.70,
+      loanYears: 35,
+      loanType: '元利均等',
+      holdingYears: 10,
+      exitCapRate: 5.0,
+    }
+  },
+  shibuya: {
+    name: '🏙️ 渋谷区ワンルーム',
+    description: '都心部の単身者向け高利回り物件',
+    data: {
+      propertyName: '渋谷区ワンルームマンション',
+      landArea: 80.00,
+      buildingArea: 25.00,
+      roadPrice: 800000,
+      marketValue: 4500,
+      purchasePrice: 3800,
+      otherCosts: 200,
+      renovationCost: 100,
+      monthlyRent: 120000,
+      managementFee: 6000,
+      fixedCost: 2000,
+      propertyTax: 60000,
+      vacancyRate: 3.00,
+      rentDecline: 0.50,
+      loanAmount: 3200,
+      interestRate: 0.60,
+      loanYears: 35,
+      loanType: '元利均等',
+      holdingYears: 15,
+      exitCapRate: 4.5,
+    }
+  },
+  setagaya: {
+    name: '🏡 世田谷区ファミリー',
+    description: 'ファミリー向け安定収益物件',
+    data: {
+      propertyName: '世田谷区ファミリーマンション',
+      landArea: 150.00,
+      buildingArea: 80.00,
+      roadPrice: 400000,
+      marketValue: 8500,
+      purchasePrice: 7200,
+      otherCosts: 350,
+      renovationCost: 250,
+      monthlyRent: 220000,
+      managementFee: 11000,
+      fixedCost: 3000,
+      propertyTax: 120000,
+      vacancyRate: 8.00,
+      rentDecline: 1.20,
+      loanAmount: 6000,
+      interestRate: 0.75,
+      loanYears: 30,
+      loanType: '元利均等',
+      holdingYears: 12,
+      exitCapRate: 5.2,
+    }
+  },
+  osaka: {
+    name: '🌆 大阪市中央区',
+    description: '関西圏の商業地域物件',
+    data: {
+      propertyName: '大阪市中央区投資マンション',
+      landArea: 120.00,
+      buildingArea: 65.00,
+      roadPrice: 300000,
+      marketValue: 5800,
+      purchasePrice: 4900,
+      otherCosts: 280,
+      renovationCost: 180,
+      monthlyRent: 165000,
+      managementFee: 8500,
+      fixedCost: 1500,
+      propertyTax: 85000,
+      vacancyRate: 6.00,
+      rentDecline: 1.50,
+      loanAmount: 4200,
+      interestRate: 0.80,
+      loanYears: 32,
+      loanType: '元利均等',
+      holdingYears: 10,
+      exitCapRate: 5.5,
+    }
+  },
+  regional: {
+    name: '🌾 地方都市アパート',
+    description: '地方の一棟アパート投資',
+    data: {
+      propertyName: '地方都市一棟アパート',
+      landArea: 300.00,
+      buildingArea: 240.00,
+      roadPrice: 80000,
+      marketValue: 6500,
+      purchasePrice: 5500,
+      otherCosts: 300,
+      renovationCost: 400,
+      monthlyRent: 280000,
+      managementFee: 14000,
+      fixedCost: 8000,
+      propertyTax: 95000,
+      vacancyRate: 12.00,
+      rentDecline: 2.00,
+      loanAmount: 4800,
+      interestRate: 1.20,
+      loanYears: 25,
+      loanType: '元利均等',
+      holdingYears: 8,
+      exitCapRate: 6.5,
+    }
+  }
+};
 
 // 用語解説の定義
 const tooltips = {
@@ -71,41 +206,19 @@ const Simulator: React.FC = () => {
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [inputs, setInputs] = useState({
-    // 物件基本情報
-    propertyName: '品川区投資物件',
-    
-    // 🏠 物件情報
-    landArea: 135.00, // ㎡
-    buildingArea: 150.00, // ㎡
-    roadPrice: 250000, // 円/㎡
-    marketValue: 8000, // 万円（想定売却価格）
-    
-    // 💰 取得・初期費用
-    purchasePrice: 6980, // 万円
-    otherCosts: 300, // 万円（諸経費）
-    renovationCost: 200, // 万円（改装費）
-    
-    // 📈 収益情報
-    monthlyRent: 250000, // 円
-    managementFee: 5000, // 円（月額）
-    fixedCost: 0, // 円（その他固定費月額）
-    propertyTax: 100000, // 円（年額）
-    vacancyRate: 5.00, // %
-    rentDecline: 1.00, // %/年
-    
-    // 🏦 借入条件
-    loanAmount: 6500, // 万円
-    interestRate: 0.70, // %
-    loanYears: 35, // 年
-    loanType: '元利均等',
-    
-    // 🎯 出口戦略
-    holdingYears: 10, // 年
-    exitCapRate: 6.00 // %
-  });
+  const [inputs, setInputs] = useState(sampleProperties.default.data);
+
+  // 初回アクセス時にチュートリアルを表示
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (!hasSeenTutorial) {
+      setShowTutorial(true);
+      localStorage.setItem('hasSeenTutorial', 'true');
+    }
+  }, []);
 
   // URLパラメータから編集IDを取得
   useEffect(() => {
@@ -399,6 +512,13 @@ const Simulator: React.FC = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowTutorial(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <span>使い方を見る</span>
+                <span className="text-sm">📖</span>
+              </button>
               <button 
                 onClick={() => window.history.back()}
                 className="px-4 py-2 text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50"
@@ -435,6 +555,31 @@ const Simulator: React.FC = () => {
         )}
 
         {/* Input Form */}
+        {/* サンプル物件選択 */}
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center mb-3">
+            <div className="bg-blue-100 p-2 rounded-full mr-3">
+              🎯
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-blue-900">初回の方におすすめ</h3>
+              <p className="text-sm text-blue-700">サンプル物件で投資シミュレーションを体験してみましょう</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Object.entries(sampleProperties).map(([key, property]) => (
+              <button
+                key={key}
+                onClick={() => setInputs(property.data)}
+                className="text-left p-3 bg-white border border-blue-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <div className="font-medium text-blue-900 mb-1">{property.name}</div>
+                <div className="text-xs text-blue-600">{property.description}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
           {/* 物件名 */}
           <div>
@@ -1006,6 +1151,12 @@ const Simulator: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* チュートリアル */}
+        <Tutorial 
+          isOpen={showTutorial} 
+          onClose={() => setShowTutorial(false)} 
+        />
       </div>
     </div>
   );
