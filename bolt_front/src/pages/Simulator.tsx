@@ -10,6 +10,7 @@ import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
 import CashFlowChart from '../components/CashFlowChart';
 import SliderInput from '../components/SliderInput';
+import Tooltip from '../components/Tooltip';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -35,6 +36,29 @@ interface SimulationResult {
     '累計CF': number;
   }[];
 }
+
+// 用語解説の定義
+const tooltips = {
+  landArea: '物件の土地の面積です。㎡単位で入力してください。登記簿謄本で確認できます。',
+  buildingArea: '建物の延床面積です。㎡単位で入力してください。各階の床面積の合計です。',
+  roadPrice: '国税庁が定める路線価格です。相続税評価額の基準となる価格で、実勢価格の約80%程度です。',
+  marketValue: '将来の売却想定価格です。現在の市場価格や将来の市況を考慮して設定してください。',
+  purchasePrice: '物件の購入価格です。土地と建物の合計金額を万円単位で入力してください。',
+  otherCosts: '登記費用、仲介手数料、印紙税などの取得にかかる諸経費です。購入価格の3-8%程度が目安です。',
+  renovationCost: 'リフォームや修繕にかかる費用です。入居前に必要な工事費用を見積もってください。',
+  monthlyRent: '月額の賃料収入です。近隣相場を調査して適切な賃料を設定してください。',
+  managementFee: '管理会社への委託料や共益費などの月額費用です。賃料の5-10%程度が一般的です。',
+  fixedCost: '保険料、修繕積立金など毎月発生するその他の固定費用です。',
+  propertyTax: '固定資産税と都市計画税の年額です。毎年5月頃に送付される納税通知書で確認できます。',
+  vacancyRate: '年間を通じた空室の割合です。地域の特性や物件タイプを考慮して設定してください。',
+  rentDecline: '年間の家賃下落率です。築年数の経過に伴う賃料の減少を想定します。一般的に1-2%程度です。',
+  loanAmount: '金融機関からの借入金額です。自己資金と合わせて物件価格と諸経費をカバーします。',
+  interestRate: '住宅ローンの年利です。金融機関や借入条件によって異なります。',
+  loanYears: 'ローンの返済期間です。一般的に15-35年で設定します。期間が長いほど月々の返済額は少なくなります。',
+  loanType: '元利均等は毎月の返済額が一定、元金均等は毎月の元金返済額が一定の方式です。',
+  holdingYears: '物件を保有する予定年数です。売却タイミングの目安として設定してください。',
+  exitCapRate: '売却時の利回りです。NOI（純収益）÷売却価格で算出されます。市場環境を考慮して設定してください。'
+};
 
 const Simulator: React.FC = () => {
   const { user } = useAuthContext();
@@ -428,178 +452,287 @@ const Simulator: React.FC = () => {
           {/* 🏠 物件情報 */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏠 物件情報</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SliderInput
-                label="土地面積"
-                value={inputs.landArea}
-                onChange={(value) => handleInputChange('landArea', value)}
-                min={10}
-                max={500}
-                step={0.01}
-                unit="㎡"
-              />
-              <SliderInput
-                label="建物面積"
-                value={inputs.buildingArea}
-                onChange={(value) => handleInputChange('buildingArea', value)}
-                min={10}
-                max={500}
-                step={0.01}
-                unit="㎡"
-              />
-              <SliderInput
-                label="路線価"
-                value={inputs.roadPrice}
-                onChange={(value) => handleInputChange('roadPrice', value)}
-                min={10000}
-                max={1000000}
-                step={1000}
-                unit="円/㎡"
-              />
-              <SliderInput
-                label="想定売却価格"
-                value={inputs.marketValue}
-                onChange={(value) => handleInputChange('marketValue', value)}
-                min={100}
-                max={50000}
-                step={10}
-                unit="万円"
-              />
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">土地面積</label>
+                  <Tooltip content={tooltips.landArea} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.landArea}
+                    onChange={(e) => handleInputChange('landArea', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">㎡</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">建物面積</label>
+                  <Tooltip content={tooltips.buildingArea} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.buildingArea}
+                    onChange={(e) => handleInputChange('buildingArea', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">㎡</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">路線価</label>
+                  <Tooltip content={tooltips.roadPrice} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.roadPrice}
+                    onChange={(e) => handleInputChange('roadPrice', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">円/㎡</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">想定売却価格</label>
+                  <Tooltip content={tooltips.marketValue} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.marketValue}
+                    onChange={(e) => handleInputChange('marketValue', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* 💰 取得・初期費用 */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 取得・初期費用</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <SliderInput
-                label="購入価格"
-                value={inputs.purchasePrice}
-                onChange={(value) => handleInputChange('purchasePrice', value)}
-                min={100}
-                max={50000}
-                step={10}
-                unit="万円"
-              />
-              <SliderInput
-                label="諸経費"
-                value={inputs.otherCosts}
-                onChange={(value) => handleInputChange('otherCosts', value)}
-                min={0}
-                max={2000}
-                step={10}
-                unit="万円"
-              />
-              <SliderInput
-                label="改装費"
-                value={inputs.renovationCost}
-                onChange={(value) => handleInputChange('renovationCost', value)}
-                min={0}
-                max={2000}
-                step={10}
-                unit="万円"
-              />
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">購入価格</label>
+                  <Tooltip content={tooltips.purchasePrice} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.purchasePrice}
+                    onChange={(e) => handleInputChange('purchasePrice', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">諸経費</label>
+                  <Tooltip content={tooltips.otherCosts} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.otherCosts}
+                    onChange={(e) => handleInputChange('otherCosts', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">改装費</label>
+                  <Tooltip content={tooltips.renovationCost} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.renovationCost}
+                    onChange={(e) => handleInputChange('renovationCost', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* 📈 収益情報 */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">📈 収益情報</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">月額賃料(円)</label>
-                <input
-                  type="number"
-                  value={inputs.monthlyRent}
-                  onChange={(e) => handleInputChange('monthlyRent', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">月額賃料</label>
+                  <Tooltip content={tooltips.monthlyRent} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.monthlyRent}
+                    onChange={(e) => handleInputChange('monthlyRent', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">円</span>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">管理費(月額円)</label>
-                <input
-                  type="number"
-                  value={inputs.managementFee}
-                  onChange={(e) => handleInputChange('managementFee', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">管理費</label>
+                  <Tooltip content={tooltips.managementFee} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.managementFee}
+                    onChange={(e) => handleInputChange('managementFee', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">円</span>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">その他固定費(月額円)</label>
-                <input
-                  type="number"
-                  value={inputs.fixedCost}
-                  onChange={(e) => handleInputChange('fixedCost', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">その他固定費</label>
+                  <Tooltip content={tooltips.fixedCost} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.fixedCost}
+                    onChange={(e) => handleInputChange('fixedCost', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">円</span>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">固定資産税(年額円)</label>
-                <input
-                  type="number"
-                  value={inputs.propertyTax}
-                  onChange={(e) => handleInputChange('propertyTax', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">固定資産税</label>
+                  <Tooltip content={tooltips.propertyTax} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.propertyTax}
+                    onChange={(e) => handleInputChange('propertyTax', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">円</span>
+                </div>
               </div>
-              <SliderInput
-                label="空室率"
-                value={inputs.vacancyRate}
-                onChange={(value) => handleInputChange('vacancyRate', value)}
-                min={0}
-                max={30}
-                step={0.5}
-                unit="%"
-              />
-              <SliderInput
-                label="家賃下落率（年）"
-                value={inputs.rentDecline}
-                onChange={(value) => handleInputChange('rentDecline', value)}
-                min={0}
-                max={5}
-                step={0.1}
-                unit="%"
-              />
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">空室率</label>
+                  <Tooltip content={tooltips.vacancyRate} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.vacancyRate}
+                    onChange={(e) => handleInputChange('vacancyRate', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">%</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">家賃下落率</label>
+                  <Tooltip content={tooltips.rentDecline} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.rentDecline}
+                    onChange={(e) => handleInputChange('rentDecline', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">%/年</span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* 🏦 借入条件 */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏦 借入条件</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SliderInput
-                label="借入額"
-                value={inputs.loanAmount}
-                onChange={(value) => handleInputChange('loanAmount', value)}
-                min={0}
-                max={50000}
-                step={100}
-                unit="万円"
-              />
-              <SliderInput
-                label="金利"
-                value={inputs.interestRate}
-                onChange={(value) => handleInputChange('interestRate', value)}
-                min={0}
-                max={5}
-                step={0.1}
-                unit="%"
-              />
-              <SliderInput
-                label="返済期間"
-                value={inputs.loanYears}
-                onChange={(value) => handleInputChange('loanYears', value)}
-                min={1}
-                max={40}
-                step={1}
-                unit="年"
-              />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">借入形式</label>
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">借入額</label>
+                  <Tooltip content={tooltips.loanAmount} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.loanAmount}
+                    onChange={(e) => handleInputChange('loanAmount', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">金利</label>
+                  <Tooltip content={tooltips.interestRate} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.interestRate}
+                    onChange={(e) => handleInputChange('interestRate', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">%</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">返済期間</label>
+                  <Tooltip content={tooltips.loanYears} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.loanYears}
+                    onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">年</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">借入形式</label>
+                  <Tooltip content={tooltips.loanType} />
+                </div>
                 <select
                   value={inputs.loanType}
                   onChange={(e) => handleInputChange('loanType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                 >
                   <option value="元利均等">元利均等</option>
                   <option value="元金均等">元金均等</option>
@@ -611,25 +744,38 @@ const Simulator: React.FC = () => {
           {/* 🎯 出口戦略 */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 出口戦略</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SliderInput
-                label="保有年数"
-                value={inputs.holdingYears}
-                onChange={(value) => handleInputChange('holdingYears', value)}
-                min={1}
-                max={30}
-                step={1}
-                unit="年"
-              />
-              <SliderInput
-                label="売却CapRate"
-                value={inputs.exitCapRate}
-                onChange={(value) => handleInputChange('exitCapRate', value)}
-                min={1}
-                max={20}
-                step={0.1}
-                unit="%"
-              />
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">保有年数</label>
+                  <Tooltip content={tooltips.holdingYears} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    value={inputs.holdingYears}
+                    onChange={(e) => handleInputChange('holdingYears', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">年</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">売却CapRate</label>
+                  <Tooltip content={tooltips.exitCapRate} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={inputs.exitCapRate}
+                    onChange={(e) => handleInputChange('exitCapRate', Number(e.target.value))}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">%</span>
+                </div>
+              </div>
             </div>
           </div>
 

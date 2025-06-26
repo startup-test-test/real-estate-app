@@ -13,6 +13,49 @@ st.set_page_config(
     layout="wide"
 )
 
+# カスタムCSSでコンパクトなレイアウトを実現
+st.markdown("""
+<style>
+/* フォーム要素の間隔を狭くする */
+.stNumberInput > div > div > input {
+    height: 35px !important;
+    font-size: 14px !important;
+}
+
+.stTextInput > div > div > input {
+    height: 35px !important;
+    font-size: 14px !important;
+}
+
+.stSelectbox > div > div > div {
+    height: 35px !important;
+    font-size: 14px !important;
+}
+
+/* サブヘッダーの間隔を狭くする */
+.stMarkdown h3 {
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 1.1rem !important;
+}
+
+/* ラベルの間隔を狭くする */
+.stMarkdown p {
+    margin-bottom: 0.2rem !important;
+}
+
+/* 列の間隔を狭くする */
+.css-1r6slb0 {
+    gap: 0.5rem !important;
+}
+
+/* サイドバーをコンパクトに */
+.css-1d391kg {
+    padding-top: 1rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🏢 不動産投資シミュレーター")
 st.markdown("### AI物件シミュレーター - 35年キャッシュフロー対応版")
 
@@ -26,57 +69,63 @@ with st.sidebar:
     
     # 物件基本情報
     st.subheader("🏠 物件情報")
-    property_name = st.text_input("物件名", "品川区投資物件")
-    location = st.text_input("所在地", "東京都品川区")
-    property_type = st.selectbox("物件タイプ", ["一棟アパート/マンション", "区分マンション", "戸建て"])
-    
-    col1, col2 = st.columns(2)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        land_area = st.number_input("土地面積(㎡)", value=135.0, step=0.1)
-        building_area = st.number_input("建物面積(㎡)", value=150.0, step=0.1)
+        property_name = st.text_input("物件名", "品川区投資物件")
     with col2:
-        road_price = st.number_input("路線価(円/㎡)", value=250000, step=1000)
+        location = st.text_input("所在地", "東京都品川区")
+    with col3:
+        property_type = st.selectbox("物件タイプ", ["一棟アパート/マンション", "区分マンション", "戸建て"])
+    with col4:
         year_built = st.number_input("築年", value=2010, step=1)
     
     # 取得・初期費用
     st.subheader("💰 取得・初期費用")
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         purchase_price = st.number_input("購入価格(万円)", value=6980, step=10)
-        other_costs = st.number_input("諸経費(万円)", value=300, step=10)
     with col2:
+        other_costs = st.number_input("諸経費(万円)", value=300, step=10)
+    with col3:
         renovation_cost = st.number_input("改装費(万円)", value=200, step=10)
-        market_value = st.number_input("想定売却価格(万円)", value=8000, step=10)
     
     # 収益情報
     st.subheader("📈 収益情報")
-    monthly_rent = st.number_input("月額賃料(円)", value=250000, step=1000)
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        monthly_rent = st.number_input("月額賃料(円)", value=250000, step=1000)
+    with col2:
+        management_fee = st.number_input("管理費(月額円)", value=5000, step=100)
+    with col3:
+        property_tax = st.number_input("固定資産税(年額円)", value=100000, step=1000)
+    with col4:
+        vacancy_rate = st.number_input("空室率(%)", value=5.0, step=0.1)
     
     col1, col2 = st.columns(2)
     with col1:
-        management_fee = st.number_input("管理費(月額円)", value=5000, step=100)
         fixed_cost = st.number_input("その他固定費(月額円)", value=0, step=100)
     with col2:
-        property_tax = st.number_input("固定資産税(年額円)", value=100000, step=1000)
-        vacancy_rate = st.number_input("空室率(%)", value=5.0, step=0.1)
-    
-    rent_decline = st.number_input("家賃下落率(%/年)", value=1.0, step=0.1)
+        rent_decline = st.number_input("家賃下落率(%/年)", value=1.0, step=0.1)
     
     # 借入条件
     st.subheader("🏦 借入条件")
-    loan_amount = st.number_input("借入額(万円)", value=6500, step=10)
-    
-    col1, col2 = st.columns(2)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        interest_rate = st.number_input("金利(%)", value=0.7, step=0.01)
-        loan_years = st.number_input("返済期間(年)", value=35, min_value=1, max_value=35)
+        loan_amount = st.number_input("借入額(万円)", value=6500, step=10)
     with col2:
+        interest_rate = st.number_input("金利(%)", value=0.7, step=0.01)
+    with col3:
+        loan_years = st.number_input("返済期間(年)", value=35, min_value=1, max_value=35)
+    with col4:
         loan_type = st.selectbox("借入形式", ["元利均等", "元金均等"])
     
     # 出口戦略
     st.subheader("🎯 出口戦略")
-    holding_years = st.number_input("保有年数(年)", value=10, min_value=1, max_value=35)
-    exit_cap_rate = st.number_input("売却CapRate(%)", value=6.0, step=0.1)
+    col1, col2 = st.columns(2)
+    with col1:
+        holding_years = st.number_input("保有年数(年)", value=10, min_value=1, max_value=35)
+    with col2:
+        exit_cap_rate = st.number_input("売却CapRate(%)", value=6.0, step=0.1)
     
     # シミュレーション実行ボタン
     simulate_button = st.button("🚀 シミュレーション実行", type="primary", use_container_width=True)
@@ -89,9 +138,9 @@ if simulate_button:
         "location": location,
         "year_built": year_built,
         "property_type": property_type,
-        "land_area": land_area,
-        "building_area": building_area,
-        "road_price": road_price,
+        "land_area": 135.0,  # デフォルト値
+        "building_area": 150.0,  # デフォルト値
+        "road_price": 250000,  # デフォルト値
         "purchase_price": purchase_price,
         "building_price": purchase_price * 0.7,
         "other_costs": other_costs,
@@ -108,7 +157,7 @@ if simulate_button:
         "loan_years": loan_years,
         "holding_years": holding_years,
         "exit_cap_rate": exit_cap_rate,
-        "market_value": market_value
+        "market_value": purchase_price + 1000  # 購入価格+1000万円をデフォルト値
     }
     
     # プログレスバー表示
