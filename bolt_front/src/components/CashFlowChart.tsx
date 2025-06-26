@@ -100,7 +100,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     ],
   };
 
-  const options: ChartOptions<'bar' | 'line'> = {
+  const options: ChartOptions<'bar' | 'line'> & { plugins?: any } = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -129,6 +129,13 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       tooltip: {
         mode: 'index' as const,
         intersect: false,
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        borderColor: 'rgba(255, 255, 255, 0.2)',
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
         callbacks: {
           label: function(context) {
             const label = context.dataset.label || '';
