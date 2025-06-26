@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import CashFlowChart from '../components/CashFlowChart';
 import SliderInput from '../components/SliderInput';
 import Tooltip from '../components/Tooltip';
+import MetricCard from '../components/MetricCard';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -859,131 +860,99 @@ const Simulator: React.FC = () => {
               </div>
             </div>
             
-            {/* 投資パフォーマンス指標 */}
+            {/* 重要投資指標 */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">投資パフォーマンス指標</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* 表面利回り */}
-                {simulationResults.results['表面利回り（%）'] !== null && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">表面利回り</h4>
-                    <div className={`text-2xl font-bold ${
-                      simulationResults.results['表面利回り（%）']! > 5 
-                        ? 'text-green-600' 
-                        : 'text-yellow-600'
-                    }`}>
-                      {simulationResults.results['表面利回り（%）']}%
-                    </div>
-                  </div>
-                )}
-                
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">🎯 重要投資指標</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {/* IRR */}
-                {simulationResults.results['IRR（%）'] !== null && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">IRR（内部収益率）</h4>
-                    <div className={`text-2xl font-bold ${
-                      simulationResults.results['IRR（%）']! > 10 
-                        ? 'text-green-600' 
-                        : simulationResults.results['IRR（%）']! > 5 
-                        ? 'text-yellow-600' 
-                        : 'text-red-600'
-                    }`}>
-                      {simulationResults.results['IRR（%）']}%
-                    </div>
-                  </div>
-                )}
+                <MetricCard
+                  title="IRR"
+                  subtitle="内部収益率"
+                  value={simulationResults.results['IRR（%）']}
+                  unit="%"
+                  format="percentage"
+                  thresholds={{
+                    excellent: 15,
+                    good: 10,
+                    warning: 5
+                  }}
+                  description="投資全体の年間収益率。15%以上で優秀、10%以上で良好。"
+                />
                 
                 {/* CCR */}
-                {simulationResults.results['CCR（%）'] !== null && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">CCR（自己資金回収率）</h4>
-                    <div className={`text-2xl font-bold ${
-                      simulationResults.results['CCR（%）']! > 8 
-                        ? 'text-green-600' 
-                        : 'text-yellow-600'
-                    }`}>
-                      {simulationResults.results['CCR（%）']}%
-                    </div>
-                  </div>
-                )}
+                <MetricCard
+                  title="CCR"
+                  subtitle="自己資金回収率"
+                  value={simulationResults.results['CCR（%）']}
+                  unit="%"
+                  format="percentage"
+                  thresholds={{
+                    excellent: 12,
+                    good: 8,
+                    warning: 5
+                  }}
+                  description="自己資金に対する年間収益率。12%以上で優秀、8%以上で良好。"
+                />
                 
                 {/* DSCR */}
-                {simulationResults.results['DSCR（返済余裕率）'] !== null && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">DSCR（返済余裕率）</h4>
-                    <div className={`text-2xl font-bold ${
-                      simulationResults.results['DSCR（返済余裕率）']! > 1.3 
-                        ? 'text-green-600' 
-                        : 'text-red-600'
-                    }`}>
-                      {simulationResults.results['DSCR（返済余裕率）']!.toFixed(2)}
-                    </div>
-                  </div>
-                )}
+                <MetricCard
+                  title="DSCR"
+                  subtitle="返済余裕率"
+                  value={simulationResults.results['DSCR（返済余裕率）']}
+                  format="number"
+                  thresholds={{
+                    excellent: 1.5,
+                    good: 1.3,
+                    warning: 1.1
+                  }}
+                  description="債務返済能力の指標。1.3以上で安全、1.5以上で優秀。"
+                />
                 
+                {/* 表面利回り */}
+                <MetricCard
+                  title="表面利回り"
+                  subtitle="粗利回り"
+                  value={simulationResults.results['表面利回り（%）']}
+                  unit="%"
+                  format="percentage"
+                  thresholds={{
+                    excellent: 8,
+                    good: 6,
+                    warning: 4
+                  }}
+                  description="年間賃料収入÷物件価格。8%以上で優秀、6%以上で良好。"
+                />
+              </div>
+              
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 キャッシュフロー</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 月間キャッシュフロー */}
-                {simulationResults.results['月間キャッシュフロー（円）'] !== null && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">月間キャッシュフロー</h4>
-                    <div className="text-2xl font-bold text-gray-800">
-                      {simulationResults.results['月間キャッシュフロー（円）']!.toLocaleString()}円
-                    </div>
-                  </div>
-                )}
+                <MetricCard
+                  title="月間キャッシュフロー"
+                  value={simulationResults.results['月間キャッシュフロー（円）']}
+                  unit="円"
+                  format="currency"
+                  thresholds={{
+                    excellent: 50000,
+                    good: 20000,
+                    warning: 0
+                  }}
+                  description="毎月の手取り収入。プラスであれば収益物件として機能。"
+                />
                 
                 {/* 年間キャッシュフロー */}
-                {simulationResults.results['年間キャッシュフロー（円）'] !== null && (
-                  <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">年間キャッシュフロー</h4>
-                    <div className="text-2xl font-bold text-gray-800">
-                      {simulationResults.results['年間キャッシュフロー（円）']!.toLocaleString()}円
-                    </div>
-                  </div>
-                )}
-                
-                {/* 自己資金 */}
-                {simulationResults.results['自己資金（万円）'] !== null && (
-                  <div className="bg-blue-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">自己資金</h4>
-                    <div className="text-2xl font-bold text-blue-600">
-                      {simulationResults.results['自己資金（万円）']}万円
-                    </div>
-                  </div>
-                )}
-                
-                {/* 売却益 */}
-                {simulationResults.results['売却益（万円）'] !== null && (
-                  <div className="bg-green-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">売却益</h4>
-                    <div className={`text-2xl font-bold ${
-                      simulationResults.results['売却益（万円）']! >= 0 
-                        ? 'text-green-600' 
-                        : 'text-red-600'
-                    }`}>
-                      {simulationResults.results['売却益（万円）']! >= 0 ? '+' : ''}{simulationResults.results['売却益（万円）']}万円
-                    </div>
-                  </div>
-                )}
-                
-                {/* NOI */}
-                {simulationResults.results['NOI（円）'] !== null && (
-                  <div className="bg-purple-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">NOI（営業純利益）</h4>
-                    <div className="text-2xl font-bold text-purple-600">
-                      {simulationResults.results['NOI（円）']!.toLocaleString()}円
-                    </div>
-                  </div>
-                )}
-                
-                {/* 年間ローン返済額 */}
-                {simulationResults.results['年間ローン返済額（円）'] !== null && (
-                  <div className="bg-orange-50 rounded-lg p-4 text-center">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">年間ローン返済額</h4>
-                    <div className="text-2xl font-bold text-orange-600">
-                      {simulationResults.results['年間ローン返済額（円）']!.toLocaleString()}円
-                    </div>
-                  </div>
-                )}
+                <MetricCard
+                  title="年間キャッシュフロー"
+                  value={simulationResults.results['年間キャッシュフロー（円）']}
+                  unit="円"
+                  format="currency"
+                  thresholds={{
+                    excellent: 600000,
+                    good: 240000,
+                    warning: 0
+                  }}
+                  description="年間の手取り収入。投資収益の実額。"
+                />
               </div>
             </div>
             
