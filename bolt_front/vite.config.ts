@@ -8,4 +8,40 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    // チャンクサイズ警告を800kBに設定
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        // vendor依存関係を分離してキャッシュ効率を向上
+        manualChunks: {
+          // React関連を分離
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          // Supabaseを分離
+          supabase: ['@supabase/supabase-js'],
+          // Chart.js関連を分離
+          charts: ['chart.js', 'react-chartjs-2', 'chartjs-plugin-zoom'],
+          // Lucide アイコンを分離
+          icons: ['lucide-react']
+        }
+      }
+    },
+    // ソースマップを無効化して本番ビルドサイズを削減
+    sourcemap: false,
+    // minifyを有効化
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        // 本番環境でconsole.logを削除
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
+  // 開発時のパフォーマンス向上
+  server: {
+    hmr: {
+      overlay: false
+    }
+  }
 });

@@ -9,7 +9,6 @@ import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
 import CashFlowChart from '../components/CashFlowChart';
-import SliderInput from '../components/SliderInput';
 import Tooltip from '../components/Tooltip';
 import MetricCard from '../components/MetricCard';
 import Tutorial from '../components/Tutorial';
