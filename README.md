@@ -1,102 +1,157 @@
-# 🏢 不動産投資プラットフォーム
+# 🏢 大家DX - 不動産投資SaaSプラットフォーム
 
-AI搭載の総合不動産投資プラットフォーム
+AI搭載の包括的不動産投資プラットフォーム
 
 ## 📋 プロジェクト構成
 
-### Backend APIs
-- **simulator-api**: 投資シミュレーション・市場分析
-- **property-api**: 物件検索・情報管理 (開発予定)
-- **auth-api**: 認証・ユーザー管理 (開発予定)
-- **payment-api**: 決済・サブスクリプション (開発予定)
-
-### Frontend
-- **simulator**: 投資シミュレーター画面
-- **property-search**: 物件検索画面 (開発予定)
-- **dashboard**: ユーザーダッシュボード (開発予定)
-- **auth**: 認証画面 (開発予定)
+### アーキテクチャ概要
+- **フロントエンド**: React + TypeScript + Vite (bolt_front)
+- **バックエンド**: FastAPI + Streamlit (backend)
+- **認証**: Supabase Auth（モック対応）
+- **外部API**: 国土交通省不動産情報ライブラリ、OpenAI
 
 ## 🚀 デプロイ状況
 
 ### ✅ 稼働中
 - **Simulator API**: https://real-estate-app-1-iii4.onrender.com
-- **Simulator Frontend**: `/frontend/simulator/index.html`
-
-### 🔄 開発予定
-- Property API
-- Auth API
-- Payment API
-- 統合フロントエンド
+- **フロントエンドアプリ**: React SPA (Vite開発サーバー)
+- **不動産検索ツール**: Streamlit アプリ
 
 ## 📁 フォルダ構成
 
 ```
-real-estate-platform/
+real-estate-app/
+├── bolt_front/                      # メインフロントエンドアプリ
+│   ├── src/
+│   │   ├── components/              # 共通コンポーネント
+│   │   ├── pages/                   # ページコンポーネント
+│   │   ├── hooks/                   # カスタムフック
+│   │   ├── types/                   # TypeScript型定義
+│   │   └── lib/                     # ユーティリティ・Supabase設定
+│   ├── package.json
+│   ├── vite.config.ts              # 最適化済みビルド設定
+│   └── .env                        # 環境変数
 ├── backend/
-│   ├── shared/              # 共通モジュール
-│   ├── simulator-api/       # 投資シミュレーター (稼働中)
-│   ├── property-api/        # 物件検索API (開発予定)
-│   ├── auth-api/           # 認証API (開発予定)
-│   └── payment-api/        # 決済API (開発予定)
-├── frontend/
-│   ├── shared/             # 共通フロントエンド
-│   ├── simulator/          # シミュレーター (稼働中)
-│   ├── property-search/    # 物件検索 (開発予定)
-│   ├── dashboard/          # ダッシュボード (開発予定)
-│   └── auth/              # 認証画面 (開発予定)
-├── docs/                   # ドキュメント
-└── scripts/               # 開発スクリプト
+│   ├── simulator-api/              # FastAPIメインアプリ
+│   │   ├── app.py                  # シミュレーションAPI
+│   │   └── requirements.txt
+│   ├── property-api/               # 不動産データ検索
+│   │   ├── streamlit_app.py        # Streamlitアプリ
+│   │   └── real_estate_client.py   # 不動産APIクライアント
+│   └── shared/                     # 共通設定
+│       └── config/settings.py
+├── docs/                           # API仕様書・管理シート
+└── 参考キャプチャー/                 # UI設計参考資料
 ```
 
-## 🛠️ 開発環境
+## 🛠️ 開発環境セットアップ
 
-### 必要な環境変数
-```bash
-# Simulator API
-REAL_ESTATE_API_KEY=your_key
-OPENAI_API_KEY=your_key
-
-# Firebase (開発予定)
-FIREBASE_PROJECT_ID=your_project
-FIREBASE_PRIVATE_KEY=your_key
-
-# Stripe (開発予定)
-STRIPE_SECRET_KEY=your_key
-STRIPE_WEBHOOK_SECRET=your_secret
-```
-
-## 📖 使用技術
-
-### Backend
-- FastAPI
+### 前提条件
+- Node.js 18+
 - Python 3.11+
-- Render (デプロイ)
+- npm または yarn
 
-### Frontend
-- HTML5 / CSS3 / JavaScript
-- 将来的にReact/Vue.js移行検討
+### フロントエンド起動
+```bash
+cd bolt_front
+npm install
+npm run dev
+```
 
-### 外部API
-- 国土交通省不動産取引価格情報API
-- OpenAI GPT API
-- Firebase Auth (予定)
-- Stripe API (予定)
+### バックエンドAPI起動
+```bash
+cd backend/simulator-api
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
 
-## 🎯 機能一覧
+### 不動産検索ツール起動
+```bash
+cd backend/property-api
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+## ⚙️ 環境変数設定
+
+### フロントエンド (.env)
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_key
+```
+
+### バックエンド
+```
+OPENAI_API_KEY=your_openai_key
+REAL_ESTATE_API_KEY=your_real_estate_api_key
+```
+
+## 🎯 主要機能
 
 ### ✅ 実装済み
-- 投資シミュレーション計算
-- 市場分析・価格評価
-- キャッシュフロー予測
-- レスポンシブデザイン
+- **投資シミュレーション**: IRR、CCR、DSCR等の指標計算
+- **市場分析**: 人口動態・駅別利用者数分析
+- **取引価格検索**: 国土交通省データ連携
+- **キャッシュフロー分析**: 年次詳細シミュレーション
+- **ユーザー管理**: Supabase認証（モック対応）
+- **レスポンシブUI**: モバイルファーストデザイン
 
-### 🔄 開発予定
-- ユーザー認証・管理
-- 物件検索・フィルタリング
-- お気に入り物件管理
-- 月額サブスクリプション
-- 詳細レポート出力
+### 🔄 継続改善
+- パフォーマンス最適化
+- ユーザビリティ向上
+- 新機能追加
+
+## 📖 技術スタック
+
+### フロントエンド
+- **フレームワーク**: React 18 + TypeScript
+- **ビルドツール**: Vite（最適化済み）
+- **UI**: Tailwind CSS + Lucide React
+- **データ可視化**: Chart.js + react-chartjs-2
+- **ルーティング**: React Router
+- **認証**: Supabase Auth
+
+### バックエンド
+- **API**: FastAPI + Python 3.11
+- **ツール**: Streamlit
+- **デプロイ**: Render
+- **データベース**: Supabase（設定済み）
+
+### 外部連携
+- 国土交通省不動産情報ライブラリ
+- OpenAI API
+
+## 🚀 デプロイ
+
+### フロントエンド
+- GitHub Pages / Vercel / Netlify 対応
+- 最適化済みビルド設定（チャンク分割、minify済み）
+
+### バックエンド
+- Render でのPythonアプリデプロイ
+- 自動CI/CDパイプライン
+
+## 🔧 技術的特徴
+
+### パフォーマンス最適化
+- Vite手動チャンク分割でキャッシュ効率向上
+- バンドルサイズ最適化（624kB → 163kB）
+- Tree shaking & Dead code elimination
+
+### 型安全性
+- 統合TypeScript型定義
+- 実用的な日本語ベース型システム
+- Supabaseスキーマ連携準備済み
+
+### 開発効率
+- 最新のフロントエンド開発環境
+- ホットリロード対応
+- ESLint・Prettier設定準備
 
 ## 📞 サポート
 
 開発に関する質問は Issue を作成してください。
+
+## 📝 ライセンス
+
+Private - All rights reserved

@@ -17,17 +17,25 @@ real-estate-app/
 │   ├── shared/
 │   │   └── config/
 │   │       └── settings.py          # 共通設定
-│   └── simulator-api/
-│       ├── app.py                   # メインアプリケーション
-│       └── requirements.txt         # 依存関係
-├── frontend/
-│   ├── shared/
-│   │   └── js/
-│   │       └── api-client.js        # 共通APIクライアント
-│   └── simulator/
-│       └── index.html               # シミュレーター画面
+│   ├── simulator-api/
+│   │   ├── app.py                   # メインアプリケーション
+│   │   └── requirements.txt         # 依存関係
+│   └── property-api/
+│       ├── streamlit_app.py         # 不動産データ検索ツール
+│       └── real_estate_client.py    # 不動産APIクライアント
+├── bolt_front/                      # メインフロントエンドアプリ
+│   ├── src/
+│   │   ├── components/              # Reactコンポーネント
+│   │   ├── pages/                   # ページコンポーネント
+│   │   ├── hooks/                   # カスタムフック
+│   │   ├── types/                   # TypeScript型定義
+│   │   └── lib/                     # ユーティリティ
+│   ├── package.json
+│   └── vite.config.ts              # ビルド設定
 ├── docs/
-│   └── simulator-api-spec.md        # 本仕様書
+│   ├── simulator-api-spec.md        # 本仕様書
+│   ├── real-estate-api-spec.md      # 不動産API仕様
+│   └── リファクタリング課題管理シート.md
 └── README.md
 ```
 
