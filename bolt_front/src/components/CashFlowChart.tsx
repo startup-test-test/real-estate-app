@@ -12,6 +12,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
+import { CashFlowData } from '../types';
 
 // Chart.jsのコンポーネントを登録
 ChartJS.register(
@@ -24,18 +25,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-interface CashFlowData {
-  '年次': number;
-  '満室想定収入': number;
-  '空室率（%）': number;
-  '実効収入': number;
-  '経費': number;
-  '大規模修繕': number;
-  'ローン返済': number;
-  '営業CF': number;
-  '累計CF': number;
-}
 
 interface CashFlowChartProps {
   data: CashFlowData[];

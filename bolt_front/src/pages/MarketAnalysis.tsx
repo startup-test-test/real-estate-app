@@ -20,8 +20,9 @@ import {
   Activity,
   TrendingDown
 } from 'lucide-react';
+import { CensusData, StationData, AnalysisResult } from '../types';
 
-interface CensusData {
+interface CensusDataWithYear extends CensusData {
   year: number;
   age0to14: number;
   age15to64: number;
@@ -29,22 +30,22 @@ interface CensusData {
   total: number;
 }
 
-interface StationData {
+interface StationDataWithPassengers extends StationData {
   stationName: string;
   line: string;
   dailyPassengers: number;
   yearlyChange: number;
 }
 
-interface AnalysisResult {
+interface AnalysisResultWithDetails extends AnalysisResult {
   censusData2020: {
     age0to14: number;
     age15to64: number;
     age65plus: number;
     total: number;
   };
-  futurePopulation: CensusData[];
-  stationData: StationData[];
+  futurePopulation: CensusDataWithYear[];
+  stationData: StationDataWithPassengers[];
   marketAnalysis: {
     populationTrend: 'increasing' | 'stable' | 'decreasing';
     agingRate: number;

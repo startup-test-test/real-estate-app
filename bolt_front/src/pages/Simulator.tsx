@@ -15,30 +15,14 @@ import MetricCard from '../components/MetricCard';
 import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
+import { SimulationResultData, CashFlowData, SimulationInputData } from '../types';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
 
 interface SimulationResult {
-  results: {
-    '表面利回り（%）': number | null;
-    'IRR（%）': number | null;
-    'CCR（%）': number | null;
-    'DSCR（返済余裕率）': number | null;
-    '月間キャッシュフロー（円）': number | null;
-    '年間キャッシュフロー（円）': number | null;
-  };
-  cash_flow_table?: {
-    '年次': number;
-    '満室想定収入': number;
-    '空室率（%）': number;
-    '実効収入': number;
-    '経費': number;
-    '大規模修繕': number;
-    'ローン返済': number;
-    '営業CF': number;
-    '累計CF': number;
-  }[];
+  results: SimulationResultData;
+  cash_flow_table?: CashFlowData[];
 }
 
 

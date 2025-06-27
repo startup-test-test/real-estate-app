@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Property, Simulation, MarketAnalysis } from '../lib/supabase'
+import type { Property, Simulation, MarketAnalysis } from '../types'
 
 export function useSupabaseData() {
   const [loading, setLoading] = useState(false)
