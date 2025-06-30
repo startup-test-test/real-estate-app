@@ -84,6 +84,8 @@ export interface SimulationInputData {
   // 物件ブックマーク
   property_url?: string;
   property_memo?: string;
+  property_image_url?: string;
+  property_image_file?: File;
 }
 
 // シミュレーション結果データ型

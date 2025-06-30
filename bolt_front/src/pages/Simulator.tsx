@@ -14,6 +14,7 @@ import MetricCard from '../components/MetricCard';
 import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
+import ImageUpload from '../components/ImageUpload';
 import { SimulationResultData, CashFlowData, SimulationInputData } from '../types';
 
 // FAST API のベースURL
@@ -59,6 +60,7 @@ const sampleProperties = {
       depreciationYears: 27,
       propertyUrl: '',
       propertyMemo: '',
+      propertyImageUrl: '',
     }
   },
   shibuya: {
@@ -93,6 +95,7 @@ const sampleProperties = {
       depreciationYears: 27,
       propertyUrl: 'https://suumo.jp/example-shibuya',
       propertyMemo: '渋谷駅徒歩圏内の好立地物件。単身者需要が見込める。',
+      propertyImageUrl: '',
     }
   },
   setagaya: {
@@ -127,6 +130,7 @@ const sampleProperties = {
       depreciationYears: 39,
       propertyUrl: 'https://athome.jp/example-setagaya',
       propertyMemo: 'ファミリー層に人気のエリア。教育環境が充実。',
+      propertyImageUrl: '',
     }
   },
   osaka: {
@@ -161,6 +165,7 @@ const sampleProperties = {
       depreciationYears: 34,
       propertyUrl: 'https://homes.co.jp/example-osaka',
       propertyMemo: '大阪市中央区の商業地域。オフィス街に近く需要安定。',
+      propertyImageUrl: '',
     }
   },
   regional: {
@@ -195,6 +200,7 @@ const sampleProperties = {
       depreciationYears: 22,
       propertyUrl: 'https://suumo.jp/example-regional',
       propertyMemo: '一棟アパート。利回り重視の投資に適している。',
+      propertyImageUrl: '',
     }
   }
 };
@@ -309,7 +315,8 @@ const Simulator: React.FC = () => {
           buildingPriceForDepreciation: simData.buildingPriceForDepreciation || 3000,
           depreciationYears: simData.depreciationYears || 27,
           propertyUrl: simData.propertyUrl || '',
-          propertyMemo: simData.propertyMemo || ''
+          propertyMemo: simData.propertyMemo || '',
+          propertyImageUrl: simData.propertyImageUrl || ''
         });
         
         // 既存の結果も表示
@@ -395,7 +402,8 @@ const Simulator: React.FC = () => {
         building_price: inputs.buildingPriceForDepreciation || inputs.purchasePrice * 0.7,
         depreciation_years: inputs.depreciationYears || 27,
         property_url: inputs.propertyUrl || '',
-        property_memo: inputs.propertyMemo || ''
+        property_memo: inputs.propertyMemo || '',
+        property_image_url: inputs.propertyImageUrl || ''
       };
       
       console.log('FAST API送信データ:', apiData);
@@ -490,7 +498,8 @@ const Simulator: React.FC = () => {
                 buildingPriceForDepreciation: apiData.building_price,
                 depreciationYears: apiData.depreciation_years,
                 propertyUrl: apiData.property_url,
-                propertyMemo: apiData.property_memo
+                propertyMemo: apiData.property_memo,
+                propertyImageUrl: apiData.property_image_url
               },
               // results (JSONB) - 計算結果
               results: {
@@ -1167,6 +1176,16 @@ const Simulator: React.FC = () => {
                   onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
                   placeholder="物件の特徴、気になるポイント、検討事項など..."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* 物件画像 */}
+              <div>
+                <ImageUpload
+                  onImageUploaded={(imageUrl) => handleInputChange('propertyImageUrl', imageUrl)}
+                  onImageRemoved={() => handleInputChange('propertyImageUrl', '')}
+                  currentImageUrl={inputs.propertyImageUrl}
+                  disabled={isSimulating}
                 />
               </div>
             </div>

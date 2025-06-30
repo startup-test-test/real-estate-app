@@ -208,7 +208,9 @@ const Dashboard: React.FC = () => {
         cashFlow: results.monthlyCashFlow || 0,
         date: new Date(sim.created_at).toLocaleDateString('ja-JP'),
         status: 'completed',
-        thumbnail: 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
+        thumbnail: simulationData.propertyImageUrl || 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
+        propertyUrl: simulationData.propertyUrl || '',
+        propertyMemo: simulationData.propertyMemo || '',
         radarData: {
           shortTermProfitability: Math.min(10, Math.max(1, Math.round((results.surfaceYield || 0) / 2))),
           longTermProfitability: Math.min(10, Math.max(1, Math.round((results.irr || 0) / 2))),
@@ -531,6 +533,11 @@ const Dashboard: React.FC = () => {
                         src={sim.thumbnail}
                         alt={sim.propertyName}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // 画像読み込みエラー時のフォールバック
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400';
+                        }}
                       />
                       <div className="absolute top-3 left-3">
                         <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">
@@ -544,6 +551,11 @@ const Dashboard: React.FC = () => {
                         {sim.status === 'draft' && (
                           <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded">
                             節税
+                          </span>
+                        )}
+                        {sim.thumbnail !== 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400' && (
+                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
+                            📸
                           </span>
                         )}
                       </div>
@@ -571,7 +583,32 @@ const Dashboard: React.FC = () => {
                       {/* Property Info */}
                       <div className="mb-4">
                         <h4 className="font-bold text-lg text-gray-900 mb-1">{sim.propertyName}</h4>
-                        <p className="text-sm text-gray-600 mb-3">{sim.location}</p>
+                        <p className="text-sm text-gray-600 mb-2">{sim.location}</p>
+                        
+                        {/* Property URL and Memo */}
+                        {(sim.propertyUrl || sim.propertyMemo) && (
+                          <div className="mb-3 p-2 bg-gray-50 rounded text-xs">
+                            {sim.propertyUrl && (
+                              <div className="mb-1">
+                                <span className="text-gray-500">🔗 </span>
+                                <a 
+                                  href={sim.propertyUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 underline truncate inline-block max-w-[200px]"
+                                >
+                                  {sim.propertyUrl.replace(/^https?:\/\//, '')}
+                                </a>
+                              </div>
+                            )}
+                            {sim.propertyMemo && (
+                              <div className="text-gray-600">
+                                <span className="text-gray-500">📝 </span>
+                                {sim.propertyMemo}
+                              </div>
+                            )}
+                          </div>
+                        )}
                         
                         {/* Financial Details */}
                         <div className="grid grid-cols-2 gap-4 text-sm">
