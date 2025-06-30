@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
   // Supabase state management
   const [simulations, setSimulations] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<string | null>(null);
   const [sortBy, setSortBy] = React.useState('newest');
   const [filterStatus, setFilterStatus] = React.useState('all');
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -165,21 +165,31 @@ const Dashboard: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('この物件データを削除しますか？')) {
-      try {
-        setLoading(true);
-        const { error } = await deleteSimulation(id);
-        if (error) {
-          setError(error);
-        } else {
-          // 削除成功後、データを再読み込み
-          loadSimulations();
-        }
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+    try {
+      setLoading(true);
+      const { error } = await deleteSimulation(id);
+      if (error) {
+        setError(error || 'エラーが発生しました');
+        alert('削除に失敗しました: ' + error);
+      } else {
+        // 削除成功後、データを再読み込み
+        loadSimulations();
+        // 成功フィードバック
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        toast.textContent = '物件データを削除しました';
+        document.body.appendChild(toast);
+        setTimeout(() => {
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
+          }
+        }, 3000);
       }
+    } catch (err: any) {
+      setError(err.message);
+      alert('削除処理中にエラーが発生しました: ' + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -592,24 +602,45 @@ const Dashboard: React.FC = () => {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => navigate(`/simulator?edit=${sim.id}`)}
-                          className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200 transition-colors"
-                        >
-                          編集
-                        </button>
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
+                        {/* Primary Action - 結果表示 */}
                         <button 
                           onClick={() => navigate(`/simulation-result/${sim.id}?scrollTo=results`)}
-                          className="flex-1 px-3 py-2 bg-orange-500 text-white text-sm rounded hover:bg-orange-600 transition-colors"
+                          className="group flex-2 flex items-center justify-center px-4 py-3 sm:py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
+                          title="シミュレーション結果を詳しく確認"
+                          aria-label="シミュレーション結果を表示"
+                          style={{ flex: '2' }}
                         >
-                          詳細表示
+                          <Eye className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                          結果表示
                         </button>
+                        
+                        {/* Secondary Action - 編集 */}
                         <button 
-                          onClick={() => handleDelete(sim.id)}
-                          className="px-3 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+                          onClick={() => navigate(`/simulator?edit=${sim.id}`)}
+                          className="group flex items-center justify-center px-3 py-3 sm:py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
+                          title="物件データを編集・再計算"
+                          aria-label="物件データを編集"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Edit className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                          編集
+                        </button>
+                        
+                        {/* Danger Action - 削除 */}
+                        <button 
+                          onClick={() => {
+                            if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`)) {
+                              if (window.confirm('本当に削除しますか？\n\n削除後は復元できません。')) {
+                                handleDelete(sim.id);
+                              }
+                            }
+                          }}
+                          className="group flex items-center justify-center px-3 py-3 sm:py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
+                          title="この物件データを完全に削除"
+                          aria-label="物件を削除"
+                        >
+                          <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                          <span className="sr-only sm:not-sr-only sm:ml-1">削除</span>
                         </button>
                       </div>
                     </div>
