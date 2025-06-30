@@ -39,39 +39,42 @@ def main():
 def basic_simulation_page():
     st.header("📊 基本シミュレーション")
     
+    # 物件名
+    property_name = st.text_input("物件名 📝", value="サンプル物件", placeholder="物件名を入力してください")
+    
     # 入力フォーム
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("物件基本情報")
-        monthly_rent = st.number_input("月間家賃収入（円）", value=100000, step=1000)
-        purchase_price = st.number_input("購入価格（万円）", value=3000, step=100)
-        market_value = st.number_input("実勢価格（万円）", value=3000, step=100)
-        land_area = st.number_input("土地面積（㎡）", value=100.0, step=1.0)
-        building_area = st.number_input("建物面積（㎡）", value=80.0, step=1.0)
+        st.subheader("🏠 物件情報")
+        land_area = st.number_input("土地面積（㎡）", value=100.0, step=0.01)
+        building_area = st.number_input("建物面積（㎡）", value=120.0, step=0.01)
         road_price = st.number_input("路線価（円/㎡）", value=200000, step=1000)
+        market_value = st.number_input("想定売却価格（万円）", value=6000.0, step=0.01)
         
-        st.subheader("運営費用")
-        vacancy_rate = st.slider("空室率（%）", 0, 50, 5)
-        management_fee = st.number_input("管理費（円/月）", value=8000, step=1000)
-        fixed_cost = st.number_input("固定費（円/月）", value=5000, step=1000)
-        property_tax = st.number_input("固定資産税（円/年）", value=120000, step=1000)
-        rent_decline = st.slider("家賃下落率（%/年）", 0.0, 5.0, 1.0, step=0.1)
+        st.subheader("💰 取得・初期費用")
+        purchase_price = st.number_input("購入価格（万円） ⭐", value=5000.0, step=0.01)
+        other_costs = st.number_input("諸経費（万円）", value=250.0, step=0.01)
+        renovation_cost = st.number_input("改装費（万円）", value=150.0, step=0.01)
+        
+        st.subheader("📈 収益情報")
+        monthly_rent = st.number_input("月額賃料（円）", value=180000, step=1000)
+        management_fee = st.number_input("管理費（円）", value=9000, step=1000)
+        fixed_cost = st.number_input("その他固定費（円）", value=0, step=1000)
+        property_tax = st.number_input("固定資産税（円）", value=80000, step=1000)
+        vacancy_rate = st.number_input("空室率（%）", value=5.0, step=0.01)
+        rent_decline = st.number_input("家賃下落率（%/年）", value=1.0, step=0.01)
     
     with col2:
-        st.subheader("融資条件")
-        loan_amount = st.number_input("融資額（万円）", value=2400, step=100)
-        interest_rate = st.slider("金利（%）", 0.0, 10.0, 2.0, step=0.1)
-        loan_years = st.selectbox("融資期間（年）", [10, 15, 20, 25, 30, 35], index=4)
-        loan_type = st.selectbox("返済方法", ["元利均等", "元金均等"])
+        st.subheader("🏦 借入条件")
+        loan_amount = st.number_input("借入額（万円）", value=4500.0, step=0.01)
+        interest_rate = st.number_input("金利（%）", value=0.70, step=0.01)
+        loan_years = st.number_input("返済期間（年）", value=35, step=1)
+        loan_type = st.selectbox("借入形式", ["元利均等", "元金均等"])
         
-        st.subheader("その他費用")
-        other_costs = st.number_input("諸費用（万円）", value=200, step=10)
-        renovation_cost = st.number_input("リフォーム費用（万円）", value=100, step=10)
-        
-        st.subheader("売却設定")
-        holding_years = st.slider("保有年数（年）", 1, 35, 35)
-        exit_cap_rate = st.slider("売却時利回り（%）", 3.0, 10.0, 5.0, step=0.1)
+        st.subheader("🎯 出口戦略")
+        holding_years = st.number_input("保有年数（年）", value=10, min_value=1, max_value=35, step=1)
+        exit_cap_rate = st.number_input("売却CapRate（%）", value=4.0, step=0.01)
         
         st.subheader("税金条件")
         ownership_type = st.selectbox("所有形態", ["個人", "法人"])
@@ -80,35 +83,37 @@ def basic_simulation_page():
         
         st.subheader("大規模修繕設定")
         major_repair_cycle = st.number_input("大規模修繕周期（年）", value=10, min_value=1, max_value=35, step=1)
-        major_repair_cost = st.number_input("大規模修繕費用（万円）", value=200, step=10)
+        major_repair_cost = st.number_input("大規模修繕費用（万円）", value=200.0, step=10.0)
         
         st.subheader("減価償却設定")
-        building_price = st.number_input("建物価格（万円）", value=2000, step=100)
+        building_price = st.number_input("建物価格（万円）", value=3000.0, step=100.0)
         depreciation_years = st.selectbox("償却年数（年）", [22, 27, 34, 39, 47], index=1)
     
     # シミュレーション実行ボタン
     if st.button("🚀 シミュレーション実行", type="primary"):
         # 入力データをまとめる
         property_data = {
+            'property_name': property_name,
+            'land_area': land_area,
+            'building_area': building_area,
+            'road_price': road_price,
+            'market_value': market_value,
+            'purchase_price': purchase_price,
+            'other_costs': other_costs,
+            'renovation_cost': renovation_cost,
             'monthly_rent': monthly_rent,
-            'vacancy_rate': vacancy_rate,
             'management_fee': management_fee,
             'fixed_cost': fixed_cost,
             'property_tax': property_tax,
-            'purchase_price': purchase_price,
+            'vacancy_rate': vacancy_rate,
+            'rent_decline': rent_decline,
             'loan_amount': loan_amount,
-            'other_costs': other_costs,
-            'renovation_cost': renovation_cost,
             'interest_rate': interest_rate,
             'loan_years': loan_years,
             'loan_type': loan_type,
-            'exit_cap_rate': exit_cap_rate,
-            'land_area': land_area,
-            'road_price': road_price,
-            'building_area': building_area,
-            'market_value': market_value,
             'holding_years': holding_years,
-            'rent_decline': rent_decline,
+            'exit_cap_rate': exit_cap_rate,
+            'expected_sale_price': market_value,
             'ownership_type': ownership_type,
             'effective_tax_rate': effective_tax_rate,
             'major_repair_cycle': major_repair_cycle,
@@ -186,9 +191,9 @@ def display_results(simulation_result, property_data):
     
     st.subheader("💰 売却時分析")
     sale_data = {
-        "項目": ["売却価格", "残債", "売却コスト", "売却益"],
+        "項目": ["想定売却価格", "残債", "売却コスト", "売却益"],
         "金額（万円）": [
-            results['実勢価格（万円）'],
+            results['想定売却価格（万円）'],
             results['残債（万円）'],
             results['売却コスト（万円）'],
             results['売却益（万円）']

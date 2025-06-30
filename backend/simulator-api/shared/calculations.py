@@ -90,10 +90,25 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # NOI
     noi = annual_rent - (management_fee * 12 + fixed_cost * 12 + property_tax)
     
-    # 各種比率
+    # 税金計算用パラメータ（CCR/ROI計算のため）
+    effective_tax_rate = property_data.get('effective_tax_rate', 20)
+    building_price = property_data.get('building_price', 2000)
+    depreciation_years = property_data.get('depreciation_years', 27)
+    
+    # 減価償却費（1年目）
+    annual_depreciation = calculate_depreciation(building_price, depreciation_years, 1)
+    
+    # 不動産所得と税金
+    real_estate_income = annual_rent - (management_fee * 12 + fixed_cost * 12 + property_tax) - annual_depreciation
+    tax = calculate_tax(real_estate_income, effective_tax_rate)
+    
+    # 税引後キャッシュフロー（正確な計算）
+    tax_after_cf = noi - tax
+    
+    # 各種比率（税引後ベース）
     gross_yield = annual_rent / (purchase_price * 10000) * 100 if purchase_price > 0 else 0
-    ccr = ((annual_cf - annual_loan) / (self_funding * 10000)) * 100 if self_funding > 0 else 0
-    roi = (annual_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0
+    ccr = ((tax_after_cf - annual_loan) / (self_funding * 10000)) * 100 if self_funding > 0 else 0
+    roi = (tax_after_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0
     dscr = noi / annual_loan if annual_loan > 0 else 0
     
     return {
@@ -148,7 +163,8 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
     loan_years = property_data.get('loan_years', 0)
     loan_type = property_data.get('loan_type', '元利均等')
     holding_years = property_data.get('holding_years', 0)
-    market_value = property_data.get('market_value', 0)
+    # 想定売却価格を優先、なければ市場価格を使用
+    expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
     
     # 売却時のローン残高
     remaining_loan = calculate_remaining_loan(
@@ -156,10 +172,10 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
     )
     
     # 売却コスト（5%）
-    sale_cost = market_value * 0.05
+    sale_cost = expected_sale_price * 0.05
     
     # 売却益
-    sale_profit = market_value - remaining_loan - sale_cost
+    sale_profit = expected_sale_price - remaining_loan - sale_cost
     
     return {
         'remaining_loan': remaining_loan,
@@ -294,6 +310,7 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         "NOI（円）": int(basic_metrics['noi']),
         "収益還元評価額（万円）": round(valuation['cap_rate_eval'], 2),
         "実勢価格（万円）": valuation['market_value'],
+        "想定売却価格（万円）": property_data.get('expected_sale_price', valuation['market_value']),
         "土地積算評価（万円）": round(valuation['land_eval'], 2),
         "建物積算評価（万円）": round(valuation['building_eval'], 2),
         "積算評価合計（万円）": round(valuation['assessed_total'], 2),
