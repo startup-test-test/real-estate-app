@@ -1263,6 +1263,104 @@ const Simulator: React.FC = () => {
               </div>
             </div>
             
+            {/* 追加投資指標 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">📈 詳細投資指標</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                {/* NOI */}
+                <MetricCard
+                  title="NOI"
+                  subtitle="純営業収益"
+                  value={simulationResults.results['NOI（円）']}
+                  unit="円"
+                  format="currency"
+                  thresholds={{
+                    excellent: 1000000,
+                    good: 500000,
+                    warning: 100000
+                  }}
+                  description="年間賃料収入から運営費を差し引いた純収益。物件の収益力を示す。"
+                />
+                
+                {/* ROI */}
+                <MetricCard
+                  title="ROI"
+                  subtitle="投資収益率"
+                  value={simulationResults.results['ROI（%）']}
+                  unit="%"
+                  format="percentage"
+                  thresholds={{
+                    excellent: 15,
+                    good: 10,
+                    warning: 5
+                  }}
+                  description="投資額に対する税引後キャッシュフローの割合。ROI=年間CF÷自己資金。"
+                />
+                
+                {/* LTV */}
+                <MetricCard
+                  title="LTV"
+                  subtitle="融資比率"
+                  value={simulationResults.results['LTV（%）']}
+                  unit="%"
+                  format="percentage"
+                  thresholds={{
+                    excellent: 70,
+                    good: 80,
+                    warning: 90
+                  }}
+                  description="物件価格に対する融資額の割合。低いほど安全性が高い。"
+                />
+              </div>
+            </div>
+            
+            {/* 売却分析 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 売却分析</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 想定売却価格 */}
+                <MetricCard
+                  title="想定売却価格"
+                  value={simulationResults.results['想定売却価格（万円）']}
+                  unit="万円"
+                  format="number"
+                  description="保有期間終了時の想定売却価格。"
+                />
+                
+                {/* 残債 */}
+                <MetricCard
+                  title="残債"
+                  value={simulationResults.results['残債（万円）']}
+                  unit="万円"
+                  format="number"
+                  description="売却時のローン残高。"
+                />
+                
+                {/* 売却コスト */}
+                <MetricCard
+                  title="売却コスト"
+                  value={simulationResults.results['売却コスト（万円）']}
+                  unit="万円"
+                  format="number"
+                  description="売却時にかかる諸費用（仲介手数料等）。"
+                />
+                
+                {/* 売却益 */}
+                <MetricCard
+                  title="売却益"
+                  value={simulationResults.results['売却益（万円）']}
+                  unit="万円"
+                  format="number"
+                  thresholds={{
+                    excellent: 500,
+                    good: 100,
+                    warning: 0
+                  }}
+                  description="売却価格から残債と売却コストを引いた手取り額。"
+                />
+              </div>
+            </div>
+            
             {/* キャッシュフロー表 */}
             {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
               <div>
@@ -1286,7 +1384,10 @@ const Simulator: React.FC = () => {
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">空室率</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">実効収入</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">経費</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">減価償却</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">税金</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">大規模修繕</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">初期リフォーム</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">ローン返済</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">営業CF</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">累計CF</th>
@@ -1300,7 +1401,10 @@ const Simulator: React.FC = () => {
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['空室率（%）']}%</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['実効収入'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['経費'].toLocaleString()}円</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['減価償却'].toLocaleString()}円</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['税金'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['大規模修繕'].toLocaleString()}円</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['初期リフォーム'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['ローン返済'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['営業CF'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['累計CF'].toLocaleString()}円</td>

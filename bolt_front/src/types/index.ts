@@ -87,9 +87,16 @@ export interface SimulationResultData {
   '表面利回り（%）': number;
   'IRR（%）': number | null;
   'CCR（%）': number;
+  'ROI（%）': number;
   'DSCR（返済余裕率）': number;
   '月間キャッシュフロー（円）': number;
   '年間キャッシュフロー（円）': number;
+  'NOI（円）': number;
+  'LTV（%）': number;
+  '想定売却価格（万円）': number;
+  '残債（万円）': number;
+  '売却コスト（万円）': number;
+  '売却益（万円）': number;
   '総投資額（円）': number;
   '自己資金（円）': number;
   '借入額（円）': number;
@@ -102,7 +109,10 @@ export interface CashFlowData {
   '空室率（%）': number;
   実効収入: number;
   経費: number;
+  減価償却: number;
+  税金: number;
   大規模修繕: number;
+  初期リフォーム: number;
   ローン返済: number;
   営業CF: number;
   累計CF: number;
