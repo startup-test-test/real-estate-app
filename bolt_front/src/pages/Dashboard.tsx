@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
+import { ShareButton } from '../components/ShareButton';
 import { 
   Calculator, 
   LogOut, 
@@ -601,47 +602,67 @@ const Dashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
-                        {/* Primary Action - 結果表示 */}
+                      {/* Action Buttons - メインアクション＋サブアクション */}
+                      <div className="space-y-3">
+                        {/* メインアクション: 結果表示（大きめ） */}
                         <button 
                           onClick={() => navigate(`/simulator?view=${sim.id}#results`)}
-                          className="group flex-2 flex items-center justify-center px-4 py-3 sm:py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
+                          className="group w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
                           title="シミュレーション結果を詳しく確認"
-                          aria-label="シミュレーション結果を表示"
-                          style={{ flex: '2' }}
                         >
-                          <Eye className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                          結果表示
+                          <Eye className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                          シミュレーション結果を見る
                         </button>
                         
-                        {/* Secondary Action - 編集 */}
-                        <button 
-                          onClick={() => navigate(`/simulator?edit=${sim.id}`)}
-                          className="group flex items-center justify-center px-3 py-3 sm:py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
-                          title="物件データを編集・再計算"
-                          aria-label="物件データを編集"
-                        >
-                          <Edit className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                          編集
-                        </button>
-                        
-                        {/* Danger Action - 削除 */}
-                        <button 
-                          onClick={() => {
-                            if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`)) {
-                              if (window.confirm('本当に削除しますか？\n\n削除後は復元できません。')) {
-                                handleDelete(sim.id);
+                        {/* サブアクション: 共有・編集・削除 */}
+                        <div className="flex gap-2">
+                          <ShareButton
+                            propertyId={sim.id}
+                            simulationData={{
+                              surfaceYield: sim.surfaceYield,
+                              netYield: sim.netYield,
+                              monthlyCashFlow: sim.cashFlow,
+                              annualCashFlow: sim.cashFlow * 12,
+                              annualRentalIncome: sim.annualIncome * 10000,
+                              annualExpenses: sim.managementFee * 10000
+                            }}
+                            propertyData={{
+                              propertyName: sim.propertyName,
+                              location: sim.location,
+                              purchasePrice: sim.acquisitionPrice,
+                              monthlyRent: (sim.annualIncome * 10000) / 12,
+                              propertyUrl: sim.propertyUrl,
+                              propertyMemo: sim.propertyMemo,
+                              propertyImageUrl: sim.thumbnail
+                            }}
+                            size="small"
+                            className="flex-1"
+                          />
+                          
+                          <button 
+                            onClick={() => navigate(`/simulator?edit=${sim.id}`)}
+                            className="group flex-1 flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition-all duration-200"
+                            title="物件データを編集・再計算"
+                          >
+                            <Edit className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
+                            編集
+                          </button>
+                          
+                          <button 
+                            onClick={() => {
+                              if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`)) {
+                                if (window.confirm('本当に削除しますか？\n\n削除後は復元できません。')) {
+                                  handleDelete(sim.id);
+                                }
                               }
-                            }
-                          }}
-                          className="group flex items-center justify-center px-3 py-3 sm:py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
-                          title="この物件データを完全に削除"
-                          aria-label="物件を削除"
-                        >
-                          <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                          <span className="sr-only sm:not-sr-only sm:ml-1">削除</span>
-                        </button>
+                            }}
+                            className="group flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-all duration-200"
+                            title="この物件データを完全に削除"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
+                            削除
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

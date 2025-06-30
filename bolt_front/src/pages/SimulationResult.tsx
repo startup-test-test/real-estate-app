@@ -3,13 +3,17 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Edit,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import CashFlowChart from '../components/CashFlowChart';
 import MetricCard from '../components/MetricCard';
 import Breadcrumb from '../components/Breadcrumb';
+import { ShareButton } from '../components/ShareButton';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const SimulationResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,7 +43,7 @@ const SimulationResult: React.FC = () => {
           return;
         }
 
-        const foundSimulation = data?.find(sim => sim.id === id);
+        const foundSimulation = data?.find((sim: any) => sim.id === id);
         if (!foundSimulation) {
           setError('指定されたシミュレーションが見つかりません');
           return;
@@ -94,6 +98,49 @@ const SimulationResult: React.FC = () => {
     return `${value}%`;
   };
 
+  // PDF保存機能
+  const handleSavePDF = async () => {
+    try {
+      const element = document.getElementById('pdf-content');
+      if (!element) return;
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const fileName = `シミュレーション結果_${simulationData?.propertyName || 'property'}_${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('PDF生成エラー:', error);
+      alert('PDFの生成に失敗しました');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -129,6 +176,8 @@ const SimulationResult: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* PDF出力用のコンテンツラッパー */}
+        <div id="pdf-content">
         {/* Header */}
         <div className="mb-6">
           <Breadcrumb 
@@ -149,6 +198,25 @@ const SimulationResult: React.FC = () => {
             </div>
             
             <div className="flex space-x-3">
+              {/* 共有ボタン */}
+              {simulation && (
+                <ShareButton
+                  propertyId={id!}
+                  simulationData={results}
+                  propertyData={simulationData}
+                  size="medium"
+                />
+              )}
+              
+              {/* PDF保存ボタン */}
+              <button
+                onClick={handleSavePDF}
+                className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                PDF保存
+              </button>
+              
               <button
                 onClick={() => navigate(`/simulator?edit=${id}`)}
                 className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -156,6 +224,7 @@ const SimulationResult: React.FC = () => {
                 <Edit className="h-4 w-4 mr-2" />
                 編集
               </button>
+              
               <button
                 onClick={() => navigate('/dashboard')}
                 className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
@@ -345,6 +414,7 @@ const SimulationResult: React.FC = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,8 @@ import {
   Zap,
   CheckCircle,
   AlertCircle,
-  Download
+  Download,
+  Share2
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
@@ -15,6 +16,7 @@ import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
+import { ShareButton } from '../components/ShareButton';
 import { SimulationResultData, CashFlowData, SimulationInputData } from '../types';
 
 // FAST API のベースURL
@@ -1326,6 +1328,18 @@ const Simulator: React.FC = () => {
                     ✓ マイページに保存済み
                   </span>
                 )}
+                
+                {/* 共有ボタン */}
+                {user && (editingId || saveMessage?.includes('✅')) && (
+                  <ShareButton
+                    propertyId={editingId || 'temp-id'}
+                    simulationData={simulationResults.results}
+                    propertyData={inputs}
+                    size="medium"
+                    className="print:hidden"
+                  />
+                )}
+                
                 <button
                   onClick={handleSaveToPDF}
                   className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
@@ -1431,6 +1445,32 @@ const Simulator: React.FC = () => {
                   description="年間の手取り収入。投資収益の実額。"
                 />
               </div>
+              
+              {/* 共有セクション */}
+              {user && (editingId || saveMessage?.includes('✅')) && (
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-2">
+                        <Share2 className="h-5 w-5 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">
+                          この結果を家族や投資仲間と共有
+                        </span>
+                      </div>
+                    </div>
+                    <ShareButton
+                      propertyId={editingId || 'temp-id'}
+                      simulationData={simulationResults.results}
+                      propertyData={inputs}
+                      size="medium"
+                      className="bg-blue-600 hover:bg-blue-700"
+                    />
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2">
+                    💡 URLを知っている人なら誰でも7日間閲覧可能です
+                  </p>
+                </div>
+              )}
             </div>
             
             {/* 追加投資指標 */}

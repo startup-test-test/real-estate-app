@@ -13,6 +13,7 @@ import MarketAnalysis from './pages/MarketAnalysis';
 import TransactionSearch from './pages/TransactionSearch';
 import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
+import ShareView from './pages/ShareView';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -46,6 +47,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/share/:shareId" element={<ShareView />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
