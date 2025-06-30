@@ -37,6 +37,8 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
       breadcrumbs.push({ name: '有料プラン', path: '/premium-plan', current: true });
     } else if (path.includes('/property-detail')) {
       breadcrumbs.push({ name: '物件詳細', path: path, current: true });
+    } else if (path.includes('/simulation-result')) {
+      breadcrumbs.push({ name: 'シミュレーション結果', path: path, current: true });
     } else if (path === '/') {
       breadcrumbs[0].current = true;
     }

@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import Dashboard from './pages/Dashboard';
 import Simulator from './pages/Simulator';
+import SimulationResult from './pages/SimulationResult';
 import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
 import MarketAnalysis from './pages/MarketAnalysis';
@@ -56,6 +57,7 @@ function App() {
             <Route path="premium-plan" element={<PremiumPlan />} />
             <Route path="transaction-search" element={<TransactionSearch />} />
             <Route path="simulator" element={<Simulator />} />
+            <Route path="simulation-result/:id" element={<SimulationResult />} />
             <Route path="market-analysis" element={<MarketAnalysis />} />
             <Route path="property-detail/:id" element={<PropertyDetail />} />
           </Route>

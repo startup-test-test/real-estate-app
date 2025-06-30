@@ -17,7 +17,6 @@ import {
   HelpCircle,
   Crown,
   Key,
-  ChevronRight,
   Plus,
   Download,
   Eye,
@@ -28,7 +27,9 @@ import {
   Filter,
   ChevronDown,
   Users,
-  Loader
+  Loader,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // Removed useSupabaseData hook dependency
@@ -121,6 +122,8 @@ const Dashboard: React.FC = () => {
   const [sortBy, setSortBy] = React.useState('newest');
   const [filterStatus, setFilterStatus] = React.useState('all');
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
   
   // データ読み込み関数
   const loadSimulations = async () => {
@@ -207,18 +210,10 @@ const Dashboard: React.FC = () => {
         netYield: results.netYield || 0,
         cashFlow: results.monthlyCashFlow || 0,
         date: new Date(sim.created_at).toLocaleDateString('ja-JP'),
-        status: 'completed',
+        status: simulationData.propertyStatus || '検討中',
         thumbnail: simulationData.propertyImageUrl || 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
         propertyUrl: simulationData.propertyUrl || '',
-        propertyMemo: simulationData.propertyMemo || '',
-        radarData: {
-          shortTermProfitability: Math.min(10, Math.max(1, Math.round((results.surfaceYield || 0) / 2))),
-          longTermProfitability: Math.min(10, Math.max(1, Math.round((results.irr || 0) / 2))),
-          shortTermRisk: Math.min(10, Math.max(1, 10 - Math.round((results.dscr || 1) * 3))),
-          longTermRisk: Math.min(10, Math.max(1, Math.round(Math.random() * 5 + 3))),
-          relativeFinancialPressure: Math.min(10, Math.max(1, Math.round((simulationData.selfFunding || 1000) / 200))),
-          longTermAssetValue: Math.min(10, Math.max(1, Math.round((results.netYield || 0) / 1.5)))
-        }
+        propertyMemo: simulationData.propertyMemo || ''
       };
     });
   };
@@ -262,6 +257,29 @@ const Dashboard: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
+  // ページネーション計算
+  const totalPages = Math.ceil(filteredResults.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedResults = filteredResults.slice(startIndex, startIndex + itemsPerPage);
+
+  // 検索・フィルター変更時にページをリセット
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus]);
+
+  // ページ変更時にスムーズスクロール
+  React.useEffect(() => {
+    if (currentPage > 1) {
+      const propertyListElement = document.getElementById('property-list');
+      if (propertyListElement) {
+        propertyListElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+  }, [currentPage]);
+
   const formatCurrency = (amount: number) => {
     if (amount >= 10000) {
       return `${(amount / 10000).toFixed(0)}万円`;
@@ -273,85 +291,6 @@ const Dashboard: React.FC = () => {
     return num.toLocaleString();
   };
 
-  // レーダーチャートのSVGコンポーネント
-  const RadarChart = ({ data }: { data: any }) => {
-    const size = 120;
-    const center = size / 2;
-    const radius = 40;
-    const angles = [0, 60, 120, 180, 240, 300].map(deg => (deg * Math.PI) / 180);
-    
-    const points = [
-      data.shortTermProfitability,
-      data.longTermProfitability,
-      data.shortTermRisk,
-      data.longTermRisk,
-      data.relativeFinancialPressure,
-      data.longTermAssetValue
-    ];
-
-    const pathData = points.map((point, index) => {
-      const angle = angles[index];
-      const r = (point / 10) * radius;
-      const x = center + r * Math.cos(angle - Math.PI / 2);
-      const y = center + r * Math.sin(angle - Math.PI / 2);
-      return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ') + ' Z';
-
-    return (
-      <svg width={size} height={size} className="mx-auto">
-        {/* Background circles */}
-        {[0.2, 0.4, 0.6, 0.8, 1.0].map((scale, i) => (
-          <circle
-            key={i}
-            cx={center}
-            cy={center}
-            r={radius * scale}
-            fill="none"
-            stroke="#e5e7eb"
-            strokeWidth="1"
-          />
-        ))}
-        
-        {/* Axis lines */}
-        {angles.map((angle, i) => (
-          <line
-            key={i}
-            x1={center}
-            y1={center}
-            x2={center + radius * Math.cos(angle - Math.PI / 2)}
-            y2={center + radius * Math.sin(angle - Math.PI / 2)}
-            stroke="#e5e7eb"
-            strokeWidth="1"
-          />
-        ))}
-        
-        {/* Data area */}
-        <path
-          d={pathData}
-          fill="rgba(59, 130, 246, 0.2)"
-          stroke="#3b82f6"
-          strokeWidth="2"
-        />
-        
-        {/* Data points */}
-        {points.map((point, index) => {
-          const angle = angles[index];
-          const r = (point / 10) * radius;
-          const x = center + r * Math.cos(angle - Math.PI / 2);
-          const y = center + r * Math.sin(angle - Math.PI / 2);
-          return (
-            <circle
-              key={index}
-              cx={x}
-              cy={y}
-              r="3"
-              fill="#3b82f6"
-            />
-          );
-        })}
-      </svg>
-    );
-  };
 
   if (loading) {
     return (
@@ -419,7 +358,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Property List Section */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div id="property-list" className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <Calculator className="h-5 w-5 text-purple-500 mr-2" />
@@ -479,8 +418,13 @@ const Dashboard: React.FC = () => {
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none pr-8"
                     >
                       <option value="all">すべて</option>
-                      <option value="completed">完了</option>
-                      <option value="draft">下書き</option>
+                      <option value="検討中">🔍 検討中</option>
+                      <option value="内見予定">👀 内見予定</option>
+                      <option value="申込検討">⏳ 申込検討</option>
+                      <option value="契約手続中">📋 契約手続中</option>
+                      <option value="取得済み">✅ 取得済み</option>
+                      <option value="見送り">❌ 見送り</option>
+                      <option value="保留">📝 保留</option>
                     </select>
                     <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                   </div>
@@ -505,8 +449,11 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Results Count */}
-            <div className="mb-4">
-              <p className="text-gray-600">{filteredResults.length}件の物件が見つかりました。</p>
+            <div className="mb-4 flex justify-between items-center">
+              <p className="text-gray-600">
+                {filteredResults.length}件中 {startIndex + 1}〜{Math.min(startIndex + itemsPerPage, filteredResults.length)}件を表示
+                {totalPages > 1 && ` (${currentPage}/${totalPages}ページ)`}
+              </p>
             </div>
             
             {/* Card Grid - Responsive Layout */}
@@ -525,7 +472,7 @@ const Dashboard: React.FC = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredResults.map((sim) => (
+                {paginatedResults.map((sim) => (
                   <div key={sim.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
                     {/* Property Image */}
                     <div className="relative h-48">
@@ -540,34 +487,34 @@ const Dashboard: React.FC = () => {
                         }}
                       />
                       <div className="absolute top-3 left-3">
-                        <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">
-                          {sim.propertyType}
+                        <span className="px-3 py-2 bg-black/70 text-white text-sm font-medium rounded-lg shadow-lg backdrop-blur-sm">
+                          {sim.propertyName}
                         </span>
                       </div>
                       <div className="absolute top-3 right-3 flex space-x-1">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
-                          収益
-                        </span>
-                        {sim.status === 'draft' && (
-                          <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded">
-                            節税
-                          </span>
-                        )}
-                        {sim.thumbnail !== 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400' && (
-                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
-                            📸
-                          </span>
-                        )}
+                        {/* ステータスバッジ */}
                       </div>
                       
                       {/* Status Badge */}
                       <div className="absolute bottom-3 left-3">
-                        <span className={`px-2 py-1 text-xs rounded ${
-                          sim.status === 'completed' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-yellow-100 text-yellow-700'
+                        <span className={`px-2 py-1 text-xs rounded font-medium ${
+                          sim.status === '検討中' ? 'bg-blue-100 text-blue-700' :
+                          sim.status === '内見予定' ? 'bg-purple-100 text-purple-700' :
+                          sim.status === '申込検討' ? 'bg-orange-100 text-orange-700' :
+                          sim.status === '契約手続中' ? 'bg-yellow-100 text-yellow-700' :
+                          sim.status === '取得済み' ? 'bg-green-100 text-green-700' :
+                          sim.status === '見送り' ? 'bg-red-100 text-red-700' :
+                          sim.status === '保留' ? 'bg-gray-100 text-gray-700' :
+                          'bg-blue-100 text-blue-700'
                         }`}>
-                          {sim.status === 'completed' ? '完了' : '下書き'}
+                          {sim.status === '検討中' ? '🔍 検討中' :
+                           sim.status === '内見予定' ? '👀 内見予定' :
+                           sim.status === '申込検討' ? '⏳ 申込検討' :
+                           sim.status === '契約手続中' ? '📋 契約手続中' :
+                           sim.status === '取得済み' ? '✅ 取得済み' :
+                           sim.status === '見送り' ? '❌ 見送り' :
+                           sim.status === '保留' ? '📝 保留' :
+                           '🔍 検討中'}
                         </span>
                       </div>
 
@@ -582,7 +529,6 @@ const Dashboard: React.FC = () => {
                     <div className="p-4">
                       {/* Property Info */}
                       <div className="mb-4">
-                        <h4 className="font-bold text-lg text-gray-900 mb-1">{sim.propertyName}</h4>
                         <p className="text-sm text-gray-600 mb-2">{sim.location}</p>
                         
                         {/* Property URL and Memo */}
@@ -611,7 +557,7 @@ const Dashboard: React.FC = () => {
                         )}
                         
                         {/* Financial Details */}
-                        <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                           <div>
                             <span className="text-gray-500">取得価格</span>
                             <div className="font-bold text-lg">{formatCurrency(sim.acquisitionPrice)}</div>
@@ -628,43 +574,18 @@ const Dashboard: React.FC = () => {
                             <span className="text-gray-500">実質利回り</span>
                             <div className="font-bold text-blue-600">{sim.netYield}%</div>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Radar Chart and Metrics */}
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        {/* Radar Chart */}
-                        <div>
-                          <RadarChart data={sim.radarData} />
-                        </div>
-                        
-                        {/* Key Metrics */}
-                        <div className="space-y-2">
-                          <div className="text-center">
-                            <div className="text-xs text-gray-500">月間CF</div>
+                          <div>
+                            <span className="text-gray-500">月間CF</span>
                             <div className={`font-bold text-sm ${
                               sim.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
                               {sim.cashFlow >= 0 ? '+' : ''}{formatNumber(sim.cashFlow)}円
                             </div>
                           </div>
-                          <div className="text-center">
-                            <div className="text-xs text-gray-500">運営費用</div>
+                          <div>
+                            <span className="text-gray-500">運営費用</span>
                             <div className="font-bold text-sm text-gray-900">
                               {sim.managementFee}万円/年
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-xs text-gray-500">総合評価</div>
-                            <div className="flex justify-center">
-                              {[...Array(5)].map((_, i) => (
-                                <div
-                                  key={i}
-                                  className={`w-2 h-2 rounded-full mx-0.5 ${
-                                    i < Math.round(sim.netYield / 2) ? 'bg-blue-500' : 'bg-gray-200'
-                                  }`}
-                                />
-                              ))}
                             </div>
                           </div>
                         </div>
@@ -679,7 +600,7 @@ const Dashboard: React.FC = () => {
                           編集
                         </button>
                         <button 
-                          onClick={() => navigate(`/property-detail/${sim.id}`)}
+                          onClick={() => navigate(`/simulation-result/${sim.id}?scrollTo=results`)}
                           className="flex-1 px-3 py-2 bg-orange-500 text-white text-sm rounded hover:bg-orange-600 transition-colors"
                         >
                           詳細表示
@@ -697,11 +618,40 @@ const Dashboard: React.FC = () => {
               </div>
             )}
 
-            {/* Load More */}
-            {filteredResults.length > 6 && (
-              <div className="mt-8 text-center">
-                <button className="px-6 py-3 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                  さらに読み込む
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex justify-center items-center space-x-2">
+                <button 
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                
+                {/* Page Numbers */}
+                <div className="flex space-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-2 rounded-lg transition-colors ${
+                        currentPage === page
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-700 hover:bg-gray-50 border border-gray-300'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             )}

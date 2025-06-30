@@ -33,6 +33,7 @@ const sampleProperties = {
     description: '自由に設定してください',
     data: {
       propertyName: '物件名を入力してください',
+      location: '',
       landArea: 100.00,
       buildingArea: 120.00,
       roadPrice: 200000,
@@ -61,6 +62,7 @@ const sampleProperties = {
       propertyUrl: '',
       propertyMemo: '',
       propertyImageUrl: '',
+      propertyStatus: '検討中',
     }
   },
   shibuya: {
@@ -68,6 +70,7 @@ const sampleProperties = {
     description: '都心部の単身者向け高利回り物件',
     data: {
       propertyName: '渋谷区ワンルームマンション',
+      location: '東京都渋谷区道玤坂',
       landArea: 80.00,
       buildingArea: 25.00,
       roadPrice: 800000,
@@ -96,6 +99,7 @@ const sampleProperties = {
       propertyUrl: 'https://suumo.jp/example-shibuya',
       propertyMemo: '渋谷駅徒歩圏内の好立地物件。単身者需要が見込める。',
       propertyImageUrl: '',
+      propertyStatus: '検討中',
     }
   },
   setagaya: {
@@ -103,6 +107,7 @@ const sampleProperties = {
     description: 'ファミリー向け安定収益物件',
     data: {
       propertyName: '世田谷区ファミリーマンション',
+      location: '東京都世田谷区三軒茶屋',
       landArea: 150.00,
       buildingArea: 80.00,
       roadPrice: 400000,
@@ -138,6 +143,7 @@ const sampleProperties = {
     description: '関西圏の商業地域物件',
     data: {
       propertyName: '大阪市中央区投資マンション',
+      location: '大阪府大阪市中央区本町',
       landArea: 120.00,
       buildingArea: 65.00,
       roadPrice: 300000,
@@ -173,6 +179,7 @@ const sampleProperties = {
     description: '地方の一棟アパート投資',
     data: {
       propertyName: '地方都市一棟アパート',
+      location: '愛知県名古屋市中区栄',
       landArea: 300.00,
       buildingArea: 240.00,
       roadPrice: 80000,
@@ -289,6 +296,7 @@ const Simulator: React.FC = () => {
         const simData = simulation.simulation_data;
         setInputs({
           propertyName: simData.propertyName || '品川区投資物件',
+          location: simData.location || '東京都品川区',
           landArea: simData.landArea || 135.00,
           buildingArea: simData.buildingArea || 150.00,
           roadPrice: simData.roadPrice || 250000,
@@ -372,7 +380,7 @@ const Simulator: React.FC = () => {
       // FAST API への送信データを構築
       const apiData = {
         property_name: inputs.propertyName,
-        location: '東京都品川区', // デフォルト値
+        location: inputs.location || '住所未設定',
         year_built: 2010, // デフォルト値
         property_type: '一棟アパート/マンション', // デフォルト値
         land_area: inputs.landArea,
@@ -403,7 +411,8 @@ const Simulator: React.FC = () => {
         depreciation_years: inputs.depreciationYears || 27,
         property_url: inputs.propertyUrl || '',
         property_memo: inputs.propertyMemo || '',
-        property_image_url: inputs.propertyImageUrl || ''
+        property_image_url: inputs.propertyImageUrl || '',
+        property_status: inputs.propertyStatus || '検討中'
       };
       
       console.log('FAST API送信データ:', apiData);
@@ -499,7 +508,8 @@ const Simulator: React.FC = () => {
                 depreciationYears: apiData.depreciation_years,
                 propertyUrl: apiData.property_url,
                 propertyMemo: apiData.property_memo,
-                propertyImageUrl: apiData.property_image_url
+                propertyImageUrl: apiData.property_image_url,
+                propertyStatus: apiData.property_status
               },
               // results (JSONB) - 計算結果
               results: {
@@ -684,6 +694,39 @@ const Simulator: React.FC = () => {
             />
           </div>
 
+          {/* 住所 */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              住所
+            </label>
+            <input
+              type="text"
+              value={inputs.location}
+              onChange={(e) => handleInputChange('location', e.target.value)}
+              placeholder="例：東京都渋谷区神宮前1-1-1"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* 物件ステータス */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              物件ステータス
+            </label>
+            <select
+              value={inputs.propertyStatus || ''}
+              onChange={(e) => handleInputChange('propertyStatus', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="検討中">🔍 検討中</option>
+              <option value="内見予定">👀 内見予定</option>
+              <option value="申込検討">⏳ 申込検討</option>
+              <option value="契約手続中">📋 契約手続中</option>
+              <option value="取得済み">✅ 取得済み</option>
+              <option value="見送り">❌ 見送り</option>
+              <option value="保留">📝 保留</option>
+            </select>
+          </div>
 
           {/* 🏠 物件情報 */}
           <div className="border-t pt-6">
