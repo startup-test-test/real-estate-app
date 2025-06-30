@@ -1384,10 +1384,11 @@ const Simulator: React.FC = () => {
                 <div className="mb-6">
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white border border-gray-300">
-                    <thead className="bg-gray-50">
-                      <tr>
+                <div className="border border-gray-300 rounded-lg overflow-hidden">
+                  <div className="overflow-auto" style={{ maxHeight: '600px' }}>
+                    <table className="min-w-full bg-white">
+                      <thead className="bg-gray-50 sticky top-0 z-10">
+                        <tr>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">年次</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">満室想定収入</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">空室率</th>
@@ -1421,8 +1422,8 @@ const Simulator: React.FC = () => {
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </div>
-              </div>
             )}
           </div>
         )}
