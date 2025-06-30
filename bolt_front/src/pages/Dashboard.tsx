@@ -605,7 +605,7 @@ const Dashboard: React.FC = () => {
                       <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
                         {/* Primary Action - 結果表示 */}
                         <button 
-                          onClick={() => navigate(`/simulation-result/${sim.id}?scrollTo=results`)}
+                          onClick={() => navigate(`/simulator?view=${sim.id}#results`)}
                           className="group flex-2 flex items-center justify-center px-4 py-3 sm:py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-200 touch-manipulation"
                           title="シミュレーション結果を詳しく確認"
                           aria-label="シミュレーション結果を表示"

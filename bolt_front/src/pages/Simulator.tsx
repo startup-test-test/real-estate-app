@@ -268,15 +268,38 @@ const Simulator: React.FC = () => {
     }
   }, []);
 
-  // URLパラメータから編集IDを取得
+  // URLパラメータから編集IDまたは閲覧IDを取得
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const editId = searchParams.get('edit');
+    const viewId = searchParams.get('view');
+    
     if (editId) {
       setEditingId(editId);
       loadExistingData(editId);
+    } else if (viewId) {
+      setEditingId(viewId);
+      loadExistingData(viewId);
     }
   }, [location.search]);
+
+  // Hash-based scrolling to results section
+  useEffect(() => {
+    // Check if URL contains #results hash
+    if (location.hash === '#results' && simulationResults && resultsRef.current) {
+      // Delay scroll to ensure results are fully rendered
+      const timer = setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash, simulationResults]);
 
   // 既存データを読み込む
   const loadExistingData = async (simulationId: string) => {
