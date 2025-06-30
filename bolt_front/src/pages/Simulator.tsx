@@ -675,51 +675,6 @@ const Simulator: React.FC = () => {
             />
           </div>
 
-          {/* 📌 物件ブックマーク */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📌 物件ブックマーク</h3>
-            <div className="space-y-4">
-              {/* 物件URL */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  物件URL（SUUMO、athome等）
-                </label>
-                <input
-                  type="url"
-                  value={inputs.propertyUrl || ''}
-                  onChange={(e) => handleInputChange('propertyUrl', e.target.value)}
-                  placeholder="https://suumo.jp/..."
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
-                    urlError 
-                      ? 'border-red-300 focus:ring-red-500' 
-                      : 'border-gray-300 focus:ring-indigo-500'
-                  }`}
-                />
-                {urlError && (
-                  <p className="text-xs text-red-600 mt-1">
-                    ❌ {urlError}
-                  </p>
-                )}
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 SUUMO、athome、HOME'S等の物件詳細ページのURLを貼り付けてください
-                </p>
-              </div>
-
-              {/* メモ */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  メモ（任意）
-                </label>
-                <textarea
-                  value={inputs.propertyMemo || ''}
-                  onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
-                  placeholder="物件の特徴、気になるポイント、検討事項など..."
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-vertical"
-                />
-              </div>
-            </div>
-          </div>
 
           {/* 🏠 物件情報 */}
           <div className="border-t pt-6">
@@ -1167,6 +1122,52 @@ const Simulator: React.FC = () => {
                   <option value={39}>39年（SRC造）</option>
                   <option value={47}>47年（RC造）</option>
                 </select>
+              </div>
+            </div>
+          </div>
+
+          {/* 📌 物件ブックマーク */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">📌 物件ブックマーク</h3>
+            <div className="space-y-4">
+              {/* 物件URL */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  物件URL（SUUMO、athome等）
+                </label>
+                <input
+                  type="url"
+                  value={inputs.propertyUrl || ''}
+                  onChange={(e) => handleInputChange('propertyUrl', e.target.value)}
+                  placeholder="https://suumo.jp/..."
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                    urlError 
+                      ? 'border-red-300 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-indigo-500'
+                  }`}
+                />
+                {urlError && (
+                  <p className="text-xs text-red-600 mt-1">
+                    ❌ {urlError}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 SUUMO、athome、HOME'S等の物件詳細ページのURLを貼り付けてください
+                </p>
+              </div>
+
+              {/* メモ */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  メモ（任意）
+                </label>
+                <input
+                  type="text"
+                  value={inputs.propertyMemo || ''}
+                  onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
+                  placeholder="物件の特徴、気になるポイント、検討事項など..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
               </div>
             </div>
           </div>
