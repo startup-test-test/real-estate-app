@@ -231,7 +231,7 @@ const Simulator: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [inputs, setInputs] = useState(sampleProperties.default.data);
+  const [inputs, setInputs] = useState<any>(sampleProperties.default.data);
 
 
 
@@ -363,17 +363,25 @@ const Simulator: React.FC = () => {
         exit_cap_rate: inputs.exitCapRate,
         market_value: inputs.marketValue,
         expected_sale_price: inputs.marketValue,
-        ownership_type: inputs.ownershipType,
-        effective_tax_rate: inputs.effectiveTaxRate,
-        major_repair_cycle: inputs.majorRepairCycle,
-        major_repair_cost: inputs.majorRepairCost,
-        building_price: inputs.buildingPriceForDepreciation,
-        depreciation_years: inputs.depreciationYears
+        ownership_type: inputs.ownershipType || '個人',
+        effective_tax_rate: inputs.effectiveTaxRate || 20,
+        major_repair_cycle: inputs.majorRepairCycle || 10,
+        major_repair_cost: inputs.majorRepairCost || 200,
+        building_price: inputs.buildingPriceForDepreciation || inputs.purchasePrice * 0.7,
+        depreciation_years: inputs.depreciationYears || 27
       };
       
       console.log('FAST API送信データ:', apiData);
       console.log('ローン期間:', apiData.loan_years, '年');
       console.log('保有年数:', apiData.holding_years, '年');
+      console.log('新機能フィールド確認:', {
+        ownership_type: apiData.ownership_type,
+        effective_tax_rate: apiData.effective_tax_rate,
+        major_repair_cycle: apiData.major_repair_cycle,
+        major_repair_cost: apiData.major_repair_cost,
+        building_price: apiData.building_price,
+        depreciation_years: apiData.depreciation_years
+      });
       
       // テスト: 最大期間でのリクエスト
       if (apiData.holding_years > 10) {
@@ -492,6 +500,7 @@ const Simulator: React.FC = () => {
       
     } catch (error) {
       console.error('シミュレーションエラー:', error);
+      console.error('エラースタック:', error instanceof Error ? error.stack : 'スタックなし');
       let errorMessage = '不明なエラー';
       
       if (error instanceof Error) {
@@ -977,7 +986,7 @@ const Simulator: React.FC = () => {
                   <Tooltip content={tooltips.ownershipType} />
                 </div>
                 <select
-                  value={inputs.ownershipType}
+                  value={inputs.ownershipType || '個人'}
                   onChange={(e) => handleInputChange('ownershipType', e.target.value)}
                   className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                 >
@@ -994,7 +1003,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.1"
-                    value={inputs.effectiveTaxRate}
+                    value={inputs.effectiveTaxRate || 20}
                     onChange={(e) => handleInputChange('effectiveTaxRate', Number(e.target.value))}
                     className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
@@ -1021,7 +1030,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     min="1"
                     max="35"
-                    value={inputs.majorRepairCycle}
+                    value={inputs.majorRepairCycle || 10}
                     onChange={(e) => handleInputChange('majorRepairCycle', Number(e.target.value))}
                     className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
@@ -1037,7 +1046,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="10"
-                    value={inputs.majorRepairCost}
+                    value={inputs.majorRepairCost || 200}
                     onChange={(e) => handleInputChange('majorRepairCost', Number(e.target.value))}
                     className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1060,7 +1069,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="100"
-                    value={inputs.buildingPriceForDepreciation}
+                    value={inputs.buildingPriceForDepreciation || 3000}
                     onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
                     className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1073,7 +1082,7 @@ const Simulator: React.FC = () => {
                   <Tooltip content={tooltips.depreciationYears} />
                 </div>
                 <select
-                  value={inputs.depreciationYears}
+                  value={inputs.depreciationYears || 27}
                   onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
                   className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                 >
