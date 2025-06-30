@@ -1280,7 +1280,7 @@ const Simulator: React.FC = () => {
                 <MetricCard
                   title="NOI"
                   subtitle="純営業収益"
-                  value={simulationResults.results['NOI（円）']}
+                  value={simulationResults.results['NOI（円）'] || 0}
                   unit="円"
                   format="currency"
                   thresholds={{
@@ -1295,7 +1295,7 @@ const Simulator: React.FC = () => {
                 <MetricCard
                   title="ROI"
                   subtitle="投資収益率"
-                  value={simulationResults.results['ROI（%）']}
+                  value={simulationResults.results['ROI（%）'] || 0}
                   unit="%"
                   format="percentage"
                   thresholds={{
@@ -1310,7 +1310,7 @@ const Simulator: React.FC = () => {
                 <MetricCard
                   title="LTV"
                   subtitle="融資比率"
-                  value={simulationResults.results['LTV（%）']}
+                  value={simulationResults.results['LTV（%）'] || 0}
                   unit="%"
                   format="percentage"
                   thresholds={{
@@ -1330,7 +1330,7 @@ const Simulator: React.FC = () => {
                 {/* 想定売却価格 */}
                 <MetricCard
                   title="想定売却価格"
-                  value={simulationResults.results['想定売却価格（万円）']}
+                  value={simulationResults.results['想定売却価格（万円）'] || 0}
                   unit="万円"
                   format="number"
                   description="保有期間終了時の想定売却価格。"
@@ -1339,7 +1339,7 @@ const Simulator: React.FC = () => {
                 {/* 残債 */}
                 <MetricCard
                   title="残債"
-                  value={simulationResults.results['残債（万円）']}
+                  value={simulationResults.results['残債（万円）'] || 0}
                   unit="万円"
                   format="number"
                   description="売却時のローン残高。"
@@ -1348,7 +1348,7 @@ const Simulator: React.FC = () => {
                 {/* 売却コスト */}
                 <MetricCard
                   title="売却コスト"
-                  value={simulationResults.results['売却コスト（万円）']}
+                  value={simulationResults.results['売却コスト（万円）'] || 0}
                   unit="万円"
                   format="number"
                   description="売却時にかかる諸費用（仲介手数料等）。"
@@ -1357,7 +1357,7 @@ const Simulator: React.FC = () => {
                 {/* 売却益 */}
                 <MetricCard
                   title="売却益"
-                  value={simulationResults.results['売却益（万円）']}
+                  value={simulationResults.results['売却益（万円）'] || 0}
                   unit="万円"
                   format="number"
                   thresholds={{
@@ -1410,10 +1410,10 @@ const Simulator: React.FC = () => {
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['空室率（%）']}%</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['実効収入'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['経費'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['減価償却'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['税金'].toLocaleString()}円</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['減価償却'] || 0).toLocaleString()}円</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['税金'] || 0).toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['大規模修繕'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['初期リフォーム'].toLocaleString()}円</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['初期リフォーム'] || 0).toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['ローン返済'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['営業CF'].toLocaleString()}円</td>
                           <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['累計CF'].toLocaleString()}円</td>
