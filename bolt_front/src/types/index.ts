@@ -68,6 +68,18 @@ export interface SimulationInputData {
   holding_years: number;
   exit_cap_rate: number;
   market_value: number;
+  
+  // 税金条件
+  ownership_type: '個人' | '法人';
+  effective_tax_rate: number;
+  
+  // 大規模修繕設定
+  major_repair_cycle: number;
+  major_repair_cost: number;
+  
+  // 減価償却設定
+  building_price_for_depreciation: number;
+  depreciation_years: number;
 }
 
 // シミュレーション結果データ型

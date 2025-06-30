@@ -51,6 +51,12 @@ const sampleProperties = {
       loanType: '元利均等',
       holdingYears: 10,
       exitCapRate: 5.0,
+      ownershipType: '個人',
+      effectiveTaxRate: 20,
+      majorRepairCycle: 10,
+      majorRepairCost: 200,
+      buildingPriceForDepreciation: 3000,
+      depreciationYears: 27,
     }
   },
   shibuya: {
@@ -77,6 +83,12 @@ const sampleProperties = {
       loanType: '元利均等',
       holdingYears: 15,
       exitCapRate: 4.5,
+      ownershipType: '個人',
+      effectiveTaxRate: 20,
+      majorRepairCycle: 10,
+      majorRepairCost: 200,
+      buildingPriceForDepreciation: 2500,
+      depreciationYears: 27,
     }
   },
   setagaya: {
@@ -103,6 +115,12 @@ const sampleProperties = {
       loanType: '元利均等',
       holdingYears: 12,
       exitCapRate: 5.2,
+      ownershipType: '法人',
+      effectiveTaxRate: 25,
+      majorRepairCycle: 12,
+      majorRepairCost: 300,
+      buildingPriceForDepreciation: 4500,
+      depreciationYears: 39,
     }
   },
   osaka: {
@@ -129,6 +147,12 @@ const sampleProperties = {
       loanType: '元利均等',
       holdingYears: 10,
       exitCapRate: 5.5,
+      ownershipType: '個人',
+      effectiveTaxRate: 22,
+      majorRepairCycle: 10,
+      majorRepairCost: 250,
+      buildingPriceForDepreciation: 3000,
+      depreciationYears: 34,
     }
   },
   regional: {
@@ -155,6 +179,12 @@ const sampleProperties = {
       loanType: '元利均等',
       holdingYears: 8,
       exitCapRate: 6.5,
+      ownershipType: '法人',
+      effectiveTaxRate: 23,
+      majorRepairCycle: 15,
+      majorRepairCost: 500,
+      buildingPriceForDepreciation: 3500,
+      depreciationYears: 22,
     }
   }
 };
@@ -179,7 +209,13 @@ const tooltips = {
   loanYears: 'ローンの返済期間です。一般的に15-35年で設定します。期間が長いほど月々の返済額は少なくなります。',
   loanType: '元利均等は毎月の返済額が一定、元金均等は毎月の元金返済額が一定の方式です。',
   holdingYears: '物件を保有する予定年数です。売却タイミングの目安として設定してください。',
-  exitCapRate: '売却時の利回りです。NOI（純収益）÷売却価格で算出されます。市場環境を考慮して設定してください。'
+  exitCapRate: '売却時の利回りです。NOI（純収益）÷売却価格で算出されます。市場環境を考慮して設定してください。',
+  ownershipType: '物件の所有形態です。個人所有と法人所有では税率や税務処理が異なります。',
+  effectiveTaxRate: '実効税率（所得税＋住民税）です。個人：20-30%、法人：15-25%程度が目安です。',
+  majorRepairCycle: '大規模修繕を行う周期です。一般的に10-15年に1回実施します。',
+  majorRepairCost: '1回あたりの大規模修繕費用です。外壁塗装、屋根修理などの費用を見込んでください。',
+  buildingPriceForDepreciation: '減価償却の対象となる建物価格です。購入価格から土地価格を除いた金額を設定してください。',
+  depreciationYears: '減価償却の償却期間です。構造により異なります（木造22年、鉄骨造34年、RC造47年など）。'
 };
 
 const Simulator: React.FC = () => {
@@ -255,7 +291,13 @@ const Simulator: React.FC = () => {
           loanYears: simData.loanTerm || 35,
           loanType: simData.loanType || '元利均等',
           holdingYears: simData.holdingYears || 10,
-          exitCapRate: simData.exitCapRate || 6.00
+          exitCapRate: simData.exitCapRate || 6.00,
+          ownershipType: simData.ownershipType || '個人',
+          effectiveTaxRate: simData.effectiveTaxRate || 20,
+          majorRepairCycle: simData.majorRepairCycle || 10,
+          majorRepairCost: simData.majorRepairCost || 200,
+          buildingPriceForDepreciation: simData.buildingPriceForDepreciation || 3000,
+          depreciationYears: simData.depreciationYears || 27
         });
         
         // 既存の結果も表示
@@ -319,7 +361,14 @@ const Simulator: React.FC = () => {
         loan_years: inputs.loanYears,
         holding_years: inputs.holdingYears,
         exit_cap_rate: inputs.exitCapRate,
-        market_value: inputs.marketValue
+        market_value: inputs.marketValue,
+        expected_sale_price: inputs.marketValue,
+        ownership_type: inputs.ownershipType,
+        effective_tax_rate: inputs.effectiveTaxRate,
+        major_repair_cycle: inputs.majorRepairCycle,
+        major_repair_cost: inputs.majorRepairCost,
+        building_price: inputs.buildingPriceForDepreciation,
+        depreciation_years: inputs.depreciationYears
       };
       
       console.log('FAST API送信データ:', apiData);
@@ -398,7 +447,13 @@ const Simulator: React.FC = () => {
                 loanAmount: apiData.loan_amount,
                 holdingYears: apiData.holding_years,
                 vacancyRate: apiData.vacancy_rate,
-                propertyTax: apiData.property_tax
+                propertyTax: apiData.property_tax,
+                ownershipType: apiData.ownership_type,
+                effectiveTaxRate: apiData.effective_tax_rate,
+                majorRepairCycle: apiData.major_repair_cycle,
+                majorRepairCost: apiData.major_repair_cost,
+                buildingPriceForDepreciation: apiData.building_price,
+                depreciationYears: apiData.depreciation_years
               },
               // results (JSONB) - 計算結果
               results: {
@@ -908,6 +963,126 @@ const Simulator: React.FC = () => {
                   />
                   <span className="text-sm text-gray-500">%</span>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 📊 税金条件 */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 税金条件</h3>
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">所有形態</label>
+                  <Tooltip content={tooltips.ownershipType} />
+                </div>
+                <select
+                  value={inputs.ownershipType}
+                  onChange={(e) => handleInputChange('ownershipType', e.target.value)}
+                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                >
+                  <option value="個人">個人</option>
+                  <option value="法人">法人</option>
+                </select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">実効税率</label>
+                  <Tooltip content={tooltips.effectiveTaxRate} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={inputs.effectiveTaxRate}
+                    onChange={(e) => handleInputChange('effectiveTaxRate', Number(e.target.value))}
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
+                  />
+                  <span className="text-sm text-gray-500">%</span>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
+                💡 実効税率の目安: 個人(20-30%) / 法人(15-25%)
+              </div>
+            </div>
+          </div>
+
+          {/* 🔧 大規模修繕設定 */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">🔧 大規模修繕設定</h3>
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">修繕周期</label>
+                  <Tooltip content={tooltips.majorRepairCycle} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    min="1"
+                    max="35"
+                    value={inputs.majorRepairCycle}
+                    onChange={(e) => handleInputChange('majorRepairCycle', Number(e.target.value))}
+                    className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
+                  />
+                  <span className="text-sm text-gray-500">年</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">修繕費用</label>
+                  <Tooltip content={tooltips.majorRepairCost} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="10"
+                    value={inputs.majorRepairCost}
+                    onChange={(e) => handleInputChange('majorRepairCost', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 📉 減価償却設定 */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">📉 減価償却設定</h3>
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">建物価格</label>
+                  <Tooltip content={tooltips.buildingPriceForDepreciation} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="100"
+                    value={inputs.buildingPriceForDepreciation}
+                    onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
+                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500">万円</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <label className="text-sm font-medium text-gray-700">償却年数</label>
+                  <Tooltip content={tooltips.depreciationYears} />
+                </div>
+                <select
+                  value={inputs.depreciationYears}
+                  onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
+                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
+                >
+                  <option value={22}>22年（木造）</option>
+                  <option value={27}>27年（軽量鉄骨）</option>
+                  <option value={34}>34年（重量鉄骨）</option>
+                  <option value={39}>39年（SRC造）</option>
+                  <option value={47}>47年（RC造）</option>
+                </select>
               </div>
             </div>
           </div>
