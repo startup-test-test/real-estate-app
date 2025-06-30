@@ -187,6 +187,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     cum = 0
     cf_data = []
     
+    # 税金計算用パラメータ
+    effective_tax_rate = property_data.get('effective_tax_rate', 20)
+    building_price = property_data.get('building_price', 2000)
+    depreciation_years = property_data.get('depreciation_years', 27)
+    
     for i in years_list:
         adjusted_monthly_rent = monthly_rent * (1 - (i - 1) * rent_decline / 100)
         full_annual_rent = adjusted_monthly_rent * 12
@@ -194,11 +199,31 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax
         
-        repair = 0
-        if i % 10 == 0:  # 10年ごとに大規模修繕
-            repair = building_area * 10000
+        # 大規模修繕（カスタマイズ対応）
+        major_repair_cycle = property_data.get('major_repair_cycle', 10)
+        major_repair_cost = property_data.get('major_repair_cost', 200)
         
-        cf_i = eff - annual_expenses - annual_loan - repair
+        repair = 0
+        if i % major_repair_cycle == 0:  # ユーザー指定周期で大規模修繕
+            repair = major_repair_cost * 10000
+        
+        # 初期リフォーム費用（1年目のみ）
+        initial_renovation = 0
+        if i == 1:
+            renovation_cost = property_data.get('renovation_cost', 0)
+            initial_renovation = renovation_cost * 10000
+        
+        # 減価償却費
+        depreciation = calculate_depreciation(building_price, depreciation_years, i)
+        
+        # 不動産所得（税金計算用）
+        real_estate_income = eff - annual_expenses - depreciation
+        
+        # 税金計算
+        tax = calculate_tax(real_estate_income, effective_tax_rate)
+        
+        # キャッシュフロー（税引後）
+        cf_i = eff - annual_expenses - annual_loan - repair - initial_renovation - tax
         cum += cf_i
         
         cf_data.append({
@@ -207,13 +232,29 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "空室率（%）": vacancy_rate,
             "実効収入": int(eff),
             "経費": int(annual_expenses),
+            "減価償却": int(depreciation),
+            "税金": int(tax),
             "大規模修繕": int(repair),
+            "初期リフォーム": int(initial_renovation),
             "ローン返済": int(annual_loan),
             "営業CF": int(cf_i),
             "累計CF": int(cum)
         })
     
     return cf_data
+
+
+def calculate_depreciation(building_price: float, depreciation_years: int, year: int) -> float:
+    """減価償却費を計算（定額法）"""
+    annual_depreciation = building_price * 10000 / depreciation_years
+    return annual_depreciation if year <= depreciation_years else 0
+
+
+def calculate_tax(income: float, effective_tax_rate: float) -> float:
+    """実効税率による税金計算（シンプル方式）"""
+    if income <= 0:
+        return 0
+    return income * (effective_tax_rate / 100)
 
 
 def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:

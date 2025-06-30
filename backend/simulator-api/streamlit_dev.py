@@ -72,6 +72,19 @@ def basic_simulation_page():
         st.subheader("売却設定")
         holding_years = st.slider("保有年数（年）", 1, 35, 35)
         exit_cap_rate = st.slider("売却時利回り（%）", 3.0, 10.0, 5.0, step=0.1)
+        
+        st.subheader("税金条件")
+        ownership_type = st.selectbox("所有形態", ["個人", "法人"])
+        effective_tax_rate = st.number_input("実効税率（%）", value=20, min_value=0, max_value=50, step=1)
+        st.caption("💡 実効税率の目安: 個人(20-30%) / 法人(15-25%)")
+        
+        st.subheader("大規模修繕設定")
+        major_repair_cycle = st.number_input("大規模修繕周期（年）", value=10, min_value=1, max_value=35, step=1)
+        major_repair_cost = st.number_input("大規模修繕費用（万円）", value=200, step=10)
+        
+        st.subheader("減価償却設定")
+        building_price = st.number_input("建物価格（万円）", value=2000, step=100)
+        depreciation_years = st.selectbox("償却年数（年）", [22, 27, 34, 39, 47], index=1)
     
     # シミュレーション実行ボタン
     if st.button("🚀 シミュレーション実行", type="primary"):
@@ -95,7 +108,13 @@ def basic_simulation_page():
             'building_area': building_area,
             'market_value': market_value,
             'holding_years': holding_years,
-            'rent_decline': rent_decline
+            'rent_decline': rent_decline,
+            'ownership_type': ownership_type,
+            'effective_tax_rate': effective_tax_rate,
+            'major_repair_cycle': major_repair_cycle,
+            'major_repair_cost': major_repair_cost,
+            'building_price': building_price,
+            'depreciation_years': depreciation_years
         }
         
         # シミュレーション実行
