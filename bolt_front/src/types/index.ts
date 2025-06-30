@@ -80,6 +80,10 @@ export interface SimulationInputData {
   // 減価償却設定
   building_price_for_depreciation: number;
   depreciation_years: number;
+  
+  // 物件ブックマーク
+  property_url?: string;
+  property_memo?: string;
 }
 
 // シミュレーション結果データ型

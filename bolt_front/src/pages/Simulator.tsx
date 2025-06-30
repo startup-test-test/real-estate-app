@@ -57,6 +57,8 @@ const sampleProperties = {
       majorRepairCost: 200,
       buildingPriceForDepreciation: 3000,
       depreciationYears: 27,
+      propertyUrl: '',
+      propertyMemo: '',
     }
   },
   shibuya: {
@@ -89,6 +91,8 @@ const sampleProperties = {
       majorRepairCost: 200,
       buildingPriceForDepreciation: 2500,
       depreciationYears: 27,
+      propertyUrl: 'https://suumo.jp/example-shibuya',
+      propertyMemo: '渋谷駅徒歩圏内の好立地物件。単身者需要が見込める。',
     }
   },
   setagaya: {
@@ -121,6 +125,8 @@ const sampleProperties = {
       majorRepairCost: 300,
       buildingPriceForDepreciation: 4500,
       depreciationYears: 39,
+      propertyUrl: 'https://athome.jp/example-setagaya',
+      propertyMemo: 'ファミリー層に人気のエリア。教育環境が充実。',
     }
   },
   osaka: {
@@ -153,6 +159,8 @@ const sampleProperties = {
       majorRepairCost: 250,
       buildingPriceForDepreciation: 3000,
       depreciationYears: 34,
+      propertyUrl: 'https://homes.co.jp/example-osaka',
+      propertyMemo: '大阪市中央区の商業地域。オフィス街に近く需要安定。',
     }
   },
   regional: {
@@ -185,6 +193,8 @@ const sampleProperties = {
       majorRepairCost: 500,
       buildingPriceForDepreciation: 3500,
       depreciationYears: 22,
+      propertyUrl: 'https://suumo.jp/example-regional',
+      propertyMemo: '一棟アパート。利回り重視の投資に適している。',
     }
   }
 };
@@ -297,7 +307,9 @@ const Simulator: React.FC = () => {
           majorRepairCycle: simData.majorRepairCycle || 10,
           majorRepairCost: simData.majorRepairCost || 200,
           buildingPriceForDepreciation: simData.buildingPriceForDepreciation || 3000,
-          depreciationYears: simData.depreciationYears || 27
+          depreciationYears: simData.depreciationYears || 27,
+          propertyUrl: simData.propertyUrl || '',
+          propertyMemo: simData.propertyMemo || ''
         });
         
         // 既存の結果も表示
@@ -330,6 +342,20 @@ const Simulator: React.FC = () => {
       [field]: value
     }));
   };
+
+  // URL バリデーション
+  const validateUrl = (url: string): string | null => {
+    if (!url) return null;
+    
+    try {
+      new URL(url);
+      return null; // エラーなし
+    } catch {
+      return 'URLの形式が正しくありません';
+    }
+  };
+
+  const urlError = inputs.propertyUrl ? validateUrl(inputs.propertyUrl) : null;
 
   const handleSimulation = async () => {
     setIsSimulating(true);
@@ -367,7 +393,9 @@ const Simulator: React.FC = () => {
         major_repair_cycle: inputs.majorRepairCycle || 10,
         major_repair_cost: inputs.majorRepairCost || 200,
         building_price: inputs.buildingPriceForDepreciation || inputs.purchasePrice * 0.7,
-        depreciation_years: inputs.depreciationYears || 27
+        depreciation_years: inputs.depreciationYears || 27,
+        property_url: inputs.propertyUrl || '',
+        property_memo: inputs.propertyMemo || ''
       };
       
       console.log('FAST API送信データ:', apiData);
@@ -460,7 +488,9 @@ const Simulator: React.FC = () => {
                 majorRepairCycle: apiData.major_repair_cycle,
                 majorRepairCost: apiData.major_repair_cost,
                 buildingPriceForDepreciation: apiData.building_price,
-                depreciationYears: apiData.depreciation_years
+                depreciationYears: apiData.depreciation_years,
+                propertyUrl: apiData.property_url,
+                propertyMemo: apiData.property_memo
               },
               // results (JSONB) - 計算結果
               results: {
@@ -643,6 +673,52 @@ const Simulator: React.FC = () => {
               placeholder="物件名を入力してください"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
+          </div>
+
+          {/* 📌 物件ブックマーク */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">📌 物件ブックマーク</h3>
+            <div className="space-y-4">
+              {/* 物件URL */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  物件URL（SUUMO、athome等）
+                </label>
+                <input
+                  type="url"
+                  value={inputs.propertyUrl || ''}
+                  onChange={(e) => handleInputChange('propertyUrl', e.target.value)}
+                  placeholder="https://suumo.jp/..."
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
+                    urlError 
+                      ? 'border-red-300 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-indigo-500'
+                  }`}
+                />
+                {urlError && (
+                  <p className="text-xs text-red-600 mt-1">
+                    ❌ {urlError}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 SUUMO、athome、HOME'S等の物件詳細ページのURLを貼り付けてください
+                </p>
+              </div>
+
+              {/* メモ */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  メモ（任意）
+                </label>
+                <textarea
+                  value={inputs.propertyMemo || ''}
+                  onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
+                  placeholder="物件の特徴、気になるポイント、検討事項など..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-vertical"
+                />
+              </div>
+            </div>
           </div>
 
           {/* 🏠 物件情報 */}
