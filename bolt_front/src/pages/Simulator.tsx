@@ -346,7 +346,6 @@ const Simulator: React.FC = () => {
         building_area: inputs.buildingArea,
         road_price: inputs.roadPrice,
         purchase_price: inputs.purchasePrice,
-        building_price: inputs.purchasePrice * 0.7, // 建物価格は購入価格の70%と仮定
         other_costs: inputs.otherCosts,
         renovation_cost: inputs.renovationCost,
         monthly_rent: inputs.monthlyRent,
@@ -1424,6 +1423,7 @@ const Simulator: React.FC = () => {
                   </table>
                   </div>
                 </div>
+              </div>
             )}
           </div>
         )}
