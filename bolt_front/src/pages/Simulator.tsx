@@ -4,7 +4,9 @@ import {
   CheckCircle,
   AlertCircle,
   Download,
-  Share2
+  Share2,
+  Users,
+  MessageCircle
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
@@ -17,7 +19,10 @@ import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
 import { ShareButton } from '../components/ShareButton';
-import { SimulationResultData, CashFlowData, SimulationInputData } from '../types';
+import InviteModal from '../components/InviteModal';
+import CommentSection from '../components/CommentSection';
+import { SimulationResultData, CashFlowData, SimulationInputData, PropertyShare } from '../types';
+import { usePropertyShare } from '../hooks/usePropertyShare';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -254,6 +259,10 @@ const Simulator: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
+  
+  const { createShare } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState<any>(sampleProperties.default.data);
@@ -1329,7 +1338,19 @@ const Simulator: React.FC = () => {
                   </span>
                 )}
                 
-                {/* 共有ボタン */}
+                {/* 共有・招待ボタン */}
+                {user && (editingId || saveMessage?.includes('✅')) && (
+                  <button
+                    onClick={() => setShowInviteModal(true)}
+                    className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden shadow-md"
+                    title="家族や専門家を招待してコメントで相談"
+                  >
+                    <Users size={18} />
+                    <span>共有・招待</span>
+                  </button>
+                )}
+                
+                {/* 既存の共有ボタン */}
                 {user && (editingId || saveMessage?.includes('✅')) && (
                   <ShareButton
                     propertyId={editingId || 'temp-id'}
@@ -1630,12 +1651,58 @@ const Simulator: React.FC = () => {
           </div>
         )}
 
+        {/* 招待者からのコメント */}
+        {simulationResults && (
+          <div className="mt-6 bg-white rounded-lg p-6 border-l-4 border-blue-500">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
+                招待者からのコメント
+                {!currentShare && (
+                  <span className="ml-2 text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                    デモ
+                  </span>
+                )}
+              </h3>
+              <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
+                投資判断の参考にご活用ください
+              </span>
+            </div>
+            <CommentSection
+              shareId={currentShare?.id || `demo-${editingId || 'temp'}`}
+              canComment={false}
+              showOnlyComments={true}
+              maxDisplayCount={3}
+            />
+            {!currentShare && (
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-700">
+                  💡 実際に専門家を招待するには上の「共有・招待」ボタンをクリックしてください
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* チュートリアル */}
         <Tutorial 
           isOpen={showTutorial} 
           onClose={() => setShowTutorial(false)} 
         />
+        
+        {/* 招待モーダル */}
+        {showInviteModal && simulationResults && (
+          <InviteModal
+            propertyId={editingId || 'temp-id'}
+            propertyName={inputs.propertyName || '物件'}
+            share={currentShare || undefined}
+            onClose={() => setShowInviteModal(false)}
+            onShareCreated={(share) => {
+              setCurrentShare(share);
+              setShowInviteModal(false);
+            }}
+          />
+        )}
       </div>
     </div>
   );

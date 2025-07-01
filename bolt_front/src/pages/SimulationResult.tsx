@@ -4,7 +4,9 @@ import {
   ArrowLeft, 
   Edit,
   AlertCircle,
-  Download
+  Download,
+  Users,
+  MessageCircle
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
@@ -12,6 +14,10 @@ import CashFlowChart from '../components/CashFlowChart';
 import MetricCard from '../components/MetricCard';
 import Breadcrumb from '../components/Breadcrumb';
 import { ShareButton } from '../components/ShareButton';
+import InviteModal from '../components/InviteModal';
+import CommentSection from '../components/CommentSection';
+import { PropertyShare } from '../types';
+import { usePropertyShare } from '../hooks/usePropertyShare';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -19,6 +25,11 @@ const SimulationResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // URLクエリパラメータからviewも取得
+  const searchParams = new URLSearchParams(location.search);
+  const viewId = searchParams.get('view');
+  const actualId = id || viewId;
   const { user } = useAuthContext();
   const { getSimulations } = useSupabaseData();
   
@@ -26,10 +37,13 @@ const SimulationResult: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isScrollHighlighted, setIsScrollHighlighted] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
+  const { fetchShare, fetchShareByPropertyId } = usePropertyShare();
 
   useEffect(() => {
     const loadSimulation = async () => {
-      if (!user || !id) {
+      if (!user || !actualId) {
         setError('ユーザー認証またはシミュレーションIDが無効です');
         setLoading(false);
         return;
@@ -43,13 +57,31 @@ const SimulationResult: React.FC = () => {
           return;
         }
 
-        const foundSimulation = data?.find((sim: any) => sim.id === id);
+        const foundSimulation = data?.find((sim: any) => sim.id === actualId);
         if (!foundSimulation) {
           setError('指定されたシミュレーションが見つかりません');
           return;
         }
 
         setSimulation(foundSimulation);
+        
+        // シミュレーション読み込み後、関連する共有情報も取得
+        // シミュレーションIDをpropertyIdとして使用（一時的な解決策）
+        const propertyId = foundSimulation?.property_id || foundSimulation?.id;
+        if (propertyId) {
+          try {
+            console.log('Looking for share with property_id:', propertyId);
+            const share = await fetchShareByPropertyId(propertyId);
+            if (share) {
+              console.log('Found existing share for property:', share);
+              setCurrentShare(share);
+            } else {
+              console.log('No existing share found for property:', propertyId);
+            }
+          } catch (shareError) {
+            console.log('Error fetching share:', shareError);
+          }
+        }
       } catch (err: any) {
         setError('データの読み込み中にエラーが発生しました');
       } finally {
@@ -58,7 +90,7 @@ const SimulationResult: React.FC = () => {
     };
 
     loadSimulation();
-  }, [id, user, getSimulations]);
+  }, [actualId, user, getSimulations, fetchShareByPropertyId]);
 
   // スクロール機能
   useEffect(() => {
@@ -197,41 +229,47 @@ const SimulationResult: React.FC = () => {
               </p>
             </div>
             
-            <div className="flex space-x-3">
-              {/* 共有ボタン */}
-              {simulation && (
-                <ShareButton
-                  propertyId={id!}
-                  simulationData={results}
-                  propertyData={simulationData}
-                  size="medium"
-                />
-              )}
-              
-              {/* PDF保存ボタン */}
+            <div className="flex flex-wrap gap-3">
+              {/* 共有・招待ボタン（最も目立つ位置に配置） */}
               <button
-                onClick={handleSavePDF}
-                className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                onClick={() => setShowInviteModal(true)}
+                className="flex items-center px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 shadow-lg transition-all hover:shadow-xl"
               >
-                <Download className="h-4 w-4 mr-2" />
-                PDF保存
+                <Users className="h-5 w-5 mr-2" />
+                <span className="font-medium">共有・招待</span>
               </button>
               
-              <button
-                onClick={() => navigate(`/simulator?edit=${id}`)}
-                className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                編集
-              </button>
+              {/* メインアクション */}
+              <div className="flex space-x-3">
+                
+                {/* PDF保存ボタン */}
+                <button
+                  onClick={handleSavePDF}
+                  className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  PDF保存
+                </button>
+              </div>
               
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                マイページに戻る
-              </button>
+              {/* サブアクション */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => navigate(`/simulator?edit=${id}`)}
+                  className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  編集
+                </button>
+                
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  戻る
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -278,6 +316,55 @@ const SimulationResult: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* Comments Section - 招待者からのコメント */}
+        {/* デバッグ用の情報表示 */}
+        <div className="bg-yellow-50 p-3 mb-3 rounded-lg border border-yellow-200">
+          <p className="text-sm text-yellow-800">
+            <strong>Debug Info:</strong><br/>
+            • currentShare = {currentShare ? 'EXISTS' : 'NULL'}<br/>
+            • currentShare.id = {currentShare?.id || 'N/A'}<br/>
+            • simulation exists = {simulation ? 'YES' : 'NO'}<br/>
+            • simulation.id = {simulation?.id || 'N/A'}<br/>
+            • simulation.property_id = {simulation?.property_id || 'N/A'}<br/>
+            • URL param id = {id || 'N/A'}<br/>
+            • URL query view = {viewId || 'N/A'}<br/>
+            • actualId = {actualId || 'N/A'}<br/>
+            • loading = {loading ? 'TRUE' : 'FALSE'}<br/>
+            • error = {error || 'NONE'}
+          </p>
+        </div>
+        
+        {/* デモ用：常にコメントセクションを表示 */}
+        <div className="bg-white rounded-lg p-6 mb-6 border-l-4 border-blue-500">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+              <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
+              招待者からのコメント
+              {!currentShare && (
+                <span className="ml-2 text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                  デモ
+                </span>
+              )}
+            </h3>
+            <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
+              投資判断の参考にご活用ください
+            </span>
+          </div>
+          <CommentSection
+            shareId={currentShare?.id || `demo-${simulation?.id || actualId}`}
+            canComment={false}
+            showOnlyComments={true}
+            maxDisplayCount={3}
+          />
+          {!currentShare && (
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-700">
+                💡 実際に専門家を招待するには「共有・招待」ボタンをクリックしてください
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Key Metrics Grid */}
         <div 
@@ -414,8 +501,33 @@ const SimulationResult: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* コメントセクション */}
+        {currentShare && (
+          <div className="bg-white rounded-lg p-6">
+            <CommentSection
+              shareId={currentShare.id}
+              canComment={true}
+            />
+          </div>
+        )}
         </div>
       </div>
+
+      {/* 招待モーダル */}
+      {showInviteModal && simulation && (
+        <InviteModal
+          propertyId={simulation.property_id || actualId!}
+          propertyName={simulationData.propertyName}
+          share={currentShare || undefined}
+          onClose={() => setShowInviteModal(false)}
+          onShareCreated={(share) => {
+            console.log('Share created in SimulationResult:', share);
+            setCurrentShare(share);
+            setShowInviteModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };
