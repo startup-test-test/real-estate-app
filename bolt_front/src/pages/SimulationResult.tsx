@@ -77,9 +77,43 @@ const SimulationResult: React.FC = () => {
               setCurrentShare(share);
             } else {
               console.log('No existing share found for property:', propertyId);
+              
+              // 共有レコードが存在しない場合、オンデマンドで作成
+              // ただし、現在はモック認証なのでcreateShareは実行しない
+              // 代わりに、コメント表示のためのモック共有レコードを作成
+              const mockShare = {
+                id: `mock-share-${propertyId}`,
+                property_id: propertyId,
+                owner_id: user?.id || 'mock-user-id',
+                share_token: `mock-token-${propertyId}`,
+                title: foundSimulation?.simulation_name || '物件シミュレーション',
+                description: 'シミュレーション結果の共有',
+                settings: { allow_comments: true, allow_download: false },
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              };
+              
+              console.log('Created mock share for demo:', mockShare);
+              setCurrentShare(mockShare);
             }
           } catch (shareError) {
             console.log('Error fetching share:', shareError);
+            
+            // エラーの場合でもモック共有レコードを作成してコメント機能を有効化
+            const mockShare = {
+              id: `mock-share-error-${propertyId}`,
+              property_id: propertyId,
+              owner_id: user?.id || 'mock-user-id',
+              share_token: `mock-token-error-${propertyId}`,
+              title: foundSimulation?.simulation_name || '物件シミュレーション',
+              description: 'シミュレーション結果の共有（デモ）',
+              settings: { allow_comments: true, allow_download: false },
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            };
+            
+            console.log('Created mock share after error:', mockShare);
+            setCurrentShare(mockShare);
           }
         }
       } catch (err: any) {
