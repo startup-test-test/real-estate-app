@@ -15,6 +15,8 @@ import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
 import ShareView from './pages/ShareView';
 import CollaborationView from './pages/CollaborationView';
+import SimpleCollaboration from './pages/SimpleCollaboration';
+import TestInvitation from './pages/TestInvitation';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -50,6 +52,7 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/share/:shareId" element={<ShareView />} />
           <Route path="/collaboration/:token" element={<CollaborationView />} />
+          <Route path="/simple-collaboration/:token" element={<SimpleCollaboration />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
@@ -64,6 +67,7 @@ function App() {
             <Route path="simulation-result/:id" element={<SimulationResult />} />
             <Route path="market-analysis" element={<MarketAnalysis />} />
             <Route path="property-detail/:id" element={<PropertyDetail />} />
+            <Route path="test-invitation" element={<TestInvitation />} />
           </Route>
         </Routes>
       </Router>

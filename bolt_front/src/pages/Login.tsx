@@ -34,7 +34,37 @@ const Login: React.FC = () => {
         }
         
         console.log('サインアップ成功、自動ログイン');
-        navigate('/');
+        
+        // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
+        const searchParams = new URLSearchParams(window.location.search);
+        const urlReturnParam = searchParams.get('return');
+        const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
+        const returnUrl = urlReturnParam || localStorageReturnUrl;
+        console.log('📍 Checking return URL after signup:', {
+          urlReturnParam,
+          localStorageReturnUrl,
+          finalReturnUrl: returnUrl
+        });
+        
+        if (returnUrl) {
+          localStorage.removeItem('pendingReturnUrl');
+          const decodedUrl = decodeURIComponent(returnUrl);
+          
+          // ログインページへのリダイレクトループを防ぐ
+          if (decodedUrl.includes('/login')) {
+            console.log('🔄 Detected login loop, redirecting to home instead');
+            navigate('/');
+          } else {
+            console.log('🔄 Redirecting to saved URL:', decodedUrl);
+            // 認証状態の反映を待ってからリダイレクト
+            setTimeout(() => {
+              navigate(decodedUrl);
+            }, 200);
+          }
+        } else {
+          console.log('🏠 No return URL, redirecting to home');
+          navigate('/');
+        }
       } else {
         const { data, error } = await signIn(formData.email, formData.password);
         console.log('ログイン結果:', { data, error });
@@ -48,8 +78,38 @@ const Login: React.FC = () => {
             throw error;
           }
         }
-        console.log('ログイン成功、ダッシュボードへリダイレクト');
-        navigate('/');
+        console.log('ログイン成功');
+        
+        // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
+        const searchParams = new URLSearchParams(window.location.search);
+        const urlReturnParam = searchParams.get('return');
+        const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
+        const returnUrl = urlReturnParam || localStorageReturnUrl;
+        console.log('📍 Checking return URL after login:', {
+          urlReturnParam,
+          localStorageReturnUrl,
+          finalReturnUrl: returnUrl
+        });
+        
+        if (returnUrl) {
+          localStorage.removeItem('pendingReturnUrl');
+          const decodedUrl = decodeURIComponent(returnUrl);
+          
+          // ログインページへのリダイレクトループを防ぐ
+          if (decodedUrl.includes('/login')) {
+            console.log('🔄 Detected login loop, redirecting to home instead');
+            navigate('/');
+          } else {
+            console.log('🔄 Redirecting to saved URL:', decodedUrl);
+            // 認証状態の反映を待ってからリダイレクト
+            setTimeout(() => {
+              navigate(decodedUrl);
+            }, 200);
+          }
+        } else {
+          console.log('🏠 No return URL, redirecting to home');
+          navigate('/');
+        }
       }
     } catch (err: any) {
       console.error('認証エラー:', err);

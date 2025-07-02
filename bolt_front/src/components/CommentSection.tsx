@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Send, ThumbsUp, ThumbsDown, HelpCircle, Reply, Tag as TagIcon, MoreVertical } from 'lucide-react';
+import { MessageCircle, Send, ThumbsUp, ThumbsDown, HelpCircle, Reply, Tag as TagIcon, MoreVertical, Edit3, Trash2, Check, X } from 'lucide-react';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import { ShareComment } from '../types';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
@@ -22,9 +22,13 @@ export default function CommentSection({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
+  const [editTags, setEditTags] = useState<string[]>([]);
+  const [showDropdown, setShowDropdown] = useState<string | null>(null);
   
   const { user } = useSupabaseAuth();
-  const { fetchComments, postComment, toggleReaction, loading, error } = usePropertyShare();
+  const { fetchComments, postComment, toggleReaction, deleteComment, editComment, loading, error } = usePropertyShare();
 
   const availableTags = ['要検討', 'リスク', '承認', '質問', '提案'];
   const availableReactions = [
@@ -34,11 +38,22 @@ export default function CommentSection({
   ];
 
   useEffect(() => {
-    loadComments();
-    
-    // 常にモックコメントを追加（デモ用）
     if (shareId) {
-      setTimeout(() => {
+      loadComments();
+    }
+  }, [shareId]);
+
+  const loadComments = async () => {
+    try {
+      console.log('📥 Loading comments for shareId:', shareId);
+      const data = await fetchComments(shareId);
+      
+      if (data && data.length > 0) {
+        console.log('✅ Found real comments:', data.length);
+        setComments(data);
+      } else {
+        console.log('📭 No comments found, adding demo comments');
+        // データベースにコメントがない場合はデモコメントを表示
         const mockComments = [
           {
             id: 'mock-1',
@@ -89,58 +104,86 @@ export default function CommentSection({
             replies: []
           }
         ];
-        console.log('🎭 Adding mock comments for shareId:', shareId);
         setComments(mockComments);
-      }, 500);
+      }
+    } catch (error) {
+      console.error('❌ Failed to load comments:', error);
+      // エラー時もデモコメントを表示
+      setComments([]);
     }
-  }, [shareId]);
-
-  const loadComments = async () => {
-    const data = await fetchComments(shareId);
-    setComments(data);
   };
 
   const handlePostComment = async () => {
     if (!newComment.trim()) return;
 
-    console.log('Posting comment:', {
+    console.log('💬 Posting comment:', {
       shareId,
       content: newComment,
       tags: selectedTags,
       user: user?.id
     });
 
-    // 一時的にローカルでコメントを追加（デモ用）
-    const mockComment = {
-      id: `mock-${Date.now()}`,
-      share_id: shareId,
-      user_id: user?.id || 'anonymous',
-      content: newComment,
-      tags: selectedTags,
-      created_at: new Date().toISOString(),
-      user: {
-        id: user?.id || 'anonymous',
-        email: user?.email || 'ゲストユーザー',
-        full_name: user?.email || 'ゲストユーザー',
-        avatar_url: null
-      },
-      reactions: [],
-      replies: []
-    };
-
-    // ローカルステートに追加
-    setComments([...comments, mockComment]);
-    setNewComment('');
-    setSelectedTags([]);
-    
-    console.log('Mock comment added:', mockComment);
-    
-    // 実際のデータベース投稿も試行（エラーが出ても継続）
     try {
+      // 実際のデータベースに投稿
       const comment = await postComment(shareId, newComment, selectedTags);
-      console.log('Database comment result:', comment);
+      
+      if (comment) {
+        console.log('✅ Comment posted successfully:', comment);
+        // 成功したらコメントリストを再読み込み
+        await loadComments();
+        setNewComment('');
+        setSelectedTags([]);
+      } else {
+        // 投稿に失敗した場合、ローカルでコメントを追加（フォールバック）
+        console.log('⚠️ Database post failed, adding local comment');
+        const localComment = {
+          id: `local-${Date.now()}`,
+          share_id: shareId,
+          user_id: user?.id || 'anonymous',
+          content: newComment,
+          tags: selectedTags,
+          created_at: new Date().toISOString(),
+          user: {
+            id: user?.id || 'anonymous',
+            email: user?.email || 'ゲストユーザー',
+            full_name: user?.email || 'ゲストユーザー',
+            avatar_url: null
+          },
+          reactions: [],
+          replies: []
+        };
+        
+        setComments([...comments, localComment]);
+        setNewComment('');
+        setSelectedTags([]);
+      }
     } catch (error) {
-      console.log('Database post failed, but mock comment was added:', error);
+      console.error('❌ Error posting comment:', error);
+      
+      // エラー時もローカルでコメントを追加（ユーザー体験を維持）
+      const localComment = {
+        id: `local-error-${Date.now()}`,
+        share_id: shareId,
+        user_id: user?.id || 'anonymous',
+        content: newComment,
+        tags: selectedTags,
+        created_at: new Date().toISOString(),
+        user: {
+          id: user?.id || 'anonymous',
+          email: user?.email || 'ゲストユーザー',
+          full_name: user?.email || 'ゲストユーザー',
+          avatar_url: null
+        },
+        reactions: [],
+        replies: []
+      };
+      
+      setComments([...comments, localComment]);
+      setNewComment('');
+      setSelectedTags([]);
+      
+      // ユーザーに通知
+      alert('コメントの投稿に失敗しましたが、一時的に表示しています。ページを更新すると消える可能性があります。');
     }
   };
 
@@ -160,6 +203,52 @@ export default function CommentSection({
     if (success) {
       await loadComments();
     }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (window.confirm('本当にこのコメントを削除しますか？')) {
+      const success = await deleteComment(commentId);
+      if (success) {
+        await loadComments();
+        setShowDropdown(null);
+      }
+    }
+  };
+
+  const handleEditComment = async (commentId: string) => {
+    const comment = comments.find(c => c.id === commentId);
+    if (comment) {
+      setEditingComment(commentId);
+      setEditContent(comment.content);
+      setEditTags(comment.tags);
+      setShowDropdown(null);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingComment || !editContent.trim()) return;
+
+    const updatedComment = await editComment(editingComment, editContent, editTags);
+    if (updatedComment) {
+      await loadComments();
+      setEditingComment(null);
+      setEditContent('');
+      setEditTags([]);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingComment(null);
+    setEditContent('');
+    setEditTags([]);
+  };
+
+  const toggleEditTag = (tag: string) => {
+    setEditTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
   };
 
   const toggleTag = (tag: string) => {
@@ -206,14 +295,85 @@ export default function CommentSection({
               </div>
             </div>
             {comment.user_id === user?.id && (
-              <button className="text-gray-400 hover:text-gray-600">
-                <MoreVertical className="h-4 w-4" />
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setShowDropdown(showDropdown === comment.id ? null : comment.id)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </button>
+                {showDropdown === comment.id && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    <div className="py-1">
+                      <button
+                        onClick={() => handleEditComment(comment.id)}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        編集
+                      </button>
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        削除
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
           <div className="mb-3">
-            <p className="text-gray-800 whitespace-pre-wrap">{comment.content}</p>
+            {editingComment === comment.id ? (
+              <div className="space-y-3">
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  rows={3}
+                />
+                
+                <div className="flex flex-wrap gap-2">
+                  {availableTags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => toggleEditTag(tag)}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                        editTags.includes(tag)
+                          ? 'bg-indigo-100 text-indigo-800'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <TagIcon className="w-3 h-3 mr-1" />
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={!editContent.trim()}
+                    className="flex items-center px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    保存
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="flex items-center px-3 py-1 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    キャンセル
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-800 whitespace-pre-wrap">{comment.content}</p>
+            )}
             {comment.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-2">
                 {comment.tags.map((tag) => (

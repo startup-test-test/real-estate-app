@@ -35,12 +35,14 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     return null;
   }
 
-  // データを準備
-  const years = data.map(row => `${row['年次']}年目`);
-  const annualCashFlow = data.map(row => row['営業CF'] / 10000); // 万円単位
-  const cumulativeCashFlow = data.map(row => row['累計CF'] / 10000); // 万円単位
-  const income = data.map(row => row['実効収入'] / 10000); // 万円単位
-  const expenses = data.map(row => (row['経費'] + row['大規模修繕'] + row['ローン返済']) / 10000); // 万円単位
+  // データを準備（null/undefined チェック付き）
+  const years = data.map(row => `${row['年次'] || 0}年目`);
+  const annualCashFlow = data.map(row => (row['営業CF'] || 0) / 10000); // 万円単位
+  const cumulativeCashFlow = data.map(row => (row['累計CF'] || 0) / 10000); // 万円単位
+  const income = data.map(row => (row['実効収入'] || 0) / 10000); // 万円単位
+  const expenses = data.map(row => 
+    ((row['経費'] || 0) + (row['大規模修繕'] || 0) + (row['ローン返済'] || 0)) / 10000
+  ); // 万円単位
 
   const chartData = {
     labels: years,
@@ -158,7 +160,10 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
           label: function(context) {
             const label = context.dataset.label || '';
             const value = context.parsed.y;
-            return `${label}: ${value.toLocaleString()}万円`;
+            if (value === null || value === undefined) {
+              return `${label}: データなし`;
+            }
+            return `${label}: ${Number(value).toLocaleString()}万円`;
           },
         },
       },

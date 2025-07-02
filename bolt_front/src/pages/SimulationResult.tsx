@@ -16,6 +16,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import { ShareButton } from '../components/ShareButton';
 import InviteModal from '../components/InviteModal';
 import CommentSection from '../components/CommentSection';
+import SimpleCommentSection from '../components/SimpleCommentSection';
 import { PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import html2canvas from 'html2canvas';
@@ -29,6 +30,7 @@ const SimulationResult: React.FC = () => {
   // URLクエリパラメータからviewも取得
   const searchParams = new URLSearchParams(location.search);
   const viewId = searchParams.get('view');
+  const shareToken = searchParams.get('share'); // 共有トークンも取得
   const actualId = id || viewId;
   const { user } = useAuthContext();
   const { getSimulations } = useSupabaseData();
@@ -39,14 +41,26 @@ const SimulationResult: React.FC = () => {
   const [isScrollHighlighted, setIsScrollHighlighted] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
-  const { fetchShare, fetchShareByPropertyId } = usePropertyShare();
+  const { fetchShare, fetchShareByPropertyId, fetchOrCreateShareByPropertyId } = usePropertyShare();
 
   useEffect(() => {
     const loadSimulation = async () => {
-      if (!user || !actualId) {
-        setError('ユーザー認証またはシミュレーションIDが無効です');
+      if (!actualId) {
+        setError('シミュレーションIDが無効です');
         setLoading(false);
         return;
+      }
+
+      console.log('🔍 Authentication status:', {
+        user: user,
+        userId: user?.id,
+        email: user?.email,
+        isAuthenticated: !!user?.id
+      });
+
+      if (!user?.id) {
+        console.warn('⚠️ User not authenticated, using demo mode');
+        // 認証されていない場合はデモモードで表示
       }
 
       try {
@@ -65,56 +79,41 @@ const SimulationResult: React.FC = () => {
 
         setSimulation(foundSimulation);
         
-        // シミュレーション読み込み後、関連する共有情報も取得
-        // シミュレーションIDをpropertyIdとして使用（一時的な解決策）
+        // シミュレーション読み込み後、関連する共有情報も取得または作成
+        // 重要: property_idを使用してコラボレーションページと同じshareを参照
         const propertyId = foundSimulation?.property_id || foundSimulation?.id;
-        if (propertyId) {
+        const propertyName = foundSimulation?.simulation_name || '物件シミュレーション';
+        
+        if (propertyId && user?.id) {
           try {
-            console.log('Looking for share with property_id:', propertyId);
-            const share = await fetchShareByPropertyId(propertyId);
-            if (share) {
-              console.log('Found existing share for property:', share);
-              setCurrentShare(share);
+            console.log('🔗 共有情報を取得または作成中 (property_id):', propertyId);
+            
+            // 認証済みユーザーの場合のみ、実際のshareを取得/作成
+            const existingShare = await fetchShareByPropertyId(propertyId);
+            
+            if (existingShare) {
+              console.log('✅ 既存の共有を発見:', existingShare);
+              setCurrentShare(existingShare);
             } else {
-              console.log('No existing share found for property:', propertyId);
+              console.log('📝 新しい共有を作成中...');
+              const newShare = await fetchOrCreateShareByPropertyId(propertyId, propertyName);
               
-              // 共有レコードが存在しない場合、オンデマンドで作成
-              // ただし、現在はモック認証なのでcreateShareは実行しない
-              // 代わりに、コメント表示のためのモック共有レコードを作成
-              const mockShare = {
-                id: `mock-share-${propertyId}`,
-                property_id: propertyId,
-                owner_id: user?.id || 'mock-user-id',
-                share_token: `mock-token-${propertyId}`,
-                title: foundSimulation?.simulation_name || '物件シミュレーション',
-                description: 'シミュレーション結果の共有',
-                settings: { allow_comments: true, allow_download: false },
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              };
-              
-              console.log('Created mock share for demo:', mockShare);
-              setCurrentShare(mockShare);
+              if (newShare) {
+                console.log('✅ 新しい共有を作成:', newShare);
+                setCurrentShare(newShare);
+              } else {
+                console.log('⚠️ 実際の共有作成に失敗、デモモードに切り替え');
+                setCurrentShare(null); // デモコメントを表示
+              }
             }
           } catch (shareError) {
-            console.log('Error fetching share:', shareError);
-            
-            // エラーの場合でもモック共有レコードを作成してコメント機能を有効化
-            const mockShare = {
-              id: `mock-share-error-${propertyId}`,
-              property_id: propertyId,
-              owner_id: user?.id || 'mock-user-id',
-              share_token: `mock-token-error-${propertyId}`,
-              title: foundSimulation?.simulation_name || '物件シミュレーション',
-              description: 'シミュレーション結果の共有（デモ）',
-              settings: { allow_comments: true, allow_download: false },
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            };
-            
-            console.log('Created mock share after error:', mockShare);
-            setCurrentShare(mockShare);
+            console.error('❌ 共有情報の処理中にエラー:', shareError);
+            console.log('🎭 エラーによりデモモードに切り替え');
+            setCurrentShare(null); // デモコメントを表示
           }
+        } else {
+          console.log('🎭 認証なしまたはpropertyId無効、デモモードで表示');
+          setCurrentShare(null); // デモコメントを表示
         }
       } catch (err: any) {
         setError('データの読み込み中にエラーが発生しました');
@@ -124,7 +123,7 @@ const SimulationResult: React.FC = () => {
     };
 
     loadSimulation();
-  }, [actualId, user, getSimulations, fetchShareByPropertyId]);
+  }, [actualId, user, getSimulations, fetchOrCreateShareByPropertyId]);
 
   // スクロール機能
   useEffect(() => {
@@ -352,53 +351,51 @@ const SimulationResult: React.FC = () => {
         )}
 
         {/* Comments Section - 招待者からのコメント */}
-        {/* デバッグ用の情報表示 */}
-        <div className="bg-yellow-50 p-3 mb-3 rounded-lg border border-yellow-200">
-          <p className="text-sm text-yellow-800">
-            <strong>Debug Info:</strong><br/>
-            • currentShare = {currentShare ? 'EXISTS' : 'NULL'}<br/>
-            • currentShare.id = {currentShare?.id || 'N/A'}<br/>
-            • simulation exists = {simulation ? 'YES' : 'NO'}<br/>
-            • simulation.id = {simulation?.id || 'N/A'}<br/>
-            • simulation.property_id = {simulation?.property_id || 'N/A'}<br/>
-            • URL param id = {id || 'N/A'}<br/>
-            • URL query view = {viewId || 'N/A'}<br/>
-            • actualId = {actualId || 'N/A'}<br/>
-            • loading = {loading ? 'TRUE' : 'FALSE'}<br/>
-            • error = {error || 'NONE'}
-          </p>
-        </div>
+        {/* デバッグ用の情報表示（開発環境のみ） */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-yellow-50 p-3 mb-3 rounded-lg border border-yellow-200">
+            <p className="text-sm text-yellow-800">
+              <strong>Debug Info:</strong><br/>
+              • user authenticated = {user?.id ? 'YES' : 'NO'}<br/>
+              • user.id = {user?.id || 'undefined'}<br/>
+              • user.email = {user?.email || 'N/A'}<br/>
+              • currentShare = {currentShare ? 'EXISTS' : 'NULL'}<br/>
+              • currentShare.id = {currentShare?.id || 'N/A'}<br/>
+              • simulation exists = {simulation ? 'YES' : 'NO'}<br/>
+              • simulation.id = {simulation?.id || 'N/A'}<br/>
+              • simulation.property_id = {simulation?.property_id || 'N/A'}<br/>
+              • URL param id = {id || 'N/A'}<br/>
+              • URL query view = {viewId || 'N/A'}<br/>
+              • actualId = {actualId || 'N/A'}<br/>
+              • shareToken = {shareToken || 'N/A'}<br/>
+              • sharedPageId = {shareToken || currentShare?.share_token || actualId}<br/>
+              • loading = {loading ? 'TRUE' : 'FALSE'}<br/>
+              • error = {error || 'NONE'}
+            </p>
+          </div>
+        )}
         
-        {/* デモ用：常にコメントセクションを表示 */}
-        <div className="bg-white rounded-lg p-6 mb-6 border-l-4 border-blue-500">
+        {/* 新しいシンプルコメント機能 */}
+        <div className="bg-white rounded-lg p-6 mb-6 border-l-4 border-green-500">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
-              招待者からのコメント
-              {!currentShare && (
-                <span className="ml-2 text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-                  デモ
-                </span>
-              )}
+              <MessageCircle className="h-5 w-5 mr-2 text-green-600" />
+              投資に関するコメント
+              <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                実データ
+              </span>
             </h3>
-            <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
+            <span className="text-sm text-gray-500 bg-green-50 px-3 py-1 rounded-full">
               投資判断の参考にご活用ください
             </span>
           </div>
-          <CommentSection
-            shareId={currentShare?.id || `demo-${simulation?.id || actualId}`}
-            canComment={false}
-            showOnlyComments={true}
-            maxDisplayCount={3}
+          <SimpleCommentSection
+            pageId={currentShare?.share_token || actualId}
+            title="投資に関するコメント"
+            showSharedComments={false}
           />
-          {!currentShare && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-700">
-                💡 実際に専門家を招待するには「共有・招待」ボタンをクリックしてください
-              </p>
-            </div>
-          )}
         </div>
+
 
         {/* Key Metrics Grid */}
         <div 
@@ -536,22 +533,13 @@ const SimulationResult: React.FC = () => {
           </div>
         )}
 
-        {/* コメントセクション */}
-        {currentShare && (
-          <div className="bg-white rounded-lg p-6">
-            <CommentSection
-              shareId={currentShare.id}
-              canComment={true}
-            />
-          </div>
-        )}
         </div>
       </div>
 
       {/* 招待モーダル */}
       {showInviteModal && simulation && (
         <InviteModal
-          propertyId={simulation.property_id || actualId!}
+          propertyId={actualId!}
           propertyName={simulationData.propertyName}
           share={currentShare || undefined}
           onClose={() => setShowInviteModal(false)}
@@ -559,6 +547,10 @@ const SimulationResult: React.FC = () => {
             console.log('Share created in SimulationResult:', share);
             setCurrentShare(share);
             setShowInviteModal(false);
+            
+            // ページURLを更新して共有トークンを含める
+            const newUrl = `${window.location.pathname}?view=${actualId}&share=${share.share_token}${window.location.hash}`;
+            window.history.replaceState({}, '', newUrl);
           }}
         />
       )}

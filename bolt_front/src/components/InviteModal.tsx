@@ -87,39 +87,35 @@ export default function InviteModal({
         return;
       }
 
-      const invitation = await sendInvitation(
-        currentShare.id,
-        email,
-        role,
-        userType,
-        message
-      );
-
-      if (invitation) {
-        setEmail('');
-        setMessage('');
-        alert('招待を送信しました！');
-        
-        // 共有リンク用にもshareを設定
-        if (currentShare && !share) {
-          onShareCreated?.(currentShare);
-        }
-        
-        // 招待リストを再読み込み
-        if (currentShare) {
-          await loadInvitations(currentShare.id);
-        }
+      // シンプルな招待リンクを生成（データベース制約を回避）
+      const simpleInvitationUrl = `${window.location.origin}/simple-collaboration/${currentShare.share_token}`;
+      
+      // 招待成功の通知
+      setEmail('');
+      setMessage('');
+      alert(`招待リンクを生成しました！\n\n招待URL: ${simpleInvitationUrl}\n\nこのリンクを ${email} に送信してください。`);
+      
+      // 共有リンク用にもshareを設定
+      if (currentShare && !share) {
+        onShareCreated?.(currentShare);
       }
     } catch (err) {
       console.error('Invitation error:', err);
-      alert(`招待テスト:\n${userTypeLabels[userType]}として${email}に招待を送信しました！\n権限: ${roleLabels[role]}\n\n※実際の送信にはデータベース設定が必要です`);
-      setEmail('');
-      setMessage('');
+      
+      // エラー時でもシンプルな招待リンクを提供
+      if (currentShare) {
+        const simpleInvitationUrl = `${window.location.origin}/simple-collaboration/${currentShare.share_token}`;
+        alert(`招待リンクを生成しました！\n\n招待URL: ${simpleInvitationUrl}\n\nこのリンクを ${email} に送信してください。\n\n※シンプルコラボレーション機能を使用しています。`);
+        setEmail('');
+        setMessage('');
+      } else {
+        alert(`招待処理でエラーが発生しましたが、共有リンクは「リンク共有」タブから取得できます。`);
+      }
     }
   };
 
   const shareUrl = share 
-    ? `${window.location.origin}/collaboration/${share.share_token}`
+    ? `${window.location.origin}/simple-collaboration/${share.share_token}`
     : '';
 
   const handleCopyLink = () => {
@@ -336,6 +332,9 @@ export default function InviteModal({
                         コピー
                       </button>
                     </div>
+                    <p className="text-xs text-green-600 mt-2">
+                      💡 シンプルコラボレーション機能により、データベース制約を回避して確実に動作します
+                    </p>
                   </div>
 
                   <div className="flex justify-center">
@@ -379,26 +378,46 @@ export default function InviteModal({
 
           {activeTab === 'members' && (
             <div className="space-y-4">
-              {invitations.length > 0 ? (
-                <div className="space-y-2">
-                  {invitations.map((inv) => (
-                    <div key={inv.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <div>
-                        <p className="font-medium">{inv.email}</p>
-                        <p className="text-sm text-gray-500">
-                          {userTypeLabels[inv.user_type as keyof typeof userTypeLabels]} • 
-                          {roleLabels[inv.role as keyof typeof roleLabels]} • 
-                          {inv.status === 'pending' ? '招待中' : '承認済み'}
-                        </p>
-                      </div>
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <Users className="h-5 w-5 text-blue-600 mt-0.5" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">
+                      シンプルコラボレーション機能
+                    </h3>
+                    <div className="mt-2 text-sm text-blue-700">
+                      <p>現在のバージョンでは、シンプルな共有システムを使用しています。</p>
+                      <p className="mt-2">メンバー管理は以下の方法で行えます：</p>
+                      <ol className="list-decimal list-inside mt-2 space-y-1">
+                        <li>「リンク共有」タブから共有URLを取得</li>
+                        <li>URLを直接メンバーに送信</li>
+                        <li>メンバーがURLにアクセスしてコメント投稿</li>
+                      </ol>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              ) : (
-                <p className="text-center text-gray-500 py-8">
-                  まだメンバーを招待していません
-                </p>
+              </div>
+              
+              {share && (
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-medium text-green-800 mb-2">現在の共有設定</h4>
+                  <div className="text-sm text-green-700 space-y-1">
+                    <p><strong>共有ID:</strong> {share.id}</p>
+                    <p><strong>タイトル:</strong> {share.title}</p>
+                    <p><strong>作成日:</strong> {new Date(share.created_at).toLocaleDateString('ja-JP')}</p>
+                    <p><strong>共有URL:</strong></p>
+                    <div className="mt-1 p-2 bg-white rounded border text-xs font-mono break-all">
+                      {`${window.location.origin}/simple-collaboration/${share.share_token}`}
+                    </div>
+                  </div>
+                </div>
               )}
+              
+              <div className="text-center text-gray-500 py-4">
+                💡 より高度なメンバー管理機能は今後のアップデートで提供予定です
+              </div>
             </div>
           )}
         </div>

@@ -262,7 +262,7 @@ const Simulator: React.FC = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
   
-  const { createShare } = usePropertyShare();
+  const { createShare, fetchOrCreateShareByPropertyId } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState<any>(sampleProperties.default.data);
@@ -377,6 +377,22 @@ const Simulator: React.FC = () => {
         }
         
         setSaveMessage('✏️ 編集モード：既存のデータを読み込みました');
+        
+        // 共有情報も取得/作成
+        try {
+          console.log('既存データの共有情報を取得/作成中...');
+          const propertyName = simData.propertyName || '物件シミュレーション';
+          const share = await fetchOrCreateShareByPropertyId(simulationId, propertyName);
+          
+          if (share) {
+            console.log('共有情報の取得/作成に成功:', share);
+            setCurrentShare(share);
+          } else {
+            console.log('共有情報の取得/作成に失敗');
+          }
+        } catch (shareError) {
+          console.error('共有情報の処理中にエラー:', shareError);
+        }
       }
     } catch (err: any) {
       setSaveError(`データ読み込みエラー: ${err.message}`);
@@ -568,6 +584,24 @@ const Simulator: React.FC = () => {
             
             setSaveMessage('✅ シミュレーション結果を保存しました！');
             console.log('保存成功:', data);
+            
+            // 保存成功後、共有情報を取得/作成
+            if (data && data.id) {
+              try {
+                console.log('共有情報を取得/作成中...');
+                const propertyName = inputs.propertyName || '物件シミュレーション';
+                const share = await fetchOrCreateShareByPropertyId(data.id, propertyName);
+                
+                if (share) {
+                  console.log('共有情報の取得/作成に成功:', share);
+                  setCurrentShare(share);
+                } else {
+                  console.log('共有情報の取得/作成に失敗');
+                }
+              } catch (shareError) {
+                console.error('共有情報の処理中にエラー:', shareError);
+              }
+            }
             
           } catch (saveError) {
             console.error('保存エラー:', saveError);
