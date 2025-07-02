@@ -16,7 +16,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import { ShareButton } from '../components/ShareButton';
 import InviteModal from '../components/InviteModal';
 import CommentSection from '../components/CommentSection';
-import SimpleCommentSection from '../components/SimpleCommentSection';
+import ShareCommentDisplay from '../components/ShareCommentDisplay';
 import { PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import html2canvas from 'html2canvas';
@@ -375,25 +375,39 @@ const SimulationResult: React.FC = () => {
           </div>
         )}
         
-        {/* 新しいシンプルコメント機能 */}
+        {/* 招待者からのコメント表示 */}
         <div className="bg-white rounded-lg p-6 mb-6 border-l-4 border-green-500">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
               <MessageCircle className="h-5 w-5 mr-2 text-green-600" />
-              投資に関するコメント
+              投資検討ディスカッション
               <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                実データ
+                招待者コメント
               </span>
             </h3>
             <span className="text-sm text-gray-500 bg-green-50 px-3 py-1 rounded-full">
-              投資判断の参考にご活用ください
+              専門家からのコメントをご確認ください
             </span>
           </div>
-          <SimpleCommentSection
-            pageId={currentShare?.share_token || actualId}
-            title="投資に関するコメント"
-            showSharedComments={false}
-          />
+          {currentShare?.share_token ? (
+            <ShareCommentDisplay
+              shareToken={currentShare.share_token}
+              title="招待者からのコメント"
+            />
+          ) : shareToken ? (
+            <ShareCommentDisplay
+              shareToken={shareToken}
+              title="招待者からのコメント"
+            />
+          ) : (
+            <div className="text-center py-8 text-gray-500 bg-gray-50 border border-gray-200 rounded-lg p-6">
+              <p className="text-lg font-medium text-gray-700 mb-2">コメント機能を有効にする</p>
+              <p className="text-sm text-gray-600 mb-4">このシミュレーション結果に対するコメントを受け取るには、まず共有を作成してください。</p>
+              <p className="text-xs text-blue-600">
+                💡 上の「共有・招待」ボタンをクリックして共有URLを生成すると、そのURLからコメントを受け取れます
+              </p>
+            </div>
+          )}
         </div>
 
 

@@ -698,6 +698,37 @@ export function usePropertyShare() {
     }
   };
 
+  // シミュレーションデータから共有トークンを取得するフォールバック機能
+  const fetchShareTokenFromSimulation = async (propertyId: string): Promise<string | null> => {
+    try {
+      console.log('🔄 Trying to fetch share token from simulation data for property:', propertyId);
+      
+      // 認証なしでシミュレーションデータから共有トークンを取得
+      const { data: simulationData, error } = await supabase
+        .from('simulations')
+        .select('share_token')
+        .eq('id', propertyId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.log('📊 No share token found in simulation data:', error.code);
+        return null;
+      }
+
+      if (simulationData?.share_token) {
+        console.log('✅ Found share token in simulation data:', simulationData.share_token);
+        return simulationData.share_token;
+      }
+
+      return null;
+    } catch (err) {
+      console.log('⚠️ Error fetching share token from simulation:', err);
+      return null;
+    }
+  };
+
   // プロパティIDから共有情報を取得（存在しない場合は作成）
   const fetchOrCreateShareByPropertyId = async (
     propertyId: string,
@@ -708,11 +739,28 @@ export function usePropertyShare() {
 
     try {
       console.log('🔍 Fetching share by property ID:', propertyId);
-      console.log('🔍 Current user ID:', user?.id);
+      console.log('🔍 Current user state:', {
+        user: user ? 'EXISTS' : 'NULL',
+        userId: user?.id,
+        userEmail: user?.email,
+        userAud: user?.aud
+      });
       
-      // ユーザーIDが無効な場合は早期リターン
+      // ユーザーIDが無効な場合は、まずシミュレーションデータから共有トークンを探す
       if (!user?.id) {
-        console.warn('⚠️ User ID is undefined, cannot fetch/create shares');
+        console.warn('⚠️ User ID is undefined, trying fallback from simulation data');
+        const shareToken = await fetchShareTokenFromSimulation(propertyId);
+        
+        if (shareToken) {
+          // 共有トークンが見つかった場合、property_sharesテーブルから詳細を取得
+          const shareData = await fetchShare(shareToken);
+          if (shareData) {
+            console.log('✅ Retrieved share data using token from simulation:', shareData);
+            return shareData;
+          }
+        }
+        
+        console.warn('🔍 Available user properties:', Object.keys(user || {}));
         return null;
       }
       
@@ -934,6 +982,7 @@ export function usePropertyShare() {
     fetchShareByInvitationToken,
     fetchShareByPropertyId,
     fetchOrCreateShareByPropertyId,
+    fetchShareTokenFromSimulation,
     logAccess,
     deleteComment,
     editComment,

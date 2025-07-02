@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Share2, Check, Copy, X } from 'lucide-react';
-import { createShare, copyToClipboard } from '../utils/shareUtils';
+import { copyToClipboard } from '../utils/shareUtils';
+import { usePropertyShare } from '../hooks/usePropertyShare';
 
 interface ShareButtonProps {
   propertyId: string;
@@ -8,6 +9,7 @@ interface ShareButtonProps {
   propertyData: any;
   className?: string;
   size?: 'small' | 'medium' | 'large';
+  onShareCreated?: (share: any) => void;
 }
 
 export const ShareButton: React.FC<ShareButtonProps> = ({
@@ -15,23 +17,41 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
   simulationData,
   propertyData,
   className = '',
-  size = 'medium'
+  size = 'medium',
+  onShareCreated
 }) => {
   const [isSharing, setIsSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const { fetchOrCreateShareByPropertyId } = usePropertyShare();
 
   const handleShare = async () => {
     setIsSharing(true);
     setError(null);
 
     try {
-      const result = await createShare(propertyId, simulationData, propertyData);
-      setShareUrl(result.shareUrl);
-      setShowModal(true);
+      // 新しいproperty_sharesシステムを使用
+      const propertyName = propertyData?.propertyName || simulationData?.propertyName || '物件シミュレーション';
+      const share = await fetchOrCreateShareByPropertyId(propertyId, propertyName);
+      
+      if (share) {
+        const baseUrl = window.location.origin;
+        const shareUrl = `${baseUrl}/simple-collaboration/${share.share_token}`;
+        setShareUrl(shareUrl);
+        setShowModal(true);
+        
+        // 共有作成を親コンポーネントに通知
+        if (onShareCreated) {
+          onShareCreated(share);
+        }
+      } else {
+        throw new Error('共有の作成に失敗しました');
+      }
     } catch (err) {
+      console.error('Share creation error:', err);
       setError(err instanceof Error ? err.message : '共有の作成に失敗しました');
     } finally {
       setIsSharing(false);

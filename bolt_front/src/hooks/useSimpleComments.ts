@@ -123,12 +123,23 @@ export function useSimpleComments(pageId: string) {
 
   // コメントを投稿
   const postComment = async (content: string): Promise<SimpleComment | null> => {
+    console.log('🚀 Starting comment post process...');
+    console.log('📋 Current state:', {
+      user: user ? 'EXISTS' : 'NULL',
+      userId: user?.id,
+      userEmail: user?.email,
+      pageId,
+      contentLength: content?.length || 0
+    });
+
     if (!user) {
+      console.error('❌ User not authenticated');
       setError('ログインが必要です');
       return null;
     }
 
     if (!content.trim()) {
+      console.error('❌ Content is empty');
       setError('コメント内容を入力してください');
       return null;
     }
@@ -138,7 +149,7 @@ export function useSimpleComments(pageId: string) {
       setError(null);
 
       console.log('📝 Posting comment:', {
-        content,
+        content: content.substring(0, 50) + '...',
         page_id: pageId,
         user_id: user.id,
         user_email: user.email

@@ -105,7 +105,7 @@ export function useSupabaseData() {
   }
 
   // Simulations CRUD operations
-  const saveSimulation = async (simulationData: any) => {
+  const saveSimulation = async (simulationData: any, shareToken?: string, existingId?: string) => {
     setLoading(true)
     setError(null)
     
@@ -136,15 +136,47 @@ export function useSupabaseData() {
         }
       }
 
-      // シミュレーションデータを保存
-      const { data, error } = await supabase
-        .from('simulations')
-        .insert({
-          ...simulationData,
-          user_id: user.id,
-        })
-        .select()
-        .single()
+      // 共有トークンがある場合はシミュレーションデータに含める
+      const dataToSave = {
+        ...simulationData,
+        user_id: user.id,
+      };
+      
+      if (shareToken) {
+        dataToSave.share_token = shareToken;
+        console.log('💾 Saving simulation with share token:', shareToken);
+      }
+
+      let data, error;
+
+      // 編集モード（既存IDがある場合）は更新処理
+      if (existingId) {
+        console.log('🔄 Updating existing simulation:', existingId);
+        const updateResult = await supabase
+          .from('simulations')
+          .update({
+            ...dataToSave,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingId)
+          .eq('user_id', user.id)
+          .select()
+          .single();
+        
+        data = updateResult.data;
+        error = updateResult.error;
+      } else {
+        // 新規作成
+        console.log('📝 Creating new simulation');
+        const insertResult = await supabase
+          .from('simulations')
+          .insert(dataToSave)
+          .select()
+          .single();
+          
+        data = insertResult.data;
+        error = insertResult.error;
+      }
 
       if (error) {
         console.error('Simulation save error:', error)
