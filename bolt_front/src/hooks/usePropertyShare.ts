@@ -37,6 +37,7 @@ export function usePropertyShare() {
       
       if (!propertyId || propertyId === 'temp-id') {
         console.warn('⚠️ 無効なpropertyId。新しいUUIDを生成します。');
+        console.warn('⚠️ これにより新しい共有が作成されます。既存の共有との関連付けが失われる可能性があります。');
         actualPropertyId = crypto.randomUUID();
       }
       
@@ -745,6 +746,12 @@ export function usePropertyShare() {
         userEmail: user?.email,
         userAud: user?.aud
       });
+      
+      // temp-id の場合は警告を出力
+      if (propertyId === 'temp-id') {
+        console.warn('⚠️ propertyId が temp-id です。これは新しい共有を作成する可能性があります。');
+        console.warn('📍 呼び出し元を確認して、適切なIDが渡されているか確認してください。');
+      }
       
       // ユーザーIDが無効な場合は、まずシミュレーションデータから共有トークンを探す
       if (!user?.id) {

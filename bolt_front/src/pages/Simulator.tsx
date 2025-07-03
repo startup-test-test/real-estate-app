@@ -443,10 +443,17 @@ const Simulator: React.FC = () => {
                   console.log('✅ 共有情報の更新成功');
                   const updatedShare = { ...currentShare, property_id: data.id };
                   setCurrentShare(updatedShare);
+                  // editingIdも更新して、以降の共有で同じIDが使われるようにする
+                  setEditingId(data.id);
                 }
               } catch (updateShareError) {
                 console.error('❌ 共有情報の更新中にエラー:', updateShareError);
               }
+            }
+            
+            // 編集モードの場合でも、保存後にeditingIdが正しく設定されていることを確認
+            if (isEditMode && data && data.id && !editingId) {
+              setEditingId(data.id);
             }
             
           } catch (saveError) {
@@ -1237,7 +1244,7 @@ const Simulator: React.FC = () => {
                 {/* 既存の共有ボタン */}
                 {user && (editingId || saveMessage?.includes('✅')) && (
                   <ShareButton
-                    propertyId={editingId || 'temp-id'}
+                    propertyId={editingId || currentShare?.property_id || 'temp-id'}
                     simulationData={simulationResults.results}
                     propertyData={inputs}
                     size="medium"
@@ -1364,7 +1371,7 @@ const Simulator: React.FC = () => {
                       </div>
                     </div>
                     <ShareButton
-                      propertyId={editingId || 'temp-id'}
+                      propertyId={editingId || currentShare?.property_id || 'temp-id'}
                       simulationData={simulationResults.results}
                       propertyData={inputs}
                       size="medium"
@@ -1589,7 +1596,7 @@ const Simulator: React.FC = () => {
         {/* 招待モーダル */}
         {showInviteModal && simulationResults && (
           <InviteModal
-            propertyId={editingId || 'temp-id'}
+            propertyId={editingId || currentShare?.property_id || 'temp-id'}
             propertyName={inputs.propertyName || '物件'}
             share={currentShare || undefined}
             onClose={() => setShowInviteModal(false)}
