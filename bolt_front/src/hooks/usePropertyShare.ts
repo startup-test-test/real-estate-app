@@ -699,9 +699,27 @@ export function usePropertyShare() {
     }
   };
 
+  // APIコール追跡用（無限ループ防止）
+  let fetchShareTokenCallCount = 0;
+  const MAX_FETCH_ATTEMPTS = 3;
+
   // シミュレーションデータから共有トークンを取得するフォールバック機能
   const fetchShareTokenFromSimulation = async (propertyId: string): Promise<string | null> => {
     try {
+      // 無効なpropertyIdの場合は早期リターン
+      if (!propertyId || propertyId === 'temp-id' || propertyId === 'undefined' || propertyId.length !== 36) {
+        console.log('⚠️ Invalid propertyId, skipping fetch:', propertyId);
+        return null;
+      }
+      
+      // 無限ループ防止
+      fetchShareTokenCallCount++;
+      if (fetchShareTokenCallCount > MAX_FETCH_ATTEMPTS) {
+        console.warn('⚠️ Max fetch attempts reached, aborting to prevent infinite loop');
+        fetchShareTokenCallCount = 0; // リセット
+        return null;
+      }
+
       console.log('🔄 Trying to fetch share token from simulation data for property:', propertyId);
       
       // 認証なしでシミュレーションデータから共有トークンを取得
@@ -711,7 +729,7 @@ export function usePropertyShare() {
         .eq('id', propertyId)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.log('📊 No share token found in simulation data:', error.code);
@@ -727,103 +745,115 @@ export function usePropertyShare() {
     } catch (err) {
       console.log('⚠️ Error fetching share token from simulation:', err);
       return null;
+    } finally {
+      // 一定時間後にカウンタをリセット
+      setTimeout(() => {
+        fetchShareTokenCallCount = 0;
+      }, 5000);
     }
   };
+
+  // 共有作成の同期制御用Map
+  const creationPromises = new Map<string, Promise<PropertyShare | null>>();
 
   // プロパティIDから共有情報を取得（存在しない場合は作成）
   const fetchOrCreateShareByPropertyId = async (
     propertyId: string,
     propertyName?: string
   ): Promise<PropertyShare | null> => {
-    setLoading(true);
-    setError(null);
+    console.log('🔍 Fetching share by property ID:', propertyId);
+    console.log('🔍 Current user state:', {
+      user: user ? 'EXISTS' : 'NULL',
+      userId: user?.id,
+      userEmail: user?.email,
+      userAud: user?.aud
+    });
+    
+    // 無効なpropertyIdの場合は早期リターン
+    if (!propertyId || propertyId === 'temp-id' || propertyId === 'undefined') {
+      console.warn('⚠️ 無効なpropertyId:', propertyId);
+      return null;
+    }
+    
+    // ユーザーIDが無効な場合は、ユーザー認証を促す
+    if (!user?.id) {
+      console.warn('⚠️ User ID is undefined. User must be authenticated to create shares.');
+      setError('共有を作成するにはログインが必要です。');
+      return null;
+    }
 
-    try {
-      console.log('🔍 Fetching share by property ID:', propertyId);
-      console.log('🔍 Current user state:', {
-        user: user ? 'EXISTS' : 'NULL',
-        userId: user?.id,
-        userEmail: user?.email,
-        userAud: user?.aud
-      });
-      
-      // temp-id の場合は警告を出力
-      if (propertyId === 'temp-id') {
-        console.warn('⚠️ propertyId が temp-id です。これは新しい共有を作成する可能性があります。');
-        console.warn('📍 呼び出し元を確認して、適切なIDが渡されているか確認してください。');
-      }
-      
-      // ユーザーIDが無効な場合は、まずシミュレーションデータから共有トークンを探す
-      if (!user?.id) {
-        console.warn('⚠️ User ID is undefined, trying fallback from simulation data');
-        const shareToken = await fetchShareTokenFromSimulation(propertyId);
-        
-        if (shareToken) {
-          // 共有トークンが見つかった場合、property_sharesテーブルから詳細を取得
-          const shareData = await fetchShare(shareToken);
-          if (shareData) {
-            console.log('✅ Retrieved share data using token from simulation:', shareData);
-            return shareData;
-          }
+    // 同一property_idに対する同時作成を防ぐため、既存のPromiseがあれば待機
+    const cacheKey = `${propertyId}-${user.id}`;
+    if (creationPromises.has(cacheKey)) {
+      console.log('🔄 Waiting for existing share creation process...');
+      return creationPromises.get(cacheKey)!;
+    }
+
+    const createPromise = (async (): Promise<PropertyShare | null> => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // まず既存の共有を探す
+        const { data: existingShare, error: fetchError } = await supabase
+          .from('property_shares')
+          .select('*')
+          .eq('property_id', propertyId)
+          .eq('owner_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        console.log('📊 Share fetch result:', { data: existingShare, error: fetchError, code: fetchError?.code });
+
+        // 既存の共有が見つかった場合はそれを返す
+        if (existingShare && !fetchError) {
+          console.log('✅ Found existing share:', existingShare);
+          return existingShare;
         }
-        
-        console.warn('🔍 Available user properties:', Object.keys(user || {}));
-        return null;
-      }
-      
-      // まず既存の共有を探す
-      const { data: existingShare, error: fetchError } = await supabase
-        .from('property_shares')
-        .select('*')
-        .eq('property_id', propertyId)
-        .eq('owner_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
 
-      console.log('📊 Share fetch result:', { data: existingShare, error: fetchError, code: fetchError?.code });
+        // 共有が存在しない場合は新規作成
+        if (fetchError?.code === 'PGRST116') { // PGRST116 = no rows returned
+          console.log('📝 No existing share found, creating new one...');
+          
+          try {
+            const newShare = await createShare(
+              propertyId,
+              propertyName ? `${propertyName}のシミュレーション結果` : 'シミュレーション結果',
+              '投資判断のための共有'
+            );
 
-      // 既存の共有が見つかった場合はそれを返す
-      if (existingShare && !fetchError) {
-        console.log('✅ Found existing share:', existingShare);
-        return existingShare;
-      }
-
-      // 共有が存在しない場合は新規作成
-      if (fetchError?.code === 'PGRST116') { // PGRST116 = no rows returned
-        console.log('📝 No existing share found, creating new one...');
-        
-        try {
-          const newShare = await createShare(
-            propertyId,
-            propertyName ? `${propertyName}のシミュレーション結果` : 'シミュレーション結果',
-            '投資判断のための共有'
-          );
-
-          if (newShare) {
-            console.log('✅ Successfully created new share:', newShare);
-            return newShare;
-          } else {
-            console.warn('⚠️ Failed to create new share');
+            if (newShare) {
+              console.log('✅ Successfully created new share:', newShare);
+              return newShare;
+            } else {
+              console.warn('⚠️ Failed to create new share');
+              return null;
+            }
+          } catch (createError) {
+            console.error('❌ Error creating share:', createError);
+            // 作成に失敗してもnullを返してアプリケーションを継続
             return null;
           }
-        } catch (createError) {
-          console.error('❌ Error creating share:', createError);
-          // 作成に失敗してもnullを返してアプリケーションを継続
+        } else if (fetchError) {
+          console.error('❌ Unexpected error fetching share:', fetchError);
           return null;
         }
-      } else if (fetchError) {
-        console.error('❌ Unexpected error fetching share:', fetchError);
+        
         return null;
+      } catch (err) {
+        console.error('💥 Failed to fetch/create share by property ID:', err);
+        return null;
+      } finally {
+        setLoading(false);
+        // 処理完了後にPromiseを削除
+        creationPromises.delete(cacheKey);
       }
-      
-      return null;
-    } catch (err) {
-      console.error('💥 Failed to fetch/create share by property ID:', err);
-      return null;
-    } finally {
-      setLoading(false);
-    }
+    })();
+
+    // Promiseをキャッシュに保存
+    creationPromises.set(cacheKey, createPromise);
+    return createPromise;
   };
 
   // プロパティIDから共有情報を取得（従来の関数も残す）

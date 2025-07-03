@@ -29,6 +29,12 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
   const { fetchOrCreateShareByPropertyId } = usePropertyShare();
 
   const handleShare = async () => {
+    // propertyIdの検証
+    if (!propertyId || propertyId === 'temp-id' || propertyId === 'undefined') {
+      setError('有効な物件IDが必要です。シミュレーションを保存してから共有してください。');
+      return;
+    }
+    
     setIsSharing(true);
     setError(null);
 
@@ -48,7 +54,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
           onShareCreated(share);
         }
       } else {
-        throw new Error('共有の作成に失敗しました');
+        throw new Error('共有の作成に失敗しました。ログインが必要な場合があります。');
       }
     } catch (err) {
       console.error('Share creation error:', err);
