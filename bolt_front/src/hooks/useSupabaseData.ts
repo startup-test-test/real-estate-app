@@ -136,16 +136,21 @@ export function useSupabaseData() {
         }
       }
 
-      // 共有トークンがある場合はシミュレーションデータに含める
+      // シミュレーションデータを準備（share_tokenは除外）
       const dataToSave = {
         ...simulationData,
         user_id: user.id,
       };
       
-      if (shareToken) {
-        dataToSave.share_token = shareToken;
-        console.log('💾 Saving simulation with share token:', shareToken);
+      // property_idが無効な場合はNULLに設定
+      if (dataToSave.property_id && typeof dataToSave.property_id === 'string' && dataToSave.property_id.trim() === '') {
+        dataToSave.property_id = null;
       }
+      
+      console.log('💾 Saving simulation data:', { 
+        hasPropertyId: !!dataToSave.property_id, 
+        hasShareToken: !!shareToken 
+      });
 
       let data, error;
 
@@ -180,10 +185,37 @@ export function useSupabaseData() {
 
       if (error) {
         console.error('Simulation save error:', error)
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
         throw error
       }
       
       console.log('Simulation saved successfully:', data)
+      
+      // シミュレーション保存成功後、share_tokenがある場合は別途保存
+      if (shareToken && data) {
+        try {
+          console.log('💾 Saving share token separately...')
+          const { error: shareError } = await supabase
+            .from('simulations')
+            .update({ share_token: shareToken })
+            .eq('id', data.id)
+            .eq('user_id', user.id)
+          
+          if (shareError) {
+            console.warn('Share token save failed (non-critical):', shareError)
+          } else {
+            console.log('✅ Share token saved successfully')
+          }
+        } catch (shareErr) {
+          console.warn('Share token save error (non-critical):', shareErr)
+        }
+      }
+      
       return { data, error: null }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
