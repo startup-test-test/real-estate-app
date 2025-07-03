@@ -27,6 +27,9 @@ import { usePropertyShare } from '../hooks/usePropertyShare';
 import { validatePropertyUrl } from '../utils/validation';
 import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
 import { generateSimulationPDF } from '../utils/pdfGenerator';
+import { sampleProperties } from '../constants/sampleData';
+import { tooltips } from '../constants/tooltips';
+import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions } from '../constants/masterData';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -37,220 +40,7 @@ interface SimulationResult {
 }
 
 
-// サンプル物件データ
-const sampleProperties = {
-  default: {
-    name: 'オリジナル設定',
-    description: '自由に設定してください',
-    data: {
-      propertyName: '物件名を入力してください',
-      location: '',
-      landArea: 100.00,
-      buildingArea: 120.00,
-      roadPrice: 200000,
-      marketValue: 6000,
-      purchasePrice: 5000,
-      otherCosts: 250,
-      renovationCost: 150,
-      monthlyRent: 180000,
-      managementFee: 9000,
-      fixedCost: 0,
-      propertyTax: 80000,
-      vacancyRate: 5.00,
-      rentDecline: 1.00,
-      loanAmount: 4500,
-      interestRate: 0.70,
-      loanYears: 35,
-      loanType: '元利均等',
-      holdingYears: 10,
-      exitCapRate: 5.0,
-      ownershipType: '個人',
-      effectiveTaxRate: 20,
-      majorRepairCycle: 10,
-      majorRepairCost: 200,
-      buildingPriceForDepreciation: 3000,
-      depreciationYears: 27,
-      propertyUrl: '',
-      propertyMemo: '',
-      propertyImageUrl: '',
-      propertyStatus: '検討中',
-    }
-  },
-  shibuya: {
-    name: '🏙️ 渋谷区ワンルーム',
-    description: '都心部の単身者向け高利回り物件',
-    data: {
-      propertyName: '渋谷区ワンルームマンション',
-      location: '東京都渋谷区道玤坂',
-      landArea: 80.00,
-      buildingArea: 25.00,
-      roadPrice: 800000,
-      marketValue: 4500,
-      purchasePrice: 3800,
-      otherCosts: 200,
-      renovationCost: 100,
-      monthlyRent: 120000,
-      managementFee: 6000,
-      fixedCost: 2000,
-      propertyTax: 60000,
-      vacancyRate: 3.00,
-      rentDecline: 0.50,
-      loanAmount: 3200,
-      interestRate: 0.60,
-      loanYears: 35,
-      loanType: '元利均等',
-      holdingYears: 15,
-      exitCapRate: 4.5,
-      ownershipType: '個人',
-      effectiveTaxRate: 20,
-      majorRepairCycle: 10,
-      majorRepairCost: 200,
-      buildingPriceForDepreciation: 2500,
-      depreciationYears: 27,
-      propertyUrl: 'https://suumo.jp/example-shibuya',
-      propertyMemo: '渋谷駅徒歩圏内の好立地物件。単身者需要が見込める。',
-      propertyImageUrl: '',
-      propertyStatus: '検討中',
-    }
-  },
-  setagaya: {
-    name: '🏡 世田谷区ファミリー',
-    description: 'ファミリー向け安定収益物件',
-    data: {
-      propertyName: '世田谷区ファミリーマンション',
-      location: '東京都世田谷区三軒茶屋',
-      landArea: 150.00,
-      buildingArea: 80.00,
-      roadPrice: 400000,
-      marketValue: 8500,
-      purchasePrice: 7200,
-      otherCosts: 350,
-      renovationCost: 250,
-      monthlyRent: 220000,
-      managementFee: 11000,
-      fixedCost: 3000,
-      propertyTax: 120000,
-      vacancyRate: 8.00,
-      rentDecline: 1.20,
-      loanAmount: 6000,
-      interestRate: 0.75,
-      loanYears: 30,
-      loanType: '元利均等',
-      holdingYears: 12,
-      exitCapRate: 5.2,
-      ownershipType: '法人',
-      effectiveTaxRate: 25,
-      majorRepairCycle: 12,
-      majorRepairCost: 300,
-      buildingPriceForDepreciation: 4500,
-      depreciationYears: 39,
-      propertyUrl: 'https://athome.jp/example-setagaya',
-      propertyMemo: 'ファミリー層に人気のエリア。教育環境が充実。',
-      propertyImageUrl: '',
-    }
-  },
-  osaka: {
-    name: '🌆 大阪市中央区',
-    description: '関西圏の商業地域物件',
-    data: {
-      propertyName: '大阪市中央区投資マンション',
-      location: '大阪府大阪市中央区本町',
-      landArea: 120.00,
-      buildingArea: 65.00,
-      roadPrice: 300000,
-      marketValue: 5800,
-      purchasePrice: 4900,
-      otherCosts: 280,
-      renovationCost: 180,
-      monthlyRent: 165000,
-      managementFee: 8500,
-      fixedCost: 1500,
-      propertyTax: 85000,
-      vacancyRate: 6.00,
-      rentDecline: 1.50,
-      loanAmount: 4200,
-      interestRate: 0.80,
-      loanYears: 32,
-      loanType: '元利均等',
-      holdingYears: 10,
-      exitCapRate: 5.5,
-      ownershipType: '個人',
-      effectiveTaxRate: 22,
-      majorRepairCycle: 10,
-      majorRepairCost: 250,
-      buildingPriceForDepreciation: 3000,
-      depreciationYears: 34,
-      propertyUrl: 'https://homes.co.jp/example-osaka',
-      propertyMemo: '大阪市中央区の商業地域。オフィス街に近く需要安定。',
-      propertyImageUrl: '',
-    }
-  },
-  regional: {
-    name: '🌾 地方都市アパート',
-    description: '地方の一棟アパート投資',
-    data: {
-      propertyName: '地方都市一棟アパート',
-      location: '愛知県名古屋市中区栄',
-      landArea: 300.00,
-      buildingArea: 240.00,
-      roadPrice: 80000,
-      marketValue: 6500,
-      purchasePrice: 5500,
-      otherCosts: 300,
-      renovationCost: 400,
-      monthlyRent: 280000,
-      managementFee: 14000,
-      fixedCost: 8000,
-      propertyTax: 95000,
-      vacancyRate: 12.00,
-      rentDecline: 2.00,
-      loanAmount: 4800,
-      interestRate: 1.20,
-      loanYears: 25,
-      loanType: '元利均等',
-      holdingYears: 8,
-      exitCapRate: 6.5,
-      ownershipType: '法人',
-      effectiveTaxRate: 23,
-      majorRepairCycle: 15,
-      majorRepairCost: 500,
-      buildingPriceForDepreciation: 3500,
-      depreciationYears: 22,
-      propertyUrl: 'https://suumo.jp/example-regional',
-      propertyMemo: '一棟アパート。利回り重視の投資に適している。',
-      propertyImageUrl: '',
-    }
-  }
-};
 
-// 用語解説の定義
-const tooltips = {
-  landArea: '物件の土地の面積です。㎡単位で入力してください。登記簿謄本で確認できます。',
-  buildingArea: '建物の延床面積です。㎡単位で入力してください。各階の床面積の合計です。',
-  roadPrice: '国税庁が定める路線価格です。相続税評価額の基準となる価格で、実勢価格の約80%程度です。',
-  marketValue: '将来の売却想定価格です。現在の市場価格や将来の市況を考慮して設定してください。',
-  purchasePrice: '物件の購入価格です。土地と建物の合計金額を万円単位で入力してください。',
-  otherCosts: '登記費用、仲介手数料、印紙税などの取得にかかる諸経費です。購入価格の3-8%程度が目安です。',
-  renovationCost: 'リフォームや修繕にかかる費用です。入居前に必要な工事費用を見積もってください。',
-  monthlyRent: '月額の賃料収入です。近隣相場を調査して適切な賃料を設定してください。',
-  managementFee: '管理会社への委託料や共益費などの月額費用です。賃料の5-10%程度が一般的です。',
-  fixedCost: '保険料、修繕積立金など毎月発生するその他の固定費用です。',
-  propertyTax: '固定資産税と都市計画税の年額です。毎年5月頃に送付される納税通知書で確認できます。',
-  vacancyRate: '年間を通じた空室の割合です。地域の特性や物件タイプを考慮して設定してください。',
-  rentDecline: '年間の家賃下落率です。築年数の経過に伴う賃料の減少を想定します。一般的に1-2%程度です。',
-  loanAmount: '金融機関からの借入金額です。自己資金と合わせて物件価格と諸経費をカバーします。',
-  interestRate: '住宅ローンの年利です。金融機関や借入条件によって異なります。',
-  loanYears: 'ローンの返済期間です。一般的に15-35年で設定します。期間が長いほど月々の返済額は少なくなります。',
-  loanType: '元利均等は毎月の返済額が一定、元金均等は毎月の元金返済額が一定の方式です。',
-  holdingYears: '物件を保有する予定年数です。売却タイミングの目安として設定してください。',
-  exitCapRate: '売却時の利回りです。NOI（純収益）÷売却価格で算出されます。市場環境を考慮して設定してください。',
-  ownershipType: '物件の所有形態です。個人所有と法人所有では税率や税務処理が異なります。',
-  effectiveTaxRate: '実効税率（所得税＋住民税）です。個人：20-30%、法人：15-25%程度が目安です。',
-  majorRepairCycle: '大規模修繕を行う周期です。一般的に10-15年に1回実施します。',
-  majorRepairCost: '1回あたりの大規模修繕費用です。外壁塗装、屋根修理などの費用を見込んでください。',
-  buildingPriceForDepreciation: '減価償却の対象となる建物価格です。購入価格から土地価格を除いた金額を設定してください。',
-  depreciationYears: '減価償却の償却期間です。構造により異なります（木造22年、鉄骨造34年、RC造47年など）。'
-};
 
 const Simulator: React.FC = () => {
   const { user } = useAuthContext();
@@ -842,13 +632,11 @@ const Simulator: React.FC = () => {
               onChange={(e) => handleInputChange('propertyStatus', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
-              <option value="検討中">🔍 検討中</option>
-              <option value="内見予定">👀 内見予定</option>
-              <option value="申込検討">⏳ 申込検討</option>
-              <option value="契約手続中">📋 契約手続中</option>
-              <option value="取得済み">✅ 取得済み</option>
-              <option value="見送り">❌ 見送り</option>
-              <option value="保留">📝 保留</option>
+              {propertyStatusOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -1137,8 +925,11 @@ const Simulator: React.FC = () => {
                   onChange={(e) => handleInputChange('loanType', e.target.value)}
                   className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                 >
-                  <option value="元利均等">元利均等</option>
-                  <option value="元金均等">元金均等</option>
+                  {loanTypeOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -1196,8 +987,11 @@ const Simulator: React.FC = () => {
                   onChange={(e) => handleInputChange('ownershipType', e.target.value)}
                   className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                 >
-                  <option value="個人">個人</option>
-                  <option value="法人">法人</option>
+                  {ownershipTypeOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex items-center space-x-2">
