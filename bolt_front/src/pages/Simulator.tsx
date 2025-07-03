@@ -24,6 +24,9 @@ import InviteModal from '../components/InviteModal';
 import ShareCommentDisplay from '../components/ShareCommentDisplay';
 import { SimulationResultData, CashFlowData, SimulationInputData, PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
+import { validatePropertyUrl } from '../utils/validation';
+import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
+import { generateSimulationPDF } from '../utils/pdfGenerator';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -456,19 +459,7 @@ const Simulator: React.FC = () => {
     }));
   };
 
-  // URL バリデーション
-  const validateUrl = (url: string): string | null => {
-    if (!url) return null;
-    
-    try {
-      new URL(url);
-      return null; // エラーなし
-    } catch {
-      return 'URLの形式が正しくありません';
-    }
-  };
-
-  const urlError = inputs.propertyUrl ? validateUrl(inputs.propertyUrl) : null;
+  const urlError = inputs.propertyUrl ? validatePropertyUrl(inputs.propertyUrl) : null;
 
   const handleSimulation = async () => {
     setIsSimulating(true);
@@ -476,42 +467,7 @@ const Simulator: React.FC = () => {
     
     try {
       // FAST API への送信データを構築
-      const apiData = {
-        property_name: inputs.propertyName,
-        location: inputs.location || '住所未設定',
-        year_built: 2010, // デフォルト値
-        property_type: '一棟アパート/マンション', // デフォルト値
-        land_area: inputs.landArea,
-        building_area: inputs.buildingArea,
-        road_price: inputs.roadPrice,
-        purchase_price: inputs.purchasePrice,
-        other_costs: inputs.otherCosts,
-        renovation_cost: inputs.renovationCost,
-        monthly_rent: inputs.monthlyRent,
-        management_fee: inputs.managementFee,
-        fixed_cost: inputs.fixedCost,
-        property_tax: inputs.propertyTax,
-        vacancy_rate: inputs.vacancyRate,
-        rent_decline: inputs.rentDecline,
-        loan_type: inputs.loanType,
-        loan_amount: inputs.loanAmount,
-        interest_rate: inputs.interestRate,
-        loan_years: inputs.loanYears,
-        holding_years: inputs.holdingYears,
-        exit_cap_rate: inputs.exitCapRate,
-        market_value: inputs.marketValue,
-        expected_sale_price: inputs.marketValue,
-        ownership_type: inputs.ownershipType || '個人',
-        effective_tax_rate: inputs.effectiveTaxRate || 20,
-        major_repair_cycle: inputs.majorRepairCycle || 10,
-        major_repair_cost: inputs.majorRepairCost || 200,
-        building_price: inputs.buildingPriceForDepreciation || inputs.purchasePrice * 0.7,
-        depreciation_years: inputs.depreciationYears || 27,
-        property_url: inputs.propertyUrl || '',
-        property_memo: inputs.propertyMemo || '',
-        property_image_url: inputs.propertyImageUrl || '',
-        property_status: inputs.propertyStatus || '検討中'
-      };
+      const apiData = transformFormDataToApiData(inputs);
       
       console.log('FAST API送信データ:', apiData);
       console.log('ローン期間:', apiData.loan_years, '年');
