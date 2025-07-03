@@ -20,4 +20,3 @@ export { default as usePropertyShare } from './usePropertyShare';
 // コメント関連
 export { default as useShareComments } from './useShareComments';
 export { default as useSimpleComments } from './useSimpleComments';
-export { default as useTestComments } from './useTestComments';

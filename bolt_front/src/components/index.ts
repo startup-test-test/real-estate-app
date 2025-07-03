@@ -32,7 +32,6 @@ export { default as MetricCard } from './MetricCard';
 // コメント機能（既存）
 export { default as CommentSection } from './CommentSection';
 export { default as SimpleCommentSection } from './SimpleCommentSection';
-export { default as TestCommentSection } from './TestCommentSection';
 export { default as ShareCommentDisplay } from './ShareCommentDisplay';
 
 // コメント機能（統合版）

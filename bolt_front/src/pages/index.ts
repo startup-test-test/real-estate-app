@@ -14,7 +14,6 @@ export { default as SimulationResult } from './SimulationResult';
 export { default as CollaborationView } from './CollaborationView';
 export { default as ShareView } from './ShareView';
 export { default as SimpleCollaboration } from './SimpleCollaboration';
-export { default as TestInvitation } from './TestInvitation';
 
 // その他のページ
 export { default as Dashboard } from './Dashboard';

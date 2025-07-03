@@ -259,16 +259,6 @@ const Dashboard: React.FC = () => {
         { name: '市場分析を実行する', primary: true, path: '/market-analysis' }
       ]
     },
-    // 開発環境でのみ表示
-    ...(process.env.NODE_ENV === 'development' ? [{
-      category: '🧪 開発者ツール',
-      icon: Search,
-      color: 'bg-orange-600',
-      description: '招待機能とコメント投稿のテストツールです。',
-      actions: [
-        { name: '招待機能をテストする', primary: true, path: '/test-invitation' }
-      ]
-    }] : [])
   ];
 
   const filteredResults = formattedSimulations.filter(result => {
