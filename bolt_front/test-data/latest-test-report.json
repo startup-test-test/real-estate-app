@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-07-03T03:00:47.346Z",
+  "duration": 27.62,
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "failed": 0,
+    "errors": 0,
+    "manual": 1
+  },
+  "results": [
+    {
+      "test": "file-structure",
+      "status": "pass"
+    },
+    {
+      "test": "sample-data",
+      "status": "pass"
+    },
+    {
+      "test": "typescript",
+      "status": "pass"
+    },
+    {
+      "test": "build",
+      "status": "pass"
+    },
+    {
+      "test": "api-connection",
+      "status": "manual-check-required"
+    }
+  ],
+  "recommendation": "proceed"
+}
