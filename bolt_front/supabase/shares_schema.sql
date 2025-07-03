@@ -1,9 +1,11 @@
--- 共有データ保存用テーブル
-CREATE TABLE IF NOT EXISTS public.simulation_shares (
+-- 既存のテーブルを削除（もし存在する場合）
+DROP TABLE IF EXISTS public.simulation_shares CASCADE;
+
+-- 共有データ保存用テーブル（修正版）
+CREATE TABLE public.simulation_shares (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   share_id VARCHAR(12) UNIQUE NOT NULL, -- 短縮URL用のID
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL, -- 共有作成者（削除されてもデータは残る）
-  property_id UUID REFERENCES public.properties(id) ON DELETE CASCADE, -- 元の物件データ
   
   -- シミュレーション結果データ
   simulation_data JSONB NOT NULL, -- シミュレーション結果の完全なコピー
@@ -30,9 +32,6 @@ BEGIN
   WHERE expires_at < NOW();
 END;
 $$ LANGUAGE plpgsql;
-
--- 毎日実行されるスケジュール（pg_cronが必要）
--- SELECT cron.schedule('delete-expired-shares', '0 0 * * *', 'SELECT delete_expired_shares();');
 
 -- インデックスの作成
 CREATE INDEX idx_share_id ON public.simulation_shares(share_id);

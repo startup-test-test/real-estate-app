@@ -32,6 +32,7 @@
 - **データ変換**: dataTransform.ts
 - **ファイル処理**: imageUtils.ts, pdfGenerator.ts
 - **共有機能**: shareUtils.ts
+- **index.ts**: 統合エクスポート
 
 ### types/
 TypeScript型定義

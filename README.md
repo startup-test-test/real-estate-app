@@ -27,7 +27,13 @@ real-estate-app/
 │   │   ├── pages/                   # ページコンポーネント
 │   │   ├── hooks/                   # カスタムフック
 │   │   ├── types/                   # TypeScript型定義
-│   │   └── lib/                     # ユーティリティ・Supabase設定
+│   │   ├── utils/                   # ユーティリティ関数
+│   │   ├── constants/               # 定数・設定データ
+│   │   └── lib/                     # ライブラリ設定
+│   ├── dev-tools/                   # 開発・デバッグツール
+│   ├── test-data/                   # テストデータ・自動テスト
+│   ├── supabase/                    # データベーススキーマ
+│   │   └── archive/                 # 過去のスキーマファイル
 │   ├── package.json
 │   ├── vite.config.ts              # 最適化済みビルド設定
 │   └── .env                        # 環境変数
