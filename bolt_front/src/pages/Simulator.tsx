@@ -719,11 +719,11 @@ const Simulator: React.FC = () => {
 
           {/* 💰 取得・初期費用 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 取得・初期費用</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 取得・初期費用 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="flex flex-wrap gap-x-6 gap-y-3">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">購入価格</label>
+                  <label className="text-sm font-medium text-gray-700">購入価格 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.purchasePrice} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -739,7 +739,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">諸経費</label>
+                  <label className="text-sm font-medium text-gray-700">諸経費 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.otherCosts} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -774,11 +774,11 @@ const Simulator: React.FC = () => {
 
           {/* 📈 収益情報 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📈 収益情報</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">📈 収益情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="flex flex-wrap gap-x-6 gap-y-3">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">月額賃料</label>
+                  <label className="text-sm font-medium text-gray-700">月額賃料 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.monthlyRent} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -793,7 +793,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">管理費</label>
+                  <label className="text-sm font-medium text-gray-700">管理費 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.managementFee} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -823,7 +823,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">固定資産税</label>
+                  <label className="text-sm font-medium text-gray-700">固定資産税 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.propertyTax} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -838,7 +838,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">空室率</label>
+                  <label className="text-sm font-medium text-gray-700">空室率 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.vacancyRate} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -854,7 +854,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">家賃下落率</label>
+                  <label className="text-sm font-medium text-gray-700">家賃下落率 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.rentDecline} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -873,11 +873,11 @@ const Simulator: React.FC = () => {
 
           {/* 🏦 借入条件 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏦 借入条件</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏦 借入条件 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="flex flex-wrap gap-x-6 gap-y-3">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">借入額</label>
+                  <label className="text-sm font-medium text-gray-700">借入額 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.loanAmount} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -893,7 +893,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">金利</label>
+                  <label className="text-sm font-medium text-gray-700">金利 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.interestRate} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -909,7 +909,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">返済期間</label>
+                  <label className="text-sm font-medium text-gray-700">返済期間 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.loanYears} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -924,7 +924,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">借入形式</label>
+                  <label className="text-sm font-medium text-gray-700">借入形式 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.loanType} />
                 </div>
                 <select
@@ -944,11 +944,11 @@ const Simulator: React.FC = () => {
 
           {/* 🎯 出口戦略 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 出口戦略</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 出口戦略 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="flex flex-wrap gap-x-6 gap-y-3">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">保有年数</label>
+                  <label className="text-sm font-medium text-gray-700">保有年数 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.holdingYears} />
                 </div>
                 <div className="flex items-center space-x-1">
@@ -963,7 +963,7 @@ const Simulator: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
-                  <label className="text-sm font-medium text-gray-700">売却CapRate</label>
+                  <label className="text-sm font-medium text-gray-700">売却CapRate <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span></label>
                   <Tooltip content={tooltips.exitCapRate} />
                 </div>
                 <div className="flex items-center space-x-1">
