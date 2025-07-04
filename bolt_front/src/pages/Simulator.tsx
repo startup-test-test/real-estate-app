@@ -59,7 +59,7 @@ const Simulator: React.FC = () => {
   const { createShare, fetchOrCreateShareByPropertyId, fetchShareTokenFromSimulation, fetchShare } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [inputs, setInputs] = useState<any>(sampleProperties.default.data);
+  const [inputs, setInputs] = useState<any>(sampleProperties.shibuya.data);
 
 
 
