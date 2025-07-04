@@ -2,6 +2,41 @@
  * サンプル物件データ定数
  */
 
+// 空のデフォルト値
+export const emptyPropertyData = {
+  propertyName: '',
+  location: '',
+  landArea: 0,
+  buildingArea: 0,
+  roadPrice: 0,
+  marketValue: 0,
+  purchasePrice: 0,
+  otherCosts: 0,
+  renovationCost: 0,
+  monthlyRent: 0,
+  managementFee: 0,
+  fixedCost: 0,
+  propertyTax: 0,
+  vacancyRate: 0,
+  rentDecline: 0,
+  loanAmount: 0,
+  interestRate: 0,
+  loanYears: 0,
+  loanType: '元利均等',
+  holdingYears: 0,
+  exitCapRate: 0,
+  ownershipType: '個人',
+  effectiveTaxRate: 0,
+  majorRepairCycle: 0,
+  majorRepairCost: 0,
+  buildingPriceForDepreciation: 0,
+  depreciationYears: 27,
+  propertyUrl: '',
+  propertyMemo: '',
+  propertyImageUrl: '',
+  propertyStatus: '検討中'
+};
+
 export const sampleProperties = {
   shibuya: {
     name: '🏙️ 渋谷区ワンルーム',

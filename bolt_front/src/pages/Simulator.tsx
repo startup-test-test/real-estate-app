@@ -27,7 +27,7 @@ import { usePropertyShare } from '../hooks/usePropertyShare';
 import { validatePropertyUrl } from '../utils/validation';
 import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
 import { generateSimulationPDF } from '../utils/pdfGenerator';
-import { sampleProperties } from '../constants/sampleData';
+import { sampleProperties, emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions } from '../constants/masterData';
 
@@ -59,7 +59,7 @@ const Simulator: React.FC = () => {
   const { createShare, fetchOrCreateShareByPropertyId, fetchShareTokenFromSimulation, fetchShare } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [inputs, setInputs] = useState<any>(sampleProperties.shibuya.data);
+  const [inputs, setInputs] = useState<any>(emptyPropertyData);
 
 
 
@@ -1010,7 +1010,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.1"
-                    value={inputs.effectiveTaxRate || 20}
+                    value={inputs.effectiveTaxRate || 0}
                     onChange={(e) => handleInputChange('effectiveTaxRate', Number(e.target.value))}
                     className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
@@ -1037,7 +1037,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     min="1"
                     max="35"
-                    value={inputs.majorRepairCycle || 10}
+                    value={inputs.majorRepairCycle || 0}
                     onChange={(e) => handleInputChange('majorRepairCycle', Number(e.target.value))}
                     className="w-full sm:w-20 px-3 py-2 sm:px-2 sm:py-1 border border-gray-300 rounded text-base sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px] sm:min-h-auto touch-manipulation"
                   />
@@ -1053,7 +1053,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="10"
-                    value={inputs.majorRepairCost || 200}
+                    value={inputs.majorRepairCost || 0}
                     onChange={(e) => handleInputChange('majorRepairCost', Number(e.target.value))}
                     className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1076,7 +1076,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="100"
-                    value={inputs.buildingPriceForDepreciation || 3000}
+                    value={inputs.buildingPriceForDepreciation || 0}
                     onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
                     className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-indigo-500 focus:border-transparent"
                   />
