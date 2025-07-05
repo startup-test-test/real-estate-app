@@ -27,7 +27,7 @@ import { usePropertyShare } from '../hooks/usePropertyShare';
 import { validatePropertyUrl } from '../utils/validation';
 import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
 import { generateSimulationPDF } from '../utils/pdfGenerator';
-import { sampleProperties, emptyPropertyData } from '../constants/sampleData';
+import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 
@@ -55,6 +55,7 @@ const Simulator: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
+  const [isManualDepreciation, setIsManualDepreciation] = useState(false);
   
   const { createShare, fetchOrCreateShareByPropertyId, fetchShareTokenFromSimulation, fetchShare } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -198,7 +199,6 @@ const Simulator: React.FC = () => {
           });
         }
         
-        setSaveMessage('✏️ 編集モード：既存のデータを読み込みました');
         
         // 既存のシミュレーションから共有トークンを取得
         if (simulation.share_token) {
@@ -269,6 +269,32 @@ const Simulator: React.FC = () => {
       if (field === 'monthlyRent' && typeof value === 'number' && value > 0) {
         if (!prev.managementFee || prev.managementFee === 0) {
           newInputs.managementFee = Math.round(value * 0.05);
+        }
+      }
+
+      // 建築年・建物構造変更時の減価償却年数自動計算（手動モードでない場合のみ）
+      if (!isManualDepreciation && (field === 'buildingYear' || field === 'buildingStructure')) {
+        const currentYear = new Date().getFullYear();
+        const buildingYear = field === 'buildingYear' ? Number(value) : newInputs.buildingYear;
+        const structure = field === 'buildingStructure' ? String(value) : newInputs.buildingStructure;
+        
+        if (buildingYear && buildingYear > 0 && structure) {
+          // 法定耐用年数の取得
+          const getLegalUsefulLife = (structure: string): number => {
+            switch (structure) {
+              case 'RC': return 47;
+              case 'SRC': return 39;
+              case 'S': return 34; // 重量鉄骨造
+              case '木造': return 22;
+              default: return 27; // 軽量鉄骨造をデフォルト
+            }
+          };
+          
+          const legalYears = getLegalUsefulLife(structure);
+          const buildingAge = currentYear - buildingYear;
+          const remainingYears = Math.max(4, legalYears - buildingAge); // 最低4年
+          
+          newInputs.depreciationYears = remainingYears;
         }
       }
 
@@ -556,11 +582,6 @@ const Simulator: React.FC = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
                 AI物件シミュレーター
-                {editingId && (
-                  <span className="ml-3 text-lg text-orange-600 bg-orange-100 px-3 py-1 rounded-full">
-                    編集モード
-                  </span>
-                )}
               </h1>
             </div>
             <div className="flex items-center space-x-3">
@@ -575,10 +596,7 @@ const Simulator: React.FC = () => {
             </div>
           </div>
           <p className="text-gray-600">
-            {editingId 
-              ? '既存の物件データを編集して、新しいシミュレーションを実行できます。'
-              : 'AIを活用した収益シミュレーションで、最適な投資判断をサポートします。'
-            }
+            AIを活用した収益シミュレーションで、最適な投資判断をサポートします。
           </p>
         </div>
 
@@ -602,31 +620,6 @@ const Simulator: React.FC = () => {
         )}
 
         {/* Input Form */}
-        {/* サンプル物件選択 */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center mb-3">
-            <div className="bg-blue-100 p-2 rounded-full mr-3">
-              🎯
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-blue-900">初回の方におすすめ</h3>
-              <p className="text-sm text-blue-700">サンプル物件で投資シミュレーションを体験してみましょう</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {Object.entries(sampleProperties).map(([key, property]) => (
-              <button
-                key={key}
-                onClick={() => setInputs(property.data)}
-                className="text-left p-4 sm:p-3 bg-white border border-blue-200 rounded-lg hover:border-blue-400 hover:shadow-md active:scale-[0.98] active:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] touch-manipulation"
-              >
-                <div className="font-medium text-blue-900 mb-1">{property.name}</div>
-                <div className="text-xs text-blue-600">{property.description}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
         <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
           {/* 🏠 物件情報 */}
           <div>
@@ -1144,9 +1137,9 @@ const Simulator: React.FC = () => {
             </div>
           </div>
 
-          {/* 📊 税金条件 */}
+          {/* 📊 税務・会計設定 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 税金条件</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 税務・会計設定</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 所有形態 */}
               <div>
@@ -1187,6 +1180,87 @@ const Simulator: React.FC = () => {
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
                 </div>
+              </div>
+
+              {/* 建物価格（減価償却対象） */}
+              <div>
+                <div className="flex items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    建物価格（減価償却対象）
+                  </label>
+                  <Tooltip content={tooltips.buildingPriceForDepreciation} />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="100"
+                    value={inputs.buildingPriceForDepreciation || 0}
+                    onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
+                    placeholder="8000"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-sm text-gray-500 ml-2">万円</span>
+                </div>
+              </div>
+
+              {/* 償却年数（自動計算） */}
+              <div>
+                <div className="flex items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    償却年数（自動計算）
+                  </label>
+                  <Tooltip content={tooltips.depreciationYears} />
+                </div>
+                {!isManualDepreciation ? (
+                  <div className="bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-700 font-medium">{inputs.depreciationYears || 27}年</span>
+                      <button
+                        type="button"
+                        onClick={() => setIsManualDepreciation(true)}
+                        className="text-xs text-blue-600 hover:text-blue-800 underline"
+                      >
+                        手動調整
+                      </button>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      建築年・構造から自動計算
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <select
+                        value={inputs.depreciationYears || 27}
+                        onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      >
+                        <option value={4}>4年（木造超過）</option>
+                        <option value={22}>22年（木造）</option>
+                        <option value={27}>27年（軽量鉄骨）</option>
+                        <option value={34}>34年（重量鉄骨）</option>
+                        <option value={39}>39年（SRC造）</option>
+                        <option value={47}>47年（RC造）</option>
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsManualDepreciation(false);
+                          // 自動モードに戻った時に再計算
+                          if (inputs.buildingYear && inputs.buildingStructure) {
+                            handleInputChange('buildingYear', inputs.buildingYear);
+                          }
+                        }}
+                        className="text-xs text-gray-600 hover:text-gray-800 px-2 py-1 border border-gray-300 rounded"
+                      >
+                        自動
+                      </button>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      手動調整モード：築年数や資金調達に合わせて調整可能
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1234,54 +1308,6 @@ const Simulator: React.FC = () => {
                   />
                   <span className="text-sm text-gray-500 ml-2">万円</span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 📉 減価償却設定 */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📉 減価償却設定</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* 建物価格 */}
-              <div>
-                <div className="flex items-center mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    建物価格
-                  </label>
-                  <Tooltip content={tooltips.buildingPriceForDepreciation} />
-                </div>
-                <div className="flex items-center space-x-1">
-                  <input
-                    type="number"
-                    step="100"
-                    value={inputs.buildingPriceForDepreciation || 0}
-                    onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
-                    placeholder="8000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  />
-                  <span className="text-sm text-gray-500 ml-2">万円</span>
-                </div>
-              </div>
-
-              {/* 償却年数 */}
-              <div>
-                <div className="flex items-center mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    償却年数
-                  </label>
-                  <Tooltip content={tooltips.depreciationYears} />
-                </div>
-                <select
-                  value={inputs.depreciationYears || 27}
-                  onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                >
-                  <option value={22}>22年（木造）</option>
-                  <option value={27}>27年（軽量鉄骨）</option>
-                  <option value={34}>34年（重量鉄骨）</option>
-                  <option value={39}>39年（SRC造）</option>
-                  <option value={47}>47年（RC造）</option>
-                </select>
               </div>
             </div>
           </div>
