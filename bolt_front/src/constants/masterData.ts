@@ -24,3 +24,12 @@ export const ownershipTypeOptions = [
   { value: '個人', label: '個人' },
   { value: '法人', label: '法人' }
 ];
+
+// 建物構造選択肢
+export const buildingStructureOptions = [
+  { value: 'RC', label: 'RC造（鉄筋コンクリート造）' },
+  { value: 'SRC', label: 'SRC造（鉄骨鉄筋コンクリート造）' },
+  { value: 'S', label: 'S造（鉄骨造）' },
+  { value: '木造', label: '木造' },
+  { value: 'その他', label: 'その他' }
+];
