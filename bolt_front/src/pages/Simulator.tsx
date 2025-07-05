@@ -628,59 +628,61 @@ const Simulator: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
-          {/* 物件名 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              物件名 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span>
-            </label>
-            <input
-              type="text"
-              value={inputs.propertyName}
-              onChange={(e) => handleInputChange('propertyName', e.target.value)}
-              placeholder="例：カーサ○○マンション"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              💡 同じ物件で複数の条件でシミュレーションする際は、条件をメモしておくと便利です
-            </p>
-          </div>
-
-          {/* 住所 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              住所
-            </label>
-            <input
-              type="text"
-              value={inputs.location}
-              onChange={(e) => handleInputChange('location', e.target.value)}
-              placeholder="例：東京都渋谷区神宮前1-1-1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            />
-          </div>
-
-          {/* 物件ステータス */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              物件ステータス
-            </label>
-            <select
-              value={inputs.propertyStatus || ''}
-              onChange={(e) => handleInputChange('propertyStatus', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            >
-              {propertyStatusOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
           {/* 🏠 物件情報 */}
-          <div className="border-t pt-6">
+          <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏠 物件情報</h3>
-            <div className="flex flex-wrap gap-x-6 gap-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* 物件名 */}
+              <div>
+                <div className="flex items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    物件名 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded">必須</span>
+                  </label>
+                  <Tooltip content={tooltips.propertyName} />
+                </div>
+                <input
+                  type="text"
+                  value={inputs.propertyName}
+                  onChange={(e) => handleInputChange('propertyName', e.target.value)}
+                  placeholder="例：カーサ○○マンション"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* 住所 */}
+              <div>
+                <div className="flex items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    住所
+                  </label>
+                  <Tooltip content={tooltips.location} />
+                </div>
+                <input
+                  type="text"
+                  value={inputs.location}
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  placeholder="例：東京都渋谷区神宮前1-1-1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* 物件ステータス */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  物件ステータス
+                </label>
+                <select
+                  value={inputs.propertyStatus || ''}
+                  onChange={(e) => handleInputChange('propertyStatus', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+                  {propertyStatusOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-1">
@@ -698,9 +700,6 @@ const Simulator: React.FC = () => {
                     />
                     <span className="text-sm text-gray-500">㎡</span>
                   </div>
-                </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  ⚠️ 区分所有の場合は土地持ち分のみを入力（登記簿に記載）
                 </div>
               </div>
               <div className="flex-1 min-w-[200px]">
@@ -721,9 +720,6 @@ const Simulator: React.FC = () => {
                     <span className="text-sm text-gray-500">㎡</span>
                   </div>
                 </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  📊 担保力の計算に影響します
-                </div>
               </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center space-x-2">
@@ -741,9 +737,6 @@ const Simulator: React.FC = () => {
                     />
                     <span className="text-sm text-gray-500">円/㎡</span>
                   </div>
-                </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  📍 角地の場合は高い方の路線価を入力
                 </div>
                 <div className="mt-1">
                   <a href="https://www.rosenka.nta.go.jp/" target="_blank" rel="noopener noreferrer" 
@@ -814,9 +807,6 @@ const Simulator: React.FC = () => {
                     <span className="text-sm text-gray-500">万円</span>
                   </div>
                 </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  未記入時は購入価格の7%が自動設定
-                </div>
               </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center space-x-2">
@@ -879,9 +869,6 @@ const Simulator: React.FC = () => {
                     <span className="text-sm text-gray-500">円</span>
                   </div>
                 </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  管理委託手数料の相場は5%前後
-                </div>
               </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center space-x-2">
@@ -916,9 +903,6 @@ const Simulator: React.FC = () => {
                     />
                     <span className="text-sm text-gray-500">円</span>
                   </div>
-                </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  未記入時は購入価格の0.7%が自動設定
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -1026,9 +1010,6 @@ const Simulator: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  民間は「元利均等」、公庫は「元金均等」が多い
-                </div>
               </div>
             </div>
           </div>
@@ -1108,9 +1089,6 @@ const Simulator: React.FC = () => {
                   <span className="text-sm text-gray-500">%</span>
                 </div>
               </div>
-              <div className="text-xs text-gray-700 py-2">
-                💡 実効税率の目安: 個人(20-30%) / 法人(15-25%)。詳細な税金計算に影響します
-              </div>
             </div>
           </div>
 
@@ -1176,9 +1154,6 @@ const Simulator: React.FC = () => {
                     <span className="text-sm text-gray-500">万円</span>
                   </div>
                 </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  未記入時は購入価格の30%が自動設定
-                </div>
               </div>
               <div className="flex-1 min-w-[200px]">
                 <div className="flex items-center space-x-2">
@@ -1197,9 +1172,6 @@ const Simulator: React.FC = () => {
                     <option value={39}>39年（SRC造）</option>
                     <option value={47}>47年（RC造）</option>
                   </select>
-                </div>
-                <div className="text-xs text-gray-700 py-1 mt-1">
-                  🔧 構造によって減価償却の計算に影響します
                 </div>
               </div>
             </div>
@@ -1230,9 +1202,6 @@ const Simulator: React.FC = () => {
                     ❌ {urlError}
                   </p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 SUUMO、athome、HOME'S等の物件詳細ページのURLを貼り付けてください
-                </p>
               </div>
 
               {/* メモ */}
