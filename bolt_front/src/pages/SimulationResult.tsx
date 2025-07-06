@@ -423,51 +423,68 @@ const SimulationResult: React.FC = () => {
             value={results.surfaceYield || 0}
             unit="%"
             format="percentage"
+            size="large"
           />
           <MetricCard
             title="実質利回り"
             value={results.netYield || 0}
             unit="%"
             format="percentage"
+            size="large"
           />
           <MetricCard
             title="月間キャッシュフロー"
             value={results.monthlyCashFlow || 0}
             unit="円"
             format="currency"
+            size="large"
           />
           <MetricCard
             title="IRR"
             value={results.irr || null}
             unit="%"
             format="percentage"
+            size="large"
           />
         </div>
 
         {/* Additional Metrics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 収益指標</h3>
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">CCR（自己資本収益率）</span>
-                <span className="font-semibold">{formatPercent(results.ccr || 0)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">ROI（投資収益率）</span>
-                <span className="font-semibold">{formatPercent(results.roi || 0)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">DSCR（返済余裕率）</span>
-                <span className="font-semibold">{results.dscr || 0}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">LTV（ローン比率）</span>
-                <span className="font-semibold">{formatPercent(results.ltv || 0)}</span>
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <MetricCard
+            title="CCR"
+            subtitle="自己資本収益率"
+            value={results.ccr || 0}
+            unit="%"
+            format="percentage"
+            size="large"
+          />
+          <MetricCard
+            title="ROI"
+            subtitle="投資収益率"
+            value={results.roi || 0}
+            unit="%"
+            format="percentage"
+            size="large"
+          />
+          <MetricCard
+            title="DSCR"
+            subtitle="返済余裕率"
+            value={results.dscr || 0}
+            format="number"
+            size="large"
+          />
+          <MetricCard
+            title="LTV"
+            subtitle="ローン比率"
+            value={results.ltv || 0}
+            unit="%"
+            format="percentage"
+            size="large"
+          />
+        </div>
 
+        {/* Investment Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 投資概要</h3>
             <div className="space-y-4">

@@ -14,7 +14,7 @@ interface MetricCardProps {
   };
   reversed?: boolean; // 値が低いほど良い場合（例：リスク指標）
   format?: 'number' | 'percentage' | 'currency';
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'xlarge';
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -66,7 +66,13 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   // スタイルの定義
   const getCardStyles = () => {
-    const baseStyles = "rounded-xl border-2 p-6 transition-all duration-300 hover:shadow-lg";
+    const paddingSizes = {
+      small: 'p-4',
+      medium: 'p-6',
+      large: 'p-6',
+      xlarge: 'p-8'
+    };
+    const baseStyles = `rounded-xl border-2 ${paddingSizes[size]} transition-all duration-300 hover:shadow-lg`;
     
     switch (performanceLevel) {
       case 'excellent':
@@ -86,7 +92,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
     const baseSizes = {
       small: 'text-xl',
       medium: 'text-2xl',
-      large: 'text-3xl'
+      large: 'text-4xl',
+      xlarge: 'text-6xl'
     };
 
     const baseStyle = `${baseSizes[size]} font-bold`;
@@ -141,14 +148,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
     <div className={getCardStyles()}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h4 className="text-sm font-medium text-gray-600 mb-1">{title}</h4>
+          <h4 className={`font-medium text-gray-600 mb-1 ${size === 'xlarge' ? 'text-lg' : 'text-sm'}`}>{title}</h4>
           {subtitle && (
             <p className="text-xs text-gray-500">{subtitle}</p>
           )}
         </div>
         <div className="flex items-center space-x-2">
           {getIcon()}
-          <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+          <span className={`font-medium px-2 py-1 rounded-full ${size === 'xlarge' ? 'text-sm' : 'text-xs'} ${
             performanceLevel === 'excellent' ? 'bg-emerald-100 text-emerald-700' :
             performanceLevel === 'good' ? 'bg-blue-100 text-blue-700' :
             performanceLevel === 'warning' ? 'bg-amber-100 text-amber-700' :

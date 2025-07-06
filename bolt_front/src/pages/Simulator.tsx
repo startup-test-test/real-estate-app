@@ -1513,7 +1513,7 @@ const Simulator: React.FC = () => {
                     propertyId={editingId || currentShare?.property_id || 'temp-id'}
                     simulationData={simulationResults.results}
                     propertyData={inputs}
-                    size="medium"
+                    size="large"
                     className="print:hidden"
                   />
                 )}
@@ -1540,6 +1540,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['IRR（%）']}
                   unit="%"
                   format="percentage"
+                  size="large"
                   thresholds={{
                     excellent: 15,
                     good: 10,
@@ -1555,6 +1556,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['CCR（%）']}
                   unit="%"
                   format="percentage"
+                  size="large"
                   thresholds={{
                     excellent: 12,
                     good: 8,
@@ -1569,6 +1571,7 @@ const Simulator: React.FC = () => {
                   subtitle="返済余裕率"
                   value={simulationResults.results['DSCR（返済余裕率）']}
                   format="number"
+                  size="large"
                   thresholds={{
                     excellent: 1.5,
                     good: 1.3,
@@ -1584,6 +1587,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['表面利回り（%）']}
                   unit="%"
                   format="percentage"
+                  size="large"
                   thresholds={{
                     excellent: 8,
                     good: 6,
@@ -1601,6 +1605,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['月間キャッシュフロー（円）']}
                   unit="円"
                   format="currency"
+                  size="large"
                   thresholds={{
                     excellent: 50000,
                     good: 20000,
@@ -1615,6 +1620,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['年間キャッシュフロー（円）']}
                   unit="円"
                   format="currency"
+                  size="large"
                   thresholds={{
                     excellent: 600000,
                     good: 240000,
@@ -1640,7 +1646,7 @@ const Simulator: React.FC = () => {
                       propertyId={editingId || currentShare?.property_id || 'temp-id'}
                       simulationData={simulationResults.results}
                       propertyData={inputs}
-                      size="medium"
+                      size="large"
                       className="bg-blue-600 hover:bg-blue-700"
                       onShareCreated={(share) => {
                         console.log('Share created from ShareButton:', share);
@@ -1666,6 +1672,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['NOI（円）'] || 0}
                   unit="円"
                   format="currency"
+                  size="large"
                   thresholds={{
                     excellent: 1000000,
                     good: 500000,
@@ -1681,6 +1688,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['ROI（%）'] || 0}
                   unit="%"
                   format="percentage"
+                  size="large"
                   thresholds={{
                     excellent: 15,
                     good: 10,
@@ -1696,6 +1704,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['LTV（%）'] || 0}
                   unit="%"
                   format="percentage"
+                  size="large"
                   thresholds={{
                     excellent: 70,
                     good: 80,
@@ -1716,6 +1725,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['想定売却価格（万円）'] || 0}
                   unit="万円"
                   format="number"
+                  size="large"
                   description="保有期間終了時の想定売却価格。"
                 />
                 
@@ -1725,6 +1735,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['残債（万円）'] || 0}
                   unit="万円"
                   format="number"
+                  size="large"
                   description="売却時のローン残高。"
                 />
                 
@@ -1734,6 +1745,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['売却コスト（万円）'] || 0}
                   unit="万円"
                   format="number"
+                  size="large"
                   description="売却時にかかる諸費用（仲介手数料等）。"
                 />
                 
@@ -1743,6 +1755,7 @@ const Simulator: React.FC = () => {
                   value={simulationResults.results['売却益（万円）'] || 0}
                   unit="万円"
                   format="number"
+                  size="large"
                   thresholds={{
                     excellent: 500,
                     good: 100,
