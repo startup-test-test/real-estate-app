@@ -27,6 +27,7 @@ export const ownershipTypeOptions = [
 
 // 建物構造選択肢
 export const buildingStructureOptions = [
+  { value: '', label: '-- 選択してください --' },
   { value: 'RC', label: 'RC造（鉄筋コンクリート造）' },
   { value: 'SRC', label: 'SRC造（鉄骨鉄筋コンクリート造）' },
   { value: 'S', label: 'S造（鉄骨造）' },

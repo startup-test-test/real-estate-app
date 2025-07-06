@@ -32,7 +32,7 @@ export const emptyPropertyData = {
   buildingPriceForDepreciation: 0,
   depreciationYears: 27,
   buildingYear: 0,
-  buildingStructure: 'RC',
+  buildingStructure: '',
   propertyUrl: '',
   propertyMemo: '',
   propertyImageUrl: '',

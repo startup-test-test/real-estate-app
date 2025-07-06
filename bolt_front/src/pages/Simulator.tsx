@@ -278,6 +278,14 @@ const Simulator: React.FC = () => {
         const buildingYear = field === 'buildingYear' ? Number(value) : newInputs.buildingYear;
         const structure = field === 'buildingStructure' ? String(value) : newInputs.buildingStructure;
         
+        console.log('🔧 減価償却自動計算:', {
+          field,
+          value,
+          buildingYear,
+          structure,
+          isManualDepreciation
+        });
+        
         if (buildingYear && buildingYear > 0 && structure) {
           // 法定耐用年数の取得
           const getLegalUsefulLife = (structure: string): number => {
@@ -292,7 +300,25 @@ const Simulator: React.FC = () => {
           
           const legalYears = getLegalUsefulLife(structure);
           const buildingAge = currentYear - buildingYear;
-          const remainingYears = Math.max(4, legalYears - buildingAge); // 最低4年
+          let remainingYears: number;
+          
+          // 中古資産の耐用年数計算（税務上の正しい計算）
+          if (buildingAge >= legalYears) {
+            // 法定耐用年数を超過している場合
+            remainingYears = Math.floor(legalYears * 0.2); // 法定耐用年数の20%
+            remainingYears = Math.max(4, remainingYears); // 最低4年
+          } else {
+            // 法定耐用年数内の場合
+            remainingYears = Math.floor((legalYears - buildingAge) + buildingAge * 0.2);
+            remainingYears = Math.max(4, remainingYears); // 最低4年
+          }
+          
+          console.log('📊 計算結果:', {
+            legalYears,
+            buildingAge,
+            remainingYears,
+            isExceeded: buildingAge >= legalYears
+          });
           
           newInputs.depreciationYears = remainingYears;
         }
@@ -1204,7 +1230,7 @@ const Simulator: React.FC = () => {
               <div>
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
-                    償却年数（自動計算）
+                    償却年数（残存耐用年数）
                   </label>
                   <Tooltip content={tooltips.depreciationYears} />
                 </div>
@@ -1221,7 +1247,41 @@ const Simulator: React.FC = () => {
                       </button>
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      建築年・構造から自動計算
+                      {inputs.buildingYear && inputs.buildingStructure ? (
+                        <>
+                          {(() => {
+                            const currentYear = new Date().getFullYear();
+                            const buildingAge = currentYear - inputs.buildingYear;
+                            const getLegalLife = (structure: string) => {
+                              switch (structure) {
+                                case 'RC': return 47;
+                                case 'SRC': return 39;
+                                case 'S': return 34;
+                                case '木造': return 22;
+                                default: return 27;
+                              }
+                            };
+                            const legalLife = getLegalLife(inputs.buildingStructure);
+                            const isExceeded = buildingAge >= legalLife;
+                            
+                            if (isExceeded) {
+                              return (
+                                <>
+                                  <span className="text-orange-600 font-medium">
+                                    ⚠️ 耐用年数超過物件
+                                  </span>
+                                  ：{inputs.buildingStructure}（法定{legalLife}年）で築{buildingAge}年 
+                                  → 残存{inputs.depreciationYears}年（法定耐用年数×20%）
+                                </>
+                              );
+                            } else {
+                              return `${inputs.buildingStructure}（法定${legalLife}年）で築${buildingAge}年 → 残存${inputs.depreciationYears}年`;
+                            }
+                          })()}
+                        </>
+                      ) : (
+                        '建築年・構造から自動計算'
+                      )}
                     </div>
                   </div>
                 ) : (
