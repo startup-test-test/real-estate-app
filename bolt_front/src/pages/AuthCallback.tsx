@@ -1,45 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { CheckCircle, AlertCircle, Loader } from 'lucide-react';
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // URLからアクセストークンとリフレッシュトークンを取得
-        const accessToken = searchParams.get('access_token');
-        const refreshToken = searchParams.get('refresh_token');
-        const type = searchParams.get('type');
+        console.log('AuthCallback - Full URL:', window.location.href);
+        console.log('AuthCallback - Search params:', Object.fromEntries(searchParams));
+        console.log('AuthCallback - Hash:', location.hash);
 
-        if (type === 'signup' && accessToken && refreshToken) {
-          // セッションを設定
-          const { data, error } = await supabase.auth.setSession({
+        // Supabase v2のメール確認フローを処理
+        // URLにaccess_tokenが含まれている場合（#以降のハッシュフラグメントとして来ることもある）
+        const hashParams = new URLSearchParams(location.hash.substring(1));
+        const accessToken = searchParams.get('access_token') || hashParams.get('access_token');
+        const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token');
+        const type = searchParams.get('type') || hashParams.get('type');
+        const error = searchParams.get('error') || hashParams.get('error');
+        const errorDescription = searchParams.get('error_description') || hashParams.get('error_description');
+
+        // エラーがある場合
+        if (error) {
+          throw new Error(errorDescription || error);
+        }
+
+        // トークンがある場合はセッションを設定
+        if (accessToken && refreshToken) {
+          console.log('Setting session with tokens');
+          const { data, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
           });
 
-          if (error) {
-            throw error;
+          if (sessionError) {
+            throw sessionError;
           }
 
           if (data.user) {
             setStatus('success');
             setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
             
-            // 3秒後にダッシュボードにリダイレクト
+            // 即座にダッシュボードにリダイレクト
             setTimeout(() => {
               navigate('/', { replace: true });
-            }, 3000);
+            }, 1500);
+            return;
           }
-        } else {
-          throw new Error('無効な確認リンクです。');
         }
+
+        // Supabase v1形式のトークン確認も試みる
+        const token = searchParams.get('token');
+        if (token && type === 'signup') {
+          console.log('Attempting to verify with token:', token);
+          // tokenベースの確認を試みる（古い形式）
+          const { error: verifyError } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: 'signup'
+          });
+
+          if (verifyError) {
+            console.error('Token verification error:', verifyError);
+            throw verifyError;
+          }
+
+          // 認証成功後、現在のセッションを確認
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            setStatus('success');
+            setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
+            setTimeout(() => {
+              navigate('/', { replace: true });
+            }, 1500);
+            return;
+          }
+        }
+
+        // どちらの形式でもない場合
+        throw new Error('無効な確認リンクです。');
       } catch (error: any) {
         console.error('認証コールバックエラー:', error);
         setStatus('error');
@@ -48,7 +92,7 @@ const AuthCallback: React.FC = () => {
     };
 
     handleAuthCallback();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, location]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-600 flex items-center justify-center p-4">
