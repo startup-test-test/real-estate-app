@@ -83,7 +83,7 @@ const LandingPage: React.FC = () => {
       {/* ヘッダー */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-3">
               <div className="h-8 w-8 bg-gradient-to-r from-slate-700 to-slate-900 rounded-lg flex items-center justify-center">
                 <Home className="h-5 w-5 text-white" />
@@ -131,12 +131,12 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* ヒーローセクション */}
-      <section id="about" className="py-24 bg-gradient-to-br from-gray-50 via-white to-slate-50">
+      <section id="about" className="py-16 bg-gradient-to-br from-gray-50 via-white to-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* 左側：メインコピー */}
             <div className="text-center lg:text-left">
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
                 手計算からの解放、<br />
                 <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
                   AIが導く賃貸経営DX
@@ -164,74 +164,25 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
             
-            {/* 右側：PCモックアップ画面（小さく） */}
+            {/* 右側：PCモックアップ画面 */}
             <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-md">
+              <div className="w-full max-w-lg">
                 <div className="relative">
-                  {/* ラップトップのフレーム */}
-                  <div className="bg-gray-900 rounded-t-2xl p-3 shadow-2xl">
-                    <div className="bg-white rounded-md overflow-hidden">
-                      {/* ブラウザのヘッダー */}
-                      <div className="bg-gray-100 px-2 py-1.5 flex items-center space-x-1">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                        </div>
-                        <div className="flex-1 bg-white rounded px-2 py-0.5 text-xs text-gray-600">
-                          ooya-dx.com/simulator
-                        </div>
-                      </div>
-                      
-                      {/* シミュレーション結果画面 */}
-                      <div className="p-3 bg-white">
-                        <div className="mb-3">
-                          <h3 className="text-sm font-bold text-gray-900 mb-1">シミュレーション結果</h3>
-                          <p className="text-gray-600 text-xs">プレミアムマンション池袋</p>
-                        </div>
-                        
-                        {/* 主要指標 */}
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                          <div className="bg-blue-50 p-2 rounded text-center">
-                            <div className="text-lg font-bold text-blue-600">6.2%</div>
-                            <div className="text-xs text-gray-600">表面利回り</div>
-                          </div>
-                          <div className="bg-green-50 p-2 rounded text-center">
-                            <div className="text-lg font-bold text-green-600">4.8%</div>
-                            <div className="text-xs text-gray-600">実質利回り</div>
-                          </div>
-                          <div className="bg-purple-50 p-2 rounded text-center">
-                            <div className="text-lg font-bold text-purple-600">12.5%</div>
-                            <div className="text-xs text-gray-600">IRR</div>
-                          </div>
-                          <div className="bg-orange-50 p-2 rounded text-center">
-                            <div className="text-lg font-bold text-orange-600">1.4</div>
-                            <div className="text-xs text-gray-600">DSCR</div>
-                          </div>
-                        </div>
-                        
-                        {/* グラフエリア */}
-                        <div className="bg-gray-50 rounded p-2 h-16 flex items-center justify-center">
-                          <div className="flex items-end space-x-1">
-                            <div className="bg-blue-500 w-2 h-8 rounded-t"></div>
-                            <div className="bg-blue-500 w-2 h-10 rounded-t"></div>
-                            <div className="bg-blue-500 w-2 h-12 rounded-t"></div>
-                            <div className="bg-blue-500 w-2 h-9 rounded-t"></div>
-                            <div className="bg-blue-500 w-2 h-11 rounded-t"></div>
-                            <div className="bg-blue-500 w-2 h-13 rounded-t"></div>
-                          </div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            キャッシュフロー
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* ラップトップのベース */}
-                  <div className="bg-gray-300 h-2 rounded-b-xl relative">
-                    <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-gray-400 to-gray-300 rounded-b-xl"></div>
-                  </div>
+                  <img
+                    src="/images/main_001.png"
+                    alt="大家DX ダッシュボード画面"
+                    className="w-full h-auto"
+                    onError={(e) => {
+                      // 画像読み込みエラー時のフォールバック
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      // フォールバック用のテキストを表示
+                      const fallback = document.createElement('div');
+                      fallback.className = 'w-full h-64 bg-gray-100 rounded-lg shadow-2xl flex items-center justify-center text-gray-500';
+                      fallback.textContent = 'ダッシュボード画面';
+                      target.parentNode?.appendChild(fallback);
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -240,7 +191,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* ピックアップニュース */}
-      <section className="py-16">
+      <section className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-start space-x-8">
