@@ -105,8 +105,8 @@ const LandingPage: React.FC = () => {
                 <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
                   料金
                 </a>
-                <a href="#contact" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  お問合せ
+                <a href="#media" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  メディア
                 </a>
               </nav>
               
@@ -137,9 +137,9 @@ const LandingPage: React.FC = () => {
             {/* 左側：メインコピー */}
             <div className="text-center lg:text-left">
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
-                手計算からの解放、<br />
+                <span className="whitespace-nowrap">現役大家が開発した、</span><br />
                 <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
-                  AIが導く賃貸経営DX
+                  不動産経営DX×AI
                 </span>
               </h1>
               <p className="text-xl lg:text-2xl text-gray-600 mb-10 leading-relaxed">
