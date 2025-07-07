@@ -29,6 +29,9 @@ export { default as Tutorial } from './Tutorial';
 export { default as CashFlowChart } from './CashFlowChart';
 export { default as MetricCard } from './MetricCard';
 
+// 法的免責事項
+export { LegalDisclaimer } from './LegalDisclaimer';
+
 // コメント機能（既存）
 export { default as CommentSection } from './CommentSection';
 export { default as SimpleCommentSection } from './SimpleCommentSection';

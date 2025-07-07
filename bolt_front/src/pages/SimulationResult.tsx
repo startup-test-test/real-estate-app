@@ -21,6 +21,7 @@ import { PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+// import { LegalDisclaimer } from '../components';
 
 const SimulationResult: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -306,6 +307,9 @@ const SimulationResult: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Legal Disclaimer */}
+        {/* <LegalDisclaimer variant="compact" /> */}
 
         {/* Property Image and Basic Info */}
         {simulationData.propertyImageUrl && (

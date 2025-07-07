@@ -132,13 +132,13 @@ const MetricCard: React.FC<MetricCardProps> = ({
   const getPerformanceText = () => {
     switch (performanceLevel) {
       case 'excellent':
-        return '優秀';
+        return '参考値A';
       case 'good':
-        return '良好';
+        return '参考値B';
       case 'warning':
-        return '注意';
+        return '参考値C';
       case 'danger':
-        return '要改善';
+        return '参考値D';
       default:
         return '';
     }
@@ -155,14 +155,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         </div>
         <div className="flex items-center space-x-2">
           {getIcon()}
-          <span className={`font-medium px-2 py-1 rounded-full ${size === 'xlarge' ? 'text-sm' : 'text-xs'} ${
-            performanceLevel === 'excellent' ? 'bg-emerald-100 text-emerald-700' :
-            performanceLevel === 'good' ? 'bg-blue-100 text-blue-700' :
-            performanceLevel === 'warning' ? 'bg-amber-100 text-amber-700' :
-            'bg-red-100 text-red-700'
-          }`}>
-            {getPerformanceText()}
-          </span>
+          {/* パフォーマンスレベル表示を非表示化 */}
         </div>
       </div>
 

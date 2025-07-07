@@ -232,12 +232,12 @@ const Dashboard: React.FC = () => {
 
   const quickActions = [
     {
-      category: 'AI物件シミュレーター',
+      category: '物件収益シミュレーター',
       icon: Calculator,
       color: 'bg-slate-700',
-      description: '物件の収益性と価格妥当性を、AIがまとめて分析します。',
+      description: '物件の収益性と投資指標を詳細に計算・分析します。',
       actions: [
-        { name: '物件をAIで分析する', primary: true, path: '/simulator' }
+        { name: '物件を分析する', primary: true, path: '/simulator' }
       ]
     },
     // 2次リリース用: AI取引事例検索機能

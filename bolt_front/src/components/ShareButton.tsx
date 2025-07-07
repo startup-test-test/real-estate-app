@@ -120,9 +120,6 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
 
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-gray-600 mb-2">
-                  このリンクは7日間有効です。URLを知っている人なら誰でも閲覧できます。
-                </p>
                 
                 <div className="flex items-center gap-2">
                   <input

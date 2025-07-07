@@ -22,6 +22,7 @@ import ImageUpload from '../components/ImageUpload';
 import { ShareButton } from '../components/ShareButton';
 import InviteModal from '../components/InviteModal';
 import ShareCommentDisplay from '../components/ShareCommentDisplay';
+// import { LegalDisclaimer } from '../components';
 import { SimulationResultData, CashFlowData, SimulationInputData, PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import { validatePropertyUrl } from '../utils/validation';
@@ -607,7 +608,7 @@ const Simulator: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                AI物件シミュレーター
+                物件収益シミュレーター
               </h1>
             </div>
             <div className="flex items-center space-x-3">
@@ -622,9 +623,12 @@ const Simulator: React.FC = () => {
             </div>
           </div>
           <p className="text-gray-600">
-            AIを活用した収益シミュレーションで、最適な投資判断をサポートします。
+            物件の収益性を詳細に計算し、投資判断の参考情報を提供します。
           </p>
         </div>
+
+        {/* Legal Disclaimer */}
+        {/* <LegalDisclaimer variant="full" /> */}
 
         {/* Success/Error Messages */}
         {saveMessage && (
@@ -1445,7 +1449,7 @@ const Simulator: React.FC = () => {
                 ) : (
                   <div className="flex items-center">
                     <Zap className="h-5 w-5 mr-2" />
-                    AI物件シミュレーターを実行する
+                    シミュレーションを実行する
                   </div>
                 )}
               </button>
@@ -1546,7 +1550,7 @@ const Simulator: React.FC = () => {
                     good: 10,
                     warning: 5
                   }}
-                  description="投資全体の年間収益率。15%以上で優秀、10%以上で良好。"
+                  description="投資全体の年間収益率を示す参考指標です。"
                 />
                 
                 {/* CCR */}
@@ -1562,7 +1566,7 @@ const Simulator: React.FC = () => {
                     good: 8,
                     warning: 5
                   }}
-                  description="自己資金に対する年間収益率。12%以上で優秀、8%以上で良好。"
+                  description="自己資金に対する年間収益率を示す参考指標です。"
                 />
                 
                 {/* DSCR */}
@@ -1577,7 +1581,7 @@ const Simulator: React.FC = () => {
                     good: 1.3,
                     warning: 1.1
                   }}
-                  description="債務返済能力の指標。1.3以上で安全、1.5以上で優秀。"
+                  description="債務返済能力を示す参考指標です。"
                 />
                 
                 {/* 表面利回り */}
@@ -1630,15 +1634,15 @@ const Simulator: React.FC = () => {
                 />
               </div>
               
-              {/* 共有セクション */}
-              {user && (editingId || saveMessage?.includes('✅')) && (
+              {/* 共有セクション - ミニマムリリースでは非表示 */}
+              {/* {user && (editingId || saveMessage?.includes('✅')) && (
                 <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center space-x-2">
                         <Share2 className="h-5 w-5 text-blue-600" />
                         <span className="text-sm font-medium text-blue-800">
-                          この結果を家族や投資仲間と共有
+                          シミュレーション結果を共有
                         </span>
                       </div>
                     </div>
@@ -1654,11 +1658,8 @@ const Simulator: React.FC = () => {
                       }}
                     />
                   </div>
-                  <p className="text-xs text-blue-600 mt-2">
-                    💡 URLを知っている人なら誰でも7日間閲覧可能です
-                  </p>
                 </div>
-              )}
+              )} */}
             </div>
             
             {/* 追加投資指標 */}
