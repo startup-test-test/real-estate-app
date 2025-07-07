@@ -13,10 +13,9 @@ import {
   Settings,
   Building,
   BookOpen,
-  TrendingUp,
-  Search,
   HelpCircle,
   Crown,
+  Search,
   Key,
   Plus,
   Download,
@@ -241,24 +240,26 @@ const Dashboard: React.FC = () => {
         { name: '物件をAIで分析する', primary: true, path: '/simulator' }
       ]
     },
-    {
-      category: 'AI取引事例検索',
-      icon: Search,
-      color: 'bg-slate-700',
-      description: '2億件超の取引データから類似物件の事例を検索・分析します。',
-      actions: [
-        { name: '取引事例を検索する', primary: true, path: '/transaction-search' }
-      ]
-    },
-    {
-      category: 'AI市場分析',
-      icon: TrendingUp,
-      color: 'bg-slate-700',
-      description: 'エリアの市場動向と将来性をAIが詳細に分析します。',
-      actions: [
-        { name: '市場分析を実行する', primary: true, path: '/market-analysis' }
-      ]
-    },
+    // 2次リリース用: AI取引事例検索機能
+    // {
+    //   category: 'AI取引事例検索',
+    //   icon: Search,
+    //   color: 'bg-slate-700',
+    //   description: '2億件超の取引データから類似物件の事例を検索・分析します。',
+    //   actions: [
+    //     { name: '取引事例を検索する', primary: true, path: '/transaction-search' }
+    //   ]
+    // },
+    // 2次リリース用: AI市場分析機能
+    // {
+    //   category: 'AI市場分析',
+    //   icon: TrendingUp,
+    //   color: 'bg-slate-700',
+    //   description: 'エリアの市場動向と将来性をAIが詳細に分析します。',
+    //   actions: [
+    //     { name: '市場分析を実行する', primary: true, path: '/market-analysis' }
+    //   ]
+    // },
   ];
 
   const filteredResults = formattedSimulations.filter(result => {

@@ -9,8 +9,6 @@ import {
   X,
   Settings,
   BookOpen,
-  TrendingUp,
-  Search,
   HelpCircle,
   Crown,
   Database,
@@ -37,8 +35,9 @@ const Layout: React.FC = () => {
   const navigation = [
     { name: 'マイページ', href: '/', icon: Home },
     { name: 'AI物件シミュレーター', href: '/simulator', icon: Calculator },
-    { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
-    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
+    // 2次リリース用: AI取引事例検索・AI市場分析
+    // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
+    // { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
   ];
 
   const supportNavigation = [
