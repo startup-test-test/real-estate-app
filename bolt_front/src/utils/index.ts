@@ -7,3 +7,4 @@ export * from './dataTransform';
 export * from './imageUtils';
 export * from './pdfGenerator';
 export * from './shareUtils';
+export * from './dateUtils';
