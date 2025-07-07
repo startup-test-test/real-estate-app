@@ -7,7 +7,11 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { signIn, signUp, loading } = useAuthContext();
   const [showPassword, setShowPassword] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  
+  // URLパラメータから新規登録モードかどうかを判定
+  const searchParams = new URLSearchParams(window.location.search);
+  const isSignupMode = searchParams.get('signup') === 'true';
+  const [isSignUp, setIsSignUp] = useState(isSignupMode);
   const [formData, setFormData] = useState({
     email: '',
     password: '',

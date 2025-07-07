@@ -9,6 +9,7 @@ import Simulator from './pages/Simulator';
 import SimulationResult from './pages/SimulationResult';
 import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
+import LandingPage from './pages/LandingPage';
 // 2次リリース用: AI機能のインポート
 // import MarketAnalysis from './pages/MarketAnalysis';
 // import TransactionSearch from './pages/TransactionSearch';
@@ -48,6 +49,8 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* パブリックページ */}
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/share/:shareId" element={<ShareView />} />
