@@ -42,7 +42,7 @@ const LandingPage: React.FC = () => {
         "PDFレポート出力（ウォーターマーク付き）",
         "メールサポート"
       ],
-      buttonText: "無料で始める",
+      buttonText: "1分で悩み解決を体験",
       buttonStyle: "bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200"
     },
     {
@@ -122,7 +122,7 @@ const LandingPage: React.FC = () => {
                   onClick={() => navigate('/login?signup=true')}
                   className="px-4 py-2 bg-gradient-to-r from-slate-700 to-slate-900 text-white rounded-lg hover:from-slate-800 hover:to-slate-950 transition-all"
                 >
-                  無料で始める
+                  1分で悩み解決を体験
                 </button>
               </div>
             </div>
@@ -131,28 +131,28 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* ヒーローセクション */}
-      <section id="about" className="py-16 bg-gradient-to-br from-gray-50 via-white to-slate-50">
+      <section id="about" className="py-16 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* 左側：メインコピー */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
-                <span className="whitespace-nowrap">現役大家が開発した、</span><br />
-                <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
-                  不動産経営DX×AI
+            <div className="text-center lg:text-left max-w-4xl">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
+                <span className="block">現役大家が開発した、</span>
+                <span className="block">賃貸経営の悩みを</span>
+                <span className="block bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
+                  1分で解決
                 </span>
               </h1>
               <p className="text-xl lg:text-2xl text-gray-600 mb-10 leading-relaxed">
-                不動産投資のシミュレーションツールで、
-                IRR・CCR・DSCRから35年間のキャッシュフローまで、投資検討の参考情報を計算します。<br />
-                <span className="text-sm text-gray-500">※ 計算結果は参考情報であり、投資を保証するものではありません。</span>
+                銀行提出書類も、収支計算も、投資判断も。<br />
+                もうExcelで徹夜する必要はありません。
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-8">
                 <button
                   onClick={() => navigate('/login?signup=true')}
                   className="px-10 py-4 bg-gradient-to-r from-slate-700 to-slate-900 text-white rounded-xl hover:from-slate-800 hover:to-slate-950 transition-all duration-300 text-lg font-semibold flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  無料で今すぐ始める
+                  1分で悩み解決を体験
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </button>
                 <button
@@ -190,42 +190,12 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ピックアップニュース */}
-      <section className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex items-start space-x-8">
-              <div className="flex-shrink-0">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  NEWS
-                </h2>
-              </div>
-              <div className="flex-1">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <span className="inline-block px-4 py-2 bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 text-sm font-semibold rounded-full shadow-sm">
-                      動画配信
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-500 mb-2">2025.06.03</p>
-                    <h3 className="text-lg text-gray-900 font-semibold hover:text-blue-600 cursor-pointer transition-colors duration-200">
-                      不動産投資スクール「大家DX Academy」にて最新動画を公開いたしました
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* お悩みセクション */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-              こんなお悩みありませんか？
+              こんな経験、ありませんか？
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -235,10 +205,12 @@ const LandingPage: React.FC = () => {
                   <span className="text-2xl">😰</span>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  悩み.1 Excel計算が面倒で時間がかかる
+                  銀行面談まであと12時間
                 </h3>
-                <p className="text-gray-600 text-sm">
-                  複雑な関数やシート作成に時間を取られ、肝心の投資判断に集中できない
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  「事業計画書がまだ白紙...<br />
+                  収支計算も間違いだらけ...<br />
+                  また徹夜確定。家族に申し訳ない」
                 </p>
               </div>
             </div>
@@ -246,13 +218,15 @@ const LandingPage: React.FC = () => {
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="text-center">
                 <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🤔</span>
+                  <span className="text-2xl">🏚️</span>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  悩み.2 計算ミスが心配
+                  空室更新、今月で4ヶ月目
                 </h3>
-                <p className="text-gray-600 text-sm">
-                  手計算やExcelでのヒューマンエラーが不安で、投資判断に自信が持てない
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  「5万→4.5万→4万...どこまで下げる？<br />
+                  隣の似た物件は5.2万で満室なのに<br />
+                  何が違うのか分からない」
                 </p>
               </div>
             </div>
@@ -260,22 +234,33 @@ const LandingPage: React.FC = () => {
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">📊</span>
+                  <span className="text-2xl">💸</span>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  悩み.3 複数物件の比較が大変
+                  購入して気づいた現実
                 </h3>
-                <p className="text-gray-600 text-sm">
-                  物件ごとに別々のファイルで管理し、比較検討に手間がかかりすぎる
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  「表面利回り12%→実質3%<br />
+                  修繕費と税金を甘く見てた<br />
+                  2,000万の借金だけが残った」
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="text-center mt-12">
-            <p className="text-2xl text-gray-700 font-semibold leading-relaxed">
-              そんなお悩みを<span className="text-slate-700 font-bold">大家DX</span>が解決します！
-            </p>
+          <div className="text-center mt-16">
+            <div className="inline-block">
+              <p className="text-xl text-gray-700 font-medium mb-3 flex items-center justify-center">
+                <span className="text-4xl mr-3">↓</span>
+              </p>
+              <p className="text-2xl text-gray-800 font-bold leading-relaxed mb-3">
+                「全部、私も経験しました<br />
+                だから本気で解決したかった」
+              </p>
+              <p className="text-lg text-gray-600">
+                開発者より（大家歴15年）
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -302,6 +287,85 @@ const LandingPage: React.FC = () => {
                 <p className="text-gray-600 text-base leading-relaxed">{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 開発者セクション */}
+      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-tight">
+              なぜ現役大家が開発したのか
+            </h2>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg border border-gray-100">
+            <div className="text-center">
+              <div className="text-2xl lg:text-3xl font-bold text-gray-900 mb-10 leading-relaxed">
+                きっかけは、銀行融資の3連敗。
+              </div>
+              
+              <div className="mb-10">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">試したツール全滅：</h3>
+                <div className="space-y-4 max-w-2xl mx-auto">
+                  <div className="flex items-center justify-start text-left">
+                    <span className="text-red-500 text-xl mr-3">❌</span>
+                    <div>
+                      <span className="text-gray-900 font-medium">不動産会社用</span>
+                      <span className="text-gray-600 ml-2">→ 売買特化</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-start text-left">
+                    <span className="text-red-500 text-xl mr-3">❌</span>
+                    <div>
+                      <span className="text-gray-900 font-medium">会計ソフト</span>
+                      <span className="text-gray-600 ml-2">→ 賃貸非対応</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-start text-left">
+                    <span className="text-red-500 text-xl mr-3">❌</span>
+                    <div>
+                      <span className="text-gray-900 font-medium">海外ツール</span>
+                      <span className="text-gray-600 ml-2">→ 日本の税制×</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-start text-left">
+                    <span className="text-red-500 text-xl mr-3">❌</span>
+                    <div>
+                      <span className="text-gray-900 font-medium">Excel</span>
+                      <span className="text-gray-600 ml-2">→ ミスだらけ</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-2xl lg:text-3xl font-bold text-slate-700 mb-10">
+                だから自分で作った。
+              </div>
+              
+              <div className="mt-10">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">開発者実績：</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                  <div className="flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+                    <span className="text-gray-700 font-medium">大家歴15年</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+                    <span className="text-gray-700 font-medium">所有5棟42室</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+                    <span className="text-gray-700 font-medium">満室経営継続中</span>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
+                    <span className="text-gray-700 font-medium">融資総額3.2億円</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -345,7 +409,7 @@ const LandingPage: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => {
-                    if (plan.buttonText === '無料で始める') {
+                    if (plan.buttonText === '1分で悩み解決を体験') {
                       navigate('/login?signup=true');
                     } else {
                       navigate('/login');
@@ -375,7 +439,7 @@ const LandingPage: React.FC = () => {
             onClick={() => navigate('/login?signup=true')}
             className="px-12 py-5 bg-white text-slate-700 rounded-xl hover:bg-gray-50 transition-all duration-300 text-xl font-semibold inline-flex items-center shadow-2xl hover:shadow-3xl transform hover:-translate-y-1"
           >
-            無料アカウントを作成
+            1分で悩み解決を体験
             <ArrowRight className="h-5 w-5 ml-2" />
           </button>
         </div>
