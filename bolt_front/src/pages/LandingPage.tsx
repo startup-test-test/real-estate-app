@@ -23,7 +23,7 @@ const LandingPage: React.FC = () => {
       name: '藤田 健太',
       age: '37歳',
       job: 'ITコンサルタント',
-      image: '👨‍💼',
+      image: '/img/people_1.png',
       color: 'from-blue-500 to-blue-700',
       problem: '「銀行面談まで12時間、収支計算がまだ白紙...またExcelで徹夜確定」',
       solution: '楽待URL貼り付けで即分析',
@@ -39,7 +39,7 @@ const LandingPage: React.FC = () => {
       name: '山本 理恵',
       age: '34歳',
       job: '育休中プランナー',
-      image: '👩‍💼',
+      image: '/img/people_2.png',
       color: 'from-pink-500 to-rose-700',
       problem: '「授乳中に楽待チェック、でも分析は娘が寝た後...復職後どうしよう」',
       solution: 'スマホで完結、夫婦で共有',
@@ -55,7 +55,7 @@ const LandingPage: React.FC = () => {
       name: '佐藤 慎一',
       age: '45歳',
       job: '大手メーカー部長',
-      image: '👨‍💼',
+      image: '/img/people_3.png',
       color: 'from-green-500 to-green-700',
       problem: '「58室の管理で確定申告3日間...税理士に『整理が必要』と言われた」',
       solution: '大規模対応、事業承継準備',
@@ -185,25 +185,20 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* ヒーローセクション */}
-      <section id="about" className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <section id="about" className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* 左側：メインコピー */}
-            <div className="text-center lg:text-left max-w-4xl">
+          <div className="flex justify-center lg:justify-start">
+            {/* メインコピー */}
+            <div className="text-center lg:text-left max-w-5xl">
               <div className="mb-6">
-                <span className="inline-block px-4 py-2 bg-blue-100 text-blue-800 text-sm font-medium rounded-full mb-4">
-                  現役大家が開発した経営OS
-                </span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
-                <span className="block">大家業を、</span>
-                <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  もっとスマートに
-                </span>
+                現役大家が開発した、<br />
+                賃貸経営DX。
               </h1>
               <p className="text-2xl lg:text-3xl text-gray-600 mb-10 leading-relaxed">
-                1分で物件分析、スマホで資産管理、家族で共有。<br />
-                もうExcelで徹夜する必要はありません。
+                市場分析・収支判断・銀行提出。<br />
+                すべて1分。
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-8">
                 <button
@@ -223,53 +218,32 @@ const LandingPage: React.FC = () => {
               
               {/* 信頼指標 */}
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start text-sm text-gray-600">
-                <div className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                  <span>開発者：大家歴15年</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                  <span>実績：5棟42室運営中</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* 右側：PCモックアップ画面 */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-lg">
-                <div className="relative">
-                  <img
-                    src="/images/main_001.png"
-                    alt="大家DX ダッシュボード画面"
-                    className="w-full h-auto rounded-xl shadow-2xl"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const fallback = document.createElement('div');
-                      fallback.className = 'w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl shadow-2xl flex items-center justify-center text-gray-500';
-                      fallback.textContent = 'ダッシュボード画面';
-                      target.parentNode?.appendChild(fallback);
-                    }}
-                  />
-                  {/* 浮遊するカード */}
-                  <div className="absolute -top-4 -right-4 bg-white rounded-lg shadow-lg p-3 hidden lg:block">
-                    <div className="text-xs text-gray-500 mb-1">月間CF</div>
-                    <div className="text-lg font-bold text-green-600">+¥42万</div>
-                  </div>
-                  <div className="absolute -bottom-4 -left-4 bg-white rounded-lg shadow-lg p-3 hidden lg:block">
-                    <div className="text-xs text-gray-500 mb-1">分析時間</div>
-                    <div className="text-lg font-bold text-blue-600">1分</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* 右側画像 */}
+        <div className="hidden lg:flex absolute top-0 right-0 h-full w-1/2 items-center justify-end">
+          <img
+            src="/img/main_250710_1.png"
+            alt="大家DX メインビジュアル"
+            className="w-9/10 h-auto" style={{width: '90%'}}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const fallback = document.createElement('div');
+              fallback.className = 'w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-gray-500';
+              fallback.textContent = 'メインビジュアル';
+              target.parentNode?.appendChild(fallback);
+            }}
+          />
         </div>
       </section>
 
       {/* 課題セクション */}
       <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
               こんな悩みありませんか？
@@ -281,28 +255,27 @@ const LandingPage: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {personas.map((persona) => (
-              <div key={persona.id} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
-                {/* ペルソナ情報 */}
-                <div className="flex items-center mb-6">
-                  <div className="text-3xl mr-3">{persona.image}</div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{persona.name}</h3>
-                    <p className="text-base text-gray-600">{persona.age} • {persona.job}</p>
+              <div key={persona.id} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 text-center">
+                {/* ペルソナ画像 */}
+                <div className="mb-6 flex flex-col items-center">
+                  <div className="w-40 h-32 mx-auto mb-5">
+                    <img 
+                      src={persona.image} 
+                      alt={persona.name}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGM0Y0RjYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOUI5Qjk5Ij4KPHA+VXNlcjwvcD4KPC9zdmc+Cjwvc3ZnPgo=';
+                      }}
+                    />
                   </div>
                 </div>
                 
                 {/* 悩み */}
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                  <h4 className="text-lg font-semibold text-red-800 mb-2">😰 お悩み</h4>
-                  <p className="text-red-700 mb-2 text-base">{persona.problem}</p>
-                  <p className="text-red-600 text-sm">{persona.story}</p>
+                <div className="mb-6">
+                  <p className="text-gray-900 mb-3 text-lg">{persona.problem}</p>
                 </div>
                 
-                {/* 解決策 */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <h4 className="text-lg font-semibold text-blue-800 mb-2">✨ 大家DXなら</h4>
-                  <p className="text-blue-700 text-base">{persona.solution}</p>
-                </div>
                 
                 {/* 機能リスト */}
                 <div className="space-y-3 mb-6">
@@ -312,21 +285,13 @@ const LandingPage: React.FC = () => {
                         <feature.icon className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <h5 className="font-medium text-gray-900 text-base">{feature.title}</h5>
-                        <p className="text-gray-600 text-sm">{feature.desc}</p>
+                        <h5 className="font-medium text-gray-900 text-lg">{feature.title}</h5>
+                        <p className="text-gray-600 text-base">{feature.desc}</p>
                       </div>
                     </div>
                   ))}
                 </div>
                 
-                {/* CTA */}
-                <button
-                  onClick={() => navigate('/login?signup=true')}
-                  className={`w-full px-6 py-3 bg-gradient-to-r ${persona.color} text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-base flex items-center justify-center`}
-                >
-                  {persona.name}さんの解決策を試す
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </button>
               </div>
             ))}
           </div>
