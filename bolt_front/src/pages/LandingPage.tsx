@@ -25,14 +25,11 @@ const LandingPage: React.FC = () => {
       job: 'ITコンサルタント',
       image: '/img/people_1.png',
       color: 'from-blue-500 to-blue-700',
-      problem: '「良い物件発見！でもExcel面倒...市場調査・収支計算・銀行提出書類で徹夜」',
+      title: '悩み1.\nシミュレーションに時間がかかる',
+      problem: '「良い物件を発見したのだが、Excelでのシミュレーションに時間がかかる。他にも周辺調査や銀行書類提出を作らないといけない。」',
       solution: '楽待URL貼り付けで即分析',
       story: '7物件のExcel管理に限界。シミュレーション作成に毎回2時間かかって、家族時間を削るのが辛い。',
-      features: [
-        { icon: Clock, title: '作業時間1/10短縮', desc: 'Excel地獄から解放' },
-        { icon: Calculator, title: '楽待連携分析', desc: 'URLコピペで即完了' },
-        { icon: BarChart3, title: 'FA講座連携', desc: '学んだ指標を自動計算' }
-      ]
+      features: []
     },
     {
       id: 'yamamoto',
@@ -44,11 +41,7 @@ const LandingPage: React.FC = () => {
       problem: '「授乳中に楽待チェック、でも分析は娘が寝た後...復職後どうしよう」',
       solution: 'スマホで完結、夫婦で共有',
       story: '育児の合間での物件管理が大変。銀行訪問も娘連れで効率悪い。復職後の両立が不安。',
-      features: [
-        { icon: Smartphone, title: '授乳中でも操作', desc: 'モバイル完全対応' },
-        { icon: Users, title: '夫婦で共有', desc: '家族で資産を見える化' },
-        { icon: Heart, title: '復職後も安心', desc: '時短効果で両立可能' }
-      ]
+      features: []
     },
     {
       id: 'sato',
@@ -60,11 +53,7 @@ const LandingPage: React.FC = () => {
       problem: '「58室の管理で確定申告3日間...税理士に『整理が必要』と言われた」',
       solution: '大規模対応、事業承継準備',
       story: '58室の管理が限界。修繕履歴の把握も困難で、息子への引き継ぎ準備も進まない。',
-      features: [
-        { icon: Database, title: '58室一元管理', desc: '規模拡大に対応' },
-        { icon: Shield, title: '法人対応', desc: '税務最適化も簡単' },
-        { icon: Target, title: '承継準備', desc: '息子への引き継ぎ' }
-      ]
+      features: []
     }
   ];
 
@@ -72,18 +61,21 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: "1分で完了する物件分析",
-      description: "楽待URLを貼り付けるだけで、IRR・CCR・DSCRなどの投資指標を自動計算。もうExcelで悩む必要はありません。"
+      title: "機能1. 1分で完了する物件分析",
+      description: "楽待URLを貼り付けるだけで、IRR・CCR・DSCRなどの投資指標を自動計算。もうExcelで悩む必要はありません。",
+      image: "/img/feature_1.png"
     },
     {
       icon: Smartphone,
-      title: "スマホで完結する資産管理",
-      description: "授乳中でも、通勤中でも。親指だけでサクサク操作できるモバイル完全対応設計。"
+      title: "機能2. スマホで完結する資産管理",
+      description: "授乳中でも、通勤中でも。親指だけでサクサク操作できるモバイル完全対応設計。",
+      image: "/img/feature_2.png"
     },
     {
       icon: Users,
-      title: "家族で共有する投資戦略",
-      description: "配偶者も理解できる見える化で、家族みんなで資産形成。事業承継の準備も万全。"
+      title: "機能3. 家族で共有する投資戦略",
+      description: "配偶者も理解できる見える化で、家族みんなで資産形成。事業承継の準備も万全。",
+      image: "/img/feature_3.png"
     }
   ];
 
@@ -185,16 +177,18 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* ヒーローセクション */}
-      <section id="about" className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center lg:justify-start">
-            {/* メインコピー */}
-            <div className="text-center lg:text-left max-w-5xl">
+      <section id="about" className="py-16 bg-white bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_001.jpg)'}}>
+        {/* 背景オーバーレイ */}
+        <div className="absolute inset-0 bg-white opacity-70"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* 左側：メインコピー */}
+            <div className="text-center lg:text-left">
               <div className="mb-6">
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
                 現役大家が開発した、<br />
-                賃貸経営DX。
+                <span className="text-4xl md:text-5xl lg:text-6xl">賃貸経営DX。</span>
               </h1>
               <p className="text-2xl lg:text-3xl text-gray-600 mb-10 leading-relaxed">
                 市場分析・収支判断・銀行提出。<br />
@@ -220,24 +214,25 @@ const LandingPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start text-sm text-gray-600">
               </div>
             </div>
+            
+            {/* 右側：画像 */}
+            <div className="flex justify-center lg:justify-end pr-4 sm:pr-6 lg:pr-8">
+              <img
+                src="/img/kakushin_img01.png"
+                alt="大家DX メインビジュアル"
+                className="w-full h-auto max-w-4xl transform"
+                style={{transform: 'scale(1.2) translateX(-15px)'}}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = document.createElement('div');
+                  fallback.className = 'w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-gray-500';
+                  fallback.textContent = 'メインビジュアル';
+                  target.parentNode?.appendChild(fallback);
+                }}
+              />
+            </div>
           </div>
-        </div>
-        
-        {/* 右側画像 */}
-        <div className="hidden lg:flex absolute top-0 right-0 h-full w-1/2 items-center justify-end">
-          <img
-            src="/img/main_250710_1.png"
-            alt="大家DX メインビジュアル"
-            className="h-auto" style={{width: '80%', maxWidth: '80%'}}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              const fallback = document.createElement('div');
-              fallback.className = 'w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-gray-500';
-              fallback.textContent = 'メインビジュアル';
-              target.parentNode?.appendChild(fallback);
-            }}
-          />
         </div>
       </section>
 
@@ -245,8 +240,11 @@ const LandingPage: React.FC = () => {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              こんな悩みありませんか？
+            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight relative">
+              <span className="relative inline-block">
+                こんなお悩みありませんか？
+                <span className="absolute left-0 w-full h-3 bg-blue-500 opacity-80 z-0" style={{bottom: '-10px'}}></span>
+              </span>
             </h2>
             <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
               多くの大家さんが抱える3つの共通課題
@@ -271,6 +269,13 @@ const LandingPage: React.FC = () => {
                   </div>
                 </div>
                 
+                {/* タイトル */}
+                {persona.title && (
+                  <div className="mb-4">
+                    <h4 className="text-xl font-bold text-gray-900 whitespace-pre-line">{persona.title}</h4>
+                  </div>
+                )}
+                
                 {/* 悩み */}
                 <div className="mb-6">
                   <p className="text-gray-900 mb-3 text-lg">{persona.problem}</p>
@@ -278,19 +283,21 @@ const LandingPage: React.FC = () => {
                 
                 
                 {/* 機能リスト */}
-                <div className="space-y-3 mb-6">
-                  {persona.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-lg bg-gradient-to-r ${persona.color}`}>
-                        <feature.icon className="h-4 w-4 text-white" />
+                {persona.features.length > 0 && (
+                  <div className="space-y-3 mb-6">
+                    {persona.features.map((feature, featureIndex) => (
+                      <div key={featureIndex} className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg bg-gradient-to-r ${persona.color}`}>
+                          <feature.icon className="h-4 w-4 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <h5 className="font-medium text-gray-900 text-lg">{feature.title}</h5>
+                          <p className="text-gray-600 text-base">{feature.desc}</p>
+                        </div>
                       </div>
-                      <div className="text-left">
-                        <h5 className="font-medium text-gray-900 text-lg">{feature.title}</h5>
-                        <p className="text-gray-600 text-base">{feature.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
                 
               </div>
             ))}
@@ -313,32 +320,42 @@ const LandingPage: React.FC = () => {
               3つの革新的機能
             </h2>
             <p className="text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              現役大家が実際に使いながら開発した、本当に必要な機能だけを厳選。<br />
-              <span className="text-sm text-gray-500">※ 投資勧誘や保証を行うものではありません。</span>
+              現役大家が実際に使いながら開発した、本当に必要な機能だけを厳選。
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="group text-center p-8 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 bg-white relative overflow-hidden">
-                {/* 背景装飾 */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="h-16 w-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors">{feature.title}</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed">{feature.description}</p>
-                  
-                  {/* ホバー時の詳細情報 */}
-                  <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="text-blue-600 font-medium text-base hover:text-blue-700 flex items-center justify-center mx-auto">
-                      詳しく見る <ArrowRight className="h-4 w-4 ml-1" />
-                    </button>
-                  </div>
-                </div>
+          
+          {/* メインレイアウト: 左側PC画像、右側機能リスト */}
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            {/* 左側: PC画像 */}
+            <div className="w-full lg:w-3/5 lg:pl-0">
+              <div className="relative -ml-4 sm:-ml-6 lg:-ml-8">
+                <img
+                  src="/img/kakushin_img01.png"
+                  alt="大家DX システム画面"
+                  className="w-full h-auto rounded-xl"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                  }}
+                />
               </div>
-            ))}
+            </div>
+            
+            {/* 右側: 機能リスト */}
+            <div className="w-full lg:w-2/5">
+              <div className="space-y-12">
+                {features.map((feature, index) => (
+                  <div key={index}>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 text-lg leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           
         </div>
@@ -353,69 +370,28 @@ const LandingPage: React.FC = () => {
             </h2>
           </div>
           
-          <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg border border-gray-100">
-            <div className="text-center">
-              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-10 leading-relaxed">
-                きっかけは、銀行融資の3連敗。
-              </div>
-              
-              <div className="mb-10">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">試したツール全滅：</h3>
-                <div className="space-y-4 max-w-2xl mx-auto">
-                  <div className="flex items-center justify-start text-left">
-                    <span className="text-red-500 text-xl mr-3">❌</span>
-                    <div>
-                      <span className="text-gray-900 font-medium text-lg">不動産会社用</span>
-                      <span className="text-gray-600 ml-2 text-lg">→ 売買特化</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-start text-left">
-                    <span className="text-red-500 text-xl mr-3">❌</span>
-                    <div>
-                      <span className="text-gray-900 font-medium text-lg">会計ソフト</span>
-                      <span className="text-gray-600 ml-2 text-lg">→ 賃貸非対応</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-start text-left">
-                    <span className="text-red-500 text-xl mr-3">❌</span>
-                    <div>
-                      <span className="text-gray-900 font-medium text-lg">海外ツール</span>
-                      <span className="text-gray-600 ml-2 text-lg">→ 日本の税制×</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-start text-left">
-                    <span className="text-red-500 text-xl mr-3">❌</span>
-                    <div>
-                      <span className="text-gray-900 font-medium text-lg">Excel</span>
-                      <span className="text-gray-600 ml-2 text-lg">→ ミスだらけ</span>
-                    </div>
-                  </div>
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg border border-gray-200">
+              <div className="flex flex-col lg:flex-row items-center gap-8">
+                {/* 左側: 画像 */}
+                <div className="flex-shrink-0">
+                  <img 
+                    src="/img/people_4.png" 
+                    alt="開発者"
+                    className="w-48 h-48 object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
                 </div>
-              </div>
-              
-              <div className="text-3xl lg:text-4xl font-bold text-slate-700 mb-10">
-                だから自分で作った。
-              </div>
-              
-              <div className="mt-10">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">開発者実績：</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                  <div className="flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700 font-medium text-lg">大家歴15年</span>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700 font-medium text-lg">所有5棟42室</span>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700 font-medium text-lg">満室経営継続中</span>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                    <span className="text-gray-700 font-medium text-lg">融資総額3.2億円</span>
-                  </div>
+                
+                {/* 右側: テキスト */}
+                <div className="flex-1 text-center lg:text-left">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">きっかけは、銀行融資の3連敗。</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    融資面談で何度も断られ、収支シミュレーションの重要性を痛感。しかし、使えるツールがありませんでした。
+                  </p>
                 </div>
               </div>
             </div>
