@@ -186,9 +186,9 @@ const LandingPage: React.FC = () => {
             <div className="text-center lg:text-left">
               <div className="mb-6">
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
-                現役大家が開発した、<br />
-                <span className="text-4xl md:text-5xl lg:text-6xl">賃貸経営DX。</span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
+                自主管理大家の為の<br />
+                <span className="text-5xl md:text-6xl lg:text-7xl">賃貸経営DX</span>
               </h1>
               <p className="text-2xl lg:text-3xl text-gray-600 mb-10 leading-relaxed">
                 市場分析・収支判断・銀行提出。<br />
