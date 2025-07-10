@@ -202,12 +202,6 @@ const LandingPage: React.FC = () => {
                   1分で悩み解決を体験
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </button>
-                <button
-                  onClick={() => navigate('/simulator')}
-                  className="px-10 py-4 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 text-xl font-semibold shadow-sm hover:shadow-md"
-                >
-                  デモを見る
-                </button>
               </div>
               
               {/* 信頼指標 */}
@@ -490,118 +484,188 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* CTAセクション */}
-      <section className="py-24 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            大家業を、もっとスマートに
+          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6" style={{lineHeight: '1.3'}}>
+            3分で無料登録。<br />クレカ不要で今すぐ体験。
           </h2>
-          <p className="text-3xl text-blue-100 mb-10 leading-relaxed">
-            3分で登録完了。クレジットカード不要で今すぐ無料体験。<br />
-            <span className="text-sm text-blue-200">※ シミュレーション結果は参考情報であり、投資勧誘ではありません。</span>
-          </p>
           
-          {/* 体験の流れ */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
-              <div className="text-3xl mb-2">1</div>
-              <h3 className="text-xl font-semibold text-white mb-2">無料登録</h3>
-              <p className="text-blue-100 text-base">3分で完了</p>
-            </div>
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
-              <div className="text-3xl mb-2">2</div>
-              <h3 className="text-xl font-semibold text-white mb-2">URLを貼り付け</h3>
-              <p className="text-blue-100 text-base">楽待の物件URL</p>
-            </div>
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
-              <div className="text-3xl mb-2">3</div>
-              <h3 className="text-xl font-semibold text-white mb-2">即座に分析</h3>
-              <p className="text-blue-100 text-base">1分で完了</p>
-            </div>
+          {/* 新規会員登録フォーム */}
+          <div className="max-w-2xl mx-auto mb-10">
+            <form className="space-y-6">
+              <div className="flex items-center space-x-4">
+                <label htmlFor="email" className="w-32 text-sm font-medium text-gray-700 text-right">
+                  E-Mail <span className="text-blue-600">(必須)</span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder=""
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <label htmlFor="password" className="w-32 text-sm font-medium text-gray-700 text-right">
+                  パスワード <span className="text-blue-600">(必須)</span>
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder=""
+                />
+              </div>
+              <div className="flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                  <a href="#" className="text-blue-600 hover:underline">個人情報の取り扱い</a>
+                  <span className="mx-1">・</span>
+                  <a href="#" className="text-blue-600 hover:underline">利用規約</a>
+                  <span className="ml-1">に同意する。</span>
+                </label>
+              </div>
+              <div className="text-center">
+                <button
+                  type="submit"
+                  className="w-full max-w-md px-12 py-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-lg"
+                >
+                  1分で悩み解決を体験
+                </button>
+              </div>
+            </form>
           </div>
           
-          <button
-            onClick={() => navigate('/login?signup=true')}
-            className="px-12 py-5 bg-white text-blue-600 rounded-xl hover:bg-gray-50 transition-all duration-300 text-2xl font-semibold inline-flex items-center shadow-2xl hover:shadow-3xl transform hover:-translate-y-1"
-          >
-            1分で悩み解決を体験
-            <ArrowRight className="h-5 w-5 ml-2" />
-          </button>
+        </div>
+      </section>
+
+      {/* よくある質問セクション */}
+      <section id="faq" className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              よくある質問
+            </h2>
+          </div>
+          
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Q. 無料プランでどこまで利用できますか？
+              </h3>
+              <p className="text-gray-600">
+                A. 月10件までの物件シミュレーションと基本的な収益指標の表示が可能です。PDFレポートの出力も可能ですが、ウォーターマークが付きます。
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Q. 楽待以外の物件情報も分析できますか？
+              </h3>
+              <p className="text-gray-600">
+                A. 現在は楽待のURL貼り付けによる自動分析に対応しています。他のサイトへの対応は今後順次拡張予定です。
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Q. スマートフォンでも利用できますか？
+              </h3>
+              <p className="text-gray-600">
+                A. はい、完全にモバイル対応しています。授乳中や通勤中など、いつでもどこでも物件分析が可能です。
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Q. 家族でアカウントを共有できますか？
+              </h3>
+              <p className="text-gray-600">
+                A. プロプラン以上では複数ユーザーでの共有機能をご利用いただけます。ご家族での投資戦略共有に最適です。
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Q. 投資の成功を保証してくれますか？
+              </h3>
+              <p className="text-gray-600">
+                A. 本サービスは投資判断の参考情報を提供するものであり、投資の成功を保証するものではありません。最終的な投資判断はご自身の責任でお願いします。
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ニュースセクション */}
-      <section id="news" className="py-24 bg-white">
+      <section id="news" className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
               ニュース
             </h2>
           </div>
           <div className="bg-white">
             {/* ニュース項目 */}
-            <div className="space-y-4">
-              <div className="flex items-start space-x-4 py-4 border-b border-gray-100">
+            <div className="space-y-0">
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                    お知らせ
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    動画配信
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-base text-gray-500 mb-1">2025.01.07</p>
-                  <h3 className="text-gray-900 font-medium hover:text-blue-600 cursor-pointer text-lg">
-                    大家DX（オオヤディーエックス）サービス開始準備中のお知らせ
+                  <p className="text-sm text-gray-500 mb-1">2025.06.03</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    不動産テックの学校「Gate.School」にて最新動画を公開いたしました
                   </h3>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-4 py-4 border-b border-gray-100">
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                    機能
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    リリース
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-base text-gray-500 mb-1">2025.01.05</p>
-                  <h3 className="text-gray-900 font-medium hover:text-blue-600 cursor-pointer text-lg">
-                    不動産投資シミュレーション機能の詳細仕様を公開しました
+                  <p className="text-sm text-gray-500 mb-1">2025.06.02</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    東京都内の単身者向けマンション賃料、平均7%上昇！一人気エリアは10%以上の値上がりも
                   </h3>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-4 py-4 border-b border-gray-100">
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
-                    アップデート
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    セミナー
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-base text-gray-500 mb-1">2025.01.03</p>
-                  <h3 className="text-gray-900 font-medium hover:text-blue-600 cursor-pointer text-lg">
-                    ベータ版テストユーザー募集開始のお知らせ
+                  <p className="text-sm text-gray-500 mb-1">2025.05.01</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    【セミナー開催】不動産営業の新時代！AIとインサイドセールスチームの連携で成約数を倍増させる方法
                   </h3>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-4 py-4 border-b border-gray-100">
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">
-                    プレス
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    セミナー
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-base text-gray-500 mb-1">2024.12.28</p>
-                  <h3 className="text-gray-900 font-medium hover:text-blue-600 cursor-pointer text-lg">
-                    大家DX開発チーム設立のお知らせ
+                  <p className="text-sm text-gray-500 mb-1">2025.04.20</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    【セミナー開催】他社はこう提案している！収益物件仲介のリアルな提案例を大公開！
                   </h3>
                 </div>
               </div>
-            </div>
-            
-            {/* もっと見るボタン */}
-            <div className="text-center mt-8">
-              <button className="text-blue-600 hover:text-blue-800 font-medium text-base">
-                もっと見る
-              </button>
             </div>
           </div>
         </div>
