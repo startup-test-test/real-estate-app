@@ -484,8 +484,10 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* CTAセクション */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <section className="py-24 bg-blue-50 bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_002.jpg)'}}>
+        {/* 背景オーバーレイ */}
+        <div className="absolute inset-0 bg-blue-50 opacity-60"></div>
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6" style={{lineHeight: '1.3'}}>
             3分で無料登録。<br />クレカ不要で今すぐ体験。
           </h2>
@@ -508,12 +510,15 @@ const LandingPage: React.FC = () => {
                 <label htmlFor="password" className="w-32 text-sm font-medium text-gray-700 text-right">
                   パスワード <span className="text-blue-600">(必須)</span>
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder=""
-                />
+                <div className="flex-1">
+                  <input
+                    type="password"
+                    id="password"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder=""
+                  />
+                  <p className="text-xs text-gray-500 mt-1">半角英数字8文字以上</p>
+                </div>
               </div>
               <div className="flex items-center justify-center">
                 <input
