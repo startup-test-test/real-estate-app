@@ -25,7 +25,7 @@ const LandingPage: React.FC = () => {
       job: 'ITコンサルタント',
       image: '/img/people_1.png',
       color: 'from-blue-500 to-blue-700',
-      problem: '「銀行面談まで12時間、収支計算がまだ白紙...またExcelで徹夜確定」',
+      problem: '「良い物件発見！でもExcel面倒...市場調査・収支計算・銀行提出書類で徹夜」',
       solution: '楽待URL貼り付けで即分析',
       story: '7物件のExcel管理に限界。シミュレーション作成に毎回2時間かかって、家族時間を削るのが辛い。',
       features: [
@@ -228,7 +228,7 @@ const LandingPage: React.FC = () => {
           <img
             src="/img/main_250710_1.png"
             alt="大家DX メインビジュアル"
-            className="w-9/10 h-auto" style={{width: '90%'}}
+            className="h-auto" style={{width: '80%', maxWidth: '80%'}}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
@@ -284,7 +284,7 @@ const LandingPage: React.FC = () => {
                       <div className={`p-2 rounded-lg bg-gradient-to-r ${persona.color}`}>
                         <feature.icon className="h-4 w-4 text-white" />
                       </div>
-                      <div>
+                      <div className="text-left">
                         <h5 className="font-medium text-gray-900 text-lg">{feature.title}</h5>
                         <p className="text-gray-600 text-base">{feature.desc}</p>
                       </div>
@@ -299,15 +299,8 @@ const LandingPage: React.FC = () => {
           {/* 統一CTA */}
           <div className="text-center mt-16">
             <p className="text-2xl text-gray-700 mb-6">
-              どのタイプでも、<span className="font-bold text-blue-600">1分で悩み解決</span>を体験できます
+              どのタイプでも、<span className="font-bold text-blue-600">1分でシミュレーション体験</span>できます
             </p>
-            <button
-              onClick={() => navigate('/login?signup=true')}
-              className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold inline-flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              無料で今すぐ体験する
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </button>
           </div>
         </div>
       </section>
@@ -348,23 +341,6 @@ const LandingPage: React.FC = () => {
             ))}
           </div>
           
-          {/* 統計情報 */}
-          <div className="mt-20 bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-bold text-blue-600 mb-2">1分</div>
-                <p className="text-gray-600 text-lg">平均分析時間</p>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-green-600 mb-2">85%</div>
-                <p className="text-gray-600 text-lg">作業時間短縮</p>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-purple-600 mb-2">98%</div>
-                <p className="text-gray-600 text-lg">ユーザー満足度</p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
