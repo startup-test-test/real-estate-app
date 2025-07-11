@@ -142,9 +142,6 @@ const LandingPage: React.FC = () => {
                 <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">
                   大家DXとは？
                 </a>
-                <a href="#news" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  ニュース
-                </a>
                 <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
                   機能
                 </a>
