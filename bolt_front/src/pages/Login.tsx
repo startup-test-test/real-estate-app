@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Mail, Lock, Eye, EyeOff, TrendingUp, Zap, BarChart3, ArrowRight, AlertCircle } from 'lucide-react';
+import { Building2, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
 
@@ -14,8 +14,7 @@ const Login: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(isSignupMode);
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    fullName: ''
+    password: ''
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +26,7 @@ const Login: React.FC = () => {
 
     try {
       if (isSignUp) {
-        const { data, error } = await signUp(formData.email, formData.password, formData.fullName);
+        const { data, error } = await signUp(formData.email, formData.password);
         console.log('サインアップ結果:', { data, error });
         if (error) throw error;
         
@@ -161,23 +160,6 @@ const Login: React.FC = () => {
 
           {/* Auth Form */}
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            {/* Full Name Field (Sign Up only) */}
-            {isSignUp && (
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                  お名前
-                </label>
-                <input
-                  id="fullName"
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-                  placeholder="山田太郎"
-                  required={isSignUp}
-                />
-              </div>
-            )}
 
             {/* Email Field */}
             <div>
@@ -287,7 +269,7 @@ const Login: React.FC = () => {
                 onClick={() => {
                   setIsSignUp(!isSignUp);
                   setError(null);
-                  setFormData({ email: '', password: '', fullName: '' });
+                  setFormData({ email: '', password: '' });
                 }}
                 className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
               >
@@ -308,21 +290,6 @@ const Login: React.FC = () => {
           )}
         </div>
 
-        {/* Features Preview */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-3 sm:gap-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/20 text-center">
-            <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-white mx-auto mb-2" />
-            <p className="text-xs text-white">AI分析</p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/20 text-center">
-            <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-white mx-auto mb-2" />
-            <p className="text-xs text-white">物件管理</p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/20 text-center">
-            <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-white mx-auto mb-2" />
-            <p className="text-xs text-white">市場分析</p>
-          </div>
-        </div>
 
         {/* Security Notice */}
         <div className="mt-6 text-center">
