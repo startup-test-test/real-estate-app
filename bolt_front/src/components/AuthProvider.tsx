@@ -8,6 +8,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName?: string) => Promise<any>
   signIn: (email: string, password: string) => Promise<any>
   signOut: () => Promise<any>
+  resetPassword: (email: string) => Promise<any>
+  updatePassword: (password: string) => Promise<any>
   isAuthenticated: boolean
 }
 
@@ -26,7 +28,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { user, session, loading, signIn, signUp, signOut } = useSupabaseAuth()
+  const { user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword } = useSupabaseAuth()
 
   // 認証状態の変更をログに記録
   React.useEffect(() => {
@@ -45,6 +47,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signIn,
     signUp,
     signOut,
+    resetPassword,
+    updatePassword,
     isAuthenticated: !!user
   }
 

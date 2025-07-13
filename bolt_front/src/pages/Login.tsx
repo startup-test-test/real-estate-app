@@ -227,7 +227,7 @@ const Login: React.FC = () => {
                     ログイン状態を保持
                   </label>
                 </div>
-                <a href="#" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                <a href="/reset-password" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
                   パスワードを忘れた方
                 </a>
               </div>

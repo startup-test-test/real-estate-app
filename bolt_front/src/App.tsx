@@ -4,6 +4,8 @@ import { AuthProvider, useAuthContext } from './components/AuthProvider';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
+import ResetPassword from './pages/ResetPassword';
+import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
 import Dashboard from './pages/Dashboard';
 import Simulator from './pages/Simulator';
 import SimulationResult from './pages/SimulationResult';
@@ -53,6 +55,8 @@ function App() {
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
           <Route path="/share/:shareId" element={<ShareView />} />
           <Route path="/collaboration/:token" element={<CollaborationView />} />
           <Route path="/simple-collaboration/:token" element={<SimpleCollaboration />} />
