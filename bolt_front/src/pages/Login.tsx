@@ -128,7 +128,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 flex items-center justify-center p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-1/4 left-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-white rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
@@ -138,15 +138,12 @@ const Login: React.FC = () => {
 
       <div className="relative w-full max-w-md">
         {/* Main Login Card */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-2xl border border-white/20">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20">
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="flex items-center justify-center mb-4">
-              <div className="p-2 sm:p-3 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-2xl">
-                <Building2 className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-              </div>
+              <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-12 w-auto" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2" style={{ fontFamily: 'serif' }}>大家DX</h1>
             <p className="text-gray-600 text-sm sm:text-base">AIが導く、あなたの賃貸経営の未来。</p>
           </div>
 
@@ -160,6 +157,12 @@ const Login: React.FC = () => {
 
           {/* Auth Form */}
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            {/* Form Title */}
+            <div className="text-center mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">
+                {isSignUp ? '新規会員登録' : 'ログイン'}
+              </h2>
+            </div>
 
             {/* Email Field */}
             <div>
@@ -175,7 +178,7 @@ const Login: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
                   placeholder="your-email@example.com"
                   required
                 />
@@ -196,7 +199,7 @@ const Login: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-4 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                  className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-4 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
                   placeholder="パスワードを入力"
                   required
                   minLength={6}
@@ -224,7 +227,7 @@ const Login: React.FC = () => {
                     ログイン状態を保持
                   </label>
                 </div>
-                <a href="#" className="text-sm text-indigo-600 hover:text-indigo-700 transition-colors">
+                <a href="#" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
                   パスワードを忘れた方
                 </a>
               </div>
@@ -234,10 +237,10 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full font-medium py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 shadow-lg text-sm sm:text-base ${
+              className={`w-full font-medium py-3 sm:py-4 px-6 rounded-lg transition-all duration-200 shadow-lg text-sm sm:text-base ${
                 loading
                   ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 hover:from-indigo-600 hover:via-purple-700 hover:to-pink-700 text-white shadow-indigo-600/25 hover:shadow-indigo-600/40 transform hover:-translate-y-0.5'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-blue-600/25 hover:shadow-blue-600/40 transform hover:-translate-y-0.5'
               }`}
             >
               {loading ? (
@@ -271,29 +274,19 @@ const Login: React.FC = () => {
                   setError(null);
                   setFormData({ email: '', password: '' });
                 }}
-                className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
+                className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
               >
                 {isSignUp ? 'ログイン' : '新規登録'}
               </button>
             </p>
           </div>
 
-          {/* Demo Account Info */}
-          {!isSignUp && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="text-sm font-medium text-blue-800 mb-2">デモアカウント</h3>
-              <div className="text-xs text-blue-700 space-y-1">
-                <p>メール: demo@ooya-dx.com</p>
-                <p>パスワード: demo123</p>
-              </div>
-            </div>
-          )}
         </div>
 
 
         {/* Security Notice */}
         <div className="mt-6 text-center">
-          <p className="text-xs text-white/70">
+          <p className="text-xs text-gray-600">
             SSL暗号化通信により、お客様の情報を安全に保護しています
           </p>
         </div>
