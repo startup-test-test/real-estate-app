@@ -25,6 +25,27 @@ const AuthCallback: React.FC = () => {
         const type = searchParams.get('type') || hashParams.get('type');
         const error = searchParams.get('error') || hashParams.get('error');
         const errorDescription = searchParams.get('error_description') || hashParams.get('error_description');
+        
+        // メール確認の場合、exchangeCodeForSessionを使用
+        const code = searchParams.get('code');
+        if (code) {
+          console.log('Found authorization code, exchanging for session');
+          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          
+          if (exchangeError) {
+            console.error('Code exchange error:', exchangeError);
+            throw exchangeError;
+          }
+          
+          if (data.session) {
+            setStatus('success');
+            setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
+            setTimeout(() => {
+              navigate('/', { replace: true });
+            }, 1500);
+            return;
+          }
+        }
 
         // エラーがある場合
         if (error) {
@@ -83,11 +104,19 @@ const AuthCallback: React.FC = () => {
         }
 
         // どちらの形式でもない場合
-        throw new Error('無効な確認リンクです。');
+        throw new Error('メールリンクの認証に失敗しました。新しいアカウント作成をお試しください。');
       } catch (error: any) {
         console.error('認証コールバックエラー:', error);
         setStatus('error');
-        setMessage(error.message || 'メールの確認に失敗しました。');
+        
+        // ユーザーフレンドリーなエラーメッセージ
+        if (error.message?.includes('otp_expired') || error.message?.includes('expired')) {
+          setMessage('メールリンクの有効期限が切れています。新しいメールアドレスで再度アカウント作成をお試しください。');
+        } else if (error.message?.includes('invalid') || error.message?.includes('403')) {
+          setMessage('このメールリンクは無効です。既にアカウントをお持ちの場合はログインしてください。');
+        } else {
+          setMessage('メールアドレスの確認に失敗しました。しばらく待ってから再度お試しください。');
+        }
       }
     };
 
