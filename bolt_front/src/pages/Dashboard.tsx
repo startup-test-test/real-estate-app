@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
-import { ShareButton } from '../components/ShareButton';
 import { 
   Calculator, 
   LogOut, 
@@ -617,28 +616,6 @@ const Dashboard: React.FC = () => {
                         
                         {/* サブアクション: 共有・編集・削除 */}
                         <div className="flex gap-2">
-                          <ShareButton
-                            propertyId={sim.id}
-                            simulationData={{
-                              surfaceYield: sim.surfaceYield,
-                              netYield: sim.netYield,
-                              monthlyCashFlow: sim.cashFlow,
-                              annualCashFlow: sim.cashFlow * 12,
-                              annualRentalIncome: sim.annualIncome * 10000,
-                              annualExpenses: sim.managementFee * 10000
-                            }}
-                            propertyData={{
-                              propertyName: sim.propertyName,
-                              location: sim.location,
-                              purchasePrice: sim.acquisitionPrice,
-                              monthlyRent: (sim.annualIncome * 10000) / 12,
-                              propertyUrl: sim.propertyUrl,
-                              propertyMemo: sim.propertyMemo,
-                              propertyImageUrl: sim.thumbnail
-                            }}
-                            size="small"
-                            className="flex-1"
-                          />
                           
                           <button 
                             onClick={() => navigate(`/simulator?edit=${sim.id}`)}

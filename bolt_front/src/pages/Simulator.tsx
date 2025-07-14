@@ -4,7 +4,6 @@ import {
   CheckCircle,
   AlertCircle,
   Download,
-  Share2,
   Users,
   MessageCircle
 } from 'lucide-react';
@@ -19,7 +18,6 @@ import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
-import { ShareButton } from '../components/ShareButton';
 import InviteModal from '../components/InviteModal';
 import ShareCommentDisplay from '../components/ShareCommentDisplay';
 // import { LegalDisclaimer } from '../components';
@@ -1499,7 +1497,7 @@ const Simulator: React.FC = () => {
                   </span>
                 )}
                 
-                {/* 共有・招待ボタン */}
+                {/* メール招待・共有ボタン */}
                 {user && (editingId || saveMessage?.includes('✅')) && (
                   <button
                     onClick={() => setShowInviteModal(true)}
@@ -1507,20 +1505,10 @@ const Simulator: React.FC = () => {
                     title="家族や専門家を招待してコメントで相談"
                   >
                     <Users size={18} />
-                    <span>共有・招待</span>
+                    <span>メールで招待・共有</span>
                   </button>
                 )}
                 
-                {/* 既存の共有ボタン */}
-                {user && (editingId || saveMessage?.includes('✅')) && (
-                  <ShareButton
-                    propertyId={editingId || currentShare?.property_id || 'temp-id'}
-                    simulationData={simulationResults.results}
-                    propertyData={inputs}
-                    size="large"
-                    className="print:hidden"
-                  />
-                )}
                 
                 <button
                   onClick={handleSaveToPDF}
@@ -1853,14 +1841,14 @@ const Simulator: React.FC = () => {
                 <p className="text-lg font-medium text-gray-700 mb-2">コメント機能を有効にする</p>
                 <p className="text-sm text-gray-600 mb-4">このシミュレーション結果に対するコメントを受け取るには、まず共有を作成してください。</p>
                 <p className="text-xs text-blue-600">
-                  💡 上の「共有・招待」ボタンをクリックして共有URLを生成すると、そのURLからコメントを受け取れます
+                  💡 上の「メールで招待・共有」ボタンで特定の方に招待を送信すると、その方からコメントを受け取れます
                 </p>
               </div>
             )}
             {!currentShare && (
               <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-700">
-                  💡 実際に専門家を招待するには上の「共有・招待」ボタンをクリックしてください
+                  💡 実際に専門家を招待するには上の「メールで招待・共有」ボタンをクリックしてください
                 </p>
               </div>
             )}

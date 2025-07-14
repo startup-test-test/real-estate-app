@@ -22,7 +22,6 @@ export { default as AuthProvider } from './AuthProvider';
 // 機能コンポーネント
 export { default as ImageUpload } from './ImageUpload';
 export { default as InviteModal } from './InviteModal';
-export { default as ShareButton } from './ShareButton';
 export { default as Tutorial } from './Tutorial';
 
 // チャート・メトリクス

@@ -72,6 +72,7 @@ export default function CollaborationView() {
             share_token: token!,
             title: 'フォールバック共有',
             description: 'デモ用の共有です',
+            settings: { allow_comments: true, allow_download: false },
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
@@ -94,12 +95,15 @@ export default function CollaborationView() {
           localStorage.setItem('pendingInvitationToken', token!);
           localStorage.setItem('pendingInvitationTitle', shareData.title || '物件共有');
           
-          // 現在のURLにauth=requiredパラメータを追加
-          const currentUrl = window.location.pathname + '?auth=required';
-          localStorage.setItem('pendingReturnUrl', currentUrl);
+          // リダイレクト用URL: 招待情報を含めてログインページに送る
+          const inviterName = shareData.owner_id; // 簡易的に owner_id を inviter として使用
+          const shareUrl = `${window.location.origin}/collaboration/${token}`;
+          const loginPageUrl = `${window.location.origin}/login?invitation=true&from=${encodeURIComponent(inviterName)}&redirect=${encodeURIComponent(shareUrl)}`;
           
-          // ログインページへリダイレクト
-          navigate(`/login?invitation=true&return=${encodeURIComponent(currentUrl)}`);
+          console.log('🔗 Redirecting to login with invitation context:', loginPageUrl);
+          
+          // Magic Link形式でログインページに遷移
+          window.location.href = loginPageUrl;
           return;
         } else {
           // auth=requiredがある場合は認証待ち状態を表示

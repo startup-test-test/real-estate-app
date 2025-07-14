@@ -13,7 +13,6 @@ import { useAuthContext } from '../components/AuthProvider';
 import CashFlowChart from '../components/CashFlowChart';
 import MetricCard from '../components/MetricCard';
 import Breadcrumb from '../components/Breadcrumb';
-import { ShareButton } from '../components/ShareButton';
 import InviteModal from '../components/InviteModal';
 import CommentSection from '../components/CommentSection';
 import ShareCommentDisplay from '../components/ShareCommentDisplay';
@@ -264,13 +263,13 @@ const SimulationResult: React.FC = () => {
             </div>
             
             <div className="flex flex-wrap gap-3">
-              {/* 共有・招待ボタン（最も目立つ位置に配置） */}
+              {/* メール招待・共有ボタン（最も目立つ位置に配置） */}
               <button
                 onClick={() => setShowInviteModal(true)}
                 className="flex items-center px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 shadow-lg transition-all hover:shadow-xl"
               >
                 <Users className="h-5 w-5 mr-2" />
-                <span className="font-medium">共有・招待</span>
+                <span className="font-medium">メールで招待・共有</span>
               </button>
               
               {/* メインアクション */}
@@ -406,9 +405,9 @@ const SimulationResult: React.FC = () => {
           ) : (
             <div className="text-center py-8 text-gray-500 bg-gray-50 border border-gray-200 rounded-lg p-6">
               <p className="text-lg font-medium text-gray-700 mb-2">コメント機能を有効にする</p>
-              <p className="text-sm text-gray-600 mb-4">このシミュレーション結果に対するコメントを受け取るには、まず共有を作成してください。</p>
+              <p className="text-sm text-gray-600 mb-4">このシミュレーション結果に対するコメントを受け取るには、まずメール招待を行ってください。</p>
               <p className="text-xs text-blue-600">
-                💡 上の「共有・招待」ボタンをクリックして共有URLを生成すると、そのURLからコメントを受け取れます
+                💡 上の「メールで招待・共有」ボタンで特定の方に招待を送信すると、その方からコメントを受け取れます
               </p>
             </div>
           )}

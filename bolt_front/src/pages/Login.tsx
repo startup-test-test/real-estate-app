@@ -8,10 +8,27 @@ const Login: React.FC = () => {
   const { signIn, signUp, loading } = useAuthContext();
   const [showPassword, setShowPassword] = useState(false);
   
-  // URLパラメータから新規登録モードかどうかを判定
-  const searchParams = new URLSearchParams(window.location.search);
-  const isSignupMode = searchParams.get('signup') === 'true';
+  // URLパラメータから新規登録モードかどうかを判定（ハッシュ部分を除去）
+  const cleanUrl = window.location.href.split('#')[0]; // ハッシュ部分を除去
+  const cleanSearchParams = new URLSearchParams(new URL(cleanUrl).search);
+  
+  const isSignupMode = cleanSearchParams.get('signup') === 'true';
   const [isSignUp, setIsSignUp] = useState(isSignupMode);
+  
+  // 招待情報の取得（クリーンなURLから）
+  const isInvitation = cleanSearchParams.get('invitation') === 'true';
+  const inviterName = cleanSearchParams.get('from');
+  const redirectUrl = cleanSearchParams.get('redirect');
+  
+  console.log('🔍 URL解析結果:', {
+    原URL: window.location.href,
+    クリーンURL: cleanUrl,
+    isInvitation,
+    inviterName,
+    redirectUrl,
+    hasError: window.location.hash.includes('error'),
+    URLSearchParams: Object.fromEntries(cleanSearchParams)
+  });
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -47,10 +64,9 @@ const Login: React.FC = () => {
         console.log('サインアップ成功、自動ログイン');
         
         // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
-        const searchParams = new URLSearchParams(window.location.search);
-        const urlReturnParam = searchParams.get('return');
+        const urlReturnParam = cleanSearchParams.get('return');
         const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
-        const returnUrl = urlReturnParam || localStorageReturnUrl;
+        const returnUrl = redirectUrl || urlReturnParam || localStorageReturnUrl;
         console.log('📍 Checking return URL after signup:', {
           urlReturnParam,
           localStorageReturnUrl,
@@ -61,16 +77,31 @@ const Login: React.FC = () => {
           localStorage.removeItem('pendingReturnUrl');
           const decodedUrl = decodeURIComponent(returnUrl);
           
+          console.log('📍 Processing signup redirect URL:', {
+            original: returnUrl,
+            decoded: decodedUrl,
+            isAbsolute: decodedUrl.startsWith('http'),
+            currentOrigin: window.location.origin
+          });
+          
           // ログインページへのリダイレクトループを防ぐ
           if (decodedUrl.includes('/login')) {
             console.log('🔄 Detected login loop, redirecting to home instead');
             navigate('/');
           } else {
-            console.log('🔄 Redirecting to saved URL:', decodedUrl);
-            // 認証状態の反映を待ってからリダイレクト
-            setTimeout(() => {
-              navigate(decodedUrl);
-            }, 200);
+            // 絶対URLの場合は、window.location.hrefで直接リダイレクト
+            if (decodedUrl.startsWith('http')) {
+              console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
+              setTimeout(() => {
+                window.location.href = decodedUrl;
+              }, 200);
+            } else {
+              // 相対URLの場合はnavigate()を使用
+              console.log('🔗 Relative URL detected, using navigate():', decodedUrl);
+              setTimeout(() => {
+                navigate(decodedUrl);
+              }, 200);
+            }
           }
         } else {
           console.log('🏠 No return URL, redirecting to home');
@@ -92,30 +123,46 @@ const Login: React.FC = () => {
         console.log('ログイン成功');
         
         // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
-        const searchParams = new URLSearchParams(window.location.search);
-        const urlReturnParam = searchParams.get('return');
+        const urlReturnParam = cleanSearchParams.get('return');
         const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
-        const returnUrl = urlReturnParam || localStorageReturnUrl;
+        const returnUrl = redirectUrl || urlReturnParam || localStorageReturnUrl;
         console.log('📍 Checking return URL after login:', {
+          redirectUrl,
           urlReturnParam,
           localStorageReturnUrl,
-          finalReturnUrl: returnUrl
+          finalReturnUrl: returnUrl,
+          cleanSearchParamsAll: Object.fromEntries(cleanSearchParams)
         });
         
         if (returnUrl) {
           localStorage.removeItem('pendingReturnUrl');
           const decodedUrl = decodeURIComponent(returnUrl);
           
+          console.log('📍 Processing redirect URL:', {
+            original: returnUrl,
+            decoded: decodedUrl,
+            isAbsolute: decodedUrl.startsWith('http'),
+            currentOrigin: window.location.origin
+          });
+          
           // ログインページへのリダイレクトループを防ぐ
           if (decodedUrl.includes('/login')) {
             console.log('🔄 Detected login loop, redirecting to home instead');
             navigate('/');
           } else {
-            console.log('🔄 Redirecting to saved URL:', decodedUrl);
-            // 認証状態の反映を待ってからリダイレクト
-            setTimeout(() => {
-              navigate(decodedUrl);
-            }, 200);
+            // 絶対URLの場合は、window.location.hrefで直接リダイレクト
+            if (decodedUrl.startsWith('http')) {
+              console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
+              setTimeout(() => {
+                window.location.href = decodedUrl;
+              }, 200);
+            } else {
+              // 相対URLの場合はnavigate()を使用
+              console.log('🔗 Relative URL detected, using navigate():', decodedUrl);
+              setTimeout(() => {
+                navigate(decodedUrl);
+              }, 200);
+            }
           }
         } else {
           console.log('🏠 No return URL, redirecting to home');
@@ -154,6 +201,32 @@ const Login: React.FC = () => {
             </div>
             <p className="text-gray-600 text-sm sm:text-base">AIが導く、あなたの賃貸経営の未来。</p>
           </div>
+
+          {/* Invitation Message */}
+          {isInvitation && inviterName && (
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center mb-2">
+                <Building2 className="h-5 w-5 text-blue-500 mr-2" />
+                <span className="text-blue-800 font-semibold text-sm">不動産投資シミュレーションに招待されました</span>
+              </div>
+              <p className="text-blue-700 text-sm">
+                <strong>{inviterName}</strong>さんから投資判断の検討にご招待いただきました。
+              </p>
+              {window.location.hash.includes('otp_expired') && (
+                <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded">
+                  <p className="text-xs text-blue-700">
+                    ✉️ メールリンクの有効期限が切れていますが、下記からログインすることで共有コンテンツにアクセスできます。
+                  </p>
+                </div>
+              )}
+              <div className="mt-3 p-3 bg-white/70 rounded-md">
+                <p className="text-xs text-blue-600">
+                  <strong>新規の方：</strong> 無料でアカウント作成してアクセス<br/>
+                  <strong>既存の方：</strong> ログイン後、自動でシミュレーション結果を表示
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (

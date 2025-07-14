@@ -117,37 +117,81 @@ export function usePropertyShare() {
     }
   };
 
-  // メール送信機能
+  // マジックリンクでメール送信（新規・既存ユーザー両方対応）
   const sendInvitationEmail = async (
     invitation: ShareInvitation,
     email: string,
     role: string,
     userType: string,
-    message?: string
+    message?: string,
+    shareToken?: string
   ): Promise<boolean> => {
+    console.log('🚀 sendInvitationEmail開始（マジックリンク方式）', {
+      invitationId: invitation.id,
+      email,
+      role,
+      userType,
+      invitationToken: invitation.invitation_token,
+      shareToken
+    });
+
     try {
-      const response = await supabase.functions.invoke('send-invitation', {
-        body: {
-          invitationId: invitation.id,
-          email: email,
-          inviterName: user?.email || 'ユーザー',
-          propertyName: '投資物件', // 実際の物件名に置き換え
-          invitationUrl: `${window.location.origin}/collaboration/${invitation.invitation_token}`,
-          role: role,
-          userType: userType,
-          message: message
+      // 招待情報付きのログインページURLを生成
+      const inviterName = encodeURIComponent(user?.email?.split('@')[0] || 'ユーザー');
+      const finalShareUrl = shareToken 
+        ? `${window.location.origin}/simple-collaboration/${shareToken}`
+        : `${window.location.origin}/collaboration/${invitation.invitation_token}`;
+      
+      const loginPageUrl = `${window.location.origin}/login?invitation=true&from=${inviterName}&redirect=${encodeURIComponent(finalShareUrl)}`;
+      
+      console.log('🔗 生成されたURL:', {
+        招待URL: `${window.location.origin}/collaboration/${invitation.invitation_token}`,
+        ログインページURL: loginPageUrl,
+        最終リダイレクト先: finalShareUrl
+      });
+      
+      // マジックリンクでメール送信（ログインページに誘導）
+      console.log('📤 Supabase signInWithOtp (ログインページ誘導) 呼び出し中...');
+      
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          emailRedirectTo: loginPageUrl, // 招待情報付きログインページへ
+          data: {
+            invitation_type: 'property_share',
+            invitation_id: invitation.id,
+            inviter_name: user?.email || 'ユーザー',
+            property_name: '投資物件シミュレーション',
+            role: role,
+            user_type: userType,
+            message: message || '',
+            is_invitation: true,
+            share_token: shareToken
+          }
         }
       });
 
-      if (response.error) {
-        console.error('Email sending failed:', response.error);
-        return false;
+      if (error) {
+        console.error('❌ マジックリンクメール送信失敗:', error);
+        
+        if (error.message.includes('rate limit')) {
+          throw new Error('メール送信の制限に達しました。しばらく時間をおいて再度お試しください。');
+        } else if (error.message.includes('Invalid email')) {
+          throw new Error('メールアドレスが無効です。正しいメールアドレスを入力してください。');
+        } else {
+          throw new Error(`メール送信に失敗しました: ${error.message}`);
+        }
       }
 
+      console.log('✅ マジックリンクメール送信成功:', data);
+      console.log('📧 使用されたテンプレート: Magic Link');
+      console.log('🔗 ログインページURL:', loginPageUrl);
+      console.log('📨 メール内容: SupabaseのMagic Linkテンプレートが使用されます');
+      
       return true;
     } catch (error) {
-      console.error('Error sending invitation email:', error);
-      return false;
+      console.error('❌ メール送信エラー:', error);
+      throw error;
     }
   };
 
@@ -182,17 +226,46 @@ export function usePropertyShare() {
       if (data) {
         console.log('招待が正常に作成されました:', data);
         
-        // テスト環境ではメール送信をスキップ
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🧪 開発環境のため、メール送信をスキップします');
-        } else {
-          console.log('📧 メール送信を開始...');
-          const emailSent = await sendInvitationEmail(data, email, role, userType, message);
-          if (!emailSent) {
-            console.warn('⚠️ 招待は作成されましたがメール送信に失敗しました');
-          } else {
-            console.log('✅ 招待メールが正常に送信されました');
+        // 招待作成後、share_tokenを取得してメール送信
+        console.log('📧 招待メール送信を開始...', {
+          invitationId: data.id,
+          email,
+          role,
+          userType,
+          shareId
+        });
+        
+        try {
+          // share_idからPropertyShareを取得してshare_tokenを取得
+          let shareToken: string | undefined;
+          try {
+            const { data: shareData } = await supabase
+              .from('property_shares')
+              .select('share_token')
+              .eq('id', shareId)
+              .single();
+            
+            shareToken = shareData?.share_token;
+            console.log('📋 取得したshare_token:', shareToken);
+          } catch (err) {
+            console.warn('⚠️ share_token取得失敗、招待URLを使用します');
           }
+          
+          const emailSent = await sendInvitationEmail(data, email, role, userType, message, shareToken);
+          console.log('📊 メール送信結果:', emailSent);
+          if (emailSent) {
+            console.log('✅ 招待メールが正常に送信されました');
+          } else {
+            console.warn('⚠️ メール送信が false を返しました');
+          }
+        } catch (emailError) {
+          console.warn('⚠️ 招待は作成されましたがメール送信に失敗しました:', emailError);
+          console.error('📧 メール送信エラーの詳細:', {
+            error: emailError,
+            message: (emailError as any)?.message,
+            stack: (emailError as any)?.stack
+          });
+          // メール送信失敗でも招待自体は成功として扱う
         }
       }
       

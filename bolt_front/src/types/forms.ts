@@ -23,8 +23,7 @@ export interface ShareInvitation {
   id: string;
   share_id: string;
   email: string;
-  role: 'viewer' | 'commenter' | 'editor';
-  user_type: 'family' | 'tax_accountant' | 'consultant' | 'general';
+  role: 'viewer' | 'commenter';
   invited_by: string;
   accepted_by?: string;
   invitation_token: string;
@@ -78,7 +77,7 @@ export interface ShareAccessLog {
   share_id: string;
   user_id?: string;
   invitation_id?: string;
-  action: 'view' | 'comment' | 'edit' | 'download';
+  action: 'view' | 'comment' | 'download';
   ip_address?: string;
   user_agent?: string;
   created_at: string;

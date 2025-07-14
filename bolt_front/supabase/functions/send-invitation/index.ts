@@ -14,13 +14,12 @@ serve(async (req) => {
 
   try {
     // リクエストボディを取得
-    const { invitationId, email, inviterName, propertyName, invitationUrl, role, userType } = await req.json()
+    const { invitationId, email, inviterName, propertyName, invitationUrl, role, userType, message } = await req.json()
 
-    // Resend APIキーを環境変数から取得
-    const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    if (!resendApiKey) {
-      throw new Error('RESEND_API_KEY not found')
-    }
+    // Supabaseクライアントを初期化
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // メール内容を作成
     const roleLabels = {
@@ -36,74 +35,55 @@ serve(async (req) => {
       general: 'ゲスト'
     }
 
-    const emailContent = {
-      from: 'noreply@yourdomain.com', // 実際のドメインに変更
-      to: email,
-      subject: `【不動産投資シミュレーター】${propertyName}の投資検討にご招待`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #4F46E5;">🏡 不動産投資の検討にご招待</h2>
-          
-          <p><strong>${inviterName}</strong>さんから、不動産投資シミュレーションの検討にご招待いただきました。</p>
-          
-          <div style="background-color: #F3F4F6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #374151;">📋 招待詳細</h3>
-            <ul style="list-style: none; padding: 0;">
-              <li><strong>物件名:</strong> ${propertyName}</li>
-              <li><strong>あなたの役割:</strong> ${userTypeLabels[userType] || userType}</li>
-              <li><strong>権限:</strong> ${roleLabels[role] || role}</li>
-            </ul>
-          </div>
-          
-          <p>シミュレーション結果を確認し、コメントで投資判断についてご相談いただけます。</p>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${invitationUrl}" 
-               style="background-color: #10B981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
-              📊 シミュレーション結果を確認する
-            </a>
-          </div>
-          
-          <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 30px 0;">
-          
-          <div style="font-size: 14px; color: #6B7280;">
-            <p><strong>💡 ヒント:</strong></p>
-            <ul>
-              <li>コメントでご意見や質問を投稿できます</li>
-              <li>👍👎❓ でリアクションも可能です</li>
-              <li>#要検討 #リスク などのタグも使えます</li>
-            </ul>
-            
-            <p style="margin-top: 20px;">
-              <small>このリンクは7日間有効です。<br>
-              本メールに心当たりがない場合は、無視してください。</small>
-            </p>
-          </div>
-        </div>
-      `
-    }
+    // Supabase標準メール機能を使用（認証メールと同じ仕組み）
+    const { data: authData, error: authError } = await supabase.auth.admin.inviteUserByEmail(
+      email,
+      {
+        data: {
+          invitation_type: 'property_share',
+          invitation_id: invitationId,
+          inviter_name: inviterName,
+          property_name: propertyName,
+          invitation_url: invitationUrl,
+          role: role,
+          user_type: userType,
+          message: message || '',
+          role_label: roleLabels[role] || role,
+          user_type_label: userTypeLabels[userType] || userType
+        },
+        redirectTo: invitationUrl
+      }
+    )
 
-    // Resend APIでメール送信
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(emailContent),
-    })
+    if (authError) {
+      console.error('Supabase email sending failed:', authError)
+      
+      // フォールバック: ダミーユーザーを作成してメール送信を試行
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: email,
+        password: 'temp-password-for-invitation-' + Date.now(),
+        options: {
+          data: {
+            invitation_type: 'property_share',
+            invitation_id: invitationId,
+            inviter_name: inviterName,
+            property_name: propertyName,
+            invitation_url: invitationUrl,
+            role: role,
+            user_type: userType,
+            message: message || '',
+            is_invitation_signup: true
+          },
+          emailRedirectTo: invitationUrl
+        }
+      })
 
-    const result = await response.json()
-
-    if (!response.ok) {
-      throw new Error(`Email sending failed: ${result.message}`)
+      if (signUpError) {
+        throw new Error(`メール送信に失敗しました: ${signUpError.message}`)
+      }
     }
 
     // 送信成功をSupabaseに記録
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
     await supabase
       .from('share_invitations')
       .update({ 
@@ -115,8 +95,9 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Invitation email sent successfully',
-        emailId: result.id 
+        message: 'Invitation email sent successfully via Supabase Auth',
+        method: 'supabase_auth',
+        authData: authData
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
