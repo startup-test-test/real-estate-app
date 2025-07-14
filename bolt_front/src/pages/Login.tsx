@@ -84,9 +84,9 @@ const Login: React.FC = () => {
             currentOrigin: window.location.origin
           });
           
-          // ログインページへのリダイレクトループを防ぐ
-          if (decodedUrl.includes('/login')) {
-            console.log('🔄 Detected login loop, redirecting to home instead');
+          // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
+          if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
+            console.log('🔄 Detected login/invitation loop, redirecting to home instead');
             navigate('/');
           } else {
             // 絶対URLの場合は、window.location.hrefで直接リダイレクト
@@ -122,6 +122,12 @@ const Login: React.FC = () => {
         }
         console.log('ログイン成功');
         
+        // ログイン成功フラグを設定（認証状態反映の遅延対策）
+        localStorage.setItem('recentLogin', 'true');
+        setTimeout(() => {
+          localStorage.removeItem('recentLogin');
+        }, 5000); // 5秒後に削除
+        
         // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
         const urlReturnParam = cleanSearchParams.get('return');
         const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
@@ -145,9 +151,9 @@ const Login: React.FC = () => {
             currentOrigin: window.location.origin
           });
           
-          // ログインページへのリダイレクトループを防ぐ
-          if (decodedUrl.includes('/login')) {
-            console.log('🔄 Detected login loop, redirecting to home instead');
+          // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
+          if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
+            console.log('🔄 Detected login/invitation loop, redirecting to home instead');
             navigate('/');
           } else {
             // 絶対URLの場合は、window.location.hrefで直接リダイレクト

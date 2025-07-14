@@ -40,11 +40,12 @@ export function useSimpleComments(pageId: string) {
       console.log('🔨 Creating new property_share for token:', token);
       
       // 存在しない場合は新規作成
+      // 招待機能専用のレコードとして、property_idをnullで作成
       const { data: newShare, error: createError } = await supabase
         .from('property_shares')
         .insert({
           id: crypto.randomUUID(),
-          property_id: token, // tokenをそのままproperty_idとして使用
+          property_id: null, // 招待機能専用でnullを使用
           owner_id: user!.id,
           share_token: token,
           title: '招待コラボレーション',

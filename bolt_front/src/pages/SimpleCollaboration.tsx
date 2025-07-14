@@ -46,22 +46,32 @@ export default function SimpleCollaboration() {
         await new Promise(resolve => setTimeout(resolve, 100));
 
         // ユーザーが未認証の場合の処理
-        if (!user) {
+        if (!user && !authLoading) {
           console.log('🔐 User not authenticated, checking pending status...');
           
-          // 既に一度リダイレクトしている場合は、さらに待機してから再確認
+          // 認証処理中でない場合のみリダイレクト判断を行う
           const pendingToken = localStorage.getItem('pendingCollaborationToken');
-          if (pendingToken === token) {
-            console.log('⏳ Already redirected once, waiting for auth state...');
-            await new Promise(resolve => setTimeout(resolve, 1000));
+          const hasRecentlyLoggedIn = localStorage.getItem('recentLogin');
+          
+          // 最近ログインした場合は少し待機して認証状態を再確認
+          if (hasRecentlyLoggedIn || pendingToken === token) {
+            console.log('⏳ Recently logged in or already redirected, waiting for auth state...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
             
-            // まだ認証されていない場合のみリダイレクト
-            if (!user) {
-              console.log('🔄 Still not authenticated, redirecting to login');
+            // 再度認証状態を確認
+            const updatedUser = supabaseUser || authUser;
+            if (!updatedUser && !authLoading) {
+              console.log('🔄 Still not authenticated after waiting, redirecting to login');
               const simplePath = `/simple-collaboration/${token}`;
               localStorage.setItem('pendingReturnUrl', simplePath);
+              localStorage.setItem('pendingCollaborationToken', token);
               navigate('/login?invitation=true');
               return;
+            } else if (updatedUser) {
+              console.log('✅ Auth state updated, user found');
+              localStorage.removeItem('recentLogin');
+              localStorage.removeItem('pendingCollaborationToken');
+              // 認証済みなので続行
             }
           } else {
             console.log('🔐 First time, saving token and redirecting');
