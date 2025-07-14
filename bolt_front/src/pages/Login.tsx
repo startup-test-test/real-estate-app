@@ -17,10 +17,18 @@ const Login: React.FC = () => {
     password: ''
   });
   const [error, setError] = useState<string | null>(null);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // 新規登録時は利用規約への同意を確認
+    if (isSignUp && !agreedToTerms) {
+      setError('利用規約・プライバシーポリシーへの同意が必要です。');
+      return;
+    }
 
     console.log('ログイン試行:', { email: formData.email, isSignUp });
 
@@ -69,7 +77,7 @@ const Login: React.FC = () => {
           navigate('/');
         }
       } else {
-        const { data, error } = await signIn(formData.email, formData.password);
+        const { data, error } = await signIn(formData.email, formData.password, rememberMe);
         console.log('ログイン結果:', { data, error });
         if (error) {
           // 具体的なエラーメッセージを表示
@@ -214,6 +222,25 @@ const Login: React.FC = () => {
               </div>
             </div>
 
+            {/* Terms Agreement (Sign up only) */}
+            {isSignUp && (
+              <div className="flex items-start">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="h-4 w-4 mt-0.5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                  <a href="/terms" target="_blank" className="text-blue-600 hover:text-blue-700 underline">利用規約</a>
+                  および
+                  <a href="/privacy" target="_blank" className="text-blue-600 hover:text-blue-700 underline">プライバシーポリシー</a>
+                  に同意する
+                </label>
+              </div>
+            )}
+
             {/* Remember Me & Forgot Password (Login only) */}
             {!isSignUp && (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
@@ -221,6 +248,8 @@ const Login: React.FC = () => {
                   <input
                     id="remember"
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                   />
                   <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
@@ -273,6 +302,7 @@ const Login: React.FC = () => {
                   setIsSignUp(!isSignUp);
                   setError(null);
                   setFormData({ email: '', password: '' });
+                  setAgreedToTerms(false);
                 }}
                 className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
               >

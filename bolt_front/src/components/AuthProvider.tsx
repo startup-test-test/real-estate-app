@@ -6,7 +6,7 @@ interface AuthContextType {
   session: any
   loading: boolean
   signUp: (email: string, password: string, fullName?: string) => Promise<any>
-  signIn: (email: string, password: string) => Promise<any>
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<any>
   signOut: () => Promise<any>
   resetPassword: (email: string) => Promise<any>
   updatePassword: (password: string) => Promise<any>

@@ -20,6 +20,8 @@ import PremiumPlan from './pages/PremiumPlan';
 import ShareView from './pages/ShareView';
 import CollaborationView from './pages/CollaborationView';
 import SimpleCollaboration from './pages/SimpleCollaboration';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -60,6 +62,8 @@ function App() {
           <Route path="/share/:shareId" element={<ShareView />} />
           <Route path="/collaboration/:token" element={<CollaborationView />} />
           <Route path="/simple-collaboration/:token" element={<SimpleCollaboration />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />

@@ -10,6 +10,7 @@ export function useSupabaseAuth() {
   // モック認証状態をlocalStorageから復元する関数
   const restoreMockAuth = () => {
     try {
+      // まずlocalStorageから確認（ログイン状態を保持）
       const savedUser = localStorage.getItem('mock_user')
       const savedSession = localStorage.getItem('mock_session')
       
@@ -18,13 +19,28 @@ export function useSupabaseAuth() {
         const mockSession = JSON.parse(savedSession) as Session
         setUser(mockUser)
         setSession(mockSession)
-        console.log('モック認証状態を復元しました:', mockUser.email)
+        console.log('モック認証状態を復元しました（永続保存）:', mockUser.email)
+        return true
+      }
+      
+      // 次にsessionStorageから確認（一時的な認証）
+      const sessionUser = sessionStorage.getItem('mock_user')
+      const sessionSession = sessionStorage.getItem('mock_session')
+      
+      if (sessionUser && sessionSession) {
+        const mockUser = JSON.parse(sessionUser) as User
+        const mockSession = JSON.parse(sessionSession) as Session
+        setUser(mockUser)
+        setSession(mockSession)
+        console.log('モック認証状態を復元しました（一時保存）:', mockUser.email)
         return true
       }
     } catch (error) {
       console.error('モック認証状態の復元に失敗:', error)
       localStorage.removeItem('mock_user')
       localStorage.removeItem('mock_session')
+      sessionStorage.removeItem('mock_user')
+      sessionStorage.removeItem('mock_session')
     }
     return false
   }
@@ -45,6 +61,8 @@ export function useSupabaseAuth() {
     try {
       localStorage.removeItem('mock_user')
       localStorage.removeItem('mock_session')
+      sessionStorage.removeItem('mock_user')
+      sessionStorage.removeItem('mock_session')
       console.log('モック認証状態をクリアしました')
     } catch (error) {
       console.error('モック認証状態のクリアに失敗:', error)
@@ -132,7 +150,7 @@ export function useSupabaseAuth() {
   }
 
   // Sign in with email and password
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe: boolean = false) => {
     if (!import.meta.env.VITE_SUPABASE_URL) {
       // Mock sign in - accept demo credentials or any email/password
       if ((email === 'demo@ooya-dx.com' && password === 'demo123') || email.includes('@')) {
@@ -156,10 +174,17 @@ export function useSupabaseAuth() {
         setUser(mockUser)
         setSession(mockSession)
         
-        // モック認証状態を永続化
-        saveMockAuth(mockUser, mockSession)
+        // rememberMeがtrueの場合のみモック認証状態を永続化
+        if (rememberMe) {
+          saveMockAuth(mockUser, mockSession)
+          console.log('モックサインイン成功（認証状態を保存）:', email)
+        } else {
+          // セッションストレージに一時的に保存（ブラウザを閉じると削除される）
+          sessionStorage.setItem('mock_user', JSON.stringify(mockUser))
+          sessionStorage.setItem('mock_session', JSON.stringify(mockSession))
+          console.log('モックサインイン成功（一時的な認証）:', email)
+        }
         
-        console.log('モックサインイン成功:', email)
         return { data: { user: mockUser, session: mockSession }, error: null }
       } else {
         return { data: null, error: new Error('無効なメールアドレスまたはパスワードです') }
