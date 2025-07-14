@@ -6,7 +6,8 @@ import {
   AlertCircle,
   Download,
   Users,
-  MessageCircle
+  MessageCircle,
+  Eye
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
@@ -20,6 +21,10 @@ import { PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import PDFPreviewModal from '../components/PDFPreviewModal';
+import SimulationPDFReport from '../components/SimulationPDFReport';
+import { generateEnhancedPDF } from '../utils/enhancedPdfGenerator';
+import { createRoot } from 'react-dom/client';
 // import { LegalDisclaimer } from '../components';
 
 const SimulationResult: React.FC = () => {
@@ -41,6 +46,7 @@ const SimulationResult: React.FC = () => {
   const [isScrollHighlighted, setIsScrollHighlighted] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
+  const [showPDFPreview, setShowPDFPreview] = useState(false);
   const { fetchShare, fetchShareByPropertyId, fetchOrCreateShareByPropertyId } = usePropertyShare();
 
   useEffect(() => {
@@ -163,47 +169,62 @@ const SimulationResult: React.FC = () => {
     return `${value}%`;
   };
 
-  // PDF保存機能
+  // PDF保存機能（専用コンポーネント使用）
   const handleSavePDF = async () => {
     try {
-      const element = document.getElementById('pdf-content');
-      if (!element) return;
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
+      alert('PDF生成開始 - 新しいコードが実行されています');
+      console.log('📄 Starting PDF generation with dedicated component');
+      
+      if (!simulation) return;
+      
+      // React コンポーネントを一時的にレンダリング
+      
+      // 一時的なコンテナを作成
+      const tempContainer = document.createElement('div');
+      tempContainer.id = 'temp-pdf-container';
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '0';
+      tempContainer.style.width = '210mm';
+      tempContainer.style.background = 'white';
+      tempContainer.style.zIndex = '-1000';
+      
+      document.body.appendChild(tempContainer);
+      
+      // React コンポーネントをレンダリング
+      const root = createRoot(tempContainer);
+      
+      // レンダリング完了を待機
+      await new Promise<void>((resolve) => {
+        root.render(
+          React.createElement(SimulationPDFReport, {
+            simulation: simulation,
+            isPreview: false
+          })
+        );
+        
+        // レンダリング完了を待つ
+        setTimeout(resolve, 1000);
       });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
-
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      
+      try {
+        // PDF生成
+        await generateEnhancedPDF(simulation, 'temp-pdf-container');
+      } finally {
+        // クリーンアップ
+        root.unmount();
+        document.body.removeChild(tempContainer);
       }
-
-      const fileName = `シミュレーション結果_${simulationData?.propertyName || 'property'}_${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
+      
     } catch (error) {
       console.error('PDF生成エラー:', error);
-      alert('PDFの生成に失敗しました');
+      alert('PDFの生成に失敗しました: ' + (error as Error).message);
     }
+  };
+
+  // PDFプレビューを開く
+  const handleOpenPDFPreview = () => {
+    setShowPDFPreview(true);
   };
 
   if (loading) {
@@ -275,10 +296,19 @@ const SimulationResult: React.FC = () => {
               {/* メインアクション */}
               <div className="flex space-x-3">
                 
+                {/* PDFプレビューボタン */}
+                <button
+                  onClick={handleOpenPDFPreview}
+                  className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  PDFプレビュー
+                </button>
+                
                 {/* PDF保存ボタン */}
                 <button
                   onClick={handleSavePDF}
-                  className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="flex items-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   PDF保存
@@ -586,6 +616,16 @@ const SimulationResult: React.FC = () => {
             const newUrl = `${window.location.pathname}?view=${actualId}&share=${share.share_token}${window.location.hash}`;
             window.history.replaceState({}, '', newUrl);
           }}
+        />
+      )}
+
+      {/* PDF プレビューモーダル */}
+      {showPDFPreview && simulation && (
+        <PDFPreviewModal
+          isOpen={showPDFPreview}
+          onClose={() => setShowPDFPreview(false)}
+          simulation={simulation}
+          onDownloadPDF={handleSavePDF}
         />
       )}
     </div>

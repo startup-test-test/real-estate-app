@@ -121,10 +121,11 @@ const ResetPassword: React.FC = () => {
             {/* Form Title */}
             <div className="text-center mb-4">
               <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
-                パスワードリセット
+                パスワードリセット・変更
               </h2>
               <p className="text-gray-600 text-sm">
-                入力していただいたメールアドレス宛に再設定のご案内メールが届きます。
+                入力していただいたメールアドレス宛に再設定のご案内メールが届きます。<br />
+                パスワードを忘れた方・変更したい方共通の手順です。
               </p>
             </div>
 

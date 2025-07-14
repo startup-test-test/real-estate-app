@@ -336,7 +336,7 @@ const Login: React.FC = () => {
                   </label>
                 </div>
                 <a href="/reset-password" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
-                  パスワードを忘れた方
+                  パスワードを忘れた方・変更したい方
                 </a>
               </div>
             )}

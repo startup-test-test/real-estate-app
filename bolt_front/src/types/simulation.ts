@@ -71,6 +71,18 @@ export interface Simulation {
   user_id: string;
 }
 
+// PDF生成用の型エイリアス
+export type SimulationResult = Simulation & {
+  // 追加のプロパティをオプションで追加
+  property_price?: number;
+  down_payment?: number;
+  monthly_rent?: number;
+  irr?: number;
+  ccr?: number;
+  noi?: number;
+  annual_cash_flow?: number;
+};
+
 // キャッシュフロー詳細データ型
 export interface CashFlowData {
   年次: number;
