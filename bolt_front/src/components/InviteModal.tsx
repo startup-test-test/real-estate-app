@@ -19,7 +19,6 @@ export default function InviteModal({
   onShareCreated 
 }: InviteModalProps) {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
   const [shareTitle, setShareTitle] = useState(`${propertyName}のシミュレーション結果`);
   const [shareDescription, setShareDescription] = useState('');
   const { createShare, sendInvitation, loading, error } = usePropertyShare();
@@ -64,7 +63,7 @@ export default function InviteModal({
         email,
         'commenter', // 全員コメント可能に固定
         'general',   // ユーザータイプは汎用に固定
-        message
+        undefined
       );
 
       console.log('📊 sendInvitation結果:', invitation);
@@ -81,7 +80,6 @@ export default function InviteModal({
         }
         
         setEmail('');
-        setMessage('');
         
         // 共有情報を親コンポーネントに渡す
         if (!share) {
@@ -92,7 +90,6 @@ export default function InviteModal({
         const invitationUrl = `${window.location.origin}/simple-collaboration/${currentShare.share_token}`;
         alert(`⚠️ 招待処理でエラーが発生しました。\n\n代替として招待リンクを生成しました：\n${invitationUrl}\n\nこのリンクを ${email} に手動で送信してください。`);
         setEmail('');
-        setMessage('');
       }
 
     } catch (err) {
@@ -103,7 +100,6 @@ export default function InviteModal({
         const invitationUrl = `${window.location.origin}/simple-collaboration/${currentShare.share_token}`;
         alert(`❌ 招待処理でエラーが発生しました。\n\n代替手段として招待リンクを生成しました:\n${invitationUrl}\n\nこのリンクを ${email} に手動で送信してください。`);
         setEmail('');
-        setMessage('');
       } else {
         alert(`❌ 招待処理でエラーが発生しました。しばらく時間をおいて再度お試しください。`);
       }
@@ -179,18 +175,6 @@ export default function InviteModal({
               </div>
 
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  メッセージ（任意）
-                </label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="招待メッセージを入力..."
-                />
-              </div>
 
               <div className="bg-blue-50 p-3 rounded-md">
                 <div className="flex">
