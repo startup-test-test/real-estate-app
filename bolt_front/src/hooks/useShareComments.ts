@@ -141,7 +141,22 @@ export function useShareComments() {
       }
 
       try {
-        // 実際のデータベースからコメントを取得
+        // まずシンプルなクエリでテスト
+        console.log('🔍 Testing simple query first...');
+        const { data: testData, error: testError } = await supabase
+          .from('share_comments')
+          .select('*')
+          .eq('share_id', shareId)
+          .limit(1);
+
+        if (testError) {
+          console.warn('⚠️ シンプルクエリでもエラー:', testError);
+          // テーブルが存在しないか、アクセス権限がない
+          return [];
+        }
+
+        // シンプルクエリが成功したら、JOIN付きクエリを試行
+        console.log('✅ Simple query succeeded, trying full query...');
         const { data, error } = await supabase
           .from('share_comments')
           .select(`
@@ -159,8 +174,37 @@ export function useShareComments() {
           .order('created_at', { ascending: true });
 
         if (error) {
-          console.warn('⚠️ データベースからのコメント取得失敗:', error);
-          return [];
+          console.warn('⚠️ JOIN付きクエリでエラー:', error);
+          // JOIN付きクエリが失敗した場合、シンプルクエリにフォールバック
+          console.log('🔄 Falling back to simple query without JOINs...');
+          
+          const { data: simpleData, error: simpleError } = await supabase
+            .from('share_comments')
+            .select('*')
+            .eq('share_id', shareId)
+            .is('parent_id', null)
+            .order('created_at', { ascending: true });
+
+          if (simpleError) {
+            console.warn('⚠️ シンプルクエリでもエラー:', simpleError);
+            return [];
+          }
+
+          // JOINなしのデータを整形
+          const enrichedSimpleData = simpleData?.map(comment => ({
+            ...comment,
+            user: {
+              id: comment.user_id,
+              email: 'ユーザー',
+              full_name: 'ユーザー',
+              avatar_url: null
+            },
+            reactions: [],
+            replies: []
+          })) || [];
+
+          console.log('✅ シンプルクエリでコメント取得成功:', enrichedSimpleData.length, '件');
+          return enrichedSimpleData;
         }
 
         if (!data || data.length === 0) {
