@@ -151,10 +151,13 @@ export function useSupabaseData() {
         }
       }
 
-      // シミュレーションデータを準備（share_tokenは除外）
+      // シミュレーションデータを準備（必要なフィールドのみ）
       const dataToSave = {
-        ...simulationData,
         user_id: user.id,
+        simulation_data: simulationData.simulation_data || simulationData,
+        results: simulationData.results || {},
+        ...(simulationData.property_id && { property_id: simulationData.property_id }),
+        ...(simulationData.cash_flow_table && { cash_flow_table: simulationData.cash_flow_table })
       };
       
       // property_idが無効な場合はNULLに設定
@@ -195,19 +198,43 @@ export function useSupabaseData() {
           console.warn('⚠️ 他のユーザーのシミュレーションは更新できません');
           return { data: null, error: 'アクセス権限がありません' };
         } else {
-          // 更新処理
-          const updateResult = await supabase
-            .from('simulations')
-            .update({
-              ...dataToSave,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', existingId)
-            .select()
-            .single();
-          
-          data = updateResult.data;
-          error = updateResult.error;
+          // 更新処理を試行（updated_atはトリガーで自動更新）
+          try {
+            const { updated_at, ...updateData } = dataToSave;
+            const updateResult = await supabase
+              .from('simulations')
+              .update(updateData)
+              .eq('id', existingId)
+              .select()
+              .single();
+            
+            data = updateResult.data;
+            error = updateResult.error;
+            
+            if (error) {
+              console.warn('⚠️ 更新処理でエラー、新規作成にフォールバック:', error);
+              // 更新に失敗した場合は新規作成として処理
+              const fallbackResult = await supabase
+                .from('simulations')
+                .insert(dataToSave)
+                .select()
+                .single();
+              
+              data = fallbackResult.data;
+              error = fallbackResult.error;
+            }
+          } catch (updateError) {
+            console.warn('⚠️ 更新処理で例外発生、新規作成にフォールバック:', updateError);
+            // 更新で例外が発生した場合も新規作成として処理
+            const fallbackResult = await supabase
+              .from('simulations')
+              .insert(dataToSave)
+              .select()
+              .single();
+            
+            data = fallbackResult.data;
+            error = fallbackResult.error;
+          }
         }
       } else {
         // 新規作成
@@ -235,24 +262,9 @@ export function useSupabaseData() {
       
       console.log('Simulation saved successfully:', data)
       
-      // シミュレーション保存成功後、share_tokenがある場合は別途保存
+      // share_tokenは現在のスキーマに存在しないためスキップ
       if (shareToken && data) {
-        try {
-          console.log('💾 Saving share token separately...')
-          // 単一のeq条件のみ使用（user_idチェックを削除）
-          const { error: shareError } = await supabase
-            .from('simulations')
-            .update({ share_token: shareToken })
-            .eq('id', data.id)
-          
-          if (shareError) {
-            console.warn('Share token save failed (non-critical):', shareError)
-          } else {
-            console.log('✅ Share token saved successfully')
-          }
-        } catch (shareErr) {
-          console.warn('Share token save error (non-critical):', shareErr)
-        }
+        console.log('⚠️ share_token カラムが存在しないため、share_token保存をスキップします')
       }
       
       return { data, error: null }
