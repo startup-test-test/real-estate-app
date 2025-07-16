@@ -239,11 +239,11 @@ export function useSupabaseData() {
       if (shareToken && data) {
         try {
           console.log('💾 Saving share token separately...')
+          // 単一のeq条件のみ使用（user_idチェックを削除）
           const { error: shareError } = await supabase
             .from('simulations')
             .update({ share_token: shareToken })
             .eq('id', data.id)
-            .eq('user_id', user.id)
           
           if (shareError) {
             console.warn('Share token save failed (non-critical):', shareError)
