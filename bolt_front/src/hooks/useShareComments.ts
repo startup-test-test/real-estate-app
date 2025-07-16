@@ -141,105 +141,37 @@ export function useShareComments() {
       }
 
       try {
-        // まずシンプルなクエリでテスト
-        console.log('🔍 Testing simple query first...');
-        const { data: testData, error: testError } = await supabase
+        // 直接シンプルクエリを使用（JOIN付きクエリを回避）
+        console.log('🔍 Using simple query to avoid JOIN issues...');
+        const { data: simpleData, error: simpleError } = await supabase
           .from('share_comments')
           .select('*')
-          .eq('share_id', shareId)
-          .limit(1);
-
-        if (testError) {
-          console.warn('⚠️ シンプルクエリでもエラー:', testError);
-          // テーブルが存在しないか、アクセス権限がない
-          return [];
-        }
-
-        // シンプルクエリが成功したら、JOIN付きクエリを試行
-        console.log('✅ Simple query succeeded, trying full query...');
-        const { data, error } = await supabase
-          .from('share_comments')
-          .select(`
-            *,
-            user:profiles(id, email, full_name, avatar_url),
-            reactions:comment_reactions(id, user_id, reaction),
-            replies:share_comments!parent_id(
-              *,
-              user:profiles(id, email, full_name, avatar_url),
-              reactions:comment_reactions(id, user_id, reaction)
-            )
-          `)
           .eq('share_id', shareId)
           .is('parent_id', null)
           .order('created_at', { ascending: true });
 
-        if (error) {
-          console.warn('⚠️ JOIN付きクエリでエラー:', error);
-          // JOIN付きクエリが失敗した場合、シンプルクエリにフォールバック
-          console.log('🔄 Falling back to simple query without JOINs...');
-          
-          const { data: simpleData, error: simpleError } = await supabase
-            .from('share_comments')
-            .select('*')
-            .eq('share_id', shareId)
-            .is('parent_id', null)
-            .order('created_at', { ascending: true });
-
-          if (simpleError) {
-            console.warn('⚠️ シンプルクエリでもエラー:', simpleError);
-            return [];
-          }
-
-          // JOINなしのデータを整形
-          const enrichedSimpleData = simpleData?.map(comment => ({
-            ...comment,
-            user: {
-              id: comment.user_id,
-              email: 'ユーザー',
-              full_name: 'ユーザー',
-              avatar_url: null
-            },
-            reactions: [],
-            replies: []
-          })) || [];
-
-          console.log('✅ シンプルクエリでコメント取得成功:', enrichedSimpleData.length, '件');
-          return enrichedSimpleData;
-        }
-
-        if (!data || data.length === 0) {
-          console.log('ℹ️ コメントが見つかりません');
+        if (simpleError) {
+          console.warn('⚠️ シンプルクエリでもエラー:', simpleError);
+          console.warn('⚠️ エラーコード:', simpleError.code);
+          console.warn('⚠️ エラー詳細:', simpleError.message);
           return [];
         }
 
-        // ユーザー情報の再構築（Supabaseの結合が失敗した場合）
-        const enrichedComments = data.map(comment => {
-          const enrichedComment = {
-            ...comment,
-            user: comment.user || {
-              id: comment.user_id,
-              email: 'ユーザー情報不明',
-              full_name: 'ユーザー情報不明',
-              avatar_url: null
-            },
-            reactions: comment.reactions || [],
-            replies: (comment.replies || []).map((reply: any) => ({
-              ...reply,
-              user: reply.user || {
-                id: reply.user_id,
-                email: 'ユーザー情報不明',
-                full_name: 'ユーザー情報不明',
-                avatar_url: null
-              },
-              reactions: reply.reactions || []
-            }))
-          };
+        // JOINなしのデータを整形
+        const enrichedSimpleData = simpleData?.map(comment => ({
+          ...comment,
+          user: {
+            id: comment.user_id,
+            email: 'ユーザー',
+            full_name: 'ユーザー',
+            avatar_url: null
+          },
+          reactions: [],
+          replies: []
+        })) || [];
 
-          return enrichedComment;
-        });
-
-        console.log('✅ コメント取得成功:', enrichedComments.length, '件');
-        return enrichedComments;
+        console.log('✅ シンプルクエリでコメント取得成功:', enrichedSimpleData.length, '件');
+        return enrichedSimpleData;
       } catch (dbError) {
         console.warn('⚠️ データベースエラー、空配列を返す:', dbError);
         return [];
