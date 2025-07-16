@@ -172,19 +172,43 @@ export function useSupabaseData() {
       // 編集モード（既存IDがある場合）は更新処理
       if (existingId) {
         console.log('🔄 Updating existing simulation:', existingId);
-        const updateResult = await supabase
-          .from('simulations')
-          .update({
-            ...dataToSave,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existingId)
-          .eq('user_id', user.id)
-          .select()
-          .single();
         
-        data = updateResult.data;
-        error = updateResult.error;
+        // まず既存レコードの存在確認
+        const { data: existingRecord, error: checkError } = await supabase
+          .from('simulations')
+          .select('id, user_id')
+          .eq('id', existingId)
+          .single();
+
+        if (checkError || !existingRecord) {
+          console.warn('⚠️ 更新対象のシミュレーションが見つかりません:', existingId);
+          // 見つからない場合は新規作成として処理
+          const insertResult = await supabase
+            .from('simulations')
+            .insert(dataToSave)
+            .select()
+            .single();
+          
+          data = insertResult.data;
+          error = insertResult.error;
+        } else if (existingRecord.user_id !== user.id) {
+          console.warn('⚠️ 他のユーザーのシミュレーションは更新できません');
+          return { data: null, error: 'アクセス権限がありません' };
+        } else {
+          // 更新処理
+          const updateResult = await supabase
+            .from('simulations')
+            .update({
+              ...dataToSave,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existingId)
+            .select()
+            .single();
+          
+          data = updateResult.data;
+          error = updateResult.error;
+        }
       } else {
         // 新規作成
         console.log('📝 Creating new simulation');
