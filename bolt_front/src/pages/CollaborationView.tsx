@@ -7,9 +7,8 @@ import {
   Users,
   MessageCircle
 } from 'lucide-react';
-import { usePropertyShare } from '../hooks/usePropertyShare';
-import { useSupabaseData } from '../hooks/useSupabaseData';
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
+import { useCollaborationAuth } from '../hooks/useCollaborationAuth';
+import { useCollaborationData } from '../hooks/useCollaborationData';
 import CommentSection from '../components/CommentSection';
 import SimpleCommentSection from '../components/SimpleCommentSection';
 import MetricCard from '../components/MetricCard';
