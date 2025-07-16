@@ -24,7 +24,7 @@ export function useShareCRUD() {
     return withLoadingState(async () => {
       console.log('Creating share with:', {
         property_id: propertyId,
-        owner_id: user?.id,
+        owner_id: user?.id || 'anonymous',
         title,
         description,
         expires_at: expiresAt?.toISOString(),
@@ -37,6 +37,27 @@ export function useShareCRUD() {
         console.warn('⚠️ 無効なpropertyId。新しいUUIDを生成します。');
         console.warn('⚠️ これにより新しい共有が作成されます。既存の共有との関連付けが失われる可能性があります。');
         actualPropertyId = crypto.randomUUID();
+      }
+      
+      // デモモード検出
+      const isDemoMode = actualPropertyId.includes('demo') || actualPropertyId.includes('test') || !user?.id;
+      
+      if (isDemoMode) {
+        console.log('🧪 デモモード: モック共有を作成');
+        const mockShare: PropertyShare = {
+          id: crypto.randomUUID(),
+          property_id: actualPropertyId,
+          owner_id: user?.id || 'anonymous',
+          title: title || 'デモ共有',
+          description: description || 'デモ用の共有です',
+          share_token: crypto.randomUUID().replace(/-/g, '').substring(0, 32),
+          expires_at: expiresAt?.toISOString() || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        console.log('✅ モック共有作成:', mockShare);
+        return mockShare;
       }
       
       if (!user?.id) {
@@ -52,7 +73,7 @@ export function useShareCRUD() {
           .from('properties')
           .upsert({
             id: actualPropertyId,
-            user_id: user.id,
+            user_id: user?.id || 'anonymous',
             property_name: title || 'テスト物件',
             location: '東京都',
             property_type: '区分マンション',
@@ -76,7 +97,7 @@ export function useShareCRUD() {
         .from('property_shares')
         .insert({
           property_id: actualPropertyId,
-          owner_id: user?.id,
+          owner_id: user?.id || 'anonymous',
           title,
           description,
           expires_at: expiresAt?.toISOString(),
@@ -123,6 +144,14 @@ export function useShareCRUD() {
   const fetchShareByPropertyId = async (propertyId: string): Promise<PropertyShare | null> => {
     return withLoadingState(async () => {
       console.log('🔍 fetchShareByPropertyId called with:', propertyId);
+
+      // デモモード検出
+      const isDemoMode = propertyId.includes('demo') || propertyId.includes('test');
+      
+      if (isDemoMode) {
+        console.log('🧪 デモモード: 既存共有なしと判定');
+        return null;
+      }
 
       if (!user?.id) {
         console.warn('⚠️ User not authenticated, returning null');
