@@ -8,10 +8,8 @@ import {
   Download
 } from 'lucide-react';
 import { getShareData, getTimeUntilExpiry } from '../utils/shareUtils';
-import CashFlowChart from '../components/CashFlowChart';
-import MetricCard from '../components/MetricCard';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { usePdfGenerator } from '../hooks/usePdfGenerator';
+import ShareMetrics from '../components/ShareMetrics';
 
 const ShareView: React.FC = () => {
   const { shareId } = useParams<{ shareId: string }>();
@@ -21,6 +19,8 @@ const ShareView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shareData, setShareData] = useState<any>(null);
   const [timeRemaining, setTimeRemaining] = useState<string>('');
+  
+  const { generatePDF, isGenerating, error: pdfError } = usePdfGenerator();
 
   useEffect(() => {
     const loadShareData = async () => {
@@ -57,44 +57,15 @@ const ShareView: React.FC = () => {
 
   // PDF保存機能
   const handleSavePDF = async () => {
-    try {
-      const element = document.getElementById('pdf-content');
-      if (!element) return;
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
-
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      const fileName = `シミュレーション結果_${shareData?.propertyData?.propertyName || 'property'}_${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
-    } catch (error) {
-      console.error('PDF生成エラー:', error);
-      alert('PDFの生成に失敗しました');
+    const fileName = `シミュレーション結果_${shareData?.propertyData?.propertyName || 'property'}_${new Date().toISOString().split('T')[0]}.pdf`;
+    
+    const success = await generatePDF({
+      elementId: 'pdf-content',
+      fileName
+    });
+    
+    if (!success && pdfError) {
+      alert(pdfError);
     }
   };
 
@@ -155,10 +126,11 @@ const ShareView: React.FC = () => {
               </div>
               <button
                 onClick={handleSavePDF}
-                className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                disabled={isGenerating}
+                className="flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="h-4 w-4 mr-2" />
-                PDF保存
+                {isGenerating ? 'PDF生成中...' : 'PDF保存'}
               </button>
             </div>
           </div>
@@ -168,121 +140,10 @@ const ShareView: React.FC = () => {
       {/* メインコンテンツ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div id="pdf-content">
-          {/* 物件基本情報 */}
-          <div className="bg-white rounded-lg p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">物件情報</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">物件名</p>
-                <p className="font-medium">{propertyData.propertyName || '未設定'}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">所在地</p>
-                <p className="font-medium">{propertyData.location || '未設定'}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">購入価格</p>
-                <p className="font-medium">{propertyData.purchasePrice?.toLocaleString() || 0}円</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">想定家賃（月額）</p>
-                <p className="font-medium">{propertyData.monthlyRent?.toLocaleString() || 0}円</p>
-              </div>
-            </div>
-          </div>
-
-          {/* 重要指標 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <MetricCard
-              title="表面利回り"
-              value={simulationData.surfaceYield || 0}
-              unit="%"
-              format="percentage"
-            />
-            <MetricCard
-              title="実質利回り"
-              value={simulationData.netYield || 0}
-              unit="%"
-              format="percentage"
-            />
-            <MetricCard
-              title="月間キャッシュフロー"
-              value={simulationData.monthlyCashFlow || 0}
-              unit="円"
-              format="currency"
-            />
-            <MetricCard
-              title="IRR"
-              value={simulationData.irr || null}
-              unit="%"
-              format="percentage"
-            />
-          </div>
-
-          {/* 詳細指標 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">収益指標</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">年間家賃収入</span>
-                  <span className="font-medium">{simulationData.annualRentalIncome?.toLocaleString() || 0}円</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">年間経費</span>
-                  <span className="font-medium">{simulationData.annualExpenses?.toLocaleString() || 0}円</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">年間ローン返済</span>
-                  <span className="font-medium">{simulationData.annualLoanPayment?.toLocaleString() || 0}円</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">年間キャッシュフロー</span>
-                  <span className={`font-medium ${simulationData.annualCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {simulationData.annualCashFlow?.toLocaleString() || 0}円
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">投資効率指標</h3>
-              <div className="space-y-3">
-                {simulationData.ccr !== null && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">CCR (自己資金回収率)</span>
-                    <span className="font-medium">{simulationData.ccr}%</span>
-                  </div>
-                )}
-                {simulationData.dscr !== null && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">DSCR (返済余裕率)</span>
-                    <span className="font-medium">{simulationData.dscr}</span>
-                  </div>
-                )}
-                {simulationData.roi !== null && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">ROI</span>
-                    <span className="font-medium">{simulationData.roi}%</span>
-                  </div>
-                )}
-                {simulationData.ltv !== null && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">LTV (融資比率)</span>
-                    <span className="font-medium">{simulationData.ltv}%</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* キャッシュフローチャート */}
-          {simulationData.cash_flow_data && (
-            <div className="bg-white rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">キャッシュフロー推移</h3>
-              <CashFlowChart data={simulationData.cash_flow_data} />
-            </div>
-          )}
+          <ShareMetrics 
+            simulationData={simulationData} 
+            propertyData={propertyData} 
+          />
         </div>
 
         {/* フッター */}
