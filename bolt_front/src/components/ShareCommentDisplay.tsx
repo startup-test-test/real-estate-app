@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { useShareComments } from '../hooks/useShareComments';
+import { ShareComment } from '../types';
 
 interface ShareCommentDisplayProps {
   shareToken: string;
@@ -11,12 +12,33 @@ const ShareCommentDisplay: React.FC<ShareCommentDisplayProps> = ({
   shareToken, 
   title = '招待者からのコメント'
 }) => {
-  const { comments, loading, error, refetch } = useShareComments(shareToken);
+  const { fetchComments, loading, error } = useShareComments();
+  const [comments, setComments] = useState<ShareComment[]>([]);
+  
+  const loadComments = async () => {
+    try {
+      const data = await fetchComments(shareToken);
+      setComments(data || []);
+    } catch (err) {
+      console.error('Failed to load comments:', err);
+      setComments([]);
+    }
+  };
+  
+  useEffect(() => {
+    if (shareToken) {
+      loadComments();
+    }
+  }, [shareToken]);
+  
+  const refetch = () => {
+    loadComments();
+  };
   
   // デバッグ用
   console.log('🔍 ShareCommentDisplay rendering with:', {
     shareToken,
-    commentsCount: comments.length,
+    commentsCount: comments?.length || 0,
     loading,
     error
   });
@@ -42,7 +64,7 @@ const ShareCommentDisplay: React.FC<ShareCommentDisplayProps> = ({
           <MessageCircle className="h-5 w-5 mr-2 text-green-600" />
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
           <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-            {comments.length}件
+            {comments?.length || 0}件
           </span>
         </div>
         <button
@@ -64,7 +86,7 @@ const ShareCommentDisplay: React.FC<ShareCommentDisplayProps> = ({
       )}
 
       {/* ローディング表示 */}
-      {loading && comments.length === 0 && (
+      {loading && (!comments || comments.length === 0) && (
         <div className="text-center py-4">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600 mx-auto" />
           <p className="text-gray-500 mt-2">コメントを読み込み中...</p>
@@ -73,19 +95,19 @@ const ShareCommentDisplay: React.FC<ShareCommentDisplayProps> = ({
 
       {/* コメント一覧 */}
       <div className="space-y-4">
-        {comments.length === 0 && !loading ? (
+        {(!comments || comments.length === 0) && !loading ? (
           <div className="text-center py-8 text-gray-500">
             <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>招待者からのコメントはまだありません</p>
           </div>
         ) : (
-          comments.map((comment) => (
+          comments?.map((comment) => (
             <div key={comment.id} className="border border-gray-200 rounded-lg p-4 bg-green-50">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
                     <span className="font-medium text-gray-900">
-                      {comment.user_email || 'ユーザー'}
+                      {comment.user?.email || comment.user?.full_name || 'ユーザー'}
                     </span>
                     <span className="text-sm text-gray-500">
                       {formatDate(comment.created_at)}
