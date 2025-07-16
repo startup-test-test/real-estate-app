@@ -131,9 +131,9 @@ export function useShareComments() {
       // デモモード検出（shareIdが32文字のハッシュでない場合もデモとする）
       const isDemoMode = shareId.includes('demo') || 
                         shareId.includes('test') || 
-                        shareId.length < 10 || 
+                        shareId.length < 30 ||  // 32文字より短い場合はデモ
                         shareId.length > 50 ||
-                        !/^[a-f0-9]+$/.test(shareId);
+                        !/^[a-f0-9]{32}$/.test(shareId); // 正確に32文字の16進数でない場合はデモ
       
       if (isDemoMode) {
         console.log('🧪 デモモード - 空配列を返す');
