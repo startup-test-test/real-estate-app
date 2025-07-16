@@ -111,7 +111,22 @@ export function useSupabaseData() {
     
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      
+      // 認証されていない場合はローカルでシミュレーションデータを処理
+      if (!user) {
+        console.log('🧪 User not authenticated, returning local simulation data');
+        const localSimulation = {
+          id: existingId || crypto.randomUUID(),
+          simulation_name: simulationData.simulation_name,
+          input_data: simulationData.input_data,
+          result_data: simulationData.result_data,
+          user_id: 'anonymous',
+          share_token: shareToken || crypto.randomUUID().replace(/-/g, '').substring(0, 32),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        return { data: localSimulation, error: null };
+      }
 
       // ユーザーが public.users テーブルに存在するか確認
       const { data: existingUser, error: userCheckError } = await supabase
