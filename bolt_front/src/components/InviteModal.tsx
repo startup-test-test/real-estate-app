@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Info } from 'lucide-react';
-import { usePropertyShare } from '../hooks/usePropertyShare';
+import { useInvitationSender } from '../hooks/useInvitationSender';
 import { PropertyShare } from '../types';
 
 interface InviteModalProps {
@@ -21,88 +21,33 @@ export default function InviteModal({
   const [email, setEmail] = useState('');
   const [shareTitle, setShareTitle] = useState(`${propertyName}のシミュレーション結果`);
   const [shareDescription, setShareDescription] = useState('');
-  const { createShare, sendInvitation, loading, error } = usePropertyShare();
+  
+  const { 
+    sendInvitationEmail, 
+    isLoading, 
+    error,
+    clearError 
+  } = useInvitationSender({ onShareCreated });
 
-  const handleCreateShare = async () => {
-    if (!share) {
-      const newShare = await createShare(propertyId, shareTitle, shareDescription);
-      if (newShare) {
-        onShareCreated?.(newShare);
-        return newShare;
-      }
-    }
-    return share;
-  };
 
   const handleSendInvitation = async () => {
-    if (!email) {
-      alert('メールアドレスを入力してください');
-      return;
+    clearError();
+    
+    const result = await sendInvitationEmail(
+      propertyId,
+      email,
+      propertyName,
+      shareTitle,
+      shareDescription,
+      share
+    );
+    
+    if (result.errorMessage) {
+      alert(result.errorMessage);
     }
-
-    let currentShare;
-    try {
-      // 1. 共有を作成または取得
-      currentShare = await handleCreateShare();
-      if (!currentShare) {
-        alert(`共有の作成に失敗しました。データベース設定を確認してください。`);
-        return;
-      }
-
-      console.log('🚀 送信する招待情報:', {
-        shareId: currentShare.id,
-        email,
-        propertyName,
-        shareToken: currentShare.share_token
-      });
-
-      // 2. 招待を作成してメール送信
-      console.log('📧 sendInvitation関数を呼び出し中...');
-      const invitation = await sendInvitation(
-        currentShare.id,
-        email,
-        'commenter', // 全員コメント可能に固定
-        'general',   // ユーザータイプは汎用に固定
-        undefined
-      );
-
-      console.log('📊 sendInvitation結果:', invitation);
-
-      if (invitation) {
-        // 成功時の処理 - 招待リンクをクリップボードにコピー
-        const invitationUrl = `${window.location.origin}/collaboration/${invitation.invitation_token}`;
-        
-        try {
-          await navigator.clipboard.writeText(invitationUrl);
-          alert(`🎉 招待リンクをクリップボードにコピーしました！\n\n${email} に以下をお送りください：\n\n「不動産投資シミュレーションの検討にご招待します。\nこちらのリンクからご確認ください：\n${invitationUrl}\n\n※リンクの有効期限は7日間です。」`);
-        } catch (err) {
-          alert(`🎉 招待リンクを生成しました！\n\n以下のリンクを ${email} にお送りください：\n\n${invitationUrl}\n\n※リンクの有効期限は7日間です。`);
-        }
-        
-        setEmail('');
-        
-        // 共有情報を親コンポーネントに渡す
-        if (!share) {
-          onShareCreated?.(currentShare);
-        }
-      } else {
-        // メール送信失敗時のフォールバック
-        const invitationUrl = `${window.location.origin}/simple-collaboration/${currentShare.share_token}`;
-        alert(`⚠️ 招待処理でエラーが発生しました。\n\n代替として招待リンクを生成しました：\n${invitationUrl}\n\nこのリンクを ${email} に手動で送信してください。`);
-        setEmail('');
-      }
-
-    } catch (err) {
-      console.error('Invitation error:', err);
-      
-      // エラー時のフォールバック処理
-      if (currentShare) {
-        const invitationUrl = `${window.location.origin}/simple-collaboration/${currentShare.share_token}`;
-        alert(`❌ 招待処理でエラーが発生しました。\n\n代替手段として招待リンクを生成しました:\n${invitationUrl}\n\nこのリンクを ${email} に手動で送信してください。`);
-        setEmail('');
-      } else {
-        alert(`❌ 招待処理でエラーが発生しました。しばらく時間をおいて再度お試しください。`);
-      }
+    
+    if (result.success || result.invitationUrl) {
+      setEmail('');
     }
   };
 
@@ -188,10 +133,10 @@ export default function InviteModal({
 
               <button
                 onClick={handleSendInvitation}
-                disabled={!email || loading}
+                disabled={!email || isLoading}
                 className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? '送信中...' : '招待を送信'}
+                {isLoading ? '送信中...' : '招待を送信'}
               </button>
           </div>
         </div>
