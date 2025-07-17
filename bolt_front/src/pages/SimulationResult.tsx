@@ -457,16 +457,16 @@ const SimulationResult: React.FC = () => {
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-2 px-3">年次</th>
-                    <th className="text-right py-2 px-3">不動産収入</th>
+                    <th className="text-right py-2 px-3">不動産<br/>収入</th>
                     <th className="text-right py-2 px-3">経費</th>
                     <th className="text-right py-2 px-3">減価償却</th>
                     <th className="text-right py-2 px-3">税金</th>
                     <th className="text-right py-2 px-3">初期リフォーム<br/>・大規模修繕</th>
-                    <th className="text-right py-2 px-3">ローン返済</th>
-                    <th className="text-right py-2 px-3">元金返済</th>
+                    <th className="text-right py-2 px-3">ローン<br/>返済</th>
+                    <th className="text-right py-2 px-3">元金<br/>返済</th>
                     <th className="text-right py-2 px-3">インカムゲイン<br/>(単年)</th>
-                    <th className="text-right py-2 px-3">累計CF</th>
-                    <th className="text-right py-2 px-3">借入残高</th>
+                    <th className="text-right py-2 px-3">累計<br/>CF</th>
+                    <th className="text-right py-2 px-3">借入<br/>残高</th>
                     <th className="text-right py-2 px-3">自己資金<br/>回収率</th>
                     <th className="text-right py-2 px-3">DSCR</th>
                     <th className="text-right py-2 px-3">売却時<br/>手取り</th>
