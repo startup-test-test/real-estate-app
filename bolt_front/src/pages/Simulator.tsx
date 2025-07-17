@@ -29,6 +29,7 @@ import { generateSimulationPDF } from '../utils/pdfGenerator';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
+import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -596,13 +597,15 @@ const Simulator: React.FC = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen print:p-4 print:bg-white">
+      <div className="max-w-6xl mx-auto print:max-w-full">
         {/* Breadcrumb */}
-        <Breadcrumb />
+        <div className="print:hidden">
+          <Breadcrumb />
+        </div>
         
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 print:hidden">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -630,7 +633,7 @@ const Simulator: React.FC = () => {
 
         {/* Success/Error Messages */}
         {saveMessage && (
-          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 print:hidden">
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-blue-500 mr-2" />
               <span className="text-blue-800">{saveMessage}</span>
@@ -639,7 +642,7 @@ const Simulator: React.FC = () => {
         )}
 
         {saveError && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 print:hidden">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
               <span className="text-red-800">{saveError}</span>
@@ -648,7 +651,7 @@ const Simulator: React.FC = () => {
         )}
 
         {/* Input Form */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6 print:hidden">
           {/* 🏠 物件情報 */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏠 物件情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
@@ -1521,10 +1524,71 @@ const Simulator: React.FC = () => {
               </div>
             </div>
             
+            {/* 📋 年次キャッシュフロー詳細 - 最優先表示 */}
+            {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
+                  <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
+                    {simulationResults.cash_flow_table.length}年分のデータ
+                  </span>
+                </div>
+
+                {/* キャッシュフローグラフ */}
+                <div className="mb-6">
+                  <CashFlowChart data={simulationResults.cash_flow_table} />
+                </div>
+                <div className="border border-gray-300 rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white">
+                      <thead className="bg-gray-50">
+                        <tr>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">年次</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">不動産収入</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">経費</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">減価償却</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">税金</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">初期リフォーム<br/>・大規模修繕</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">ローン返済</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">元金返済</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">インカムゲイン<br/>(単年)</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">累計CF</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">借入残高</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">自己資金<br/>回収率</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">DSCR</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">売却時<br/>手取り</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {simulationResults.cash_flow_table.map((row, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['年次']}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['実効収入'])}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['経費'])}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['減価償却'])}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['税金'])}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0))}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['ローン返済'])}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['累計CF'])}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['借入残高'] || 0)}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{((row['自己資金回収率'] || 0) * 100).toFixed(1)}%</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['DSCR'] || 0).toFixed(2)}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['売却時手取り'] || row['売却益'] || 0)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* 重要投資指標 */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">🎯 重要投資指標</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 print:grid-cols-4">
                 {/* IRR */}
                 <MetricCard
                   title="IRR"
@@ -1589,39 +1653,6 @@ const Simulator: React.FC = () => {
                 />
               </div>
               
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 キャッシュフロー</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 月間キャッシュフロー */}
-                <MetricCard
-                  title="月間キャッシュフロー"
-                  value={simulationResults.results['月間キャッシュフロー（円）']}
-                  unit="円"
-                  format="currency"
-                  size="large"
-                  thresholds={{
-                    excellent: 50000,
-                    good: 20000,
-                    warning: 0
-                  }}
-                  description="毎月の手取り収入。プラスであれば収益物件として機能。"
-                />
-                
-                {/* 年間キャッシュフロー */}
-                <MetricCard
-                  title="年間キャッシュフロー"
-                  value={simulationResults.results['年間キャッシュフロー（円）']}
-                  unit="円"
-                  format="currency"
-                  size="large"
-                  thresholds={{
-                    excellent: 600000,
-                    good: 240000,
-                    warning: 0
-                  }}
-                  description="年間の手取り収入。投資収益の実額。"
-                />
-              </div>
-              
               {/* 共有セクション - ミニマムリリースでは非表示 */}
               {/* {user && (editingId || saveMessage?.includes('✅')) && (
                 <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -1653,7 +1684,7 @@ const Simulator: React.FC = () => {
             {/* 追加投資指標 */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">📈 詳細投資指標</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid-cols-3">
                 {/* NOI */}
                 <MetricCard
                   title="NOI"
@@ -1703,114 +1734,61 @@ const Simulator: React.FC = () => {
                 />
               </div>
             </div>
-            
-            {/* 売却分析 */}
+
+            {/* 💰 投資概要 */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 売却分析</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* 想定売却価格 */}
-                <MetricCard
-                  title="想定売却価格"
-                  value={simulationResults.results['想定売却価格（万円）'] || 0}
-                  unit="万円"
-                  format="number"
-                  size="large"
-                  description="保有期間終了時の想定売却価格。"
-                />
-                
-                {/* 残債 */}
-                <MetricCard
-                  title="残債"
-                  value={simulationResults.results['残債（万円）'] || 0}
-                  unit="万円"
-                  format="number"
-                  size="large"
-                  description="売却時のローン残高。"
-                />
-                
-                {/* 売却コスト */}
-                <MetricCard
-                  title="売却コスト"
-                  value={simulationResults.results['売却コスト（万円）'] || 0}
-                  unit="万円"
-                  format="number"
-                  size="large"
-                  description="売却時にかかる諸費用（仲介手数料等）。"
-                />
-                
-                {/* 売却益 */}
-                <MetricCard
-                  title="売却益"
-                  value={simulationResults.results['売却益（万円）'] || 0}
-                  unit="万円"
-                  format="number"
-                  size="large"
-                  thresholds={{
-                    excellent: 500,
-                    good: 100,
-                    warning: 0
-                  }}
-                  description="売却価格から残債と売却コストを引いた手取り額。"
-                />
-              </div>
-            </div>
-            
-            {/* キャッシュフロー表 */}
-            {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
-                  <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
-                    {simulationResults.cash_flow_table.length}年分のデータ
-                  </span>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 投資概要</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:grid-cols-2">
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">基本投資情報</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">購入価格</span>
+                      <span className="font-semibold">{((inputs.purchasePrice || 0) * 10000).toLocaleString()}円</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">自己資金</span>
+                      <span className="font-semibold">{(simulationResults.results['自己資金（円）'] || 0).toLocaleString()}円</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">借入額</span>
+                      <span className="font-semibold">{((inputs.loanAmount || 0) * 10000).toLocaleString()}円</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">年間家賃収入</span>
+                      <span className="font-semibold">{((inputs.monthlyRent || 0) * 12).toLocaleString()}円</span>
+                    </div>
+                  </div>
                 </div>
                 
-                {/* キャッシュフローグラフ */}
-                <div className="mb-6">
-                  <CashFlowChart data={simulationResults.cash_flow_table} />
-                </div>
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <div className="overflow-auto" style={{ maxHeight: '600px' }}>
-                    <table className="min-w-full bg-white">
-                      <thead className="bg-gray-50 sticky top-0 z-10">
-                        <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">年次</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">満室想定収入</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">空室率</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">実効収入</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">経費</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">減価償却</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">税金</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">大規模修繕</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">初期リフォーム</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">ローン返済</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">営業CF</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">累計CF</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {simulationResults.cash_flow_table.map((row, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['年次']}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['満室想定収入'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['空室率（%）']}%</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['実効収入'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['経費'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['減価償却'] || 0).toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['税金'] || 0).toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['大規模修繕'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['初期リフォーム'] || 0).toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['ローン返済'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['営業CF'].toLocaleString()}円</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['累計CF'].toLocaleString()}円</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">収益性指標</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">表面利回り</span>
+                      <span className="font-semibold">{(simulationResults.results['表面利回り（%）'] || 0).toFixed(2)}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">実質利回り</span>
+                      <span className="font-semibold">{(simulationResults.results['実質利回り（%）'] || 0).toFixed(2)}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">月間CF</span>
+                      <span className={`font-semibold ${(simulationResults.results['月間キャッシュフロー（円）'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {(simulationResults.results['月間キャッシュフロー（円）'] || 0).toLocaleString()}円
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">年間CF</span>
+                      <span className={`font-semibold ${(simulationResults.results['年間キャッシュフロー（円）'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {(simulationResults.results['年間キャッシュフロー（円）'] || 0).toLocaleString()}円
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+            
           </div>
         )}
 
