@@ -1548,11 +1548,11 @@ const Simulator: React.FC = () => {
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">経費</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">減価償却</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">税金</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">初期リフォーム<br/>・大規模修繕</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">修繕費</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">ローン<br/>返済</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">元金<br/>返済</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">インカムゲイン<br/>(単年)</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">累計<br/>CF</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">CF</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">累計CF</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">借入<br/>残高</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">自己資金<br/>回収率</th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">DSCR</th>

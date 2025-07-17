@@ -461,11 +461,11 @@ const SimulationResult: React.FC = () => {
                     <th className="text-right py-2 px-3">経費</th>
                     <th className="text-right py-2 px-3">減価償却</th>
                     <th className="text-right py-2 px-3">税金</th>
-                    <th className="text-right py-2 px-3">初期リフォーム<br/>・大規模修繕</th>
+                    <th className="text-right py-2 px-3">修繕費</th>
                     <th className="text-right py-2 px-3">ローン<br/>返済</th>
                     <th className="text-right py-2 px-3">元金<br/>返済</th>
-                    <th className="text-right py-2 px-3">インカムゲイン<br/>(単年)</th>
-                    <th className="text-right py-2 px-3">累計<br/>CF</th>
+                    <th className="text-right py-2 px-3">CF</th>
+                    <th className="text-right py-2 px-3">累計CF</th>
                     <th className="text-right py-2 px-3">借入<br/>残高</th>
                     <th className="text-right py-2 px-3">自己資金<br/>回収率</th>
                     <th className="text-right py-2 px-3">DSCR</th>
