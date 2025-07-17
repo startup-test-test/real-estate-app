@@ -8,7 +8,6 @@ import ResetPassword from './pages/ResetPassword';
 import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
 import Dashboard from './pages/Dashboard';
 import Simulator from './pages/Simulator';
-import SimulationResult from './pages/SimulationResult';
 import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
 import LandingPage from './pages/LandingPage';
@@ -74,7 +73,6 @@ function App() {
             <Route path="faq" element={<FAQ />} />
             <Route path="premium-plan" element={<PremiumPlan />} />
             <Route path="simulator" element={<Simulator />} />
-            <Route path="simulation-result/:id" element={<SimulationResult />} />
             {/* 2次リリース用: AI機能のルート */}
             {/* <Route path="transaction-search" element={<TransactionSearch />} /> */}
             {/* <Route path="market-analysis" element={<MarketAnalysis />} /> */}

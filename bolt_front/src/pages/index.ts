@@ -8,7 +8,6 @@ export { default as AuthCallback } from './AuthCallback';
 
 // シミュレーション関連
 export { default as Simulator } from './Simulator';
-export { default as SimulationResult } from './SimulationResult';
 
 // コラボレーション関連
 export { default as CollaborationView } from './CollaborationView';

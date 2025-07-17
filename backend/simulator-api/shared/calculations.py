@@ -242,6 +242,50 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         cf_i = eff - annual_expenses - annual_loan - repair - initial_renovation - tax
         cum += cf_i
         
+        # NOI（Net Operating Income）計算
+        noi = eff - annual_expenses - repair - initial_renovation
+        
+        # DSCR計算
+        dscr = noi / annual_loan if annual_loan > 0 else 0
+        
+        # 売却金額を計算（想定売却価格または市場価値）
+        expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
+        sale_amount = expected_sale_price * 10000 if i == holding_years else 0
+        
+        # ローン残高計算
+        loan_amount = property_data.get('loan_amount', 0)
+        interest_rate = property_data.get('interest_rate', 0)
+        loan_years = property_data.get('loan_years', 0)
+        loan_type = property_data.get('loan_type', '元利均等')
+        
+        remaining_loan = calculate_remaining_loan(
+            loan_amount, interest_rate, loan_years, i, loan_type
+        )
+        
+        
+        # 元金返済額の計算（年間ローン返済額 - 利息）
+        if interest_rate > 0 and i > 0:
+            # 前年のローン残高から利息を計算
+            prev_remaining = calculate_remaining_loan(
+                loan_amount, interest_rate, loan_years, i-1, loan_type
+            )
+            annual_interest = prev_remaining * 10000 * (interest_rate / 100)
+            principal_payment = annual_loan - annual_interest
+        else:
+            principal_payment = annual_loan
+        
+        
+        # 自己資金回収率計算
+        self_funding = basic_metrics['self_funding']
+        recovery_rate = cum / (self_funding * 10000) if self_funding > 0 else 0
+        
+        # 売却時手取り計算（最終年度のみ）
+        if i == holding_years and sale_amount > 0:
+            sale_cost = sale_amount * 0.05  # 売却コスト5%
+            net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost
+        else:
+            net_sale_proceeds = 0
+        
         cf_data.append({
             "年次": f"{i}年目",
             "満室想定収入": int(full_annual_rent),
@@ -253,8 +297,14 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "大規模修繕": int(repair),
             "初期リフォーム": int(initial_renovation),
             "ローン返済": int(annual_loan),
+            "元金返済": 0,  # TODO: 元金返済額の計算
             "営業CF": int(cf_i),
-            "累計CF": int(cum)
+            "累計CF": int(cum),
+            "借入残高": 0,  # TODO: 借入残高の計算
+            "自己資金回収率": 0,  # TODO: 自己資金回収率の計算
+            "DSCR": round(dscr, 2),  # DSCR計算済み
+            "売却金額": int(sale_amount),  # 売却金額
+            "売却時手取り": 0  # TODO: 売却時手取りの計算
         })
     
     return cf_data

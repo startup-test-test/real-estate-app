@@ -36,7 +36,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   }
 
   // データを準備（null/undefined チェック付き）
-  const years = data.map(row => `${row['年次'] || 0}年目`);
+  const years = data.map(row => row['年次'] || '0年目');
   const annualCashFlow = data.map(row => (row['営業CF'] || 0) / 10000); // 万円単位
   const cumulativeCashFlow = data.map(row => (row['累計CF'] || 0) / 10000); // 万円単位
   const income = data.map(row => (row['実効収入'] || 0) / 10000); // 万円単位
@@ -191,13 +191,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         display: true,
         position: 'left' as const,
         title: {
-          display: true,
-          text: '年次キャッシュフロー・収支',
-          font: {
-            size: 13,
-            weight: 'bold',
-          },
-          color: '#6b7280', // gray-500
+          display: false,
         },
         grid: {
           color: 'rgba(156, 163, 175, 0.3)', // gray-400 with opacity
@@ -214,13 +208,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         display: true,
         position: 'right' as const,
         title: {
-          display: true,
-          text: '累計キャッシュフロー',
-          font: {
-            size: 13,
-            weight: 'bold',
-          },
-          color: '#6b7280', // gray-500
+          display: false,
         },
         grid: {
           drawOnChartArea: false,

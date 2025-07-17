@@ -1538,44 +1538,110 @@ const Simulator: React.FC = () => {
                 <div className="mb-6">
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto">
+                <div className="border border-gray-300 rounded-lg">
+                  <div className="overflow-x-auto relative">
                     <table className="min-w-full bg-white">
                       <thead className="bg-gray-50">
                         <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">年次</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">不動産<br/>収入</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">経費</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">減価償却</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">税金</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">修繕費</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">ローン<br/>返済</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">元金<br/>返済</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">CF</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">累計CF</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">借入<br/>残高</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">自己資金<br/>回収率</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">DSCR</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b">売却時<br/>手取り</th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b">年次</th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          不動産<br/>収入
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px]">
+                            家賃収入の推移。<br/>前面面で家賃下落（上昇）を選択した場合は次第に変化していきます。<br/>また、各年度で売却した際の売却価格（キャピタルゲイン）に影響を与えます。
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          経費
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            ランニングコスト
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          減価<br/>償却
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            減価償却費
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          税金
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            支払利息
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          改装費<br/>修繕費
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            税引後利益
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          ローン<br/>返済
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            返済元金
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          元金<br/>返済
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            インカムゲイン単年
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          年間<br/>CF
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            インカムゲイン単年
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          累計<br/>CF
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            累計キャッシュフロー
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          借入<br/>残高
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            借入残高
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          自己資金<br/>回収率
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            残債利回り
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          売却<br/>金額
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px]">
+                            物件の売却価格。<br/>
+                            市場価値や収益還元法により算出されます。
+                          </div>
+                        </th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                          売却時<br/>手取り
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                            売却時キャッシュフロー純額
+                          </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {simulationResults.cash_flow_table.map((row, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{row['年次']}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['実効収入'])}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['経費'])}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['減価償却'])}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['税金'])}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0))}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['ローン返済'])}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['累計CF'])}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['借入残高'] || 0)}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{((row['自己資金回収率'] || 0) * 100).toFixed(1)}%</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{(row['DSCR'] || 0).toFixed(2)}</td>
-                          <td className="px-4 py-3 text-sm text-gray-900 border-b">{formatCurrencyNoSymbol(row['売却時手取り'] || row['売却益'] || 0)}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['実効収入'])}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['経費'])}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['減価償却'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['減価償却'])}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['税金'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['税金'])}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0)) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0))}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['ローン返済'])}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['元金返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['累計CF'])}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['借入残高'] || 0)}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{((row['自己資金回収率'] || 0) * 100).toFixed(1)}%</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
+                          <td className={`px-4 py-3 text-sm border-b text-center ${(row['売却時手取り'] || row['売却益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時手取り'] || row['売却益'] || 0)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1683,7 +1749,6 @@ const Simulator: React.FC = () => {
             
             {/* 追加投資指標 */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">📈 詳細投資指標</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid-cols-3">
                 {/* NOI */}
                 <MetricCard
@@ -1735,59 +1800,6 @@ const Simulator: React.FC = () => {
               </div>
             </div>
 
-            {/* 💰 投資概要 */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 投資概要</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:grid-cols-2">
-                <div className="bg-white rounded-lg p-6 border border-gray-200">
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">基本投資情報</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">購入価格</span>
-                      <span className="font-semibold">{((inputs.purchasePrice || 0) * 10000).toLocaleString()}円</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">自己資金</span>
-                      <span className="font-semibold">{(simulationResults.results['自己資金（円）'] || 0).toLocaleString()}円</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">借入額</span>
-                      <span className="font-semibold">{((inputs.loanAmount || 0) * 10000).toLocaleString()}円</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">年間家賃収入</span>
-                      <span className="font-semibold">{((inputs.monthlyRent || 0) * 12).toLocaleString()}円</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-lg p-6 border border-gray-200">
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">収益性指標</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">表面利回り</span>
-                      <span className="font-semibold">{(simulationResults.results['表面利回り（%）'] || 0).toFixed(2)}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">実質利回り</span>
-                      <span className="font-semibold">{(simulationResults.results['実質利回り（%）'] || 0).toFixed(2)}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">月間CF</span>
-                      <span className={`font-semibold ${(simulationResults.results['月間キャッシュフロー（円）'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {(simulationResults.results['月間キャッシュフロー（円）'] || 0).toLocaleString()}円
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">年間CF</span>
-                      <span className={`font-semibold ${(simulationResults.results['年間キャッシュフロー（円）'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {(simulationResults.results['年間キャッシュフロー（円）'] || 0).toLocaleString()}円
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             
           </div>
         )}
