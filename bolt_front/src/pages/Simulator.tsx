@@ -1882,21 +1882,22 @@ const Simulator: React.FC = () => {
               <ShareCommentDisplay
                 shareToken={currentShare.share_token}
                 title="招待者からのコメント"
+                showInviteButton={true}
+                onInviteClick={() => setShowInviteModal(true)}
               />
             ) : (
               <div className="text-center py-8 text-gray-500 bg-gray-50 border border-gray-200 rounded-lg p-6">
                 <p className="text-lg font-medium text-gray-700 mb-2">コメント機能を有効にする</p>
                 <p className="text-sm text-gray-600 mb-4">このシミュレーション結果に対するコメントを受け取るには、まず共有を作成してください。</p>
-                <p className="text-xs text-blue-600">
-                  💡 上の「メールで招待・共有」ボタンで特定の方に招待を送信すると、その方からコメントを受け取れます
-                </p>
-              </div>
-            )}
-            {!currentShare && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-700">
-                  💡 実際に専門家を招待するには上の「メールで招待・共有」ボタンをクリックしてください
-                </p>
+                {user && (editingId || saveMessage?.includes('✅')) && (
+                  <button
+                    onClick={() => setShowInviteModal(true)}
+                    className="mt-4 flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 mx-auto shadow-md"
+                  >
+                    <Users size={20} />
+                    <span>メールで招待・共有</span>
+                  </button>
+                )}
               </div>
             )}
           </div>

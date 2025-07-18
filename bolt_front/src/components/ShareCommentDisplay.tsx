@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { MessageCircle, AlertCircle, RefreshCw, Users } from 'lucide-react';
 import { useShareComments } from '../hooks/useShareComments';
 import { ShareComment } from '../types';
 
 interface ShareCommentDisplayProps {
   shareToken: string;
   title?: string;
+  showInviteButton?: boolean;
+  onInviteClick?: () => void;
 }
 
 const ShareCommentDisplay: React.FC<ShareCommentDisplayProps> = ({ 
   shareToken, 
-  title = '招待者からのコメント'
+  title = '招待者からのコメント',
+  showInviteButton = false,
+  onInviteClick
 }) => {
   const { fetchComments, loading, error } = useShareComments();
   const [comments, setComments] = useState<ShareComment[]>([]);
@@ -99,6 +103,15 @@ const ShareCommentDisplay: React.FC<ShareCommentDisplayProps> = ({
           <div className="text-center py-8 text-gray-500">
             <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>招待者からのコメントはまだありません</p>
+            {showInviteButton && onInviteClick && (
+              <button
+                onClick={onInviteClick}
+                className="mt-4 flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 mx-auto shadow-md"
+              >
+                <Users size={20} />
+                <span>メールで招待・共有</span>
+              </button>
+            )}
           </div>
         ) : (
           comments?.map((comment) => (
