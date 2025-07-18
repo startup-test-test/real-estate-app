@@ -1436,10 +1436,10 @@ const Simulator: React.FC = () => {
               <button 
                 onClick={handleSimulation}
                 disabled={isSimulating || !isFormValid}
-                className={`flex items-center justify-center px-8 py-4 rounded-lg font-medium text-lg transition-all duration-200 min-h-[56px] touch-manipulation ${
+                className={`flex items-center justify-center px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 min-h-[56px] touch-manipulation ${
                   isSimulating || !isFormValid
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:from-purple-800 active:to-indigo-800 active:scale-[0.98] text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                    : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                 }`}
               >
                 {isSimulating ? (
@@ -1538,86 +1538,86 @@ const Simulator: React.FC = () => {
                 <div className="mb-6">
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
-                <div className="border border-gray-300 rounded-lg">
+                <div className="border border-gray-300 rounded-lg overflow-hidden">
                   <div className="overflow-x-auto relative">
                     <table className="min-w-full bg-white">
-                      <thead className="bg-gray-50">
+                      <thead className="bg-blue-900">
                         <tr>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b">年次</th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           不動産<br/>収入
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px]">
                             家賃収入の推移。<br/>前面面で家賃下落（上昇）を選択した場合は次第に変化していきます。<br/>また、各年度で売却した際の売却価格（キャピタルゲイン）に影響を与えます。
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           経費
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             ランニングコスト
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           減価<br/>償却
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             減価償却費
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           税金
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             支払利息
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           改装費<br/>修繕費
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             税引後利益
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           ローン<br/>返済
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             返済元金
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           元金<br/>返済
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             インカムゲイン単年
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           年間<br/>CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             インカムゲイン単年
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           累計<br/>CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             累計キャッシュフロー
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           借入<br/>残高
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             借入残高
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           自己資金<br/>回収率
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             残債利回り
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却<br/>金額
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px]">
                             物件の売却価格。<br/>
                             市場価値や収益還元法により算出されます。
                           </div>
                         </th>
-                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700 border-b relative group cursor-help">
+                        <th className="px-4 py-3 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却時<br/>手取り
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             売却時キャッシュフロー純額

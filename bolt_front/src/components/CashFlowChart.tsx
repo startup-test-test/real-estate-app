@@ -36,76 +36,84 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   }
 
   // データを準備（null/undefined チェック付き）
-  const years = data.map(row => row['年次'] || '0年目');
+  const years = data.map((row, index) => `${index + 1}年`);
   const annualCashFlow = data.map(row => (row['営業CF'] || 0) / 10000); // 万円単位
   const cumulativeCashFlow = data.map(row => (row['累計CF'] || 0) / 10000); // 万円単位
   const income = data.map(row => (row['実効収入'] || 0) / 10000); // 万円単位
   const expenses = data.map(row => 
-    ((row['経費'] || 0) + (row['大規模修繕'] || 0) + (row['ローン返済'] || 0)) / 10000
+    ((row['経費'] || 0) + (row['ローン返済'] || 0)) / 10000
   ); // 万円単位
-  const saleProfit = data.map(row => (row['売却益'] || 0) / 10000); // 万円単位
+  const saleProfit = data.map(row => (row['売却時手取り'] || row['売却益'] || 0) / 10000); // 万円単位
+
+  // 累計CFと売却時累計CFを分離（最後の年のみ売却時累計CFを表示）
+  const cumulativeCashFlowBar = data.map((row, index) => {
+    if (index === data.length - 1) return 0; // 最後の年は売却時累計CFとして別表示
+    return (row['累計CF'] || 0) / 10000;
+  });
+  
+  const saleCumulativeCF = data.map((row, index) => {
+    if (index === data.length - 1) return (row['累計CF'] || 0) / 10000;
+    return 0;
+  });
 
   const chartData = {
     labels: years,
     datasets: [
       {
         type: 'bar' as const,
-        label: '💰 年次キャッシュフロー',
+        label: '累計CF(右軸)',
+        data: cumulativeCashFlowBar,
+        backgroundColor: 'rgba(139, 92, 246, 0.5)', // 紫系
+        borderColor: 'rgba(139, 92, 246, 0)',
+        borderWidth: 0,
+        yAxisID: 'y1',
+        stack: 'Stack 0',
+      },
+      {
+        type: 'bar' as const,
+        label: '売却時累計CF(右軸)',
+        data: saleCumulativeCF,
+        backgroundColor: 'rgba(59, 130, 246, 0.5)', // 青系
+        borderColor: 'rgba(59, 130, 246, 0)',
+        borderWidth: 0,
+        yAxisID: 'y1',
+        stack: 'Stack 0',
+      },
+      {
+        type: 'line' as const,
+        label: 'CF(左軸)',
         data: annualCashFlow,
-        backgroundColor: 'rgba(34, 197, 94, 0.8)', // green-500 より鮮明
-        borderColor: 'rgb(22, 163, 74)',
-        borderWidth: 2,
+        borderColor: 'rgb(236, 72, 153)', // ピンク
+        backgroundColor: 'transparent',
+        borderWidth: 3,
+        pointRadius: 0,
+        pointHoverRadius: 0,
         yAxisID: 'y',
+        tension: 0,
       },
       {
         type: 'line' as const,
-        label: '📈 累計キャッシュフロー',
-        data: cumulativeCashFlow,
-        borderColor: 'rgb(220, 38, 127)', // pink-600 より目立つ色
-        backgroundColor: 'rgba(220, 38, 127, 0.1)',
-        borderWidth: 4,
-        pointBackgroundColor: 'rgb(220, 38, 127)',
-        pointBorderColor: 'rgb(255, 255, 255)',
-        pointBorderWidth: 3,
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        fill: false,
-        yAxisID: 'y1',
-        tension: 0.2, // 線をなめらかに
-      },
-      {
-        type: 'line' as const,
-        label: '💰 売却益',
-        data: saleProfit,
-        borderColor: 'rgb(147, 51, 234)', // purple-600 売却益は紫系
-        backgroundColor: 'rgba(147, 51, 234, 0.1)',
-        borderWidth: 4,
-        pointBackgroundColor: 'rgb(147, 51, 234)',
-        pointBorderColor: 'rgb(255, 255, 255)',
-        pointBorderWidth: 3,
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        fill: false,
-        yAxisID: 'y1',
-        tension: 0.2,
-      },
-      {
-        type: 'bar' as const,
-        label: '💵 実効収入',
+        label: '実質年間収入(左軸)',
         data: income,
-        backgroundColor: 'rgba(59, 130, 246, 0.6)', // blue-500 収入は青系
-        borderColor: 'rgb(37, 99, 235)',
-        borderWidth: 2,
+        borderColor: 'rgb(34, 197, 94)', // 緑
+        backgroundColor: 'transparent',
+        borderWidth: 3,
+        pointRadius: 0,
+        pointHoverRadius: 0,
         yAxisID: 'y',
+        tension: 0,
       },
       {
-        type: 'bar' as const,
-        label: '💸 総支出',
+        type: 'line' as const,
+        label: '支出(左軸)',
         data: expenses,
-        backgroundColor: 'rgba(239, 68, 68, 0.6)', // red-500 支出は赤系
-        borderColor: 'rgb(220, 38, 38)',
-        borderWidth: 2,
+        borderColor: 'rgb(251, 146, 60)', // オレンジ
+        backgroundColor: 'transparent',
+        borderWidth: 3,
+        pointRadius: 0,
+        pointHoverRadius: 0,
         yAxisID: 'y',
+        tension: 0,
       },
     ],
   };
@@ -117,38 +125,33 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       legend: {
         display: true,
         position: 'top' as const,
-        align: 'start' as const,
+        align: 'center' as const,
         labels: {
-          usePointStyle: true,
-          pointStyle: 'rectRounded',
-          padding: 25,
-          boxWidth: 15,
-          boxHeight: 15,
+          usePointStyle: false,
+          padding: 15,
+          boxWidth: 40,
+          boxHeight: 2,
           font: {
-            size: 13,
-            weight: '600',
+            size: 12,
+            weight: 'normal',
             family: 'system-ui, -apple-system, sans-serif',
           },
-          color: '#374151', // gray-700
+          color: '#374151',
           generateLabels: function(chart) {
             const datasets = chart.data.datasets;
-            return datasets.map((dataset, i) => ({
-              text: dataset.label,
-              fillStyle: dataset.backgroundColor,
-              strokeStyle: dataset.borderColor,
-              lineWidth: dataset.borderWidth,
-              pointStyle: dataset.type === 'line' ? 'line' : 'rect',
-              hidden: !chart.isDatasetVisible(i),
-              datasetIndex: i
-            }));
+            return datasets.map((dataset, i) => {
+              const isLine = dataset.type === 'line';
+              return {
+                text: dataset.label,
+                fillStyle: isLine ? 'transparent' : dataset.backgroundColor,
+                strokeStyle: dataset.borderColor || dataset.backgroundColor,
+                lineWidth: isLine ? 3 : 0,
+                pointStyle: isLine ? 'line' : 'rect',
+                hidden: !chart.isDatasetVisible(i),
+                datasetIndex: i
+              };
+            });
           },
-        },
-        onClick: function(e, legendItem, legend) {
-          const index = legendItem.datasetIndex;
-          const chart = legend.chart;
-          const meta = chart.getDatasetMeta(index);
-          meta.hidden = meta.hidden === null ? !chart.data.datasets[index].hidden : null;
-          chart.update();
         },
       },
       title: {
@@ -184,6 +187,17 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         },
         grid: {
           display: false,
+          drawBorder: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
+          color: '#6B7280',
+          // 5年ごとに表示
+          callback: function(value, index) {
+            return index % 5 === 4 ? this.getLabelForValue(value) : '';
+          },
         },
       },
       y: {
@@ -191,16 +205,26 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         display: true,
         position: 'left' as const,
         title: {
-          display: false,
+          display: true,
+          text: '(万円)',
+          font: {
+            size: 12,
+            weight: 'normal',
+          },
         },
         grid: {
-          color: 'rgba(156, 163, 175, 0.3)', // gray-400 with opacity
+          color: 'rgba(229, 231, 235, 1)', // gray-200
           lineWidth: 1,
+          drawBorder: false,
         },
         ticks: {
           callback: function(value) {
-            return `${Number(value).toFixed(1)}`;
+            return value.toLocaleString();
           },
+          font: {
+            size: 11,
+          },
+          color: '#6B7280',
         },
       },
       y1: {
@@ -208,17 +232,27 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         display: true,
         position: 'right' as const,
         title: {
-          display: false,
+          display: true,
+          text: '(万円)',
+          font: {
+            size: 12,
+            weight: 'normal',
+          },
         },
         grid: {
           drawOnChartArea: false,
-          color: 'rgba(156, 163, 175, 0.3)',
+          color: 'rgba(229, 231, 235, 1)',
           lineWidth: 1,
+          drawBorder: false,
         },
         ticks: {
           callback: function(value) {
-            return `${Number(value).toFixed(1)}`;
+            return value.toLocaleString();
           },
+          font: {
+            size: 11,
+          },
+          color: '#6B7280',
         },
       },
     },
@@ -230,6 +264,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm chart-container">
+      <h3 className="text-center text-lg font-semibold text-gray-800 mb-4">- シミュレーション結果 -</h3>
       <div className="h-96 w-full">
         <Chart type="bar" data={chartData} options={options} />
       </div>
