@@ -1572,7 +1572,9 @@ const Simulator: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+              </div>
+              {/* 2行目: 投資指標 */}
+              <div className="flex flex-wrap gap-2 mt-3">
                 {/* IRR */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
