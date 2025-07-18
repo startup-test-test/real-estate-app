@@ -181,7 +181,8 @@ const Simulator: React.FC = () => {
           depreciationYears: simData.depreciationYears || 27,
           propertyUrl: simData.propertyUrl || '',
           propertyMemo: simData.propertyMemo || '',
-          propertyImageUrl: simData.propertyImageUrl || ''
+          propertyImageUrl: simData.propertyImageUrl || '',
+          annualDepreciationRate: simData.annualDepreciationRate || 1.0
         });
         
         // 既存の結果も表示
@@ -1162,6 +1163,27 @@ const Simulator: React.FC = () => {
                   <span className="text-sm text-gray-500 ml-2">万円</span>
                 </div>
               </div>
+
+              {/* 年間価値下落率 */}
+              <div>
+                <div className="flex items-center mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    年間価値下落率
+                  </label>
+                  <Tooltip content="物件価値が年間で下落する割合（%）。建物の経年劣化や市場環境を考慮します。通常0.5〜2.0%程度を設定します。" />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={inputs.annualDepreciationRate || 1.0}
+                    onChange={(e) => handleInputChange('annualDepreciationRate', Number(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="1.0"
+                  />
+                  <span className="text-sm text-gray-500 ml-2">%</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1526,7 +1548,7 @@ const Simulator: React.FC = () => {
             
             {/* 物件価値評価と重要投資指標 */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">📐 物件価値評価（参考値）・🎯 重要投資指標</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 評価額と投資指標</h3>
               <div className="flex flex-wrap gap-2">
                 {/* 積算評価額 */}
                 <div className="group relative">
@@ -1567,6 +1589,53 @@ const Simulator: React.FC = () => {
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                     市場での想定取引価格（入力値ベース）です
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 区切り線 */}
+                <div className="flex items-center px-2">
+                  <div className="h-8 w-px bg-gray-300"></div>
+                </div>
+                
+                {/* 表面利回り */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults.results['表面利回り（%）'] >= 8 ? 'bg-green-100 text-green-800' :
+                    simulationResults.results['表面利回り（%）'] >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults.results['表面利回り（%）'] >= 4 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">表面利回り</span>
+                    <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults.results['表面利回り（%）'] >= 8 && <span className="ml-1">⭐</span>}
+                    {simulationResults.results['表面利回り（%）'] < 4 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    粗利回り：年間賃料収入÷物件価格
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 実質利回り */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults.results['実質利回り（%）'] >= 6 ? 'bg-green-100 text-green-800' :
+                    simulationResults.results['実質利回り（%）'] >= 4.5 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults.results['実質利回り（%）'] >= 3 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">実質利回り</span>
+                    <span className="font-semibold">{simulationResults.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults.results['実質利回り（%）'] >= 6 && <span className="ml-1">⭐</span>}
+                    {simulationResults.results['実質利回り（%）'] < 3 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    実質利回り：（年間賃料収入－年間経費）÷物件価格
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1632,27 +1701,6 @@ const Simulator: React.FC = () => {
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                     返済余裕率：債務返済能力（1.3以上が望ましい）
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                      <div className="border-4 border-transparent border-t-gray-800"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* 表面利回り */}
-                <div className="group relative">
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    simulationResults.results['表面利回り（%）'] >= 8 ? 'bg-green-100 text-green-800' :
-                    simulationResults.results['表面利回り（%）'] >= 6 ? 'bg-yellow-100 text-yellow-800' :
-                    simulationResults.results['表面利回り（%）'] >= 4 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">表面利回り</span>
-                    <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults.results['表面利回り（%）'] >= 8 && <span className="ml-1">⭐</span>}
-                    {simulationResults.results['表面利回り（%）'] < 4 && <span className="ml-1">⚠️</span>}
-                  </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    粗利回り：年間賃料収入÷物件価格
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>

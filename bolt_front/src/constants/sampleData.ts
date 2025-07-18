@@ -36,7 +36,8 @@ export const emptyPropertyData = {
   propertyUrl: '',
   propertyMemo: '',
   propertyImageUrl: '',
-  propertyStatus: '検討中'
+  propertyStatus: '検討中',
+  annualDepreciationRate: 1.0
 };
 
 export const sampleProperties = {
@@ -76,7 +77,8 @@ export const sampleProperties = {
       propertyUrl: '',
       propertyMemo: '駅徒歩5分、築10年、フルリノベーション済み',
       propertyImageUrl: '',
-      propertyStatus: '検討中'
+      propertyStatus: '検討中',
+      annualDepreciationRate: 0.8
     }
   },
   setagaya: {
@@ -115,7 +117,8 @@ export const sampleProperties = {
       propertyUrl: '',
       propertyMemo: '駅徒歩8分、人気学区、南向きバルコニー',
       propertyImageUrl: '',
-      propertyStatus: '検討中'
+      propertyStatus: '検討中',
+      annualDepreciationRate: 1.0
     }
   },
   osaka: {
@@ -154,7 +157,8 @@ export const sampleProperties = {
       propertyUrl: '',
       propertyMemo: '1フロア150㎡、4階建て、基準階貸し',
       propertyImageUrl: '',
-      propertyStatus: '検討中'
+      propertyStatus: '検討中',
+      annualDepreciationRate: 1.5
     }
   }
 };
