@@ -1651,72 +1651,207 @@ const Simulator: React.FC = () => {
               </div>
             )}
 
+            {/* 物件価値評価 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">📐 物件価値評価（参考値）</h3>
+              <div className="flex flex-wrap gap-2">
+                {/* 積算評価額 */}
+                <div className="group relative">
+                  <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
+                    <span className="font-normal mr-1">積算</span>
+                    <span className="font-semibold">7,200万円</span>
+                    <span className="text-xs ml-1">※</span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    土地評価と建物評価を合計した参考評価額です
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 収益還元評価額 */}
+                <div className="group relative">
+                  <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
+                    <span className="font-normal mr-1">収益還元</span>
+                    <span className="font-semibold">8,400万円</span>
+                    <span className="text-xs ml-1">※</span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    年間純収益を還元利回りで割った参考評価額です
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 想定実勢価格 */}
+                <div className="group relative">
+                  <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
+                    <span className="font-normal mr-1">実勢</span>
+                    <span className="font-semibold">8,000万円</span>
+                    <span className="text-xs ml-1">※</span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    市場での想定取引価格（入力値ベース）です
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* 重要投資指標 */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">🎯 重要投資指標</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 print:grid-cols-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">🎯 重要投資指標</h3>
+              <div className="flex flex-wrap gap-2">
                 {/* IRR */}
-                <MetricCard
-                  title="IRR"
-                  subtitle="内部収益率"
-                  value={simulationResults.results['IRR（%）']}
-                  unit="%"
-                  format="percentage"
-                  size="large"
-                  thresholds={{
-                    excellent: 15,
-                    good: 10,
-                    warning: 5
-                  }}
-                  description="投資全体の年間収益率を示す参考指標です。"
-                />
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults.results['IRR（%）'] >= 15 ? 'bg-green-100 text-green-800' :
+                    simulationResults.results['IRR（%）'] >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults.results['IRR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">IRR</span>
+                    <span className="font-semibold">{simulationResults.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
+                    {simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    内部収益率：投資全体の年間収益率
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
                 
                 {/* CCR */}
-                <MetricCard
-                  title="CCR"
-                  subtitle="自己資金回収率"
-                  value={simulationResults.results['CCR（%）']}
-                  unit="%"
-                  format="percentage"
-                  size="large"
-                  thresholds={{
-                    excellent: 12,
-                    good: 8,
-                    warning: 5
-                  }}
-                  description="自己資金に対する年間収益率を示す参考指標です。"
-                />
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults.results['CCR（%）'] >= 12 ? 'bg-green-100 text-green-800' :
+                    simulationResults.results['CCR（%）'] >= 8 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults.results['CCR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">CCR</span>
+                    <span className="font-semibold">{simulationResults.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults.results['CCR（%）'] >= 12 && <span className="ml-1">⭐</span>}
+                    {simulationResults.results['CCR（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    自己資金回収率：自己資金に対する年間収益率
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
                 
                 {/* DSCR */}
-                <MetricCard
-                  title="DSCR"
-                  subtitle="返済余裕率"
-                  value={simulationResults.results['DSCR（返済余裕率）']}
-                  format="number"
-                  size="large"
-                  thresholds={{
-                    excellent: 1.5,
-                    good: 1.3,
-                    warning: 1.1
-                  }}
-                  description="債務返済能力を示す参考指標です。"
-                />
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults.results['DSCR（返済余裕率）'] >= 1.5 ? 'bg-green-100 text-green-800' :
+                    simulationResults.results['DSCR（返済余裕率）'] >= 1.3 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults.results['DSCR（返済余裕率）'] >= 1.1 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">DSCR</span>
+                    <span className="font-semibold">{simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
+                    {simulationResults.results['DSCR（返済余裕率）'] >= 1.5 && <span className="ml-1">✓</span>}
+                    {simulationResults.results['DSCR（返済余裕率）'] < 1.1 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    返済余裕率：債務返済能力（1.3以上が望ましい）
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
                 
                 {/* 表面利回り */}
-                <MetricCard
-                  title="表面利回り"
-                  subtitle="粗利回り"
-                  value={simulationResults.results['表面利回り（%）']}
-                  unit="%"
-                  format="percentage"
-                  size="large"
-                  thresholds={{
-                    excellent: 8,
-                    good: 6,
-                    warning: 4
-                  }}
-                  description="年間賃料収入÷物件価格。8%以上で優秀、6%以上で良好。"
-                />
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults.results['表面利回り（%）'] >= 8 ? 'bg-green-100 text-green-800' :
+                    simulationResults.results['表面利回り（%）'] >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults.results['表面利回り（%）'] >= 4 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">表面利回り</span>
+                    <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults.results['表面利回り（%）'] >= 8 && <span className="ml-1">⭐</span>}
+                    {simulationResults.results['表面利回り（%）'] < 4 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    粗利回り：年間賃料収入÷物件価格
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* NOI */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    (simulationResults.results['NOI（円）'] || 0) >= 1000000 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['NOI（円）'] || 0) >= 500000 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['NOI（円）'] || 0) >= 100000 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">NOI</span>
+                    <span className="font-semibold">
+                      {((simulationResults.results['NOI（円）'] || 0) / 10000).toFixed(0)}万円
+                    </span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    純営業収益：年間賃料収入から運営費を差し引いた純収益
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* ROI */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    (simulationResults.results['ROI（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['ROI（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['ROI（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">ROI</span>
+                    <span className="font-semibold">
+                      {(simulationResults.results['ROI（%）'] || 0).toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    投資収益率：年間CF÷自己資金
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* LTV */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    (simulationResults.results['LTV（%）'] || 0) <= 70 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['LTV（%）'] || 0) <= 80 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['LTV（%）'] || 0) <= 90 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">LTV</span>
+                    <span className="font-semibold">
+                      {(simulationResults.results['LTV（%）'] || 0).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    融資比率：物件価格に対する融資額の割合（低いほど安全）
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               {/* 共有セクション - ミニマムリリースでは非表示 */}
@@ -1745,59 +1880,6 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
               )} */}
-            </div>
-            
-            {/* 追加投資指標 */}
-            <div className="mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid-cols-3">
-                {/* NOI */}
-                <MetricCard
-                  title="NOI"
-                  subtitle="純営業収益"
-                  value={simulationResults.results['NOI（円）'] || 0}
-                  unit="円"
-                  format="currency"
-                  size="large"
-                  thresholds={{
-                    excellent: 1000000,
-                    good: 500000,
-                    warning: 100000
-                  }}
-                  description="年間賃料収入から運営費を差し引いた純収益。物件の収益力を示す。"
-                />
-                
-                {/* ROI */}
-                <MetricCard
-                  title="ROI"
-                  subtitle="投資収益率"
-                  value={simulationResults.results['ROI（%）'] || 0}
-                  unit="%"
-                  format="percentage"
-                  size="large"
-                  thresholds={{
-                    excellent: 15,
-                    good: 10,
-                    warning: 5
-                  }}
-                  description="投資額に対する税引後キャッシュフローの割合。ROI=年間CF÷自己資金。"
-                />
-                
-                {/* LTV */}
-                <MetricCard
-                  title="LTV"
-                  subtitle="融資比率"
-                  value={simulationResults.results['LTV（%）'] || 0}
-                  unit="%"
-                  format="percentage"
-                  size="large"
-                  thresholds={{
-                    excellent: 70,
-                    good: 80,
-                    warning: 90
-                  }}
-                  description="物件価格に対する融資額の割合。低いほど安全性が高い。"
-                />
-              </div>
             </div>
 
             
@@ -1842,6 +1924,64 @@ const Simulator: React.FC = () => {
                 </p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* 計算ロジック説明・注意事項 */}
+        {simulationResults && (
+          <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg className="h-5 w-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              計算ロジック・注意事項
+            </h3>
+            
+            {/* 計算ロジック説明 */}
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">📊 主要指標の計算方法</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
+                <div>
+                  <span className="font-medium">・表面利回り</span>：年間家賃収入 ÷ 物件価格 × 100
+                </div>
+                <div>
+                  <span className="font-medium">・CCR（自己資金回収率）</span>：年間CF ÷ 自己資金 × 100
+                </div>
+                <div>
+                  <span className="font-medium">・IRR（内部収益率）</span>：投資期間全体の収益率
+                </div>
+                <div>
+                  <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
+                </div>
+              </div>
+            </div>
+            
+            {/* 物件価値評価の計算方法 */}
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">📐 物件価値評価の算出方法</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-600">
+                <div>
+                  <span className="font-medium">・積算評価額</span>：土地評価額 + 建物評価額
+                </div>
+                <div>
+                  <span className="font-medium">・収益還元評価額</span>：年間NOI ÷ CapRate
+                </div>
+                <div>
+                  <span className="font-medium">・想定実勢価格</span>：市場での想定取引価格
+                </div>
+              </div>
+            </div>
+            
+            {/* 注意事項 */}
+            <div className="border-t border-gray-300 pt-4">
+              <h4 className="text-sm font-semibold text-red-600 mb-2">⚠️ 重要な注意事項</h4>
+              <div className="text-xs text-gray-600 space-y-1">
+                <p>※ これらの数値はユーザー入力値に基づく参考計算値です。実際の取引価格は市況により変動します。</p>
+                <p>※ 投資判断は必ず複数の専門家（不動産業者、税理士、FP等）にご相談の上、自己責任で行ってください。</p>
+                <p>※ 本シミュレーションは簡易計算であり、実際の収支とは異なる場合があります。</p>
+                <p>※ 税制改正、金利変動、空室リスク等により実際の収益は変動する可能性があります。</p>
+              </div>
+            </div>
           </div>
         )}
 
