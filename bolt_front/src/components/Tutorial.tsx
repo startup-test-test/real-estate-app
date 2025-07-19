@@ -28,44 +28,17 @@ const tutorialSteps = [
     )
   },
   {
-    title: '📝 Step 1: サンプル物件を選択',
+    title: '📝 Step 1: 物件情報を入力',
     content: (
       <div className="space-y-4">
-        <p>まずは青いエリアからサンプル物件を選んでみましょう。</p>
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border-2 border-blue-300">
-          <div className="flex items-center mb-2">
-            <div className="bg-blue-100 p-2 rounded-full mr-3">🎯</div>
-            <div>
-              <h4 className="font-semibold text-blue-900">初回の方におすすめ</h4>
-              <p className="text-sm text-blue-700">サンプル物件で投資シミュレーションを体験</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <div className="bg-white p-2 rounded border border-blue-200">
-              <div className="font-medium text-blue-900 text-sm">🏙️ 渋谷区ワンルーム</div>
-              <div className="text-xs text-blue-600">都心部の単身者向け高利回り物件</div>
-            </div>
-            <div className="bg-white p-2 rounded border border-blue-200">
-              <div className="font-medium text-blue-900 text-sm">🏡 世田谷区ファミリー</div>
-              <div className="text-xs text-blue-600">ファミリー向け安定収益物件</div>
-            </div>
-          </div>
-        </div>
-        <p className="text-sm text-gray-600">どの物件タイプにも興味がありますか？まずは一つ選んでクリックしてみてください。</p>
-      </div>
-    )
-  },
-  {
-    title: '⚙️ Step 2: 条件を調整（オプション）',
-    content: (
-      <div className="space-y-4">
-        <p>サンプル物件の数値はそのまま使うか、お好みで調整できます。</p>
+        <p>検討中の物件情報を入力していきましょう。各セクションごとに必要な情報を入力します。</p>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-green-50 p-3 rounded-lg">
             <h4 className="font-medium text-green-900 mb-2">🏠 物件情報</h4>
             <ul className="text-sm text-green-800 space-y-1">
               <li>• 土地面積・建物面積</li>
-              <li>• 路線価・想定売却価格</li>
+              <li>• 路線価・実勢価格</li>
+              <li>• 建物構造・築年数</li>
             </ul>
           </div>
           <div className="bg-blue-50 p-3 rounded-lg">
@@ -89,6 +62,21 @@ const tutorialSteps = [
               <li>• 返済期間・方式</li>
             </ul>
           </div>
+          <div className="bg-indigo-50 p-3 rounded-lg">
+            <h4 className="font-medium text-indigo-900 mb-2">🎯 出口戦略</h4>
+            <ul className="text-sm text-indigo-800 space-y-1">
+              <li>• 保有年数・売却CapRate</li>
+              <li>• 想定売却価格</li>
+              <li>• 年間価値下落率 <span className="text-xs bg-indigo-200 px-1 rounded">NEW</span></li>
+            </ul>
+          </div>
+          <div className="bg-gray-50 p-3 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">📊 税務・会計設定</h4>
+            <ul className="text-sm text-gray-800 space-y-1">
+              <li>• 所有形態（個人/法人）</li>
+              <li>• 実効税率・減価償却</li>
+            </ul>
+          </div>
         </div>
         <div className="bg-gray-50 p-3 rounded-lg">
           <p className="text-sm text-gray-700">
@@ -100,7 +88,7 @@ const tutorialSteps = [
     )
   },
   {
-    title: '🚀 Step 3: シミュレーション実行',
+    title: '🚀 Step 2: シミュレーション実行',
     content: (
       <div className="space-y-4">
         <p>「AI物件シミュレーターを実行する」ボタンをクリックしてシミュレーションを開始しましょう。</p>
@@ -120,20 +108,32 @@ const tutorialSteps = [
     )
   },
   {
-    title: '📊 Step 4: 結果の見方',
+    title: '📊 Step 3: 結果の見方',
     content: (
       <div className="space-y-4">
         <p>シミュレーション結果では重要な投資指標とグラフが表示されます。</p>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-            <h4 className="font-medium text-green-900 mb-2">🎯 重要投資指標</h4>
-            <ul className="text-xs text-green-800 space-y-1">
-              <li>• IRR（内部収益率）</li>
-              <li>• CCR（自己資金回収率）</li>
-              <li>• DSCR（返済余裕率）</li>
-              <li>• 表面利回り</li>
-            </ul>
+        <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mb-3">
+          <h4 className="font-medium text-amber-900 mb-2">📊 評価額と投資指標</h4>
+          <div className="grid grid-cols-2 gap-2 text-xs text-amber-800">
+            <div>
+              <p className="font-medium">物件評価額：</p>
+              <ul className="space-y-1 ml-2">
+                <li>• 積算評価</li>
+                <li>• 収益還元評価</li>
+                <li>• 実勢価格</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-medium">利回り・投資指標：</p>
+              <ul className="space-y-1 ml-2">
+                <li>• 表面利回り</li>
+                <li>• 実質利回り <span className="bg-amber-200 px-1 rounded">NEW</span></li>
+                <li>• IRR・CCR・DSCR</li>
+              </ul>
+            </div>
           </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
           <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
             <h4 className="font-medium text-blue-900 mb-2">💰 キャッシュフロー</h4>
             <ul className="text-xs text-blue-800 space-y-1">
@@ -142,17 +142,25 @@ const tutorialSteps = [
               <li>• 20年間の推移グラフ</li>
             </ul>
           </div>
+          <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
+            <h4 className="font-medium text-purple-900 mb-2">📈 詳細分析</h4>
+            <ul className="text-xs text-purple-800 space-y-1">
+              <li>• 年次キャッシュフロー表</li>
+              <li>• 売却価格（経年変化対応）</li>
+              <li>• 累積収益の推移</li>
+            </ul>
+          </div>
         </div>
         <div className="bg-gray-50 p-3 rounded-lg">
           <p className="text-sm text-gray-700">
             <span className="font-medium">🏆 評価基準：</span>
-            各指標は色分けされ、「優秀」「良好」「注意」「要改善」で評価されます。
+            各指標は色分けされ、緑（優秀）、黄（良好）、橙（注意）、赤（要改善）で評価されます。
           </p>
         </div>
         <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
           <p className="text-sm text-indigo-800">
-            <span className="font-medium">💾 保存機能：</span>
-            ログインすると結果を保存し、後で比較検討できます。
+            <span className="font-medium">💾 保存・共有機能：</span>
+            ログインすると結果を保存し、PDFダウンロードや他の人との共有ができます。
           </p>
         </div>
       </div>

@@ -1557,8 +1557,11 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">7,200万円</span>
                     <span className="text-xs ml-1">※</span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    土地評価と建物評価を合計した参考評価額です
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">積算評価額</div>
+                    <div className="mb-2">土地と建物を別々に評価して合計した価格です。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：(土地面積 × 路線価) + (建物面積 × 再調達価格)</div>
+                    <div className="text-gray-400 text-xs">※ 銀行融資の際に重視される評価方法</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1572,8 +1575,11 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">8,400万円</span>
                     <span className="text-xs ml-1">※</span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    年間純収益を還元利回りで割った参考評価額です
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">収益還元評価額</div>
+                    <div className="mb-2">物件の収益力から逆算した評価額です。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間純収益（NOI） ÷ 還元利回り</div>
+                    <div className="text-gray-400 text-xs">※ 投資物件の収益性を重視した評価方法</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1587,8 +1593,11 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">8,000万円</span>
                     <span className="text-xs ml-1">※</span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    市場での想定取引価格（入力値ベース）です
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">実勢価格</div>
+                    <div className="mb-2">実際の市場で取引される想定価格です。</div>
+                    <div className="text-gray-300 text-xs mb-1">入力された想定売却価格を表示</div>
+                    <div className="text-gray-400 text-xs">※ 周辺の取引事例等を参考に設定</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1613,8 +1622,11 @@ const Simulator: React.FC = () => {
                     {simulationResults.results['表面利回り（%）'] >= 8 && <span className="ml-1">⭐</span>}
                     {simulationResults.results['表面利回り（%）'] < 4 && <span className="ml-1">⚠️</span>}
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    粗利回り：年間賃料収入÷物件価格
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">表面利回り</div>
+                    <div className="mb-2">年間家賃収入を物件価格で割った基本的な利回りです。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間家賃収入 ÷ 物件価格 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 経費を考慮しない単純計算</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1634,8 +1646,11 @@ const Simulator: React.FC = () => {
                     {simulationResults.results['実質利回り（%）'] >= 6 && <span className="ml-1">⭐</span>}
                     {simulationResults.results['実質利回り（%）'] < 3 && <span className="ml-1">⚠️</span>}
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    実質利回り：（年間賃料収入－年間経費）÷物件価格
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">実質利回り</div>
+                    <div className="mb-2">経費を差し引いた実際の収益率です。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：(年間家賃収入 - 年間経費) ÷ 物件価格 × 100</div>
+                    <div className="text-gray-400 text-xs">※ より現実的な収益性を表す指標</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1657,8 +1672,11 @@ const Simulator: React.FC = () => {
                     {simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
                     {simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    内部収益率：投資全体の年間収益率
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">IRR（内部収益率）</div>
+                    <div className="mb-2">投資した資金が年何％で増えているかを示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：投資額と将来収益から複利計算で算出</div>
+                    <div className="text-gray-400 text-xs">※ 定期預金の金利のようなもの</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1678,8 +1696,11 @@ const Simulator: React.FC = () => {
                     {simulationResults.results['CCR（%）'] >= 12 && <span className="ml-1">⭐</span>}
                     {simulationResults.results['CCR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    自己資金回収率：自己資金に対する年間収益率
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
+                    <div className="mb-2">投資した自己資金が年何％戻ってくるかを示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間手取り収入 ÷ 自己資金 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 10%なら約10年で元本回収</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1699,8 +1720,11 @@ const Simulator: React.FC = () => {
                     {simulationResults.results['DSCR（返済余裕率）'] >= 1.5 && <span className="ml-1">✓</span>}
                     {simulationResults.results['DSCR（返済余裕率）'] < 1.1 && <span className="ml-1">⚠️</span>}
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    返済余裕率：債務返済能力（1.3以上が望ましい）
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">DSCR（債務返済能力）</div>
+                    <div className="mb-2">年間純収益がローン返済額の何倍あるかを示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間純収益 ÷ 年間ローン返済額</div>
+                    <div className="text-gray-400 text-xs">※ 1.0以上で返済可能、1.3以上が一般的な目安</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1720,8 +1744,11 @@ const Simulator: React.FC = () => {
                       {((simulationResults.results['NOI（円）'] || 0) / 10000).toFixed(0)}万円
                     </span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    純営業収益：年間賃料収入から運営費を差し引いた純収益
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">NOI（純営業収益）</div>
+                    <div className="mb-2">年間家賃収入から運営費を差し引いた純収益です。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間家賃収入 - 運営費（管理費・税金等）</div>
+                    <div className="text-gray-400 text-xs">※ ローン返済前の実質的な収益力</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1741,8 +1768,11 @@ const Simulator: React.FC = () => {
                       {(simulationResults.results['ROI（%）'] || 0).toFixed(2)}%
                     </span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    投資収益率：年間CF÷自己資金
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">ROI（投資収益率）</div>
+                    <div className="mb-2">投資した総額に対する年間収益の割合です。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間キャッシュフロー ÷ 総投資額 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 投資効率を測る基本指標</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -1762,8 +1792,11 @@ const Simulator: React.FC = () => {
                       {(simulationResults.results['LTV（%）'] || 0).toFixed(1)}%
                     </span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-2 px-3 bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    融資比率：物件価格に対する融資額の割合（低いほど安全）
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">LTV（融資比率）</div>
+                    <div className="mb-2">物件価格に対する借入金額の割合です。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：借入金額 ÷ 物件価格 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 低いほど安全性が高い（70%以下推奨）</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
