@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
+import { sanitizeUrl, openUrlSafely } from '../utils/validation';
 import { 
   Calculator, 
   LogOut, 
@@ -544,14 +545,22 @@ const Dashboard: React.FC = () => {
                           <div className="flex items-center">
                             <span className="text-gray-600 mr-2">URL:</span>
                             {sim.propertyUrl ? (
-                              <a 
-                                href={sim.propertyUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 underline truncate flex-1"
-                              >
-                                {sim.propertyUrl.replace(/^https?:\/\//, '')}
-                              </a>
+                              sanitizeUrl(sim.propertyUrl) ? (
+                                <a 
+                                  href={sanitizeUrl(sim.propertyUrl) || '#'} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 underline truncate flex-1"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    openUrlSafely(sim.propertyUrl);
+                                  }}
+                                >
+                                  {sim.propertyUrl.replace(/^https?:\/\//, '')}
+                                </a>
+                              ) : (
+                                <span className="text-red-600">無効なURL</span>
+                              )
                             ) : (
                               <span className="text-gray-400">未登録</span>
                             )}
