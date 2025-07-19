@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
+import { useSecureSession } from '../hooks/useSecureSession'
 
 interface AuthContextType {
   user: any
@@ -29,6 +30,14 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword } = useSupabaseAuth()
+  
+  // SEC-005: セキュアなセッション管理を適用
+  useSecureSession({
+    onSessionTimeout: () => {
+      console.log('セッションタイムアウト検出')
+    },
+    warningTime: 5 * 60 * 1000 // 5分前に警告
+  })
 
   // 認証状態の変更をログに記録
   React.useEffect(() => {

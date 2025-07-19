@@ -1,72 +1,40 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
+import { SessionManager } from '../utils/sessionManager'
 
 export function useSupabaseAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // モック認証状態をlocalStorageから復元する関数
+  // SEC-005: セキュアなセッション管理
+  const sessionManager = SessionManager.getInstance()
+
+  // モック認証状態をセキュアに復元する関数
   const restoreMockAuth = () => {
-    try {
-      // まずlocalStorageから確認（ログイン状態を保持）
-      const savedUser = localStorage.getItem('mock_user')
-      const savedSession = localStorage.getItem('mock_session')
-      
-      if (savedUser && savedSession) {
-        const mockUser = JSON.parse(savedUser) as User
-        const mockSession = JSON.parse(savedSession) as Session
-        setUser(mockUser)
-        setSession(mockSession)
-        console.log('モック認証状態を復元しました（永続保存）:', mockUser.email)
-        return true
-      }
-      
-      // 次にsessionStorageから確認（一時的な認証）
-      const sessionUser = sessionStorage.getItem('mock_user')
-      const sessionSession = sessionStorage.getItem('mock_session')
-      
-      if (sessionUser && sessionSession) {
-        const mockUser = JSON.parse(sessionUser) as User
-        const mockSession = JSON.parse(sessionSession) as Session
-        setUser(mockUser)
-        setSession(mockSession)
-        console.log('モック認証状態を復元しました（一時保存）:', mockUser.email)
-        return true
-      }
-    } catch (error) {
-      console.error('モック認証状態の復元に失敗:', error)
-      localStorage.removeItem('mock_user')
-      localStorage.removeItem('mock_session')
-      sessionStorage.removeItem('mock_user')
-      sessionStorage.removeItem('mock_session')
+    const { user: restoredUser, session: restoredSession } = sessionManager.restoreSession()
+    
+    if (restoredUser && restoredSession) {
+      setUser(restoredUser)
+      setSession(restoredSession)
+      console.log('セキュアなセッション復元成功:', restoredUser.email)
+      return true
     }
+    
     return false
   }
 
-  // モック認証状態をlocalStorageに保存する関数
-  const saveMockAuth = (user: User, session: Session) => {
-    try {
-      localStorage.setItem('mock_user', JSON.stringify(user))
-      localStorage.setItem('mock_session', JSON.stringify(session))
-      console.log('モック認証状態を保存しました:', user.email)
-    } catch (error) {
-      console.error('モック認証状態の保存に失敗:', error)
-    }
+  // SEC-005: セキュアなセッション保存
+  const saveMockAuth = (user: User, session: Session, rememberMe: boolean = false) => {
+    sessionManager.saveSession(user, session, rememberMe)
+    console.log('セキュアなセッション保存完了:', user.email)
   }
 
-  // モック認証状態をクリアする関数
+  // SEC-005: セキュアなセッションクリア
   const clearMockAuth = () => {
-    try {
-      localStorage.removeItem('mock_user')
-      localStorage.removeItem('mock_session')
-      sessionStorage.removeItem('mock_user')
-      sessionStorage.removeItem('mock_session')
-      console.log('モック認証状態をクリアしました')
-    } catch (error) {
-      console.error('モック認証状態のクリアに失敗:', error)
-    }
+    sessionManager.clearSession()
+    console.log('セキュアなセッションクリア完了')
   }
 
   useEffect(() => {
@@ -132,8 +100,8 @@ export function useSupabaseAuth() {
       setUser(mockUser)
       setSession(mockSession)
       
-      // モック認証状態を永続化
-      saveMockAuth(mockUser, mockSession)
+      // SEC-005: セキュアなセッション保存（永続化）
+      saveMockAuth(mockUser, mockSession, true)
       
       console.log('モックサインアップ成功:', email)
       return { data: { user: mockUser, session: mockSession }, error: null }
@@ -182,19 +150,10 @@ export function useSupabaseAuth() {
         setUser(mockUser)
         setSession(mockSession)
         
-        // rememberMeがtrueの場合のみモック認証状態を永続化
-        if (rememberMe) {
-          saveMockAuth(mockUser, mockSession)
-          if (!isProduction) {
-            console.log('モックサインイン成功（認証状態を保存）:', email)
-          }
-        } else {
-          // セッションストレージに一時的に保存（ブラウザを閉じると削除される）
-          sessionStorage.setItem('mock_user', JSON.stringify(mockUser))
-          sessionStorage.setItem('mock_session', JSON.stringify(mockSession))
-          if (!isProduction) {
-            console.log('モックサインイン成功（一時的な認証）:', email)
-          }
+        // SEC-005: rememberMeに基づくセキュアなセッション保存
+        saveMockAuth(mockUser, mockSession, rememberMe)
+        if (!isProduction) {
+          console.log(`セキュアサインイン成功（${rememberMe ? '永続' : '一時'}）:`, email)
         }
         
         return { data: { user: mockUser, session: mockSession }, error: null }
