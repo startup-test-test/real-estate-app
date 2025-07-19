@@ -80,6 +80,83 @@ export const isImageFile = (file: File): boolean => {
 };
 
 /**
+ * ファイルのマジックナンバーを検証（SEC-010対応）
+ * 実際のファイル内容を確認して、偽装されたファイルを検出
+ */
+export const validateImageMagicNumber = async (file: File): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    
+    reader.onloadend = (e) => {
+      if (!e.target?.result || !(e.target.result instanceof ArrayBuffer)) {
+        resolve(false);
+        return;
+      }
+      
+      const arr = new Uint8Array(e.target.result);
+      
+      // 各画像形式のマジックナンバーをチェック
+      // JPEG: FF D8 FF
+      if (arr[0] === 0xFF && arr[1] === 0xD8 && arr[2] === 0xFF) {
+        resolve(true);
+        return;
+      }
+      
+      // PNG: 89 50 4E 47 0D 0A 1A 0A
+      if (arr[0] === 0x89 && arr[1] === 0x50 && arr[2] === 0x4E && arr[3] === 0x47 &&
+          arr[4] === 0x0D && arr[5] === 0x0A && arr[6] === 0x1A && arr[7] === 0x0A) {
+        resolve(true);
+        return;
+      }
+      
+      // WebP: RIFF...WEBP
+      if (arr[0] === 0x52 && arr[1] === 0x49 && arr[2] === 0x46 && arr[3] === 0x46 &&
+          arr[8] === 0x57 && arr[9] === 0x45 && arr[10] === 0x42 && arr[11] === 0x50) {
+        resolve(true);
+        return;
+      }
+      
+      // マジックナンバーが一致しない場合は偽装ファイル
+      resolve(false);
+    };
+    
+    reader.onerror = () => {
+      resolve(false);
+    };
+    
+    // ファイルの最初の12バイトを読み込む（WebPの判定に必要）
+    reader.readAsArrayBuffer(file.slice(0, 12));
+  });
+};
+
+/**
+ * 安全な画像ファイル検証（MIMEタイプとマジックナンバーの両方をチェック）
+ */
+export const isSecureImageFile = async (file: File): Promise<{
+  isValid: boolean;
+  error?: string;
+}> => {
+  // まずMIMEタイプをチェック
+  if (!isImageFile(file)) {
+    return {
+      isValid: false,
+      error: 'サポートされていないファイル形式です。JPEG、PNG、WebPのみ対応しています。'
+    };
+  }
+  
+  // 次にマジックナンバーをチェック
+  const hasValidMagicNumber = await validateImageMagicNumber(file);
+  if (!hasValidMagicNumber) {
+    return {
+      isValid: false,
+      error: 'ファイルの内容が画像形式と一致しません。正しい画像ファイルをアップロードしてください。'
+    };
+  }
+  
+  return { isValid: true };
+};
+
+/**
  * ファイルサイズチェック
  */
 export const isValidFileSize = (file: File, maxSizeInMB: number = 2): boolean => {
@@ -106,6 +183,21 @@ export const validateImageFile = (file: File): { isValid: boolean; error?: strin
   }
 
   return { isValid: true };
+};
+
+/**
+ * 非同期版の画像ファイル検証（SEC-010対応でマジックナンバーチェックを含む）
+ */
+export const validateImageFileAsync = async (file: File): Promise<{ isValid: boolean; error?: string }> => {
+  // まず同期的な検証を実施
+  const basicValidation = validateImageFile(file);
+  if (!basicValidation.isValid) {
+    return basicValidation;
+  }
+
+  // 次にマジックナンバーの検証を実施
+  const secureValidation = await isSecureImageFile(file);
+  return secureValidation;
 };
 
 /**

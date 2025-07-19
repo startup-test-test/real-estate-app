@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { resizeImage, validateImageFile } from '../utils/imageUtils';
+import { resizeImage, validateImageFileAsync } from '../utils/imageUtils';
 
 export interface UploadState {
   isUploading: boolean;
@@ -36,8 +36,8 @@ export const useImageUpload = () => {
 
   const uploadImage = async (file: File): Promise<string | null> => {
     try {
-      // ファイル検証
-      const validation = validateImageFile(file);
+      // ファイル検証（SEC-010対応: マジックナンバーチェックを含む）
+      const validation = await validateImageFileAsync(file);
       if (!validation.isValid) {
         setUploadState(prev => ({ ...prev, error: validation.error || 'ファイルが無効です' }));
         return null;
