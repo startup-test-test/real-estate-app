@@ -1441,13 +1441,17 @@ const Simulator: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     メモ（任意）
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     value={inputs.propertyMemo || ''}
                     onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
                     placeholder="物件の特徴、気になるポイント、検討事項など..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    rows={3}
+                    maxLength={1000}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                   />
+                  <p className="mt-1 text-sm text-gray-500">
+                    {inputs.propertyMemo ? `${inputs.propertyMemo.length}/1000文字` : '0/1000文字'}
+                  </p>
                 </div>
               </div>
 
