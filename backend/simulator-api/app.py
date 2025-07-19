@@ -25,12 +25,34 @@ app = FastAPI(
 )
 
 # CORS設定
+# 環境変数から許可するオリジンを取得
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:4173").split(",")
+
+# 本番環境では厳格なオリジン設定を使用
+if os.getenv("ENV", "development") == "production":
+    # 本番環境では環境変数で明示的に設定されたオリジンのみ許可
+    if not os.getenv("ALLOWED_ORIGINS"):
+        # 本番環境でオリジンが設定されていない場合はエラー
+        raise ValueError("本番環境ではALLOWED_ORIGINSの設定が必須です")
+else:
+    # 開発環境ではlocalhostと開発サーバーを許可
+    allowed_origins.extend([
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:4173",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:4173"
+    ])
+    # 重複を除去
+    allowed_origins = list(set(allowed_origins))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    expose_headers=["Content-Length", "Content-Range"]
 )
 
 # APIキーの取得
