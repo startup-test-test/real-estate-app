@@ -70,12 +70,16 @@ export function useSupabaseAuth() {
   }
 
   useEffect(() => {
+    const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production'
+    
     // Check if Supabase is configured
     if (!import.meta.env.VITE_SUPABASE_URL) {
-      console.log('Supabase not configured, using mock auth')
+      if (!isProduction) {
+        console.log('Supabase not configured, using mock auth')
+      }
       // モック認証状態を復元
       const restored = restoreMockAuth()
-      if (!restored) {
+      if (!restored && !isProduction) {
         console.log('復元可能なモック認証状態がありません')
       }
       setLoading(false)
@@ -151,8 +155,12 @@ export function useSupabaseAuth() {
 
   // Sign in with email and password
   const signIn = async (email: string, password: string, rememberMe: boolean = false) => {
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      // Mock sign in - accept demo credentials or any email/password
+    // 本番環境でモック認証を無効化
+    const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production'
+    const isSupabaseConfigured = !!import.meta.env.VITE_SUPABASE_URL
+    
+    if (!isSupabaseConfigured && !isProduction) {
+      // 開発環境でのみモック認証を許可
       if ((email === 'demo@ooya-dx.com' && password === 'demo123') || email.includes('@')) {
         const mockUser = {
           id: 'mock-user-id',
@@ -177,18 +185,28 @@ export function useSupabaseAuth() {
         // rememberMeがtrueの場合のみモック認証状態を永続化
         if (rememberMe) {
           saveMockAuth(mockUser, mockSession)
-          console.log('モックサインイン成功（認証状態を保存）:', email)
+          if (!isProduction) {
+            console.log('モックサインイン成功（認証状態を保存）:', email)
+          }
         } else {
           // セッションストレージに一時的に保存（ブラウザを閉じると削除される）
           sessionStorage.setItem('mock_user', JSON.stringify(mockUser))
           sessionStorage.setItem('mock_session', JSON.stringify(mockSession))
-          console.log('モックサインイン成功（一時的な認証）:', email)
+          if (!isProduction) {
+            console.log('モックサインイン成功（一時的な認証）:', email)
+          }
         }
         
         return { data: { user: mockUser, session: mockSession }, error: null }
       } else {
         return { data: null, error: new Error('無効なメールアドレスまたはパスワードです') }
       }
+    }
+    
+    // 本番環境でSupabaseが設定されていない場合はエラー
+    if (!isSupabaseConfigured && isProduction) {
+      console.error('本番環境でSupabaseが設定されていません')
+      return { data: null, error: new Error('認証サービスが利用できません。システム管理者にお問い合わせください。') }
     }
 
     try {
