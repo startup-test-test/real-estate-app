@@ -31,6 +31,17 @@ import { tooltips } from '../constants/tooltips';
 import { sanitizePropertyInput, sanitizeLongText } from '../utils/sanitize';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
+import { 
+  validateAndSanitizeNumber,
+  validatePercentage,
+  validateAmount,
+  validateYears,
+  validateBuildingYear,
+  validateInterestRate,
+  validateArea,
+  validateRoadPrice,
+  validateLoanToPurchaseRatio
+} from '../utils/numberValidation';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -247,12 +258,68 @@ const Simulator: React.FC = () => {
   const handleInputChange = (field: string, value: string | number) => {
     setInputs((prev: SimulationInputData) => {
       // テキストフィールドのサニタイゼーション（SEC-015対応）
-      let sanitizedValue = value;
+      let sanitizedValue: any = value;
+      
       if (typeof value === 'string') {
         if (field === 'propertyName' || field === 'location') {
           sanitizedValue = sanitizePropertyInput(value);
         } else if (field === 'propertyMemo') {
           sanitizedValue = sanitizeLongText(value);
+        }
+      }
+      
+      // 数値フィールドの検証（SEC-017対応）
+      if (typeof value === 'number' || !isNaN(Number(value))) {
+        switch (field) {
+          case 'landArea':
+          case 'buildingArea':
+            sanitizedValue = validateArea(value);
+            break;
+          case 'roadPrice':
+            sanitizedValue = validateRoadPrice(value);
+            break;
+          case 'buildingYear':
+            sanitizedValue = validateBuildingYear(value);
+            break;
+          case 'purchasePrice':
+          case 'otherCosts':
+          case 'renovationCost':
+          case 'monthlyRent':
+          case 'managementFee':
+          case 'fixedCost':
+          case 'propertyTax':
+          case 'loanAmount':
+          case 'marketValue':
+          case 'buildingPriceForDepreciation':
+          case 'majorRepairCost':
+            sanitizedValue = validateAmount(value);
+            break;
+          case 'vacancyRate':
+          case 'rentDecline':
+          case 'exitCapRate':
+          case 'effectiveTaxRate':
+          case 'annualDepreciationRate':
+            sanitizedValue = validatePercentage(value);
+            break;
+          case 'interestRate':
+            sanitizedValue = validateInterestRate(value);
+            break;
+          case 'loanYears':
+          case 'holdingYears':
+          case 'depreciationYears':
+            sanitizedValue = validateYears(value);
+            break;
+          case 'majorRepairCycle':
+            sanitizedValue = validateYears(value, 35);
+            break;
+          default:
+            // その他の数値フィールドは基本的な検証のみ
+            sanitizedValue = validateAndSanitizeNumber(value, { min: 0 });
+        }
+        
+        // 無効な値の場合は前の値を保持
+        if (sanitizedValue === null) {
+          return prev;
         }
       }
       
@@ -333,6 +400,18 @@ const Simulator: React.FC = () => {
           });
           
           newInputs.depreciationYears = remainingYears;
+        }
+      }
+      
+      // 借入額と購入価格の論理検証（SEC-018対応）
+      if ((field === 'loanAmount' || field === 'purchasePrice') && newInputs.loanAmount && newInputs.purchasePrice) {
+        const validation = validateLoanToPurchaseRatio(newInputs.loanAmount, newInputs.purchasePrice);
+        if (!validation.isValid) {
+          setSaveError(validation.message || '');
+          // 無効な場合は前の値を保持
+          return prev;
+        } else {
+          setSaveError(null);
         }
       }
 
