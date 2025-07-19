@@ -28,6 +28,7 @@ import { transformFormDataToApiData, transformApiResponseToSupabaseData, transfo
 import { generateSimulationPDF } from '../utils/pdfGenerator';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
+import { sanitizePropertyInput, sanitizeLongText } from '../utils/sanitize';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 
@@ -244,10 +245,20 @@ const Simulator: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string | number) => {
-    setInputs(prev => {
+    setInputs((prev: SimulationInputData) => {
+      // テキストフィールドのサニタイゼーション（SEC-015対応）
+      let sanitizedValue = value;
+      if (typeof value === 'string') {
+        if (field === 'propertyName' || field === 'location') {
+          sanitizedValue = sanitizePropertyInput(value);
+        } else if (field === 'propertyMemo') {
+          sanitizedValue = sanitizeLongText(value);
+        }
+      }
+      
       const newInputs = {
         ...prev,
-        [field]: value
+        [field]: sanitizedValue
       };
 
       // 自動設定機能
