@@ -3,6 +3,7 @@
  */
 import React, { useState } from 'react';
 import { Trash2, Edit, Reply, MoreHorizontal } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { formatCommentDate, getUserDisplayName, getTagColor, reactionEmojis } from './CommentUtils';
 
 export interface CommentData {
@@ -164,9 +165,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
             </div>
           </div>
         ) : (
-          <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
-            {comment.content}
-          </p>
+          <p 
+            className="text-gray-800 whitespace-pre-wrap leading-relaxed"
+            dangerouslySetInnerHTML={{ 
+              __html: DOMPurify.sanitize(comment.content || '', {
+                ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'u', 'br'],
+                ALLOWED_ATTR: []
+              })
+            }}
+          />
         )}
       </div>
 
