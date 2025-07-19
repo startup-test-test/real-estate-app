@@ -18,17 +18,13 @@ import {
   Key,
   Plus,
   Download,
-  Eye,
   Edit,
-  Copy,
   Trash2,
-  MoreVertical,
-  Filter,
   ChevronDown,
-  Users,
   Loader,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  BarChart3
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // Removed useSupabaseData hook dependency
@@ -47,94 +43,91 @@ const Dashboard: React.FC = () => {
     })
   }, [user, isAuthenticated, authLoading])
   
-  // Mock data for simulations
-  const mockSimulations = [
-    {
-      id: '1',
-      property_name: 'プレミアムマンション池袋',
-      property_data: {
-        location: '東京都豊島区池袋',
-        propertyType: '一棟マンション',
-        purchasePrice: 85000000,
-        managementFee: 120
-      },
-      simulation_results: {
-        monthlyLoan: 45000,
-        grossYield: 6.2,
-        netYield: 4.8,
-        irr: 12.5,
-        dscr: 1.4,
-        selfFunding: 2000000
-      },
-      ai_analysis: {},
-      created_at: '2024-06-20T10:30:00Z',
-      status: 'completed'
-    },
-    {
-      id: '2',
-      property_name: '駅近アパート新宿',
-      property_data: {
-        location: '東京都新宿区西新宿',
-        propertyType: '一棟アパート',
-        purchasePrice: 55000000,
-        managementFee: 80
-      },
-      simulation_results: {
-        monthlyLoan: 32000,
-        grossYield: 5.8,
-        netYield: 4.2,
-        irr: 10.8,
-        dscr: 1.2,
-        selfFunding: 1500000
-      },
-      ai_analysis: {},
-      created_at: '2024-06-18T14:15:00Z',
-      status: 'completed'
-    },
-    {
-      id: '3',
-      property_name: '投資用マンション渋谷',
-      property_data: {
-        location: '東京都渋谷区渋谷',
-        propertyType: '区分マンション',
-        purchasePrice: 38000000,
-        managementFee: 60
-      },
-      simulation_results: {
-        monthlyLoan: 28000,
-        grossYield: 5.4,
-        netYield: 3.9,
-        irr: 9.2,
-        dscr: 1.1,
-        selfFunding: 1200000
-      },
-      ai_analysis: {},
-      created_at: '2024-06-15T09:45:00Z',
-      status: 'draft'
-    }
-  ];
-
   // Supabase state management
-  const [simulations, setSimulations] = React.useState([]);
+  const [simulations, setSimulations] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [sortBy, setSortBy] = React.useState('newest');
   const [filterStatus, setFilterStatus] = React.useState('all');
   const [searchTerm, setSearchTerm] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true); // 初回読み込みフラグ
   const itemsPerPage = 10;
   
+  // キャッシュキーの生成（ユーザーごとに異なるキャッシュ）
+  const getCacheKey = () => `simulations_cache_${user?.id || 'anonymous'}`;
+  const getCacheTimestampKey = () => `simulations_cache_timestamp_${user?.id || 'anonymous'}`;
+  
+  // キャッシュからデータを読み込む
+  const loadFromCache = () => {
+    try {
+      const cacheKey = getCacheKey();
+      const cachedData = localStorage.getItem(cacheKey);
+      const cacheTimestamp = localStorage.getItem(getCacheTimestampKey());
+      
+      if (cachedData && cacheTimestamp) {
+        const data = JSON.parse(cachedData);
+        const timestamp = new Date(cacheTimestamp);
+        const now = new Date();
+        const hoursSinceCache = (now.getTime() - timestamp.getTime()) / (1000 * 60 * 60);
+        
+        // キャッシュが24時間以内なら有効とする
+        if (hoursSinceCache < 24) {
+          console.log('キャッシュからデータを読み込みました');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.error('キャッシュ読み込みエラー:', error);
+    }
+    return null;
+  };
+  
+  // キャッシュにデータを保存
+  const saveToCache = (data: any[]) => {
+    try {
+      const cacheKey = getCacheKey();
+      const timestampKey = getCacheTimestampKey();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      localStorage.setItem(timestampKey, new Date().toISOString());
+    } catch (error) {
+      console.error('キャッシュ保存エラー:', error);
+    }
+  };
+  
   // データ読み込み関数
-  const loadSimulations = async () => {
+  const loadSimulations = async (forceRefresh = false) => {
     if (!user) {
       console.log('loadSimulations: ユーザーが登録されていません')
       return;
     }
     
-    console.log('loadSimulations: データ読み込み開始, ユーザー:', user.email)
+    // 初回読み込み時はキャッシュをチェック
+    if (isInitialLoad && !forceRefresh) {
+      const cachedData = loadFromCache();
+      if (cachedData) {
+        setSimulations(cachedData);
+        setLoading(false);
+        setIsInitialLoad(false);
+        
+        // バックグラウンドで最新データを取得
+        setTimeout(() => {
+          loadSimulations(true);
+        }, 1000);
+        return;
+      }
+    }
+    
+    console.log('loadSimulations: Supabaseからデータ読み込み開始, ユーザー:', user.email)
     
     try {
-      setLoading(true);
+      // 強制リフレッシュでない場合は、既存データがあればローディングを表示しない
+      if (!forceRefresh && simulations.length > 0) {
+        // バックグラウンド更新
+      } else {
+        setLoading(true);
+      }
+      
       setError(null);
       const { data, error: fetchError } = await getSimulations();
       
@@ -149,6 +142,8 @@ const Dashboard: React.FC = () => {
           console.log('最初のシミュレーションデータの詳細:', JSON.stringify(data[0], null, 2));
         }
         setSimulations(data || []);
+        // キャッシュに保存
+        saveToCache(data || []);
       }
     } catch (err: any) {
       console.error('データ読み込みエラー:', err);
@@ -156,11 +151,12 @@ const Dashboard: React.FC = () => {
       setSimulations([]);
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
   };
 
   const refetch = () => {
-    loadSimulations();
+    loadSimulations(true); // 強制リフレッシュ
   };
 
   const handleDelete = async (id: string) => {
@@ -171,8 +167,8 @@ const Dashboard: React.FC = () => {
         setError(error || 'エラーが発生しました');
         alert('削除に失敗しました: ' + error);
       } else {
-        // 削除成功後、データを再読み込み
-        loadSimulations();
+        // 削除成功後、データを再読み込み（強制リフレッシュ）
+        loadSimulations(true);
         // 成功フィードバック
         const toast = document.createElement('div');
         toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
@@ -486,7 +482,7 @@ const Dashboard: React.FC = () => {
                 {paginatedResults.map((sim) => (
                   <div key={sim.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
                     {/* Property Image */}
-                    <div className="relative h-48">
+                    <div className="relative h-40">
                       <img
                         src={sim.thumbnail}
                         alt={sim.propertyName}
@@ -498,9 +494,10 @@ const Dashboard: React.FC = () => {
                         }}
                       />
                       <div className="absolute top-3 left-3">
-                        <span className="px-3 py-2 bg-black/70 text-white text-sm font-medium rounded-lg shadow-lg backdrop-blur-sm">
-                          {sim.propertyName}
-                        </span>
+                        <div className="bg-black/70 text-white px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm">
+                          <span className="text-xs text-gray-300 block">物件名</span>
+                          <span className="text-sm font-medium">{sim.propertyName}</span>
+                        </div>
                       </div>
                       <div className="absolute top-3 right-3 flex space-x-1">
                         {/* ステータスバッジ */}
@@ -529,74 +526,64 @@ const Dashboard: React.FC = () => {
                         </span>
                       </div>
 
-                      {/* Date */}
-                      <div className="absolute bottom-3 right-3">
-                        <span className="px-2 py-1 bg-black/50 text-white text-xs rounded">
-                          {sim.date}
-                        </span>
-                      </div>
                     </div>
 
                     <div className="p-4">
                       {/* Property Info */}
                       <div className="mb-4">
-                        <p className="text-sm text-gray-600 mb-2">{sim.location}</p>
+                        <div className="mb-2 flex items-center justify-between">
+                          <div>
+                            <span className="text-sm text-gray-500">住所：</span>
+                            <span className="text-base text-gray-900 font-medium">{sim.location}</span>
+                          </div>
+                          <span className="text-sm text-gray-600">{sim.date}</span>
+                        </div>
                         
-                        {/* Property URL and Memo */}
-                        {(sim.propertyUrl || sim.propertyMemo) && (
-                          <div className="mb-3 p-2 bg-gray-50 rounded text-xs">
-                            {sim.propertyUrl && (
-                              <div className="mb-1">
-                                <span className="text-gray-500">🔗 </span>
-                                <a 
-                                  href={sim.propertyUrl} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 hover:text-blue-800 underline truncate inline-block max-w-[200px]"
-                                >
-                                  {sim.propertyUrl.replace(/^https?:\/\//, '')}
-                                </a>
-                              </div>
-                            )}
-                            {sim.propertyMemo && (
-                              <div className="text-gray-600">
-                                <span className="text-gray-500">📝 </span>
-                                {sim.propertyMemo}
-                              </div>
+                        {/* Property URL and Memo - Compact */}
+                        <div className="mb-3 p-2 bg-gray-50 rounded text-sm space-y-1">
+                          <div className="flex items-center">
+                            <span className="text-gray-600 mr-2">URL:</span>
+                            {sim.propertyUrl ? (
+                              <a 
+                                href={sim.propertyUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline truncate flex-1"
+                              >
+                                {sim.propertyUrl.replace(/^https?:\/\//, '')}
+                              </a>
+                            ) : (
+                              <span className="text-gray-400">未登録</span>
                             )}
                           </div>
-                        )}
+                          <div className="flex items-start">
+                            <span className="text-gray-600 mr-2">メモ:</span>
+                            <p className="text-gray-700 flex-1 line-clamp-1">
+                              {sim.propertyMemo || <span className="text-gray-400">なし</span>}
+                            </p>
+                          </div>
+                        </div>
                         
-                        {/* Financial Details */}
-                        <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                        {/* Financial Details - Compact */}
+                        <div className="grid grid-cols-2 gap-3 mb-3">
                           <div>
-                            <span className="text-gray-500">取得価格</span>
-                            <div className="font-bold text-lg">{formatCurrency(sim.acquisitionPrice)}</div>
+                            <span className="text-sm text-gray-500">取得価格</span>
+                            <div className="font-bold text-base">{formatCurrency(sim.acquisitionPrice)}</div>
                           </div>
                           <div>
-                            <span className="text-gray-500">年間収入</span>
-                            <div className="font-bold text-lg">{sim.annualIncome}万円</div>
+                            <span className="text-sm text-gray-500">年間収入</span>
+                            <div className="font-bold text-base">{sim.annualIncome}万円</div>
                           </div>
                           <div>
-                            <span className="text-gray-500">表面利回り</span>
-                            <div className="font-bold text-green-600">{sim.surfaceYield}%</div>
+                            <span className="text-sm text-gray-500">表面利回り</span>
+                            <div className="font-bold text-green-600 text-base">{sim.surfaceYield}%</div>
                           </div>
                           <div>
-                            <span className="text-gray-500">実質利回り</span>
-                            <div className="font-bold text-blue-600">{sim.netYield}%</div>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">月間CF</span>
+                            <span className="text-sm text-gray-500">月間CF</span>
                             <div className={`font-bold text-sm ${
                               sim.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
                               {sim.cashFlow >= 0 ? '+' : ''}{formatNumber(sim.cashFlow)}円
-                            </div>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">運営費用</span>
-                            <div className="font-bold text-sm text-gray-900">
-                              {sim.managementFee}万円/年
                             </div>
                           </div>
                         </div>
@@ -610,7 +597,7 @@ const Dashboard: React.FC = () => {
                           className="group w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
                           title="シミュレーション結果を詳しく確認"
                         >
-                          <Eye className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                          <BarChart3 className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
                           シミュレーション結果を見る
                         </button>
                         
