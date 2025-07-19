@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { resizeImage, validateImageFileAsync } from '../utils/imageUtils';
+import { performSecurityValidation, generateSecureFileName } from '../utils/fileSecurityValidator';
 
 export interface UploadState {
   isUploading: boolean;
@@ -43,6 +44,18 @@ export const useImageUpload = () => {
         return null;
       }
 
+      // SEC-006: 追加のセキュリティ検証
+      const securityValidation = await performSecurityValidation(file);
+      if (!securityValidation.isValid) {
+        setUploadState(prev => ({ ...prev, error: securityValidation.error || 'セキュリティ検証に失敗しました' }));
+        return null;
+      }
+      
+      // 警告がある場合はコンソールに出力
+      if (securityValidation.warnings) {
+        console.warn('ファイルアップロードの警告:', securityValidation.warnings);
+      }
+
       setUploadState({
         isUploading: true,
         progress: 0,
@@ -58,11 +71,9 @@ export const useImageUpload = () => {
         quality: 0.7
       });
 
-      // ファイル名を生成（タイムスタンプ + ランダム文字列）
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      const fileExtension = resizedFile.name.split('.').pop();
-      const fileName = `property-images/${timestamp}-${randomString}.${fileExtension}`;
+      // SEC-006: セキュアなファイル名を生成
+      const secureFileName = generateSecureFileName(resizedFile.name);
+      const fileName = `property-images/${secureFileName}`;
 
       setUploadState(prev => ({ ...prev, progress: 60 }));
 
