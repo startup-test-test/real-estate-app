@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isInitialLoad, setIsInitialLoad] = React.useState(true); // 初回読み込みフラグ
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   
   // キャッシュキーの生成（ユーザーごとに異なるキャッシュ）
   const getCacheKey = () => `simulations_cache_${user?.id || 'anonymous'}`;
