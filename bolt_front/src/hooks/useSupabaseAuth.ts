@@ -42,16 +42,21 @@ export function useSupabaseAuth() {
     
     // Check if Supabase is configured
     if (!import.meta.env.VITE_SUPABASE_URL) {
-      if (!isProduction) {
-        console.log('Supabase not configured, using mock auth')
+      if (isProduction) {
+        // SEC-038: 本番環境では必ずSupabaseが設定されている必要がある
+        console.error('Critical error: Supabase is not configured in production environment')
+        setLoading(false)
+        return
+      } else {
+        console.log('Supabase not configured, using mock auth in development')
+        // 開発環境でのみモック認証状態を復元
+        const restored = restoreMockAuth()
+        if (!restored) {
+          console.log('復元可能なモック認証状態がありません')
+        }
+        setLoading(false)
+        return
       }
-      // モック認証状態を復元
-      const restored = restoreMockAuth()
-      if (!restored && !isProduction) {
-        console.log('復元可能なモック認証状態がありません')
-      }
-      setLoading(false)
-      return
     }
 
     // Get initial session
@@ -59,8 +64,14 @@ export function useSupabaseAuth() {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
-    }).catch(() => {
-      console.log('Supabase error, using mock auth')
+    }).catch((error) => {
+      const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production'
+      if (isProduction) {
+        console.error('Supabase authentication error:', error)
+        // 本番環境では認証エラーをそのまま扱う
+      } else {
+        console.log('Supabase error in development environment')
+      }
       setLoading(false)
     })
 
@@ -78,8 +89,17 @@ export function useSupabaseAuth() {
 
   // Sign up with email and password
   const signUp = async (email: string, password: string, fullName?: string) => {
+    const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production'
+    
     if (!import.meta.env.VITE_SUPABASE_URL) {
-      // Mock sign up
+      if (isProduction) {
+        // SEC-038: 本番環境では必ずSupabaseが必要
+        return { 
+          data: null, 
+          error: new Error('Authentication service is not configured. Please contact support.') 
+        }
+      }
+      // Mock sign up (開発環境のみ)
       const mockUser = {
         id: 'mock-user-id',
         email,
@@ -127,7 +147,14 @@ export function useSupabaseAuth() {
     const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production'
     const isSupabaseConfigured = !!import.meta.env.VITE_SUPABASE_URL
     
-    if (!isSupabaseConfigured && !isProduction) {
+    if (!isSupabaseConfigured) {
+      if (isProduction) {
+        // SEC-038: 本番環境では必ずSupabaseが必要
+        return { 
+          data: null, 
+          error: new Error('Authentication service is not configured. Please contact support.') 
+        }
+      }
       // 開発環境でのみモック認証を許可
       if ((email === 'demo@ooya-dx.com' && password === 'demo123') || email.includes('@')) {
         const mockUser = {
