@@ -52,7 +52,7 @@ export function validateFileName(fileName: string): {
   }
 
   // 危険な文字のチェック
-  const dangerousChars = /[<>:"|?*\x00-\x1f]/;
+  const dangerousChars = /[<>:"|?*\x00-\x1f\u202e\ufeff]/;
   if (dangerousChars.test(fileName)) {
     return {
       isValid: false,
@@ -62,6 +62,14 @@ export function validateFileName(fileName: string): {
 
   // パストラバーサル攻撃の防止
   if (fileName.includes('..') || fileName.includes('./') || fileName.includes('\\')) {
+    return {
+      isValid: false,
+      error: '不正なファイル名です'
+    };
+  }
+
+  // URLエンコードされたドットを検出
+  if (/%2e/i.test(fileName)) {
     return {
       isValid: false,
       error: '不正なファイル名です'
@@ -279,4 +287,100 @@ export function generateSecureFileName(originalFileName: string): string {
   const sanitizedName = `property_${timestamp}_${randomString}.${extension}`;
   
   return sanitizedName;
+}
+
+/**
+ * SEC-014: ファイルパスのサニタイゼーション
+ * パストラバーサル攻撃を防ぐための厳密なパス検証
+ */
+export function sanitizeFilePath(filePath: string): {
+  isValid: boolean;
+  sanitizedPath?: string;
+  error?: string;
+} {
+  // 空のパスは無効
+  if (!filePath || filePath.trim() === '') {
+    return {
+      isValid: false,
+      error: '空のファイルパスです'
+    };
+  }
+
+  // パストラバーサル攻撃のパターンを検出
+  const dangerousPatterns = [
+    /\.\./,           // 親ディレクトリへの参照
+    /\.\.\\/, 
+    /^\.\//,          // カレントディレクトリへの参照（先頭のみ）
+    /^\.\\/, 
+    /~/, 
+    /%2e%2e/i,        // URLエンコードされた..
+    /%252e%252e/i,    // ダブルエンコードされた..
+    /%c0%af/i,        // バックスラッシュのバリエーション
+    /%c1%9c/i,
+    /\x00/,           // NULL文字
+    /[\x01-\x1f]/,    // 制御文字
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    if (pattern.test(filePath)) {
+      return {
+        isValid: false,
+        error: '不正なファイルパスです'
+      };
+    }
+  }
+
+  // Windowsスタイルのパスセパレータを統一
+  let normalizedPath = filePath.replace(/\\/g, '/');
+
+  // 複数の連続したスラッシュを単一に
+  normalizedPath = normalizedPath.replace(/\/+/g, '/');
+
+  // 先頭と末尾のスラッシュを削除
+  normalizedPath = normalizedPath.replace(/^\/+|\/+$/g, '');
+
+  // ファイル名のみを抽出（ディレクトリトラバーサルを防ぐ）
+  const fileName = normalizedPath.split('/').pop() || '';
+
+  // ファイル名の検証
+  const fileNameValidation = validateFileName(fileName);
+  if (!fileNameValidation.isValid) {
+    return {
+      isValid: false,
+      error: fileNameValidation.error
+    };
+  }
+
+  return {
+    isValid: true,
+    sanitizedPath: fileName
+  };
+}
+
+/**
+ * URLからセキュアなファイル名を抽出
+ */
+export function extractSecureFileNameFromUrl(url: string): string | null {
+  try {
+    // 基本的なURLプロトコルチェック
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      return null;
+    }
+    
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/');
+    const fileName = pathParts[pathParts.length - 1];
+    
+    // ファイル名のサニタイゼーション
+    const sanitizationResult = sanitizeFilePath(fileName);
+    
+    if (sanitizationResult.isValid && sanitizationResult.sanitizedPath) {
+      return sanitizationResult.sanitizedPath;
+    }
+    
+    return null;
+  } catch (error) {
+    // URL解析エラーは静かに処理（ログ出力は本番環境では避ける）
+    return null;
+  }
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { resizeImage, validateImageFileAsync } from '../utils/imageUtils';
-import { performSecurityValidation, generateSecureFileName } from '../utils/fileSecurityValidator';
+import { performSecurityValidation, generateSecureFileName, extractSecureFileNameFromUrl } from '../utils/fileSecurityValidator';
 
 export interface UploadState {
   isUploading: boolean;
@@ -182,11 +182,17 @@ export const useImageUpload = () => {
         throw new Error('Supabaseクライアントが初期化されていません');
       }
 
-      // URLからファイルパスを抽出
-      const url = new URL(imageUrl);
-      const pathParts = url.pathname.split('/');
-      const fileName = pathParts[pathParts.length - 1];
+      // SEC-014: URLからセキュアなファイル名を抽出
+      const fileName = extractSecureFileNameFromUrl(imageUrl);
+      if (!fileName) {
+        console.error('SEC-014: 無効なファイルURLです');
+        return false;
+      }
+
+      // ファイルパスを構築（ディレクトリは固定）
       const filePath = `property-images/${fileName}`;
+
+      console.log('SEC-014: 削除対象ファイル:', filePath);
 
       const { error } = await supabase.storage
         .from('property-images')
