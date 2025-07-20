@@ -13,7 +13,6 @@ import { supabase } from '../lib/supabase';
 import { useLocation } from 'react-router-dom';
 import CashFlowChart from '../components/CashFlowChart';
 import Tooltip from '../components/Tooltip';
-import MetricCard from '../components/MetricCard';
 import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
@@ -21,14 +20,12 @@ import ImageUpload from '../components/ImageUpload';
 import InviteModal from '../components/InviteModal';
 import ShareCommentDisplay from '../components/ShareCommentDisplay';
 // import { LegalDisclaimer } from '../components';
-import { SimulationResultData, CashFlowData, SimulationInputData, PropertyShare } from '../types';
+import { SimulationResultData, CashFlowData, PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import { validatePropertyUrl } from '../utils/validation';
-import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
-import { generateSimulationPDF } from '../utils/pdfGenerator';
+import { transformFormDataToApiData } from '../utils/dataTransform';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
-import { sanitizePropertyInput, sanitizeLongText } from '../utils/sanitize';
 import { sanitizeSimulatorInput, sanitizeMemoInput } from '../utils/xssSanitizer';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
@@ -43,6 +40,10 @@ import {
   validateRoadPrice,
   validateLoanToPurchaseRatio
 } from '../utils/numberValidation';
+import { 
+  validateExtremeValue, 
+  preprocessExtremeInput
+} from '../utils/extremeValueValidator';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -52,12 +53,51 @@ interface SimulationResult {
   cash_flow_table?: CashFlowData[];
 }
 
+// フォーム入力用の型（camelCaseを使用）
+interface FormInputData {
+  propertyName: string;
+  location: string;
+  landArea: number;
+  buildingArea: number;
+  roadPrice: number;
+  marketValue: number;
+  purchasePrice: number;
+  otherCosts: number;
+  renovationCost: number;
+  monthlyRent: number;
+  managementFee: number;
+  fixedCost: number;
+  propertyTax: number;
+  vacancyRate: number;
+  rentDecline: number;
+  loanAmount: number;
+  interestRate: number;
+  loanYears: number;
+  loanType: '元利均等' | '元金均等';
+  holdingYears: number;
+  exitCapRate: number;
+  ownershipType: '個人' | '法人';
+  effectiveTaxRate: number;
+  majorRepairCycle: number;
+  majorRepairCost: number;
+  building_price_for_depreciation: number;
+  depreciationYears: number;
+  buildingYear?: number;
+  buildingStructure?: string;
+  propertyUrl?: string;
+  propertyMemo?: string;
+  propertyImageUrl?: string;
+  propertyImageFile?: File;
+  propertyStatus?: string;
+  annualDepreciationRate?: number;
+}
+
 
 
 
 const Simulator: React.FC = () => {
   const { user } = useAuthContext();
-  const { saveSimulation, getSimulations, loading: dbLoading } = useSupabaseData();
+  const { saveSimulation, getSimulations } = useSupabaseData();
   const location = useLocation();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -70,10 +110,10 @@ const Simulator: React.FC = () => {
   const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
   
-  const { createShare, fetchOrCreateShareByPropertyId, fetchShareTokenFromSimulation, fetchShare } = usePropertyShare();
+  const { fetchOrCreateShareByPropertyId, fetchShareTokenFromSimulation, fetchShare } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [inputs, setInputs] = useState<any>(emptyPropertyData);
+  const [inputs, setInputs] = useState<FormInputData>(emptyPropertyData as FormInputData);
 
 
 
@@ -190,7 +230,7 @@ const Simulator: React.FC = () => {
           effectiveTaxRate: simData.effectiveTaxRate || 20,
           majorRepairCycle: simData.majorRepairCycle || 10,
           majorRepairCost: simData.majorRepairCost || 200,
-          buildingPriceForDepreciation: simData.buildingPriceForDepreciation || 3000,
+          building_price_for_depreciation: simData.building_price_for_depreciation || 3000,
           depreciationYears: simData.depreciationYears || 27,
           propertyUrl: simData.propertyUrl || '',
           propertyMemo: simData.propertyMemo || '',
@@ -202,12 +242,24 @@ const Simulator: React.FC = () => {
         if (simulation.results) {
           setSimulationResults({
             results: {
-              '表面利回り（%）': simulation.results.surfaceYield,
+              '表面利回り（%）': simulation.results.surfaceYield || 0,
+              '実質利回り（%）': simulation.results.netYield || 0,
               'IRR（%）': simulation.results.irr,
-              'CCR（%）': simulation.results.ccr,
-              'DSCR（返済余裕率）': simulation.results.dscr,
-              '月間キャッシュフロー（円）': simulation.results.monthlyCashFlow,
-              '年間キャッシュフロー（円）': simulation.results.annualCashFlow
+              'CCR（%）': simulation.results.ccr || 0,
+              'ROI（%）': simulation.results.roi || 0,
+              'DSCR（返済余裕率）': simulation.results.dscr || 0,
+              '月間キャッシュフロー（円）': simulation.results.monthlyCashFlow || 0,
+              '年間キャッシュフロー（円）': simulation.results.annualCashFlow || 0,
+              'NOI（円）': simulation.results.noi || 0,
+              'LTV（%）': simulation.results.ltv || 0,
+              '想定売却価格（万円）': simulation.results.expectedSalePrice || 0,
+              '残債（万円）': simulation.results.remainingDebt || 0,
+              '売却コスト（万円）': simulation.results.saleCost || 0,
+              '売却益（万円）': simulation.results.saleProfit || 0,
+              '総投資額（円）': simulation.results.totalInvestment || 0,
+              '自己資金（円）': simulation.results.equity || 0,
+              '借入額（円）': simulation.results.loanAmount || 0,
+              propertyName: inputs.propertyName
             },
             cash_flow_table: simulation.cash_flow_table
           });
@@ -257,7 +309,7 @@ const Simulator: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string | number) => {
-    setInputs((prev: SimulationInputData) => {
+    setInputs((prev: FormInputData) => {
       // テキストフィールドのサニタイゼーション（SEC-012強化版）
       let sanitizedValue: any = value;
       
@@ -271,18 +323,53 @@ const Simulator: React.FC = () => {
         }
       }
       
-      // 数値フィールドの検証（SEC-017対応）
+      // 数値フィールドの検証（SEC-013強化版：極端な値対策）
       if (typeof value === 'number' || !isNaN(Number(value))) {
+        // SEC-013: 極端な値の前処理
+        const preprocessedValue = typeof value === 'string' ? preprocessExtremeInput(value) : String(value);
+        
+        // フィールドタイプの判定
+        let fieldType: 'price' | 'percentage' | 'years' | 'area' | 'general' = 'general';
+        
+        // 価格系フィールド
+        if (['purchasePrice', 'otherCosts', 'renovationCost', 'monthlyRent', 
+             'managementFee', 'fixedCost', 'propertyTax', 'loanAmount', 
+             'marketValue', 'building_price_for_depreciation', 'majorRepairCost', 'roadPrice'].includes(field)) {
+          fieldType = 'price';
+        }
+        // パーセンテージ系フィールド
+        else if (['vacancyRate', 'rentDecline', 'exitCapRate', 'effectiveTaxRate', 
+                  'annualDepreciationRate', 'interestRate'].includes(field)) {
+          fieldType = 'percentage';
+        }
+        // 年数系フィールド
+        else if (['loanYears', 'holdingYears', 'depreciationYears', 'majorRepairCycle', 'buildingYear'].includes(field)) {
+          fieldType = 'years';
+        }
+        // 面積系フィールド
+        else if (['landArea', 'buildingArea'].includes(field)) {
+          fieldType = 'area';
+        }
+        
+        // SEC-013: 極端な値の検証
+        const extremeValidation = validateExtremeValue(preprocessedValue, fieldType);
+        if (!extremeValidation.isValid) {
+          console.warn(`SEC-013: 極端な値を検出 - ${field}: ${value} - ${extremeValidation.message}`);
+          // エラーメッセージをユーザーに表示する処理を追加できます
+          return prev; // 無効な値の場合は前の値を保持
+        }
+        
+        // 既存の検証（SEC-017）
         switch (field) {
           case 'landArea':
           case 'buildingArea':
-            sanitizedValue = validateArea(value);
+            sanitizedValue = validateArea(extremeValidation.sanitizedValue);
             break;
           case 'roadPrice':
-            sanitizedValue = validateRoadPrice(value);
+            sanitizedValue = validateRoadPrice(extremeValidation.sanitizedValue);
             break;
           case 'buildingYear':
-            sanitizedValue = validateBuildingYear(value);
+            sanitizedValue = validateBuildingYear(extremeValidation.sanitizedValue);
             break;
           case 'purchasePrice':
           case 'otherCosts':
@@ -293,31 +380,31 @@ const Simulator: React.FC = () => {
           case 'propertyTax':
           case 'loanAmount':
           case 'marketValue':
-          case 'buildingPriceForDepreciation':
+          case 'building_price_for_depreciation':
           case 'majorRepairCost':
-            sanitizedValue = validateAmount(value);
+            sanitizedValue = validateAmount(extremeValidation.sanitizedValue);
             break;
           case 'vacancyRate':
           case 'rentDecline':
           case 'exitCapRate':
           case 'effectiveTaxRate':
           case 'annualDepreciationRate':
-            sanitizedValue = validatePercentage(value);
+            sanitizedValue = validatePercentage(extremeValidation.sanitizedValue);
             break;
           case 'interestRate':
-            sanitizedValue = validateInterestRate(value);
+            sanitizedValue = validateInterestRate(extremeValidation.sanitizedValue);
             break;
           case 'loanYears':
           case 'holdingYears':
           case 'depreciationYears':
-            sanitizedValue = validateYears(value);
+            sanitizedValue = validateYears(extremeValidation.sanitizedValue);
             break;
           case 'majorRepairCycle':
-            sanitizedValue = validateYears(value, 35);
+            sanitizedValue = validateYears(extremeValidation.sanitizedValue, 35);
             break;
           default:
             // その他の数値フィールドは基本的な検証のみ
-            sanitizedValue = validateAndSanitizeNumber(value, { min: 0 });
+            sanitizedValue = validateAndSanitizeNumber(extremeValidation.sanitizedValue, { min: 0 });
         }
         
         // 無効な値の場合は前の値を保持
@@ -334,8 +421,8 @@ const Simulator: React.FC = () => {
       // 自動設定機能
       if (field === 'purchasePrice' && typeof value === 'number' && value > 0) {
         // 建物価格：購入価格の30%を自動設定
-        if (!prev.buildingPriceForDepreciation || prev.buildingPriceForDepreciation === 0) {
-          newInputs.buildingPriceForDepreciation = Math.round(value * 0.3);
+        if (!prev.building_price_for_depreciation || prev.building_price_for_depreciation === 0) {
+          newInputs.building_price_for_depreciation = Math.round(value * 0.3);
         }
         // 諸経費：購入価格の7%を自動設定
         if (!prev.otherCosts || prev.otherCosts === 0) {
@@ -521,7 +608,7 @@ const Simulator: React.FC = () => {
                 effectiveTaxRate: apiData.effective_tax_rate,
                 majorRepairCycle: apiData.major_repair_cycle,
                 majorRepairCost: apiData.major_repair_cost,
-                buildingPriceForDepreciation: apiData.building_price,
+                building_price_for_depreciation: apiData.building_price,
                 depreciationYears: apiData.depreciation_years,
                 propertyUrl: apiData.property_url,
                 propertyMemo: apiData.property_memo,
@@ -558,7 +645,7 @@ const Simulator: React.FC = () => {
               } else {
                 // currentShareがない場合は、シミュレーションから共有トークンを探す
                 try {
-                  const existingShareToken = await fetchShareTokenFromSimulation(editingId);
+                  const existingShareToken = await fetchShareTokenFromSimulation(editingId || '');
                   if (existingShareToken) {
                     shareToken = existingShareToken;
                     console.log('🔍 編集モード: シミュレーションから共有トークンを取得:', shareToken);
@@ -1331,14 +1418,14 @@ const Simulator: React.FC = () => {
                   <label className="text-sm font-medium text-gray-700">
                     建物価格（減価償却対象）
                   </label>
-                  <Tooltip content={tooltips.buildingPriceForDepreciation} />
+                  <Tooltip content={tooltips.building_price_for_depreciation} />
                 </div>
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
                     step="100"
-                    value={inputs.buildingPriceForDepreciation || 0}
-                    onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
+                    value={inputs.building_price_for_depreciation || 0}
+                    onChange={(e) => handleInputChange('building_price_for_depreciation', Number(e.target.value))}
                     placeholder="8000"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1759,15 +1846,15 @@ const Simulator: React.FC = () => {
                 {/* IRR */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    simulationResults.results['IRR（%）'] >= 15 ? 'bg-green-100 text-green-800' :
-                    simulationResults.results['IRR（%）'] >= 10 ? 'bg-yellow-100 text-yellow-800' :
-                    simulationResults.results['IRR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    (simulationResults.results['IRR（%）'] ?? 0) >= 15 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['IRR（%）'] ?? 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['IRR（%）'] ?? 0) >= 5 ? 'bg-orange-100 text-orange-800' :
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">IRR</span>
                     <span className="font-semibold">{simulationResults.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
-                    {simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                    {(simulationResults.results['IRR（%）'] ?? 0) >= 15 && <span className="ml-1">⭐</span>}
+                    {(simulationResults.results['IRR（%）'] ?? 0) < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">IRR（内部収益率）</div>

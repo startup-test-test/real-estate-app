@@ -30,6 +30,7 @@ export const emptyPropertyData = {
   majorRepairCycle: 0,
   majorRepairCost: 0,
   buildingPriceForDepreciation: 0,
+  building_price_for_depreciation: 0,
   depreciationYears: 27,
   buildingYear: 0,
   buildingStructure: '',

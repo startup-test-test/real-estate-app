@@ -5,6 +5,7 @@
 // シミュレーション結果データ型
 export interface SimulationResultData {
   '表面利回り（%）': number;
+  '実質利回り（%）': number;
   'IRR（%）': number | null;
   'CCR（%）': number;
   'ROI（%）': number;
@@ -20,6 +21,7 @@ export interface SimulationResultData {
   '総投資額（円）': number;
   '自己資金（円）': number;
   '借入額（円）': number;
+  propertyName?: string;
 }
 
 // 市場分析データ型
