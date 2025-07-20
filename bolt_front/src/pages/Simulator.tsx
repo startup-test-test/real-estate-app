@@ -23,11 +23,13 @@ import ShareCommentDisplay from '../components/ShareCommentDisplay';
 import { SimulationResultData, CashFlowData, PropertyShare } from '../types';
 import { usePropertyShare } from '../hooks/usePropertyShare';
 import { validatePropertyUrl } from '../utils/validation';
-import { transformFormDataToApiData } from '../utils/dataTransform';
 import { emptyPropertyData } from '../constants/sampleData';
+import { useApiCall } from '../hooks/useApiCall';
+import { rbacClient, Permission } from '../utils/rbacClient';
 import { tooltips } from '../constants/tooltips';
 import { sanitizeSimulatorInput, sanitizeMemoInput } from '../utils/xssSanitizer';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
+import { SecureErrorHandler } from '../utils/errorHandler';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 import { 
   validateAndSanitizeNumber,
@@ -98,6 +100,7 @@ interface FormInputData {
 const Simulator: React.FC = () => {
   const { user } = useAuthContext();
   const { saveSimulation, getSimulations } = useSupabaseData();
+  const { executeSimulation } = useApiCall();
   const location = useLocation();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -160,10 +163,12 @@ const Simulator: React.FC = () => {
             });
             setCurrentShare(share);
           } else {
-            console.log('❌ 共有情報の取得/作成に失敗');
+            if (import.meta.env.DEV) {
+              console.log('❌ 共有情報の取得/作成に失敗');
+            }
           }
         } catch (error) {
-          console.error('❌ 共有情報取得エラー:', error);
+          SecureErrorHandler.log(error, { action: 'fetchShareInfo' });
         }
       };
       fetchShareInfo();
@@ -277,7 +282,10 @@ const Simulator: React.FC = () => {
               setCurrentShare(shareData);
             }
           } catch (shareError) {
-            console.error('❌ 既存共有情報の取得エラー:', shareError);
+            SecureErrorHandler.log(shareError, { 
+              action: 'fetchShareFromExisting',
+              shareToken: simulation.share_token 
+            });
           }
         }
         
@@ -295,14 +303,20 @@ const Simulator: React.FC = () => {
               console.log('⚠️ 共有情報の取得/作成に失敗');
             }
           } catch (shareError) {
-            console.error('❌ 共有情報の処理中にエラー:', shareError);
+            SecureErrorHandler.log(shareError, { 
+              action: 'fetchOrCreateShareByPropertyId',
+              simulationId 
+            });
           }
-        } else if (!user?.id) {
+        } else if (!user?.id && import.meta.env.DEV) {
           console.log('⚠️ ユーザー未認証のため共有情報の取得をスキップ');
         }
       }
     } catch (err: any) {
-      setSaveError(`データ読み込みエラー: ${err.message}`);
+      const errorInfo = SecureErrorHandler.handle(err, { 
+        action: 'loadExistingData' 
+      });
+      setSaveError(errorInfo.userMessage);
     } finally {
       setIsLoading(false);
     }
@@ -512,59 +526,18 @@ const Simulator: React.FC = () => {
   const urlError = inputs.propertyUrl ? validatePropertyUrl(inputs.propertyUrl) : null;
 
   const handleSimulation = async () => {
+    // 権限チェック（認証が有効な場合のみ）
+    if (import.meta.env.VITE_DISABLE_API_AUTH !== 'true' && !rbacClient.hasPermission(Permission.SIMULATE_BASIC)) {
+      setSaveError(rbacClient.getPermissionDeniedMessage(Permission.SIMULATE_BASIC));
+      return;
+    }
+    
     setIsSimulating(true);
     setSaveError(null);
     
     try {
-      // FAST API への送信データを構築
-      const apiData = transformFormDataToApiData(inputs);
-      
-      console.log('FAST API送信データ:', apiData);
-      console.log('ローン期間:', apiData.loan_years, '年');
-      console.log('保有年数:', apiData.holding_years, '年');
-      console.log('新機能フィールド確認:', {
-        ownership_type: apiData.ownership_type,
-        effective_tax_rate: apiData.effective_tax_rate,
-        major_repair_cycle: apiData.major_repair_cycle,
-        major_repair_cost: apiData.major_repair_cost,
-        building_price: apiData.building_price,
-        depreciation_years: apiData.depreciation_years
-      });
-      
-      // テスト: 最大期間でのリクエスト
-      if (apiData.holding_years > 10) {
-        console.log('⚠️ 35年のキャッシュフローを要求中...');
-      }
-      
-      // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
-      
-      // 最初にAPIを起動させる（Health Check）
-      try {
-        await fetch(`${API_BASE_URL}/`, { method: 'GET' });
-      } catch (e) {
-        console.log('API起動中...');
-      }
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
-      
-      const response = await fetch(`${API_BASE_URL}/api/simulate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiData),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        throw new Error(`HTTPエラー: ${response.status}`);
-      }
-      
-      const result = await response.json();
+      // useApiCallのexecuteSimulationを使用（認証付き）
+      const result = await executeSimulation(inputs);
       console.log('FAST APIレスポンス:', result);
       console.log('キャッシュフローテーブルの詳細:', result.cash_flow_table);
       console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
@@ -592,28 +565,28 @@ const Simulator: React.FC = () => {
             const simulationData = {
               // simulation_data (JSONB) - 入力データ
               simulation_data: {
-                propertyName: apiData.property_name || '無題の物件',
-                location: apiData.location,
-                propertyType: apiData.property_type,
-                purchasePrice: apiData.purchase_price,
-                monthlyRent: apiData.monthly_rent,
-                managementFee: apiData.management_fee || 0,
-                loanTerm: apiData.loan_years,
-                interestRate: apiData.interest_rate,
-                loanAmount: apiData.loan_amount,
-                holdingYears: apiData.holding_years,
-                vacancyRate: apiData.vacancy_rate,
-                propertyTax: apiData.property_tax,
-                ownershipType: apiData.ownership_type,
-                effectiveTaxRate: apiData.effective_tax_rate,
-                majorRepairCycle: apiData.major_repair_cycle,
-                majorRepairCost: apiData.major_repair_cost,
-                building_price_for_depreciation: apiData.building_price,
-                depreciationYears: apiData.depreciation_years,
-                propertyUrl: apiData.property_url,
-                propertyMemo: apiData.property_memo,
-                propertyImageUrl: apiData.property_image_url,
-                propertyStatus: apiData.property_status
+                propertyName: inputs.propertyName || '無題の物件',
+                location: inputs.location,
+                propertyType: '賃貸',  // デフォルト値
+                purchasePrice: inputs.purchasePrice,
+                monthlyRent: inputs.monthlyRent,
+                managementFee: inputs.managementFee || 0,
+                loanTerm: inputs.loanYears,
+                interestRate: inputs.interestRate,
+                loanAmount: inputs.loanAmount,
+                holdingYears: inputs.holdingYears,
+                vacancyRate: inputs.vacancyRate,
+                propertyTax: inputs.propertyTax,
+                ownershipType: inputs.ownershipType,
+                effectiveTaxRate: inputs.effectiveTaxRate,
+                majorRepairCycle: inputs.majorRepairCycle,
+                majorRepairCost: inputs.majorRepairCost,
+                building_price_for_depreciation: inputs.building_price_for_depreciation,
+                depreciationYears: inputs.depreciationYears,
+                propertyUrl: inputs.propertyUrl,
+                propertyMemo: inputs.propertyMemo,
+                propertyImageUrl: inputs.propertyImageUrl,
+                propertyStatus: inputs.propertyStatus
               },
               // results (JSONB) - 計算結果
               results: {

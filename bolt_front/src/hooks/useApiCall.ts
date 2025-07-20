@@ -1,17 +1,56 @@
 /**
  * API呼び出し管理フック
+ * SEC-022: API認証システムを統合
+ * SEC-069: エラーメッセージの詳細露出対策
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { transformFormDataToApiData, transformApiResponseToSupabaseData } from '../utils/dataTransform';
 import { useSupabaseAuth } from './useSupabaseAuth';
 import { useSupabaseData } from './useSupabaseData';
 import { supabase } from '../lib/supabase';
+import { apiAuth } from '../utils/apiAuth';
+import { rbacClient } from '../utils/rbacClient';
+import { SecureErrorHandler } from '../utils/errorHandler';
 
 export const useApiCall = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
   const { user } = useSupabaseAuth();
   const { saveSimulation } = useSupabaseData();
+
+  // Supabaseセッションが利用可能になったらAPIトークンを取得
+  useEffect(() => {
+    const initializeApiAuth = async () => {
+      if (user) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const success = await apiAuth.obtainToken(session);
+          setIsAuthInitialized(success);
+          
+          // 権限情報を取得
+          if (success && import.meta.env.VITE_DISABLE_API_AUTH !== 'true') {
+            try {
+              const response = await apiAuth.authenticatedFetch(`${import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com'}/api/auth/me`);
+              if (response.ok) {
+                const data = await response.json();
+                if (data.user) {
+                  rbacClient.setUserPermissions(data.user.role, data.user.permissions);
+                }
+              }
+            } catch (error) {
+              console.error('Failed to fetch user permissions:', error);
+            }
+          } else if (import.meta.env.VITE_DISABLE_API_AUTH === 'true') {
+            // 認証が無効の場合は標準ユーザー権限を設定
+            rbacClient.setUserPermissions('standard', ['simulate_basic', 'data_read', 'data_write', 'market_analysis_basic']);
+          }
+        }
+      }
+    };
+
+    initializeApiAuth();
+  }, [user]);
 
   // シミュレーション実行API
   const executeSimulation = async (inputs: any) => {
@@ -21,25 +60,28 @@ export const useApiCall = () => {
       // FAST API への送信データを構築
       const apiData = transformFormDataToApiData(inputs);
       
-      console.log('FAST API送信データ:', apiData);
-      console.log('ローン期間:', apiData.loan_years, '年');
-      console.log('保有年数:', apiData.holding_years, '年');
-      console.log('新機能フィールド確認:', {
-        ownership_type: apiData.ownership_type,
-        effective_tax_rate: apiData.effective_tax_rate,
-        major_repair_cycle: apiData.major_repair_cycle,
-        major_repair_cost: apiData.major_repair_cost,
-        building_price: apiData.building_price,
-        depreciation_years: apiData.depreciation_years
-      });
-      
-      // テスト: 最大期間でのリクエスト
-      if (apiData.holding_years > 10) {
-        console.log('⚠️ 35年のキャッシュフローを要求中...');
+      // 開発環境のみデバッグ情報を出力
+      if (import.meta.env.DEV) {
+        console.log('FAST API送信データ:', apiData);
+        console.log('ローン期間:', apiData.loan_years, '年');
+        console.log('保有年数:', apiData.holding_years, '年');
+        console.log('新機能フィールド確認:', {
+          ownership_type: apiData.ownership_type,
+          effective_tax_rate: apiData.effective_tax_rate,
+          major_repair_cycle: apiData.major_repair_cycle,
+          major_repair_cost: apiData.major_repair_cost,
+          building_price: apiData.building_price,
+          depreciation_years: apiData.depreciation_years
+        });
+        
+        // テスト: 最大期間でのリクエスト
+        if (apiData.holding_years > 10) {
+          console.log('⚠️ 35年のキャッシュフローを要求中...');
+        }
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
       
       // 最初にAPIを起動させる（Health Check）
       try {
@@ -51,7 +93,16 @@ export const useApiCall = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
       
-      const response = await fetch(`${API_BASE_URL}/api/simulate`, {
+      // 認証チェック
+      if (!isAuthInitialized) {
+        // 認証が初期化されていない場合は、トークンを再取得
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await apiAuth.obtainToken(session);
+        }
+      }
+
+      const response = await apiAuth.authenticatedFetch(`${API_BASE_URL}/api/simulate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,12 +114,19 @@ export const useApiCall = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`シミュレーション計算でエラーが発生しました (${response.status}): ${errorText}`);
+        const errorInfo = await SecureErrorHandler.handleApiResponse(response);
+        SecureErrorHandler.log(errorInfo, { 
+          endpoint: '/api/simulate',
+          status: response.status 
+        });
+        throw new Error(errorInfo.userMessage);
       }
       
       const result = await response.json();
-      console.log('FAST API応答:', result);
+      // 開発環境のみログ出力
+      if (import.meta.env.DEV) {
+        console.log('FAST API応答:', result);
+      }
       
       return result;
       
@@ -77,8 +135,12 @@ export const useApiCall = () => {
         throw new Error('計算がタイムアウトしました。条件を見直してもう一度お試しください。');
       }
       
-      console.error('シミュレーション実行エラー:', error);
-      throw error;
+      // セキュアなエラーハンドリング
+      const errorInfo = SecureErrorHandler.handle(error, {
+        action: 'executeSimulation'
+      });
+      SecureErrorHandler.log(error, { action: 'executeSimulation' });
+      throw new Error(errorInfo.userMessage);
     } finally {
       setIsSimulating(false);
     }
@@ -96,8 +158,12 @@ export const useApiCall = () => {
         .single();
 
       if (error) {
-        console.error('データ読み込みエラー:', error);
-        throw new Error('データの読み込みに失敗しました');
+        const errorInfo = SecureErrorHandler.handle(error, {
+          action: 'loadExistingData',
+          simulationId
+        });
+        SecureErrorHandler.log(error, { action: 'loadExistingData' });
+        throw new Error(errorInfo.userMessage);
       }
 
       if (data) {
@@ -110,8 +176,11 @@ export const useApiCall = () => {
       return null;
       
     } catch (error: any) {
-      console.error('既存データ読み込みエラー:', error);
-      throw error;
+      const errorInfo = SecureErrorHandler.handle(error, {
+        action: 'loadExistingData'
+      });
+      SecureErrorHandler.log(error, { action: 'loadExistingData' });
+      throw new Error(errorInfo.userMessage);
     } finally {
       setIsLoading(false);
     }

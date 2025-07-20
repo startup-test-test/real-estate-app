@@ -1,11 +1,14 @@
 """
 大家DX - 不動産投資シミュレーターAPI（軽量版）
+SEC-022: API認証システムを実装
+SEC-069: エラーメッセージの詳細露出対策
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 import requests
@@ -13,6 +16,19 @@ import time
 import re
 import random
 from shared.calculations import run_full_simulation
+from auth import verify_token, get_current_user, create_access_token, get_mock_user
+from rbac import Permission, UserRole, require_permission, require_any_permission, rbac_manager
+from error_handler import (
+    handle_http_exception, 
+    handle_general_exception, 
+    create_validation_error_response,
+    create_auth_error_response,
+    create_permission_error_response
+)
+import logging
+
+# ロガーの設定
+logger = logging.getLogger(__name__)
 
 # .envファイルの読み込み
 load_dotenv()
@@ -34,8 +50,17 @@ if os.getenv("ENV", "development") == "production":
     if not os.getenv("ALLOWED_ORIGINS"):
         # 本番環境でオリジンが設定されていない場合はエラー
         raise ValueError("本番環境ではALLOWED_ORIGINSの設定が必須です")
+    # 本番環境では明示的に指定されたオリジンのみ使用
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=allowed_origins,
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+        expose_headers=["Content-Length", "Content-Range"]
+    )
 else:
-    # 開発環境ではlocalhostと開発サーバーを許可
+    # 開発環境ではより柔軟なCORS設定を使用
     allowed_origins.extend([
         "http://localhost:3000",
         "http://localhost:5173",
@@ -45,15 +70,33 @@ else:
     ])
     # 重複を除去
     allowed_origins = list(set(allowed_origins))
+    
+    # 開発環境では、GitHub Codespacesのオリジンも許可するカスタムミドルウェアを使用
+    @app.middleware("http")
+    async def cors_middleware(request, call_next):
+        origin = request.headers.get("origin", "")
+        
+        # 許可されたオリジンか、GitHub Codespacesのパターンにマッチするかチェック
+        if origin in allowed_origins or origin.endswith(".app.github.dev"):
+            response = await call_next(request)
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+            response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
+            return response
+        else:
+            # 標準のCORSミドルウェアの動作にフォールバック
+            return await call_next(request)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
-    expose_headers=["Content-Length", "Content-Range"]
-)
+# エラーハンドラーの登録
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return handle_http_exception(request, exc)
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    return handle_general_exception(request, exc)
 
 # APIキーの取得
 openai_api_key = os.getenv("OPENAI_API_KEY", "")
@@ -62,32 +105,135 @@ real_estate_api_key = os.getenv("REAL_ESTATE_API_KEY", "")
 # データ型定義（Pydanticなしのシンプル版）
 # リクエストはJSONとして直接受け取る
 
-# ヘルスチェックエンドポイント
+# セキュリティ設定
+security = HTTPBearer()
+
+# ヘルスチェックエンドポイント（認証不要）
 @app.get("/")
 def read_root():
     return {
         "message": "大家DX API",
         "version": "1.0.0",
-        "status": "running"
+        "status": "running",
+        "authenticated": False
     }
 
 # 古い計算関数は削除し、shared.calculations.pyの関数を使用
 
-# シミュレーションエンドポイント
-@app.post("/api/simulate")
-def run_simulation(property_data: dict):
-    """収益シミュレーションを実行 - 新機能対応版"""
-    # 共通計算ロジックを使用してシミュレーション実行
-    return run_full_simulation(property_data)
+# 認証エンドポイント
+@app.post("/api/auth/token")
+def login_for_access_token(credentials: dict):
+    """
+    アクセストークンを取得（SEC-022対策）
+    Supabaseからの認証情報を受け取ってJWTトークンを発行
+    """
+    # 開発環境では簡易認証を許可
+    if os.getenv("ENV", "development") == "development":
+        # 開発環境用のモックトークン
+        if credentials.get("email", "").endswith("@example.com"):
+            # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
+            role = UserRole.ADMIN if credentials.get("email") == "admin@example.com" else UserRole.STANDARD
+            
+            access_token = create_access_token(
+                data={
+                    "sub": "dev-user-123",
+                    "email": credentials.get("email"),
+                    "role": role.value,
+                    "type": "development"
+                }
+            )
+            return {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "expires_in": 3600,
+                "role": role.value
+            }
+    
+    # 本番環境では実際の認証を必須とする
+    # ここではSupabaseのセッショントークンを検証する想定
+    supabase_token = credentials.get("supabase_token")
+    if not supabase_token:
+        raise create_auth_error_response("認証情報が不正です")
+    
+    # TODO: Supabaseトークンの検証を実装
+    # 現在は仮実装として、トークンが存在すればOKとする
+    user_id = credentials.get("user_id", "unknown")
+    email = credentials.get("email", "unknown@example.com")
+    
+    # 本番環境でのロール決定（実際にはデータベースから取得すべき）
+    # 現在は仮実装として、メールアドレスで判定
+    role = UserRole.STANDARD  # デフォルトは標準ユーザー
+    if email.endswith("@admin.com"):
+        role = UserRole.ADMIN
+    elif credentials.get("is_premium", False):
+        role = UserRole.PREMIUM
+    
+    access_token = create_access_token(
+        data={
+            "sub": user_id,
+            "email": email,
+            "role": role.value,
+            "type": "production"
+        }
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "expires_in": 3600,
+        "role": role.value
+    }
 
-# 市場分析エンドポイント
+# 認証状態確認エンドポイント
+@app.get("/api/auth/me")
+def get_me(current_user: dict = Depends(get_current_user)):
+    """現在の認証ユーザー情報を取得"""
+    # ロールと権限情報を追加
+    role = rbac_manager.get_user_role(current_user)
+    permissions = rbac_manager.get_user_permissions(role)
+    
+    return {
+        "user": {
+            **current_user,
+            "role": role.value,
+            "permissions": [p.value for p in permissions]
+        },
+        "authenticated": True
+    }
+
+# シミュレーションエンドポイント（認証＋権限必須）
+@app.post("/api/simulate")
+def run_simulation(
+    property_data: dict, 
+    current_user: dict = Depends(require_permission(Permission.SIMULATE_BASIC))
+):
+    """収益シミュレーションを実行 - 新機能対応版（認証必須）"""
+    # ユーザーIDをログに記録（監査用）
+    logger.info(f"Simulation requested by user: {current_user.get('user_id')}")
+    
+    # 共通計算ロジックを使用してシミュレーション実行
+    result = run_full_simulation(property_data)
+    
+    # レスポンスにユーザー情報を追加
+    result["requested_by"] = current_user.get("user_id")
+    result["requested_at"] = datetime.utcnow().isoformat()
+    
+    return result
+
+# 市場分析エンドポイント（認証＋権限必須）
 @app.post("/api/market-analysis")
-def market_analysis(request: dict):
+def market_analysis(
+    request: dict, 
+    current_user: dict = Depends(require_permission(Permission.MARKET_ANALYSIS_BASIC))
+):
     """類似物件の市場分析を実行"""
     location = request.get('location', '')
     land_area = request.get('land_area', 0)
     year_built = request.get('year_built', 2000)
     purchase_price = request.get('purchase_price', 0)
+    
+    # ユーザーIDをログに記録（監査用）
+    logger.info(f"Market analysis requested by user: {current_user.get('user_id')}")
     
     # ユーザー物件の平米単価を計算
     user_unit_price = purchase_price * 10000 / land_area / 10000 if land_area > 0 else 0
