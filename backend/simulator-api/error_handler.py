@@ -79,22 +79,21 @@ class SecureErrorHandler:
         _ = error_type
         if status_code == 400:
             return ERROR_CODES["API_VALIDATION"]
-        elif status_code == 401:
+        if status_code == 401:
             return ERROR_CODES["AUTH_FAILED"]
-        elif status_code == 403:
+        if status_code == 403:
             return ERROR_CODES["AUTH_INVALID"]
-        elif status_code == 404:
+        if status_code == 404:
             return ERROR_CODES["API_NOT_FOUND"]
-        elif status_code == 405:
+        if status_code == 405:
             return ERROR_CODES["API_METHOD_NOT_ALLOWED"]
-        elif status_code == 409:
+        if status_code == 409:
             return ERROR_CODES["DATA_CONFLICT"]
-        elif status_code == 429:
+        if status_code == 429:
             return ERROR_CODES["RATE_LIMIT"]
-        elif status_code == 503:
+        if status_code == 503:
             return ERROR_CODES["SERVICE_UNAVAILABLE"]
-        else:
-            return ERROR_CODES["INTERNAL_ERROR"]
+        return ERROR_CODES["INTERNAL_ERROR"]
 
     @staticmethod
     def create_error_response(
@@ -104,6 +103,8 @@ class SecureErrorHandler:
         request_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """エラーレスポンスを作成"""
+        # status_codeは将来の拡張用（現在は未使用）
+        _ = status_code
         # ユーザー向けメッセージを取得
         user_message = USER_MESSAGES.get(error_code, "エラーが発生しました")
 
@@ -170,14 +171,14 @@ def handle_http_exception(request: Request, exc: HTTPException) -> JSONResponse:
     """HTTPExceptionをセキュアに処理"""
     error_code = SecureErrorHandler.get_error_code(exc.status_code)
     request_id = SecureErrorHandler.log_error(exc, request)
-    
+
     response_data = SecureErrorHandler.create_error_response(
         status_code=exc.status_code,
         error_code=error_code,
         detail=exc.detail if not is_production() else None,
         request_id=request_id
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
         content=response_data
@@ -202,14 +203,14 @@ def handle_general_exception(request: Request, exc: Exception) -> JSONResponse:
         error_code = ERROR_CODES["INTERNAL_ERROR"]
 
     request_id = SecureErrorHandler.log_error(exc, request)
-    
+
     response_data = SecureErrorHandler.create_error_response(
         status_code=status_code,
         error_code=error_code,
         detail=str(exc) if not is_production() else None,
         request_id=request_id
     )
-    
+
     return JSONResponse(
         status_code=status_code,
         content=response_data
@@ -223,7 +224,7 @@ def create_validation_error_response(field: str, message: str) -> HTTPException:
     else:
         # 開発環境では詳細情報
         detail = f"{field}: {message}"
-    
+
     return HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail=detail

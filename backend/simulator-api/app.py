@@ -4,28 +4,22 @@ SEC-022: API認証システムを実装
 SEC-069: エラーメッセージの詳細露出対策
 """
 
-from fastapi import FastAPI, Depends, HTTPException, status, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
-from typing import Dict, List, Optional
-from datetime import datetime, timedelta
-import os
-from dotenv import load_dotenv
-import requests
-import time
-import re
-import random
-from shared.calculations import run_full_simulation
-from auth import verify_token, get_current_user, create_access_token, get_mock_user
-from rbac import Permission, UserRole, require_permission, require_any_permission, rbac_manager
-from error_handler import (
-    handle_http_exception, 
-    handle_general_exception, 
-    create_validation_error_response,
-    create_auth_error_response,
-    create_permission_error_response
-)
 import logging
+import os
+import random
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.security import HTTPBearer
+from fastapi.middleware.cors import CORSMiddleware
+from auth import get_current_user, create_access_token
+from rbac import Permission, UserRole, require_permission, rbac_manager
+from error_handler import (
+    handle_http_exception,
+    handle_general_exception,
+    create_auth_error_response
+)
+from shared.calculations import run_full_simulation
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -70,12 +64,12 @@ else:
     ])
     # 重複を除去
     allowed_origins = list(set(allowed_origins))
-    
+
     # 開発環境では、GitHub Codespacesのオリジンも許可するカスタムミドルウェアを使用
     @app.middleware("http")
     async def cors_middleware(request, call_next):
         origin = request.headers.get("origin", "")
-        
+
         # 許可されたオリジンか、GitHub Codespacesのパターンにマッチするかチェック
         if origin in allowed_origins or origin.endswith(".app.github.dev"):
             response = await call_next(request)
@@ -85,9 +79,8 @@ else:
             response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
             response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
             return response
-        else:
-            # 標準のCORSミドルウェアの動作にフォールバック
-            return await call_next(request)
+        # 標準のCORSミドルウェアの動作にフォールバック
+        return await call_next(request)
 
 # エラーハンドラーの登録
 @app.exception_handler(HTTPException)
@@ -133,7 +126,7 @@ def login_for_access_token(credentials: dict):
         if credentials.get("email", "").endswith("@example.com"):
             # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
             role = UserRole.ADMIN if credentials.get("email") == "admin@example.com" else UserRole.STANDARD
-            
+
             access_token = create_access_token(
                 data={
                     "sub": "dev-user-123",
@@ -148,18 +141,18 @@ def login_for_access_token(credentials: dict):
                 "expires_in": 3600,
                 "role": role.value
             }
-    
+
     # 本番環境では実際の認証を必須とする
     # ここではSupabaseのセッショントークンを検証する想定
     supabase_token = credentials.get("supabase_token")
     if not supabase_token:
         raise create_auth_error_response("認証情報が不正です")
-    
+
     # TODO: Supabaseトークンの検証を実装
     # 現在は仮実装として、トークンが存在すればOKとする
     user_id = credentials.get("user_id", "unknown")
     email = credentials.get("email", "unknown@example.com")
-    
+
     # 本番環境でのロール決定（実際にはデータベースから取得すべき）
     # 現在は仮実装として、メールアドレスで判定
     role = UserRole.STANDARD  # デフォルトは標準ユーザー
@@ -167,7 +160,7 @@ def login_for_access_token(credentials: dict):
         role = UserRole.ADMIN
     elif credentials.get("is_premium", False):
         role = UserRole.PREMIUM
-    
+
     access_token = create_access_token(
         data={
             "sub": user_id,
@@ -176,7 +169,7 @@ def login_for_access_token(credentials: dict):
             "type": "production"
         }
     )
-    
+
     return {
         "access_token": access_token,
         "token_type": "bearer",
@@ -191,7 +184,7 @@ def get_me(current_user: dict = Depends(get_current_user)):
     # ロールと権限情報を追加
     role = rbac_manager.get_user_role(current_user)
     permissions = rbac_manager.get_user_permissions(role)
-    
+
     return {
         "user": {
             **current_user,
@@ -204,26 +197,26 @@ def get_me(current_user: dict = Depends(get_current_user)):
 # シミュレーションエンドポイント（認証＋権限必須）
 @app.post("/api/simulate")
 def run_simulation(
-    property_data: dict, 
+    property_data: dict,
     current_user: dict = Depends(require_permission(Permission.SIMULATE_BASIC))
 ):
     """収益シミュレーションを実行 - 新機能対応版（認証必須）"""
     # ユーザーIDをログに記録（監査用）
-    logger.info(f"Simulation requested by user: {current_user.get('user_id')}")
-    
+    logger.info("Simulation requested by user: %s", current_user.get('user_id'))
+
     # 共通計算ロジックを使用してシミュレーション実行
     result = run_full_simulation(property_data)
-    
+
     # レスポンスにユーザー情報を追加
     result["requested_by"] = current_user.get("user_id")
-    result["requested_at"] = datetime.utcnow().isoformat()
-    
+    result["requested_at"] = datetime.now(timezone.utc).isoformat()
+
     return result
 
 # 市場分析エンドポイント（認証＋権限必須）
 @app.post("/api/market-analysis")
 def market_analysis(
-    request: dict, 
+    request: dict,
     current_user: dict = Depends(require_permission(Permission.MARKET_ANALYSIS_BASIC))
 ):
     """類似物件の市場分析を実行"""
@@ -231,19 +224,19 @@ def market_analysis(
     land_area = request.get('land_area', 0)
     year_built = request.get('year_built', 2000)
     purchase_price = request.get('purchase_price', 0)
-    
+
     # ユーザーIDをログに記録（監査用）
-    logger.info(f"Market analysis requested by user: {current_user.get('user_id')}")
-    
+    logger.info("Market analysis requested by user: %s", current_user.get('user_id'))
+
     # ユーザー物件の平米単価を計算
     user_unit_price = purchase_price * 10000 / land_area / 10000 if land_area > 0 else 0
-    
+
     # サンプルデータを生成（実際のAPIは後で実装）
     similar_properties = []
-    for i in range(15):
+    for _ in range(15):
         unit_price = user_unit_price * (1 + random.uniform(-0.3, 0.3))
         area = land_area * (1 + random.uniform(-0.3, 0.3))
-        
+
         similar_properties.append({
             '取引時期': f"2024年Q{random.randint(1, 4)}",
             '所在地': f"{location[:6] if location else '東京都'}***",
@@ -255,7 +248,7 @@ def market_analysis(
             '最寄駅': '品川',
             '駅距離': f"{random.randint(5, 15)}分"
         })
-    
+
     # 統計を計算
     prices = [prop['平米単価(万円/㎡)'] for prop in similar_properties]
     prices.sort()
@@ -264,10 +257,10 @@ def market_analysis(
     mean_price = sum(prices) / len(prices)
     variance = sum((x - mean_price) ** 2 for x in prices) / len(prices)
     std_price = variance ** 0.5
-    
+
     # 価格評価
     deviation = ((user_unit_price - median_price) / median_price * 100) if median_price > 0 else 0
-    
+
     if deviation < -20:
         evaluation = "非常に割安"
     elif deviation < -10:
@@ -278,7 +271,7 @@ def market_analysis(
         evaluation = "やや割高"
     else:
         evaluation = "割高"
-    
+
     return {
         "similar_properties": similar_properties,
         "statistics": {
