@@ -29,6 +29,7 @@ import { generateSimulationPDF } from '../utils/pdfGenerator';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
 import { sanitizePropertyInput, sanitizeLongText } from '../utils/sanitize';
+import { sanitizeSimulatorInput, sanitizeMemoInput } from '../utils/xssSanitizer';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 import { 
@@ -257,14 +258,16 @@ const Simulator: React.FC = () => {
 
   const handleInputChange = (field: string, value: string | number) => {
     setInputs((prev: SimulationInputData) => {
-      // テキストフィールドのサニタイゼーション（SEC-015対応）
+      // テキストフィールドのサニタイゼーション（SEC-012強化版）
       let sanitizedValue: any = value;
       
       if (typeof value === 'string') {
         if (field === 'propertyName' || field === 'location') {
-          sanitizedValue = sanitizePropertyInput(value);
+          // SEC-012: DOMPurifyを使用した強化されたXSS対策
+          sanitizedValue = sanitizeSimulatorInput(value);
         } else if (field === 'propertyMemo') {
-          sanitizedValue = sanitizeLongText(value);
+          // SEC-012: メモフィールド用のサニタイズ（改行保持）
+          sanitizedValue = sanitizeMemoInput(value);
         }
       }
       
