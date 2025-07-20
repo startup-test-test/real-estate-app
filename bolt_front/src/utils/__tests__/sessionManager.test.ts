@@ -1,10 +1,21 @@
 /**
  * SEC-005: セッション管理の強化のテスト
+ * SEC-047: 暗号化機能のテスト
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { SessionManager } from '../sessionManager';
 import type { User, Session } from '@supabase/supabase-js';
+import { SecureStorage } from '../cryptoUtils';
+
+// SecureStorageのモック
+vi.mock('../cryptoUtils', () => ({
+  SecureStorage: {
+    setItem: vi.fn().mockResolvedValue(undefined),
+    getItem: vi.fn().mockResolvedValue(null),
+    removeItem: vi.fn()
+  }
+}));
 
 // モックの設定
 const mockLocalStorage = {
@@ -79,8 +90,8 @@ describe('SessionManager', () => {
   });
 
   describe('セッション保存', () => {
-    test('Remember Meなしの場合はsessionStorageに保存', () => {
-      sessionManager.saveSession(mockUser, mockSession, false);
+    test('Remember Meなしの場合はsessionStorageに保存', async () => {
+      await sessionManager.saveSession(mockUser, mockSession, false);
       
       expect(mockSessionStorage.setItem).toHaveBeenCalledWith(
         'secure_session',
@@ -93,21 +104,29 @@ describe('SessionManager', () => {
       expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
     });
 
-    test('Remember Meありの場合はlocalStorageに期限付きで保存', () => {
-      sessionManager.saveSession(mockUser, mockSession, true);
+    test('Remember Meありの場合はlocalStorageに期限付きで保存', async () => {
+      await sessionManager.saveSession(mockUser, mockSession, true);
       
-      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+      // SecureStorageを使用することを確認
+      expect(SecureStorage.setItem).toHaveBeenCalledTimes(2);
+      expect(SecureStorage.setItem).toHaveBeenCalledWith(
         'secure_session',
-        expect.stringContaining('"expires":')
+        expect.objectContaining({
+          data: expect.any(String),
+          expires: expect.any(Number)
+        })
       );
-      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+      expect(SecureStorage.setItem).toHaveBeenCalledWith(
         'secure_user',
-        expect.stringContaining('"expires":')
+        expect.objectContaining({
+          data: expect.any(String),
+          expires: expect.any(Number)
+        })
       );
     });
 
-    test('センシティブな情報を除外してユーザー情報を保存', () => {
-      sessionManager.saveSession(mockUser, mockSession, false);
+    test('センシティブな情報を除外してユーザー情報を保存', async () => {
+      await sessionManager.saveSession(mockUser, mockSession, false);
       
       const savedUserCall = mockSessionStorage.setItem.mock.calls.find(
         call => call[0] === 'secure_user'
@@ -123,7 +142,7 @@ describe('SessionManager', () => {
   });
 
   describe('セッション復元', () => {
-    test('sessionStorageから復元', () => {
+    test('sessionStorageから復元', async () => {
       const encodedSession = btoa(JSON.stringify({
         ...mockSession,
         lastActivity: Date.now(),
@@ -139,14 +158,14 @@ describe('SessionManager', () => {
       mockSessionStorage.store['secure_session'] = encodedSession;
       mockSessionStorage.store['secure_user'] = encodedUser;
       
-      const { user, session } = sessionManager.restoreSession();
+      const { user, session } = await sessionManager.restoreSession();
       
       expect(user).toBeTruthy();
       expect(user?.email).toBe(mockUser.email);
       expect(session).toBeTruthy();
     });
 
-    test('期限切れのセッションは復元しない', () => {
+    test('期限切れのセッションは復元しない', async () => {
       const expiredSession = {
         ...mockSession,
         lastActivity: Date.now(),
@@ -157,13 +176,13 @@ describe('SessionManager', () => {
       mockSessionStorage.store['secure_session'] = encodedSession;
       mockSessionStorage.store['secure_user'] = btoa(JSON.stringify(mockUser));
       
-      const { user, session } = sessionManager.restoreSession();
+      const { user, session } = await sessionManager.restoreSession();
       
       expect(user).toBeNull();
       expect(session).toBeNull();
     });
 
-    test('localStorageから期限付きセッションを復元', () => {
+    test('localStorageから期限付きセッションを復元', async () => {
       const futureExpiry = Date.now() + 24 * 60 * 60 * 1000; // 24時間後
       const sessionData = {
         data: btoa(JSON.stringify({
@@ -183,10 +202,12 @@ describe('SessionManager', () => {
         expires: futureExpiry
       };
       
-      mockLocalStorage.store['secure_session'] = JSON.stringify(sessionData);
-      mockLocalStorage.store['secure_user'] = JSON.stringify(userData);
+      // SecureStorageから値を返すようにモックを設定
+      vi.mocked(SecureStorage.getItem)
+        .mockResolvedValueOnce(sessionData as any)
+        .mockResolvedValueOnce(userData as any);
       
-      const { user, session } = sessionManager.restoreSession();
+      const { user, session } = await sessionManager.restoreSession();
       
       expect(user).toBeTruthy();
       expect(user?.email).toBe(mockUser.email);
@@ -195,17 +216,17 @@ describe('SessionManager', () => {
   });
 
   describe('セッションクリア', () => {
-    test('全てのストレージからセッション情報を削除', () => {
+    test('全てのストレージからセッション情報を削除', async () => {
       // セッションを保存
-      sessionManager.saveSession(mockUser, mockSession, true);
+      await sessionManager.saveSession(mockUser, mockSession, true);
       
       // クリア実行
       sessionManager.clearSession();
       
       expect(mockSessionStorage.removeItem).toHaveBeenCalledWith('secure_session');
       expect(mockSessionStorage.removeItem).toHaveBeenCalledWith('secure_user');
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('secure_session');
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('secure_user');
+      expect(SecureStorage.removeItem).toHaveBeenCalledWith('secure_session');
+      expect(SecureStorage.removeItem).toHaveBeenCalledWith('secure_user');
       
       // 旧形式のデータも削除されることを確認
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('mock_user');
@@ -258,6 +279,112 @@ describe('SessionManager', () => {
       const instance2 = SessionManager.getInstance();
       
       expect(instance1).toBe(instance2);
+    });
+  });
+
+  describe('SEC-047: 暗号化機能', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    test('Remember Me選択時に暗号化してlocalStorageに保存', async () => {
+      await sessionManager.saveSession(mockUser, mockSession, true);
+
+      // SecureStorage.setItemが2回呼ばれることを確認（session と user）
+      expect(SecureStorage.setItem).toHaveBeenCalledTimes(2);
+      
+      // 暗号化されたデータが適切な形式で保存されることを確認
+      expect(SecureStorage.setItem).toHaveBeenCalledWith(
+        'secure_session',
+        expect.objectContaining({
+          data: expect.any(String),
+          expires: expect.any(Number)
+        })
+      );
+      
+      expect(SecureStorage.setItem).toHaveBeenCalledWith(
+        'secure_user',
+        expect.objectContaining({
+          data: expect.any(String),
+          expires: expect.any(Number)
+        })
+      );
+    });
+
+    test('Remember Me未選択時はsessionStorageに保存', async () => {
+      await sessionManager.saveSession(mockUser, mockSession, false);
+
+      // SecureStorageは使用されない
+      expect(SecureStorage.setItem).not.toHaveBeenCalled();
+      
+      // sessionStorageが使用される
+      expect(mockSessionStorage.setItem).toHaveBeenCalledWith('secure_session', expect.any(String));
+      expect(mockSessionStorage.setItem).toHaveBeenCalledWith('secure_user', expect.any(String));
+    });
+
+    test('暗号化されたセッションの復元', async () => {
+      const sessionData = {
+        data: btoa(JSON.stringify({
+          ...mockSession,
+          lastActivity: Date.now(),
+          expiresAt: Date.now() + 30 * 60 * 1000
+        })),
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000
+      };
+      const userData = {
+        data: btoa(JSON.stringify({
+          id: mockUser.id,
+          email: mockUser.email,
+          user_metadata: mockUser.user_metadata,
+          created_at: mockUser.created_at
+        })),
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000
+      };
+
+      // SecureStorageから暗号化データを返す
+      vi.mocked(SecureStorage.getItem)
+        .mockResolvedValueOnce(sessionData as any)
+        .mockResolvedValueOnce(userData as any);
+
+      const { user, session } = await sessionManager.restoreSession();
+
+      expect(SecureStorage.getItem).toHaveBeenCalledWith('secure_session');
+      expect(SecureStorage.getItem).toHaveBeenCalledWith('secure_user');
+      expect(user).toBeTruthy();
+      expect(session).toBeTruthy();
+    });
+
+    test('暗号化データの削除', () => {
+      sessionManager.clearSession();
+
+      expect(SecureStorage.removeItem).toHaveBeenCalledWith('secure_session');
+      expect(SecureStorage.removeItem).toHaveBeenCalledWith('secure_user');
+    });
+
+    test('暗号化データの有効期限切れ時の処理', async () => {
+      const expiredData = {
+        secure_session: {
+          data: btoa(JSON.stringify(mockSession)),
+          expires: Date.now() - 1000 // 過去の日時
+        },
+        secure_user: {
+          data: btoa(JSON.stringify(mockUser)),
+          expires: Date.now() - 1000 // 過去の日時
+        }
+      };
+
+      vi.mocked(SecureStorage.getItem)
+        .mockResolvedValueOnce(expiredData.secure_session)
+        .mockResolvedValueOnce(expiredData.secure_user);
+
+      const { user, session } = await sessionManager.restoreSession();
+
+      // 期限切れのデータは返されない
+      expect(user).toBeNull();
+      expect(session).toBeNull();
+      
+      // クリアが呼ばれる
+      expect(SecureStorage.removeItem).toHaveBeenCalled();
     });
   });
 });

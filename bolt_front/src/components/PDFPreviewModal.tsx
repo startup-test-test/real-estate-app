@@ -116,8 +116,8 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={onClose} data-testid="modal-overlay">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center">
@@ -151,6 +151,7 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="close"
             >
               <X className="h-5 w-5" />
             </button>
@@ -163,6 +164,7 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             <div 
               id="pdf-preview-content"
               className="bg-white shadow-lg rounded-lg overflow-hidden"
+              data-testid="pdf-content"
               style={{ 
                 width: '210mm', 
                 minHeight: '297mm',
