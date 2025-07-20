@@ -22,62 +22,82 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
   const handlePrint = () => {
     // PDF専用ウィンドウで印刷
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer');
     if (!printWindow) return;
 
     const printContent = document.getElementById('pdf-preview-content');
     if (!printContent) return;
 
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>シミュレーション結果 - ${simulation.simulation_name || '物件'}</title>
-          <meta charset="utf-8">
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
-            
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
-            
-            body {
-              font-family: 'Noto Sans JP', sans-serif;
-              line-height: 1.6;
-              color: #333;
-              background: white;
-            }
-            
-            @page {
-              margin: 15mm;
-              size: A4;
-            }
-            
-            .print-container {
-              width: 100%;
-              max-width: none;
-            }
-            
-            .page-break {
-              page-break-before: always;
-            }
-            
-            .no-print {
-              display: none !important;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="print-container">
-            ${printContent.innerHTML}
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
+    // SEC-045: document.writeとinnerHTMLの危険な使用を回避
+    const doc = printWindow.document;
+    
+    // HTMLの基本構造を作成
+    doc.documentElement.innerHTML = '';
+    const html = doc.createElement('html');
+    const head = doc.createElement('head');
+    const body = doc.createElement('body');
+    
+    // タイトルを設定
+    const title = doc.createElement('title');
+    title.textContent = `シミュレーション結果 - ${simulation.simulation_name || '物件'}`;
+    head.appendChild(title);
+    
+    // メタタグを設定
+    const meta = doc.createElement('meta');
+    meta.setAttribute('charset', 'utf-8');
+    head.appendChild(meta);
+    
+    // スタイルを設定
+    const style = doc.createElement('style');
+    style.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Noto Sans JP', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: white;
+      }
+      
+      @page {
+        margin: 15mm;
+        size: A4;
+      }
+      
+      .print-container {
+        width: 100%;
+        max-width: none;
+      }
+      
+      .page-break {
+        page-break-before: always;
+      }
+      
+      .no-print {
+        display: none !important;
+      }
+    `;
+    head.appendChild(style);
+    
+    // コンテンツを安全に複製
+    const printContainer = doc.createElement('div');
+    printContainer.className = 'print-container';
+    
+    // cloneNodeを使用して安全にコンテンツをコピー
+    const clonedContent = printContent.cloneNode(true);
+    printContainer.appendChild(clonedContent);
+    body.appendChild(printContainer);
+    
+    // HTMLを組み立て
+    html.appendChild(head);
+    html.appendChild(body);
+    doc.documentElement.replaceWith(html);
     
     // 少し待ってから印刷ダイアログを表示
     setTimeout(() => {

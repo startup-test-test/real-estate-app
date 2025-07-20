@@ -12,8 +12,8 @@ export function useSupabaseAuth() {
   const sessionManager = SessionManager.getInstance()
 
   // モック認証状態をセキュアに復元する関数
-  const restoreMockAuth = () => {
-    const { user: restoredUser, session: restoredSession } = sessionManager.restoreSession()
+  const restoreMockAuth = async () => {
+    const { user: restoredUser, session: restoredSession } = await sessionManager.restoreSession()
     
     if (restoredUser && restoredSession) {
       setUser(restoredUser)
@@ -26,8 +26,8 @@ export function useSupabaseAuth() {
   }
 
   // SEC-005: セキュアなセッション保存
-  const saveMockAuth = (user: User, session: Session, rememberMe: boolean = false) => {
-    sessionManager.saveSession(user, session, rememberMe)
+  const saveMockAuth = async (user: User, session: Session, rememberMe: boolean = false) => {
+    await sessionManager.saveSession(user, session, rememberMe)
     console.log('セキュアなセッション保存完了:', user.email)
   }
 
@@ -50,11 +50,12 @@ export function useSupabaseAuth() {
       } else {
         console.log('Supabase not configured, using mock auth in development')
         // 開発環境でのみモック認証状態を復元
-        const restored = restoreMockAuth()
-        if (!restored) {
-          console.log('復元可能なモック認証状態がありません')
-        }
-        setLoading(false)
+        restoreMockAuth().then(restored => {
+          if (!restored) {
+            console.log('復元可能なモック認証状態がありません')
+          }
+          setLoading(false)
+        })
         return
       }
     }
@@ -121,7 +122,7 @@ export function useSupabaseAuth() {
       setSession(mockSession)
       
       // SEC-005: セキュアなセッション保存（永続化）
-      saveMockAuth(mockUser, mockSession, true)
+      await saveMockAuth(mockUser, mockSession, true)
       
       console.log('モックサインアップ成功:', email)
       return { data: { user: mockUser, session: mockSession }, error: null }
@@ -178,7 +179,7 @@ export function useSupabaseAuth() {
         setSession(mockSession)
         
         // SEC-005: rememberMeに基づくセキュアなセッション保存
-        saveMockAuth(mockUser, mockSession, rememberMe)
+        await saveMockAuth(mockUser, mockSession, rememberMe)
         if (!isProduction) {
           console.log(`セキュアサインイン成功（${rememberMe ? '永続' : '一時'}）:`, email)
         }

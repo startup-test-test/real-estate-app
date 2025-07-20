@@ -1,9 +1,11 @@
 /**
  * SEC-005: セッション管理の強化
+ * SEC-047: localStorage機密情報保存対策
  * セキュアなセッション管理機能
  */
 
 import type { User, Session } from '@supabase/supabase-js';
+import { SecureStorage } from './cryptoUtils';
 
 // セッションタイムアウト時間（ミリ秒）
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30分
@@ -80,8 +82,9 @@ export class SessionManager {
 
   /**
    * セッションを保存（セキュアな方法）
+   * SEC-047: 暗号化して保存
    */
-  saveSession(user: User, session: Session, rememberMe: boolean = false): void {
+  async saveSession(user: User, session: Session, rememberMe: boolean = false): Promise<void> {
     const secureSession: SecureSession = {
       ...session,
       lastActivity: Date.now(),
@@ -93,17 +96,16 @@ export class SessionManager {
     const encodedUser = this.encodeUser(user);
 
     if (rememberMe) {
-      // Remember Me の場合は暗号化してlocalStorageに保存
-      // ただし、セッション有効期限を設定
+      // SEC-047: Remember Me の場合は暗号化してlocalStorageに保存
       const expirationTime = Date.now() + (7 * 24 * 60 * 60 * 1000); // 7日間
-      localStorage.setItem('secure_session', JSON.stringify({
+      await SecureStorage.setItem('secure_session', {
         data: encodedSession,
         expires: expirationTime
-      }));
-      localStorage.setItem('secure_user', JSON.stringify({
+      });
+      await SecureStorage.setItem('secure_user', {
         data: encodedUser,
         expires: expirationTime
-      }));
+      });
     } else {
       // 通常はsessionStorageに保存（ブラウザを閉じると削除）
       sessionStorage.setItem('secure_session', encodedSession);
@@ -116,27 +118,26 @@ export class SessionManager {
 
   /**
    * セッションを復元
+   * SEC-047: 暗号化されたデータを復号化
    */
-  restoreSession(): { user: User | null; session: SecureSession | null } {
+  async restoreSession(): Promise<{ user: User | null; session: SecureSession | null }> {
     try {
       // まずsessionStorageを確認
       let encodedSession = sessionStorage.getItem('secure_session');
       let encodedUser = sessionStorage.getItem('secure_user');
 
-      // sessionStorageにない場合はlocalStorageを確認
+      // sessionStorageにない場合は暗号化されたlocalStorageを確認
       if (!encodedSession || !encodedUser) {
-        const storedSession = localStorage.getItem('secure_session');
-        const storedUser = localStorage.getItem('secure_user');
+        // SEC-047: 暗号化されたデータを復号化
+        const storedSession = await SecureStorage.getItem('secure_session');
+        const storedUser = await SecureStorage.getItem('secure_user');
 
         if (storedSession && storedUser) {
-          const sessionData = JSON.parse(storedSession);
-          const userData = JSON.parse(storedUser);
-
           // 有効期限をチェック
-          if (sessionData.expires && sessionData.expires > Date.now() &&
-              userData.expires && userData.expires > Date.now()) {
-            encodedSession = sessionData.data;
-            encodedUser = userData.data;
+          if (storedSession.expires && storedSession.expires > Date.now() &&
+              storedUser.expires && storedUser.expires > Date.now()) {
+            encodedSession = storedSession.data;
+            encodedUser = storedUser.data;
           } else {
             // 期限切れの場合は削除
             this.clearSession();
@@ -166,15 +167,16 @@ export class SessionManager {
 
   /**
    * セッションをクリア
+   * SEC-047: 暗号化されたデータも安全に削除
    */
   clearSession(): void {
     // セッションストレージをクリア
     sessionStorage.removeItem('secure_session');
     sessionStorage.removeItem('secure_user');
     
-    // ローカルストレージをクリア
-    localStorage.removeItem('secure_session');
-    localStorage.removeItem('secure_user');
+    // SEC-047: 暗号化されたデータを削除
+    SecureStorage.removeItem('secure_session');
+    SecureStorage.removeItem('secure_user');
     
     // 旧形式のデータも削除（後方互換性）
     localStorage.removeItem('mock_user');
