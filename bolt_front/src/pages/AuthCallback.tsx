@@ -54,7 +54,13 @@ const AuthCallback: React.FC = () => {
 
         // トークンがある場合はセッションを設定
         if (accessToken && refreshToken) {
-          console.log('Setting session with tokens');
+          // SEC-035: 本番環境でトークン情報をログ出力しない
+          const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production';
+          if (!isProduction) {
+            console.log('Setting session with tokens');
+          } else {
+            console.log('Setting session');
+          }
           const { data, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -79,7 +85,13 @@ const AuthCallback: React.FC = () => {
         // Supabase v1形式のトークン確認も試みる
         const token = searchParams.get('token');
         if (token && type === 'signup') {
-          console.log('Attempting to verify with token:', token);
+          // SEC-035: 本番環境でトークン情報をログ出力しない
+          const isProduction = import.meta.env.PROD || import.meta.env.VITE_ENV === 'production';
+          if (!isProduction) {
+            console.log('Attempting to verify with token:', token);
+          } else {
+            console.log('Attempting to verify with token');
+          }
           // tokenベースの確認を試みる（古い形式）
           const { error: verifyError } = await supabase.auth.verifyOtp({
             token_hash: token,

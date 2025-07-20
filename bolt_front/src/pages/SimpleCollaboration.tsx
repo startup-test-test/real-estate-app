@@ -11,6 +11,7 @@ import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 import { useAuthContext } from '../components/AuthProvider';
 import SimpleCommentSection from '../components/SimpleCommentSection';
 import MetricCard from '../components/MetricCard';
+import { SecureStorage } from '../utils/cryptoUtils';
 
 export default function SimpleCollaboration() {
   const { token } = useParams<{ token: string }>();
@@ -50,7 +51,11 @@ export default function SimpleCollaboration() {
           console.log('🔐 User not authenticated, checking pending status...');
           
           // 認証処理中でない場合のみリダイレクト判断を行う
-          const pendingToken = localStorage.getItem('pendingCollaborationToken');
+          // SEC-064: 暗号化されたトークンを取得
+          const pendingToken = await SecureStorage.getItem('pendingCollaborationToken').catch(() => {
+            // フォールバック: sessionStorageから取得
+            return sessionStorage.getItem('pendingCollaborationToken');
+          });
           const hasRecentlyLoggedIn = localStorage.getItem('recentLogin');
           
           // 最近ログインした場合は少し待機して認証状態を再確認
@@ -64,18 +69,29 @@ export default function SimpleCollaboration() {
               console.log('🔄 Still not authenticated after waiting, redirecting to login');
               const simplePath = `/simple-collaboration/${token}`;
               localStorage.setItem('pendingReturnUrl', simplePath);
-              localStorage.setItem('pendingCollaborationToken', token);
+              // SEC-064: 招待トークンを暗号化して保存
+              SecureStorage.setItem('pendingCollaborationToken', token).catch(err => {
+                console.error('Failed to securely store token:', err);
+                // フォールバック: sessionStorageに保存
+                sessionStorage.setItem('pendingCollaborationToken', token);
+              });
               navigate('/login?invitation=true');
               return;
             } else if (updatedUser) {
               console.log('✅ Auth state updated, user found');
               localStorage.removeItem('recentLogin');
-              localStorage.removeItem('pendingCollaborationToken');
+              // SEC-064: 暗号化されたトークンを削除
+              SecureStorage.removeItem('pendingCollaborationToken');
               // 認証済みなので続行
             }
           } else {
             console.log('🔐 First time, saving token and redirecting');
-            localStorage.setItem('pendingCollaborationToken', token);
+            // SEC-064: 招待トークンを暗号化して保存
+            SecureStorage.setItem('pendingCollaborationToken', token).catch(err => {
+              console.error('Failed to securely store token:', err);
+              // フォールバック: sessionStorageに保存
+              sessionStorage.setItem('pendingCollaborationToken', token);
+            });
             const simplePath = `/simple-collaboration/${token}`;
             localStorage.setItem('pendingReturnUrl', simplePath);
             navigate('/login?invitation=true');
@@ -85,7 +101,8 @@ export default function SimpleCollaboration() {
 
         // 認証済みの場合は成功
         console.log('✅ User authenticated, showing collaboration page');
-        localStorage.removeItem('pendingCollaborationToken');
+        // SEC-064: 暗号化されたトークンを削除
+        SecureStorage.removeItem('pendingCollaborationToken');
         
       } catch (err: any) {
         console.error('❌ Error initializing collaboration page:', err);
