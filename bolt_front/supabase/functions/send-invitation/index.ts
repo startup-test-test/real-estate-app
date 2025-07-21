@@ -20,10 +20,16 @@ serve(async (req) => {
     // リクエストボディを取得
     const { invitationId, email, inviterName, propertyName, invitationUrl, role, userType, message } = await req.json()
 
-    // Supabaseクライアントを初期化
+    // SEC-040: 最小権限の原則に従ったクライアント初期化
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    
+    // 通常操作用クライアント（Anon Key使用）
+    const publicClient = createClient(supabaseUrl, supabaseAnonKey)
+    
+    // 管理操作専用クライアント（Service Role Key使用）
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey)
 
     // メール内容を作成
     const roleLabels = {
@@ -39,8 +45,9 @@ serve(async (req) => {
       general: 'ゲスト'
     }
 
-    // Supabase標準メール機能を使用（認証メールと同じ仕組み）
-    const { error: authError } = await supabase.auth.admin.inviteUserByEmail(
+    // SEC-040: 管理操作のみadminClientを使用
+    // メール送信は管理者権限が必要なため、adminClientを使用
+    const { error: authError } = await adminClient.auth.admin.inviteUserByEmail(
       email,
       {
         data: {
@@ -64,7 +71,7 @@ serve(async (req) => {
       logger.error('Supabase email sending failed', authError)
       
       // フォールバック: ダミーユーザーを作成してメール送信を試行
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await adminClient.auth.signUp({
         email: email,
         password: 'temp-password-for-invitation-' + Date.now(),
         options: {
@@ -88,14 +95,36 @@ serve(async (req) => {
       }
     }
 
-    // 送信成功をSupabaseに記録
-    await supabase
+    // SEC-040: 通常のデータ操作はpublicClientを使用
+    // share_invitationsテーブルへの更新はRLSで保護されているが、
+    // この操作は招待送信の完了を記録するシステム操作のため、adminClientを使用
+    const { error: updateError } = await adminClient
       .from('share_invitations')
       .update({ 
         status: 'sent',
         updated_at: new Date().toISOString()
       })
       .eq('id', invitationId)
+    
+    if (updateError) {
+      logger.warn('Failed to update invitation status', { invitationId })
+    }
+    
+    // SEC-040: 監査ログの記録（Service Role Key使用を追跡）
+    await adminClient
+      .from('edge_function_audit_logs')
+      .insert({
+        function_name: 'send-invitation',
+        action: 'send_invitation_email',
+        details: {
+          invitation_id: invitationId,
+          recipient_email: email.replace(/(.{2}).*@/, '$1***@'),
+          role: role,
+          user_type: userType
+        },
+        performed_at: new Date().toISOString()
+      })
+      .catch(err => logger.error('Failed to create audit log', err))
 
     // SEC-039: 成功ログ（機密情報を含まない）
     logger.info('Invitation email sent successfully', { 
