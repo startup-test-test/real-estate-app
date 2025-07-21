@@ -33,6 +33,7 @@ from csrf_protection import (
     generate_csrf_token, validate_csrf_token, 
     csrf_protection, CSRF_HEADER_NAME
 )
+from database import get_db, init_db, log_user_activity
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -46,6 +47,18 @@ app = FastAPI(
     description="不動産投資シミュレーター RESTful API",
     version="1.0.0"
 )
+
+# SEC-070: データベース初期化
+@app.on_event("startup")
+async def startup_event():
+    """アプリケーション起動時の処理"""
+    try:
+        init_db()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
+        # データベース初期化失敗は致命的エラーではない
+        # インメモリSQLiteを使用
 
 # SEC-082: HTTPメソッド制限ミドルウェアを追加
 app.middleware("http")(http_method_middleware)
@@ -397,6 +410,21 @@ async def run_simulation(
     
     # ユーザーIDをログに記録（監査用）
     logger.info("Simulation requested by user: %s", current_user.get('user_id'))
+    
+    # SEC-070: ユーザーアクティビティをデータベースに記録
+    with get_db() as db:
+        log_user_activity(
+            db, 
+            current_user.get('user_id'),
+            "simulation",
+            "/api/simulate",
+            {
+                "ip_address": http_request.client.host if http_request.client else "unknown",
+                "user_agent": http_request.headers.get("User-Agent", ""),
+                "data": request.model_dump(),
+                "response_status": 200
+            }
+        )
 
     try:
         # SEC-059: 危険なインポートをチェック済み（デコレータ）
@@ -464,6 +492,21 @@ async def market_analysis(
     
     # ユーザーIDをログに記録（監査用）
     logger.info("Market analysis requested by user: %s", current_user.get('user_id'))
+    
+    # SEC-070: ユーザーアクティビティをデータベースに記録
+    with get_db() as db:
+        log_user_activity(
+            db,
+            current_user.get('user_id'),
+            "market_analysis",
+            "/api/market-analysis",
+            {
+                "ip_address": http_request.client.host if http_request.client else "unknown",
+                "user_agent": http_request.headers.get("User-Agent", ""),
+                "data": request.model_dump(),
+                "response_status": 200
+            }
+        )
 
     # ユーザー物件の平米単価を計算
     user_unit_price = purchase_price * 10000 / land_area / 10000 if land_area > 0 else 0
