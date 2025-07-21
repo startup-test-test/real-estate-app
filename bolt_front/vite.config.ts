@@ -71,6 +71,13 @@ export default defineConfig({
     // チャンクサイズ警告を800kBに設定
     chunkSizeWarningLimit: 800,
     rollupOptions: {
+      // SEC-043: テストファイルとデバッグファイルを本番ビルドから除外
+      external: [
+        /test-data\/.*/,
+        /.*\.test\.(js|ts|jsx|tsx)$/,
+        /.*\.spec\.(js|ts|jsx|tsx)$/,
+        /__tests__\/.*/
+      ],
       output: {
         // vendor依存関係を分離してキャッシュ効率を向上
         manualChunks: {
