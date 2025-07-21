@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Download, Printer, Eye } from 'lucide-react';
 import SimulationPDFReport from './SimulationPDFReport';
 import { SimulationResult } from '../types/simulation';
+import { loadGoogleFonts, createSecureLink } from '../utils/sriUtils';
 
 interface PDFPreviewModalProps {
   isOpen: boolean;
@@ -17,6 +18,11 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   onDownloadPDF
 }) => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  
+  // SEC-032: Google Fontsを安全に読み込み
+  useEffect(() => {
+    loadGoogleFonts('Noto Sans JP', ['400', '500', '600', '700']);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -49,11 +55,15 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
     meta.setAttribute('charset', 'utf-8');
     head.appendChild(meta);
     
+    // SEC-032: Google Fontsを別途読み込み（@importを回避）
+    const fontLink = createSecureLink(
+      'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap'
+    );
+    head.appendChild(fontLink);
+    
     // スタイルを設定
     const style = doc.createElement('style');
     style.textContent = `
-      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
-      
       * {
         margin: 0;
         padding: 0;
@@ -111,8 +121,11 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     try {
-      await onDownloadPDF();
-    } finally {
+      onDownloadPDF();
+      // PDF生成完了後にフラグをリセット
+      setTimeout(() => setIsGeneratingPDF(false), 2000);
+    } catch (error) {
+      console.error('PDF download error:', error);
       setIsGeneratingPDF(false);
     }
   };
