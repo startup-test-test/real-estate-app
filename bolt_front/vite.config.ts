@@ -41,7 +41,7 @@ function securityHeaders(): Plugin {
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "font-src 'self' https://fonts.gstatic.com",
           "img-src 'self' data: https: blob:",
-          "connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co ws://localhost:*",
+          "connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co ws://localhost:* https://real-estate-app-1-iii4.onrender.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",

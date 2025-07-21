@@ -54,7 +54,7 @@ server {
     set $csp "${csp}style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ";
     set $csp "${csp}font-src 'self' https://fonts.gstatic.com; ";
     set $csp "${csp}img-src 'self' data: https: blob:; ";
-    set $csp "${csp}connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; ";
+    set $csp "${csp}connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co https://real-estate-app-1-iii4.onrender.com; ";
     set $csp "${csp}frame-ancestors 'none'; ";
     set $csp "${csp}base-uri 'self'; ";
     set $csp "${csp}form-action 'self'; ";
@@ -96,7 +96,7 @@ server {
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
     
     # Content-Security-Policy
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co https://real-estate-app-1-iii4.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
 
     <Directory /var/www/html>
         Options -Indexes
@@ -142,7 +142,7 @@ server {
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co https://real-estate-app-1-iii4.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
         }
       ]
     }
