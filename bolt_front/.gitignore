@@ -23,3 +23,23 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Security - Debug and development files
+debug_*.js
+debug_*.ts
+test_*.js
+test_*.ts
+*.debug.js
+*.debug.ts
+*.test.local.js
+*.test.local.ts
+temp_*.js
+temp_*.ts
+
+# Security - Authentication and sensitive files  
+*_auth_url.js
+*_auth_url.ts
+*_token.js
+*_token.ts
+*_credentials.js
+*_credentials.ts
