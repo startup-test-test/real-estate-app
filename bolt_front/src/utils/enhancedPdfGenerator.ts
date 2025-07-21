@@ -1,5 +1,6 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import DOMPurify from 'dompurify';
 import { SimulationResult } from '../types/simulation';
 
 /**
@@ -140,7 +141,14 @@ export const generatePDFFromComponent = async (
   tempContainer.style.top = '0';
   tempContainer.style.width = '210mm';
   tempContainer.style.background = 'white';
-  tempContainer.innerHTML = componentHTML;
+  // SEC-029: innerHTMLの安全な使用のためDOMPurifyでサニタイズ
+  const sanitizedHTML = DOMPurify.sanitize(componentHTML, {
+    ADD_TAGS: ['style'], // PDFスタイルを許可
+    ADD_ATTR: ['style'], // インラインスタイルを許可
+    ALLOW_DATA_ATTR: false, // data-*属性は不要
+    ALLOW_UNKNOWN_PROTOCOLS: false // 未知のプロトコルを拒否
+  });
+  tempContainer.innerHTML = sanitizedHTML;
 
   document.body.appendChild(tempContainer);
 

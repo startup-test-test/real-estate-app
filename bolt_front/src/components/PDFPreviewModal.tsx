@@ -28,11 +28,13 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
     const printContent = document.getElementById('pdf-preview-content');
     if (!printContent) return;
 
-    // SEC-045: document.writeとinnerHTMLの危険な使用を回避
+    // SEC-045/SEC-029: document.writeとinnerHTMLの危険な使用を回避
     const doc = printWindow.document;
     
-    // HTMLの基本構造を作成
-    doc.documentElement.innerHTML = '';
+    // HTMLの基本構造を作成（innerHTMLを使わずにDOM操作で実装）
+    while (doc.documentElement.firstChild) {
+      doc.documentElement.removeChild(doc.documentElement.firstChild);
+    }
     const html = doc.createElement('html');
     const head = doc.createElement('head');
     const body = doc.createElement('body');
