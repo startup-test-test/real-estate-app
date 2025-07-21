@@ -34,6 +34,7 @@ from csrf_protection import (
     csrf_protection, CSRF_HEADER_NAME
 )
 from database import get_db, init_db, log_user_activity
+from https_redirect import HTTPSRedirectMiddleware, check_https_config
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -59,6 +60,9 @@ async def startup_event():
         logger.error(f"Failed to initialize database: {e}")
         # データベース初期化失敗は致命的エラーではない
         # インメモリSQLiteを使用
+
+# SEC-072: HTTPSリダイレクトミドルウェアを追加
+app.add_middleware(HTTPSRedirectMiddleware)
 
 # SEC-082: HTTPメソッド制限ミドルウェアを追加
 app.middleware("http")(http_method_middleware)
@@ -190,6 +194,20 @@ def read_root():
         "status": "running",
         "authenticated": False
     }
+
+# SEC-072: HTTPSステータスチェックエンドポイント
+@app.get("/api/https-status")
+def get_https_status(request: Request):
+    """
+    HTTPS設定の状態を取得
+    
+    Args:
+        request: HTTPリクエスト
+        
+    Returns:
+        dict: HTTPS設定の状態
+    """
+    return check_https_config(request)
 
 # 古い計算関数は削除し、shared.calculations.pyの関数を使用
 
