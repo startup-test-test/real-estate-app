@@ -183,7 +183,8 @@ export function setupSecureErrorHandler(): void {
   window.addEventListener('error', (event) => {
     if (isProduction) {
       // 本番環境ではエラーの詳細を隠蔽
-      event.preventDefault();
+      // 注: preventDefault()を呼ぶとデフォルトのエラー処理も止まるため、
+      // ログだけマスクして、デフォルト処理は継続させる
       logger.error('An error occurred');
     } else {
       // 開発環境では機密情報をマスクして出力
@@ -199,7 +200,6 @@ export function setupSecureErrorHandler(): void {
   window.addEventListener('unhandledrejection', (event) => {
     if (isProduction) {
       // 本番環境では詳細を隠蔽
-      event.preventDefault();
       logger.error('An unhandled promise rejection occurred');
     } else {
       // 開発環境では機密情報をマスクして出力
