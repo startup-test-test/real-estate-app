@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
 import { SessionManager } from '../utils/sessionManager'
+import { logger } from '../utils/logger'
 
 export function useSupabaseAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -18,7 +19,7 @@ export function useSupabaseAuth() {
     if (restoredUser && restoredSession) {
       setUser(restoredUser)
       setSession(restoredSession)
-      console.log('セキュアなセッション復元成功:', restoredUser.email)
+      logger.log('セキュアなセッション復元成功:', restoredUser.email)
       return true
     }
     
@@ -28,13 +29,13 @@ export function useSupabaseAuth() {
   // SEC-005: セキュアなセッション保存
   const saveMockAuth = async (user: User, session: Session, rememberMe: boolean = false) => {
     await sessionManager.saveSession(user, session, rememberMe)
-    console.log('セキュアなセッション保存完了:', user.email)
+    logger.log('セキュアなセッション保存完了:', user.email)
   }
 
   // SEC-005: セキュアなセッションクリア
   const clearMockAuth = () => {
     sessionManager.clearSession()
-    console.log('セキュアなセッションクリア完了')
+    logger.log('セキュアなセッションクリア完了')
   }
 
   useEffect(() => {
@@ -44,11 +45,11 @@ export function useSupabaseAuth() {
     if (!import.meta.env.VITE_SUPABASE_URL) {
       if (isProduction) {
         // SEC-038: 本番環境では必ずSupabaseが設定されている必要がある
-        console.error('Critical error: Supabase is not configured in production environment')
+        logger.error('Critical error: Supabase is not configured in production environment')
         setLoading(false)
         return
       } else {
-        console.log('Supabase not configured, using mock auth in development')
+        logger.log('Supabase not configured, using mock auth in development')
         // 開発環境でのみモック認証状態を復元
         restoreMockAuth().then(restored => {
           if (!restored) {
