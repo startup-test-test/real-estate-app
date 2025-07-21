@@ -4,6 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- SEC-067: Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com data:;
+      img-src 'self' data: https: blob:;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co http://localhost:* ws://localhost:* https://real-estate-app-1-iii4.onrender.com https://*.onrender.com;
+      form-action 'self';
+      base-uri 'self';
+      upgrade-insecure-requests;
+    ">
     <title>大家DX - 不動産投資SaaS</title>
   </head>
   <body>

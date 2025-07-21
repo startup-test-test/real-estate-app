@@ -33,7 +33,7 @@ import { useNavigate } from 'react-router-dom';
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading: authLoading } = useAuthContext();
-  const { getSimulations, deleteSimulation } = useSupabaseData();
+  const { getSimulations, deleteSimulation, getProperties } = useSupabaseData();
   
   // 認証状態をログに記録
   React.useEffect(() => {
@@ -46,6 +46,7 @@ const Dashboard: React.FC = () => {
   
   // Supabase state management
   const [simulations, setSimulations] = React.useState<any[]>([]);
+  const [savedSimulations, setSavedSimulations] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [sortBy, setSortBy] = React.useState('newest');
@@ -130,7 +131,13 @@ const Dashboard: React.FC = () => {
       }
       
       setError(null);
-      const { data, error: fetchError } = await getSimulations();
+      // プロパティデータを取得
+      const { data: propsData, error: propsError } = await getProperties();
+      // シミュレーションデータを取得
+      const { data: simsData, error: simsError } = await getSimulations();
+      
+      const fetchError = propsError || simsError;
+      const data = propsData;
       
       if (fetchError) {
         console.error('データ取得エラー:', fetchError);
@@ -143,6 +150,7 @@ const Dashboard: React.FC = () => {
           console.log('最初のシミュレーションデータの詳細:', JSON.stringify(data[0], null, 2));
         }
         setSimulations(data || []);
+        setSavedSimulations(simsData || []);
         // キャッシュに保存
         saveToCache(data || []);
       }
@@ -363,6 +371,83 @@ const Dashboard: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+
+          {/* Saved Simulations Section */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <BarChart3 className="h-5 w-5 text-indigo-500 mr-2" />
+                <h3 className="font-semibold text-gray-900">保存済みシミュレーション</h3>
+              </div>
+              <button 
+                onClick={() => navigate('/simulator')}
+                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                新規シミュレーション
+              </button>
+            </div>
+            
+            {savedSimulations.length === 0 ? (
+              <div className="text-center py-12">
+                <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">シミュレーション結果がまだ保存されていません</h3>
+                <p className="text-gray-600 mb-6">物件をシミュレーションすると自動保存されます。</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                {savedSimulations.slice(0, 6).map((sim) => {
+                  const inputData = sim.input_data || {};
+                  const resultData = sim.result_data || {};
+                  return (
+                    <div key={sim.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="mb-3">
+                        <h4 className="font-medium text-gray-900">{sim.simulation_name || '無題'}</h4>
+                        <p className="text-sm text-gray-500">
+                          {new Date(sim.created_at).toLocaleDateString('ja-JP')}
+                        </p>
+                      </div>
+                      
+                      <div className="mb-3 space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">物件名:</span>
+                          <span className="font-medium">{inputData.propertyName || '-'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">購入価格:</span>
+                          <span className="font-medium">{inputData.purchasePrice ? `${inputData.purchasePrice.toLocaleString()}万円` : '-'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">CCR:</span>
+                          <span className="font-medium text-green-600">
+                            {resultData.results?.ccr_1 ? `${(resultData.results.ccr_1 * 100).toFixed(1)}%` : '-'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => navigate(`/simulator?view=${sim.id}#results`)}
+                        className="w-full px-3 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium"
+                      >
+                        結果を表示
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            
+            {savedSimulations.length > 6 && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => navigate('/simulator')}
+                  className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                >
+                  すべて表示 ({savedSimulations.length}件)
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Property List Section */}

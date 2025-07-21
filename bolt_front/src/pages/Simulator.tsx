@@ -29,7 +29,7 @@ import { rbacClient, Permission } from '../utils/rbacClient';
 import { tooltips } from '../constants/tooltips';
 import { sanitizeSimulatorInput, sanitizeMemoInput } from '../utils/xssSanitizer';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
-import { SecureErrorHandler } from '../utils/errorHandler';
+import { handleError } from '../utils/secureErrorHandler';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 import { 
   validateAndSanitizeNumber,
@@ -168,7 +168,7 @@ const Simulator: React.FC = () => {
             }
           }
         } catch (error) {
-          SecureErrorHandler.log(error, { action: 'fetchShareInfo' });
+          handleError(error, 'fetchShareInfo');
         }
       };
       fetchShareInfo();
@@ -282,10 +282,7 @@ const Simulator: React.FC = () => {
               setCurrentShare(shareData);
             }
           } catch (shareError) {
-            SecureErrorHandler.log(shareError, { 
-              action: 'fetchShareFromExisting',
-              shareToken: simulation.share_token 
-            });
+            handleError(shareError, 'fetchShareFromExisting');
           }
         }
         
@@ -303,19 +300,14 @@ const Simulator: React.FC = () => {
               console.log('⚠️ 共有情報の取得/作成に失敗');
             }
           } catch (shareError) {
-            SecureErrorHandler.log(shareError, { 
-              action: 'fetchOrCreateShareByPropertyId',
-              simulationId 
-            });
+            handleError(shareError, 'fetchOrCreateShareByPropertyId');
           }
         } else if (!user?.id && import.meta.env.DEV) {
           console.log('⚠️ ユーザー未認証のため共有情報の取得をスキップ');
         }
       }
     } catch (err: any) {
-      const errorInfo = SecureErrorHandler.handle(err, { 
-        action: 'loadExistingData' 
-      });
+      const errorInfo = handleError(err, 'loadExistingData');
       setSaveError(errorInfo.userMessage);
     } finally {
       setIsLoading(false);
@@ -548,6 +540,32 @@ const Simulator: React.FC = () => {
         console.log('最後の5行:', result.cash_flow_table?.slice(-5));
         setSimulationResults(result);
         
+        // 認証ユーザーの場合は自動保存
+        if (user) {
+          try {
+            const simulationName = `${inputs.propertyName || '物件'}_${new Date().toLocaleDateString('ja-JP')}`;
+            const saveData = {
+              simulation_name: simulationName,
+              input_data: inputs,
+              result_data: result,
+              simulation_data: inputs,
+              results: result.results,
+              cash_flow_table: result.cash_flow_table
+            };
+            
+            const { data: savedData, error: saveError } = await saveSimulation(saveData);
+            if (saveError) {
+              console.error('シミュレーション結果の自動保存に失敗:', saveError);
+            } else {
+              console.log('シミュレーション結果を自動保存しました:', savedData);
+              setSaveMessage('シミュレーション結果が自動保存されました');
+              setTimeout(() => setSaveMessage(null), 3000);
+            }
+          } catch (autoSaveError) {
+            console.error('自動保存エラー:', autoSaveError);
+          }
+        }
+        
         // 結果表示後に自動スクロール
         setTimeout(() => {
           if (resultsRef.current) {
@@ -701,8 +719,7 @@ const Simulator: React.FC = () => {
       }
       
     } catch (error) {
-      console.error('シミュレーションエラー:', error);
-      console.error('エラースタック:', error instanceof Error ? error.stack : 'スタックなし');
+      handleError(error, 'Simulation Execution');
       let errorMessage = '不明なエラー';
       
       if (error instanceof Error) {

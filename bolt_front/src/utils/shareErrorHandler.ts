@@ -1,4 +1,5 @@
 import { SetStateAction, Dispatch } from 'react';
+import { handleError as handleSecureError, getDisplayMessage } from './secureErrorHandler';
 
 export interface ShareError {
   message: string;
@@ -11,22 +12,8 @@ export interface ShareError {
  * Supabaseエラーの詳細ログ出力
  */
 export const logSupabaseError = (error: any, operation: string): void => {
-  console.error(`❌ ${operation} error:`, error);
-  
-  if (error && typeof error === 'object') {
-    if ('message' in error) {
-      console.error('Error message:', error.message);
-    }
-    if ('details' in error) {
-      console.error('Error details:', error.details);
-    }
-    if ('hint' in error) {
-      console.error('Error hint:', error.hint);
-    }
-    if ('code' in error) {
-      console.error('Error code:', error.code);
-    }
-  }
+  // セキュアなエラーハンドラーを使用
+  handleSecureError(error, `Supabase ${operation}`);
 };
 
 /**
@@ -38,20 +25,8 @@ export const handleShareError = (
   setError: Dispatch<SetStateAction<string | null>>,
   customMessage?: string
 ): string => {
-  logSupabaseError(error, operation);
-  
-  let errorMessage: string;
-  
-  if (customMessage) {
-    errorMessage = customMessage;
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
-  } else if (error && typeof error === 'object' && 'message' in error) {
-    errorMessage = String(error.message);
-  } else {
-    errorMessage = `${operation}に失敗しました`;
-  }
-  
+  // セキュアなエラーハンドラーを使用
+  const errorMessage = customMessage || getDisplayMessage(error);
   setError(errorMessage);
   return errorMessage;
 };
@@ -63,16 +38,17 @@ export const handleEmailError = (
   error: any,
   setError: Dispatch<SetStateAction<string | null>>
 ): void => {
-  console.error('❌ メール送信エラー:', error);
+  handleSecureError(error, 'Email Send');
   
   let errorMessage: string;
   
+  // メールエラーの特別なケース
   if (error?.message?.includes('rate limit')) {
     errorMessage = 'メール送信の制限に達しました。しばらく時間をおいて再度お試しください。';
   } else if (error?.message?.includes('Invalid email')) {
     errorMessage = 'メールアドレスが無効です。正しいメールアドレスを入力してください。';
   } else {
-    errorMessage = `メール送信に失敗しました: ${error?.message || '不明なエラー'}`;
+    errorMessage = getDisplayMessage(error);
   }
   
   setError(errorMessage);

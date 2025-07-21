@@ -10,7 +10,7 @@ import { useSupabaseData } from './useSupabaseData';
 import { supabase } from '../lib/supabase';
 import { apiAuth } from '../utils/apiAuth';
 import { rbacClient } from '../utils/rbacClient';
-import { SecureErrorHandler } from '../utils/errorHandler';
+import { handleError, handleApiError } from '../utils/secureErrorHandler';
 
 export const useApiCall = () => {
   const [isSimulating, setIsSimulating] = useState(false);
@@ -114,11 +114,7 @@ export const useApiCall = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        const errorInfo = await SecureErrorHandler.handleApiResponse(response);
-        SecureErrorHandler.log(errorInfo, { 
-          endpoint: '/api/simulate',
-          status: response.status 
-        });
+        const errorInfo = handleApiError(response);
         throw new Error(errorInfo.userMessage);
       }
       
@@ -136,10 +132,7 @@ export const useApiCall = () => {
       }
       
       // セキュアなエラーハンドリング
-      const errorInfo = SecureErrorHandler.handle(error, {
-        action: 'executeSimulation'
-      });
-      SecureErrorHandler.log(error, { action: 'executeSimulation' });
+      const errorInfo = handleError(error, 'executeSimulation');
       throw new Error(errorInfo.userMessage);
     } finally {
       setIsSimulating(false);
@@ -158,11 +151,7 @@ export const useApiCall = () => {
         .single();
 
       if (error) {
-        const errorInfo = SecureErrorHandler.handle(error, {
-          action: 'loadExistingData',
-          simulationId
-        });
-        SecureErrorHandler.log(error, { action: 'loadExistingData' });
+        const errorInfo = handleError(error, 'loadExistingData');
         throw new Error(errorInfo.userMessage);
       }
 
@@ -176,10 +165,7 @@ export const useApiCall = () => {
       return null;
       
     } catch (error: any) {
-      const errorInfo = SecureErrorHandler.handle(error, {
-        action: 'loadExistingData'
-      });
-      SecureErrorHandler.log(error, { action: 'loadExistingData' });
+      const errorInfo = handleError(error, 'loadExistingData');
       throw new Error(errorInfo.userMessage);
     } finally {
       setIsLoading(false);
