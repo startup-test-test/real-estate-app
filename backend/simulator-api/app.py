@@ -23,6 +23,7 @@ from shared.calculations import run_full_simulation
 from models import PropertyInputModel, SimulationRequestModel, SimulationResponseModel
 from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
 from http_method_guard import http_method_middleware
+from config_proxy import router as config_router
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -143,6 +144,9 @@ real_estate_api_key = os.getenv("REAL_ESTATE_API_KEY", "")
 
 # セキュリティ設定
 security = HTTPBearer()
+
+# SEC-065: 環境変数の直接露出対策 - 設定プロキシルーターを追加
+app.include_router(config_router)
 
 # ヘルスチェックエンドポイント（認証不要）
 # SEC-082: HTTPメソッド制限 - GETのみ許可
