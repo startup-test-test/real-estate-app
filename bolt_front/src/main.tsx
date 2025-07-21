@@ -4,6 +4,17 @@ import App from './App.tsx';
 import './index.css';
 import { setupGlobalErrorHandler } from './utils/secureErrorHandler';
 import { setupSecureErrorHandler } from './utils/logger';
+import { performStartupEnvCheck } from './utils/envChecker';
+
+// SEC-044: 環境変数の起動時チェック
+try {
+  performStartupEnvCheck();
+} catch (error) {
+  // 環境変数エラーの場合は起動を停止
+  console.error('Failed to start application:', error);
+  // これ以降の処理を実行しない
+  throw error;
+}
 
 // SEC-069: グローバルエラーハンドラーを設定
 setupGlobalErrorHandler();

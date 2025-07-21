@@ -7,7 +7,11 @@
 
 ### Supabase関連
 - `VITE_SUPABASE_URL`: SupabaseプロジェクトのURL
+  - 形式: `https://<project-ref>.supabase.co`
+  - 本番環境ではlocalhostは使用不可
 - `VITE_SUPABASE_ANON_KEY`: Supabaseの匿名キー
+  - JWT形式のトークン
+  - Service Keyは使用しないこと
 
 ## オプション環境変数
 
@@ -62,6 +66,27 @@ VITE_ENABLE_MOCK_MODE=true
 
 本番環境では必ずモックモードを無効にしてください。
 
+## 環境変数の検証（SEC-044）
+
+### 起動時チェック
+アプリケーション起動時に以下の検証が自動的に実行されます：
+
+1. **必須環境変数の存在確認**
+   - `VITE_SUPABASE_URL`と`VITE_SUPABASE_ANON_KEY`が設定されているか
+   - 空文字列でないか
+
+2. **形式の検証**
+   - Supabase URLが有効なURL形式か
+   - Anon KeyがJWT形式か
+
+3. **本番環境での追加チェック**
+   - localhostのURLが使用されていないか
+   - モックモードが無効になっているか
+
+### エラー時の動作
+- **開発環境**: コンソールに詳細なエラーメッセージを表示
+- **本番環境**: アプリケーションの起動を停止し、エラー画面を表示
+
 ## トラブルシューティング
 
 ### 環境変数が読み込まれない
@@ -72,3 +97,8 @@ VITE_ENABLE_MOCK_MODE=true
 ### モックモードが意図せず有効になる
 1. `VITE_ENABLE_MOCK_MODE`の値を確認
 2. 環境変数の優先順位を確認（.env.local > .env）
+
+### 起動時エラー「Invalid configuration」
+1. 必須環境変数がすべて設定されているか確認
+2. 環境変数の値が正しい形式か確認
+3. 本番環境でモックモードが無効になっているか確認

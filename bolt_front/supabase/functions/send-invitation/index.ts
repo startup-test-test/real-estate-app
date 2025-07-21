@@ -1,10 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { SecureLogger } from '../_shared/secureLogger.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// SEC-039: セキュアログインスタンスを作成
+const logger = new SecureLogger({ functionName: 'send-invitation' })
 
 serve(async (req) => {
   // CORS対応
@@ -36,7 +40,7 @@ serve(async (req) => {
     }
 
     // Supabase標準メール機能を使用（認証メールと同じ仕組み）
-    const { data: authData, error: authError } = await supabase.auth.admin.inviteUserByEmail(
+    const { error: authError } = await supabase.auth.admin.inviteUserByEmail(
       email,
       {
         data: {
@@ -56,7 +60,8 @@ serve(async (req) => {
     )
 
     if (authError) {
-      console.error('Supabase email sending failed:', authError)
+      // SEC-039: 機密情報をマスクしてログ出力
+      logger.error('Supabase email sending failed', authError)
       
       // フォールバック: ダミーユーザーを作成してメール送信を試行
       const { error: signUpError } = await supabase.auth.signUp({
@@ -92,12 +97,20 @@ serve(async (req) => {
       })
       .eq('id', invitationId)
 
+    // SEC-039: 成功ログ（機密情報を含まない）
+    logger.info('Invitation email sent successfully', { 
+      invitationId, 
+      recipientEmail: email.replace(/(.{2}).*@/, '$1***@'), // メールを部分マスク
+      role,
+      userType 
+    })
+    
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: 'Invitation email sent successfully via Supabase Auth',
-        method: 'supabase_auth',
-        authData: authData
+        method: 'supabase_auth'
+        // SEC-039: authDataは機密情報なのでレスポンスから除外
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -106,7 +119,8 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error sending invitation email:', error)
+    // SEC-039: 機密情報をマスクしてログ出力
+    logger.error('Error sending invitation email', error)
     
     return new Response(
       JSON.stringify({ 
