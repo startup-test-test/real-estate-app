@@ -2,7 +2,7 @@
 市場分析用のPydanticモデル
 """
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Dict, Any
 
 
@@ -14,7 +14,8 @@ class MarketAnalysisRequestModel(BaseModel):
     year_built: int = Field(2000, ge=1900, le=2100, description="建築年")
     purchase_price: float = Field(..., ge=0, le=1000000, description="購入価格（万円）")
     
-    @validator('location')
+    @field_validator('location')
+    @classmethod
     def sanitize_location(cls, v):
         """場所のサニタイゼーション"""
         # 危険な文字を除去
@@ -23,15 +24,16 @@ class MarketAnalysisRequestModel(BaseModel):
             v = v.replace(char, '')
         return v.strip()
     
-    @validator('purchase_price', 'land_area')
-    def validate_positive(cls, v, field):
+    @field_validator('purchase_price', 'land_area')
+    @classmethod
+    def validate_positive(cls, v):
         """正の値であることを確認"""
         if v <= 0:
-            raise ValueError(f'{field.name}は0より大きい値を入力してください')
+            raise ValueError('値は0より大きい値を入力してください')
         return v
-    
-    class Config:
-        schema_extra = {
+
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "location": "東京都港区",
                 "land_area": 100,
@@ -39,6 +41,7 @@ class MarketAnalysisRequestModel(BaseModel):
                 "purchase_price": 5000
             }
         }
+    }
 
 
 class SimilarPropertyModel(BaseModel):

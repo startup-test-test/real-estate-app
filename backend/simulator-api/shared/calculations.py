@@ -7,6 +7,12 @@ from math import pow
 from typing import Dict, List, Optional, Any
 import sys
 import os
+from .input_validator import (
+    validate_calculation_params, 
+    safe_calculation_wrapper, 
+    DoSProtectionError,
+    prevent_computation_bomb
+)
 
 # 親ディレクトリをパスに追加してmodelsをインポート可能にする
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,22 +24,57 @@ except ImportError:
     PropertyInputModel = None
 
 
+@safe_calculation_wrapper
 def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int, 
                            elapsed_years: int, loan_type: str = "元利均等") -> float:
-    """ローン残高を計算"""
+    """ローン残高を計算（SEC-058: DoS攻撃対策済み）"""
+    # SEC-058: 入力値の事前検証
+    if loan_amount < 0 or loan_amount > 100000:  # 100億円制限
+        raise DoSProtectionError("ローン額が範囲外です")
+    if interest_rate < 0 or interest_rate > 50:  # 50%制限
+        raise DoSProtectionError("金利が範囲外です")
+    if loan_years <= 0 or loan_years > 100:  # 100年制限
+        raise DoSProtectionError("ローン年数が範囲外です")
+    if elapsed_years < 0 or elapsed_years > loan_years:
+        raise DoSProtectionError("経過年数が範囲外です")
+    
+    # SEC-058: オーバーフロー防止のための数値チェック
     r = interest_rate / 100 / 12
     n = loan_years * 12
     m = elapsed_years * 12
+    
+    # 極端な値による計算爆弾を防止
+    if n > 1200:  # 100年 * 12ヶ月
+        raise DoSProtectionError("計算期間が長すぎます")
+    
     P = loan_amount * 10000
+    
+    # SEC-058: 指数計算でのオーバーフロー防止
+    if r > 0:
+        # 指数計算の結果が極大値になることを防ぐ
+        max_power = min(n, 500)  # 指数を制限
+        if (1 + r) ** max_power > 1e15:  # 極大値チェック
+            raise DoSProtectionError("計算結果が大きすぎます")
     
     if loan_type == "元利均等":
         if r == 0:
             remaining = P * (n - m) / n
         else:
-            remaining = P * (pow(1 + r, n) - pow(1 + r, m)) / (pow(1 + r, n) - 1)
+            try:
+                power_n = pow(1 + r, n)
+                power_m = pow(1 + r, m)
+                remaining = P * (power_n - power_m) / (power_n - 1)
+            except OverflowError:
+                raise DoSProtectionError("計算オーバーフローが発生しました")
     else:
         monthly_principal = P / n
         remaining = P - (monthly_principal * m)
+    
+    # SEC-058: 結果の妥当性チェック
+    if remaining < 0:
+        remaining = 0
+    if remaining > P * 2:  # 残高が元本の2倍を超えることはない
+        raise DoSProtectionError("計算結果が異常です")
     
     return remaining / 10000
 
@@ -72,61 +113,75 @@ def calculate_monthly_loan_payment(loan_amount: float, interest_rate: float,
 
 
 def validate_and_extract_data(property_data: Dict[str, Any]) -> Dict[str, Any]:
-    """入力データを検証して安全な値を抽出"""
+    """入力データを検証して安全な値を抽出（SEC-058: DoS攻撃対策強化）"""
+    # SEC-058: 厳密な入力検証を実行
+    try:
+        safe_data = validate_calculation_params(property_data)
+        return safe_data
+    except DoSProtectionError:
+        # DoS攻撃を検出した場合は再発生
+        raise
+    except Exception:
+        # その他の例外の場合はフォールバック処理
+        pass
+    
+    # フォールバック: 従来の基本的な検証（互換性のため保持）
     if PropertyInputModel is not None:
-        # Pydanticモデルが利用可能な場合
         try:
             validated = PropertyInputModel(**property_data)
             return validated.dict()
         except Exception:
-            # バリデーションエラーの場合はフォールバック
             pass
     
-    # フォールバック: 基本的な型チェックと範囲検証
+    # 最終フォールバック
     safe_data = {}
     
-    # 数値フィールドの検証
+    # SEC-058: より厳格な数値制限を適用
     numeric_fields = [
-        ('monthly_rent', 0, 10000),
+        ('monthly_rent', 0, 10000),      # 1000万円/月まで
         ('vacancy_rate', 0, 100),
         ('management_fee', 0, 1000),
         ('fixed_cost', 0, 1000),
         ('property_tax', 0, 10000),
-        ('purchase_price', 0, 1000000),
-        ('loan_amount', 0, 1000000),
+        ('purchase_price', 1, 100000),    # SEC-058: 最低1万円、最高100億円
+        ('loan_amount', 0, 100000),       # SEC-058: 最高100億円
         ('other_costs', 0, 10000),
         ('renovation_cost', 0, 10000),
-        ('interest_rate', 0, 20),
-        ('loan_years', 1, 50),
-        ('holding_years', 1, 50),
+        ('interest_rate', 0, 50),         # SEC-058: 50%まで制限
+        ('loan_years', 1, 100),           # SEC-058: 100年まで制限
+        ('holding_years', 1, 100),        # SEC-058: 100年まで制限
         ('exit_cap_rate', 0, 50),
-        ('effective_tax_rate', 0, 60),
-        ('building_price', 0, 1000000),
-        ('depreciation_years', 1, 100),
-        ('land_area', 0, 100000),
-        ('building_area', 0, 100000),
-        ('road_price', 0, 10000000),
+        ('effective_tax_rate', 0, 100),   # SEC-058: 100%まで制限
+        ('building_price', 0, 100000),    # SEC-058: 100億円まで
+        ('depreciation_years', 1, 100),   # SEC-058: 100年まで制限
+        ('land_area', 0, 1000000),        # SEC-058: 100万平米まで
+        ('building_area', 0, 100000),     # SEC-058: 10万平米まで
+        ('road_price', 0, 100000000),     # SEC-058: 1億円/平米まで
         ('rent_decline', 0, 50)
     ]
     
     for field, min_val, max_val in numeric_fields:
-        value = property_data.get(field, 0)
+        value = property_data.get(field, min_val if min_val > 0 else 0)
         try:
             value = float(value)
-            if value < min_val or value > max_val:
-                value = max(min_val, min(value, max_val))
-        except (TypeError, ValueError):
-            value = 0
+            # SEC-058: 特殊値チェック
+            if value != value or value == float('inf') or value == float('-inf'):
+                value = min_val if min_val > 0 else 0
+            # 範囲制限
+            value = max(min_val, min(value, max_val))
+        except (TypeError, ValueError, OverflowError):
+            value = min_val if min_val > 0 else 0
         safe_data[field] = value
     
-    # 文字列フィールドのサニタイズ
+    # 文字列フィールドのサニタイズ（SEC-058: より厳格に）
     string_fields = ['property_name', 'location', 'property_type', 'loan_type', 'building_structure']
     for field in string_fields:
         value = property_data.get(field, '')
         if isinstance(value, str):
-            # 危険な文字を除去
+            # SEC-058: 危険な文字をより厳格に除去
+            value = ''.join(char for char in value if char.isprintable() and ord(char) < 127)
             value = value.replace('<', '').replace('>', '').replace('"', '').replace("'", '')
-            value = value.replace('\x00', '').replace('\r', '').replace('\n\n\n', '\n')
+            value = value.replace('&', '').replace('\\', '').replace('/', '')
             safe_data[field] = value[:200]  # 最大200文字
         else:
             safe_data[field] = ''
@@ -271,9 +326,10 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+@safe_calculation_wrapper
 def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """年次キャッシュフロー表を生成"""
-    # 入力データを検証
+    """年次キャッシュフロー表を生成（SEC-058: DoS攻撃対策済み）"""
+    # SEC-058: 入力データを厳密に検証
     safe_data = validate_and_extract_data(property_data)
     
     monthly_rent = safe_data['monthly_rent']
@@ -285,11 +341,18 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     rent_decline = safe_data['rent_decline']
     building_area = safe_data['building_area']
     
+    # SEC-058: 計算爆弾攻撃を防止
+    prevent_computation_bomb(holding_years, "holding_years")
+    
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)
     annual_loan = basic_metrics['annual_loan']
     
-    years_list = list(range(1, holding_years + 1))
+    # SEC-058: 反復回数制限
+    if holding_years > 100:  # 既に validate_and_extract_data でチェック済みだが念のため
+        raise DoSProtectionError("保有年数が長すぎます")
+    
+    years_list = list(range(1, int(holding_years) + 1))
     cum = 0
     cf_data = []
     
@@ -413,21 +476,25 @@ def calculate_tax(income: float, effective_tax_rate: float) -> float:
     return income * (effective_tax_rate / 100)
 
 
+@safe_calculation_wrapper
 def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
-    """完全なシミュレーションを実行"""
+    """完全なシミュレーションを実行（SEC-058: DoS攻撃対策済み）"""
+    # SEC-058: 最初に入力データを厳密検証
+    safe_data = validate_and_extract_data(property_data)
+    
     # 基本指標
-    basic_metrics = calculate_basic_metrics(property_data)
+    basic_metrics = calculate_basic_metrics(safe_data)
     
     # 物件評価
-    valuation = calculate_property_valuation(property_data)
+    valuation = calculate_property_valuation(safe_data)
     
     # 売却分析
-    sale_analysis = calculate_sale_analysis(property_data)
+    sale_analysis = calculate_sale_analysis(safe_data)
     
     # IRR計算
     irr = calculate_irr(
         basic_metrics['annual_cf'],
-        property_data.get('holding_years', 0),
+        safe_data.get('holding_years', 0),
         sale_analysis['sale_profit'],
         basic_metrics['self_funding'],
         basic_metrics['annual_loan']

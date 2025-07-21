@@ -1,16 +1,12 @@
 """
 SEC-075: 入力サニタイゼーションの不備対策
-Pydanticモデルによる厳密な入力検証 (Pydantic v2 対応)
+Pydanticモデルによる厳密な入力検証
 """
 
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator
 
-class BaseResponse(BaseModel):
-    """基本レスポンスモデル"""
-    success: bool
-    message: Optional[str] = None
 
 class PropertyInputModel(BaseModel):
     """物件シミュレーション入力データのバリデーションモデル"""
@@ -53,13 +49,14 @@ class PropertyInputModel(BaseModel):
     fixed_cost: float = Field(0, ge=0, le=1000, description="固定費（月額・万円）")
     property_tax: float = Field(0, ge=0, le=10000, description="固定資産税（年額・万円）")
     
-    # 融資情報
+    # ローン情報
     loan_amount: float = Field(0, ge=0, le=1000000, description="借入金額（万円）")
-    interest_rate: float = Field(2.0, ge=0, le=20, description="金利（%）")
+    interest_rate: float = Field(2, ge=0, le=20, description="金利（%）")
     loan_years: int = Field(35, ge=1, le=50, description="借入年数")
+    loan_type: Literal["元利均等", "元金均等"] = Field("元利均等", description="返済方式")
     
     # その他費用
-    initial_cost: float = Field(0, ge=0, le=10000, description="初期費用（万円）")
+    other_costs: float = Field(0, ge=0, le=10000, description="その他初期費用（万円）")
     renovation_cost: float = Field(0, ge=0, le=10000, description="リフォーム費用（万円）")
     
     # 保有・売却計画
@@ -75,12 +72,28 @@ class PropertyInputModel(BaseModel):
     # URL（バリデーション済み）
     property_url: Optional[str] = Field(None, max_length=2000, description="物件URL")
     
+    class Config:
+        # サンプル値を含める
+        schema_extra = {
+            "example": {
+                "property_name": "東京マンション101号室",
+                "location": "東京都港区",
+                "purchase_price": 5000,
+                "monthly_rent": 20,
+                "land_area": 100,
+                "building_area": 80,
+                "loan_amount": 4000,
+                "interest_rate": 2.0,
+                "loan_years": 35
+            }
+        }
+    
     @field_validator('property_name', 'location', 'memo')
-    @classmethod
     def sanitize_text_fields(cls, v):
         """テキストフィールドのサニタイゼーション"""
         if v is None:
             return v
+        # HTMLタグと危険な文字を除去
         import re
         # HTMLタグを完全に除去
         v = re.sub(r'<[^>]+>', '', v)
@@ -95,15 +108,19 @@ class PropertyInputModel(BaseModel):
         return v.strip()
     
     @field_validator('purchase_price')
-    @classmethod
-    def validate_purchase_price(cls, v):
-        """購入価格の検証"""
+    def validate_required_amounts(cls, v):
         if v <= 0:
             raise ValueError('購入価格は0より大きい値を入力してください')
         return v
     
-    @field_validator('property_url')
-    @classmethod
+    @validator('loan_amount')
+    def validate_loan_amount(cls, v, values):
+        """借入金額が購入価格を超えないことを確認"""
+        if 'purchase_price' in values and v > values['purchase_price']:
+            raise ValueError('借入金額は購入価格を超えることはできません')
+        return v
+    
+    @validator('property_url')
     def validate_url(cls, v):
         """URLの検証"""
         if v is None or v == '':
@@ -117,8 +134,7 @@ class PropertyInputModel(BaseModel):
             raise ValueError('URLはhttp://またはhttps://で始まる必要があります')
         return v
     
-    @field_validator('building_year')
-    @classmethod
+    @validator('building_year')
     def validate_building_year(cls, v):
         """建築年の妥当性チェック"""
         if v is None:
@@ -127,22 +143,13 @@ class PropertyInputModel(BaseModel):
         if v > current_year:
             raise ValueError(f'建築年は{current_year}年以前である必要があります')
         return v
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "property_name": "東京マンション101号室",
-                "location": "東京都港区",
-                "purchase_price": 5000,
-                "monthly_rent": 20,
-                "land_area": 100,
-                "building_area": 80,
-                "loan_amount": 4000,
-                "interest_rate": 2.0,
-                "loan_years": 35
-            }
-        }
-    }
+    
+    @validator('vacancy_rate', 'rent_decline', 'interest_rate', 'exit_cap_rate', 'effective_tax_rate')
+    def validate_percentage(cls, v, field):
+        """パーセンテージ値の検証"""
+        if v < 0 or v > 100:
+            raise ValueError(f'{field.name}は0〜100の範囲で入力してください')
+        return v
 
 
 class SimulationRequestModel(BaseModel):
@@ -152,23 +159,15 @@ class SimulationRequestModel(BaseModel):
     # オプション
     include_cash_flow_table: bool = Field(True, description="キャッシュフロー表を含める")
     include_market_analysis: bool = Field(False, description="市場分析を含める")
-
-    model_config = {
-        "json_schema_extra": {
+    
+    class Config:
+        schema_extra = {
             "example": {
-                "property_data": {
-                    "property_name": "東京マンション101号室",
-                    "location": "東京都港区", 
-                    "purchase_price": 5000,
-                    "monthly_rent": 20,
-                    "land_area": 100,
-                    "building_area": 80
-                },
+                "property_data": PropertyInputModel.Config.schema_extra["example"],
                 "include_cash_flow_table": True,
                 "include_market_analysis": False
             }
         }
-    }
 
 
 class SimulationResponseModel(BaseModel):
@@ -179,9 +178,9 @@ class SimulationResponseModel(BaseModel):
     market_analysis: Optional[dict] = None
     error: Optional[str] = None
     request_id: Optional[str] = None
-
-    model_config = {
-        "json_schema_extra": {
+    
+    class Config:
+        schema_extra = {
             "example": {
                 "success": True,
                 "results": {
@@ -194,4 +193,3 @@ class SimulationResponseModel(BaseModel):
                 "request_id": "123e4567-e89b-12d3-a456-426614174000"
             }
         }
-    }

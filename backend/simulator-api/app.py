@@ -19,7 +19,9 @@ from error_handler import (
     handle_general_exception,
     create_auth_error_response
 )
+from supabase_auth import supabase_auth, get_authenticated_user
 from shared.calculations import run_full_simulation
+from shared.safe_serializer import prevent_dangerous_imports, safe_json_parse, UnsafeOperationError
 from models import PropertyInputModel, SimulationRequestModel, SimulationResponseModel
 from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
 from http_method_guard import http_method_middleware
@@ -148,6 +150,10 @@ security = HTTPBearer()
 # SEC-065: 環境変数の直接露出対策 - 設定プロキシルーターを追加
 app.include_router(config_router)
 
+# SEC-073: ユーザー管理APIエンドポイントを追加
+from user_management import user_router
+app.include_router(user_router)
+
 # ヘルスチェックエンドポイント（認証不要）
 # SEC-082: HTTPメソッド制限 - GETのみ許可
 @app.get("/")
@@ -172,88 +178,130 @@ def read_root():
 @app.post("/api/auth/token")
 def login_for_access_token(credentials: dict):
     """
-    アクセストークンを取得（SEC-022対策）
-    Supabaseからの認証情報を受け取ってJWTトークンを発行
+    アクセストークンを取得（SEC-073統合認証システム）
+    Supabaseトークンを検証してJWTトークンを発行
     """
-    # 開発環境では簡易認証を許可
-    if os.getenv("ENV", "development") == "development":
-        # 開発環境用のモックトークン
-        if credentials.get("email", "").endswith("@example.com"):
-            # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
-            is_admin = credentials.get("email") == "admin@example.com"
-            role = UserRole.ADMIN if is_admin else UserRole.STANDARD
+    logger.info("Token request received")
+    
+    try:
+        # 開発環境では簡易認証を許可
+        if os.getenv("ENV", "development") == "development":
+            # 開発環境用のモックトークン
+            if credentials.get("email", "").endswith("@example.com"):
+                # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
+                is_admin = credentials.get("email") == "admin@example.com"
+                role = UserRole.ADMIN if is_admin else UserRole.STANDARD
 
-            access_token = create_access_token(
-                data={
-                    "sub": "dev-user-123",
-                    "email": credentials.get("email"),
-                    "role": role.value,
-                    "type": "development"
+                access_token = create_access_token(
+                    data={
+                        "sub": "dev-user-123",
+                        "email": credentials.get("email"),
+                        "role": role.value,
+                        "type": "development"
+                    }
+                )
+                return {
+                    "access_token": access_token,
+                    "token_type": "bearer",
+                    "expires_in": 3600,
+                    "role": role.value
                 }
-            )
-            return {
-                "access_token": access_token,
-                "token_type": "bearer",
-                "expires_in": 3600,
-                "role": role.value
+            else:
+                raise create_auth_error_response("開発環境では@example.comメールアドレスを使用してください")
+
+        # 本番環境ではSupabase認証システムを使用
+        supabase_token = credentials.get("supabase_token")
+        if not supabase_token:
+            raise create_auth_error_response("Supabaseトークンが必要です")
+
+        # Supabaseトークンを検証
+        user_info = supabase_auth.verify_supabase_token(supabase_token)
+        
+        # JWTトークンを生成
+        access_token = create_access_token(
+            data={
+                "sub": user_info["user_id"],
+                "email": user_info["email"],
+                "role": user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
+                "type": "supabase"
             }
+        )
 
-    # 本番環境では実際の認証を必須とする
-    # ここではSupabaseのセッショントークンを検証する想定
-    supabase_token = credentials.get("supabase_token")
-    if not supabase_token:
-        raise create_auth_error_response("認証情報が不正です")
-
-    # TODO: Supabaseトークンの検証を実装  # pylint: disable=fixme
-    # 現在は仮実装として、トークンが存在すればOKとする
-    user_id = credentials.get("user_id", "unknown")
-    email = credentials.get("email", "unknown@example.com")
-
-    # 本番環境でのロール決定（実際にはデータベースから取得すべき）
-    # 現在は仮実装として、メールアドレスで判定
-    role = UserRole.STANDARD  # デフォルトは標準ユーザー
-    if email.endswith("@admin.com"):
-        role = UserRole.ADMIN
-    elif credentials.get("is_premium", False):
-        role = UserRole.PREMIUM
-
-    access_token = create_access_token(
-        data={
-            "sub": user_id,
-            "email": email,
-            "role": role.value,
-            "type": "production"
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": 3600,
+            "role": user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
+            "user_id": user_info["user_id"],
+            "full_name": user_info.get("full_name")
         }
-    )
-
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "expires_in": 3600,
-        "role": role.value
-    }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Token generation failed: {e}")
+        raise create_auth_error_response("認証処理中にエラーが発生しました")
 
 # 認証状態確認エンドポイント
 # SEC-082: HTTPメソッド制限 - GETのみ許可
 @app.get("/api/auth/me")
 def get_me(current_user: dict = Depends(get_current_user)):
-    """現在の認証ユーザー情報を取得"""
-    # ロールと権限情報を追加
-    role = rbac_manager.get_user_role(current_user)
-    permissions = rbac_manager.get_user_permissions(role)
-
-    return {
-        "user": {
-            **current_user,
-            "role": role.value,
-            "permissions": [p.value for p in permissions]
-        },
-        "authenticated": True
-    }
+    """
+    現在の認証ユーザー情報を取得
+    SEC-073: 統合認証システムからユーザープロファイル情報を取得
+    """
+    try:
+        # ロールと権限情報を追加
+        role = rbac_manager.get_user_role(current_user)
+        permissions = rbac_manager.get_user_permissions(role)
+        
+        # Supabase認証システムからプロファイル情報を取得
+        user_id = current_user.get("user_id") or current_user.get("sub")
+        profile = None
+        
+        if user_id and user_id != "dev-user-123":
+            profile = supabase_auth.get_user_profile(user_id)
+        
+        response_data = {
+            "user": {
+                **current_user,
+                "role": role.value,
+                "permissions": [p.value for p in permissions]
+            },
+            "authenticated": True
+        }
+        
+        # プロファイル情報があれば追加
+        if profile:
+            response_data["user"].update({
+                "full_name": profile.full_name,
+                "login_count": profile.login_count,
+                "last_login": profile.last_login.isoformat() if profile.last_login else None,
+                "created_at": profile.created_at.isoformat() if profile.created_at else None,
+                "is_active": profile.is_active
+            })
+        
+        return response_data
+        
+    except Exception as e:
+        logger.error(f"Failed to get user info: {e}")
+        # 基本情報のみ返す
+        role = rbac_manager.get_user_role(current_user)
+        permissions = rbac_manager.get_user_permissions(role)
+        
+        return {
+            "user": {
+                **current_user,
+                "role": role.value,
+                "permissions": [p.value for p in permissions]
+            },
+            "authenticated": True
+        }
 
 # シミュレーションエンドポイント（認証＋権限必須）
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/simulate", response_model=SimulationResponseModel)
+@prevent_dangerous_imports
 def run_simulation(
     request: SimulationRequestModel,
     current_user: dict = Depends(require_permission(Permission.SIMULATE_BASIC))
@@ -261,6 +309,7 @@ def run_simulation(
     """
     収益シミュレーションを実行 - 新機能対応版（認証必須）
     
+    SEC-059: Python Pickle/eval攻撃経路対策を実装
     SEC-075: Pydanticモデルによる入力検証を実装
     SEC-082: HTTPメソッド制限を実装 - POSTのみ許可
     """
@@ -268,8 +317,14 @@ def run_simulation(
     logger.info("Simulation requested by user: %s", current_user.get('user_id'))
 
     try:
+        # SEC-059: 危険なインポートをチェック済み（デコレータ）
+        
         # Pydanticモデルで検証済みのデータを使用
         property_data = request.property_data.dict()
+        
+        # SEC-059: 入力データの安全性を追加検証
+        # Pydanticで基本検証済みだが、念のため危険なパターンをチェック
+        _validate_simulation_input_safety(property_data)
         
         # 共通計算ロジックを使用してシミュレーション実行
         result = run_full_simulation(property_data)
@@ -304,6 +359,7 @@ def run_simulation(
 # 市場分析エンドポイント（認証＋権限必須）
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/market-analysis", response_model=MarketAnalysisResponseModel)
+@prevent_dangerous_imports
 def market_analysis(
     request: MarketAnalysisRequestModel,
     current_user: dict = Depends(require_permission(Permission.MARKET_ANALYSIS_BASIC))
@@ -378,6 +434,50 @@ def market_analysis(
             evaluation=evaluation
         )
     )
+
+
+def _validate_simulation_input_safety(property_data: dict) -> None:
+    """
+    シミュレーション入力データの安全性を検証
+    SEC-059: Python Pickle/eval攻撃経路対策
+    
+    Args:
+        property_data: 検証するプロパティデータ
+        
+    Raises:
+        UnsafeOperationError: 危険なデータが検出された場合
+    """
+    # 危険な文字列パターンをチェック
+    dangerous_patterns = [
+        '__import__', '__builtins__', '__globals__', '__locals__',
+        'eval(', 'exec(', 'compile(', 'subprocess.', 'os.system',
+        'pickle.', 'dill.', 'marshal.', 'shelve.', 'dbm.'
+    ]
+    
+    def check_value_safety(value, field_name=""):
+        """再帰的に値の安全性をチェック"""
+        if isinstance(value, str):
+            value_lower = value.lower()
+            for pattern in dangerous_patterns:
+                if pattern in value_lower:
+                    logger.warning(f"Dangerous pattern detected in {field_name}: {pattern}")
+                    raise UnsafeOperationError(
+                        f"危険なパターンが入力データに含まれています: {pattern}"
+                    )
+        elif isinstance(value, dict):
+            for k, v in value.items():
+                check_value_safety(k, f"{field_name}.{k}")
+                check_value_safety(v, f"{field_name}.{k}")
+        elif isinstance(value, list):
+            for i, item in enumerate(value):
+                check_value_safety(item, f"{field_name}[{i}]")
+    
+    try:
+        check_value_safety(property_data, "property_data")
+    except Exception as e:
+        logger.error(f"Input safety validation failed: {e}")
+        raise UnsafeOperationError("入力データの安全性検証に失敗しました")
+
 
 # APIドキュメントの自動生成
 if __name__ == "__main__":
