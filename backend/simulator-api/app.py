@@ -300,7 +300,7 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
 # SEC-051: セッション破棄によるセッション固定攻撃対策
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/auth/logout")
-def logout(request: Request, current_user: dict = Depends(get_current_user)):
+async def logout(request: Request, current_user: dict = Depends(get_current_user)):
     """
     ログアウト処理 - セッションを破棄
     SEC-051: セッション固定攻撃対策
@@ -311,6 +311,9 @@ def logout(request: Request, current_user: dict = Depends(get_current_user)):
             from session_security import destroy_session
             destroy_session(session_id)
             logger.info(f"User {current_user.get('user_id')} logged out, session destroyed")
+        
+        # SEC-066: CSRFトークンを検証
+        await validate_csrf_token(request, current_user.get('user_id'), current_user.get('session_id'))
         
         return {"success": True, "message": "ログアウトしました"}
     except Exception as e:
@@ -377,8 +380,9 @@ def get_me(request: Request, current_user: dict = Depends(get_current_user)):
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/simulate", response_model=SimulationResponseModel)
 @prevent_dangerous_imports
-def run_simulation(
+async def run_simulation(
     request: SimulationRequestModel,
+    http_request: Request,
     current_user: dict = Depends(require_permission(Permission.SIMULATE_BASIC))
 ):
     """
@@ -388,6 +392,9 @@ def run_simulation(
     SEC-075: Pydanticモデルによる入力検証を実装
     SEC-082: HTTPメソッド制限を実装 - POSTのみ許可
     """
+    # SEC-066: CSRFトークンを検証
+    await validate_csrf_token(http_request, current_user.get('user_id'), current_user.get('session_id'))
+    
     # ユーザーIDをログに記録（監査用）
     logger.info("Simulation requested by user: %s", current_user.get('user_id'))
 
@@ -435,8 +442,9 @@ def run_simulation(
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/market-analysis", response_model=MarketAnalysisResponseModel)
 @prevent_dangerous_imports
-def market_analysis(
+async def market_analysis(
     request: MarketAnalysisRequestModel,
+    http_request: Request,
     current_user: dict = Depends(require_permission(Permission.MARKET_ANALYSIS_BASIC))
 ):
     """
@@ -451,6 +459,9 @@ def market_analysis(
     year_built = request.year_built
     purchase_price = request.purchase_price
 
+    # SEC-066: CSRFトークンを検証
+    await validate_csrf_token(http_request, current_user.get('user_id'), current_user.get('session_id'))
+    
     # ユーザーIDをログに記録（監査用）
     logger.info("Market analysis requested by user: %s", current_user.get('user_id'))
 

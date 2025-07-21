@@ -73,6 +73,7 @@ class TokenResponse(BaseModel):
     role: str = Field(..., description="ユーザーロール")
     user_id: Optional[str] = Field(None, description="ユーザーID")
     full_name: Optional[str] = Field(None, description="フルネーム")
+    csrf_token: str = Field(..., description="CSRFトークン")
 
 
 class UserInfoResponse(BaseModel):
