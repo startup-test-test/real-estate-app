@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { resizeImage, validateImageFileAsync } from '../utils/imageUtils';
 import { performSecurityValidation, generateSecureFileName, extractSecureFileNameFromUrl } from '../utils/fileSecurityValidator';
+import { uploadRateLimiter } from '../utils/rateLimiter';
 
 export interface UploadState {
   isUploading: boolean;
@@ -37,6 +38,20 @@ export const useImageUpload = () => {
 
   const uploadImage = async (file: File): Promise<string | null> => {
     try {
+      // SEC-025: レート制限チェック
+      const userId = 'anonymous'; // TODO: ユーザーIDを取得
+      const isAllowed = await uploadRateLimiter.checkLimit(userId);
+      
+      if (!isAllowed) {
+        const resetTime = uploadRateLimiter.getResetTime(userId);
+        const minutes = Math.ceil(resetTime / 60000);
+        setUploadState(prev => ({ 
+          ...prev, 
+          error: `アップロード制限に達しました。${minutes}分後に再度お試しください。` 
+        }));
+        return null;
+      }
+      
       // ファイル検証（SEC-010対応: マジックナンバーチェックを含む）
       const validation = await validateImageFileAsync(file);
       if (!validation.isValid) {

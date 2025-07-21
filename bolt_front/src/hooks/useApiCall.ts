@@ -2,6 +2,7 @@
  * API呼び出し管理フック
  * SEC-022: API認証システムを統合
  * SEC-069: エラーメッセージの詳細露出対策
+ * SEC-025: レート制限の実装
  */
 import { useState, useEffect } from 'react';
 import { transformFormDataToApiData, transformApiResponseToSupabaseData } from '../utils/dataTransform';
@@ -11,6 +12,7 @@ import { supabase } from '../lib/supabase';
 import { apiAuth } from '../utils/apiAuth';
 import { rbacClient } from '../utils/rbacClient';
 import { handleError, handleApiError } from '../utils/secureErrorHandler';
+import { simulationRateLimiter, apiRateLimiter } from '../utils/rateLimiter';
 
 export const useApiCall = () => {
   const [isSimulating, setIsSimulating] = useState(false);
@@ -57,6 +59,16 @@ export const useApiCall = () => {
     setIsSimulating(true);
     
     try {
+      // SEC-025: レート制限チェック
+      const userId = user?.id || 'anonymous';
+      const isAllowed = await simulationRateLimiter.checkLimit(userId);
+      
+      if (!isAllowed) {
+        const resetTime = simulationRateLimiter.getResetTime(userId);
+        const minutes = Math.ceil(resetTime / 60000);
+        throw new Error(`リクエスト制限に達しました。${minutes}分後に再度お試しください。`);
+      }
+      
       // FAST API への送信データを構築
       const apiData = transformFormDataToApiData(inputs);
       
@@ -144,6 +156,16 @@ export const useApiCall = () => {
     setIsLoading(true);
     
     try {
+      // SEC-025: レート制限チェック（API読み込み用）
+      const userId = user?.id || 'anonymous';
+      const isAllowed = await apiRateLimiter.checkLimit(userId);
+      
+      if (!isAllowed) {
+        const resetTime = apiRateLimiter.getResetTime(userId);
+        const minutes = Math.ceil(resetTime / 60000);
+        throw new Error(`リクエスト制限に達しました。${minutes}分後に再度お試しください。`);
+      }
+      
       const { data, error } = await supabase
         .from('simulations')
         .select('*')
