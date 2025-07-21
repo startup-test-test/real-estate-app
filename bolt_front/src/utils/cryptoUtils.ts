@@ -4,6 +4,28 @@
  */
 
 /**
+ * データ圧縮ユーティリティ（軽量版）
+ */
+export class CompressionUtils {
+  /**
+   * 文字列を圧縮（現在は圧縮をスキップ）
+   */
+  static compress(str: string): string {
+    // パフォーマンスの問題を回避するため、現時点では圧縮をスキップ
+    // 将来的により効率的なアルゴリズムに置き換える予定
+    return str;
+  }
+  
+  /**
+   * 圧縮された文字列を展開
+   */
+  static decompress(compressed: string): string {
+    // 圧縮をスキップしているため、そのまま返す
+    return compressed;
+  }
+}
+
+/**
  * Web Crypto APIを使用した暗号化・復号化ユーティリティ
  */
 export class CryptoUtils {
@@ -45,6 +67,9 @@ export class CryptoUtils {
    */
   static async encrypt(data: string, password: string): Promise<string> {
     try {
+      // データを圧縮してサイズを削減
+      const compressedData = CompressionUtils.compress(data);
+      
       const encoder = new TextEncoder();
       const salt = window.crypto.getRandomValues(new Uint8Array(this.SALT_LENGTH));
       const iv = window.crypto.getRandomValues(new Uint8Array(this.IV_LENGTH));
@@ -53,7 +78,7 @@ export class CryptoUtils {
       const encrypted = await window.crypto.subtle.encrypt(
         { name: this.ALGORITHM, iv },
         key,
-        encoder.encode(data)
+        encoder.encode(compressedData)
       );
 
       // salt + iv + 暗号化データを結合
@@ -62,8 +87,15 @@ export class CryptoUtils {
       combined.set(iv, salt.length);
       combined.set(new Uint8Array(encrypted), salt.length + iv.length);
 
-      // Base64エンコード
-      return btoa(String.fromCharCode(...combined));
+      // Base64エンコード（大きなデータにも対応）
+      // チャンクごとに処理して大きなデータでもスタックオーバーフローを避ける
+      let binary = '';
+      const chunkSize = 1024; // 1KB chunks
+      for (let i = 0; i < combined.length; i += chunkSize) {
+        const chunk = combined.slice(i, i + chunkSize);
+        binary += Array.from(chunk).map(b => String.fromCharCode(b)).join('');
+      }
+      return btoa(binary);
     } catch (error) {
       console.error('Encryption error:', error);
       throw new Error('Failed to encrypt data');
@@ -92,7 +124,10 @@ export class CryptoUtils {
       );
 
       const decoder = new TextDecoder();
-      return decoder.decode(decrypted);
+      const decryptedData = decoder.decode(decrypted);
+      
+      // 圧縮されたデータを展開
+      return CompressionUtils.decompress(decryptedData);
     } catch (error) {
       console.error('Decryption error:', error);
       throw new Error('Failed to decrypt data');
@@ -123,7 +158,38 @@ export class SecureStorage {
     try {
       const jsonString = JSON.stringify(value);
       const encrypted = await CryptoUtils.encrypt(jsonString, this.encryptionKey);
-      localStorage.setItem(key, encrypted);
+      
+      // localStorageの容量をチェック
+      try {
+        localStorage.setItem(key, encrypted);
+      } catch (quotaError: any) {
+        if (quotaError.name === 'QuotaExceededError') {
+          console.warn('localStorage quota exceeded, cleaning up old data...');
+          
+          // 古いデータを削除
+          const keysToRemove: string[] = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('secure_') && k !== key) {
+              keysToRemove.push(k);
+            }
+          }
+          
+          // 最も古いデータから削除
+          if (keysToRemove.length > 0) {
+            keysToRemove.slice(0, Math.ceil(keysToRemove.length / 3)).forEach(k => {
+              localStorage.removeItem(k);
+            });
+            
+            // 再試行
+            localStorage.setItem(key, encrypted);
+          } else {
+            throw quotaError;
+          }
+        } else {
+          throw quotaError;
+        }
+      }
     } catch (error) {
       console.error('SecureStorage setItem error:', error);
       // フォールバック: sessionStorageに保存

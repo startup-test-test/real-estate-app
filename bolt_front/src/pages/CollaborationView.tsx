@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { safeWindowLocationAssign } from '../utils/validation';
+import { SecureDataStorage } from '../utils/secureDataStorage';
 import { 
   ArrowLeft, 
   AlertCircle,
@@ -92,8 +93,11 @@ export default function CollaborationView() {
         const urlParams = new URLSearchParams(window.location.search);
         if (!urlParams.get('auth')) {
           console.log('Setting auth required flag and saving token');
-          localStorage.setItem('pendingInvitationToken', token!);
-          localStorage.setItem('pendingInvitationTitle', shareData.title || '物件共有');
+          // SEC-030: 招待トークンを暗号化して保存
+          SecureDataStorage.setItem('pendingInvitationToken', token!)
+            .catch(() => localStorage.setItem('pendingInvitationToken', token!));
+          SecureDataStorage.setItem('pendingInvitationTitle', shareData.title || '物件共有')
+            .catch(() => localStorage.setItem('pendingInvitationTitle', shareData.title || '物件共有'));
           
           // リダイレクト用URL: 招待情報を含めてログインページに送る
           const inviterName = shareData.owner_id; // 簡易的に owner_id を inviter として使用

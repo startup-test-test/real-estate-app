@@ -3,6 +3,7 @@ import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { sanitizeUrl, openUrlSafely } from '../utils/validation';
 import { handleError } from '../utils/secureErrorHandler';
+import { SecureDataStorage } from '../utils/secureDataStorage';
 import { 
   Calculator, 
   LogOut, 
@@ -60,22 +61,20 @@ const Dashboard: React.FC = () => {
   const getCacheKey = () => `simulations_cache_${user?.id || 'anonymous'}`;
   const getCacheTimestampKey = () => `simulations_cache_timestamp_${user?.id || 'anonymous'}`;
   
-  // キャッシュからデータを読み込む
-  const loadFromCache = () => {
+  // キャッシュからデータを読み込む（SEC-030: 暗号化対応）
+  const loadFromCache = async () => {
     try {
-      const cacheKey = getCacheKey();
-      const cachedData = localStorage.getItem(cacheKey);
-      const cacheTimestamp = localStorage.getItem(getCacheTimestampKey());
+      const cachedResult = await SecureDataStorage.getSimulations();
       
-      if (cachedData && cacheTimestamp) {
-        const data = JSON.parse(cachedData);
-        const timestamp = new Date(cacheTimestamp);
+      if (cachedResult) {
+        const { data, timestamp } = cachedResult;
+        const cacheTime = new Date(timestamp);
         const now = new Date();
-        const hoursSinceCache = (now.getTime() - timestamp.getTime()) / (1000 * 60 * 60);
+        const hoursSinceCache = (now.getTime() - cacheTime.getTime()) / (1000 * 60 * 60);
         
         // キャッシュが24時間以内なら有効とする
         if (hoursSinceCache < 24) {
-          console.log('キャッシュからデータを読み込みました');
+          console.log('暗号化キャッシュからデータを読み込みました');
           return data;
         }
       }
@@ -85,15 +84,13 @@ const Dashboard: React.FC = () => {
     return null;
   };
   
-  // キャッシュにデータを保存
-  const saveToCache = (data: any[]) => {
+  // キャッシュにデータを保存（SEC-030: 暗号化対応）
+  const saveToCache = async (data: any[]) => {
     try {
-      const cacheKey = getCacheKey();
-      const timestampKey = getCacheTimestampKey();
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-      localStorage.setItem(timestampKey, new Date().toISOString());
+      await SecureDataStorage.saveSimulations(data);
+      console.log('✅ シミュレーションデータを暗号化して保存しました');
     } catch (error) {
-      console.error('キャッシュ保存エラー:', error);
+      console.error('暗号化キャッシュ保存エラー:', error);
     }
   };
   
@@ -106,7 +103,7 @@ const Dashboard: React.FC = () => {
     
     // 初回読み込み時はキャッシュをチェック
     if (isInitialLoad && !forceRefresh) {
-      const cachedData = loadFromCache();
+      const cachedData = await loadFromCache();
       if (cachedData) {
         setSimulations(cachedData);
         setLoading(false);

@@ -24,9 +24,18 @@ export const useCollaborationAuth = ({ token, shareTitle }: CollaborationAuthOpt
     return loginPageUrl;
   };
 
-  const savePendingInvitation = (token: string, title: string) => {
-    localStorage.setItem('pendingInvitationToken', token);
-    localStorage.setItem('pendingInvitationTitle', title);
+  const savePendingInvitation = async (token: string, title: string) => {
+    // SEC-030: 招待トークンを暗号化して保存
+    try {
+      const { SecureDataStorage } = await import('../utils/secureDataStorage');
+      await SecureDataStorage.setItem('pendingInvitationToken', token);
+      await SecureDataStorage.setItem('pendingInvitationTitle', title);
+    } catch (error) {
+      console.error('招待情報の保存エラー:', error);
+      // フォールバック
+      localStorage.setItem('pendingInvitationToken', token);
+      localStorage.setItem('pendingInvitationTitle', title);
+    }
   };
 
   const checkAuthRequired = (): boolean => {
