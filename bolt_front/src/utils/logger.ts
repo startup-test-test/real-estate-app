@@ -172,13 +172,14 @@ export class SecureLogger {
   flushBuffer(): void {
     if (!this.config.bufferLogs || this.logBuffer.length === 0) return;
     
-    console.group('Buffered Logs');
+    const consoleObj = (this as any).originalConsole || originalConsole;
+    consoleObj.group('Buffered Logs');
     this.logBuffer.forEach(({ level, category, args }) => {
       const levelName = LogLevel[level];
       const prefix = category ? `[${category}] ` : '';
-      console.log(`${levelName}: ${prefix}`, ...args);
+      consoleObj.log(`${levelName}: ${prefix}`, ...args);
     });
-    console.groupEnd();
+    consoleObj.groupEnd();
     
     this.logBuffer = [];
   }
@@ -203,7 +204,9 @@ export class SecureLogger {
       this.addToBuffer(level, category, processedArgs);
     } else {
       const prefix = category ? `[${category}] ` : '';
-      console[method](prefix, ...processedArgs);
+      // originalConsoleがある場合はそれを使用（無限ループ防止）
+      const consoleMethod = (this as any).originalConsole?.[method] || originalConsole[method];
+      consoleMethod(prefix, ...processedArgs);
     }
   }
   
@@ -290,8 +293,9 @@ export class SecureLogger {
         this.addToBuffer(LogLevel.LOG, category, [processedData]);
       } else {
         const prefix = category ? `[${category}] ` : '';
-        console.log(prefix);
-        console.table(processedData);
+        const consoleObj = (this as any).originalConsole || originalConsole;
+        consoleObj.log(prefix);
+        consoleObj.table(processedData);
       }
     }
   }
@@ -321,6 +325,16 @@ export const dataLogger = logger.category('data');
 export const uiLogger = logger.category('ui');
 export const debugLogger = logger.category('debug');
 
+// 元のconsoleメソッドを保存（ログ出力に使用）
+const originalConsole = {
+  log: console.log,
+  error: console.error,
+  warn: console.warn,
+  info: console.info,
+  debug: console.debug,
+  table: console.table
+};
+
 // 既存のconsole.*を置き換えるヘルパー関数
 export function replaceConsoleWithSecureLogger(config?: Partial<LoggerConfig>): void {
   // カスタム設定がある場合は適用
@@ -328,28 +342,27 @@ export function replaceConsoleWithSecureLogger(config?: Partial<LoggerConfig>): 
     logger.updateConfig(config);
   }
   
-  // 元のconsoleメソッドを保存（緊急時用）
-  const originalConsole = {
-    log: console.log,
-    error: console.error,
-    warn: console.warn,
-    info: console.info,
-    debug: console.debug,
-    table: console.table
-  };
-  
   // グローバルに保存（デバッグ用）
   if (isDevelopment()) {
     (window as any).__originalConsole = originalConsole;
   }
   
+  // SecureLoggerインスタンスを作成（元のconsoleメソッドを使用）
+  const secureLoggerWithOriginalConsole = new SecureLogger({
+    ...logger.getConfig(),
+    ...config
+  });
+  
+  // SecureLoggerが元のconsoleメソッドを使用するように設定
+  (secureLoggerWithOriginalConsole as any).originalConsole = originalConsole;
+  
   // console メソッドを SecureLogger に置き換え
-  console.log = (...args: any[]) => logger.log(...args);
-  console.error = (...args: any[]) => logger.error(...args);
-  console.warn = (...args: any[]) => logger.warn(...args);
-  console.info = (...args: any[]) => logger.info(...args);
-  console.debug = (...args: any[]) => logger.debug(...args);
-  console.table = (data: any) => logger.table(data);
+  console.log = (...args: any[]) => secureLoggerWithOriginalConsole.log(...args);
+  console.error = (...args: any[]) => secureLoggerWithOriginalConsole.error(...args);
+  console.warn = (...args: any[]) => secureLoggerWithOriginalConsole.warn(...args);
+  console.info = (...args: any[]) => secureLoggerWithOriginalConsole.info(...args);
+  console.debug = (...args: any[]) => secureLoggerWithOriginalConsole.debug(...args);
+  console.table = (data: any) => secureLoggerWithOriginalConsole.table(data);
   
   // console.group系のメソッドも制御
   if (isProduction()) {
@@ -367,7 +380,7 @@ export function replaceConsoleWithSecureLogger(config?: Partial<LoggerConfig>): 
   
   // 設定確認用のログ（開発環境のみ）
   if (isDevelopment()) {
-    logger.info('system', 'SecureLogger initialized with config:', logger.getConfig());
+    originalConsole.info('[system] SecureLogger initialized');
   }
 }
 
