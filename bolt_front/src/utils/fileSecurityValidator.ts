@@ -110,6 +110,12 @@ export async function validateFileContent(file: File): Promise<{
   isValid: boolean;
   error?: string;
 }> {
+  // 画像ファイルの場合は、テキストベースの検証をスキップ
+  // （バイナリデータを誤検知する可能性があるため）
+  if (ALLOWED_MIME_TYPES.includes(file.type)) {
+    return { isValid: true };
+  }
+
   return new Promise((resolve) => {
     const reader = new FileReader();
     
