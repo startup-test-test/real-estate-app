@@ -39,8 +39,8 @@ export function useShareCRUD() {
         actualPropertyId = crypto.randomUUID();
       }
       
-      // デモモード検出
-      const isDemoMode = actualPropertyId.includes('demo') || actualPropertyId.includes('test') || !user?.id;
+      // 環境変数による開発モード検出
+      const isDemoMode = import.meta.env.MODE === 'development' && (!user?.id || import.meta.env.VITE_ENABLE_MOCK_MODE === 'true');
       
       if (isDemoMode) {
         console.log('🧪 デモモード: モック共有を作成');
@@ -145,8 +145,8 @@ export function useShareCRUD() {
     return withLoadingState(async () => {
       console.log('🔍 fetchShareByPropertyId called with:', propertyId);
 
-      // デモモード検出
-      const isDemoMode = propertyId.includes('demo') || propertyId.includes('test');
+      // 環境変数による開発モード検出
+      const isDemoMode = import.meta.env.MODE === 'development' && import.meta.env.VITE_ENABLE_MOCK_MODE === 'true';
       
       if (isDemoMode) {
         console.log('🧪 デモモード: 既存共有なしと判定');

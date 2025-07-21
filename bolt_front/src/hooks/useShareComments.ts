@@ -71,8 +71,8 @@ export function useShareComments() {
         throw new Error('コメント内容を入力してください');
       }
 
-      // デモモード検出
-      const isDemoMode = shareId.includes('demo') || shareId.includes('test') || shareId.length < 10;
+      // 環境変数による開発モード検出
+      const isDemoMode = import.meta.env.MODE === 'development' && import.meta.env.VITE_ENABLE_MOCK_MODE === 'true';
       
       if (isDemoMode) {
         console.log('🧪 デモモード検出 - テストコメントを作成');
@@ -128,12 +128,8 @@ export function useShareComments() {
         return [];
       }
 
-      // デモモード検出（shareIdが32文字のハッシュでない場合もデモとする）
-      const isDemoMode = shareId.includes('demo') || 
-                        shareId.includes('test') || 
-                        shareId.length < 30 ||  // 32文字より短い場合はデモ
-                        shareId.length > 50 ||
-                        !/^[a-f0-9]{32}$/.test(shareId); // 正確に32文字の16進数でない場合はデモ
+      // 環境変数による開発モード検出
+      const isDemoMode = import.meta.env.MODE === 'development' && import.meta.env.VITE_ENABLE_MOCK_MODE === 'true';
       
       if (isDemoMode) {
         console.log('🧪 デモモード - 空配列を返す');
@@ -158,7 +154,7 @@ export function useShareComments() {
         }
 
         // JOINなしのデータを整形
-        const enrichedSimpleData = simpleData?.map(comment => ({
+        const enrichedSimpleData = simpleData?.map((comment: any) => ({
           ...comment,
           user: {
             id: comment.user_id,
