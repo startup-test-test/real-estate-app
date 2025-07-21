@@ -16,9 +16,9 @@ const defaultConfig: LoggerConfig = {
   maskSensitiveData: true
 };
 
-// 環境判定
-const isProduction = import.meta.env.PROD;
-const isDevelopment = import.meta.env.DEV;
+// 環境判定（動的に評価するため関数化）
+const isProduction = () => import.meta.env.PROD;
+const isDevelopment = () => import.meta.env.DEV;
 
 // 機密情報のパターン
 const sensitivePatterns = [
@@ -58,7 +58,7 @@ function maskSensitiveData(data: any): any {
     }
     
     const maskedObj: any = {};
-    const sensitiveKeys = ['password', 'token', 'secret', 'apiKey', 'api_key', 'auth', 'authorization'];
+    const sensitiveKeys = ['password', 'token', 'secret', 'apikey', 'api_key', 'auth', 'authorization'];
     
     for (const [key, value] of Object.entries(data)) {
       const lowerKey = key.toLowerCase();
@@ -88,10 +88,10 @@ export class SecureLogger {
    * ログ出力が有効かチェック
    */
   private isEnabled(): boolean {
-    if (isProduction) {
+    if (isProduction()) {
       return this.config.enabledInProduction;
     }
-    if (isDevelopment) {
+    if (isDevelopment()) {
       return this.config.enabledInDevelopment;
     }
     return false;
@@ -167,7 +167,7 @@ export const logger = new SecureLogger();
 
 // 既存のconsole.*を置き換えるヘルパー関数
 export function replaceConsoleWithSecureLogger(): void {
-  if (isProduction) {
+  if (isProduction()) {
     // 本番環境ではconsoleメソッドを無効化
     console.log = () => {};
     console.error = () => {};
@@ -181,7 +181,7 @@ export function replaceConsoleWithSecureLogger(): void {
 // グローバルエラーハンドラーで機密情報をマスク
 export function setupSecureErrorHandler(): void {
   window.addEventListener('error', (event) => {
-    if (isProduction) {
+    if (isProduction()) {
       // 本番環境ではエラーの詳細を隠蔽
       // 注: preventDefault()を呼ぶとデフォルトのエラー処理も止まるため、
       // ログだけマスクして、デフォルト処理は継続させる
@@ -198,7 +198,7 @@ export function setupSecureErrorHandler(): void {
   });
   
   window.addEventListener('unhandledrejection', (event) => {
-    if (isProduction) {
+    if (isProduction()) {
       // 本番環境では詳細を隠蔽
       logger.error('An unhandled promise rejection occurred');
     } else {
