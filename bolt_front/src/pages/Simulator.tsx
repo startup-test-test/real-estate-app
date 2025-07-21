@@ -206,7 +206,7 @@ const Simulator: React.FC = () => {
         return;
       }
       
-      const simulation = data?.find(sim => sim.id === simulationId);
+      const simulation = data?.find((sim: any) => sim.id === simulationId);
       if (simulation && simulation.simulation_data) {
         const simData = simulation.simulation_data;
         setInputs({
