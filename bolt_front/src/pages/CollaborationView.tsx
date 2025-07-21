@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { safeWindowLocationAssign } from '../utils/validation';
 import { 
   ArrowLeft, 
   AlertCircle,
@@ -102,7 +103,7 @@ export default function CollaborationView() {
           console.log('🔗 Redirecting to login with invitation context:', loginPageUrl);
           
           // Magic Link形式でログインページに遷移
-          window.location.href = loginPageUrl;
+          safeWindowLocationAssign(loginPageUrl);
           return;
         } else {
           // auth=requiredがある場合は認証待ち状態を表示

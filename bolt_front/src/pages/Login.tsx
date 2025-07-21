@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building2, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
+import { getSafeRedirectUrl, safeWindowLocationAssign } from '../utils/validation';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -91,9 +92,9 @@ const Login: React.FC = () => {
           } else {
             // 絶対URLの場合は、window.location.hrefで直接リダイレクト
             if (decodedUrl.startsWith('http')) {
-              console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
+              console.log('🌐 Absolute URL detected, using safeWindowLocationAssign:', decodedUrl);
               setTimeout(() => {
-                window.location.href = decodedUrl;
+                safeWindowLocationAssign(decodedUrl);
               }, 200);
             } else {
               // 相対URLの場合はnavigate()を使用
@@ -158,9 +159,9 @@ const Login: React.FC = () => {
           } else {
             // 絶対URLの場合は、window.location.hrefで直接リダイレクト
             if (decodedUrl.startsWith('http')) {
-              console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
+              console.log('🌐 Absolute URL detected, using safeWindowLocationAssign:', decodedUrl);
               setTimeout(() => {
-                window.location.href = decodedUrl;
+                safeWindowLocationAssign(decodedUrl);
               }, 200);
             } else {
               // 相対URLの場合はnavigate()を使用

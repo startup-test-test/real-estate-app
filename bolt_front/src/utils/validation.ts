@@ -2,6 +2,14 @@
  * バリデーション関連のユーティリティ関数
  */
 
+// SEC-028: 外部URL検証機能をインポート
+export { 
+  isValidRedirectUrl, 
+  getSafeRedirectUrl, 
+  safeWindowLocationAssign,
+  getRedirectUrlFromParams 
+} from './urlValidator';
+
 /**
  * URLの形式が正しいかをバリデーションする
  * @param url 検証するURL文字列

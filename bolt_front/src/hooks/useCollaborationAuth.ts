@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSupabaseAuth } from './useSupabaseAuth';
+import { safeWindowLocationAssign } from '../utils/validation';
 
 interface CollaborationAuthOptions {
   token: string;
@@ -60,7 +61,7 @@ export const useCollaborationAuth = ({ token, shareTitle }: CollaborationAuthOpt
     console.log('🔗 Redirecting to login with invitation context:', loginPageUrl);
     
     // Magic Link形式でログインページに遷移
-    window.location.href = loginPageUrl;
+    safeWindowLocationAssign(loginPageUrl);
   };
 
   const checkAuthentication = (shareData: any): boolean => {
