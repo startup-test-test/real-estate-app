@@ -1,9 +1,68 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import type { Plugin } from 'vite';
+
+/**
+ * SEC-009: セキュリティヘッダーを追加するプラグイン
+ */
+function securityHeaders(): Plugin {
+  return {
+    name: 'security-headers',
+    configureServer(server) {
+      server.middlewares.use((_req, res, next) => {
+        // HSTS (HTTP Strict Transport Security)
+        res.setHeader(
+          'Strict-Transport-Security',
+          'max-age=31536000; includeSubDomains; preload'
+        );
+        
+        // X-Content-Type-Options
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        
+        // X-Frame-Options
+        res.setHeader('X-Frame-Options', 'DENY');
+        
+        // X-XSS-Protection
+        res.setHeader('X-XSS-Protection', '1; mode=block');
+        
+        // Referrer-Policy
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        
+        // Permissions-Policy (旧Feature-Policy)
+        res.setHeader(
+          'Permissions-Policy',
+          'geolocation=(), microphone=(), camera=(), payment=()'
+        );
+        
+        // Content-Security-Policy
+        const csp = [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+          "font-src 'self' https://fonts.gstatic.com",
+          "img-src 'self' data: https: blob:",
+          "connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co ws://localhost:*",
+          "frame-ancestors 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+          "object-src 'none'",
+          "upgrade-insecure-requests"
+        ].join('; ');
+        
+        res.setHeader('Content-Security-Policy', csp);
+        
+        next();
+      });
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    securityHeaders() // SEC-009: セキュリティヘッダープラグイン
+  ],
   base: '/',
   optimizeDeps: {
     exclude: ['lucide-react'],
@@ -42,6 +101,9 @@ export default defineConfig({
   server: {
     hmr: {
       overlay: false
-    }
+    },
+    // SEC-009: 開発サーバーのHTTPS化（オプション）
+    // https: true を有効にすると、自己署名証明書でHTTPSを使用
+    // 本番環境では適切な証明書を使用すること
   }
 });
