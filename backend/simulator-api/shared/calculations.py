@@ -13,6 +13,10 @@ from .input_validator import (
     DoSProtectionError,
     prevent_computation_bomb
 )
+from .input_sanitizer import (
+    sanitize_and_validate_input,
+    InputSanitizationError
+)
 
 # 親ディレクトリをパスに追加してmodelsをインポート可能にする
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -113,83 +117,29 @@ def calculate_monthly_loan_payment(loan_amount: float, interest_rate: float,
 
 
 def validate_and_extract_data(property_data: Dict[str, Any]) -> Dict[str, Any]:
-    """入力データを検証して安全な値を抽出（SEC-058: DoS攻撃対策強化）"""
-    # SEC-058: 厳密な入力検証を実行
+    """入力データを検証して安全な値を抽出（SEC-075: 包括的な入力サニタイゼーション）"""
+    # SEC-075: 新しい包括的な入力サニタイゼーションを使用
     try:
-        safe_data = validate_calculation_params(property_data)
+        # 最初に包括的なサニタイゼーションを実行
+        safe_data = sanitize_and_validate_input(property_data)
+        
+        # その後、DoS攻撃対策の追加検証を実行
+        safe_data = validate_calculation_params(safe_data)
         return safe_data
-    except DoSProtectionError:
-        # DoS攻撃を検出した場合は再発生
+    except (InputSanitizationError, DoSProtectionError):
+        # セキュリティエラーは再発生
         raise
     except Exception:
         # その他の例外の場合はフォールバック処理
         pass
     
-    # フォールバック: 従来の基本的な検証（互換性のため保持）
+    # フォールバック: PropertyInputModelを使用した検証
     if PropertyInputModel is not None:
         try:
-            validated = PropertyInputModel(**property_data)
+            validated = PropertyInputModel(**safe_data)
             return validated.dict()
         except Exception:
             pass
-    
-    # 最終フォールバック
-    safe_data = {}
-    
-    # SEC-058: より厳格な数値制限を適用
-    numeric_fields = [
-        ('monthly_rent', 0, 10000),      # 1000万円/月まで
-        ('vacancy_rate', 0, 100),
-        ('management_fee', 0, 1000),
-        ('fixed_cost', 0, 1000),
-        ('property_tax', 0, 10000),
-        ('purchase_price', 1, 100000),    # SEC-058: 最低1万円、最高100億円
-        ('loan_amount', 0, 100000),       # SEC-058: 最高100億円
-        ('other_costs', 0, 10000),
-        ('renovation_cost', 0, 10000),
-        ('interest_rate', 0, 50),         # SEC-058: 50%まで制限
-        ('loan_years', 1, 100),           # SEC-058: 100年まで制限
-        ('holding_years', 1, 100),        # SEC-058: 100年まで制限
-        ('exit_cap_rate', 0, 50),
-        ('effective_tax_rate', 0, 100),   # SEC-058: 100%まで制限
-        ('building_price', 0, 100000),    # SEC-058: 100億円まで
-        ('depreciation_years', 1, 100),   # SEC-058: 100年まで制限
-        ('land_area', 0, 1000000),        # SEC-058: 100万平米まで
-        ('building_area', 0, 100000),     # SEC-058: 10万平米まで
-        ('road_price', 0, 100000000),     # SEC-058: 1億円/平米まで
-        ('rent_decline', 0, 50)
-    ]
-    
-    for field, min_val, max_val in numeric_fields:
-        value = property_data.get(field, min_val if min_val > 0 else 0)
-        try:
-            value = float(value)
-            # SEC-058: 特殊値チェック
-            if value != value or value == float('inf') or value == float('-inf'):
-                value = min_val if min_val > 0 else 0
-            # 範囲制限
-            value = max(min_val, min(value, max_val))
-        except (TypeError, ValueError, OverflowError):
-            value = min_val if min_val > 0 else 0
-        safe_data[field] = value
-    
-    # 文字列フィールドのサニタイズ（SEC-058: より厳格に）
-    string_fields = ['property_name', 'location', 'property_type', 'loan_type', 'building_structure']
-    for field in string_fields:
-        value = property_data.get(field, '')
-        if isinstance(value, str):
-            # SEC-058: 危険な文字をより厳格に除去
-            value = ''.join(char for char in value if char.isprintable() and ord(char) < 127)
-            value = value.replace('<', '').replace('>', '').replace('"', '').replace("'", '')
-            value = value.replace('&', '').replace('\\', '').replace('/', '')
-            safe_data[field] = value[:200]  # 最大200文字
-        else:
-            safe_data[field] = ''
-    
-    # デフォルト値の設定
-    safe_data['loan_type'] = safe_data.get('loan_type', '元利均等')
-    safe_data['market_value'] = property_data.get('market_value', safe_data['purchase_price'])
-    safe_data['expected_sale_price'] = property_data.get('expected_sale_price', safe_data['market_value'])
     
     return safe_data
 
