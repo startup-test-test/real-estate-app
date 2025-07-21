@@ -24,6 +24,8 @@ from shared.calculations import run_full_simulation
 from shared.safe_serializer import prevent_dangerous_imports, safe_json_parse, UnsafeOperationError
 from models import PropertyInputModel, SimulationRequestModel, SimulationResponseModel
 from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
+from models_auth import TokenRequest, TokenResponse, UserInfoResponse
+from models_extended import SimulationRequestModelV2
 from http_method_guard import http_method_middleware
 from config_proxy import router as config_router
 
@@ -175,8 +177,8 @@ def read_root():
 
 # 認証エンドポイント
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
-@app.post("/api/auth/token")
-def login_for_access_token(credentials: dict):
+@app.post("/api/auth/token", response_model=TokenResponse)
+def login_for_access_token(credentials: TokenRequest):
     """
     アクセストークンを取得（SEC-073統合認証システム）
     Supabaseトークンを検証してJWTトークンを発行
@@ -187,35 +189,35 @@ def login_for_access_token(credentials: dict):
         # 開発環境では簡易認証を許可
         if os.getenv("ENV", "development") == "development":
             # 開発環境用のモックトークン
-            if credentials.get("email", "").endswith("@example.com"):
+            if credentials.email and credentials.email.endswith("@example.com"):
                 # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
-                is_admin = credentials.get("email") == "admin@example.com"
+                is_admin = credentials.email == "admin@example.com"
                 role = UserRole.ADMIN if is_admin else UserRole.STANDARD
 
                 access_token = create_access_token(
                     data={
                         "sub": "dev-user-123",
-                        "email": credentials.get("email"),
+                        "email": credentials.email,
                         "role": role.value,
                         "type": "development"
                     }
                 )
-                return {
-                    "access_token": access_token,
-                    "token_type": "bearer",
-                    "expires_in": 3600,
-                    "role": role.value
-                }
+                return TokenResponse(
+                    access_token=access_token,
+                    token_type="bearer",
+                    expires_in=3600,
+                    role=role.value,
+                    user_id="dev-user-123"
+                )
             else:
                 raise create_auth_error_response("開発環境では@example.comメールアドレスを使用してください")
 
         # 本番環境ではSupabase認証システムを使用
-        supabase_token = credentials.get("supabase_token")
-        if not supabase_token:
+        if not credentials.supabase_token:
             raise create_auth_error_response("Supabaseトークンが必要です")
 
         # Supabaseトークンを検証
-        user_info = supabase_auth.verify_supabase_token(supabase_token)
+        user_info = supabase_auth.verify_supabase_token(credentials.supabase_token)
         
         # JWTトークンを生成
         access_token = create_access_token(
@@ -227,14 +229,14 @@ def login_for_access_token(credentials: dict):
             }
         )
 
-        return {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "expires_in": 3600,
-            "role": user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
-            "user_id": user_info["user_id"],
-            "full_name": user_info.get("full_name")
-        }
+        return TokenResponse(
+            access_token=access_token,
+            token_type="bearer",
+            expires_in=3600,
+            role=user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
+            user_id=user_info["user_id"],
+            full_name=user_info.get("full_name")
+        )
         
     except HTTPException:
         raise
@@ -244,7 +246,7 @@ def login_for_access_token(credentials: dict):
 
 # 認証状態確認エンドポイント
 # SEC-082: HTTPメソッド制限 - GETのみ許可
-@app.get("/api/auth/me")
+@app.get("/api/auth/me", response_model=UserInfoResponse)
 def get_me(current_user: dict = Depends(get_current_user)):
     """
     現在の認証ユーザー情報を取得
@@ -320,7 +322,7 @@ def run_simulation(
         # SEC-059: 危険なインポートをチェック済み（デコレータ）
         
         # Pydanticモデルで検証済みのデータを使用
-        property_data = request.property_data.dict()
+        property_data = request.property_data.model_dump()
         
         # SEC-059: 入力データの安全性を追加検証
         # Pydanticで基本検証済みだが、念のため危険なパターンをチェック
