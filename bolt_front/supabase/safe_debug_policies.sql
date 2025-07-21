@@ -1,3 +1,9 @@
+-- ⚠️ 警告: このファイルは開発環境専用です。本番環境では使用しないでください！
+-- ⚠️ WARNING: This file is for DEVELOPMENT ONLY. DO NOT use in production!
+-- 
+-- 本番環境では production_rls_policies.sql を使用してください。
+-- For production, use production_rls_policies.sql instead.
+--
 -- 安全なデバッグ用ポリシー（RLS無効化の代替）
 
 -- 既存の制限的なポリシーを削除

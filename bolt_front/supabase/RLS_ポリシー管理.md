@@ -80,14 +80,30 @@ CREATE POLICY "Allow authenticated users to create property_shares" ON property_
 
 ## 現在のポリシー状態
 
-### property_shares テーブル
-- ✅ **読み取り**: 認証済みユーザー全て
-- ✅ **作成**: 自分がオーナーのレコードのみ
+### ⚠️ 重要：環境別ポリシーファイル
+
+#### 開発環境用（緩いポリシー）
+- **ファイル**: `safe_debug_policies.sql`
+- **特徴**: 認証済みユーザーは広くアクセス可能
+- **用途**: 開発・デバッグ時のみ使用
+
+#### 本番環境用（厳格なポリシー）
+- **ファイル**: `production_rls_policies.sql`
+- **特徴**: 最小権限の原則に基づく厳格なアクセス制御
+- **用途**: 本番環境で必須
+
+### property_shares テーブル（本番環境）
+- ✅ **読み取り**: 自分が所有する共有、または有効な招待トークンを持つ共有のみ
+- ✅ **作成**: 自分がオーナーのレコードのみ（property_idの検証付き）
+- ✅ **更新**: 自分が所有する共有のみ
+- ✅ **削除**: 自分が所有する共有のみ
 - ✅ **property_id**: nullable（招待機能用にnull許可）
 
-### share_comments テーブル
-- ✅ **読み取り**: 認証済みユーザー全て
-- ✅ **作成**: 自分のコメントのみ
+### share_comments テーブル（本番環境）
+- ✅ **読み取り**: アクセス可能な共有のコメントのみ
+- ✅ **作成**: アクセス可能な共有に対してのみ（自分のコメント）
+- ✅ **更新**: 自分のコメントのみ
+- ✅ **削除**: 自分のコメント、または共有の所有者として
 
 ## 危険なファイル（使用禁止）
 
@@ -111,11 +127,11 @@ WHERE tablename IN ('property_shares', 'share_comments');
 
 ### 2. 安全なデバッグ
 ```bash
-# 安全なデバッグポリシーを適用
+# 開発環境：安全なデバッグポリシーを適用
 psql -f supabase/safe_debug_policies.sql
 
-# 問題解決後、適切なポリシーに戻す
-psql -f supabase/re_enable_rls.sql
+# 本番環境：厳格なポリシーを適用
+psql -f supabase/production_rls_policies.sql
 ```
 
 ### 3. 緊急時のみ
