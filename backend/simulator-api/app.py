@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from auth import get_current_user, create_access_token
 from rbac import Permission, UserRole, require_permission, rbac_manager
 from error_handler import (
@@ -28,6 +29,10 @@ from models_auth import TokenRequest, TokenResponse, UserInfoResponse
 from models_extended import SimulationRequestModelV2
 from http_method_guard import http_method_middleware
 from config_proxy import router as config_router
+from csrf_protection import (
+    generate_csrf_token, validate_csrf_token, 
+    csrf_protection, CSRF_HEADER_NAME
+)
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -103,7 +108,7 @@ else:
                 "GET, POST, PUT, DELETE, OPTIONS"
             )
             response.headers["Access-Control-Allow-Headers"] = (
-                "Content-Type, Authorization, X-Requested-With"
+                "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
             )
             response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
             return response
@@ -178,7 +183,7 @@ def read_root():
 # 認証エンドポイント
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/auth/token", response_model=TokenResponse)
-def login_for_access_token(request: Request, credentials: TokenRequest):
+async def login_for_access_token(request: Request, credentials: TokenRequest):
     """
     アクセストークンを取得（SEC-073統合認証システム）
     Supabaseトークンを検証してJWTトークンを発行
@@ -205,6 +210,9 @@ def login_for_access_token(request: Request, credentials: TokenRequest):
                 # SEC-051: 新しいセッションを作成
                 from session_security import create_secure_session
                 session_id = create_secure_session(user_id, request)
+                
+                # SEC-066: CSRFトークンを生成
+                csrf_token = generate_csrf_token(user_id, session_id)
 
                 access_token = create_access_token(
                     data={
@@ -219,13 +227,18 @@ def login_for_access_token(request: Request, credentials: TokenRequest):
                 # ログイン成功時は失敗カウンターをリセット
                 session_manager.reset_failed_attempts(client_ip)
                 
-                return TokenResponse(
+                response = TokenResponse(
                     access_token=access_token,
                     token_type="bearer",
                     expires_in=3600,
                     role=role.value,
-                    user_id=user_id
+                    user_id=user_id,
+                    csrf_token=csrf_token  # CSRFトークンを含める
                 )
+                
+                # CSRFトークンをクッキーにも設定
+                json_response = JSONResponse(content=response.dict())
+                return csrf_protection.create_csrf_cookie_response(json_response, csrf_token)
             else:
                 # ログイン失敗を記録
                 session_manager.record_failed_attempt(client_ip)
@@ -244,6 +257,9 @@ def login_for_access_token(request: Request, credentials: TokenRequest):
         from session_security import create_secure_session
         session_id = create_secure_session(user_info["user_id"], request)
         
+        # SEC-066: CSRFトークンを生成
+        csrf_token = generate_csrf_token(user_info["user_id"], session_id)
+        
         # JWTトークンを生成
         access_token = create_access_token(
             data={
@@ -258,14 +274,19 @@ def login_for_access_token(request: Request, credentials: TokenRequest):
         # ログイン成功時は失敗カウンターをリセット
         session_manager.reset_failed_attempts(client_ip)
 
-        return TokenResponse(
+        response = TokenResponse(
             access_token=access_token,
             token_type="bearer",
             expires_in=3600,
+            csrf_token=csrf_token,  # CSRFトークンを含める
             role=user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
             user_id=user_info["user_id"],
             full_name=user_info.get("full_name")
         )
+        
+        # CSRFトークンをクッキーにも設定
+        json_response = JSONResponse(content=response.dict())
+        return csrf_protection.create_csrf_cookie_response(json_response, csrf_token)
         
     except HTTPException:
         raise
