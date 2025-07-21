@@ -500,14 +500,24 @@ const Simulator: React.FC = () => {
       }
       
       // 借入額と購入価格の論理検証（SEC-018対応）
-      if ((field === 'loanAmount' || field === 'purchasePrice') && newInputs.loanAmount && newInputs.purchasePrice) {
-        const validation = validateLoanToPurchaseRatio(newInputs.loanAmount, newInputs.purchasePrice);
+      if ((field === 'loanAmount' || field === 'purchasePrice' || field === 'otherCosts' || field === 'renovationCost') 
+          && newInputs.loanAmount && newInputs.purchasePrice) {
+        const validation = validateLoanToPurchaseRatio(
+          newInputs.loanAmount, 
+          newInputs.purchasePrice,
+          newInputs.otherCosts || 0,
+          newInputs.renovationCost || 0
+        );
         if (!validation.isValid) {
           setSaveError(validation.message || '');
           // 無効な場合は前の値を保持
           return prev;
         } else {
           setSaveError(null);
+          // LTV情報を表示用に保存（オプション）
+          if (validation.ltv !== undefined) {
+            console.log(`LTV: ${validation.ltv.toFixed(1)}%`);
+          }
         }
       }
 

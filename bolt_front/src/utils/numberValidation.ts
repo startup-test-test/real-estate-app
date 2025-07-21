@@ -150,37 +150,92 @@ export function validateBuildingYear(value: string | number | undefined | null):
 }
 
 /**
- * 借入額と購入価格の論理検証
- * @param loanAmount - 借入額
- * @param purchasePrice - 購入価格
+ * SEC-018: 借入額と購入価格の論理検証
+ * @param loanAmount - 借入額（万円）
+ * @param purchasePrice - 購入価格（万円）
+ * @param otherCosts - 諸経費（万円）
+ * @param renovationCost - 改装費（万円）
  * @returns 検証結果
  */
 export function validateLoanToPurchaseRatio(
   loanAmount: number | null,
-  purchasePrice: number | null
-): { isValid: boolean; message?: string } {
+  purchasePrice: number | null,
+  otherCosts: number = 0,
+  renovationCost: number = 0
+): { isValid: boolean; message?: string; ltv?: number } {
+  // 入力値の検証
   if (loanAmount === null || purchasePrice === null) {
     return { isValid: true }; // 値が入力されていない場合はOK
   }
 
-  // LTV（Loan to Value）の計算
-  const ltv = (loanAmount / purchasePrice) * 100;
-
-  // LTVが120%を超える場合はエラー
-  if (ltv > 120) {
+  // ゼロ以下の値は無効
+  if (purchasePrice <= 0) {
     return {
       isValid: false,
-      message: 'LTV（借入比率）が120%を超えています'
+      message: '購入価格は0より大きい値を入力してください'
     };
   }
 
-  // 借入額が購入価格を超える場合（100%超120%以下）は別メッセージ
+  if (loanAmount < 0) {
+    return {
+      isValid: false,
+      message: '借入額は0以上の値を入力してください'
+    };
+  }
+
+  // 総取得価格の計算（購入価格 + 諸経費 + 改装費）
+  const totalAcquisitionCost = purchasePrice + otherCosts + renovationCost;
+
+  // LTV（Loan to Value）の計算 - 物件価格に対する借入比率
+  const ltv = (loanAmount / purchasePrice) * 100;
+
+
+  // 借入額が総取得価格を超える場合は絶対にNG（最優先チェック）
+  if (loanAmount > totalAcquisitionCost) {
+    return {
+      isValid: false,
+      message: `借入額（${loanAmount.toLocaleString()}万円）が総取得価格（${totalAcquisitionCost.toLocaleString()}万円）を超えています。諸経費も含めた資金計画を見直してください。`,
+      ltv
+    };
+  }
+
+  // 借入額が購入価格を超える場合は警告
   if (loanAmount > purchasePrice) {
     return {
       isValid: false,
-      message: '借入額は購入価格を超えることはできません'
+      message: `借入額（${loanAmount.toLocaleString()}万円）が購入価格（${purchasePrice.toLocaleString()}万円）を超えています。通常の不動産融資では購入価格の100%が上限です。`,
+      ltv
     };
   }
 
-  return { isValid: true };
+  // LTVが90%を超える場合は警告（一般的な融資基準）
+  if (ltv > 90) {
+    return {
+      isValid: false,
+      message: `LTV（借入比率）が${ltv.toFixed(1)}%です。一般的な不動産融資では90%以下が推奨されます。`,
+      ltv
+    };
+  }
+
+  // 自己資金がマイナスになる場合の警告
+  const requiredEquity = totalAcquisitionCost - loanAmount;
+  if (requiredEquity < 0) {
+    return {
+      isValid: false,
+      message: `自己資金がマイナスになります。資金計画を見直してください。`,
+      ltv
+    };
+  }
+
+  // 自己資金比率が10%未満の場合は警告
+  const equityRatio = (requiredEquity / totalAcquisitionCost) * 100;
+  if (equityRatio < 10) {
+    return {
+      isValid: false,
+      message: `自己資金比率が${equityRatio.toFixed(1)}%です。最低でも10%以上の自己資金を準備することを推奨します。`,
+      ltv
+    };
+  }
+
+  return { isValid: true, ltv };
 }

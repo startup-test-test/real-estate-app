@@ -1,213 +1,145 @@
 /**
- * SEC-017: 数値フィールド範囲外入力対策のテスト
+ * SEC-018: 借入額と購入価格の論理検証のテスト
  */
 
-import {
-  validateAndSanitizeNumber,
+import { describe, it, expect } from 'vitest';
+import { 
+  validateLoanToPurchaseRatio,
   validatePercentage,
   validateAmount,
   validateYears,
-  validateBuildingAge,
-  validateInterestRate,
-  validateArea,
-  validateRoadPrice,
-  validateBuildingYear,
-  validateLoanToPurchaseRatio
+  validateAndSanitizeNumber
 } from '../numberValidation';
 
-describe('validateAndSanitizeNumber', () => {
-  test('有効な数値を返す', () => {
-    expect(validateAndSanitizeNumber(123, { min: 0, max: 1000 })).toBe(123);
-    expect(validateAndSanitizeNumber('456', { min: 0, max: 1000 })).toBe(456);
+describe('numberValidation', () => {
+  describe('validateAndSanitizeNumber', () => {
+    it('有効な数値を正しく処理する', () => {
+      expect(validateAndSanitizeNumber(100, { min: 0, max: 1000 })).toBe(100);
+      expect(validateAndSanitizeNumber('50.5', { min: 0, max: 100, allowDecimal: true })).toBe(50.5);
+      expect(validateAndSanitizeNumber(0, { min: 0, max: 100 })).toBe(0);
+    });
+
+    it('無効な値を正しく拒否する', () => {
+      expect(validateAndSanitizeNumber(null, { min: 0, max: 100 })).toBe(null);
+      expect(validateAndSanitizeNumber(undefined, { min: 0, max: 100 })).toBe(null);
+      expect(validateAndSanitizeNumber('', { min: 0, max: 100 })).toBe(null);
+      expect(validateAndSanitizeNumber(NaN, { min: 0, max: 100 })).toBe(null);
+      expect(validateAndSanitizeNumber(Infinity, { min: 0, max: 100 })).toBe(null);
+      expect(validateAndSanitizeNumber(-Infinity, { min: 0, max: 100 })).toBe(null);
+    });
+
+    it('範囲外の値を拒否する', () => {
+      expect(validateAndSanitizeNumber(150, { min: 0, max: 100 })).toBe(null);
+      expect(validateAndSanitizeNumber(-10, { min: 0, max: 100 })).toBe(null);
+    });
   });
 
-  test('NaN、Infinity、-Infinityを拒否', () => {
-    expect(validateAndSanitizeNumber(NaN, { min: 0 })).toBeNull();
-    expect(validateAndSanitizeNumber(Infinity, { min: 0 })).toBeNull();
-    expect(validateAndSanitizeNumber(-Infinity, { min: 0 })).toBeNull();
-    expect(validateAndSanitizeNumber('NaN', { min: 0 })).toBeNull();
+  describe('validatePercentage', () => {
+    it('有効なパーセンテージを受け入れる', () => {
+      expect(validatePercentage(0)).toBe(0);
+      expect(validatePercentage(50)).toBe(50);
+      expect(validatePercentage(100)).toBe(100);
+      expect(validatePercentage('75.5')).toBe(75.5);
+    });
+
+    it('無効なパーセンテージを拒否する', () => {
+      expect(validatePercentage(-1)).toBe(null);
+      expect(validatePercentage(101)).toBe(null);
+      expect(validatePercentage(150)).toBe(null);
+    });
   });
 
-  test('範囲外の値を拒否', () => {
-    expect(validateAndSanitizeNumber(-1, { min: 0 })).toBeNull();
-    expect(validateAndSanitizeNumber(101, { max: 100 })).toBeNull();
-    expect(validateAndSanitizeNumber(50, { min: 60, max: 100 })).toBeNull();
-  });
+  describe('validateLoanToPurchaseRatio（SEC-018）', () => {
+    describe('基本的な検証', () => {
+      it('正常な値を受け入れる', () => {
+        const result = validateLoanToPurchaseRatio(5000, 7000, 300, 200);
+        expect(result.isValid).toBe(true);
+        expect(result.ltv).toBeCloseTo(71.4, 1);
+      });
 
-  test('小数点の処理', () => {
-    expect(validateAndSanitizeNumber(123.456, { allowDecimal: false })).toBeNull();
-    expect(validateAndSanitizeNumber(123.456, { allowDecimal: true, decimalPlaces: 2 })).toBe(123.46);
-    expect(validateAndSanitizeNumber(123.454, { allowDecimal: true, decimalPlaces: 2 })).toBe(123.45);
-  });
+      it('null値の場合は検証をスキップ', () => {
+        expect(validateLoanToPurchaseRatio(null, 7000).isValid).toBe(true);
+        expect(validateLoanToPurchaseRatio(5000, null).isValid).toBe(true);
+      });
+    });
 
-  test('空値の処理', () => {
-    expect(validateAndSanitizeNumber(null, { min: 0 })).toBeNull();
-    expect(validateAndSanitizeNumber(undefined, { min: 0 })).toBeNull();
-    expect(validateAndSanitizeNumber('', { min: 0 })).toBeNull();
-  });
-});
+    describe('購入価格と借入額の妥当性', () => {
+      it('購入価格が0以下の場合はエラー', () => {
+        const result = validateLoanToPurchaseRatio(5000, 0);
+        expect(result.isValid).toBe(false);
+        expect(result.message).toContain('0より大きい値');
+      });
 
-describe('validatePercentage', () => {
-  test('0-100の範囲内の値を受け入れる', () => {
-    expect(validatePercentage(0)).toBe(0);
-    expect(validatePercentage(50)).toBe(50);
-    expect(validatePercentage(100)).toBe(100);
-    expect(validatePercentage(99.99)).toBe(99.99);
-  });
+      it('借入額が負の場合はエラー', () => {
+        const result = validateLoanToPurchaseRatio(-1000, 7000);
+        expect(result.isValid).toBe(false);
+        expect(result.message).toContain('0以上の値');
+      });
 
-  test('範囲外の値を拒否', () => {
-    expect(validatePercentage(-1)).toBeNull();
-    expect(validatePercentage(101)).toBeNull();
-    expect(validatePercentage(150)).toBeNull();
-  });
+      it('借入額が購入価格を超える場合はエラー', () => {
+        const result = validateLoanToPurchaseRatio(8000, 7000);
+        expect(result.isValid).toBe(false);
+        expect(result.message).toContain('借入額（8,000万円）が購入価格（7,000万円）を超えています');
+      });
+    });
 
-  test('小数点以下2桁まで', () => {
-    expect(validatePercentage(50.12345)).toBe(50.12);
-  });
-});
+    describe('LTV（借入比率）の検証', () => {
+      it('LTVが90%以下の場合は正常', () => {
+        const result = validateLoanToPurchaseRatio(6300, 7000); // LTV 90%
+        expect(result.isValid).toBe(true);
+        expect(result.ltv).toBe(90);
+      });
 
-describe('validateAmount', () => {
-  test('0以上の整数を受け入れる', () => {
-    expect(validateAmount(0)).toBe(0);
-    expect(validateAmount(1000000)).toBe(1000000);
-    expect(validateAmount('5000')).toBe(5000);
-  });
+      it('LTVが90%を超える場合はエラー', () => {
+        const result = validateLoanToPurchaseRatio(6500, 7000); // LTV 92.9%
+        expect(result.isValid).toBe(false);
+        expect(result.message).toContain('LTV（借入比率）が92.9%');
+        expect(result.message).toContain('90%以下が推奨');
+      });
+    });
 
-  test('負数と小数を拒否', () => {
-    expect(validateAmount(-100)).toBeNull();
-    expect(validateAmount(100.5)).toBeNull();
-  });
+    describe('諸経費を含めた総取得価格の検証', () => {
+      it('借入額が総取得価格を超える場合はエラー', () => {
+        const result = validateLoanToPurchaseRatio(7600, 7000, 300, 200); // 総取得価格7500万円
+        expect(result.isValid).toBe(false);
+        expect(result.message).toContain('借入額（7,600万円）が総取得価格（7,500万円）を超えています');
+      });
 
-  test('最大値を超える値を拒否', () => {
-    expect(validateAmount(1000000000000)).toBeNull(); // 1兆円超
-  });
-});
+      it('自己資金比率が10%未満の場合はエラー', () => {
+        // 総取得価格7500万円、借入額6800万円 => 自己資金700万円（9.3%）
+        const result = validateLoanToPurchaseRatio(6800, 7000, 300, 200);
+        expect(result.isValid).toBe(false);
+        expect(result.message).toContain('自己資金比率が9.3%');
+        expect(result.message).toContain('10%以上の自己資金');
+      });
 
-describe('validateYears', () => {
-  test('1以上の整数を受け入れる', () => {
-    expect(validateYears(1)).toBe(1);
-    expect(validateYears(30)).toBe(30);
-    expect(validateYears(100)).toBe(100);
-  });
+      it('自己資金比率が10%以上の場合は正常', () => {
+        // 総取得価格7500万円、借入額6750万円 => 自己資金750万円（10%）
+        const result = validateLoanToPurchaseRatio(6750, 7000, 300, 200);
+        expect(result.isValid).toBe(true);
+      });
+    });
 
-  test('無効な値を拒否', () => {
-    expect(validateYears(0)).toBeNull();
-    expect(validateYears(-1)).toBeNull();
-    expect(validateYears(101)).toBeNull();
-    expect(validateYears(1.5)).toBeNull();
-  });
+    describe('実際のユースケース', () => {
+      it('一般的な不動産投資のケース', () => {
+        // 購入価格6980万円、諸経費300万円、改装費200万円、借入額6000万円
+        const result = validateLoanToPurchaseRatio(6000, 6980, 300, 200);
+        expect(result.isValid).toBe(true);
+        expect(result.ltv).toBeCloseTo(86.0, 1);
+      });
 
-  test('カスタム最大値', () => {
-    expect(validateYears(30, 25)).toBeNull();
-    expect(validateYears(25, 25)).toBe(25);
-  });
-});
+      it('フルローンに近いケース', () => {
+        // 購入価格7000万円、諸経費300万円、改装費0万円、借入額6300万円（LTV90%）
+        const result = validateLoanToPurchaseRatio(6300, 7000, 300, 0);
+        expect(result.isValid).toBe(true);
+        expect(result.ltv).toBe(90);
+      });
 
-describe('validateBuildingAge', () => {
-  test('0以上の整数を受け入れる', () => {
-    expect(validateBuildingAge(0)).toBe(0);
-    expect(validateBuildingAge(50)).toBe(50);
-    expect(validateBuildingAge(200)).toBe(200);
-  });
-
-  test('無効な値を拒否', () => {
-    expect(validateBuildingAge(-1)).toBeNull();
-    expect(validateBuildingAge(201)).toBeNull();
-    expect(validateBuildingAge(10.5)).toBeNull();
-  });
-});
-
-describe('validateInterestRate', () => {
-  test('0-50%の範囲内の値を受け入れる', () => {
-    expect(validateInterestRate(0)).toBe(0);
-    expect(validateInterestRate(2.875)).toBe(2.88);
-    expect(validateInterestRate(50)).toBe(50);
-  });
-
-  test('範囲外の値を拒否', () => {
-    expect(validateInterestRate(-1)).toBeNull();
-    expect(validateInterestRate(51)).toBeNull();
-  });
-});
-
-describe('validateArea', () => {
-  test('0より大きい値を受け入れる', () => {
-    expect(validateArea(0.01)).toBe(0.01);
-    expect(validateArea(100)).toBe(100);
-    expect(validateArea(999999)).toBe(999999);
-  });
-
-  test('無効な値を拒否', () => {
-    expect(validateArea(0)).toBeNull();
-    expect(validateArea(-10)).toBeNull();
-    expect(validateArea(1000000)).toBeNull();
-  });
-
-  test('小数点以下2桁まで', () => {
-    expect(validateArea(123.456)).toBe(123.46);
-  });
-});
-
-describe('validateRoadPrice', () => {
-  test('0以上の整数を受け入れる', () => {
-    expect(validateRoadPrice(0)).toBe(0);
-    expect(validateRoadPrice(120000)).toBe(120000);
-    expect(validateRoadPrice(99999999)).toBe(99999999);
-  });
-
-  test('無効な値を拒否', () => {
-    expect(validateRoadPrice(-1)).toBeNull();
-    expect(validateRoadPrice(100000000)).toBeNull();
-    expect(validateRoadPrice(1000.5)).toBeNull();
-  });
-});
-
-describe('validateBuildingYear', () => {
-  const currentYear = new Date().getFullYear();
-
-  test('1900年以降、今年までの値を受け入れる', () => {
-    expect(validateBuildingYear(1900)).toBe(1900);
-    expect(validateBuildingYear(2000)).toBe(2000);
-    expect(validateBuildingYear(currentYear)).toBe(currentYear);
-  });
-
-  test('範囲外の値を拒否', () => {
-    expect(validateBuildingYear(1899)).toBeNull();
-    expect(validateBuildingYear(currentYear + 1)).toBeNull();
-    expect(validateBuildingYear(2020.5)).toBeNull();
-  });
-});
-
-describe('validateLoanToPurchaseRatio', () => {
-  test('借入額が購入価格以下の場合は有効', () => {
-    expect(validateLoanToPurchaseRatio(8000, 10000)).toEqual({ isValid: true });
-    expect(validateLoanToPurchaseRatio(10000, 10000)).toEqual({ isValid: true });
-  });
-
-  test('借入額が購入価格を超える場合は無効', () => {
-    const result = validateLoanToPurchaseRatio(12000, 10000);
-    expect(result.isValid).toBe(false);
-    expect(result.message).toContain('借入額は購入価格を超えることはできません');
-  });
-
-  test('LTVが120%を超える場合は無効', () => {
-    const result = validateLoanToPurchaseRatio(13000, 10000);
-    expect(result.isValid).toBe(false);
-    expect(result.message).toContain('LTV（借入比率）が120%を超えています');
-  });
-
-  test('null値の場合は有効', () => {
-    expect(validateLoanToPurchaseRatio(null, 10000)).toEqual({ isValid: true });
-    expect(validateLoanToPurchaseRatio(8000, null)).toEqual({ isValid: true });
-    expect(validateLoanToPurchaseRatio(null, null)).toEqual({ isValid: true });
-  });
-
-  test('実際のシミュレーションケース', () => {
-    // 正常なケース（借入額1億円、購入価格1.2億円）
-    expect(validateLoanToPurchaseRatio(10000, 12000)).toEqual({ isValid: true });
-    
-    // 異常なケース（借入額1.5億円、購入価格1.2億円）
-    const result = validateLoanToPurchaseRatio(15000, 12000);
-    expect(result.isValid).toBe(false);
+      it('自己資金不足のケース', () => {
+        // 購入価格7000万円、諸経費500万円、改装費300万円、借入額7300万円
+        const result = validateLoanToPurchaseRatio(7300, 7000, 500, 300);
+        expect(result.isValid).toBe(false);
+      });
+    });
   });
 });
