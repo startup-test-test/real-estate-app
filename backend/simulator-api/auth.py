@@ -1,13 +1,14 @@
 """
 SEC-022: API認証システムの実装
 JWT認証ミドルウェアとヘルパー関数
+SEC-051: セッション固定攻撃対策統合
 """
 
 import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from dotenv import load_dotenv
-from fastapi import HTTPException, Security, status
+from fastapi import HTTPException, Security, status, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 
@@ -28,13 +29,15 @@ if os.getenv("ENV", "development") == "production":
 security = HTTPBearer()
 
 
-def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None,
+                        session_id: Optional[str] = None) -> str:
     """
-    JWTアクセストークンを作成
+    JWTアクセストークンを作成（SEC-051: セッションIDを含める）
 
     Args:
         data: トークンに含めるデータ
         expires_delta: 有効期限（デフォルトは60分）
+        session_id: セッションID（セッション固定攻撃対策）
 
     Returns:
         エンコードされたJWTトークン
@@ -46,17 +49,22 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
     else:
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
-    to_encode.update({"exp": expire, "iat": datetime.utcnow()})
+    to_encode.update({
+        "exp": expire,
+        "iat": datetime.utcnow(),
+        "jti": session_id  # JWT ID としてセッションIDを使用
+    })
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     return encoded_jwt
 
 
-def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)) -> Dict[str, Any]:
+def verify_token(request: Request, credentials: HTTPAuthorizationCredentials = Security(security)) -> Dict[str, Any]:
     """
-    JWTトークンを検証
+    JWTトークンを検証（SEC-051: セッション検証を含む）
 
     Args:
+        request: FastAPIリクエストオブジェクト
         credentials: HTTPAuthorizationCredentials
 
     Returns:
@@ -88,6 +96,20 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Security(security))
                 detail="トークンにユーザー情報が含まれていません",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+        
+        # SEC-051: セッション検証
+        session_id = payload.get("jti")  # JWT ID からセッションIDを取得
+        if session_id:
+            from session_security import validate_and_refresh_session
+            session_data = validate_and_refresh_session(session_id, request)
+            if not session_data:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="セッションが無効または期限切れです",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            # セッション情報をペイロードに追加
+            payload["session_data"] = session_data
 
         return payload
 
@@ -104,21 +126,33 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Security(security))
             ) from e
 
 
-def get_current_user(token_payload: Dict[str, Any] = Security(verify_token)) -> Dict[str, Any]:
+def get_current_user(request: Request, token_payload: Dict[str, Any] = Depends(verify_token)) -> Dict[str, Any]:
     """
-    現在のユーザー情報を取得
+    現在のユーザー情報を取得（SEC-051: セッション情報を含む）
 
     Args:
+        request: FastAPIリクエストオブジェクト
         token_payload: 検証済みのトークンペイロード
 
     Returns:
         ユーザー情報
     """
-    return {
+    user_info = {
         "user_id": token_payload.get("sub"),
         "email": token_payload.get("email"),
-        "exp": token_payload.get("exp")
+        "exp": token_payload.get("exp"),
+        "session_id": token_payload.get("jti")
     }
+    
+    # セッションデータがある場合は追加
+    if "session_data" in token_payload:
+        user_info["session_info"] = {
+            "created_at": token_payload["session_data"].created_at.isoformat(),
+            "last_accessed": token_payload["session_data"].last_accessed.isoformat(),
+            "rotation_count": token_payload["session_data"].rotation_count
+        }
+    
+    return user_info
 
 
 # オプション: APIキー認証（代替認証方式）

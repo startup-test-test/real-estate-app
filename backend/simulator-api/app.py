@@ -178,14 +178,21 @@ def read_root():
 # 認証エンドポイント
 # SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/auth/token", response_model=TokenResponse)
-def login_for_access_token(credentials: TokenRequest):
+def login_for_access_token(request: Request, credentials: TokenRequest):
     """
     アクセストークンを取得（SEC-073統合認証システム）
     Supabaseトークンを検証してJWTトークンを発行
+    SEC-051: セッション固定攻撃対策 - ログイン時に新しいセッションIDを発行
     """
     logger.info("Token request received")
     
     try:
+        # SEC-051: ブルートフォース攻撃のチェック
+        from session_security import session_manager
+        client_ip = request.client.host if request.client else "unknown"
+        if session_manager.check_brute_force(client_ip):
+            raise create_auth_error_response("ログイン試行回数が上限に達しました。しばらくしてから再度お試しください")
+        
         # 開発環境では簡易認証を許可
         if os.getenv("ENV", "development") == "development":
             # 開発環境用のモックトークン
@@ -193,31 +200,49 @@ def login_for_access_token(credentials: TokenRequest):
                 # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
                 is_admin = credentials.email == "admin@example.com"
                 role = UserRole.ADMIN if is_admin else UserRole.STANDARD
+                user_id = "dev-user-123"
+                
+                # SEC-051: 新しいセッションを作成
+                from session_security import create_secure_session
+                session_id = create_secure_session(user_id, request)
 
                 access_token = create_access_token(
                     data={
-                        "sub": "dev-user-123",
+                        "sub": user_id,
                         "email": credentials.email,
                         "role": role.value,
                         "type": "development"
-                    }
+                    },
+                    session_id=session_id  # セッションIDをトークンに含める
                 )
+                
+                # ログイン成功時は失敗カウンターをリセット
+                session_manager.reset_failed_attempts(client_ip)
+                
                 return TokenResponse(
                     access_token=access_token,
                     token_type="bearer",
                     expires_in=3600,
                     role=role.value,
-                    user_id="dev-user-123"
+                    user_id=user_id
                 )
             else:
+                # ログイン失敗を記録
+                session_manager.record_failed_attempt(client_ip)
                 raise create_auth_error_response("開発環境では@example.comメールアドレスを使用してください")
 
         # 本番環境ではSupabase認証システムを使用
         if not credentials.supabase_token:
+            # ログイン失敗を記録
+            session_manager.record_failed_attempt(client_ip)
             raise create_auth_error_response("Supabaseトークンが必要です")
 
         # Supabaseトークンを検証
         user_info = supabase_auth.verify_supabase_token(credentials.supabase_token)
+        
+        # SEC-051: 新しいセッションを作成（セッション固定攻撃対策）
+        from session_security import create_secure_session
+        session_id = create_secure_session(user_info["user_id"], request)
         
         # JWTトークンを生成
         access_token = create_access_token(
@@ -226,8 +251,12 @@ def login_for_access_token(credentials: TokenRequest):
                 "email": user_info["email"],
                 "role": user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
                 "type": "supabase"
-            }
+            },
+            session_id=session_id  # セッションIDをトークンに含める
         )
+        
+        # ログイン成功時は失敗カウンターをリセット
+        session_manager.reset_failed_attempts(client_ip)
 
         return TokenResponse(
             access_token=access_token,
@@ -242,12 +271,35 @@ def login_for_access_token(credentials: TokenRequest):
         raise
     except Exception as e:
         logger.error(f"Token generation failed: {e}")
+        # ログイン失敗を記録
+        session_manager.record_failed_attempt(client_ip)
         raise create_auth_error_response("認証処理中にエラーが発生しました")
+
+# ログアウトエンドポイント
+# SEC-051: セッション破棄によるセッション固定攻撃対策
+# SEC-082: HTTPメソッド制限 - POSTのみ許可
+@app.post("/api/auth/logout")
+def logout(request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    ログアウト処理 - セッションを破棄
+    SEC-051: セッション固定攻撃対策
+    """
+    try:
+        session_id = current_user.get("session_id")
+        if session_id:
+            from session_security import destroy_session
+            destroy_session(session_id)
+            logger.info(f"User {current_user.get('user_id')} logged out, session destroyed")
+        
+        return {"success": True, "message": "ログアウトしました"}
+    except Exception as e:
+        logger.error(f"Logout failed: {e}")
+        return {"success": False, "message": "ログアウト処理中にエラーが発生しました"}
 
 # 認証状態確認エンドポイント
 # SEC-082: HTTPメソッド制限 - GETのみ許可
 @app.get("/api/auth/me", response_model=UserInfoResponse)
-def get_me(current_user: dict = Depends(get_current_user)):
+def get_me(request: Request, current_user: dict = Depends(get_current_user)):
     """
     現在の認証ユーザー情報を取得
     SEC-073: 統合認証システムからユーザープロファイル情報を取得
