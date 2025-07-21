@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
 import { SessionManager } from '../utils/sessionManager'
-import { logger } from '../utils/logger'
+import { authLogger } from '../utils/logger'
 
 export function useSupabaseAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -19,7 +19,7 @@ export function useSupabaseAuth() {
     if (restoredUser && restoredSession) {
       setUser(restoredUser)
       setSession(restoredSession)
-      logger.log('セキュアなセッション復元成功:', restoredUser.email)
+      authLogger.log('セキュアなセッション復元成功:', restoredUser.email)
       return true
     }
     
