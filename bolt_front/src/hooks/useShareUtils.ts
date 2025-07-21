@@ -60,7 +60,7 @@ export function useShareUtils() {
       }, TOKEN_FETCH_TIMEOUT);
 
       if (!user?.id) {
-        console.warn('⚠️ User not authenticated for token fetch');
+        // SEC-049: 認証状態をログに出力しない
         return null;
       }
 
@@ -75,16 +75,16 @@ export function useShareUtils() {
         .single();
 
       if (simulationError) {
-        console.warn('⚠️ シミュレーション結果からのshare_token取得失敗:', simulationError);
+        // SEC-049: エラー詳細をログに出力しない
         return null;
       }
 
       if (simulationData?.share_token) {
-        console.log('✅ シミュレーション結果からshare_token取得成功:', simulationData.share_token);
+        // SEC-049: トークンをログに出力しない
         return simulationData.share_token;
       }
 
-      console.log('ℹ️ シミュレーション結果にshare_tokenが見つかりません');
+      // SEC-049: デバッグ情報を削除
       return null;
     }, setLoading, setError, 'シミュレーションからのトークン取得');
   };

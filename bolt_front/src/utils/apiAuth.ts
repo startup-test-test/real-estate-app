@@ -56,7 +56,8 @@ export class ApiAuthManager {
         }
       }
     } catch (error) {
-      console.error('Failed to load stored token:', error);
+      // SEC-049: 機密情報を含む可能性があるエラーはログに出力しない
+      // 本番環境ではconsoleが無効化されているが、念のため削除
     }
   }
 
@@ -71,7 +72,7 @@ export class ApiAuthManager {
       await SecureStorage.setItem(TOKEN_KEY, this.token);
       await SecureStorage.setItem(TOKEN_EXPIRY_KEY, this.tokenExpiry);
     } catch (error) {
-      console.error('Failed to save token:', error);
+      // SEC-049: エラー詳細をログに出力しない
       // フォールバック: セッションストレージに保存
       sessionStorage.setItem(TOKEN_KEY, this.token);
       sessionStorage.setItem(TOKEN_EXPIRY_KEY, this.tokenExpiry.toString());
@@ -89,7 +90,7 @@ export class ApiAuthManager {
       await SecureStorage.removeItem(TOKEN_KEY);
       await SecureStorage.removeItem(TOKEN_EXPIRY_KEY);
     } catch (error) {
-      console.error('Failed to clear token:', error);
+      // SEC-049: エラー詳細をログに出力しない
     }
 
     // セッションストレージもクリア
@@ -174,7 +175,7 @@ export class ApiAuthManager {
       await this.saveToken(tokenData);
       return true;
     } catch (error) {
-      console.error('Failed to obtain API token:', error);
+      // SEC-049: トークン取得エラーの詳細をログに出力しない
       // 一時的な対処：エラー時も続行可能にする
       if (import.meta.env.VITE_DISABLE_API_AUTH === 'true') {
         const dummyToken: TokenData = {

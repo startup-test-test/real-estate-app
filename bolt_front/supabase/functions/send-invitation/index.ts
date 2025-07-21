@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { SecureLogger } from '../_shared/secureLogger.ts'
+import { generateInvitationTempPassword } from '../_shared/cryptoPassword.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -71,9 +72,11 @@ serve(async (req) => {
       logger.error('Supabase email sending failed', authError)
       
       // フォールバック: ダミーユーザーを作成してメール送信を試行
+      // SEC-050: 暗号学的に安全な一時パスワードを生成
+      const securePassword = generateInvitationTempPassword();
       const { error: signUpError } = await adminClient.auth.signUp({
         email: email,
-        password: 'temp-password-for-invitation-' + Date.now(),
+        password: securePassword,
         options: {
           data: {
             invitation_type: 'property_share',
@@ -124,7 +127,7 @@ serve(async (req) => {
         },
         performed_at: new Date().toISOString()
       })
-      .catch(err => logger.error('Failed to create audit log', err))
+      .catch((err: any) => logger.error('Failed to create audit log', err))
 
     // SEC-039: 成功ログ（機密情報を含まない）
     logger.info('Invitation email sent successfully', { 
