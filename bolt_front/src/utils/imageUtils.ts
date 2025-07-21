@@ -3,6 +3,8 @@
  * リサイズ、圧縮、ファイル検証など
  */
 
+import { detectPolyglotFile, isSecureImageFileWithPolyglotCheck } from './polyglotDetector';
+
 export interface ImageResizeOptions {
   maxWidth?: number;
   maxHeight?: number;
@@ -197,7 +199,21 @@ export const validateImageFileAsync = async (file: File): Promise<{ isValid: boo
 
   // 次にマジックナンバーの検証を実施
   const secureValidation = await isSecureImageFile(file);
-  return secureValidation;
+  if (!secureValidation.isValid) {
+    return secureValidation;
+  }
+  
+  // SEC-027: ポリグロットファイル攻撃対策
+  // 最後にポリグロット検出を実施
+  const polyglotValidation = await isSecureImageFileWithPolyglotCheck(file);
+  if (!polyglotValidation.isValid) {
+    return {
+      isValid: false,
+      error: polyglotValidation.error || 'セキュリティリスクが検出されました'
+    };
+  }
+  
+  return { isValid: true };
 };
 
 /**
