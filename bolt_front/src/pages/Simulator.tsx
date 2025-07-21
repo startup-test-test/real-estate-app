@@ -729,18 +729,15 @@ const Simulator: React.FC = () => {
       }
       
     } catch (error) {
-      handleError(error, 'Simulation Execution');
-      let errorMessage = '不明なエラー';
+      const secureError = handleError(error, 'Simulation Execution');
       
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
-        } else {
-          errorMessage = error.message;
-        }
+      // SEC-026: エラー情報の詳細漏洩対策
+      // 本番環境では汎用的なメッセージを表示
+      if (error instanceof Error && error.name === 'AbortError') {
+        setSaveError('APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。');
+      } else {
+        setSaveError(secureError.userMessage);
       }
-      
-      setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
     } finally {
       setIsSimulating(false);
     }

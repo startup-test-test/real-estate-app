@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { handleError } from '../utils/secureErrorHandler';
 import { 
   Search, 
   MapPin, 
@@ -294,8 +295,9 @@ const TransactionSearch: React.FC = () => {
       });
 
     } catch (error) {
-      console.error('検索エラー:', error);
-      setSearchError(error instanceof Error ? error.message : '検索に失敗しました');
+      // SEC-026: エラー情報の詳細漏洩対策
+      const secureError = handleError(error, 'Transaction Search');
+      setSearchError(secureError.userMessage);
     } finally {
       setIsSearching(false);
     }

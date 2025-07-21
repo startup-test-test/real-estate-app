@@ -8,6 +8,7 @@ import {
   Download
 } from 'lucide-react';
 import { getShareData, getTimeUntilExpiry } from '../utils/shareUtils';
+import { handleError } from '../utils/secureErrorHandler';
 import { usePdfGenerator } from '../hooks/usePdfGenerator';
 import ShareMetrics from '../components/ShareMetrics';
 
@@ -35,7 +36,9 @@ const ShareView: React.FC = () => {
         setShareData(data);
         setTimeRemaining(getTimeUntilExpiry(data.expiresAt));
       } catch (err: any) {
-        setError(err.message || '共有データの読み込みに失敗しました');
+        // SEC-026: エラー情報の詳細漏洩対策
+        const secureError = handleError(err, 'Share View Load');
+        setError(secureError.userMessage);
       } finally {
         setLoading(false);
       }

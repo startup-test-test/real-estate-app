@@ -2,6 +2,7 @@ import React from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { sanitizeUrl, openUrlSafely } from '../utils/validation';
+import { handleError } from '../utils/secureErrorHandler';
 import { 
   Calculator, 
   LogOut, 
@@ -152,8 +153,9 @@ const Dashboard: React.FC = () => {
         saveToCache(data || []);
       }
     } catch (err: any) {
-      console.error('データ読み込みエラー:', err);
-      setError(err.message);
+      // SEC-026: エラー情報の詳細漏洩対策
+      const secureError = handleError(err, 'Dashboard Data Load');
+      setError(secureError.userMessage);
       setSimulations([]);
     } finally {
       setLoading(false);
@@ -187,8 +189,10 @@ const Dashboard: React.FC = () => {
         }, 3000);
       }
     } catch (err: any) {
-      setError(err.message);
-      alert('削除処理中にエラーが発生しました: ' + err.message);
+      // SEC-026: エラー情報の詳細漏洩対策
+      const secureError = handleError(err, 'Dashboard Delete');
+      setError(secureError.userMessage);
+      alert('削除処理中にエラーが発生しました');
     } finally {
       setLoading(false);
     }

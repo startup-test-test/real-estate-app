@@ -287,14 +287,9 @@ def run_simulation(
     except ValueError as e:
         # バリデーションエラー
         logger.error("Validation error in simulation: %s", str(e))
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "VALIDATION_ERROR",
-                "message": "入力データに不正な値が含まれています",
-                "details": str(e)
-            }
-        )
+        # SEC-026: エラー情報の詳細漏洩対策
+        from error_handler import create_validation_error_response
+        raise create_validation_error_response("simulation_input", str(e))
     except Exception as e:
         logger.error("Error in simulation: %s", str(e))
         raise HTTPException(

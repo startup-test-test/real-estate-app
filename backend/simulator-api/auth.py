@@ -92,11 +92,16 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Security(security))
         return payload
 
     except JWTError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"トークンの検証に失敗しました: {str(e)}",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from e
+        # SEC-026: エラー情報の詳細漏洩対策
+        from error_handler import create_auth_error_response, is_production
+        if is_production():
+            raise create_auth_error_response("認証に失敗しました")
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"トークンの検証に失敗しました: {str(e)}",
+                headers={"WWW-Authenticate": "Bearer"},
+            ) from e
 
 
 def get_current_user(token_payload: Dict[str, Any] = Security(verify_token)) -> Dict[str, Any]:
