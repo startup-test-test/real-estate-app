@@ -134,12 +134,7 @@ export function usePropertyShare() {
     return comment;
   };
 
-  /**
-   * テスト用コメント投稿
-   */
-  const postTestComment = async (shareId: string, content: string, tags: string[]): Promise<ShareComment | null> => {
-    return commentsHook.postTestComment(shareId, content, tags);
-  };
+  // postTestComment機能は削除されました（SEC-042対策）
 
   /**
    * コメント一覧を取得
@@ -252,7 +247,6 @@ export function usePropertyShare() {
     
     // Comment Operations
     postComment,
-    postTestComment,
     fetchComments,
     deleteComment,
     editComment,

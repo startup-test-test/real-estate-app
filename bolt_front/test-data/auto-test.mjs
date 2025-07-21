@@ -5,7 +5,17 @@
  * 
  * 各ステップでの基本的な動作確認を自動化
  * ビルド確認、基本チェック、APIテストを実行
+ * 
+ * ⚠️ 警告: このスクリプトは開発環境専用です
+ * 本番環境での実行は禁止されています
  */
+
+// 環境チェック
+if (process.env.NODE_ENV === 'production' || process.env.VITE_ENV === 'production') {
+  console.error('❌ Error: This test script cannot be executed in production environment');
+  console.error('This script is for development purposes only.');
+  process.exit(1);
+}
 
 import { spawn } from 'child_process';
 import fs from 'fs';

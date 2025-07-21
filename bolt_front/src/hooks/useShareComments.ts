@@ -25,9 +25,16 @@ export function useShareComments() {
   };
 
   /**
-   * テスト用コメント投稿（制約回避）
+   * テスト用コメント投稿（開発環境のみ）
+   * 本番環境では使用不可
    */
   const postTestComment = async (shareId: string, content: string, tags: string[]): Promise<ShareComment | null> => {
+    // 本番環境では実行を拒否
+    if (import.meta.env.MODE === 'production') {
+      console.error('❌ postTestComment is not allowed in production environment');
+      throw new Error('Test functions are not available in production');
+    }
+    
     console.log('🧪 postTestComment: デモ/テストモード');
     
     const testComment = {
@@ -253,7 +260,6 @@ export function useShareComments() {
     
     // Comment Operations
     postComment,
-    postTestComment,
     fetchComments,
     deleteComment,
     editComment
