@@ -36,7 +36,10 @@ app = FastAPI(
 
 # CORS設定
 # 環境変数から許可するオリジンを取得
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:4173").split(",")
+allowed_origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:4173"
+).split(",")
 
 # 本番環境では厳格なオリジン設定を使用
 if os.getenv("ENV", "development") == "production":
@@ -68,6 +71,16 @@ else:
     # 開発環境では、GitHub Codespacesのオリジンも許可するカスタムミドルウェアを使用
     @app.middleware("http")
     async def cors_middleware(request, call_next):
+        """
+        GitHub Codespacesも許可するCORSミドルウェア
+        
+        Args:
+            request: HTTPリクエスト
+            call_next: 次のミドルウェア
+            
+        Returns:
+            Response: HTTPレスポンス
+        """
         origin = request.headers.get("origin", "")
 
         # 許可されたオリジンか、GitHub Codespacesのパターンにマッチするかチェック
@@ -75,8 +88,12 @@ else:
             response = await call_next(request)
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+            response.headers["Access-Control-Allow-Methods"] = (
+                "GET, POST, PUT, DELETE, OPTIONS"
+            )
+            response.headers["Access-Control-Allow-Headers"] = (
+                "Content-Type, Authorization, X-Requested-With"
+            )
             response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
             return response
         # 標準のCORSミドルウェアの動作にフォールバック
@@ -85,10 +102,30 @@ else:
 # エラーハンドラーの登録
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
+    """
+    HTTPExceptionハンドラー
+    
+    Args:
+        request: HTTPリクエスト
+        exc: HTTPException
+        
+    Returns:
+        JSONResponse: エラーレスポンス
+    """
     return handle_http_exception(request, exc)
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
+    """
+    一般的な例外ハンドラー
+    
+    Args:
+        request: HTTPリクエスト
+        exc: Exception
+        
+    Returns:
+        JSONResponse: エラーレスポンス
+    """
     return handle_general_exception(request, exc)
 
 # APIキーの取得
@@ -104,6 +141,12 @@ security = HTTPBearer()
 # ヘルスチェックエンドポイント（認証不要）
 @app.get("/")
 def read_root():
+    """
+    ヘルスチェックエンドポイント
+    
+    Returns:
+        dict: APIステータス情報
+    """
     return {
         "message": "大家DX API",
         "version": "1.0.0",
@@ -125,7 +168,8 @@ def login_for_access_token(credentials: dict):
         # 開発環境用のモックトークン
         if credentials.get("email", "").endswith("@example.com"):
             # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
-            role = UserRole.ADMIN if credentials.get("email") == "admin@example.com" else UserRole.STANDARD
+            is_admin = credentials.get("email") == "admin@example.com"
+            role = UserRole.ADMIN if is_admin else UserRole.STANDARD
 
             access_token = create_access_token(
                 data={
@@ -148,7 +192,7 @@ def login_for_access_token(credentials: dict):
     if not supabase_token:
         raise create_auth_error_response("認証情報が不正です")
 
-    # TODO: Supabaseトークンの検証を実装
+    # TODO: Supabaseトークンの検証を実装  # pylint: disable=fixme
     # 現在は仮実装として、トークンが存在すればOKとする
     user_id = credentials.get("user_id", "unknown")
     email = credentials.get("email", "unknown@example.com")
