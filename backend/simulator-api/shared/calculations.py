@@ -5,6 +5,17 @@ Streamlit開発版とFastAPI本番版で共通使用
 
 from math import pow
 from typing import Dict, List, Optional, Any
+import sys
+import os
+
+# 親ディレクトリをパスに追加してmodelsをインポート可能にする
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from models import PropertyInputModel
+except ImportError:
+    # Streamlit環境などでmodelsが使えない場合のフォールバック
+    PropertyInputModel = None
 
 
 def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int, 
@@ -60,20 +71,91 @@ def calculate_monthly_loan_payment(loan_amount: float, interest_rate: float,
     return monthly_loan
 
 
+def validate_and_extract_data(property_data: Dict[str, Any]) -> Dict[str, Any]:
+    """入力データを検証して安全な値を抽出"""
+    if PropertyInputModel is not None:
+        # Pydanticモデルが利用可能な場合
+        try:
+            validated = PropertyInputModel(**property_data)
+            return validated.dict()
+        except Exception:
+            # バリデーションエラーの場合はフォールバック
+            pass
+    
+    # フォールバック: 基本的な型チェックと範囲検証
+    safe_data = {}
+    
+    # 数値フィールドの検証
+    numeric_fields = [
+        ('monthly_rent', 0, 10000),
+        ('vacancy_rate', 0, 100),
+        ('management_fee', 0, 1000),
+        ('fixed_cost', 0, 1000),
+        ('property_tax', 0, 10000),
+        ('purchase_price', 0, 1000000),
+        ('loan_amount', 0, 1000000),
+        ('other_costs', 0, 10000),
+        ('renovation_cost', 0, 10000),
+        ('interest_rate', 0, 20),
+        ('loan_years', 1, 50),
+        ('holding_years', 1, 50),
+        ('exit_cap_rate', 0, 50),
+        ('effective_tax_rate', 0, 60),
+        ('building_price', 0, 1000000),
+        ('depreciation_years', 1, 100),
+        ('land_area', 0, 100000),
+        ('building_area', 0, 100000),
+        ('road_price', 0, 10000000),
+        ('rent_decline', 0, 50)
+    ]
+    
+    for field, min_val, max_val in numeric_fields:
+        value = property_data.get(field, 0)
+        try:
+            value = float(value)
+            if value < min_val or value > max_val:
+                value = max(min_val, min(value, max_val))
+        except (TypeError, ValueError):
+            value = 0
+        safe_data[field] = value
+    
+    # 文字列フィールドのサニタイズ
+    string_fields = ['property_name', 'location', 'property_type', 'loan_type', 'building_structure']
+    for field in string_fields:
+        value = property_data.get(field, '')
+        if isinstance(value, str):
+            # 危険な文字を除去
+            value = value.replace('<', '').replace('>', '').replace('"', '').replace("'", '')
+            value = value.replace('\x00', '').replace('\r', '').replace('\n\n\n', '\n')
+            safe_data[field] = value[:200]  # 最大200文字
+        else:
+            safe_data[field] = ''
+    
+    # デフォルト値の設定
+    safe_data['loan_type'] = safe_data.get('loan_type', '元利均等')
+    safe_data['market_value'] = property_data.get('market_value', safe_data['purchase_price'])
+    safe_data['expected_sale_price'] = property_data.get('expected_sale_price', safe_data['market_value'])
+    
+    return safe_data
+
+
 def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """基本的な収益指標を計算"""
+    # 入力データを検証して安全な値を取得
+    safe_data = validate_and_extract_data(property_data)
+    
     # 基本データの取得
-    monthly_rent = property_data.get('monthly_rent', 0)
-    vacancy_rate = property_data.get('vacancy_rate', 0)
-    management_fee = property_data.get('management_fee', 0)
-    fixed_cost = property_data.get('fixed_cost', 0)
-    property_tax = property_data.get('property_tax', 0)
-    purchase_price = property_data.get('purchase_price', 0)
-    loan_amount = property_data.get('loan_amount', 0)
-    other_costs = property_data.get('other_costs', 0)
-    renovation_cost = property_data.get('renovation_cost', 0)
-    interest_rate = property_data.get('interest_rate', 0)
-    loan_years = property_data.get('loan_years', 0)
+    monthly_rent = safe_data['monthly_rent']
+    vacancy_rate = safe_data['vacancy_rate']
+    management_fee = safe_data['management_fee']
+    fixed_cost = safe_data['fixed_cost']
+    property_tax = safe_data['property_tax']
+    purchase_price = safe_data['purchase_price']
+    loan_amount = safe_data['loan_amount']
+    other_costs = safe_data['other_costs']
+    renovation_cost = safe_data['renovation_cost']
+    interest_rate = safe_data['interest_rate']
+    loan_years = safe_data['loan_years']
     
     # キャッシュフロー計算
     annual_rent = monthly_rent * 12 * (1 - vacancy_rate / 100)
@@ -91,11 +173,11 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     noi = annual_rent - (management_fee * 12 + fixed_cost * 12 + property_tax)
     
     # 税金計算用パラメータ（CCR/ROI計算のため）
-    effective_tax_rate = property_data.get('effective_tax_rate', 20)
-    building_price = property_data.get('building_price', 2000)
-    depreciation_years = property_data.get('depreciation_years', 27)
+    effective_tax_rate = safe_data['effective_tax_rate']
     
     # 減価償却費（1年目）
+    building_price = safe_data['building_price']
+    depreciation_years = safe_data['depreciation_years']
     annual_depreciation = calculate_depreciation(building_price, depreciation_years, 1)
     
     # 不動産所得と税金
@@ -127,11 +209,14 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
 
 def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """物件評価額を計算"""
-    exit_cap_rate = property_data.get('exit_cap_rate', 0)
-    land_area = property_data.get('land_area', 0)
-    road_price = property_data.get('road_price', 0)
-    building_area = property_data.get('building_area', 0)
-    market_value = property_data.get('market_value', 0)
+    # 入力データを検証
+    safe_data = validate_and_extract_data(property_data)
+    
+    exit_cap_rate = safe_data['exit_cap_rate']
+    land_area = safe_data['land_area']
+    road_price = safe_data['road_price']
+    building_area = safe_data['building_area']
+    market_value = safe_data['market_value']
     
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)
@@ -158,13 +243,15 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
 
 def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """売却分析を計算"""
-    loan_amount = property_data.get('loan_amount', 0)
-    interest_rate = property_data.get('interest_rate', 0)
-    loan_years = property_data.get('loan_years', 0)
-    loan_type = property_data.get('loan_type', '元利均等')
-    holding_years = property_data.get('holding_years', 0)
-    # 想定売却価格を優先、なければ市場価格を使用
-    expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
+    # 入力データを検証
+    safe_data = validate_and_extract_data(property_data)
+    
+    loan_amount = safe_data['loan_amount']
+    interest_rate = safe_data['interest_rate']
+    loan_years = safe_data['loan_years']
+    loan_type = safe_data['loan_type']
+    holding_years = safe_data['holding_years']
+    expected_sale_price = safe_data['expected_sale_price']
     
     # 売却時のローン残高
     remaining_loan = calculate_remaining_loan(
@@ -186,14 +273,17 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
 
 def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     """年次キャッシュフロー表を生成"""
-    monthly_rent = property_data.get('monthly_rent', 0)
-    vacancy_rate = property_data.get('vacancy_rate', 0)
-    management_fee = property_data.get('management_fee', 0)
-    fixed_cost = property_data.get('fixed_cost', 0)
-    property_tax = property_data.get('property_tax', 0)
-    holding_years = property_data.get('holding_years', 0)
-    rent_decline = property_data.get('rent_decline', 0)
-    building_area = property_data.get('building_area', 0)
+    # 入力データを検証
+    safe_data = validate_and_extract_data(property_data)
+    
+    monthly_rent = safe_data['monthly_rent']
+    vacancy_rate = safe_data['vacancy_rate']
+    management_fee = safe_data['management_fee']
+    fixed_cost = safe_data['fixed_cost']
+    property_tax = safe_data['property_tax']
+    holding_years = safe_data['holding_years']
+    rent_decline = safe_data['rent_decline']
+    building_area = safe_data['building_area']
     
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)

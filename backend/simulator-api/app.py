@@ -20,6 +20,9 @@ from error_handler import (
     create_auth_error_response
 )
 from shared.calculations import run_full_simulation
+from models import PropertyInputModel, SimulationRequestModel, SimulationResponseModel
+from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
+from http_method_guard import http_method_middleware
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -33,6 +36,9 @@ app = FastAPI(
     description="不動産投資シミュレーター RESTful API",
     version="1.0.0"
 )
+
+# SEC-082: HTTPメソッド制限ミドルウェアを追加
+app.middleware("http")(http_method_middleware)
 
 # CORS設定
 # 環境変数から許可するオリジンを取得
@@ -139,6 +145,7 @@ real_estate_api_key = os.getenv("REAL_ESTATE_API_KEY", "")
 security = HTTPBearer()
 
 # ヘルスチェックエンドポイント（認証不要）
+# SEC-082: HTTPメソッド制限 - GETのみ許可
 @app.get("/")
 def read_root():
     """
@@ -157,6 +164,7 @@ def read_root():
 # 古い計算関数は削除し、shared.calculations.pyの関数を使用
 
 # 認証エンドポイント
+# SEC-082: HTTPメソッド制限 - POSTのみ許可
 @app.post("/api/auth/token")
 def login_for_access_token(credentials: dict):
     """
@@ -222,6 +230,7 @@ def login_for_access_token(credentials: dict):
     }
 
 # 認証状態確認エンドポイント
+# SEC-082: HTTPメソッド制限 - GETのみ許可
 @app.get("/api/auth/me")
 def get_me(current_user: dict = Depends(get_current_user)):
     """現在の認証ユーザー情報を取得"""
@@ -239,35 +248,78 @@ def get_me(current_user: dict = Depends(get_current_user)):
     }
 
 # シミュレーションエンドポイント（認証＋権限必須）
-@app.post("/api/simulate")
+# SEC-082: HTTPメソッド制限 - POSTのみ許可
+@app.post("/api/simulate", response_model=SimulationResponseModel)
 def run_simulation(
-    property_data: dict,
+    request: SimulationRequestModel,
     current_user: dict = Depends(require_permission(Permission.SIMULATE_BASIC))
 ):
-    """収益シミュレーションを実行 - 新機能対応版（認証必須）"""
+    """
+    収益シミュレーションを実行 - 新機能対応版（認証必須）
+    
+    SEC-075: Pydanticモデルによる入力検証を実装
+    SEC-082: HTTPメソッド制限を実装 - POSTのみ許可
+    """
     # ユーザーIDをログに記録（監査用）
     logger.info("Simulation requested by user: %s", current_user.get('user_id'))
 
-    # 共通計算ロジックを使用してシミュレーション実行
-    result = run_full_simulation(property_data)
+    try:
+        # Pydanticモデルで検証済みのデータを使用
+        property_data = request.property_data.dict()
+        
+        # 共通計算ロジックを使用してシミュレーション実行
+        result = run_full_simulation(property_data)
+        
+        # レスポンスにユーザー情報を追加
+        result["requested_by"] = current_user.get("user_id")
+        result["requested_at"] = datetime.now(timezone.utc).isoformat()
+        
+        return SimulationResponseModel(
+            success=True,
+            results=result.get('results', {}),
+            cash_flow_table=result.get('cash_flow_table', []) if request.include_cash_flow_table else None,
+            request_id=result.get('requested_by', '')
+        )
+    except ValueError as e:
+        # バリデーションエラー
+        logger.error("Validation error in simulation: %s", str(e))
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "VALIDATION_ERROR",
+                "message": "入力データに不正な値が含まれています",
+                "details": str(e)
+            }
+        )
+    except Exception as e:
+        logger.error("Error in simulation: %s", str(e))
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": "SIMULATION_ERROR",
+                "message": "シミュレーション中にエラーが発生しました"
+            }
+        )
 
-    # レスポンスにユーザー情報を追加
-    result["requested_by"] = current_user.get("user_id")
-    result["requested_at"] = datetime.now(timezone.utc).isoformat()
-
-    return result
 
 # 市場分析エンドポイント（認証＋権限必須）
-@app.post("/api/market-analysis")
+# SEC-082: HTTPメソッド制限 - POSTのみ許可
+@app.post("/api/market-analysis", response_model=MarketAnalysisResponseModel)
 def market_analysis(
-    request: dict,
+    request: MarketAnalysisRequestModel,
     current_user: dict = Depends(require_permission(Permission.MARKET_ANALYSIS_BASIC))
 ):
-    """類似物件の市場分析を実行"""
-    location = request.get('location', '')
-    land_area = request.get('land_area', 0)
-    year_built = request.get('year_built', 2000)
-    purchase_price = request.get('purchase_price', 0)
+    """
+    類似物件の市場分析を実行
+    
+    SEC-075: Pydanticモデルによる入力検証を実装
+    SEC-082: HTTPメソッド制限を実装 - POSTのみ許可
+    """
+    # 検証済みのデータを取得
+    location = request.location
+    land_area = request.land_area
+    year_built = request.year_built
+    purchase_price = request.purchase_price
 
     # ユーザーIDをログに記録（監査用）
     logger.info("Market analysis requested by user: %s", current_user.get('user_id'))
@@ -316,17 +368,17 @@ def market_analysis(
     else:
         evaluation = "割高"
 
-    return {
-        "similar_properties": similar_properties,
-        "statistics": {
-            "median_price": round(median_price, 2),
-            "mean_price": round(mean_price, 2),
-            "std_price": round(std_price, 2),
-            "user_price": round(user_unit_price, 2),
-            "deviation": round(deviation, 1),
-            "evaluation": evaluation
-        }
-    }
+    return MarketAnalysisResponseModel(
+        similar_properties=similar_properties,
+        statistics=MarketStatisticsModel(
+            median_price=round(median_price, 2),
+            mean_price=round(mean_price, 2),
+            std_price=round(std_price, 2),
+            user_price=round(user_unit_price, 2),
+            deviation=round(deviation, 1),
+            evaluation=evaluation
+        )
+    )
 
 # APIドキュメントの自動生成
 if __name__ == "__main__":
