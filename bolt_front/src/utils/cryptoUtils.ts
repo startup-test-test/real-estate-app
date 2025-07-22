@@ -51,7 +51,7 @@ export class CryptoUtils {
     return window.crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
-        salt,
+        salt: salt.buffer as ArrayBuffer,
         iterations: this.ITERATIONS,
         hash: 'SHA-256'
       },
@@ -208,7 +208,8 @@ export class SecureStorage {
       const decrypted = await CryptoUtils.decrypt(encrypted, this.encryptionKey);
       return JSON.parse(decrypted);
     } catch (error) {
-      console.error('SecureStorage getItem error:', error);
+      // 古い暗号化データがある場合は削除
+      localStorage.removeItem(key);
       // フォールバック: sessionStorageから取得
       const fallback = sessionStorage.getItem(key);
       return fallback ? JSON.parse(fallback) : null;

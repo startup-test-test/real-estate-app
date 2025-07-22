@@ -5,20 +5,9 @@ import { sanitizeUrl, openUrlSafely } from '../utils/validation';
 import { handleError } from '../utils/secureErrorHandler';
 import { SecureDataStorage } from '../utils/secureDataStorage';
 import { 
-  Calculator, 
-  LogOut, 
-  User,
-  Home,
-  Menu,
-  X,
-  Bell,
-  Settings,
+  Calculator,
   Building,
-  BookOpen,
-  HelpCircle,
-  Crown,
   Search,
-  Key,
   Plus,
   Download,
   Edit,
@@ -57,9 +46,6 @@ const Dashboard: React.FC = () => {
   const [isInitialLoad, setIsInitialLoad] = React.useState(true); // 初回読み込みフラグ
   const itemsPerPage = 12;
   
-  // キャッシュキーの生成（ユーザーごとに異なるキャッシュ）
-  const getCacheKey = () => `simulations_cache_${user?.id || 'anonymous'}`;
-  const getCacheTimestampKey = () => `simulations_cache_timestamp_${user?.id || 'anonymous'}`;
   
   // キャッシュからデータを読み込む（SEC-030: 暗号化対応）
   const loadFromCache = async () => {
