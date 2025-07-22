@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     onSessionTimeout: () => {
       console.log('セッションタイムアウト検出')
     },
-    warningTime: 5 * 60 * 1000 // 5分前に警告
+    warningTime: 10 * 60 * 1000 // 10分前に警告（タイムアウトが60分になったため調整）
   })
 
   // 認証状態の変更をログに記録

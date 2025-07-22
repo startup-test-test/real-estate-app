@@ -8,7 +8,8 @@ import type { User, Session } from '@supabase/supabase-js';
 import { SecureStorage } from './cryptoUtils';
 
 // セッションタイムアウト時間（ミリ秒）
-const SESSION_TIMEOUT = 30 * 60 * 1000; // 30分
+// バックエンドと同じ60分に統一
+const SESSION_TIMEOUT = 60 * 60 * 1000; // 60分
 const ACTIVITY_CHECK_INTERVAL = 60 * 1000; // 1分ごとにチェック
 
 export interface SecureSession extends Session {

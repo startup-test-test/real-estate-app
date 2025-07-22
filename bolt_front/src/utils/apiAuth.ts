@@ -116,8 +116,8 @@ export class ApiAuthManager {
     if (!this.tokenExpiry) {
       return true;
     }
-    // 5分の余裕を持って期限切れ判定
-    return Date.now() > (this.tokenExpiry - 5 * 60 * 1000);
+    // 1分の余裕を持って期限切れ判定（シミュレーション実行中の誤判定を防ぐ）
+    return Date.now() > (this.tokenExpiry - 1 * 60 * 1000);
   }
 
   /**
@@ -194,7 +194,7 @@ export class ApiAuthManager {
   /**
    * 認証付きfetchラッパー
    */
-  async authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  async authenticatedFetch(url: string, options: RequestInit = {}, retryCount = 0): Promise<Response> {
     // 認証が無効化されている場合は通常のfetchを実行
     if (import.meta.env.VITE_DISABLE_API_AUTH === 'true') {
       return fetch(url, options);
@@ -210,9 +210,26 @@ export class ApiAuthManager {
       }
     });
 
-    // 401エラーの場合はトークンをクリア
-    if (response.status === 401) {
+    // 401エラーの場合はトークンを再取得して1回だけリトライ
+    if (response.status === 401 && retryCount === 0) {
       await this.clearToken();
+      
+      // Supabaseセッションから新しいトークンを取得
+      try {
+        const { supabase } = await import('../lib/supabase');
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          const success = await this.obtainToken(session);
+          if (success) {
+            // 新しいトークンで再試行
+            return this.authenticatedFetch(url, options, 1);
+          }
+        }
+      } catch (error) {
+        // SEC-049: エラー詳細をログに出力しない
+      }
+      
       throw new Error('Authentication required');
     }
 

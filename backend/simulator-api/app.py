@@ -8,7 +8,6 @@ import logging
 import os
 import random
 from datetime import datetime, timezone
-from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +22,7 @@ from error_handler import (
 from supabase_auth import supabase_auth, get_authenticated_user
 from shared.calculations import run_full_simulation
 from shared.safe_serializer import prevent_dangerous_imports, safe_json_parse, UnsafeOperationError
+from shared.memory_guard import MemoryGuardError
 from models import PropertyInputModel, SimulationRequestModel, SimulationResponseModel
 from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
 from models_auth import TokenRequest, TokenResponse, UserInfoResponse
@@ -35,18 +35,35 @@ from csrf_protection import (
 )
 from database import get_db, init_db, log_user_activity
 from https_redirect import HTTPSRedirectMiddleware, check_https_config
+from env_security import load_secure_env, get_env, env_manager
+from security_headers import SecurityHeadersMiddleware, get_security_headers_config
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
 
-# .envファイルの読み込み
-load_dotenv()
+# SEC-077, SEC-080: セキュアな環境変数の読み込み
+try:
+    env_vars = load_secure_env()
+    env_manager.validate_runtime_security()
+    logger.info("環境変数が正常に読み込まれました")
+except Exception as e:
+    logger.error(f"環境変数の読み込みエラー: {e}")
+    # 必須環境変数がない場合は終了
+    if "SUPABASE_URL" not in os.environ:
+        raise
+
+# SEC-081: デバッグモードの本番環境確認
+is_production = get_env('ENVIRONMENT', 'development').lower() in ('production', 'prod')
+enable_docs = get_env('ENABLE_DOCS', False) and not is_production
 
 # FastAPIアプリケーションの初期化
 app = FastAPI(
     title="大家DX API",
     description="不動産投資シミュレーター RESTful API",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs" if enable_docs else None,
+    redoc_url="/redoc" if enable_docs else None,
+    openapi_url="/openapi.json" if enable_docs else None
 )
 
 # SEC-070: データベース初期化
@@ -67,12 +84,17 @@ app.add_middleware(HTTPSRedirectMiddleware)
 # SEC-082: HTTPメソッド制限ミドルウェアを追加
 app.middleware("http")(http_method_middleware)
 
+# SEC-079: セキュリティヘッダーミドルウェアを追加
+security_headers_config = get_security_headers_config(
+    'development' if not is_production else 'production'
+)
+app.add_middleware(SecurityHeadersMiddleware, **security_headers_config)
+
 # CORS設定
-# 環境変数から許可するオリジンを取得
-allowed_origins = os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://localhost:5173,http://localhost:4173"
-).split(",")
+# SEC-077: セキュアな環境変数から取得
+allowed_origins = get_env('CORS_ORIGINS', ['http://localhost:5173', 'http://localhost:4173'])
+if isinstance(allowed_origins, str):
+    allowed_origins = [origin.strip() for origin in allowed_origins.split(',')]
 
 # 本番環境では厳格なオリジン設定を使用
 if os.getenv("ENV", "development") == "production":
@@ -473,6 +495,16 @@ async def run_simulation(
         # SEC-026: エラー情報の詳細漏洩対策
         from error_handler import create_validation_error_response
         raise create_validation_error_response("simulation_input", str(e))
+    except MemoryGuardError as e:
+        # SEC-076: メモリ消費攻撃対策
+        logger.error("Memory limit exceeded in simulation: %s", str(e))
+        raise HTTPException(
+            status_code=413,
+            detail={
+                "error": "MEMORY_LIMIT_EXCEEDED",
+                "message": "シミュレーション処理がメモリ制限を超えました。入力データを確認してください。"
+            }
+        )
     except Exception as e:
         logger.error("Error in simulation: %s", str(e))
         raise HTTPException(

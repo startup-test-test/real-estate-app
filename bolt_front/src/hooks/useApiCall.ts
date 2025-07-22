@@ -13,6 +13,7 @@ import { apiAuth } from '../utils/apiAuth';
 import { rbacClient } from '../utils/rbacClient';
 import { handleError, handleApiError } from '../utils/secureErrorHandler';
 import { simulationRateLimiter, apiRateLimiter } from '../utils/rateLimiter';
+import { SessionManager } from '../utils/sessionManager';
 
 export const useApiCall = () => {
   const [isSimulating, setIsSimulating] = useState(false);
@@ -59,6 +60,10 @@ export const useApiCall = () => {
     setIsSimulating(true);
     
     try {
+      // シミュレーション実行前にセッションをリフレッシュ
+      const sessionManager = SessionManager.getInstance();
+      sessionManager.refreshSession();
+      
       // SEC-025: レート制限チェック
       const userId = user?.id || 'anonymous';
       const isAllowed = await simulationRateLimiter.checkLimit(userId);

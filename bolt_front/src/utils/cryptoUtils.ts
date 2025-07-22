@@ -209,7 +209,21 @@ export class SecureStorage {
       return JSON.parse(decrypted);
     } catch (error) {
       // 古い暗号化データがある場合は削除
+      console.warn(`[SecureStorage] 暗号化データの読み込みエラー: ${key}`);
       localStorage.removeItem(key);
+      
+      // セッション関連のキーの場合は、関連するすべてのキーをクリア
+      if (key.includes('session') || key.includes('token') || key.includes('auth')) {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const storageKey = localStorage.key(i);
+          if (storageKey && (storageKey.includes('session') || storageKey.includes('token') || storageKey.includes('auth'))) {
+            keysToRemove.push(storageKey);
+          }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+      }
+      
       // フォールバック: sessionStorageから取得
       const fallback = sessionStorage.getItem(key);
       return fallback ? JSON.parse(fallback) : null;

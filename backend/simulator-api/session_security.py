@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 SESSION_ID_LENGTH = 32  # 256ビットのセッションID
 SESSION_TIMEOUT_MINUTES = 60  # セッションタイムアウト（分）
 MAX_SESSIONS_PER_USER = 5  # ユーザーあたりの最大セッション数
-SESSION_ROTATION_INTERVAL = 15  # セッションID回転間隔（分）
+SESSION_ROTATION_INTERVAL = 30  # セッションID回転間隔（分）
 
 # セッション署名用の秘密鍵
 SESSION_SECRET = os.getenv("SESSION_SECRET", secrets.token_urlsafe(32))

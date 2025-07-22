@@ -17,6 +17,11 @@ from .input_sanitizer import (
     sanitize_and_validate_input,
     InputSanitizationError
 )
+from .memory_guard import (
+    memory_guard_decorator,
+    MemoryGuardError,
+    safe_calculation_with_memory_guard
+)
 
 # 親ディレクトリをパスに追加してmodelsをインポート可能にする
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -29,6 +34,7 @@ except ImportError:
 
 
 @safe_calculation_wrapper
+@memory_guard_decorator(memory_limit_mb=100, timeout_seconds=5)
 def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int, 
                            elapsed_years: int, loan_type: str = "元利均等") -> float:
     """ローン残高を計算（SEC-058: DoS攻撃対策済み）"""
@@ -83,6 +89,7 @@ def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_year
     return remaining / 10000
 
 
+@memory_guard_decorator(memory_limit_mb=100, timeout_seconds=5)
 def calculate_irr(annual_cf: float, years: int, sale_profit: float, 
                  self_funding: float, annual_loan: float) -> Optional[float]:
     """IRR計算（簡単な近似）"""
@@ -144,6 +151,7 @@ def validate_and_extract_data(property_data: Dict[str, Any]) -> Dict[str, Any]:
     return safe_data
 
 
+@memory_guard_decorator(memory_limit_mb=300, timeout_seconds=10)
 def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """基本的な収益指標を計算"""
     # 入力データを検証して安全な値を取得
@@ -212,6 +220,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+@memory_guard_decorator(memory_limit_mb=200, timeout_seconds=5)
 def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """物件評価額を計算"""
     # 入力データを検証
@@ -246,6 +255,7 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
     }
 
 
+@memory_guard_decorator(memory_limit_mb=200, timeout_seconds=5)
 def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """売却分析を計算"""
     # 入力データを検証
@@ -277,6 +287,7 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @safe_calculation_wrapper
+@memory_guard_decorator(memory_limit_mb=500, timeout_seconds=15)
 def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     """年次キャッシュフロー表を生成（SEC-058: DoS攻撃対策済み）"""
     # SEC-058: 入力データを厳密に検証

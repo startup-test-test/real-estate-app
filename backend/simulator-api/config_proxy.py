@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import secrets
 import hashlib
 from auth import verify_token
-from rbac import check_permission
+from rbac import require_permission, Permission
 
 router = APIRouter()
 
