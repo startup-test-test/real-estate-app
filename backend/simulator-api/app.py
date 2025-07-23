@@ -19,19 +19,18 @@ from error_handler import (
     handle_general_exception,
     create_auth_error_response
 )
-from supabase_auth import supabase_auth, get_authenticated_user
+from supabase_auth import supabase_auth
 from shared.calculations import run_full_simulation
-from shared.safe_serializer import prevent_dangerous_imports, safe_json_parse, UnsafeOperationError
+from shared.safe_serializer import prevent_dangerous_imports, UnsafeOperationError
 from shared.memory_guard import MemoryGuardError
-from models import PropertyInputModel, SimulationRequestModel, SimulationResponseModel
+from models import SimulationRequestModel, SimulationResponseModel
 from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
 from models_auth import TokenRequest, TokenResponse, UserInfoResponse
-from models_extended import SimulationRequestModelV2
 from http_method_guard import http_method_middleware
 from config_proxy import router as config_router
 from csrf_protection import (
-    generate_csrf_token, validate_csrf_token, 
-    csrf_protection, CSRF_HEADER_NAME
+    generate_csrf_token, validate_csrf_token,
+    csrf_protection
 )
 from database import get_db, init_db, log_user_activity
 from https_redirect import HTTPSRedirectMiddleware, check_https_config
@@ -656,6 +655,54 @@ def _validate_simulation_input_safety(property_data: dict) -> None:
     except Exception as e:
         logger.error(f"Input safety validation failed: {e}")
         raise UnsafeOperationError("入力データの安全性検証に失敗しました")
+
+
+# SEC-083: セキュアなヘルスチェックエンドポイント
+@app.get("/health", tags=["監視"])
+async def health_check():
+    """
+    ヘルスチェックエンドポイント
+    SEC-083: 最小限の情報のみ返却し、バージョン情報等を露出しない
+    """
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+
+# SEC-083: より詳細なヘルスチェック（認証が必要）
+@app.get("/health/detailed", 
+         dependencies=[Depends(get_current_user), Depends(require_permission(Permission.USER_MANAGE))],
+         tags=["監視"])
+async def detailed_health_check(db = Depends(get_db)):
+    """
+    詳細なヘルスチェックエンドポイント（管理者のみ）
+    """
+    health_status = {
+        "status": "healthy",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "checks": {}
+    }
+    
+    # データベース接続チェック
+    try:
+        # SQLAlchemyのテキストクエリを使用
+        from sqlalchemy import text
+        db.execute(text("SELECT 1"))
+        db.commit()
+        health_status["checks"]["database"] = "ok"
+    except Exception:
+        health_status["checks"]["database"] = "error"
+        health_status["status"] = "degraded"
+    
+    # 環境設定チェック（機密情報は含まない）
+    health_status["checks"]["environment"] = {
+        "is_production": is_production,
+        "debug_mode": not is_production,
+        "cors_configured": bool(get_env('CORS_ORIGINS'))
+    }
+    
+    return health_status
 
 
 # APIドキュメントの自動生成

@@ -1,7 +1,18 @@
 """
 不動産投資シミュレーター - Streamlit開発版
 新機能のプロトタイプ開発用
+SEC-061: 本番環境での実行を防止
 """
+
+import os
+import sys
+
+# SEC-061: 本番環境での実行を防止
+environment = os.getenv('ENVIRONMENT', os.getenv('ENV', 'development')).lower()
+if environment in ('production', 'prod'):
+    print("エラー: streamlit_dev.pyは開発環境でのみ実行可能です。")
+    print("本番環境での実行は許可されていません。")
+    sys.exit(1)
 
 import streamlit as st
 import pandas as pd

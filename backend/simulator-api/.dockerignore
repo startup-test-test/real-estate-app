@@ -1,0 +1,22 @@
+# SEC-061: 開発専用ファイルを本番イメージから除外
+streamlit_dev.py
+*_dev.py
+*_test.py
+test_*.py
+scenario_tests/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.env
+.env.*
+.git/
+.gitignore
+README.md
+docs/
+*.log
+.DS_Store
+*.swp
+*.swo
+*~

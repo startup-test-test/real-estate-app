@@ -193,11 +193,25 @@ export class ApiAuthManager {
 
   /**
    * 認証付きfetchラッパー
+   * SEC-055: 機密情報のキャッシュ防止ヘッダーを追加
    */
   async authenticatedFetch(url: string, options: RequestInit = {}, retryCount = 0): Promise<Response> {
-    // 認証が無効化されている場合は通常のfetchを実行
+    // SEC-055: デフォルトのキャッシュ制御ヘッダー
+    const defaultHeaders: Record<string, string> = {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    };
+
+    // 認証が無効化されている場合も、キャッシュ制御ヘッダーは適用
     if (import.meta.env.VITE_DISABLE_API_AUTH === 'true') {
-      return fetch(url, options);
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers
+        }
+      });
     }
     
     const authHeaders = this.getAuthHeaders();
@@ -205,6 +219,7 @@ export class ApiAuthManager {
     const response = await fetch(url, {
       ...options,
       headers: {
+        ...defaultHeaders,
         ...options.headers,
         ...authHeaders
       }
