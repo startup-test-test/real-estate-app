@@ -24,7 +24,11 @@ from shared.calculations import run_full_simulation
 from shared.safe_serializer import prevent_dangerous_imports, UnsafeOperationError
 from shared.memory_guard import MemoryGuardError
 from models import SimulationRequestModel, SimulationResponseModel
-from models_market import MarketAnalysisRequestModel, MarketAnalysisResponseModel, MarketStatisticsModel
+from models_market import (
+    MarketAnalysisRequestModel,
+    MarketAnalysisResponseModel,
+    MarketStatisticsModel
+)
 from models_auth import TokenRequest, TokenResponse, UserInfoResponse
 from http_method_guard import http_method_middleware
 from config_proxy import router as config_router
@@ -36,6 +40,7 @@ from database import get_db, init_db, log_user_activity
 from https_redirect import HTTPSRedirectMiddleware, check_https_config
 from env_security import load_secure_env, get_env, env_manager
 from security_headers import SecurityHeadersMiddleware, get_security_headers_config
+from user_management import user_router
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -46,7 +51,7 @@ try:
     env_manager.validate_runtime_security()
     logger.info("環境変数が正常に読み込まれました")
 except Exception as e:
-    logger.error(f"環境変数の読み込みエラー: {e}")
+    logger.error("環境変数の読み込みエラー: %s", e)
     # 必須環境変数がない場合は終了
     if "SUPABASE_URL" not in os.environ:
         raise
@@ -73,7 +78,7 @@ async def startup_event():
         init_db()
         logger.info("Database initialized successfully")
     except Exception as e:
-        logger.error(f"Failed to initialize database: {e}")
+        logger.error("Failed to initialize database: %s", e)
         # データベース初期化失敗は致命的エラーではない
         # インメモリSQLiteを使用
 
@@ -127,11 +132,11 @@ else:
     async def cors_middleware(request, call_next):
         """
         GitHub Codespacesも許可するCORSミドルウェア
-        
+
         Args:
             request: HTTPリクエスト
             call_next: 次のミドルウェア
-            
+
         Returns:
             Response: HTTPレスポンス
         """
@@ -148,7 +153,9 @@ else:
             response.headers["Access-Control-Allow-Headers"] = (
                 "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
             )
-            response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
+            response.headers["Access-Control-Expose-Headers"] = (
+                "Content-Length, Content-Range"
+            )
             return response
         # 標準のCORSミドルウェアの動作にフォールバック
         return await call_next(request)
@@ -158,11 +165,11 @@ else:
 async def http_exception_handler(request: Request, exc: HTTPException):
     """
     HTTPExceptionハンドラー
-    
+
     Args:
         request: HTTPリクエスト
         exc: HTTPException
-        
+
     Returns:
         JSONResponse: エラーレスポンス
     """
@@ -172,19 +179,15 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 async def general_exception_handler(request: Request, exc: Exception):
     """
     一般的な例外ハンドラー
-    
+
     Args:
         request: HTTPリクエスト
         exc: Exception
-        
+
     Returns:
         JSONResponse: エラーレスポンス
     """
     return handle_general_exception(request, exc)
-
-# APIキーの取得
-openai_api_key = os.getenv("OPENAI_API_KEY", "")
-real_estate_api_key = os.getenv("REAL_ESTATE_API_KEY", "")
 
 # データ型定義（Pydanticなしのシンプル版）
 # リクエストはJSONとして直接受け取る
@@ -196,7 +199,6 @@ security = HTTPBearer()
 app.include_router(config_router)
 
 # SEC-073: ユーザー管理APIエンドポイントを追加
-from user_management import user_router
 app.include_router(user_router)
 
 # ヘルスチェックエンドポイント（認証不要）
@@ -205,7 +207,7 @@ app.include_router(user_router)
 def read_root():
     """
     ヘルスチェックエンドポイント
-    
+
     Returns:
         dict: APIステータス情報
     """
@@ -221,10 +223,10 @@ def read_root():
 def get_https_status(request: Request):
     """
     HTTPS設定の状態を取得
-    
+
     Args:
         request: HTTPリクエスト
-        
+
     Returns:
         dict: HTTPS設定の状態
     """
@@ -242,14 +244,16 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
     SEC-051: セッション固定攻撃対策 - ログイン時に新しいセッションIDを発行
     """
     logger.info("Token request received")
-    
+
     try:
         # SEC-051: ブルートフォース攻撃のチェック
         from session_security import session_manager
         client_ip = request.client.host if request.client else "unknown"
         if session_manager.check_brute_force(client_ip):
-            raise create_auth_error_response("ログイン試行回数が上限に達しました。しばらくしてから再度お試しください")
-        
+            raise create_auth_error_response(
+                "ログイン試行回数が上限に達しました。しばらくしてから再度お試しください"
+            )
+
         # 開発環境では簡易認証を許可
         if os.getenv("ENV", "development") == "development":
             # 開発環境用のモックトークン
@@ -258,11 +262,11 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
                 is_admin = credentials.email == "admin@example.com"
                 role = UserRole.ADMIN if is_admin else UserRole.STANDARD
                 user_id = "dev-user-123"
-                
+
                 # SEC-051: 新しいセッションを作成
                 from session_security import create_secure_session
                 session_id = create_secure_session(user_id, request)
-                
+
                 # SEC-066: CSRFトークンを生成
                 csrf_token = generate_csrf_token(user_id, session_id)
 
@@ -275,10 +279,10 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
                     },
                     session_id=session_id  # セッションIDをトークンに含める
                 )
-                
+
                 # ログイン成功時は失敗カウンターをリセット
                 session_manager.reset_failed_attempts(client_ip)
-                
+
                 response = TokenResponse(
                     access_token=access_token,
                     token_type="bearer",
@@ -287,14 +291,16 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
                     user_id=user_id,
                     csrf_token=csrf_token  # CSRFトークンを含める
                 )
-                
+
                 # CSRFトークンをクッキーにも設定
                 json_response = JSONResponse(content=response.dict())
                 return csrf_protection.create_csrf_cookie_response(json_response, csrf_token)
             else:
                 # ログイン失敗を記録
                 session_manager.record_failed_attempt(client_ip)
-                raise create_auth_error_response("開発環境では@example.comメールアドレスを使用してください")
+                raise create_auth_error_response(
+                    "開発環境では@example.comメールアドレスを使用してください"
+                )
 
         # 本番環境ではSupabase認証システムを使用
         if not credentials.supabase_token:
@@ -304,25 +310,27 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
 
         # Supabaseトークンを検証
         user_info = supabase_auth.verify_supabase_token(credentials.supabase_token)
-        
+
         # SEC-051: 新しいセッションを作成（セッション固定攻撃対策）
         from session_security import create_secure_session
         session_id = create_secure_session(user_info["user_id"], request)
-        
+
         # SEC-066: CSRFトークンを生成
         csrf_token = generate_csrf_token(user_info["user_id"], session_id)
-        
+
         # JWTトークンを生成
         access_token = create_access_token(
             data={
                 "sub": user_info["user_id"],
                 "email": user_info["email"],
-                "role": user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
+                "role": (user_info["role"].value
+                         if hasattr(user_info["role"], 'value')
+                         else user_info["role"]),
                 "type": "supabase"
             },
             session_id=session_id  # セッションIDをトークンに含める
         )
-        
+
         # ログイン成功時は失敗カウンターをリセット
         session_manager.reset_failed_attempts(client_ip)
 
@@ -331,19 +339,21 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
             token_type="bearer",
             expires_in=3600,
             csrf_token=csrf_token,  # CSRFトークンを含める
-            role=user_info["role"].value if hasattr(user_info["role"], 'value') else user_info["role"],
+            role=(user_info["role"].value
+                  if hasattr(user_info["role"], 'value')
+                  else user_info["role"]),
             user_id=user_info["user_id"],
             full_name=user_info.get("full_name")
         )
-        
+
         # CSRFトークンをクッキーにも設定
         json_response = JSONResponse(content=response.dict())
         return csrf_protection.create_csrf_cookie_response(json_response, csrf_token)
-        
+
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Token generation failed: {e}")
+        logger.error("Token generation failed: %s", e)
         # ログイン失敗を記録
         session_manager.record_failed_attempt(client_ip)
         raise create_auth_error_response("認証処理中にエラーが発生しました")
@@ -362,20 +372,27 @@ async def logout(request: Request, current_user: dict = Depends(get_current_user
         if session_id:
             from session_security import destroy_session
             destroy_session(session_id)
-            logger.info(f"User {current_user.get('user_id')} logged out, session destroyed")
-        
+            logger.info(
+                "User %s logged out, session destroyed",
+                current_user.get('user_id')
+            )
+
         # SEC-066: CSRFトークンを検証
-        await validate_csrf_token(request, current_user.get('user_id'), current_user.get('session_id'))
-        
+        await validate_csrf_token(
+            request,
+            current_user.get('user_id'),
+            current_user.get('session_id')
+        )
+
         return {"success": True, "message": "ログアウトしました"}
     except Exception as e:
-        logger.error(f"Logout failed: {e}")
+        logger.error("Logout failed: %s", e)
         return {"success": False, "message": "ログアウト処理中にエラーが発生しました"}
 
 # 認証状態確認エンドポイント
 # SEC-082: HTTPメソッド制限 - GETのみ許可
 @app.get("/api/auth/me", response_model=UserInfoResponse)
-def get_me(request: Request, current_user: dict = Depends(get_current_user)):
+def get_me(current_user: dict = Depends(get_current_user)):
     """
     現在の認証ユーザー情報を取得
     SEC-073: 統合認証システムからユーザープロファイル情報を取得
@@ -384,14 +401,14 @@ def get_me(request: Request, current_user: dict = Depends(get_current_user)):
         # ロールと権限情報を追加
         role = rbac_manager.get_user_role(current_user)
         permissions = rbac_manager.get_user_permissions(role)
-        
+
         # Supabase認証システムからプロファイル情報を取得
         user_id = current_user.get("user_id") or current_user.get("sub")
         profile = None
-        
+
         if user_id and user_id != "dev-user-123":
             profile = supabase_auth.get_user_profile(user_id)
-        
+
         response_data = {
             "user": {
                 **current_user,
@@ -400,25 +417,27 @@ def get_me(request: Request, current_user: dict = Depends(get_current_user)):
             },
             "authenticated": True
         }
-        
+
         # プロファイル情報があれば追加
         if profile:
             response_data["user"].update({
                 "full_name": profile.full_name,
                 "login_count": profile.login_count,
-                "last_login": profile.last_login.isoformat() if profile.last_login else None,
-                "created_at": profile.created_at.isoformat() if profile.created_at else None,
+                "last_login": (profile.last_login.isoformat()
+                               if profile.last_login else None),
+                "created_at": (profile.created_at.isoformat()
+                               if profile.created_at else None),
                 "is_active": profile.is_active
             })
-        
+
         return response_data
-        
+
     except Exception as e:
-        logger.error(f"Failed to get user info: {e}")
+        logger.error("Failed to get user info: %s", e)
         # 基本情報のみ返す
         role = rbac_manager.get_user_role(current_user)
         permissions = rbac_manager.get_user_permissions(role)
-        
+
         return {
             "user": {
                 **current_user,
@@ -439,26 +458,31 @@ async def run_simulation(
 ):
     """
     収益シミュレーションを実行 - 新機能対応版（認証必須）
-    
+
     SEC-059: Python Pickle/eval攻撃経路対策を実装
     SEC-075: Pydanticモデルによる入力検証を実装
     SEC-082: HTTPメソッド制限を実装 - POSTのみ許可
     """
     # SEC-066: CSRFトークンを検証
-    await validate_csrf_token(http_request, current_user.get('user_id'), current_user.get('session_id'))
-    
+    await validate_csrf_token(
+        http_request,
+        current_user.get('user_id'),
+        current_user.get('session_id')
+    )
+
     # ユーザーIDをログに記録（監査用）
     logger.info("Simulation requested by user: %s", current_user.get('user_id'))
-    
+
     # SEC-070: ユーザーアクティビティをデータベースに記録
     with get_db() as db:
         log_user_activity(
-            db, 
+            db,
             current_user.get('user_id'),
             "simulation",
             "/api/simulate",
             {
-                "ip_address": http_request.client.host if http_request.client else "unknown",
+                "ip_address": (http_request.client.host
+                               if http_request.client else "unknown"),
                 "user_agent": http_request.headers.get("User-Agent", ""),
                 "data": request.model_dump(),
                 "response_status": 200
@@ -467,25 +491,26 @@ async def run_simulation(
 
     try:
         # SEC-059: 危険なインポートをチェック済み（デコレータ）
-        
+
         # Pydanticモデルで検証済みのデータを使用
         property_data = request.property_data.model_dump()
-        
+
         # SEC-059: 入力データの安全性を追加検証
         # Pydanticで基本検証済みだが、念のため危険なパターンをチェック
         _validate_simulation_input_safety(property_data)
-        
+
         # 共通計算ロジックを使用してシミュレーション実行
         result = run_full_simulation(property_data)
-        
+
         # レスポンスにユーザー情報を追加
         result["requested_by"] = current_user.get("user_id")
         result["requested_at"] = datetime.now(timezone.utc).isoformat()
-        
+
         return SimulationResponseModel(
             success=True,
             results=result.get('results', {}),
-            cash_flow_table=result.get('cash_flow_table', []) if request.include_cash_flow_table else None,
+            cash_flow_table=(result.get('cash_flow_table', [])
+                             if request.include_cash_flow_table else None),
             request_id=result.get('requested_by', '')
         )
     except ValueError as e:
@@ -501,7 +526,8 @@ async def run_simulation(
             status_code=413,
             detail={
                 "error": "MEMORY_LIMIT_EXCEEDED",
-                "message": "シミュレーション処理がメモリ制限を超えました。入力データを確認してください。"
+                "message": ("シミュレーション処理がメモリ制限を超えました。"
+                            "入力データを確認してください。")
             }
         )
     except Exception as e:
@@ -512,7 +538,7 @@ async def run_simulation(
                 "error": "SIMULATION_ERROR",
                 "message": "シミュレーション中にエラーが発生しました"
             }
-        )
+        ) from e
 
 
 # 市場分析エンドポイント（認証＋権限必須）
@@ -526,7 +552,7 @@ async def market_analysis(
 ):
     """
     類似物件の市場分析を実行
-    
+
     SEC-075: Pydanticモデルによる入力検証を実装
     SEC-082: HTTPメソッド制限を実装 - POSTのみ許可
     """
@@ -537,11 +563,15 @@ async def market_analysis(
     purchase_price = request.purchase_price
 
     # SEC-066: CSRFトークンを検証
-    await validate_csrf_token(http_request, current_user.get('user_id'), current_user.get('session_id'))
-    
+    await validate_csrf_token(
+        http_request,
+        current_user.get('user_id'),
+        current_user.get('session_id')
+    )
+
     # ユーザーIDをログに記録（監査用）
     logger.info("Market analysis requested by user: %s", current_user.get('user_id'))
-    
+
     # SEC-070: ユーザーアクティビティをデータベースに記録
     with get_db() as db:
         log_user_activity(
@@ -550,7 +580,8 @@ async def market_analysis(
             "market_analysis",
             "/api/market-analysis",
             {
-                "ip_address": http_request.client.host if http_request.client else "unknown",
+                "ip_address": (http_request.client.host
+                               if http_request.client else "unknown"),
                 "user_agent": http_request.headers.get("User-Agent", ""),
                 "data": request.model_dump(),
                 "response_status": 200
@@ -582,13 +613,15 @@ async def market_analysis(
     prices = [prop['平米単価(万円/㎡)'] for prop in similar_properties]
     prices.sort()
     n = len(prices)
-    median_price = prices[n//2] if n % 2 == 1 else (prices[n//2-1] + prices[n//2]) / 2
+    median_price = (prices[n//2] if n % 2 == 1
+                    else (prices[n//2-1] + prices[n//2]) / 2)
     mean_price = sum(prices) / len(prices)
     variance = sum((x - mean_price) ** 2 for x in prices) / len(prices)
     std_price = variance ** 0.5
 
     # 価格評価
-    deviation = ((user_unit_price - median_price) / median_price * 100) if median_price > 0 else 0
+    deviation = (((user_unit_price - median_price) / median_price * 100)
+                 if median_price > 0 else 0)
 
     if deviation < -20:
         evaluation = "非常に割安"
@@ -618,10 +651,10 @@ def _validate_simulation_input_safety(property_data: dict) -> None:
     """
     シミュレーション入力データの安全性を検証
     SEC-059: Python Pickle/eval攻撃経路対策
-    
+
     Args:
         property_data: 検証するプロパティデータ
-        
+
     Raises:
         UnsafeOperationError: 危険なデータが検出された場合
     """
@@ -631,14 +664,18 @@ def _validate_simulation_input_safety(property_data: dict) -> None:
         'eval(', 'exec(', 'compile(', 'subprocess.', 'os.system',
         'pickle.', 'dill.', 'marshal.', 'shelve.', 'dbm.'
     ]
-    
+
     def check_value_safety(value, field_name=""):
         """再帰的に値の安全性をチェック"""
         if isinstance(value, str):
             value_lower = value.lower()
             for pattern in dangerous_patterns:
                 if pattern in value_lower:
-                    logger.warning(f"Dangerous pattern detected in {field_name}: {pattern}")
+                    logger.warning(
+                        "Dangerous pattern detected in %s: %s",
+                        field_name,
+                        pattern
+                    )
                     raise UnsafeOperationError(
                         f"危険なパターンが入力データに含まれています: {pattern}"
                     )
@@ -649,12 +686,12 @@ def _validate_simulation_input_safety(property_data: dict) -> None:
         elif isinstance(value, list):
             for i, item in enumerate(value):
                 check_value_safety(item, f"{field_name}[{i}]")
-    
+
     try:
         check_value_safety(property_data, "property_data")
     except Exception as e:
-        logger.error(f"Input safety validation failed: {e}")
-        raise UnsafeOperationError("入力データの安全性検証に失敗しました")
+        logger.error("Input safety validation failed: %s", e)
+        raise UnsafeOperationError("入力データの安全性検証に失敗しました") from e
 
 
 # SEC-083: セキュアなヘルスチェックエンドポイント
@@ -671,10 +708,11 @@ async def health_check():
 
 
 # SEC-083: より詳細なヘルスチェック（認証が必要）
-@app.get("/health/detailed", 
-         dependencies=[Depends(get_current_user), Depends(require_permission(Permission.USER_MANAGE))],
+@app.get("/health/detailed",
+         dependencies=[Depends(get_current_user),
+                       Depends(require_permission(Permission.USER_MANAGE))],
          tags=["監視"])
-async def detailed_health_check(db = Depends(get_db)):
+async def detailed_health_check(db=Depends(get_db)):
     """
     詳細なヘルスチェックエンドポイント（管理者のみ）
     """
@@ -683,7 +721,7 @@ async def detailed_health_check(db = Depends(get_db)):
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "checks": {}
     }
-    
+
     # データベース接続チェック
     try:
         # SQLAlchemyのテキストクエリを使用
@@ -694,14 +732,14 @@ async def detailed_health_check(db = Depends(get_db)):
     except Exception:
         health_status["checks"]["database"] = "error"
         health_status["status"] = "degraded"
-    
+
     # 環境設定チェック（機密情報は含まない）
     health_status["checks"]["environment"] = {
         "is_production": is_production,
         "debug_mode": not is_production,
         "cors_configured": bool(get_env('CORS_ORIGINS'))
     }
-    
+
     return health_status
 
 
