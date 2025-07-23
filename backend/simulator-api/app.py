@@ -41,6 +41,13 @@ from https_redirect import HTTPSRedirectMiddleware, check_https_config
 from env_security import load_secure_env, get_env, env_manager
 from security_headers import SecurityHeadersMiddleware, get_security_headers_config
 from user_management import user_router
+from security_logger import (
+    security_logger,
+    log_authentication_attempt,
+    log_authorization_failure,
+    log_suspicious_activity,
+    log_data_access
+)
 
 # ロガーの設定
 logger = logging.getLogger(__name__)
@@ -262,6 +269,15 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
                 is_admin = credentials.email == "admin@example.com"
                 role = UserRole.ADMIN if is_admin else UserRole.STANDARD
                 user_id = "dev-user-123"
+                
+                # SEC-078: 認証成功をログ
+                log_authentication_attempt(
+                    user_id=user_id,
+                    success=True,
+                    ip_address=client_ip,
+                    user_agent=request.headers.get("User-Agent", "Unknown"),
+                    additional_info={"environment": "development", "email": credentials.email}
+                )
 
                 # SEC-051: 新しいセッションを作成
                 from session_security import create_secure_session
@@ -298,6 +314,16 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
             else:
                 # ログイン失敗を記録
                 session_manager.record_failed_attempt(client_ip)
+                
+                # SEC-078: 認証失敗をログ
+                log_authentication_attempt(
+                    user_id=credentials.email or "unknown",
+                    success=False,
+                    ip_address=client_ip,
+                    user_agent=request.headers.get("User-Agent", "Unknown"),
+                    additional_info={"reason": "invalid_email_domain"}
+                )
+                
                 raise create_auth_error_response(
                     "開発環境では@example.comメールアドレスを使用してください"
                 )
@@ -306,6 +332,16 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
         if not credentials.supabase_token:
             # ログイン失敗を記録
             session_manager.record_failed_attempt(client_ip)
+            
+            # SEC-078: 認証失敗をログ
+            log_authentication_attempt(
+                user_id=credentials.email or "unknown",
+                success=False,
+                ip_address=client_ip,
+                user_agent=request.headers.get("User-Agent", "Unknown"),
+                additional_info={"reason": "missing_supabase_token"}
+            )
+            
             raise create_auth_error_response("Supabaseトークンが必要です")
 
         # Supabaseトークンを検証
@@ -329,6 +365,15 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
                 "type": "supabase"
             },
             session_id=session_id  # セッションIDをトークンに含める
+        )
+
+        # SEC-078: 認証成功をログ
+        log_authentication_attempt(
+            user_id=user_info["user_id"],
+            success=True,
+            ip_address=client_ip,
+            user_agent=request.headers.get("User-Agent", "Unknown"),
+            additional_info={"environment": "production", "email": user_info["email"]}
         )
 
         # ログイン成功時は失敗カウンターをリセット
@@ -356,6 +401,15 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
         logger.error("Token generation failed: %s", e)
         # ログイン失敗を記録
         session_manager.record_failed_attempt(client_ip)
+        
+        # SEC-078: 疑わしい活動をログ
+        log_suspicious_activity(
+            activity_type="authentication_error",
+            details={"error": str(e), "email": credentials.email},
+            user_id=credentials.email or "unknown",
+            ip_address=client_ip
+        )
+        
         raise create_auth_error_response("認証処理中にエラーが発生しました")
 
 # ログアウトエンドポイント
@@ -472,6 +526,15 @@ async def run_simulation(
 
     # ユーザーIDをログに記録（監査用）
     logger.info("Simulation requested by user: %s", current_user.get('user_id'))
+    
+    # SEC-078: データアクセスをセキュリティログに記録
+    log_data_access(
+        user_id=current_user.get('user_id'),
+        resource_type="simulation",
+        resource_id="new_simulation",
+        action="create",
+        success=True
+    )
 
     # SEC-070: ユーザーアクティビティをデータベースに記録
     with get_db() as db:
