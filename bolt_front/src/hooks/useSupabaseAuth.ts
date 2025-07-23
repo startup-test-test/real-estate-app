@@ -29,13 +29,13 @@ export function useSupabaseAuth() {
   // SEC-005: セキュアなセッション保存
   const saveMockAuth = async (user: User, session: Session, rememberMe: boolean = false) => {
     await sessionManager.saveSession(user, session, rememberMe)
-    logger.log('セキュアなセッション保存完了:', user.email)
+    authLogger.log('セキュアなセッション保存完了:', user.email)
   }
 
   // SEC-005: セキュアなセッションクリア
   const clearMockAuth = () => {
     sessionManager.clearSession()
-    logger.log('セキュアなセッションクリア完了')
+    authLogger.log('セキュアなセッションクリア完了')
   }
 
   useEffect(() => {
