@@ -746,4 +746,8 @@ async def detailed_health_check(db=Depends(get_db)):
 # APIドキュメントの自動生成
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    from uvicorn_config import get_safe_uvicorn_kwargs
+    
+    # SEC-062: 環境に応じた安全なホスト設定を使用
+    uvicorn_kwargs = get_safe_uvicorn_kwargs()
+    uvicorn.run(app, **uvicorn_kwargs)
