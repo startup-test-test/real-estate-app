@@ -37,6 +37,10 @@ from csrf_protection import (
     csrf_protection
 )
 from database import get_db, init_db, log_user_activity
+import database  # SEC-057: Import full database module for model access
+import json
+from typing import Optional
+from sqlalchemy.orm import Session
 from https_redirect import HTTPSRedirectMiddleware, check_https_config
 from env_security import load_secure_env, get_env, env_manager
 from security_headers import SecurityHeadersMiddleware, get_security_headers_config
@@ -804,6 +808,233 @@ async def detailed_health_check(db=Depends(get_db)):
     }
 
     return health_status
+
+
+# SEC-057: シミュレーションデータ永続化エンドポイント
+@app.post("/api/simulations")
+@require_permission(Permission.CREATE_SIMULATION)
+async def save_simulation(
+    simulation_data: dict,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """シミュレーション結果を保存"""
+    try:
+        # セキュリティログ記録
+        security_logger.log_data_access(
+            user_id=current_user["id"],
+            resource_type="simulation",
+            resource_id="new",
+            action="create",
+            ip_address=None
+        )
+        
+        # プロパティIDがある場合は検証
+        property_id = simulation_data.get("property_id")
+        if property_id:
+            property_exists = db.query(database.Property).filter(
+                database.Property.id == property_id,
+                database.Property.user_id == current_user["id"]
+            ).first()
+            if not property_exists:
+                raise HTTPException(status_code=404, detail="Property not found")
+        
+        # シミュレーション結果を保存
+        result = database.save_simulation_result(
+            db=db,
+            property_id=property_id,
+            user_id=current_user["id"],
+            simulation_data=simulation_data
+        )
+        
+        return {"id": result.id, "message": "Simulation saved successfully"}
+    except Exception as e:
+        logger.error(f"Error saving simulation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to save simulation")
+
+
+@app.get("/api/simulations")
+@require_permission(Permission.VIEW_OWN_DATA)
+async def get_simulations(
+    property_id: Optional[int] = None,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """ユーザーのシミュレーション一覧を取得"""
+    try:
+        # セキュリティログ記録
+        security_logger.log_data_access(
+            user_id=current_user["id"],
+            resource_type="simulation",
+            resource_id="list",
+            action="read",
+            ip_address=None
+        )
+        
+        results = database.get_simulation_history(
+            db=db,
+            user_id=current_user["id"],
+            property_id=property_id
+        )
+        
+        # 結果を辞書形式に変換
+        simulations = []
+        for result in results:
+            simulations.append({
+                "id": result.id,
+                "property_id": result.property_id,
+                "simulation_type": result.simulation_type,
+                "gross_yield": result.gross_yield,
+                "net_yield": result.net_yield,
+                "monthly_cash_flow": result.monthly_cash_flow,
+                "annual_cash_flow": result.annual_cash_flow,
+                "roi": result.roi,
+                "noi": result.noi,
+                "dscr": result.dscr,
+                "parameters": json.loads(result.parameters) if result.parameters else {},
+                "created_at": result.created_at.isoformat()
+            })
+        
+        return {"simulations": simulations}
+    except Exception as e:
+        logger.error(f"Error fetching simulations: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch simulations")
+
+
+@app.get("/api/simulations/{simulation_id}")
+@require_permission(Permission.VIEW_OWN_DATA)
+async def get_simulation(
+    simulation_id: int,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """特定のシミュレーション結果を取得"""
+    try:
+        # セキュリティログ記録
+        security_logger.log_data_access(
+            user_id=current_user["id"],
+            resource_type="simulation",
+            resource_id=str(simulation_id),
+            action="read",
+            ip_address=None
+        )
+        
+        result = db.query(database.SimulationResult).filter(
+            database.SimulationResult.id == simulation_id,
+            database.SimulationResult.user_id == current_user["id"]
+        ).first()
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Simulation not found")
+        
+        return {
+            "id": result.id,
+            "property_id": result.property_id,
+            "simulation_type": result.simulation_type,
+            "gross_yield": result.gross_yield,
+            "net_yield": result.net_yield,
+            "monthly_cash_flow": result.monthly_cash_flow,
+            "annual_cash_flow": result.annual_cash_flow,
+            "roi": result.roi,
+            "noi": result.noi,
+            "dscr": result.dscr,
+            "parameters": json.loads(result.parameters) if result.parameters else {},
+            "created_at": result.created_at.isoformat()
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching simulation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch simulation")
+
+
+@app.put("/api/simulations/{simulation_id}")
+@require_permission(Permission.UPDATE_DATA)
+async def update_simulation(
+    simulation_id: int,
+    simulation_data: dict,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """シミュレーション結果を更新"""
+    try:
+        # セキュリティログ記録
+        security_logger.log_data_access(
+            user_id=current_user["id"],
+            resource_type="simulation",
+            resource_id=str(simulation_id),
+            action="update",
+            ip_address=None
+        )
+        
+        # 既存のシミュレーションを確認
+        result = db.query(database.SimulationResult).filter(
+            database.SimulationResult.id == simulation_id,
+            database.SimulationResult.user_id == current_user["id"]
+        ).first()
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Simulation not found")
+        
+        # 更新可能なフィールドのみ更新
+        update_fields = [
+            "simulation_type", "gross_yield", "net_yield", 
+            "monthly_cash_flow", "annual_cash_flow", "roi", "noi", "dscr"
+        ]
+        
+        for field in update_fields:
+            if field in simulation_data:
+                setattr(result, field, simulation_data[field])
+        
+        if "parameters" in simulation_data:
+            result.parameters = json.dumps(simulation_data["parameters"])
+        
+        db.commit()
+        
+        return {"id": result.id, "message": "Simulation updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating simulation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update simulation")
+
+
+@app.delete("/api/simulations/{simulation_id}")
+@require_permission(Permission.DELETE_DATA)
+async def delete_simulation(
+    simulation_id: int,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """シミュレーション結果を削除"""
+    try:
+        # セキュリティログ記録
+        security_logger.log_data_access(
+            user_id=current_user["id"],
+            resource_type="simulation",
+            resource_id=str(simulation_id),
+            action="delete",
+            ip_address=None
+        )
+        
+        # 既存のシミュレーションを確認
+        result = db.query(database.SimulationResult).filter(
+            database.SimulationResult.id == simulation_id,
+            database.SimulationResult.user_id == current_user["id"]
+        ).first()
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Simulation not found")
+        
+        db.delete(result)
+        db.commit()
+        
+        return {"message": "Simulation deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting simulation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete simulation")
 
 
 # APIドキュメントの自動生成

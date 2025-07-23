@@ -254,3 +254,17 @@ export class ApiAuthManager {
 
 // エクスポート
 export const apiAuth = ApiAuthManager.getInstance();
+
+/**
+ * SEC-057: セキュアなAPIクライアント
+ * 認証付きでバックエンドAPIを呼び出すためのヘルパー関数
+ */
+export const secureApiClient = async (
+  endpoint: string, 
+  options: RequestInit = {}
+): Promise<Response> => {
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
+  const fullUrl = `${apiUrl}${endpoint}`;
+  
+  return apiAuth.authenticatedFetch(fullUrl, options);
+};
