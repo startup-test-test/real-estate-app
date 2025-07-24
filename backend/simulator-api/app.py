@@ -812,7 +812,7 @@ async def detailed_health_check(db=Depends(get_db)):
 
 # SEC-057: シミュレーションデータ永続化エンドポイント
 @app.post("/api/simulations")
-@require_permission(Permission.CREATE_SIMULATION)
+@require_permission(Permission.DATA_WRITE)
 async def save_simulation(
     simulation_data: dict,
     current_user: dict = Depends(get_current_user),
