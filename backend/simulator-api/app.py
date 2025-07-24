@@ -854,7 +854,7 @@ async def save_simulation(
 
 
 @app.get("/api/simulations")
-@require_permission(Permission.VIEW_OWN_DATA)
+@require_permission(Permission.DATA_READ)
 async def get_simulations(
     property_id: Optional[int] = None,
     current_user: dict = Depends(get_current_user),
@@ -902,7 +902,7 @@ async def get_simulations(
 
 
 @app.get("/api/simulations/{simulation_id}")
-@require_permission(Permission.VIEW_OWN_DATA)
+@require_permission(Permission.DATA_READ)
 async def get_simulation(
     simulation_id: int,
     current_user: dict = Depends(get_current_user),
@@ -949,7 +949,7 @@ async def get_simulation(
 
 
 @app.put("/api/simulations/{simulation_id}")
-@require_permission(Permission.UPDATE_DATA)
+@require_permission(Permission.DATA_WRITE)
 async def update_simulation(
     simulation_id: int,
     simulation_data: dict,
@@ -1000,7 +1000,7 @@ async def update_simulation(
 
 
 @app.delete("/api/simulations/{simulation_id}")
-@require_permission(Permission.DELETE_DATA)
+@require_permission(Permission.DATA_DELETE)
 async def delete_simulation(
     simulation_id: int,
     current_user: dict = Depends(get_current_user),
