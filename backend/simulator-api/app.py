@@ -230,8 +230,59 @@ async def login_for_access_token(request: Request, credentials: TokenRequest):
 
         # 開発環境では簡易認証を許可
         if os.getenv("ENV", "development") == "development":
+            # Supabaseトークンがある場合は本番と同じ処理を実行
+            if credentials.supabase_token:
+                # Supabaseトークンを検証
+                user_info = supabase_auth.verify_supabase_token(credentials.supabase_token)
+
+                # SEC-051: 新しいセッションを作成（セッション固定攻撃対策）
+                from session_security import create_secure_session
+                session_id = create_secure_session(user_info["user_id"], request)
+
+                # SEC-066: CSRFトークンを生成
+                csrf_token = generate_csrf_token(user_info["user_id"], session_id)
+
+                # JWTトークンを生成
+                access_token = create_access_token(
+                    data={
+                        "sub": user_info["user_id"],
+                        "email": user_info["email"],
+                        "role": (user_info["role"].value
+                                 if hasattr(user_info["role"], 'value')
+                                 else user_info["role"]),
+                        "type": "supabase"
+                    },
+                    session_id=session_id  # セッションIDをトークンに含める
+                )
+
+                # SEC-078: 認証成功をログ
+                log_authentication_attempt(
+                    user_id=user_info["user_id"],
+                    success=True,
+                    ip_address=client_ip,
+                    user_agent=request.headers.get("User-Agent", "Unknown"),
+                    additional_info={"environment": "development", "email": user_info["email"]}
+                )
+
+                # ログイン成功時は失敗カウンターをリセット
+                session_manager.reset_failed_attempts(client_ip)
+
+                response = TokenResponse(
+                    access_token=access_token,
+                    token_type="bearer",
+                    expires_in=3600,
+                    role=(user_info["role"].value
+                          if hasattr(user_info["role"], 'value')
+                          else user_info["role"]),
+                    user_id=user_info["user_id"],
+                    csrf_token=csrf_token  # CSRFトークンを含める
+                )
+
+                # CSRFトークンをクッキーにも設定
+                json_response = JSONResponse(content=response.dict())
+                return csrf_protection.create_csrf_cookie_response(json_response, csrf_token)
             # 開発環境用のモックトークン
-            if credentials.email and credentials.email.endswith("@example.com"):
+            elif credentials.email and credentials.email.endswith("@example.com"):
                 # ロールを決定（admin@example.comは管理者、それ以外は標準ユーザー）
                 is_admin = credentials.email == "admin@example.com"
                 role = UserRole.ADMIN if is_admin else UserRole.STANDARD
