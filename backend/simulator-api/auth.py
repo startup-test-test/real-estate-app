@@ -140,6 +140,7 @@ def get_current_user(request: Request, token_payload: Dict[str, Any] = Depends(v
     user_info = {
         "user_id": token_payload.get("sub"),
         "email": token_payload.get("email"),
+        "role": token_payload.get("role"),  # ロール情報を追加
         "exp": token_payload.get("exp"),
         "session_id": token_payload.get("jti")
     }
