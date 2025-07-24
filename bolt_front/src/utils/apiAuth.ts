@@ -60,6 +60,19 @@ export class ApiAuthManager {
           await this.clearToken();
         }
       }
+      
+      // フォールバック: セッションストレージから読み込み
+      if (!this.token) {
+        const sessionToken = sessionStorage.getItem(TOKEN_KEY);
+        const sessionExpiry = sessionStorage.getItem(TOKEN_EXPIRY_KEY);
+        const sessionCsrf = sessionStorage.getItem(CSRF_TOKEN_KEY);
+        
+        if (sessionToken && sessionExpiry) {
+          this.token = sessionToken;
+          this.tokenExpiry = parseInt(sessionExpiry, 10);
+          this.csrfToken = sessionCsrf;
+        }
+      }
     } catch (error) {
       // SEC-049: 機密情報を含む可能性があるエラーはログに出力しない
       // 本番環境ではconsoleが無効化されているが、念のため削除
@@ -151,6 +164,10 @@ export class ApiAuthManager {
     if (this.csrfToken) {
       headers['X-CSRF-Token'] = this.csrfToken;
     }
+    
+    // デバッグログ
+    console.log('Auth headers:', headers);
+    console.log('CSRF token:', this.csrfToken);
     
     return headers;
   }
