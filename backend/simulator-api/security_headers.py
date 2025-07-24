@@ -22,7 +22,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             app: FastAPIアプリケーション
             **options: オプション設定
         """
-        self.app = app
+        super().__init__(app)
         self.options = options
         
         # デフォルトのセキュリティヘッダー

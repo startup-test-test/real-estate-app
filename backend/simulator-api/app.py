@@ -111,103 +111,58 @@ allowed_origins = get_env('CORS_ORIGINS', ['http://localhost:5173', 'http://loca
 if isinstance(allowed_origins, str):
     allowed_origins = [origin.strip() for origin in allowed_origins.split(',')]
 
-# 本番環境では厳格なオリジン設定を使用
-# Renderなどのデプロイ環境では、ENVが設定されない場合があるため、
-# RENDER環境変数も確認する
-is_render = os.getenv("RENDER") == "true"
-if os.getenv("ENV", "development") == "production" or is_render:
-    # 本番環境では環境変数で明示的に設定されたオリジンのみ許可
-    if not os.getenv("ALLOWED_ORIGINS") and not os.getenv("CORS_ORIGINS"):
-        # デフォルトで一般的なデプロイURLパターンを許可
-        # 実際の本番環境では明示的に設定することを推奨
-        logger.warning("本番環境でCORS設定が未指定です。デフォルト設定を使用します。")
-        # Renderやその他のホスティング環境では動的なオリジン検証を使用
-        # 下記のミドルウェアで処理するため、ここでは基本的なオリジンのみ設定
-        allowed_origins = [
-            "http://localhost:5173",
-            "http://localhost:4173"
-        ]
+# CORSMiddlewareを追加（開発・本番共通）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"],
+    expose_headers=["Content-Length", "Content-Range"]
+)
+
+# GitHub CodespacesやRenderの動的なオリジンを許可するカスタムCORSミドルウェア
+@app.middleware("http")
+async def custom_cors_middleware(request, call_next):
+    """
+    GitHub CodespacesとRenderの動的なオリジンを許可するCORSミドルウェア
+    """
+    origin = request.headers.get("origin", "")
     
-    # 本番環境でもカスタムミドルウェアを使用してGitHub Codespacesを許可
-    @app.middleware("http")
-    async def cors_middleware(request, call_next):
-        """
-        本番環境でGitHub Codespacesとonrender.comを許可するCORSミドルウェア
-        """
-        origin = request.headers.get("origin", "")
-        
-        # プリフライトリクエストの処理
-        if request.method == "OPTIONS":
-            # 許可されたオリジンか、GitHub Codespacesまたはonrender.comのパターンにマッチするかチェック
-            if origin in allowed_origins or origin.endswith(".app.github.dev") or origin.endswith(".onrender.com"):
-                return Response(
-                    content="",
-                    headers={
-                        "Access-Control-Allow-Origin": origin,
-                        "Access-Control-Allow-Credentials": "true",
-                        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, X-CSRF-Token",
-                        "Access-Control-Max-Age": "3600"
-                    }
-                )
-        
-        # 通常のリクエストの処理
-        response = await call_next(request)
-        
-        # 許可されたオリジンか、GitHub Codespacesまたはonrender.comのパターンにマッチするかチェック
-        if origin in allowed_origins or origin.endswith(".app.github.dev") or origin.endswith(".onrender.com"):
-            response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
-            response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
-        
-        return response
-
-else:
-    # 開発環境ではより柔軟なCORS設定を使用
-    allowed_origins.extend([
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://localhost:4173",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:4173"
-    ])
-    # 重複を除去
-    allowed_origins = list(set(allowed_origins))
-
-    # 開発環境では、GitHub Codespacesのオリジンも許可するカスタムミドルウェアを使用
-    @app.middleware("http")
-    async def cors_middleware(request, call_next):
-        """
-        GitHub Codespacesも許可するCORSミドルウェア
-
-        Args:
-            request: HTTPリクエスト
-            call_next: 次のミドルウェア
-
-        Returns:
-            Response: HTTPレスポンス
-        """
-        origin = request.headers.get("origin", "")
-
-        # 許可されたオリジンか、GitHub Codespacesのパターンにマッチするかチェック
-        if origin in allowed_origins or origin.endswith(".app.github.dev"):
-            response = await call_next(request)
-            response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = (
-                "GET, POST, PUT, DELETE, OPTIONS"
-            )
-            response.headers["Access-Control-Allow-Headers"] = (
-                "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
-            )
-            response.headers["Access-Control-Expose-Headers"] = (
-                "Content-Length, Content-Range"
-            )
-            return response
-        # 標準のCORSミドルウェアの動作にフォールバック
-        return await call_next(request)
+    # 動的に許可するオリジンのパターン
+    is_allowed = (
+        origin in allowed_origins or
+        origin.endswith(".app.github.dev") or
+        origin.endswith(".onrender.com") or
+        origin.startswith("http://localhost:") or
+        origin.startswith("http://127.0.0.1:")
+    )
+    
+    # プリフライトリクエストの処理
+    if request.method == "OPTIONS" and is_allowed:
+        return Response(
+            content="",
+            headers={
+                "Access-Control-Allow-Origin": origin,
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, X-CSRF-Token",
+                "Access-Control-Max-Age": "3600"
+            }
+        )
+    
+    # 通常のリクエストの処理
+    response = await call_next(request)
+    
+    # 動的に許可されたオリジンの場合、CORSヘッダーを追加
+    if is_allowed:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
+        response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
+    
+    return response
 
 # エラーハンドラーの登録
 @app.exception_handler(HTTPException)
