@@ -812,10 +812,9 @@ async def detailed_health_check(db=Depends(get_db)):
 
 # SEC-057: シミュレーションデータ永続化エンドポイント
 @app.post("/api/simulations")
-@require_permission(Permission.DATA_WRITE)
 async def save_simulation(
     simulation_data: dict,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission(Permission.DATA_WRITE)),
     db: Session = Depends(get_db)
 ):
     """シミュレーション結果を保存"""
@@ -854,10 +853,9 @@ async def save_simulation(
 
 
 @app.get("/api/simulations")
-@require_permission(Permission.DATA_READ)
 async def get_simulations(
     property_id: Optional[int] = None,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission(Permission.DATA_READ)),
     db: Session = Depends(get_db)
 ):
     """ユーザーのシミュレーション一覧を取得"""
@@ -902,10 +900,9 @@ async def get_simulations(
 
 
 @app.get("/api/simulations/{simulation_id}")
-@require_permission(Permission.DATA_READ)
 async def get_simulation(
     simulation_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission(Permission.DATA_READ)),
     db: Session = Depends(get_db)
 ):
     """特定のシミュレーション結果を取得"""
@@ -949,11 +946,10 @@ async def get_simulation(
 
 
 @app.put("/api/simulations/{simulation_id}")
-@require_permission(Permission.DATA_WRITE)
 async def update_simulation(
     simulation_id: int,
     simulation_data: dict,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission(Permission.DATA_WRITE)),
     db: Session = Depends(get_db)
 ):
     """シミュレーション結果を更新"""
@@ -1000,10 +996,9 @@ async def update_simulation(
 
 
 @app.delete("/api/simulations/{simulation_id}")
-@require_permission(Permission.DATA_DELETE)
 async def delete_simulation(
     simulation_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission(Permission.DATA_DELETE)),
     db: Session = Depends(get_db)
 ):
     """シミュレーション結果を削除"""
