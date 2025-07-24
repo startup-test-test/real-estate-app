@@ -110,8 +110,9 @@ import re # 正規表現モジュールをインポート
 
 # CORS設定
 # SEC-077: セキュアな環境変数から取得
-allowed_origins_str = get_env('CORS_ORIGINS', 'http://localhost:5173,http://localhost:4173')
-allowed_origins = [origin.strip() for origin in allowed_origins_str.split(',')]
+allowed_origins = get_env('CORS_ORIGINS', ['http://localhost:5173', 'http://localhost:4173'])
+if isinstance(allowed_origins, str):
+    allowed_origins = [origin.strip() for origin in allowed_origins.split(',')]
 
 # GitHub CodespacesとRenderの動的なオリジンを許可するための正規表現パターン
 # 例: https://*.app.github.dev や https://*.onrender.com
