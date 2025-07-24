@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from auth import get_current_user, create_access_token
 from rbac import Permission, UserRole, require_permission, rbac_manager
 from error_handler import (
@@ -112,20 +112,58 @@ if isinstance(allowed_origins, str):
     allowed_origins = [origin.strip() for origin in allowed_origins.split(',')]
 
 # 本番環境では厳格なオリジン設定を使用
-if os.getenv("ENV", "development") == "production":
+# Renderなどのデプロイ環境では、ENVが設定されない場合があるため、
+# RENDER環境変数も確認する
+is_render = os.getenv("RENDER") == "true"
+if os.getenv("ENV", "development") == "production" or is_render:
     # 本番環境では環境変数で明示的に設定されたオリジンのみ許可
-    if not os.getenv("ALLOWED_ORIGINS"):
-        # 本番環境でオリジンが設定されていない場合はエラー
-        raise ValueError("本番環境ではALLOWED_ORIGINSの設定が必須です")
-    # 本番環境では明示的に指定されたオリジンのみ使用
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=allowed_origins,
-        allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
-        expose_headers=["Content-Length", "Content-Range"]
-    )
+    if not os.getenv("ALLOWED_ORIGINS") and not os.getenv("CORS_ORIGINS"):
+        # デフォルトで一般的なデプロイURLパターンを許可
+        # 実際の本番環境では明示的に設定することを推奨
+        logger.warning("本番環境でCORS設定が未指定です。デフォルト設定を使用します。")
+        # Renderやその他のホスティング環境では動的なオリジン検証を使用
+        # 下記のミドルウェアで処理するため、ここでは基本的なオリジンのみ設定
+        allowed_origins = [
+            "http://localhost:5173",
+            "http://localhost:4173"
+        ]
+    
+    # 本番環境でもカスタムミドルウェアを使用してGitHub Codespacesを許可
+    @app.middleware("http")
+    async def cors_middleware(request, call_next):
+        """
+        本番環境でGitHub Codespacesとonrender.comを許可するCORSミドルウェア
+        """
+        origin = request.headers.get("origin", "")
+        
+        # プリフライトリクエストの処理
+        if request.method == "OPTIONS":
+            # 許可されたオリジンか、GitHub Codespacesまたはonrender.comのパターンにマッチするかチェック
+            if origin in allowed_origins or origin.endswith(".app.github.dev") or origin.endswith(".onrender.com"):
+                return Response(
+                    content="",
+                    headers={
+                        "Access-Control-Allow-Origin": origin,
+                        "Access-Control-Allow-Credentials": "true",
+                        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, X-CSRF-Token",
+                        "Access-Control-Max-Age": "3600"
+                    }
+                )
+        
+        # 通常のリクエストの処理
+        response = await call_next(request)
+        
+        # 許可されたオリジンか、GitHub Codespacesまたはonrender.comのパターンにマッチするかチェック
+        if origin in allowed_origins or origin.endswith(".app.github.dev") or origin.endswith(".onrender.com"):
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
+            response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
+        
+        return response
+
 else:
     # 開発環境ではより柔軟なCORS設定を使用
     allowed_origins.extend([
