@@ -184,8 +184,9 @@ export class ApiAuthManager {
     }
     
     // デバッグログ
-    console.log('Auth headers:', headers);
-    console.log('CSRF token:', this.csrfToken);
+    console.warn('🔍 Auth headers:', headers);
+    console.warn('🔍 CSRF token:', this.csrfToken);
+    console.warn('🔍 Token exists:', !!this.token);
     
     return headers;
   }
@@ -195,7 +196,7 @@ export class ApiAuthManager {
    */
   async obtainToken(supabaseSession: any): Promise<boolean> {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
+      const apiUrl = import.meta.env.VITE_API_URL || '';
       
       // 一時的な対処：認証エンドポイントが利用できない場合は認証をスキップ
       const isAuthDisabled = import.meta.env.VITE_DISABLE_API_AUTH === 'true';
@@ -213,16 +214,25 @@ export class ApiAuthManager {
         return true;
       }
       
+      // 開発環境では簡易認証を使用
+      const isDevelopment = import.meta.env.DEV;
+      const requestBody = isDevelopment 
+        ? {
+            email: supabaseSession?.user?.email || 'admin@example.com',
+            password: 'password123'
+          }
+        : {
+            supabase_token: supabaseSession?.access_token,
+            user_id: supabaseSession?.user?.id,
+            email: supabaseSession?.user?.email
+          };
+
       const response = await fetch(`${apiUrl}/api/auth/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          supabase_token: supabaseSession?.access_token,
-          user_id: supabaseSession?.user?.id,
-          email: supabaseSession?.user?.email
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
@@ -322,7 +332,7 @@ export const secureApiClient = async (
   endpoint: string, 
   options: RequestInit = {}
 ): Promise<Response> => {
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
+  const apiUrl = import.meta.env.VITE_API_URL || '';
   const fullUrl = `${apiUrl}${endpoint}`;
   
   return apiAuth.authenticatedFetch(fullUrl, options);

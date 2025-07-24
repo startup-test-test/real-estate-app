@@ -41,7 +41,7 @@ function securityHeaders(): Plugin {
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "font-src 'self' https://fonts.gstatic.com",
           "img-src 'self' data: https: blob:",
-          "connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co ws://localhost:* https://real-estate-app-1-iii4.onrender.com",
+          "connect-src 'self' https://*.supabase.co https://*.supabase.com wss://*.supabase.co http://localhost:* ws://localhost:* https://real-estate-app-1-iii4.onrender.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",
@@ -112,5 +112,12 @@ export default defineConfig({
     // SEC-009: 開発サーバーのHTTPS化（オプション）
     // https: true を有効にすると、自己署名証明書でHTTPSを使用
     // 本番環境では適切な証明書を使用すること
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   }
 });

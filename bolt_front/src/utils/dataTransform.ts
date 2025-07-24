@@ -6,42 +6,55 @@
  * フォーム入力データをAPI送信用データに変換
  */
 export const transformFormDataToApiData = (inputs: any) => {
-  return {
+  const result = {
     property_name: inputs.propertyName || '不動産投資シミュレーション',
     location: inputs.location || '住所未設定',
-    year_built: 2010, // デフォルト値
-    property_type: '一棟アパート/マンション', // デフォルト値
+    building_year: inputs.buildingYear || new Date().getFullYear() - 10, // 築年がない場合は築10年を仮定
+    property_type: 'apartment', // apartment, house, commercial, other
     land_area: inputs.landArea || 0,
     building_area: inputs.buildingArea || 0,
-    road_price: inputs.roadPrice || 0,
-    market_value: inputs.marketValue || 0,
-    purchase_price: inputs.purchasePrice || 0,
+    road_price: Math.min((inputs.roadPrice || 0), 100000000), // 路線価上限1億円/㎡
+    market_value: Math.min(inputs.marketValue || 0, 100000), // 市場価値上限10万万円（100億円）
+    purchase_price: Math.min(inputs.purchasePrice || 0, 100000), // 購入価格上限10万万円（100億円）
     other_costs: inputs.otherCosts || 0,
     renovation_cost: inputs.renovationCost || 0,
-    monthly_rent: inputs.monthlyRent || 0,
-    management_fee: inputs.managementFee || 0,
-    fixed_cost: inputs.fixedCost || 0,
-    property_tax: inputs.propertyTax || 0,
+    monthly_rent: Math.min((inputs.monthlyRent || 0) / 10000, 50), // 円から万円に変換、上限50万円（500,000円を10000で割った値）
+    management_fee: Math.min((inputs.managementFee || 0) / 10000, 10), // 円から万円に変換、上限10万円（100,000円を10000で割った値）
+    fixed_cost: Math.min((inputs.fixedCost || 0) / 10000, 10), // 円から万円に変換、上限10万円（100,000円を10000で割った値）
+    property_tax: Math.min((inputs.propertyTax || 0) / 10000, 1000), // 円から万円に変換、上限1000万円（10,000,000円を10000で割った値）
     vacancy_rate: inputs.vacancyRate || 0,
     rent_decline: inputs.rentDecline || 0,
-    loan_amount: inputs.loanAmount || 0,
+    loan_amount: Math.min(inputs.loanAmount || 0, 100000), // ローン額上限10万万円（100億円）
     interest_rate: inputs.interestRate || 0,
     loan_years: inputs.loanYears || 35,
     loan_type: inputs.loanType || '元利均等',
     holding_years: inputs.holdingYears || 10,
     exit_cap_rate: inputs.exitCapRate || 0,
-    expected_sale_price: inputs.marketValue || 0,
+    expected_sale_price: Math.min(inputs.expectedSalePrice || inputs.marketValue || inputs.purchasePrice * 0.9 || 0, 100000), // 想定売却価格上限10万万円（100億円）
     ownership_type: inputs.ownershipType || '個人',
     effective_tax_rate: inputs.effectiveTaxRate || 20,
     major_repair_cycle: inputs.majorRepairCycle || 10,
     major_repair_cost: inputs.majorRepairCost || 200,
-    building_price: inputs.buildingPriceForDepreciation || (inputs.purchasePrice || 0) * 0.7,
+    building_price: Math.min(inputs.buildingPriceForDepreciation || (inputs.purchasePrice || 0) * 0.7, 100000), // 建物価格上限10万万円（100億円）
     depreciation_years: inputs.depreciationYears || 27,
     property_url: inputs.propertyUrl || '',
     property_memo: inputs.propertyMemo || '',
     property_image_url: inputs.propertyImageUrl || '',
-    property_status: inputs.propertyStatus || '検討中'
+    property_status: inputs.propertyStatus || 'planning'
   };
+  
+  // デバッグ情報をコンソールに出力
+  console.log('🔍 Transform Debug Info:');
+  console.log('Original inputs:', inputs);
+  console.log('Transformed result:', result);
+  console.log('Field validations:');
+  console.log('- road_price:', result.road_price, '(max: 10000000)');
+  console.log('- monthly_rent:', result.monthly_rent, '(max: 10000)');
+  console.log('- purchase_price:', result.purchase_price, '(max: 1000000)');
+  console.log('- property_type:', result.property_type);
+  console.log('- property_status:', result.property_status);
+  
+  return result;
 };
 
 /**

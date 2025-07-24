@@ -114,6 +114,30 @@ async def http_method_middleware(request: Request, call_next):
     if not method_guard.check_method(path, method):
         allowed_methods = method_guard.get_allowed_methods(path)
         
+        # CORSヘッダーを準備
+        cors_headers = {
+            "Allow": ", ".join(allowed_methods),
+            "X-Content-Type-Options": "nosniff"
+        }
+        
+        # オリジンをチェックしてCORSヘッダーを追加
+        origin = request.headers.get("origin")
+        if origin:
+            # 簡易的なオリジンチェック（GitHubとRenderのドメインを許可）
+            allowed_patterns = [
+                "localhost",
+                "127.0.0.1",
+                ".app.github.dev",
+                ".onrender.com"
+            ]
+            
+            is_allowed = any(pattern in origin for pattern in allowed_patterns)
+            if is_allowed:
+                cors_headers["Access-Control-Allow-Origin"] = origin
+                cors_headers["Access-Control-Allow-Credentials"] = "true"
+                cors_headers["Access-Control-Allow-Methods"] = ", ".join(allowed_methods)
+                cors_headers["Access-Control-Allow-Headers"] = "*"
+        
         # 405 Method Not Allowedを返す
         return JSONResponse(
             status_code=405,
@@ -122,10 +146,7 @@ async def http_method_middleware(request: Request, call_next):
                 "message": f"Method {method} not allowed for {path}",
                 "allowed_methods": allowed_methods
             },
-            headers={
-                "Allow": ", ".join(allowed_methods),
-                "X-Content-Type-Options": "nosniff"
-            }
+            headers=cors_headers
         )
     
     # リクエストを処理

@@ -75,34 +75,38 @@ export const useApiCall = () => {
       }
       
       // FAST API への送信データを構築
-      const apiData = transformFormDataToApiData(inputs);
+      const propertyData = transformFormDataToApiData(inputs);
+      const apiData = {
+        property_data: propertyData
+      };
       
       // 開発環境のみデバッグ情報を出力
       if (import.meta.env.DEV) {
         console.log('FAST API送信データ:', apiData);
-        console.log('ローン期間:', apiData.loan_years, '年');
-        console.log('保有年数:', apiData.holding_years, '年');
+        console.log('変換後のproperty_data:', apiData.property_data);
+        console.log('ローン期間:', propertyData.loan_years, '年');
+        console.log('保有年数:', propertyData.holding_years, '年');
         console.log('新機能フィールド確認:', {
-          ownership_type: apiData.ownership_type,
-          effective_tax_rate: apiData.effective_tax_rate,
-          major_repair_cycle: apiData.major_repair_cycle,
-          major_repair_cost: apiData.major_repair_cost,
-          building_price: apiData.building_price,
-          depreciation_years: apiData.depreciation_years
+          ownership_type: propertyData.ownership_type,
+          effective_tax_rate: propertyData.effective_tax_rate,
+          major_repair_cycle: propertyData.major_repair_cycle,
+          major_repair_cost: propertyData.major_repair_cost,
+          building_price: propertyData.building_price,
+          depreciation_years: propertyData.depreciation_years
         });
         
         // テスト: 最大期間でのリクエスト
-        if (apiData.holding_years > 10) {
+        if (propertyData.holding_years > 10) {
           console.log('⚠️ 35年のキャッシュフローを要求中...');
         }
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || '';
       
       // 最初にAPIを起動させる（Health Check）
       try {
-        await fetch(`${API_BASE_URL}/`, { method: 'GET' });
+        await fetch(`${API_BASE_URL ? API_BASE_URL : ''}/`, { method: 'GET' });
       } catch (e) {
         console.log('API起動中...');
       }
@@ -111,7 +115,8 @@ export const useApiCall = () => {
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
       
       // 認証チェック
-      if (!isAuthInitialized) {
+      const isAuthDisabled = import.meta.env.VITE_DISABLE_API_AUTH === 'true';
+      if (!isAuthDisabled && !isAuthInitialized) {
         // 認証が初期化されていない場合は、トークンを再取得
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
@@ -131,8 +136,18 @@ export const useApiCall = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
+        // エラーレスポンスの内容を取得
+        let errorDetail = '';
+        try {
+          const errorData = await response.json();
+          console.error('API Error Response:', errorData);
+          errorDetail = JSON.stringify(errorData);
+        } catch (e) {
+          console.error('Failed to parse error response');
+        }
+        
         const errorInfo = handleApiError(response);
-        throw new Error(errorInfo.userMessage);
+        throw new Error(errorInfo.userMessage + (errorDetail ? ` Details: ${errorDetail}` : ''));
       }
       
       const result = await response.json();
@@ -148,9 +163,14 @@ export const useApiCall = () => {
         throw new Error('計算がタイムアウトしました。条件を見直してもう一度お試しください。');
       }
       
+      // デバッグ用：詳細なエラー情報を表示
+      console.error('executeSimulation error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
       // セキュアなエラーハンドリング
       const errorInfo = handleError(error, 'executeSimulation');
-      throw new Error(errorInfo.userMessage);
+      throw new Error(`${errorInfo.userMessage} (Debug: ${error.message})`);
     } finally {
       setIsSimulating(false);
     }
