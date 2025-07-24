@@ -4,7 +4,7 @@
 
 import os
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 from app import app
 
 # 開発環境でCSRF保護を無効化

@@ -61,7 +61,20 @@ export class ApiAuthManager {
         }
       }
       
-      // フォールバック: セッションストレージから読み込み
+      // フォールバック: localStorageから読み込み
+      if (!this.token) {
+        const localToken = localStorage.getItem(TOKEN_KEY);
+        const localExpiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
+        const localCsrf = localStorage.getItem(CSRF_TOKEN_KEY);
+        
+        if (localToken && localExpiry) {
+          this.token = localToken;
+          this.tokenExpiry = parseInt(localExpiry, 10);
+          this.csrfToken = localCsrf;
+        }
+      }
+      
+      // さらにフォールバック: sessionStorageから読み込み
       if (!this.token) {
         const sessionToken = sessionStorage.getItem(TOKEN_KEY);
         const sessionExpiry = sessionStorage.getItem(TOKEN_EXPIRY_KEY);
@@ -72,6 +85,11 @@ export class ApiAuthManager {
           this.tokenExpiry = parseInt(sessionExpiry, 10);
           this.csrfToken = sessionCsrf;
         }
+      }
+      
+      // CSRFトークンだけsessionStorageにある場合の対応
+      if (!this.csrfToken && sessionStorage.getItem(CSRF_TOKEN_KEY)) {
+        this.csrfToken = sessionStorage.getItem(CSRF_TOKEN_KEY);
       }
     } catch (error) {
       // SEC-049: 機密情報を含む可能性があるエラーはログに出力しない
