@@ -105,64 +105,33 @@ security_headers_config = get_security_headers_config(
 )
 app.add_middleware(SecurityHeadersMiddleware, **security_headers_config)
 
+from starlette.middleware.cors import CORSMiddleware
+import re # 正規表現モジュールをインポート
+
 # CORS設定
 # SEC-077: セキュアな環境変数から取得
-allowed_origins = get_env('CORS_ORIGINS', ['http://localhost:5173', 'http://localhost:4173'])
-if isinstance(allowed_origins, str):
-    allowed_origins = [origin.strip() for origin in allowed_origins.split(',')]
+allowed_origins_str = get_env('CORS_ORIGINS', 'http://localhost:5173,http://localhost:4173')
+allowed_origins = [origin.strip() for origin in allowed_origins_str.split(',')]
 
-# CORSMiddlewareを追加（開発・本番共通）
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"],
-    expose_headers=["Content-Length", "Content-Range"]
+# GitHub CodespacesとRenderの動的なオリジンを許可するための正規表現パターン
+# 例: https://*.app.github.dev や https://*.onrender.com
+allowed_origin_regex = re.compile(
+    r"^(https?://localhost:\d+|"
+    r"https?://127\.0\.0\.1:\d+|"
+    r"https?://.*\.app\.github\.dev|https?://.*\.onrender\.com)$"
 )
 
-# GitHub CodespacesやRenderの動的なオリジンを許可するカスタムCORSミドルウェア
-@app.middleware("http")
-async def custom_cors_middleware(request, call_next):
-    """
-    GitHub CodespacesとRenderの動的なオリジンを許可するCORSミドルウェア
-    """
-    origin = request.headers.get("origin", "")
-    
-    # 動的に許可するオリジンのパターン
-    is_allowed = (
-        origin in allowed_origins or
-        origin.endswith(".app.github.dev") or
-        origin.endswith(".onrender.com") or
-        origin.startswith("http://localhost:") or
-        origin.startswith("http://127.0.0.1:")
-    )
-    
-    # プリフライトリクエストの処理
-    if request.method == "OPTIONS" and is_allowed:
-        return Response(
-            content="",
-            headers={
-                "Access-Control-Allow-Origin": origin,
-                "Access-Control-Allow-Credentials": "true",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, X-CSRF-Token",
-                "Access-Control-Max-Age": "3600"
-            }
-        )
-    
-    # 通常のリクエストの処理
-    response = await call_next(request)
-    
-    # 動的に許可されたオリジンの場合、CORSヘッダーを追加
-    if is_allowed:
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With, X-CSRF-Token"
-        response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
-    
-    return response
+# 標準のCORSMiddlewareをアプリケーションに追加
+app.add_middleware(
+    CORSMiddleware,
+    # allow_originsに静的なリストを、allow_origin_regexに動的なパターンを設定
+    allow_origins=allowed_origins,
+    allow_origin_regex=allowed_origin_regex,
+    allow_credentials=True,
+    allow_methods=["*"],  # すべてのメソッドを許可
+    allow_headers=["*"],  # すべてのヘッダーを許可
+    expose_headers=["Content-Length", "Content-Range"]
+)
 
 # エラーハンドラーの登録
 @app.exception_handler(HTTPException)
