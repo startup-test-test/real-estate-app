@@ -3,6 +3,7 @@ CSRFトークン保護機能の実装
 Cross-Site Request Forgery (CSRF) 攻撃から保護するための包括的な実装
 """
 
+import os
 import secrets
 import hmac
 import hashlib
@@ -233,6 +234,11 @@ class CSRFProtection:
         Raises:
             HTTPException: CSRF検証失敗時
         """
+        # 開発環境でCSRF保護を無効化
+        if os.getenv("DISABLE_CSRF_PROTECTION", "false").lower() == "true":
+            logger.warning("CSRF protection is disabled (development mode)")
+            return True
+            
         # 安全なメソッドはスキップ
         if request.method in SAFE_METHODS:
             return True
