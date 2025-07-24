@@ -8,12 +8,14 @@ import { SecureStorage } from './cryptoUtils';
 // トークン保存キー
 const TOKEN_KEY = 'api_access_token';
 const TOKEN_EXPIRY_KEY = 'api_token_expiry';
+const CSRF_TOKEN_KEY = 'csrf_token';
 
 interface TokenData {
   access_token: string;
   token_type: string;
   expires_in: number;
   role?: string;
+  csrf_token?: string;
 }
 
 /**
@@ -23,6 +25,7 @@ export class ApiAuthManager {
   private static instance: ApiAuthManager;
   private token: string | null = null;
   private tokenExpiry: number | null = null;
+  private csrfToken: string | null = null;
 
   private constructor() {
     this.loadStoredToken();
@@ -45,10 +48,12 @@ export class ApiAuthManager {
     try {
       const storedToken = await SecureStorage.getItem(TOKEN_KEY);
       const storedExpiry = await SecureStorage.getItem(TOKEN_EXPIRY_KEY);
+      const storedCsrf = await SecureStorage.getItem(CSRF_TOKEN_KEY);
 
       if (storedToken && storedExpiry) {
         this.token = storedToken as string;
         this.tokenExpiry = storedExpiry as number;
+        this.csrfToken = storedCsrf as string || null;
 
         // 期限切れチェック
         if (this.isTokenExpired()) {
@@ -67,15 +72,22 @@ export class ApiAuthManager {
   async saveToken(tokenData: TokenData): Promise<void> {
     this.token = tokenData.access_token;
     this.tokenExpiry = Date.now() + (tokenData.expires_in * 1000);
+    this.csrfToken = tokenData.csrf_token || null;
 
     try {
       await SecureStorage.setItem(TOKEN_KEY, this.token);
       await SecureStorage.setItem(TOKEN_EXPIRY_KEY, this.tokenExpiry);
+      if (this.csrfToken) {
+        await SecureStorage.setItem(CSRF_TOKEN_KEY, this.csrfToken);
+      }
     } catch (error) {
       // SEC-049: エラー詳細をログに出力しない
       // フォールバック: セッションストレージに保存
       sessionStorage.setItem(TOKEN_KEY, this.token);
       sessionStorage.setItem(TOKEN_EXPIRY_KEY, this.tokenExpiry.toString());
+      if (this.csrfToken) {
+        sessionStorage.setItem(CSRF_TOKEN_KEY, this.csrfToken);
+      }
     }
   }
 
@@ -85,10 +97,12 @@ export class ApiAuthManager {
   async clearToken(): Promise<void> {
     this.token = null;
     this.tokenExpiry = null;
+    this.csrfToken = null;
 
     try {
       await SecureStorage.removeItem(TOKEN_KEY);
       await SecureStorage.removeItem(TOKEN_EXPIRY_KEY);
+      await SecureStorage.removeItem(CSRF_TOKEN_KEY);
     } catch (error) {
       // SEC-049: エラー詳細をログに出力しない
     }
@@ -96,6 +110,7 @@ export class ApiAuthManager {
     // セッションストレージもクリア
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_EXPIRY_KEY);
+    sessionStorage.removeItem(CSRF_TOKEN_KEY);
   }
 
   /**
@@ -128,9 +143,16 @@ export class ApiAuthManager {
     if (!token) {
       return {};
     }
-    return {
+    const headers: Record<string, string> = {
       'Authorization': `Bearer ${token}`
     };
+    
+    // CSRFトークンがある場合は追加
+    if (this.csrfToken) {
+      headers['X-CSRF-Token'] = this.csrfToken;
+    }
+    
+    return headers;
   }
 
   /**
@@ -149,7 +171,8 @@ export class ApiAuthManager {
           access_token: 'dummy-token-for-development',
           token_type: 'bearer',
           expires_in: 3600,
-          role: 'standard'
+          role: 'standard',
+          csrf_token: 'dummy-csrf-token'
         };
         await this.saveToken(dummyToken);
         return true;
@@ -182,7 +205,8 @@ export class ApiAuthManager {
           access_token: 'dummy-token-for-development',
           token_type: 'bearer',
           expires_in: 3600,
-          role: 'standard'
+          role: 'standard',
+          csrf_token: 'dummy-csrf-token'
         };
         await this.saveToken(dummyToken);
         return true;
