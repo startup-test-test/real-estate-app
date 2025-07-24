@@ -6,11 +6,12 @@
 from fastapi import Request
 from fastapi.responses import Response
 from typing import Callable
+from starlette.middleware.base import BaseHTTPMiddleware
 import logging
 
 logger = logging.getLogger(__name__)
 
-class SecurityHeadersMiddleware:
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """セキュリティヘッダーを追加するミドルウェア"""
     
     def __init__(self, app, **options):
@@ -94,7 +95,7 @@ class SecurityHeadersMiddleware:
             "form-action 'self'"
         )
     
-    async def __call__(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """
         リクエストを処理し、セキュリティヘッダーを追加
         
