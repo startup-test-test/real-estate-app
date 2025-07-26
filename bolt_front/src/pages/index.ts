@@ -12,8 +12,6 @@ export { default as Simulator } from './Simulator';
 // その他のページ
 export { default as Dashboard } from './Dashboard';
 export { default as FAQ } from './FAQ';
-export { default as MarketAnalysis } from './MarketAnalysis';
 export { default as PremiumPlan } from './PremiumPlan';
 export { default as PropertyDetail } from './PropertyDetail';
-export { default as TransactionSearch } from './TransactionSearch';
 export { default as UserGuide } from './UserGuide';

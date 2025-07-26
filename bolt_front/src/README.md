@@ -8,30 +8,31 @@
 再利用可能なReactコンポーネント
 - **基本UIコンポーネント**: Alert, Badge, Button, Input, LoadingSpinner など
 - **レイアウトコンポーネント**: Layout, BackButton, Breadcrumb など
-- **機能コンポーネント**: ImageUpload, InviteModal, ShareButton など
+- **機能コンポーネント**: ImageUpload, Tutorial, PDFPreviewModal など
 - **チャート・メトリクス**: CashFlowChart, MetricCard
-- **comments/**: コメント機能関連コンポーネント（統合版と既存版）
+- **SimulationPDFReport**: PDFレポート生成コンポーネント
 
 ### pages/
 ページレベルのコンポーネント（ルート別）
-- **認証**: Login, AuthCallback
-- **シミュレーション**: Simulator, SimulationResult
-- **コラボレーション**: CollaborationView, ShareView
-- **その他**: Dashboard, FAQ, MarketAnalysis など
+- **認証**: Login, AuthCallback, ResetPassword, ResetPasswordConfirm
+- **シミュレーション**: Simulator
+- **メイン機能**: Dashboard, PropertyDetail
+- **静的ページ**: FAQ, UserGuide, PremiumPlan, Terms, Privacy, LandingPage
 
 ### hooks/
 カスタムフック
 - **認証**: useSupabaseAuth
 - **データ**: useSupabaseData, useApiCall
 - **フォーム・状態**: useFormState, useSimulationState
-- **機能別**: useImageUpload, usePropertyShare, useComments
+- **機能別**: useImageUpload, usePdfGenerator
 
 ### utils/
 ユーティリティ関数
 - **バリデーション**: validation.ts
 - **データ変換**: dataTransform.ts
-- **ファイル処理**: imageUtils.ts, pdfGenerator.ts
-- **共有機能**: shareUtils.ts
+- **ファイル処理**: imageUtils.ts, pdfGenerator.ts, enhancedPdfGenerator.ts
+- **日付処理**: dateUtils.ts
+- **フォーマット**: formatHelpers.ts
 - **index.ts**: 統合エクスポート
 
 ### types/
