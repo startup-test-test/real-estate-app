@@ -91,7 +91,7 @@ const Input: React.FC<InputProps> = ({
 
   const renderInput = () => {
     if (props.type === 'select') {
-      const { options, placeholder, ...selectProps } = props as SelectInputProps;
+      const { options, placeholder, size: _, ...selectProps } = props as SelectInputProps;
       return (
         <select {...selectProps} className={inputClasses}>
           {placeholder && (
@@ -108,7 +108,8 @@ const Input: React.FC<InputProps> = ({
       );
     }
 
-    return <input {...props as TextInputProps | NumberInputProps} className={inputClasses} />;
+    const { size: _, ...inputProps } = props as TextInputProps | NumberInputProps;
+    return <input {...inputProps} className={inputClasses} />;
   };
 
   return (

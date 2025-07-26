@@ -17,7 +17,7 @@ export { default as BackButton } from './BackButton';
 export { default as Breadcrumb } from './Breadcrumb';
 
 // 認証コンポーネント
-export { default as AuthProvider } from './AuthProvider';
+export { AuthProvider, useAuthContext } from './AuthProvider';
 
 // 機能コンポーネント
 export { default as ImageUpload } from './ImageUpload';
