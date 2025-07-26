@@ -1,34 +1,60 @@
 # Supabaseデータベース管理
 
-## データベース関連ファイル
+## 📁 ディレクトリ構造
 
-### database-scripts/
-データベース管理用のSQLスクリプト：
-- `add_user_info_columns.sql` - ユーザー情報カラムの追加
-- `fix_database.sql` - データベース修正スクリプト
+### migrations/
+スキーママイグレーションファイル（番号順に実行）：
+- `001_initial_schema.sql` - 初期スキーマ定義
+- `002_properties_table.sql` - 物件テーブル定義
+- `003_simulations_fix.sql` - シミュレーションスキーマ修正
+- `004_complete_update.sql` - 完全なスキーマ更新
 
-### その他のSQLファイル
-- `schema.sql` - メインスキーマ定義
-- `properties_table.sql` - 物件テーブル定義
-- `simulations_schema_fix.sql` - シミュレーションスキーマ修正
-- `re_enable_rls.sql` - RLS再有効化
-- `safe_debug_policies.sql` - デバッグ用ポリシー
+### policies/
+RLS（Row Level Security）ポリシー関連：
+- `README.md` - RLSポリシー管理ドキュメント
+- `enable_rls.sql` - RLS有効化スクリプト
+- `debug_policies.sql` - デバッグ用ポリシー
 
-## 使用方法
+### scripts/
+ユーティリティスクリプト：
+- `add_user_columns.sql` - ユーザー情報カラム追加
+- `fix_database.sql` - データベース修正
 
-### Supabaseダッシュボードでの実行
+### functions/
+Supabase Edge Functions（現在は空）
+
+### archive/
+過去のファイルアーカイブ
+
+## 🚀 使用方法
+
+### 新規データベースセットアップ
 1. [Supabase Dashboard](https://app.supabase.com)にログイン
 2. プロジェクトを選択
-3. 左サイドバーの「SQL Editor」をクリック
-4. 必要なSQLファイルの内容をコピー＆ペースト
-5. 「Run」ボタンをクリックして実行
+3. SQL Editorを開く
+4. `migrations/`フォルダ内のファイルを番号順に実行
+5. `policies/enable_rls.sql`を実行してRLSを有効化
 
-### データベース修正時の注意
+### メンテナンス・修正
+- `scripts/`フォルダ内のスクリプトを必要に応じて実行
+- デバッグ時は`policies/debug_policies.sql`を使用
+
+## ⚠️ 注意事項
+
+### データベース修正時
 - 本番環境での実行前に必ずバックアップを取る
 - RLSポリシーの変更は慎重に行う
 - トランザクション内で実行することを推奨
+- マイグレーションは番号順に実行する
 
-## archiveフォルダ
-過去のデータベース修正スクリプトのアーカイブ：
-- `fix_constraints.sql` - 制約修正
-- `fix_rls_policies.sql` - RLSポリシー修正
+## 📦 ファイル説明
+
+### マイグレーションファイル
+- **001_initial_schema.sql**: 基本テーブル構造
+- **002_properties_table.sql**: 物件情報テーブル
+- **003_simulations_fix.sql**: シミュレーション関連の修正
+- **004_complete_update.sql**: 統合アップデート
+
+### ポリシーファイル
+- **enable_rls.sql**: 各テーブルのRLSを有効化
+- **debug_policies.sql**: 開発・デバッグ用の緩いポリシー
