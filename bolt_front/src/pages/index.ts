@@ -9,11 +9,6 @@ export { default as AuthCallback } from './AuthCallback';
 // シミュレーション関連
 export { default as Simulator } from './Simulator';
 
-// コラボレーション関連
-export { default as CollaborationView } from './CollaborationView';
-export { default as ShareView } from './ShareView';
-export { default as SimpleCollaboration } from './SimpleCollaboration';
-
 // その他のページ
 export { default as Dashboard } from './Dashboard';
 export { default as FAQ } from './FAQ';

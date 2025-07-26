@@ -21,7 +21,6 @@ export { default as AuthProvider } from './AuthProvider';
 
 // 機能コンポーネント
 export { default as ImageUpload } from './ImageUpload';
-export { default as InviteModal } from './InviteModal';
 export { default as Tutorial } from './Tutorial';
 
 // チャート・メトリクス
@@ -31,13 +30,4 @@ export { default as MetricCard } from './MetricCard';
 // 法的免責事項
 export { LegalDisclaimer } from './LegalDisclaimer';
 
-// コメント機能（既存）
-export { default as CommentSection } from './CommentSection';
-export { default as SimpleCommentSection } from './SimpleCommentSection';
-export { default as ShareCommentDisplay } from './ShareCommentDisplay';
-
-// コメント機能（統合版）
-export { default as UnifiedCommentSection } from './comments/UnifiedCommentSection';
-export { default as CommentForm } from './comments/CommentForm';
-export { default as CommentItem } from './comments/CommentItem';
-export * from './comments/CommentUtils';
+// コメント機能関連はすべて削除済み

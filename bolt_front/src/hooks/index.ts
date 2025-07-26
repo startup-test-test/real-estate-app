@@ -15,8 +15,3 @@ export { useSimulationState } from './useSimulationState';
 
 // 機能別フック
 export { default as useImageUpload } from './useImageUpload';
-export { default as usePropertyShare } from './usePropertyShare';
-
-// コメント関連
-export { default as useShareComments } from './useShareComments';
-export { default as useSimpleComments } from './useSimpleComments';
