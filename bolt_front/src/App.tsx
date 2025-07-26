@@ -16,9 +16,6 @@ import LandingPage from './pages/LandingPage';
 // import TransactionSearch from './pages/TransactionSearch';
 import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
-import ShareView from './pages/ShareView';
-import CollaborationView from './pages/CollaborationView';
-import SimpleCollaboration from './pages/SimpleCollaboration';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 
@@ -58,9 +55,6 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
-          <Route path="/share/:shareId" element={<ShareView />} />
-          <Route path="/collaboration/:token" element={<CollaborationView />} />
-          <Route path="/simple-collaboration/:token" element={<SimpleCollaboration />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/" element={

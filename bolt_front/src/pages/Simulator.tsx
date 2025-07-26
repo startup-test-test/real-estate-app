@@ -18,11 +18,8 @@ import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
-import InviteModal from '../components/InviteModal';
-import ShareCommentDisplay from '../components/ShareCommentDisplay';
 // import { LegalDisclaimer } from '../components';
-import { SimulationResultData, CashFlowData, SimulationInputData, PropertyShare } from '../types';
-import { usePropertyShare } from '../hooks/usePropertyShare';
+import { SimulationResultData, CashFlowData, SimulationInputData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
 import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
 import { generateSimulationPDF } from '../utils/pdfGenerator';
@@ -53,11 +50,8 @@ const Simulator: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [currentShare, setCurrentShare] = useState<PropertyShare | null>(null);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
   
-  const { createShare, fetchOrCreateShareByPropertyId, fetchShareTokenFromSimulation, fetchShare } = usePropertyShare();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState<any>(emptyPropertyData);
@@ -89,33 +83,6 @@ const Simulator: React.FC = () => {
     }
   }, [location.search]);
 
-  // ユーザー認証完了後に共有情報を必ず取得
-  useEffect(() => {
-    if (user?.id && editingId) {
-      console.log('🔄 ユーザー認証完了後の共有情報取得/作成');
-      const fetchShareInfo = async () => {
-        try {
-          const propertyName = inputs.propertyName || simulationResults?.results?.propertyName || '物件シミュレーション';
-          console.log(`🎯 Property ID: ${editingId}, Property Name: ${propertyName}`);
-          
-          const share = await fetchOrCreateShareByPropertyId(editingId, propertyName);
-          if (share) {
-            console.log('✅ 共有情報取得/作成成功:', {
-              shareId: share.id,
-              shareToken: share.share_token,
-              propertyId: share.property_id
-            });
-            setCurrentShare(share);
-          } else {
-            console.log('❌ 共有情報の取得/作成に失敗');
-          }
-        } catch (error) {
-          console.error('❌ 共有情報取得エラー:', error);
-        }
-      };
-      fetchShareInfo();
-    }
-  }, [user?.id, editingId, inputs.propertyName]);
 
   // Hash-based scrolling to results section
   useEffect(() => {
@@ -201,40 +168,6 @@ const Simulator: React.FC = () => {
         }
         
         
-        // 既存のシミュレーションから共有トークンを取得
-        if (simulation.share_token) {
-          console.log('🔍 既存シミュレーションから共有トークンを発見:', simulation.share_token);
-          try {
-            // 共有トークンから共有情報を取得
-            const shareData = await fetchShare(simulation.share_token);
-            if (shareData) {
-              console.log('✅ 既存の共有情報を取得:', shareData);
-              setCurrentShare(shareData);
-            }
-          } catch (shareError) {
-            console.error('❌ 既存共有情報の取得エラー:', shareError);
-          }
-        }
-        
-        // 共有情報が見つからない場合は取得/作成（ユーザー認証確認後）
-        if (!currentShare && user?.id) {
-          try {
-            console.log('🔄 既存データの共有情報を取得/作成中...');
-            const propertyName = simData.propertyName || '物件シミュレーション';
-            const share = await fetchOrCreateShareByPropertyId(simulationId, propertyName);
-            
-            if (share) {
-              console.log('✅ 共有情報の取得/作成に成功:', share);
-              setCurrentShare(share);
-            } else {
-              console.log('⚠️ 共有情報の取得/作成に失敗');
-            }
-          } catch (shareError) {
-            console.error('❌ 共有情報の処理中にエラー:', shareError);
-          }
-        } else if (!user?.id) {
-          console.log('⚠️ ユーザー未認証のため共有情報の取得をスキップ');
-        }
       }
     } catch (err: any) {
       setSaveError(`データ読み込みエラー: ${err.message}`);
@@ -455,49 +388,10 @@ const Simulator: React.FC = () => {
             const isEditMode = Boolean(editingId);
             console.log('🔍 編集モード:', isEditMode, 'editingId:', editingId);
             
-            let shareToken: string | null = null;
-            
-            if (isEditMode) {
-              // 編集モードの場合は既存の共有トークンを使用
-              if (currentShare?.share_token) {
-                shareToken = currentShare.share_token;
-                console.log('🔄 編集モード: 既存の共有トークンを使用:', shareToken);
-              } else {
-                // currentShareがない場合は、シミュレーションから共有トークンを探す
-                try {
-                  const existingShareToken = await fetchShareTokenFromSimulation(editingId);
-                  if (existingShareToken) {
-                    shareToken = existingShareToken;
-                    console.log('🔍 編集モード: シミュレーションから共有トークンを取得:', shareToken);
-                  }
-                } catch (err) {
-                  console.log('⚠️ 既存の共有トークン取得に失敗:', err);
-                }
-              }
-            } else {
-              // 新規作成モードの場合は新しい共有を作成
-              try {
-                console.log('📝 新規作成モード: 共有情報を作成中...');
-                const propertyName = inputs.propertyName || '物件シミュレーション';
-                const tempId = crypto.randomUUID();
-                const share = await fetchOrCreateShareByPropertyId(tempId, propertyName);
-                
-                if (share) {
-                  console.log('✅ 共有情報の作成に成功:', share);
-                  shareToken = share.share_token;
-                  setCurrentShare(share);
-                } else {
-                  console.log('⚠️ 共有情報の作成に失敗、共有トークンなしで保存');
-                }
-              } catch (shareError) {
-                console.error('❌ 共有情報の処理中にエラー:', shareError);
-              }
-            }
-            
             // シミュレーションデータを保存（編集モードの場合は更新、新規の場合は作成）
             const { data, error: saveError } = await saveSimulation(
               simulationData, 
-              shareToken ?? undefined, 
+              undefined, // 共有トークンは不要
               isEditMode ? editingId ?? undefined : undefined
             );
             
@@ -507,29 +401,6 @@ const Simulator: React.FC = () => {
             
             setSaveMessage(isEditMode ? '✅ シミュレーション結果を更新しました！' : '✅ シミュレーション結果を保存しました！');
             console.log('保存成功:', data);
-            
-            // 新規作成の場合のみproperty_idを更新
-            if (!isEditMode && data && data.id && shareToken && currentShare) {
-              try {
-                console.log('🔄 新規作成: 共有情報のproperty_idを実際の値に更新中...');
-                const { error: updateError } = await supabase
-                  .from('property_shares')
-                  .update({ property_id: data.id })
-                  .eq('id', currentShare.id);
-                
-                if (updateError) {
-                  console.error('❌ 共有情報の更新エラー:', updateError);
-                } else {
-                  console.log('✅ 共有情報の更新成功');
-                  const updatedShare = { ...currentShare, property_id: data.id };
-                  setCurrentShare(updatedShare);
-                  // editingIdも更新して、以降の共有で同じIDが使われるようにする
-                  setEditingId(data.id);
-                }
-              } catch (updateShareError) {
-                console.error('❌ 共有情報の更新中にエラー:', updateShareError);
-              }
-            }
             
             // 編集モードの場合でも、保存後にeditingIdが正しく設定されていることを確認
             if (isEditMode && data && data.id && !editingId) {
@@ -1523,16 +1394,6 @@ const Simulator: React.FC = () => {
                 )}
                 
                 {/* メール招待・共有ボタン */}
-                {user && (editingId || saveMessage?.includes('✅')) && (
-                  <button
-                    onClick={() => setShowInviteModal(true)}
-                    className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden shadow-md"
-                    title="家族や専門家を招待してコメントで相談"
-                  >
-                    <Users size={18} />
-                    <span>メールで招待・共有</span>
-                  </button>
-                )}
                 
                 
                 <button
@@ -1942,47 +1803,6 @@ const Simulator: React.FC = () => {
           </div>
         )}
 
-        {/* 招待者からのコメント */}
-        {simulationResults && (
-          <div className="mt-6 bg-white rounded-lg p-6 border-l-4 border-blue-500">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
-                招待者からのコメント
-                {!currentShare && (
-                  <span className="ml-2 text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-                    デモ
-                  </span>
-                )}
-              </h3>
-              <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
-                投資判断の参考にご活用ください
-              </span>
-            </div>
-            {currentShare?.share_token ? (
-              <ShareCommentDisplay
-                shareToken={currentShare.share_token}
-                title="招待者からのコメント"
-                showInviteButton={true}
-                onInviteClick={() => setShowInviteModal(true)}
-              />
-            ) : (
-              <div className="text-center py-8 text-gray-500 bg-gray-50 border border-gray-200 rounded-lg p-6">
-                <p className="text-lg font-medium text-gray-700 mb-2">コメント機能を有効にする</p>
-                <p className="text-sm text-gray-600 mb-4">このシミュレーション結果に対するコメントを受け取るには、まず共有を作成してください。</p>
-                {user && (editingId || saveMessage?.includes('✅')) && (
-                  <button
-                    onClick={() => setShowInviteModal(true)}
-                    className="mt-4 flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 mx-auto shadow-md"
-                  >
-                    <Users size={20} />
-                    <span>メールで招待・共有</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* 計算ロジック説明・注意事項 */}
         {simulationResults && (
@@ -2048,19 +1868,6 @@ const Simulator: React.FC = () => {
           onClose={() => setShowTutorial(false)} 
         />
         
-        {/* 招待モーダル */}
-        {showInviteModal && simulationResults && (
-          <InviteModal
-            propertyId={editingId || currentShare?.property_id || 'temp-id'}
-            propertyName={inputs.propertyName || '物件'}
-            share={currentShare || undefined}
-            onClose={() => setShowInviteModal(false)}
-            onShareCreated={(share) => {
-              setCurrentShare(share);
-              setShowInviteModal(false);
-            }}
-          />
-        )}
       </div>
     </div>
   );
