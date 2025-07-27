@@ -47,7 +47,7 @@ jobs:
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/dist/
         server-dir: /public_html/dev/
-        dangerous-clean-slate: false
+        dangerous-clean-slate: true
         exclude: |
           **/.git*
           **/.git*/**
