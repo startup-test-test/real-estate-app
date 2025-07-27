@@ -31,6 +31,9 @@ env/
 .env.*.local
 .env.ftp
 
+# FTP sync state
+.ftp-deploy-sync-state.json
+
 # IDE
 .vscode/
 .idea/

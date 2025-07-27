@@ -64,6 +64,7 @@ jobs:
         server-dir: /ooya.tech/public_html/dev.ooya.tech/
         dangerous-clean-slate: true
         log-level: verbose
+        state-name: .ftp-deploy-sync-state-dev.json
     
     - name: Upload images to dev
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
