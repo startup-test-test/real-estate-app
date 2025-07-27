@@ -6,12 +6,14 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  BarController,
+  LineController,
   Title,
   Tooltip,
   Legend,
   ChartOptions,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Chart } from 'react-chartjs-2';
 import { CashFlowData } from '../types';
 
 // Chart.jsのコンポーネントを登録
@@ -21,6 +23,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  BarController,
+  LineController,
   Title,
   Tooltip,
   Legend
@@ -266,7 +270,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm chart-container">
       <h3 className="text-center text-lg font-semibold text-gray-800 mb-4">- シミュレーション結果 -</h3>
       <div className="h-96 w-full">
-        <Bar data={chartData} options={options} />
+        <Chart type='bar' data={chartData} options={options} />
       </div>
     </div>
   );
