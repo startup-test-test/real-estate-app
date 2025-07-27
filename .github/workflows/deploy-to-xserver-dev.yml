@@ -1,10 +1,10 @@
 name: Deploy to Xserver (Development)
 
 on:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - develop
+  workflow_dispatch:  # 手動実行のみ
 
 jobs:
   deploy:
