@@ -29,6 +29,7 @@ env/
 .env
 .env.local
 .env.*.local
+.env.ftp
 
 # IDE
 .vscode/

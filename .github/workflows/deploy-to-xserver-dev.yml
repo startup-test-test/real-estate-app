@@ -1,0 +1,73 @@
+name: Deploy to Xserver (Development)
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        cd bolt_front
+        npm install
+    
+    - name: Create .env.production for dev environment
+      run: |
+        cd bolt_front
+        echo "VITE_SUPABASE_URL=${{ secrets.DEV_SUPABASE_URL }}" > .env.production
+        echo "VITE_SUPABASE_ANON_KEY=${{ secrets.DEV_SUPABASE_ANON_KEY }}" >> .env.production
+        echo "VITE_API_BASE_URL=${{ secrets.DEV_API_BASE_URL }}" >> .env.production
+    
+    - name: Build for development
+      run: |
+        cd bolt_front
+        npm run build
+    
+    - name: Deploy to FTP (dev subdomain)
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./bolt_front/dist/
+        server-dir: /public_html/dev/
+        dangerous-clean-slate: false
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          .env
+    
+    - name: Upload images to dev
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./bolt_front/img/
+        server-dir: /public_html/dev/img/
+    
+    - name: Upload .htaccess for dev
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./deploy-configs/dev/
+        server-dir: /public_html/dev/

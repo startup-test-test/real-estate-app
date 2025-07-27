@@ -17,7 +17,7 @@ jobs:
         echo "FTP Connection Test - $(date)" > test-upload/test.txt
     
     - name: Test FTP Upload
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.FTP_HOST }}
         username: ${{ secrets.FTP_USERNAME }}
@@ -26,3 +26,10 @@ jobs:
         local-dir: ./test-upload/
         server-dir: /public_html/dev/test/
         dangerous-clean-slate: false
+    
+    - name: Debug Secrets
+      run: |
+        echo "FTP_HOST is set: ${{ secrets.FTP_HOST != '' }}"
+        echo "FTP_USERNAME is set: ${{ secrets.FTP_USERNAME != '' }}"
+        echo "FTP_PASSWORD is set: ${{ secrets.FTP_PASSWORD != '' }}"
+        echo "FTP_PORT is set: ${{ secrets.FTP_PORT != '' }}"

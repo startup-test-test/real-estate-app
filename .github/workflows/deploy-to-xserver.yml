@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-      - develop
-      - staging
-  workflow_dispatch:  # 手動実行も可能
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -26,44 +24,28 @@ jobs:
         cd bolt_front
         npm install
     
-    - name: Build application
+    - name: Build
       run: |
         cd bolt_front
         npm run build
     
-    # ブランチごとの環境変数設定
-    - name: Set deployment environment
-      run: |
-        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-          echo "DEPLOY_ENV=production" >> $GITHUB_ENV
-          echo "FTP_SERVER=${{ secrets.PROD_FTP_SERVER }}" >> $GITHUB_ENV
-          echo "FTP_USERNAME=${{ secrets.PROD_FTP_USERNAME }}" >> $GITHUB_ENV
-          echo "FTP_PASSWORD=${{ secrets.PROD_FTP_PASSWORD }}" >> $GITHUB_ENV
-          echo "SERVER_DIR=/home/username/public_html/" >> $GITHUB_ENV
-        elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-          echo "DEPLOY_ENV=development" >> $GITHUB_ENV
-          echo "FTP_SERVER=${{ secrets.DEV_FTP_SERVER }}" >> $GITHUB_ENV
-          echo "FTP_USERNAME=${{ secrets.DEV_FTP_USERNAME }}" >> $GITHUB_ENV
-          echo "FTP_PASSWORD=${{ secrets.DEV_FTP_PASSWORD }}" >> $GITHUB_ENV
-          echo "SERVER_DIR=/home/username/public_html/dev/" >> $GITHUB_ENV
-        elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
-          echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
-          echo "FTP_SERVER=${{ secrets.STAGING_FTP_SERVER }}" >> $GITHUB_ENV
-          echo "FTP_USERNAME=${{ secrets.STAGING_FTP_USERNAME }}" >> $GITHUB_ENV
-          echo "FTP_PASSWORD=${{ secrets.STAGING_FTP_PASSWORD }}" >> $GITHUB_ENV
-          echo "SERVER_DIR=/home/username/public_html/staging/" >> $GITHUB_ENV
-        fi
-    
-    - name: Deploy to Xserver via FTP
+    - name: Deploy to FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ${{ env.FTP_SERVER }}
-        username: ${{ env.FTP_USERNAME }}
-        password: ${{ env.FTP_PASSWORD }}
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/dist/
-        server-dir: ${{ env.SERVER_DIR }}
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          .env
+        server-dir: /public_html/
+        dangerous-clean-slate: false
+    
+    - name: Upload images
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./bolt_front/img/
+        server-dir: /public_html/img/
