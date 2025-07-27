@@ -1,0 +1,36 @@
+name: Test Upload Location
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Create test files
+      run: |
+        mkdir -p test-upload
+        echo "TEST: public_html/dev - $(date)" > test-upload/test-dev.txt
+        echo "TEST: public_html root - $(date)" > test-upload/test-root.txt
+    
+    - name: Test upload to /public_html/dev/
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./test-upload/
+        server-dir: /public_html/dev/
+    
+    - name: Test upload to /dev.ooya.tech/public_html/
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      continue-on-error: true
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./test-upload/
+        server-dir: /dev.ooya.tech/public_html/
