@@ -40,14 +40,13 @@ Header set X-XSS-Protection "1; mode=block"
     Header set Cache-Control "max-age=86400, public"
 </FilesMatch>
 
-# アクセス許可
-<RequireAll>
-    Require all granted
-</RequireAll>
-
 # Basic認証（開発環境保護）
-# 以下のコメントを外して使用
-# AuthType Basic
-# AuthName "Development Site"
-# AuthUserFile /home/your-username/.htpasswd
-# Require valid-user
+AuthType Basic
+AuthName "Development Site"
+AuthUserFile /home/ooya/ooya.tech/public_html/dev.ooya.tech/.htpasswd
+Require valid-user
+
+# アクセス許可
+# <RequireAll>
+#     Require all granted
+# </RequireAll>
