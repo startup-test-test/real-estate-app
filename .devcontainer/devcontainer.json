@@ -26,5 +26,6 @@
       ]
     }
   },
-  "postCreateCommand": "cd bolt_front && npm install"
+  "postCreateCommand": "cd bolt_front && npm install && ./.devcontainer/setup-claude-code.sh",
+  "postStartCommand": "./.devcontainer/setup-claude-code.sh"
 }
