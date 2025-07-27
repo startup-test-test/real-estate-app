@@ -42,6 +42,10 @@ jobs:
         cd bolt_front
         npm run build
         echo "ビルド完了: $(date)"
+        echo "=== ビルド結果確認 ==="
+        ls -la dist/
+        echo "=== index.htmlの内容 ==="
+        head -20 dist/index.html
     
     - name: Deploy to FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
