@@ -290,7 +290,7 @@ const Simulator: React.FC = () => {
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
       
       // 最初にAPIを起動させる（Health Check）
       try {
