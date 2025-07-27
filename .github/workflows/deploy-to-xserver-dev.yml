@@ -53,6 +53,15 @@ jobs:
         echo "=== ファイル数 ==="
         find dist -type f | wc -l
     
+    - name: List files to upload
+      run: |
+        echo "=== 現在のディレクトリ ==="
+        pwd
+        echo "=== bolt_front/dist の内容 ==="
+        ls -la bolt_front/dist/
+        echo "=== 全ファイルリスト ==="
+        find bolt_front/dist -type f
+        
     - name: Deploy to FTP (dev subdomain)
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -65,6 +74,8 @@ jobs:
         dangerous-clean-slate: true
         log-level: verbose
         state-name: .ftp-deploy-sync-state-dev.json
+        exclude: |
+          **/.DS_Store
     
     - name: Upload images to dev
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
