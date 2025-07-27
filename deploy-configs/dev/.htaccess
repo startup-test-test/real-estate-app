@@ -25,6 +25,18 @@ Header set X-Content-Type-Options "nosniff"
 Header set X-Frame-Options "SAMEORIGIN"
 Header set X-XSS-Protection "1; mode=block"
 
+# キャッシュ制御（開発環境用）
+<FilesMatch "\.(html|htm|js|css|json)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+</FilesMatch>
+
+# 画像ファイルは1日キャッシュ
+<FilesMatch "\.(jpg|jpeg|png|gif|ico|svg)$">
+    Header set Cache-Control "max-age=86400, public"
+</FilesMatch>
+
 # Basic認証（開発環境保護）
 # 以下のコメントを外して使用
 # AuthType Basic
