@@ -1,7 +1,10 @@
 name: Deploy to Xserver (Development)
 
 on:
-  workflow_dispatch:  # 手動実行のみ
+  push:
+    branches:
+      - develop
+  workflow_dispatch:  # 手動実行も可能
     inputs:
       debug_mode:
         description: 'Enable debug logging'
