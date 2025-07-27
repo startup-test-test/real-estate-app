@@ -46,6 +46,12 @@ jobs:
       run: |
         cd bolt_front
         npm run build
+        echo "=== ビルド結果の確認 ==="
+        ls -la dist/
+        echo "=== assetsフォルダの内容 ==="
+        ls -la dist/assets/
+        echo "=== ファイル数 ==="
+        find dist -type f | wc -l
     
     - name: Deploy to FTP (dev subdomain)
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -58,11 +64,6 @@ jobs:
         server-dir: /ooya.tech/public_html/dev.ooya.tech/
         dangerous-clean-slate: true
         log-level: verbose
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          .env
     
     - name: Upload images to dev
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
