@@ -1,0 +1,28 @@
+name: Test FTP Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-ftp:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Create test file
+      run: |
+        mkdir -p test-upload
+        echo "FTP Connection Test - $(date)" > test-upload/test.txt
+    
+    - name: Test FTP Upload
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: ${{ secrets.FTP_PORT }}
+        local-dir: ./test-upload/
+        server-dir: /public_html/dev/test/
+        dangerous-clean-slate: false
