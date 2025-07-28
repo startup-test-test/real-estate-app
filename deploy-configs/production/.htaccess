@@ -1,0 +1,55 @@
+# 本番環境用 .htaccess
+
+# デフォルトファイル
+DirectoryIndex index.html index.php
+
+# SPAのルーティング設定
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.html [L]
+</IfModule>
+
+# HTTPSへのリダイレクト
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# セキュリティ設定
+<Files ~ "^\.env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# セキュリティヘッダー
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
+
+# キャッシュ制御（本番環境用）
+# HTML/JSファイルは短めのキャッシュ
+<FilesMatch "\.(html|htm|js|json)$">
+    Header set Cache-Control "max-age=3600, must-revalidate"
+</FilesMatch>
+
+# CSSファイルは1日キャッシュ
+<FilesMatch "\.css$">
+    Header set Cache-Control "max-age=86400, public"
+</FilesMatch>
+
+# 画像ファイルは7日間キャッシュ
+<FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp)$">
+    Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+
+# フォントファイルは30日間キャッシュ
+<FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
+    Header set Cache-Control "max-age=2592000, public"
+</FilesMatch>
+
+# 圧縮の有効化
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
