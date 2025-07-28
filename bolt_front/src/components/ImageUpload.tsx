@@ -146,7 +146,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       )}
       
       <p className="text-xs text-gray-500">
-        💡 SUUMO等のサムネイル画像を保存しておくと、後で物件を見つけやすくなります
+        💡 物件写真を保存しておくと、後で物件を見つけやすくなります
       </p>
       
       <input

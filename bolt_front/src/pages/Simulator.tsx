@@ -122,6 +122,8 @@ const Simulator: React.FC = () => {
         setInputs({
           propertyName: simData.propertyName || '品川区投資物件',
           location: simData.location || '東京都品川区',
+          yearBuilt: simData.yearBuilt || 2020,
+          propertyType: simData.propertyType || '',
           landArea: simData.landArea || 135.00,
           buildingArea: simData.buildingArea || 150.00,
           roadPrice: simData.roadPrice || 250000,
@@ -216,10 +218,10 @@ const Simulator: React.FC = () => {
       }
 
       // 建築年・建物構造変更時の減価償却年数自動計算（手動モードでない場合のみ）
-      if (!isManualDepreciation && (field === 'buildingYear' || field === 'buildingStructure')) {
+      if (!isManualDepreciation && (field === 'yearBuilt' || field === 'propertyType')) {
         const currentYear = new Date().getFullYear();
-        const buildingYear = field === 'buildingYear' ? Number(value) : newInputs.buildingYear;
-        const structure = field === 'buildingStructure' ? String(value) : newInputs.buildingStructure;
+        const buildingYear = field === 'yearBuilt' ? Number(value) : newInputs.yearBuilt;
+        const structure = field === 'propertyType' ? String(value) : newInputs.propertyType;
         
         console.log('🔧 減価償却自動計算:', {
           field,
@@ -354,10 +356,11 @@ const Simulator: React.FC = () => {
             const simulationData = {
               // simulation_data (JSONB) - 入力データ
               simulation_data: {
-                propertyName: apiData.property_name || '無題の物件',
-                location: apiData.location,
-                propertyType: apiData.property_type,
-                purchasePrice: apiData.purchase_price,
+                propertyName: inputs.propertyName || '無題の物件',
+                location: inputs.location,
+                yearBuilt: inputs.yearBuilt,
+                propertyType: inputs.propertyType,
+                purchasePrice: inputs.purchasePrice,
                 monthlyRent: apiData.monthly_rent,
                 managementFee: apiData.management_fee || 0,
                 loanTerm: apiData.loan_years,
@@ -671,16 +674,16 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.buildingYear || ''}
-                    onChange={(e) => handleInputChange('buildingYear', Number(e.target.value) || 0)}
+                    value={inputs.yearBuilt || ''}
+                    onChange={(e) => handleInputChange('yearBuilt', Number(e.target.value) || 0)}
                     placeholder="2020"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
                 </div>
-                {inputs.buildingYear && inputs.buildingYear > 0 && (
+                {inputs.yearBuilt && inputs.yearBuilt > 0 && (
                   <div className="text-xs text-gray-600 mt-1">
-                    築{new Date().getFullYear() - inputs.buildingYear}年（{new Date().getFullYear()}年現在）
+                    築{new Date().getFullYear() - inputs.yearBuilt}年（{new Date().getFullYear()}年現在）
                   </div>
                 )}
               </div>
@@ -694,8 +697,8 @@ const Simulator: React.FC = () => {
                   <Tooltip content="建物の構造を選択してください。構造により法定耐用年数が自動設定されます。" />
                 </div>
                 <select
-                  value={inputs.buildingStructure || ''}
-                  onChange={(e) => handleInputChange('buildingStructure', e.target.value)}
+                  value={inputs.propertyType || ''}
+                  onChange={(e) => handleInputChange('propertyType', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
                   {buildingStructureOptions.map(option => (
@@ -1329,13 +1332,13 @@ const Simulator: React.FC = () => {
                 {/* 物件URL */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    物件URL（SUUMO、athome等）
+                    物件URL
                   </label>
                   <input
                     type="url"
                     value={inputs.propertyUrl || ''}
                     onChange={(e) => handleInputChange('propertyUrl', e.target.value)}
-                    placeholder="https://suumo.jp/..."
+                    placeholder="https://ooya.tech/..."
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
                       urlError 
                         ? 'border-red-300 focus:ring-red-500' 
@@ -1391,7 +1394,7 @@ const Simulator: React.FC = () => {
                 {isSimulating ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                    AI分析中...
+                    計算中...
                   </div>
                 ) : (
                   <div className="flex items-center">
@@ -1766,31 +1769,31 @@ const Simulator: React.FC = () => {
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           税金
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            支払利息
+                            所得税・住民税
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           改装費<br/>修繕費
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            税引後利益
+                            改装費・大規模修繕費
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           ローン<br/>返済
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            返済元金
+                            年間ローン返済額（元金＋利息）
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           元金<br/>返済
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            インカムゲイン単年
+                            ローン返済額のうち元金部分
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           年間<br/>CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            インカムゲイン単年
+                            年間キャッシュフロー（税引後）
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
@@ -1808,7 +1811,7 @@ const Simulator: React.FC = () => {
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           自己資金<br/>回収率
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            残債利回り
+                            累計CFの自己資金に対する割合
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">

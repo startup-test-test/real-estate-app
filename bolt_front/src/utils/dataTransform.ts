@@ -9,8 +9,8 @@ export const transformFormDataToApiData = (inputs: any) => {
   return {
     property_name: inputs.propertyName || '不動産投資シミュレーション',
     location: inputs.location || '住所未設定',
-    year_built: 2010, // デフォルト値
-    property_type: '一棟アパート/マンション', // デフォルト値
+    year_built: inputs.yearBuilt || 2020,
+    property_type: inputs.propertyType || '一棟アパート/マンション',
     land_area: inputs.landArea || 0,
     building_area: inputs.buildingArea || 0,
     road_price: inputs.roadPrice || 0,
@@ -52,6 +52,8 @@ export const transformApiResponseToSupabaseData = (inputs: any, result: any, sha
   const simulationData = {
     propertyName: inputs.propertyName || '',
     location: inputs.location || '',
+    yearBuilt: inputs.yearBuilt || 2020,
+    propertyType: inputs.propertyType || '',
     landArea: inputs.landArea || 0,
     buildingArea: inputs.buildingArea || 0,
     roadPrice: inputs.roadPrice || 0,
@@ -117,6 +119,8 @@ export const transformSupabaseDataToFormData = (simulationData: any) => {
   return {
     propertyName: simulationData.propertyName || '物件名を入力してください',
     location: simulationData.location || '',
+    yearBuilt: simulationData.yearBuilt ?? 2020,
+    propertyType: simulationData.propertyType || '',
     landArea: simulationData.landArea ?? 100.00,
     buildingArea: simulationData.buildingArea ?? 120.00,
     roadPrice: simulationData.roadPrice ?? 200000,
