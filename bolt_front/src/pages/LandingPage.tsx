@@ -1,17 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calculator, 
   CheckCircle,
   ArrowRight,
-  BarChart3,
-  Database,
-  Clock,
-  Heart,
-  Target,
   Users,
-  Smartphone,
-  Shield
+  Smartphone
 } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
