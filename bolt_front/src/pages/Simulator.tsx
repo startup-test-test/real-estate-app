@@ -3,26 +3,21 @@ import {
   Zap,
   CheckCircle,
   AlertCircle,
-  Download,
-  Users,
-  MessageCircle
+  Download
 } from 'lucide-react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
-import { supabase } from '../lib/supabase';
 import { useLocation } from 'react-router-dom';
 import CashFlowChart from '../components/CashFlowChart';
 import Tooltip from '../components/Tooltip';
-import MetricCard from '../components/MetricCard';
 import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
 // import { LegalDisclaimer } from '../components';
-import { SimulationResultData, CashFlowData, SimulationInputData } from '../types';
+import { SimulationResultData, CashFlowData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
-import { transformFormDataToApiData, transformApiResponseToSupabaseData, transformSupabaseDataToFormData, transformSupabaseResultsToDisplayData } from '../utils/dataTransform';
-import { generateSimulationPDF } from '../utils/pdfGenerator';
+import { transformFormDataToApiData } from '../utils/dataTransform';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
@@ -41,7 +36,7 @@ interface SimulationResult {
 
 const Simulator: React.FC = () => {
   const { user } = useAuthContext();
-  const { saveSimulation, getSimulations, loading: dbLoading } = useSupabaseData();
+  const { saveSimulation, getSimulations } = useSupabaseData();
   const location = useLocation();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -51,11 +46,11 @@ const Simulator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
-  const [showFullCashFlow, setShowFullCashFlow] = useState(true);
   
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState<any>(emptyPropertyData);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
 
 
@@ -172,7 +167,13 @@ const Simulator: React.FC = () => {
               '年間キャッシュフロー（円）': simulation.results.annualCashFlow,
               '積算評価合計（万円）': simulation.results.assessedTotal || simulation.results['積算評価合計（万円）'],
               '収益還元評価額（万円）': simulation.results.capRateEval || simulation.results['収益還元評価額（万円）'],
-              '想定売却価格（万円）': simulation.results.expectedSalePrice || simulation.results['想定売却価格（万円）'] || simulation.results['売却時想定価格']
+              '想定売却価格（万円）': simulation.results.expectedSalePrice || simulation.results['想定売却価格（万円）'] || simulation.results['売却時想定価格'],
+              '残債（万円）': simulation.results['残債（万円）'] || 0,
+              '売却コスト（万円）': simulation.results['売却コスト（万円）'] || 0,
+              '売却益（万円）': simulation.results['売却益（万円）'] || 0,
+              '総投資額（円）': simulation.results['総投資額（円）'] || 0,
+              '自己資金（円）': simulation.results['自己資金（円）'] || 0,
+              '借入額（円）': simulation.results['借入額（円）'] || 0
             },
             cash_flow_table: simulation.cash_flow_table
           });
@@ -188,7 +189,7 @@ const Simulator: React.FC = () => {
   };
 
   const handleInputChange = (field: string, value: string | number) => {
-    setInputs(prev => {
+    setInputs((prev: any) => {
       const newInputs = {
         ...prev,
         [field]: value
@@ -275,7 +276,44 @@ const Simulator: React.FC = () => {
 
   const urlError = inputs.propertyUrl ? validatePropertyUrl(inputs.propertyUrl) : null;
 
+  // バリデーションチェック関数
+  const validateForm = () => {
+    const errors: string[] = [];
+    
+    // 物件情報（必須）
+    if (!inputs.propertyName) errors.push('物件名を入力してください');
+    if (!inputs.location) errors.push('所在地を入力してください');
+    if (!inputs.yearBuilt || inputs.yearBuilt <= 0) errors.push('建築年を入力してください');
+    if (!inputs.propertyType) errors.push('建物構造を選択してください');
+    
+    // 取得・初期費用（必須）
+    if (!inputs.purchasePrice || inputs.purchasePrice <= 0) errors.push('物件価格を入力してください');
+    
+    // 収益情報（必須）
+    if (!inputs.monthlyRent || inputs.monthlyRent <= 0) errors.push('月額賃料を入力してください');
+    
+    // 借入条件（必須）
+    if (inputs.loanAmount === undefined || inputs.loanAmount < 0) errors.push('借入額を入力してください');
+    if (inputs.interestRate === undefined || inputs.interestRate < 0) errors.push('金利を入力してください');
+    if (!inputs.loanYears || inputs.loanYears <= 0) errors.push('借入年数を入力してください');
+    if (!inputs.loanType) errors.push('借入タイプを選択してください');
+    
+    // 出口戦略（必須）
+    if (!inputs.holdingYears || inputs.holdingYears <= 0) errors.push('保有年数を入力してください');
+    if (!inputs.exitCapRate || inputs.exitCapRate <= 0) errors.push('売却時想定Cap Rateを入力してください');
+    
+    return errors;
+  };
+
   const handleSimulation = async () => {
+    // バリデーションチェック
+    const errors = validateForm();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    
+    setValidationErrors([]);
     setIsSimulating(true);
     setSaveError(null);
     
@@ -472,8 +510,6 @@ const Simulator: React.FC = () => {
     document.title = originalTitle;
   };
 
-  // 必須項目のチェック
-  const isFormValid = inputs.propertyName && inputs.purchasePrice > 0;
 
   if (isLoading) {
     return (
@@ -1381,12 +1417,31 @@ const Simulator: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="border-t pt-6">
+            {/* バリデーションエラー表示 */}
+            {validationErrors.length > 0 && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start">
+                  <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-red-800 mb-2">
+                      以下の必須項目を入力してください：
+                    </h4>
+                    <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
+                      {validationErrors.map((error: string, index: number) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="flex justify-center">
               <button 
                 onClick={handleSimulation}
-                disabled={isSimulating || !isFormValid}
+                disabled={isSimulating}
                 className={`flex items-center justify-center px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 min-h-[56px] touch-manipulation ${
-                  isSimulating || !isFormValid
+                  isSimulating
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                 }`}
@@ -1399,7 +1454,7 @@ const Simulator: React.FC = () => {
                 ) : (
                   <div className="flex items-center">
                     <Zap className="h-5 w-5 mr-2" />
-                    シミュレーションを実行する
+                    シミュレーション実行
                   </div>
                 )}
               </button>
@@ -1553,15 +1608,15 @@ const Simulator: React.FC = () => {
                 {/* 実質利回り */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    simulationResults.results['実質利回り（%）'] >= 6 ? 'bg-green-100 text-green-800' :
-                    simulationResults.results['実質利回り（%）'] >= 4.5 ? 'bg-yellow-100 text-yellow-800' :
-                    simulationResults.results['実質利回り（%）'] >= 3 ? 'bg-orange-100 text-orange-800' :
+                    simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] >= 6 ? 'bg-green-100 text-green-800' :
+                    simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] >= 4.5 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] >= 3 ? 'bg-orange-100 text-orange-800' :
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">実質利回り</span>
-                    <span className="font-semibold">{simulationResults.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults.results['実質利回り（%）'] >= 6 && <span className="ml-1">⭐</span>}
-                    {simulationResults.results['実質利回り（%）'] < 3 && <span className="ml-1">⚠️</span>}
+                    <span className="font-semibold">{simulationResults?.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] >= 6 && <span className="ml-1">⭐</span>}
+                    {simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] < 3 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">実質利回り</div>
@@ -1579,15 +1634,15 @@ const Simulator: React.FC = () => {
                 {/* IRR */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    simulationResults.results['IRR（%）'] >= 15 ? 'bg-green-100 text-green-800' :
-                    simulationResults.results['IRR（%）'] >= 10 ? 'bg-yellow-100 text-yellow-800' :
-                    simulationResults.results['IRR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 15 ? 'bg-green-100 text-green-800' :
+                    simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">IRR</span>
-                    <span className="font-semibold">{simulationResults.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
-                    {simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                    <span className="font-semibold">{simulationResults?.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
+                    {simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">IRR（内部収益率）</div>
@@ -1603,15 +1658,15 @@ const Simulator: React.FC = () => {
                 {/* CCR */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    simulationResults.results['CCR（%）'] >= 12 ? 'bg-green-100 text-green-800' :
-                    simulationResults.results['CCR（%）'] >= 8 ? 'bg-yellow-100 text-yellow-800' :
-                    simulationResults.results['CCR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 12 ? 'bg-green-100 text-green-800' :
+                    simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 8 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">CCR</span>
-                    <span className="font-semibold">{simulationResults.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults.results['CCR（%）'] >= 12 && <span className="ml-1">⭐</span>}
-                    {simulationResults.results['CCR（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                    <span className="font-semibold">{simulationResults?.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 12 && <span className="ml-1">⭐</span>}
+                    {simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">CCR（自己資金回収率）</div>

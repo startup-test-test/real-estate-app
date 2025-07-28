@@ -98,4 +98,10 @@ export interface CashFlowData {
   ローン返済: number;
   営業CF: number;
   累計CF: number;
+  元金返済: number;
+  借入残高: number;
+  自己資金回収率: number;
+  売却金額: number;
+  売却時手取り: number;
+  売却益: number;
 }
