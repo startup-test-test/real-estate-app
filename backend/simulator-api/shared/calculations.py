@@ -302,7 +302,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "元金返済": int(principal_payment),  # 元金返済額
             "営業CF": int(cf_i),
             "累計CF": int(cum),
-            "借入残高": round(remaining_loan, 2),  # 借入残高（万円）
+            "借入残高": int(remaining_loan),  # 借入残高（万円）
             "自己資金回収率": round(recovery_rate * 100, 1),  # 自己資金回収率（%）
             "DSCR": round(dscr, 2),  # DSCR計算済み
             "売却金額": int(sale_amount),  # 売却金額
