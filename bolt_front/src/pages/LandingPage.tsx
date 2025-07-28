@@ -23,7 +23,7 @@ const LandingPage: React.FC = () => {
       problem: '「良い物件を発見したのだが、Excelでのシミュレーションに時間がかかる。他にも周辺調査や銀行書類提出を作らないといけない。」',
       solution: '楽待URL貼り付けで即分析',
       story: '7物件のExcel管理に限界。シミュレーション作成に毎回2時間かかって、家族時間を削るのが辛い。',
-      features: []
+      features: [] as { icon: any; title: string; desc: string }[]
     },
     {
       id: 'yamamoto',
@@ -35,7 +35,7 @@ const LandingPage: React.FC = () => {
       problem: '「授乳中に楽待チェック、でも分析は娘が寝た後...復職後どうしよう」',
       solution: 'スマホで完結、夫婦で共有',
       story: '育児の合間での物件管理が大変。銀行訪問も娘連れで効率悪い。復職後の両立が不安。',
-      features: []
+      features: [] as { icon: any; title: string; desc: string }[]
     },
     {
       id: 'sato',
@@ -47,7 +47,7 @@ const LandingPage: React.FC = () => {
       problem: '「58室の管理で確定申告3日間...税理士に『整理が必要』と言われた」',
       solution: '大規模対応、事業承継準備',
       story: '58室の管理が限界。修繕履歴の把握も困難で、息子への引き継ぎ準備も進まない。',
-      features: []
+      features: [] as { icon: any; title: string; desc: string }[]
     }
   ];
 
