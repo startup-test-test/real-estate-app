@@ -268,7 +268,6 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm chart-container">
-      <h3 className="text-center text-lg font-semibold text-gray-800 mb-4">- シミュレーション結果 -</h3>
       <div className="h-96 w-full">
         <Chart type='bar' data={chartData} options={options} />
       </div>
