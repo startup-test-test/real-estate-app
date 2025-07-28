@@ -40,11 +40,6 @@ Header set X-XSS-Protection "1; mode=block"
     Header set Cache-Control "max-age=86400, public"
 </FilesMatch>
 
-# アクセス許可
-<RequireAll>
-    Require all granted
-</RequireAll>
-
 # Basic認証（開発環境保護）
 AuthType Basic
 AuthName "Development Site"
