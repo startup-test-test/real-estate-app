@@ -149,7 +149,8 @@ const Simulator: React.FC = () => {
           propertyUrl: simData.propertyUrl || '',
           propertyMemo: simData.propertyMemo || '',
           propertyImageUrl: simData.propertyImageUrl || '',
-          annualDepreciationRate: simData.annualDepreciationRate || 1.0
+          annualDepreciationRate: simData.annualDepreciationRate || 1.0,
+          priceDeclineRate: simData.priceDeclineRate || 0
         });
         
         // 既存の結果も表示
@@ -1035,20 +1036,20 @@ const Simulator: React.FC = () => {
                 </div>
               </div>
 
-              {/* 年間価値下落率 */}
+              {/* 年間価格下落率（売却価格） */}
               <div>
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
-                    年間価値下落率
+                    年間価格下落率
                   </label>
-                  <Tooltip content="物件価値が年間で下落する割合（%）。建物の経年劣化や市場環境を考慮します。通常0.5〜2.0%程度を設定します。" />
+                  <Tooltip content="売却価格が年間で下落する割合（%）。市場環境や経年劣化により毎年一定割合で下落します。通常0.5〜2.0%程度を設定します。" />
                 </div>
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
                     step="0.1"
-                    value={inputs.annualDepreciationRate || 1.0}
-                    onChange={(e) => handleInputChange('annualDepreciationRate', Number(e.target.value))}
+                    value={inputs.priceDeclineRate || 0}
+                    onChange={(e) => handleInputChange('priceDeclineRate', Number(e.target.value))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="1.0"
                   />

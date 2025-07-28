@@ -250,9 +250,17 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # DSCR計算
         dscr = noi / annual_loan if annual_loan > 0 else 0
         
-        # 売却金額を計算（想定売却価格または市場価値）
+        # 売却金額を計算（年間価格下落率を反映）
         expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
-        sale_amount = expected_sale_price * 10000 if i == holding_years else 0
+        price_decline_rate = property_data.get('price_decline_rate', 0)  # 年間価格下落率（%）
+        
+        # 各年の売却金額 = 初期売却価格 × (1 - 価格下落率)^(経過年数-1)
+        if price_decline_rate > 0:
+            sale_price_current_year = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
+        else:
+            sale_price_current_year = expected_sale_price
+        
+        sale_amount = sale_price_current_year * 10000
         
         # ローン残高計算
         loan_amount = property_data.get('loan_amount', 0)
@@ -281,8 +289,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         self_funding = basic_metrics['self_funding']
         recovery_rate = cum / (self_funding * 10000) if self_funding > 0 else 0
         
-        # 売却時手取り計算（最終年度のみ）
-        if i == holding_years and sale_amount > 0:
+        # 売却時手取り計算（全年度で計算）
+        if sale_amount > 0:
             sale_cost = sale_amount * 0.05  # 売却コスト5%
             net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost
         else:

@@ -40,6 +40,7 @@ export interface SimulationInputData {
   holding_years: number;
   exit_cap_rate: number;
   market_value: number;
+  price_decline_rate: number;
   
   // 税金条件
   ownership_type: '個人' | '法人';
