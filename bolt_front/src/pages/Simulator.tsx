@@ -51,6 +51,7 @@ const Simulator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
+  const [showFullCashFlow, setShowFullCashFlow] = useState(true);
   
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -157,12 +158,19 @@ const Simulator: React.FC = () => {
         if (simulation.results) {
           setSimulationResults({
             results: {
-              '表面利回り（%）': simulation.results.surfaceYield,
-              'IRR（%）': simulation.results.irr,
-              'CCR（%）': simulation.results.ccr,
-              'DSCR（返済余裕率）': simulation.results.dscr,
+              '表面利回り（%）': simulation.results.surfaceYield || simulation.results['表面利回り（%）'],
+              '実質利回り（%）': simulation.results.netYield || simulation.results['実質利回り'] || simulation.results['実質利回り（%）'],
+              'IRR（%）': simulation.results.irr || simulation.results['IRR'] || simulation.results['IRR（%）'],
+              'CCR（%）': simulation.results.ccr || simulation.results['CCR'] || simulation.results['CCR（%）'],
+              'ROI（%）': simulation.results.roi || simulation.results['ROI'] || simulation.results['ROI（%）'],
+              'DSCR（返済余裕率）': simulation.results.dscr || simulation.results['DSCR'],
+              'NOI（円）': simulation.results.noi || simulation.results['NOI'] || simulation.results['NOI（円）'],
+              'LTV（%）': simulation.results.ltv || simulation.results['LTV'] || simulation.results['LTV（%）'],
               '月間キャッシュフロー（円）': simulation.results.monthlyCashFlow,
-              '年間キャッシュフロー（円）': simulation.results.annualCashFlow
+              '年間キャッシュフロー（円）': simulation.results.annualCashFlow,
+              '積算評価合計（万円）': simulation.results.assessedTotal || simulation.results['積算評価合計（万円）'],
+              '収益還元評価額（万円）': simulation.results.capRateEval || simulation.results['収益還元評価額（万円）'],
+              '想定売却価格（万円）': simulation.results.expectedSalePrice || simulation.results['想定売却価格（万円）'] || simulation.results['売却時想定価格']
             },
             cash_flow_table: simulation.cash_flow_table
           });
@@ -375,9 +383,19 @@ const Simulator: React.FC = () => {
                 netYield: result.results['実質利回り（%）'] || 0,
                 irr: result.results['IRR（%）'] || 0,
                 ccr: result.results['CCR（%）'] || 0,
+                roi: result.results['ROI（%）'] || 0,
                 dscr: result.results['DSCR（返済余裕率）'] || 0,
+                noi: result.results['NOI（円）'] || 0,
+                ltv: result.results['LTV（%）'] || 0,
                 monthlyCashFlow: result.results['月間キャッシュフロー（円）'] || 0,
-                annualCashFlow: result.results['年間キャッシュフロー（円）'] || 0
+                annualCashFlow: result.results['年間キャッシュフロー（円）'] || 0,
+                assessedTotal: result.results['積算評価合計（万円）'] || 0,
+                capRateEval: result.results['収益還元評価額（万円）'] || 0,
+                expectedSalePrice: result.results['想定売却価格（万円）'] || 0,
+                '実質利回り': result.results['実質利回り（%）'] || 0,
+                'ROI': result.results['ROI（%）'] || 0,
+                'NOI': result.results['NOI（円）'] || 0,
+                'LTV': result.results['LTV（%）'] || 0
               },
               // cash_flow_table (JSONB) - キャッシュフローテーブル
               cash_flow_table: result.cash_flow_table || []
