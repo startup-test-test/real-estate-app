@@ -291,7 +291,7 @@ const Simulator: React.FC = () => {
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-1-iii4.onrender.com';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-rwf1.onrender.com';
       
       // 最初にAPIを起動させる（Health Check）
       try {
@@ -1133,88 +1133,122 @@ const Simulator: React.FC = () => {
                   </label>
                   <Tooltip content={tooltips.depreciationYears} />
                 </div>
-                {!isManualDepreciation ? (
-                  <div className="bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">{inputs.depreciationYears || 27}年</span>
-                      <button
-                        type="button"
-                        onClick={() => setIsManualDepreciation(true)}
-                        className="text-xs text-blue-600 hover:text-blue-800 underline"
-                      >
-                        手動調整
-                      </button>
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {inputs.buildingYear && inputs.buildingStructure ? (
-                        <>
-                          {(() => {
-                            const currentYear = new Date().getFullYear();
-                            const buildingAge = currentYear - inputs.buildingYear;
-                            const getLegalLife = (structure: string) => {
-                              switch (structure) {
-                                case 'RC': return 47;
-                                case 'SRC': return 39;
-                                case 'S': return 34;
-                                case '木造': return 22;
-                                default: return 27;
-                              }
-                            };
-                            const legalLife = getLegalLife(inputs.buildingStructure);
-                            const isExceeded = buildingAge >= legalLife;
-                            
-                            if (isExceeded) {
-                              return (
-                                <>
-                                  <span className="text-orange-600 font-medium">
-                                    ⚠️ 耐用年数超過物件
-                                  </span>
-                                  ：{inputs.buildingStructure}（法定{legalLife}年）で築{buildingAge}年 
-                                  → 残存{inputs.depreciationYears}年（法定耐用年数×20%）
-                                </>
-                              );
-                            } else {
-                              return `${inputs.buildingStructure}（法定${legalLife}年）で築${buildingAge}年 → 残存${inputs.depreciationYears}年`;
-                            }
-                          })()}
-                        </>
-                      ) : (
-                        '建築年・構造から自動計算'
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <select
-                        value={inputs.depreciationYears || 27}
-                        onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      >
-                        <option value={4}>4年（木造超過）</option>
-                        <option value={22}>22年（木造）</option>
-                        <option value={27}>27年（軽量鉄骨）</option>
-                        <option value={34}>34年（重量鉄骨）</option>
-                        <option value={39}>39年（SRC造）</option>
-                        <option value={47}>47年（RC造）</option>
-                      </select>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="number"
+                    value={inputs.depreciationYears || 27}
+                    onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
+                    disabled={!isManualDepreciation}
+                    className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                      !isManualDepreciation ? 'bg-gray-50 border-gray-200' : 'border-gray-300'
+                    }`}
+                  />
+                  <span className="text-sm text-gray-500">年</span>
+                </div>
+                
+                {/* 自動計算の説明と手動調整リンク */}
+                <div className="text-xs text-gray-500 mt-1">
+                  {inputs.buildingYear && inputs.buildingStructure && !isManualDepreciation ? (
+                    <>
+                      {(() => {
+                        const currentYear = new Date().getFullYear();
+                        const buildingAge = currentYear - inputs.buildingYear;
+                        const getLegalLife = (structure: string) => {
+                          switch (structure) {
+                            case 'RC': return 47;
+                            case 'SRC': return 39;
+                            case 'S': return 34;
+                            case '木造': return 22;
+                            default: return 27;
+                          }
+                        };
+                        const legalLife = getLegalLife(inputs.buildingStructure);
+                        const isExceeded = buildingAge >= legalLife;
+                        
+                        if (isExceeded) {
+                          return (
+                            <>
+                              <span className="text-orange-600 font-medium">
+                                ⚠️ 耐用年数超過物件
+                              </span>
+                              ：{inputs.buildingStructure}（法定{legalLife}年）で築{buildingAge}年 
+                              → 残存{inputs.depreciationYears}年
+                            </>
+                          );
+                        } else {
+                          return `自動計算：${inputs.buildingStructure}（法定${legalLife}年）で築${buildingAge}年 → 残存${inputs.depreciationYears}年`;
+                        }
+                      })()}
+                      {' '}
                       <button
                         type="button"
                         onClick={() => {
-                          setIsManualDepreciation(false);
-                          // 自動モードに戻った時に再計算
-                          if (inputs.buildingYear && inputs.buildingStructure) {
-                            handleInputChange('buildingYear', inputs.buildingYear);
-                          }
+                          handleInputChange('depreciationYears', inputs.loanYears || 35);
+                          setIsManualDepreciation(true);
                         }}
-                        className="text-xs text-gray-600 hover:text-gray-800 px-2 py-1 border border-gray-300 rounded"
+                        className="text-blue-600 hover:text-blue-800 underline"
                       >
-                        自動
+                        融資期間に合わせる（{inputs.loanYears || 35}年）
                       </button>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      手動調整モード：築年数や資金調達に合わせて調整可能
-                    </div>
+                    </>
+                  ) : isManualDepreciation ? (
+                    <>
+                      手動編集モード
+                      {inputs.buildingYear && inputs.buildingStructure && (
+                        <>
+                          {' '}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsManualDepreciation(false);
+                              // 自動モードに戻った時に再計算
+                              if (inputs.buildingYear && inputs.buildingStructure) {
+                                handleInputChange('buildingYear', inputs.buildingYear);
+                              }
+                            }}
+                            className="text-gray-600 hover:text-gray-800 underline"
+                          >
+                            自動計算値に戻す
+                          </button>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    '建築年・構造から自動計算されます'
+                  )}
+                </div>
+                
+                {/* 手動編集時のクイックボタン */}
+                {isManualDepreciation && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('depreciationYears', inputs.loanYears || 15)}
+                      className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md"
+                    >
+                      融資期間と同じ（{inputs.loanYears || 15}年）
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('depreciationYears', 10)}
+                      className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md"
+                    >
+                      10年
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('depreciationYears', 15)}
+                      className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md"
+                    >
+                      15年
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('depreciationYears', 20)}
+                      className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md"
+                    >
+                      20年
+                    </button>
                   </div>
                 )}
               </div>

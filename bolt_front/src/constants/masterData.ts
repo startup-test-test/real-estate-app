@@ -31,6 +31,5 @@ export const buildingStructureOptions = [
   { value: 'RC', label: 'RC造（鉄筋コンクリート造）' },
   { value: 'SRC', label: 'SRC造（鉄骨鉄筋コンクリート造）' },
   { value: 'S', label: 'S造（鉄骨造）' },
-  { value: '木造', label: '木造' },
-  { value: 'その他', label: 'その他' }
+  { value: '木造', label: '木造' }
 ];
