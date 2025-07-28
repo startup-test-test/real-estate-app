@@ -41,9 +41,7 @@ Header set X-XSS-Protection "1; mode=block"
 </FilesMatch>
 
 # Basic認証（開発環境保護）
-# 500エラーのため一時的に無効化
-# 正しい.htpasswdパスを確認後、以下のコメントを外してください
-# AuthType Basic
-# AuthName "Development Site"
-# AuthUserFile /home/ooya/ooya.tech/public_html/dev.ooya.tech/.htpasswd
-# Require valid-user
+AuthType Basic
+AuthName "Development Site"
+AuthUserFile /home/xs565244/ooya.tech/public_html/dev.ooya.tech/.htpasswd
+Require valid-user
