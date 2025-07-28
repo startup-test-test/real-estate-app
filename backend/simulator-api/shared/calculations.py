@@ -107,6 +107,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     
     # 各種比率（税引後ベース）
     gross_yield = annual_rent / (purchase_price * 10000) * 100 if purchase_price > 0 else 0
+    net_yield = (noi - tax) / (purchase_price * 10000) * 100 if purchase_price > 0 else 0  # 実質利回り
     ccr = ((tax_after_cf - annual_loan) / (self_funding * 10000)) * 100 if self_funding > 0 else 0
     roi = (tax_after_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0
     dscr = noi / annual_loan if annual_loan > 0 else 0
@@ -119,6 +120,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
         'annual_loan': annual_loan,
         'noi': noi,
         'gross_yield': gross_yield,
+        'net_yield': net_yield,
         'ccr': ccr,
         'roi': roi,
         'dscr': dscr
@@ -297,14 +299,14 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "大規模修繕": int(repair),
             "初期リフォーム": int(initial_renovation),
             "ローン返済": int(annual_loan),
-            "元金返済": 0,  # TODO: 元金返済額の計算
+            "元金返済": int(principal_payment),  # 元金返済額
             "営業CF": int(cf_i),
             "累計CF": int(cum),
-            "借入残高": 0,  # TODO: 借入残高の計算
-            "自己資金回収率": 0,  # TODO: 自己資金回収率の計算
+            "借入残高": round(remaining_loan, 2),  # 借入残高（万円）
+            "自己資金回収率": round(recovery_rate * 100, 1),  # 自己資金回収率（%）
             "DSCR": round(dscr, 2),  # DSCR計算済み
             "売却金額": int(sale_amount),  # 売却金額
-            "売却時手取り": 0  # TODO: 売却時手取りの計算
+            "売却時手取り": int(net_sale_proceeds)  # 売却時手取り
         })
     
     return cf_data
@@ -351,6 +353,7 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     results = {
         "年間家賃収入（円）": int(basic_metrics['annual_rent']),
         "表面利回り（%）": round(basic_metrics['gross_yield'], 2),
+        "実質利回り（%）": round(basic_metrics['net_yield'], 2),
         "月間キャッシュフロー（円）": int(basic_metrics['monthly_cf']),
         "年間キャッシュフロー（円）": int(basic_metrics['annual_cf']),
         "CCR（%）": round(basic_metrics['ccr'], 2),
