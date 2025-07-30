@@ -85,7 +85,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       },
       {
         type: 'bar' as const,
-        label: '②売却による純利益',
+        label: '②売却純利益',
         data: saleNetProfit,
         backgroundColor: 'rgba(59, 130, 246, 0.6)', // 青系
         borderColor: 'rgba(59, 130, 246, 0)',
@@ -148,7 +148,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             return datasets.map((dataset, i) => {
               const isLine = dataset.type === 'line';
               return {
-                text: dataset.label,
+                text: dataset.label || '',
                 fillStyle: isLine ? 'transparent' : dataset.backgroundColor,
                 strokeStyle: dataset.borderColor || dataset.backgroundColor,
                 lineWidth: isLine ? 3 : 0,
