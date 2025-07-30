@@ -1899,7 +1899,36 @@ const Simulator: React.FC = () => {
                           <td className={`px-2 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['累計CF'])}</td>
                           <td className={`px-2 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
                           <td className={`px-2 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
+                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                            <div className="relative group">
+                              <span className="cursor-help">{formatCurrencyNoSymbol(row['売却金額'] || 0)}</span>
+                              {row['売却価格内訳'] && (
+                                <div className="absolute z-10 hidden group-hover:block bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg">
+                                  <div className="font-semibold mb-2">売却価格の内訳</div>
+                                  <div className="space-y-1">
+                                    <div className="flex justify-between">
+                                      <span>① 想定価格:</span>
+                                      <span>{formatCurrencyNoSymbol(row['売却価格内訳']['想定価格'] || 0)}円</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>② 収益還元:</span>
+                                      <span>{formatCurrencyNoSymbol(row['売却価格内訳']['収益還元価格'] || 0)}円</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>③ 土地価格:</span>
+                                      <span>{formatCurrencyNoSymbol(row['売却価格内訳']['土地価格'] || 0)}円</span>
+                                    </div>
+                                  </div>
+                                  <div className="mt-2 pt-2 border-t border-gray-700 text-center">
+                                    最大値を採用
+                                  </div>
+                                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
+                                    <div className="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-gray-900"></div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </td>
                           <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却時手取り'] || row['売却益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時手取り'] || row['売却益'] || 0)}</td>
                         </tr>
                       ))}
@@ -1957,6 +1986,15 @@ const Simulator: React.FC = () => {
                 <div>
                   <span className="font-medium">・想定実勢価格</span>：市場での想定取引価格
                 </div>
+              </div>
+              <div className="mt-3 p-3 bg-blue-50 rounded text-xs">
+                <span className="font-medium text-blue-800">💡 売却価格の算定方法</span>
+                <p className="mt-1 text-gray-700">
+                  売却価格は以下の3つから最大値を採用します：
+                  ① 想定売却価格（手動入力値に価格下落率を適用）
+                  ② 収益還元価格（売却時のNOI ÷ 売却時Cap Rate）
+                  ③ 土地価格（購入価格 - 建物価格）
+                </p>
               </div>
             </div>
             

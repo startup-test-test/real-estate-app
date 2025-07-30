@@ -32,6 +32,7 @@ ChartJS.register(
 
 interface CashFlowChartProps {
   data: CashFlowData[];
+  selfFunding?: number; // 自己資金（万円）
 }
 
 const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
@@ -49,15 +50,38 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   ); // 万円単位
   const saleProfit = data.map(row => (row['売却時手取り'] || row['売却益'] || 0) / 10000); // 万円単位
 
-  // 累計CFと売却時累計CFを分離（最後の年のみ売却時累計CFを表示）
-  const cumulativeCashFlowBar = data.map((row, index) => {
-    if (index === data.length - 1) return 0; // 最後の年は売却時累計CFとして別表示
+  // 累計CF
+  const cumulativeCashFlowBar = data.map((row) => {
     return (row['累計CF'] || 0) / 10000;
   });
   
-  const saleCumulativeCF = data.map((row, index) => {
-    if (index === data.length - 1) return (row['累計CF'] || 0) / 10000;
-    return 0;
+  // 売却益部分の計算
+  const saleGainBar = data.map((row, index) => {
+    const cumCF = (row['累計CF'] || 0) / 10000;
+    const saleProceeds = (row['売却時手取り'] || 0) / 10000;
+    
+    // 売却時累計CFがAPIから返ってこない場合は、フロントエンドで計算
+    let saleCumCF = (row['売却時累計CF'] || 0) / 10000;
+    
+    if (!row['売却時累計CF'] && saleProceeds > 0) {
+      // 自己資金の計算（簡易版）
+      // TODO: 実際の自己資金はAPIから取得すべき
+      const selfFunding = 980; // 仮の値（万円）
+      saleCumCF = cumCF + saleProceeds - selfFunding;
+      
+      if (index === 0) {
+        console.log('⚠️ 売却時累計CFがAPIから返されていません。フロントエンドで計算しています。');
+      }
+    }
+    
+    // デバッグ用ログ（最初の3行のみ）
+    if (index < 3) {
+      console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却時手取り=${saleProceeds}`);
+    }
+    
+    // 売却益 = 売却時累計CF - 累計CF
+    const gain = saleCumCF - cumCF;
+    return gain;
   });
 
   const chartData = {
@@ -76,8 +100,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       {
         type: 'bar' as const,
         label: '売却時累計CF(右軸)',
-        data: saleCumulativeCF,
-        backgroundColor: 'rgba(59, 130, 246, 0.5)', // 青系
+        data: saleGainBar,
+        backgroundColor: 'rgba(59, 130, 246, 0.5)', // 青系（水色）
         borderColor: 'rgba(59, 130, 246, 0)',
         borderWidth: 0,
         yAxisID: 'y1',

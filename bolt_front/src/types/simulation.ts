@@ -104,4 +104,10 @@ export interface CashFlowData {
   売却金額: number;
   売却時手取り: number;
   売却益: number;
+  売却時累計CF?: number;
+  売却価格内訳?: {
+    想定価格: number;
+    収益還元価格: number;
+    土地価格: number;
+  };
 }

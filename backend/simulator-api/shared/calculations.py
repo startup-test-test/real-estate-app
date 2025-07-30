@@ -250,15 +250,40 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # DSCR計算
         dscr = noi / annual_loan if annual_loan > 0 else 0
         
-        # 売却金額を計算（年間価格下落率を反映）
-        expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
-        price_decline_rate = property_data.get('price_decline_rate', 0)  # 年間価格下落率（%）
+        # 売却金額を計算（3つの方法から最大値を採用）
         
-        # 各年の売却金額 = 初期売却価格 × (1 - 価格下落率)^(経過年数-1)
-        if price_decline_rate > 0:
-            sale_price_current_year = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
+        # 方法1: ユーザー入力の想定売却価格（価格下落率を適用）
+        expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
+        price_decline_rate = property_data.get('price_decline_rate', 0)
+        
+        if expected_sale_price > 0 and price_decline_rate > 0:
+            manual_price = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
         else:
-            sale_price_current_year = expected_sale_price
+            manual_price = expected_sale_price
+        
+        # 方法2: 収益還元法（売却時のNOI ÷ Cap Rate）
+        exit_cap_rate = property_data.get('exit_cap_rate', 5.0)
+        if exit_cap_rate > 0 and noi > 0:
+            cap_rate_price = noi / (exit_cap_rate / 100) / 10000
+        else:
+            cap_rate_price = 0
+        
+        # 方法3: 土地価格（積算法の簡易版）
+        purchase_price = property_data.get('purchase_price', 0)
+        building_price = property_data.get('building_price', 0)
+        land_price = purchase_price - building_price
+        
+        # 3つの価格から最大値を採用
+        sale_price_current_year = max(manual_price, cap_rate_price, land_price)
+        
+        # 売却価格が0の場合は、最低限購入価格の一定割合で売却できると仮定
+        if sale_price_current_year == 0:
+            # 価格下落を考慮して購入価格から計算
+            if price_decline_rate > 0:
+                sale_price_current_year = purchase_price * pow(1 - price_decline_rate / 100, i - 1)
+            else:
+                # 価格下落率が設定されていない場合は、年1%下落と仮定
+                sale_price_current_year = purchase_price * pow(0.99, i - 1)
         
         sale_amount = sale_price_current_year * 10000
         
@@ -291,10 +316,32 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         # 売却時手取り計算（全年度で計算）
         if sale_amount > 0:
-            sale_cost = sale_amount * 0.05  # 売却コスト5%
-            net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost
+            sale_cost = sale_amount * 0.03  # 売却コスト3%（楽待基準）
+            
+            # 譲渡所得税の計算
+            purchase_price = property_data.get('purchase_price', 0)
+            capital_gain = sale_amount - purchase_price * 10000 - depreciation * i  # 売却益
+            
+            if capital_gain > 0:
+                # 短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
+                if i <= 5:
+                    transfer_tax = capital_gain * 0.40
+                else:
+                    transfer_tax = capital_gain * 0.20
+            else:
+                transfer_tax = 0
+            
+            net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost - transfer_tax
         else:
             net_sale_proceeds = 0
+        
+        # 売却時累計CF（楽待方式）
+        # 累計CF + (売却金額 - 売却費用 - 譲渡所得税 - 残存借入額) - 自己資金
+        # ただし、グラフ表示用に自己資金の差し引きは別途計算
+        sale_cumulative_cf = cum + net_sale_proceeds - basic_metrics['self_funding'] * 10000
+        
+        # グラフ表示用の売却時累計CF（自己資金を差し引かない）
+        sale_cumulative_cf_display = cum + net_sale_proceeds
         
         cf_data.append({
             "年次": f"{i}年目",
@@ -314,7 +361,13 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "自己資金回収率": round(recovery_rate * 100, 1),  # 自己資金回収率（%）
             "DSCR": round(dscr, 2),  # DSCR計算済み
             "売却金額": int(sale_amount),  # 売却金額
-            "売却時手取り": int(net_sale_proceeds)  # 売却時手取り
+            "売却時手取り": int(net_sale_proceeds),  # 売却時手取り
+            "売却時累計CF": int(sale_cumulative_cf),  # 売却時累計CF（楽待方式）
+            "売却価格内訳": {
+                "想定価格": int(manual_price * 10000),
+                "収益還元価格": int(cap_rate_price * 10000),
+                "土地価格": int(land_price * 10000)
+            }
         })
     
     return cf_data
