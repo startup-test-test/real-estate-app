@@ -41,47 +41,32 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   }
 
   // データを準備（null/undefined チェック付き）
-  const years = data.map((row, index) => `${index + 1}年`);
-  const annualCashFlow = data.map(row => (row['営業CF'] || 0) / 10000); // 万円単位
-  const cumulativeCashFlow = data.map(row => (row['累計CF'] || 0) / 10000); // 万円単位
-  const income = data.map(row => (row['実効収入'] || 0) / 10000); // 万円単位
-  const expenses = data.map(row => 
-    ((row['経費'] || 0) + (row['ローン返済'] || 0)) / 10000
-  ); // 万円単位
-  const saleProfit = data.map(row => (row['売却時手取り'] || row['売却益'] || 0) / 10000); // 万円単位
-
+  const years = data.map((_, index) => `${index + 1}年`);
+  
   // 累計CF
   const cumulativeCashFlowBar = data.map((row) => {
     return (row['累計CF'] || 0) / 10000;
   });
   
-  // 売却益部分の計算
-  const saleGainBar = data.map((row, index) => {
+  // 売却による純利益（売却時累計CF - 累計CF）
+  const saleNetProfit = data.map((row) => {
     const cumCF = (row['累計CF'] || 0) / 10000;
-    const saleProceeds = (row['売却時手取り'] || 0) / 10000;
-    
-    // 売却時累計CFがAPIから返ってこない場合は、フロントエンドで計算
-    let saleCumCF = (row['売却時累計CF'] || 0) / 10000;
-    
-    if (!row['売却時累計CF'] && saleProceeds > 0) {
-      // 自己資金の計算（簡易版）
-      // TODO: 実際の自己資金はAPIから取得すべき
-      const selfFunding = 980; // 仮の値（万円）
-      saleCumCF = cumCF + saleProceeds - selfFunding;
-      
-      if (index === 0) {
-        console.log('⚠️ 売却時累計CFがAPIから返されていません。フロントエンドで計算しています。');
-      }
-    }
-    
-    // デバッグ用ログ（最初の3行のみ）
-    if (index < 3) {
-      console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却時手取り=${saleProceeds}`);
-    }
-    
-    // 売却益 = 売却時累計CF - 累計CF
-    const gain = saleCumCF - cumCF;
-    return gain;
+    const saleCumCF = (row['売却時累計CF'] || 0) / 10000;
+    return saleCumCF - cumCF;
+  });
+  
+  // 売却時累計CF（線グラフ用）
+  const saleCumulativeCF = data.map(row => (row['売却時累計CF'] || 0) / 10000);
+  
+  // 借入残高（線グラフ用）
+  const loanBalance = data.map(row => (row['借入残高'] || 0) / 10000);
+  
+  // デバッグ用ログ（最初の3行のみ）
+  data.slice(0, 3).forEach((row, index) => {
+    const cumCF = (row['累計CF'] || 0) / 10000;
+    const saleCumCF = (row['売却時累計CF'] || 0) / 10000;
+    const profit = saleCumCF - cumCF;
+    console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却による純利益=${profit}`);
   });
 
   const chartData = {
@@ -89,57 +74,49 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     datasets: [
       {
         type: 'bar' as const,
-        label: '累計CF(右軸)',
+        label: '累計CF',
         data: cumulativeCashFlowBar,
-        backgroundColor: 'rgba(139, 92, 246, 0.5)', // 紫系
+        backgroundColor: 'rgba(139, 92, 246, 0.6)', // 紫系
         borderColor: 'rgba(139, 92, 246, 0)',
         borderWidth: 0,
-        yAxisID: 'y1',
+        yAxisID: 'y',
         stack: 'Stack 0',
       },
       {
         type: 'bar' as const,
-        label: '売却時累計CF(右軸)',
-        data: saleGainBar,
-        backgroundColor: 'rgba(59, 130, 246, 0.5)', // 青系（水色）
+        label: '売却による純利益',
+        data: saleNetProfit,
+        backgroundColor: 'rgba(59, 130, 246, 0.6)', // 青系
         borderColor: 'rgba(59, 130, 246, 0)',
         borderWidth: 0,
-        yAxisID: 'y1',
+        yAxisID: 'y',
         stack: 'Stack 0',
       },
       {
         type: 'line' as const,
-        label: 'CF(左軸)',
-        data: annualCashFlow,
-        borderColor: 'rgb(236, 72, 153)', // ピンク
+        label: '売却時累計CF',
+        data: saleCumulativeCF,
+        borderColor: 'rgb(236, 72, 153)', // ピンク系
         backgroundColor: 'transparent',
         borderWidth: 3,
-        pointRadius: 0,
-        pointHoverRadius: 0,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgb(236, 72, 153)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
         yAxisID: 'y',
         tension: 0,
       },
       {
         type: 'line' as const,
-        label: '実質年間収入(左軸)',
-        data: income,
-        borderColor: 'rgb(34, 197, 94)', // 緑
+        label: '借入残高',
+        data: loanBalance,
+        borderColor: 'rgb(156, 163, 175)', // グレー系
         backgroundColor: 'transparent',
-        borderWidth: 3,
+        borderWidth: 2,
+        borderDash: [5, 5], // 破線
         pointRadius: 0,
-        pointHoverRadius: 0,
-        yAxisID: 'y',
-        tension: 0,
-      },
-      {
-        type: 'line' as const,
-        label: '支出(左軸)',
-        data: expenses,
-        borderColor: 'rgb(251, 146, 60)', // オレンジ
-        backgroundColor: 'transparent',
-        borderWidth: 3,
-        pointRadius: 0,
-        pointHoverRadius: 0,
+        pointHoverRadius: 4,
         yAxisID: 'y',
         tension: 0,
       },
@@ -196,13 +173,43 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         cornerRadius: 8,
         displayColors: true,
         callbacks: {
+          title: function(tooltipItems) {
+            return tooltipItems[0].label;
+          },
           label: function(context) {
             const label = context.dataset.label || '';
             const value = context.parsed.y;
             if (value === null || value === undefined) {
               return `${label}: データなし`;
             }
-            return `${label}: ${Number(value).toFixed(1)}`;
+            return `${label}: ${Number(value).toLocaleString()}万円`;
+          },
+          afterBody: function(tooltipItems) {
+            const index = tooltipItems[0].dataIndex;
+            const yearData = data[index];
+            const items = [];
+            
+            // 年間CFを追加
+            const annualCF = (yearData['営業CF'] || 0);
+            items.push(`年間CF: ${(annualCF / 10000).toLocaleString()}万円`);
+            
+            // 売却時累計CFを追加
+            const saleCumCF = (yearData['売却時累計CF'] || 0);
+            if (saleCumCF !== 0) {
+              items.push(`売却時累計CF: ${(saleCumCF / 10000).toLocaleString()}万円`);
+            }
+            
+            // 借入残高を追加
+            const loanBal = (yearData['借入残高'] || 0);
+            items.push(`借入残高: ${(loanBal / 10000).toLocaleString()}万円`);
+            
+            // 大規模修繕がある場合
+            const majorRepair = (yearData['初期リフォーム'] || 0) + (yearData['大規模修繕'] || 0);
+            if (majorRepair > 0) {
+              items.push(`⚠️ 修繕費: ${(majorRepair / 10000).toLocaleString()}万円`);
+            }
+            
+            return items;
           },
         },
       },
@@ -215,7 +222,6 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         },
         grid: {
           display: false,
-          drawBorder: false,
         },
         ticks: {
           font: {
@@ -223,8 +229,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
           },
           color: '#6B7280',
           // 5年ごとに表示
-          callback: function(value, index) {
-            return index % 5 === 4 ? this.getLabelForValue(value) : '';
+          callback: function(value: any, index: number) {
+            return index % 5 === 4 ? this.getLabelForValue(value as number) : '';
           },
         },
       },
@@ -243,7 +249,6 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         grid: {
           color: 'rgba(229, 231, 235, 1)', // gray-200
           lineWidth: 1,
-          drawBorder: false,
         },
         ticks: {
           callback: function(value) {
@@ -271,7 +276,6 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
           drawOnChartArea: false,
           color: 'rgba(229, 231, 235, 1)',
           lineWidth: 1,
-          drawBorder: false,
         },
         ticks: {
           callback: function(value) {

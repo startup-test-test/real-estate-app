@@ -1877,9 +1877,11 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却時<br/>手取り
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            売却時キャッシュフロー純額
+                          売却時<br/>累計CF
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[300px]">
+                            売却時の累計キャッシュフロー<br/>
+                            = 累計CF + 売却手取り - 自己資金<br/>
+                            投資全体の純利益を表します
                           </div>
                         </th>
                       </tr>
@@ -1929,7 +1931,7 @@ const Simulator: React.FC = () => {
                               )}
                             </div>
                           </td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却時手取り'] || row['売却益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時手取り'] || row['売却益'] || 0)}</td>
+                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
                         </tr>
                       ))}
                     </tbody>
