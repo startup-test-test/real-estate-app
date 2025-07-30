@@ -202,18 +202,36 @@ const Dashboard: React.FC = () => {
       // スキーマに合わせてデータを取得
       const simulationData = sim.simulation_data || {};
       const results = sim.results || {};
+      const cashFlowTable = sim.cash_flow_table || [];
+      
+      // 10年目のデータを取得（配列の9番目）
+      const year10Data = cashFlowTable[9] || {};
+      
+      // デバッグ用ログ（最初のシミュレーションのみ）
+      if (simulations.indexOf(sim) === 0) {
+        console.log('Dashboard: データ構造確認', {
+          cashFlowTable_exists: !!cashFlowTable,
+          cashFlowTable_length: cashFlowTable.length,
+          firstYear_data: cashFlowTable[0],
+          year10_data: year10Data,
+          results_data: results,
+          simulation_data: simulationData
+        });
+      }
       
       return {
         id: sim.id,
         propertyName: simulationData.propertyName || '無題の物件',
         location: simulationData.location || '住所未設定',
         propertyType: simulationData.propertyType || '一棟アパート/マンション',
-        acquisitionPrice: simulationData.purchasePrice || 0, // 既に万円単位で保存されている
-        annualIncome: ((simulationData.monthlyRent || 0) * 12) / 10000, // 月額家賃から年間収入を計算、万円に変換
+        acquisitionPrice: simulationData.purchasePrice || simulationData.purchase_price || 0, // 既に万円単位で保存されている
+        annualIncome: cashFlowTable[0]?.['実効収入'] ? cashFlowTable[0]['実効収入'] / 10000 : ((simulationData.monthlyRent || 0) * 12 * (1 - (simulationData.vacancyRate || 0) / 100)) / 10000, // 実効収入を優先、なければ計算
         managementFee: ((simulationData.managementFee || 0) * 12) / 10000, // 月額管理費×12を万円に変換
         surfaceYield: results.surfaceYield || 0,
         netYield: results.netYield || 0,
         cashFlow: results.monthlyCashFlow || 0,
+        annualCF: cashFlowTable[0]?.['営業CF'] || 0, // 初年度の年間CF（円単位）
+        saleCumulativeCF: year10Data['売却時累計CF'] || 0, // 10年目の売却時累計CF（円単位）
         date: new Date(sim.created_at).toLocaleDateString('ja-JP'),
         status: simulationData.propertyStatus || '検討中',
         thumbnail: simulationData.propertyImageUrl || 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -294,9 +312,6 @@ const Dashboard: React.FC = () => {
     return `${amount.toFixed(1)}万円`;
   };
 
-  const formatNumber = (num: number) => {
-    return num.toLocaleString();
-  };
 
 
   if (loading) {
@@ -567,23 +582,27 @@ const Dashboard: React.FC = () => {
                         {/* Financial Details - Compact */}
                         <div className="grid grid-cols-2 gap-3 mb-3">
                           <div>
-                            <span className="text-sm text-gray-500">取得価格</span>
+                            <span className="text-sm text-gray-500">購入価格</span>
                             <div className="font-bold text-base">{formatCurrency(sim.acquisitionPrice)}</div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">年間収入</span>
+                            <span className="text-sm text-gray-500">不動産収入</span>
                             <div className="font-bold text-base">{sim.annualIncome}万円</div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">表面利回り</span>
-                            <div className="font-bold text-green-600 text-base">{sim.surfaceYield}%</div>
+                            <span className="text-sm text-gray-500">年間CF</span>
+                            <div className={`font-bold text-base ${
+                              sim.annualCF >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {sim.annualCF >= 0 ? '+' : ''}{Math.round(sim.annualCF / 10000)}万円
+                            </div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">月間CF</span>
-                            <div className={`font-bold text-sm ${
-                              sim.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'
+                            <span className="text-sm text-gray-500">売却時累計CF(10年後)</span>
+                            <div className={`font-bold text-base ${
+                              sim.saleCumulativeCF >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
-                              {sim.cashFlow >= 0 ? '+' : ''}{formatNumber(sim.cashFlow)}円
+                              {sim.saleCumulativeCF >= 0 ? '+' : ''}{Math.round(sim.saleCumulativeCF / 10000)}万円
                             </div>
                           </div>
                         </div>
