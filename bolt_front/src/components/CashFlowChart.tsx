@@ -58,15 +58,16 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   // 売却時累計CF（線グラフ用）
   const saleCumulativeCF = data.map(row => (row['売却時累計CF'] || 0) / 10000);
   
-  // 借入残高（線グラフ用）
-  const loanBalance = data.map(row => (row['借入残高'] || 0) / 10000);
+  // 借入残高（線グラフ用）- 既に万円単位で返されるため変換不要、負の値は0にする
+  const loanBalance = data.map(row => Math.max(0, row['借入残高'] || 0));
   
   // デバッグ用ログ（最初の3行のみ）
   data.slice(0, 3).forEach((row, index) => {
     const cumCF = (row['累計CF'] || 0) / 10000;
     const saleCumCF = (row['売却時累計CF'] || 0) / 10000;
     const profit = saleCumCF - cumCF;
-    console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却による純利益=${profit}`);
+    const loanBal = row['借入残高'] || 0;
+    console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却による純利益=${profit}, 借入残高=${loanBal}`);
   });
 
   const chartData = {
@@ -74,7 +75,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     datasets: [
       {
         type: 'bar' as const,
-        label: '累計CF',
+        label: '①累計CF',
         data: cumulativeCashFlowBar,
         backgroundColor: 'rgba(139, 92, 246, 0.6)', // 紫系
         borderColor: 'rgba(139, 92, 246, 0)',
@@ -84,7 +85,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       },
       {
         type: 'bar' as const,
-        label: '売却による純利益',
+        label: '②売却による純利益',
         data: saleNetProfit,
         backgroundColor: 'rgba(59, 130, 246, 0.6)', // 青系
         borderColor: 'rgba(59, 130, 246, 0)',
@@ -94,7 +95,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       },
       {
         type: 'line' as const,
-        label: '売却時累計CF',
+        label: '③売却時累計CF（①＋②）',
         data: saleCumulativeCF,
         borderColor: 'rgb(236, 72, 153)', // ピンク系
         backgroundColor: 'transparent',
@@ -111,7 +112,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         type: 'line' as const,
         label: '借入残高',
         data: loanBalance,
-        borderColor: 'rgb(156, 163, 175)', // グレー系
+        borderColor: 'rgb(31, 41, 55)', // 黒系（gray-800）
         backgroundColor: 'transparent',
         borderWidth: 2,
         borderDash: [5, 5], // 破線
@@ -137,7 +138,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
           boxWidth: 40,
           boxHeight: 2,
           font: {
-            size: 12,
+            size: 16,
             weight: 'normal',
             family: 'system-ui, -apple-system, sans-serif',
           },
@@ -189,20 +190,6 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             const yearData = data[index];
             const items = [];
             
-            // 年間CFを追加
-            const annualCF = (yearData['営業CF'] || 0);
-            items.push(`年間CF: ${(annualCF / 10000).toLocaleString()}万円`);
-            
-            // 売却時累計CFを追加
-            const saleCumCF = (yearData['売却時累計CF'] || 0);
-            if (saleCumCF !== 0) {
-              items.push(`売却時累計CF: ${(saleCumCF / 10000).toLocaleString()}万円`);
-            }
-            
-            // 借入残高を追加
-            const loanBal = (yearData['借入残高'] || 0);
-            items.push(`借入残高: ${(loanBal / 10000).toLocaleString()}万円`);
-            
             // 大規模修繕がある場合
             const majorRepair = (yearData['初期リフォーム'] || 0) + (yearData['大規模修繕'] || 0);
             if (majorRepair > 0) {
@@ -225,12 +212,15 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         },
         ticks: {
           font: {
-            size: 11,
+            size: 14,
           },
           color: '#6B7280',
-          // 5年ごとに表示
+          // 5年ごとに表示（1年目、5年目、10年目...）
           callback: function(value: any, index: number) {
-            return index % 5 === 4 ? this.getLabelForValue(value as number) : '';
+            if (index === 0 || (index + 1) % 5 === 0) {
+              return this.getLabelForValue(value as number);
+            }
+            return '';
           },
         },
       },
@@ -255,34 +245,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             return value.toLocaleString();
           },
           font: {
-            size: 11,
-          },
-          color: '#6B7280',
-        },
-      },
-      y1: {
-        type: 'linear' as const,
-        display: true,
-        position: 'right' as const,
-        title: {
-          display: true,
-          text: '(万円)',
-          font: {
-            size: 12,
-            weight: 'normal',
-          },
-        },
-        grid: {
-          drawOnChartArea: false,
-          color: 'rgba(229, 231, 235, 1)',
-          lineWidth: 1,
-        },
-        ticks: {
-          callback: function(value) {
-            return value.toLocaleString();
-          },
-          font: {
-            size: 11,
+            size: 14,
           },
           color: '#6B7280',
         },

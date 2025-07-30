@@ -340,6 +340,9 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # ただし、グラフ表示用に自己資金の差し引きは別途計算
         sale_cumulative_cf = cum + net_sale_proceeds - basic_metrics['self_funding'] * 10000
         
+        # 売却による純利益（売却時累計CF - 累計CF）
+        sale_net_profit = sale_cumulative_cf - cum
+        
         # グラフ表示用の売却時累計CF（自己資金を差し引かない）
         sale_cumulative_cf_display = cum + net_sale_proceeds
         
@@ -362,6 +365,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "DSCR": round(dscr, 2),  # DSCR計算済み
             "売却金額": int(sale_amount),  # 売却金額
             "売却時手取り": int(net_sale_proceeds),  # 売却時手取り
+            "売却による純利益": int(sale_net_profit),  # 売却による純利益
             "売却時累計CF": int(sale_cumulative_cf),  # 売却時累計CF（楽待方式）
             "売却価格内訳": {
                 "想定価格": int(manual_price * 10000),
