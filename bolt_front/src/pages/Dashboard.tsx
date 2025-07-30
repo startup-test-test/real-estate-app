@@ -17,7 +17,6 @@ import {
   Search,
   Key,
   Plus,
-  Download,
   Edit,
   Trash2,
   ChevronDown,
@@ -394,13 +393,6 @@ const Dashboard: React.FC = () => {
                   <Plus className="h-4 w-4 mr-2" />
                   新規シミュレーション
                 </button>
-                <button 
-                  onClick={refetch}
-                  className="flex items-center px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  更新
-                </button>
               </div>
             </div>
 
@@ -510,7 +502,7 @@ const Dashboard: React.FC = () => {
                       />
                       <div className="absolute top-3 left-3">
                         <div className="bg-black/70 text-white px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm">
-                          <span className="text-xs text-gray-300 block">物件名</span>
+                          <span className="text-xs text-gray-300 block">登録日：{sim.date}</span>
                           <span className="text-sm font-medium">{sim.propertyName}</span>
                         </div>
                       </div>
@@ -520,7 +512,7 @@ const Dashboard: React.FC = () => {
                       
                       {/* Status Badge */}
                       <div className="absolute bottom-3 left-3">
-                        <span className={`px-2 py-1 text-xs rounded font-medium ${
+                        <span className={`px-3 py-2 text-sm rounded-md font-medium ${
                           sim.status === '検討中' ? 'bg-blue-100 text-blue-700' :
                           sim.status === '内見予定' ? 'bg-purple-100 text-purple-700' :
                           sim.status === '申込検討' ? 'bg-orange-100 text-orange-700' :
@@ -546,12 +538,11 @@ const Dashboard: React.FC = () => {
                     <div className="p-4">
                       {/* Property Info */}
                       <div className="mb-4">
-                        <div className="mb-2 flex items-center justify-between">
+                        <div className="mb-2">
                           <div>
                             <span className="text-sm text-gray-500">住所：</span>
                             <span className="text-base text-gray-900 font-medium">{sim.location}</span>
                           </div>
-                          <span className="text-sm text-gray-600">{sim.date}</span>
                         </div>
                         
                         {/* Property URL and Memo - Compact */}
