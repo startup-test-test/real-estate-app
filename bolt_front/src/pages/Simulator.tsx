@@ -74,6 +74,15 @@ const Simulator: React.FC = () => {
       });
     }
   };
+
+  // フォーカス時の処理（0をクリアまたは全選択）
+  const handleNumberInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '0') {
+      e.target.value = '';
+    } else if (e.target.value) {
+      e.target.select();
+    }
+  };
   
   // エラーメッセージコンポーネント
   const ErrorMessage = ({ fieldName }: { fieldName: string }) => {
@@ -751,9 +760,10 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    step="0.01"
+                    step="1"
                     value={inputs.landArea}
                     onChange={(e) => handleInputChange('landArea', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="162.52"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -771,9 +781,10 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    step="0.01"
+                    step="1"
                     value={inputs.buildingArea}
                     onChange={(e) => handleInputChange('buildingArea', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="122.5"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -812,6 +823,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.yearBuilt || ''}
                     onChange={(e) => handleFieldChange('yearBuilt', Number(e.target.value) || 0)}
+                    onFocus={handleNumberInputFocus}
                     placeholder="2020"
                     className={getFieldClassName('yearBuilt')}
                   />
@@ -867,6 +879,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.purchasePrice}
                     onChange={(e) => handleFieldChange('purchasePrice', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="12000"
                     className={getFieldClassName('purchasePrice')}
                   />
@@ -889,6 +902,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.otherCosts}
                     onChange={(e) => handleInputChange('otherCosts', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="500"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -910,6 +924,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.renovationCost}
                     onChange={(e) => handleInputChange('renovationCost', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="370"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -936,6 +951,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.monthlyRent}
                     onChange={(e) => handleFieldChange('monthlyRent', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="250000"
                     className={getFieldClassName('monthlyRent')}
                   />
@@ -957,6 +973,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.managementFee}
                     onChange={(e) => handleInputChange('managementFee', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="12500"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -977,6 +994,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.fixedCost}
                     onChange={(e) => handleInputChange('fixedCost', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">円</span>
@@ -996,6 +1014,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.propertyTax}
                     onChange={(e) => handleInputChange('propertyTax', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="100000"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1063,6 +1082,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.loanAmount}
                     onChange={(e) => handleFieldChange('loanAmount', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="10000"
                     className={getFieldClassName('loanAmount')}
                   />
@@ -1085,6 +1105,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.interestRate}
                     onChange={(e) => handleFieldChange('interestRate', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="2.875"
                     className={getFieldClassName('interestRate')}
                   />
@@ -1106,6 +1127,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.loanYears}
                     onChange={(e) => handleFieldChange('loanYears', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     placeholder="25"
                     className={getFieldClassName('loanYears')}
                   />
@@ -1155,6 +1177,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.holdingYears}
                     onChange={(e) => handleFieldChange('holdingYears', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     className={getFieldClassName('holdingYears')}
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
@@ -1176,6 +1199,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.exitCapRate}
                     onChange={(e) => handleFieldChange('exitCapRate', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
                     className={getFieldClassName('exitCapRate')}
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
