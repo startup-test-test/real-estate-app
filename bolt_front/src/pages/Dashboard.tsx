@@ -436,8 +436,8 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto pt-5 md:pt-0">
         {/* Header */}
         <div className="mb-6">
           <div>
@@ -448,7 +448,7 @@ const Dashboard: React.FC = () => {
 
         <div className="space-y-6">
           {/* Quick Actions Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             {quickActions.map((section, index) => {
               const Icon = section.icon;
               return (
@@ -459,7 +459,7 @@ const Dashboard: React.FC = () => {
                       <h3 className="font-semibold">{section.category}</h3>
                     </div>
                   </div>
-                  <div className="p-6">
+                  <div className="p-3 md:p-6">
                     {/* Description */}
                     <p className="text-gray-600 text-sm mb-4">{section.description}</p>
                     
@@ -486,7 +486,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Property List Section */}
-          <div id="property-list" className="bg-white rounded-lg border border-gray-200 p-6">
+          <div id="property-list" className="bg-white rounded-lg border border-gray-200 p-3 md:p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <Calculator className="h-6 w-6 text-purple-500 mr-2" />
@@ -590,7 +590,7 @@ const Dashboard: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                 {paginatedResults.map((sim) => (
                   <div 
                     key={sim.id} 
@@ -654,7 +654,7 @@ const Dashboard: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className={`p-4 ${
+                    <div className={`p-3 md:p-4 ${
                       sim.status === '取得済み'
                         ? 'bg-green-50'
                         : sim.status === '契約手続中'

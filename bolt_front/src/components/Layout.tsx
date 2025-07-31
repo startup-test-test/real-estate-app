@@ -59,7 +59,7 @@ const Layout: React.FC = () => {
             <Home className="h-6 w-6 text-white mr-2 flex-shrink-0" />
             <div>
               <span className="text-xl font-bold text-white" style={{ fontFamily: 'serif' }}>大家DX</span>
-              <p className="text-xs text-white/70 hidden min-[400px]:block">AIが導く、賃貸経営の未来</p>
+              <p className="text-xs text-white/70">AIが導く、賃貸経営の未来</p>
             </div>
           </div>
           

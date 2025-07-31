@@ -690,10 +690,10 @@ const Simulator: React.FC = () => {
         )}
 
         {/* Input Form */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6 print:hidden">
+        <div className="bg-transparent md:bg-white md:rounded-lg md:border md:border-gray-200 p-0 md:p-6 space-y-6 print:hidden">
           {/* 🏠 物件情報 */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏠 物件情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">🏠 物件情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 物件名 */}
               <div data-field="propertyName">
@@ -865,7 +865,7 @@ const Simulator: React.FC = () => {
 
           {/* 💰 取得・初期費用 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 取得・初期費用 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">💰 取得・初期費用 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 購入価格 */}
               <div data-field="purchasePrice">
@@ -938,7 +938,7 @@ const Simulator: React.FC = () => {
 
           {/* 📈 収益情報 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📈 収益情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">📈 収益情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 月額賃料 */}
               <div data-field="monthlyRent">
@@ -1068,7 +1068,7 @@ const Simulator: React.FC = () => {
 
           {/* 🏦 借入条件 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏦 借入条件 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">🏦 借入条件 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 借入額 */}
               <div data-field="loanAmount">
@@ -1164,7 +1164,7 @@ const Simulator: React.FC = () => {
 
           {/* 🎯 出口戦略 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 出口戦略 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">🎯 出口戦略 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 保有年数 */}
               <div data-field="holdingYears">
@@ -1254,7 +1254,7 @@ const Simulator: React.FC = () => {
 
           {/* 📊 税務・会計設定 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 税務・会計設定</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">📊 税務・会計設定</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 所有形態 */}
               <div>
@@ -1450,7 +1450,7 @@ const Simulator: React.FC = () => {
 
           {/* 🔧 大規模修繕設定 */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🔧 大規模修繕設定</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">🔧 大規模修繕設定</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 修繕周期 */}
               <div>
@@ -1497,7 +1497,7 @@ const Simulator: React.FC = () => {
 
           {/* 📌 物件ブックマーク */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📌 物件ブックマーク</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">📌 物件ブックマーク</h3>
             <div className="space-y-4">
               {/* URLとメモを横並び */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1590,7 +1590,7 @@ const Simulator: React.FC = () => {
                 ) : (
                   <div className="flex items-center">
                     <Zap className="h-6 w-6 mr-3" />
-                    シミュレーションを実行する
+                    実行する
                   </div>
                 )}
               </button>
@@ -1623,7 +1623,7 @@ const Simulator: React.FC = () => {
         {simulationResults && (
           <div 
             ref={resultsRef}
-            className="mt-6 bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none"
+            className="mt-6 bg-white md:bg-white rounded-lg border-2 border-blue-200 shadow-lg p-4 md:p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none"
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
