@@ -437,7 +437,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto pt-5 md:pt-0">
+      <div className="max-w-7xl mx-auto pt-1 md:pt-0">
         {/* Header */}
         <div className="mb-6">
           <div>

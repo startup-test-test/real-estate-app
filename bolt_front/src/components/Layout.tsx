@@ -57,10 +57,7 @@ const Layout: React.FC = () => {
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600/30">
           <div className="flex items-center">
             <Home className="h-6 w-6 text-white mr-2 flex-shrink-0" />
-            <div>
-              <span className="text-xl font-bold text-white" style={{ fontFamily: 'serif' }}>大家DX</span>
-              <p className="text-xs text-white/70">AIが導く、賃貸経営の未来</p>
-            </div>
+            <span className="text-xl font-bold text-white" style={{ fontFamily: 'serif' }}>大家DX</span>
           </div>
           
           {/* Menu Button */}
@@ -74,50 +71,6 @@ const Layout: React.FC = () => {
               <Menu className="h-5 w-5" />
             )}
           </button>
-        </div>
-        
-        {/* Horizontal Scrollable Menu */}
-        <div className="overflow-x-auto">
-          <div className="flex px-2 py-2 space-x-2 min-w-max">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white'
-                    }`
-                  }
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  {item.name}
-                </NavLink>
-              );
-            })}
-            {supportNavigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white'
-                    }`
-                  }
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  {item.name}
-                </NavLink>
-              );
-            })}
-          </div>
         </div>
       </div>
 
@@ -246,7 +199,7 @@ const Layout: React.FC = () => {
 
       {/* Main Content */}
       <div className="lg:pl-72">
-        <main className="min-h-screen pt-24 lg:pt-0 flex flex-col">
+        <main className="min-h-screen pt-16 lg:pt-0 flex flex-col">
           <div className="flex-grow">
             <Outlet />
           </div>

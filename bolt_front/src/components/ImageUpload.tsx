@@ -88,7 +88,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           <img
             src={previewUrl}
             alt="物件画像プレビュー"
-            className="w-full h-40 object-cover rounded-lg"
+            className="w-full h-32 md:h-40 object-cover rounded-lg"
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
             <button
@@ -107,19 +107,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <button
         onClick={handleFileSelect}
         disabled={disabled}
-        className="w-full border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-lg py-8 px-4 text-center transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-lg py-4 md:py-8 px-4 text-center transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <div className="flex flex-col items-center">
-          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-            <Upload className="w-6 h-6 text-gray-400" />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2 md:mb-3">
+            <Upload className="w-5 h-5 md:w-6 md:h-6 text-gray-400" />
           </div>
-          <p className="text-sm font-medium text-gray-900 mb-1">
+          <p className="text-sm font-medium text-gray-900">
             画像をアップロード
           </p>
-          <p className="text-xs text-gray-500">
-            クリックして画像を選択
+          <p className="text-xs text-gray-500 md:mb-1">
+            クリックして選択
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-400 mt-1 hidden md:block">
             JPEG, PNG, WebP (最大2MB)
           </p>
         </div>

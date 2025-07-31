@@ -77,10 +77,16 @@ const Simulator: React.FC = () => {
 
   // フォーカス時の処理（0をクリアまたは全選択）
   const handleNumberInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.value === '0') {
+    // モバイルデバイスでは全選択のみ（0のクリアは行わない）
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (!isMobile && e.target.value === '0') {
       e.target.value = '';
     } else if (e.target.value) {
-      e.target.select();
+      // setTimeoutを使用してモバイルでの選択を確実に
+      setTimeout(() => {
+        e.target.select();
+      }, 10);
     }
   };
   
@@ -621,7 +627,7 @@ const Simulator: React.FC = () => {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-        <div className="max-w-6xl mx-auto pt-5 md:pt-0">
+        <div className="max-w-6xl mx-auto pt-1 md:pt-0">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
@@ -635,7 +641,7 @@ const Simulator: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen print:p-4 print:bg-white">
-      <div className="max-w-6xl mx-auto print:max-w-full pt-5 md:pt-0">
+      <div className="max-w-6xl mx-auto print:max-w-full pt-1 md:pt-0">
         {/* Breadcrumb - PC版のみ表示 */}
         <div className="print:hidden hidden md:block">
           <Breadcrumb />
@@ -878,6 +884,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.01"
                     value={inputs.purchasePrice}
                     onChange={(e) => handleFieldChange('purchasePrice', Number(e.target.value))}
@@ -951,6 +958,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={inputs.monthlyRent}
                     onChange={(e) => handleFieldChange('monthlyRent', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
@@ -1081,6 +1089,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.01"
                     value={inputs.loanAmount}
                     onChange={(e) => handleFieldChange('loanAmount', Number(e.target.value))}
@@ -1104,6 +1113,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.01"
                     value={inputs.interestRate}
                     onChange={(e) => handleFieldChange('interestRate', Number(e.target.value))}
@@ -1629,9 +1639,6 @@ const Simulator: React.FC = () => {
               <div className="flex items-center">
                 <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
                 <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
-                <div className="ml-3 bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full animate-pulse">
-                  NEW!
-                </div>
               </div>
               <div className="flex items-center space-x-3">
                 {user && saveMessage?.includes('✅') && (
