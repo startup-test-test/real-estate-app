@@ -201,21 +201,23 @@ const Dashboard: React.FC = () => {
     }
   }, [authLoading]); // userを依存配列から削除して無限ループを防ぐ
 
-  // ページフォーカス時に最新データを取得
+  // タブが表示されたときにデータを更新（visibilitychange を使用）
   React.useEffect(() => {
-    const handleFocus = () => {
-      // 最後の更新から5秒以上経過していたら更新
-      const lastUpdate = (window as any).lastDashboardUpdate || 0;
-      const now = Date.now();
-      if (now - lastUpdate > 5000) {
-        console.log('ページフォーカス時にデータを更新');
-        (window as any).lastDashboardUpdate = now;
-        loadSimulations(true);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const lastUpdate = (window as any).lastDashboardUpdate || 0;
+        const now = Date.now();
+        // 最後の更新から10秒以上経過していたら更新
+        if (now - lastUpdate > 10000) {
+          console.log('タブが表示されたときにデータを更新');
+          (window as any).lastDashboardUpdate = now;
+          loadSimulations(true);
+        }
       }
     };
 
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   // Supabaseデータを表示用フォーマットに変換
@@ -266,6 +268,57 @@ const Dashboard: React.FC = () => {
         return value !== undefined && value !== null ? value : defaultValue;
       };
       
+      // 売却時累計CF（10年後）の計算
+      const calculateCumulativeCF10Year = () => {
+        
+        // resultsから売却時累計CFを取得（シミュレーター画面で計算済みの値）
+        if (results.cumulativeCashFlowWithSaleAt10) {
+          return results.cumulativeCashFlowWithSaleAt10;
+        }
+        
+        // cash_flow_tableから10年目のデータを取得
+        if (sim.cash_flow_table && sim.cash_flow_table.length >= 10) {
+          const year10Data = sim.cash_flow_table[9]; // 10年目（配列は0から始まる）
+          // 売却時累計CFがある場合はそれを使用
+          if (year10Data.売却時累計CF !== undefined) {
+            return year10Data.売却時累計CF;
+          }
+          // または英語のフィールド名
+          if (year10Data.cumulativeCashFlowWithSale !== undefined) {
+            return year10Data.cumulativeCashFlowWithSale;
+          }
+        }
+        
+        // フォールバック: 簡易計算
+        const monthlyCF = results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0;
+        const yearlyCF = monthlyCF * 12;
+        const cumulativeCF10Year = yearlyCF * 10;
+        
+        // 売却益の簡易計算
+        const purchasePrice = simulationData.purchasePrice || 0; // 万円単位
+        const salePrice = purchasePrice * 0.9 * 10000; // 90%で売却と仮定、円単位に変換
+        
+        // ローン残債の計算（より正確な計算）
+        const loanAmount = simulationData.loanAmount || (purchasePrice * 0.9); // 万円単位
+        const interestRate = simulationData.interestRate || 2.0;
+        const loanTerms = simulationData.loanTerms || 30;
+        
+        // 10年後の残債を元利均等返済で計算
+        const monthlyRate = interestRate / 100 / 12;
+        const totalPayments = loanTerms * 12;
+        const monthlyPayment = (loanAmount * 10000) * monthlyRate * Math.pow(1 + monthlyRate, totalPayments) 
+          / (Math.pow(1 + monthlyRate, totalPayments) - 1);
+        
+        const paymentsAfter10Years = 10 * 12;
+        const remainingPayments = totalPayments - paymentsAfter10Years;
+        const loanBalance = monthlyPayment * (1 - Math.pow(1 + monthlyRate, -remainingPayments)) / monthlyRate;
+        
+        const saleProfit = salePrice - loanBalance;
+        const total = cumulativeCF10Year + saleProfit;
+        
+        return total;
+      };
+
       return {
         id: sim.id,
         propertyName: simulationData.propertyName || '無題の物件',
@@ -277,7 +330,12 @@ const Dashboard: React.FC = () => {
         surfaceYield: results.surfaceYield || fallbackValues.surfaceYield || 0,
         netYield: results.netYield || 0,
         cashFlow: results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0,
-        date: new Date(sim.created_at).toLocaleDateString('ja-JP'),
+        cumulativeCF10Year: calculateCumulativeCF10Year(),
+        date: new Date(sim.created_at).toLocaleDateString('ja-JP', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).replace(/\//g, '/'),
         status: simulationData.propertyStatus || '検討中',
         thumbnail: simulationData.propertyImageUrl || 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
         propertyUrl: simulationData.propertyUrl || '',
@@ -558,17 +616,13 @@ const Dashboard: React.FC = () => {
                       />
                       <div className="absolute top-3 left-3">
                         <div className="bg-black/70 text-white px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm">
-                          <span className="text-xs text-gray-300 block">物件名</span>
-                          <span className="text-sm font-medium">{sim.propertyName}</span>
+                          <span className="text-xs text-gray-300 block">登録日：{sim.date}</span>
+                          <span className="text-sm font-medium block mt-1">{sim.propertyName}</span>
                         </div>
                       </div>
-                      <div className="absolute top-3 right-3 flex space-x-1">
-                        {/* ステータスバッジ */}
-                      </div>
-                      
-                      {/* Status Badge */}
-                      <div className="absolute bottom-3 left-3">
-                        <span className={`px-2 py-1 text-xs rounded font-medium ${
+                      {/* Status Badge - 右上に配置 */}
+                      <div className="absolute top-3 right-3">
+                        <span className={`px-3 py-1.5 text-sm rounded-md font-medium ${
                           sim.status === '検討中' ? 'bg-blue-100 text-blue-700' :
                           sim.status === '内見予定' ? 'bg-purple-100 text-purple-700' :
                           sim.status === '申込検討' ? 'bg-orange-100 text-orange-700' :
@@ -594,12 +648,11 @@ const Dashboard: React.FC = () => {
                     <div className="p-4">
                       {/* Property Info */}
                       <div className="mb-4">
-                        <div className="mb-2 flex items-center justify-between">
+                        <div className="mb-2">
                           <div>
                             <span className="text-sm text-gray-500">住所：</span>
                             <span className="text-base text-gray-900 font-medium">{sim.location}</span>
                           </div>
-                          <span className="text-sm text-gray-600">{sim.date}</span>
                         </div>
                         
                         {/* Property URL and Memo - Compact */}
@@ -630,23 +683,27 @@ const Dashboard: React.FC = () => {
                         {/* Financial Details - Compact */}
                         <div className="grid grid-cols-2 gap-3 mb-3">
                           <div>
-                            <span className="text-sm text-gray-500">取得価格</span>
+                            <span className="text-sm text-gray-500">購入価格</span>
                             <div className="font-bold text-base">{formatCurrency(sim.acquisitionPrice)}</div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">年間収入</span>
+                            <span className="text-sm text-gray-500">不動産収入</span>
                             <div className="font-bold text-base">{sim.annualIncome}万円</div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">表面利回り</span>
-                            <div className="font-bold text-green-600 text-base">{sim.surfaceYield}%</div>
+                            <span className="text-sm text-gray-500">年間CF</span>
+                            <div className={`font-bold text-base ${
+                              sim.cashFlow * 12 >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {sim.cashFlow * 12 >= 0 ? '+' : ''}{formatNumber(Math.round(sim.cashFlow * 12 / 10000))}万円
+                            </div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">月間CF</span>
-                            <div className={`font-bold text-sm ${
-                              sim.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'
+                            <span className="text-sm text-gray-500">売却時累計CF(10年)</span>
+                            <div className={`font-bold text-base ${
+                              sim.cumulativeCF10Year >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
-                              {sim.cashFlow >= 0 ? '+' : ''}{formatNumber(sim.cashFlow)}円
+                              {sim.cumulativeCF10Year >= 0 ? '+' : ''}{formatNumber(Math.round(sim.cumulativeCF10Year / 10000))}万円
                             </div>
                           </div>
                         </div>
