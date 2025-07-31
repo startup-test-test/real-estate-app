@@ -70,6 +70,9 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却による純利益=${profit}, 借入残高=${loanBal}`);
   });
 
+  // SP版の判定
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   const chartData = {
     labels: years,
     datasets: [
@@ -215,12 +218,16 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             size: 14,
           },
           color: '#6B7280',
-          // 5年ごとに表示（1年目、5年目、10年目...）
+          // SP版は全年表示、PC版は5年ごとに表示
           callback: function(value: any, index: number) {
-            if (index === 0 || (index + 1) % 5 === 0) {
+            if (isMobile) {
               return this.getLabelForValue(value as number);
+            } else {
+              if (index === 0 || (index + 1) % 5 === 0) {
+                return this.getLabelForValue(value as number);
+              }
+              return '';
             }
-            return '';
           },
         },
       },
@@ -258,9 +265,17 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm chart-container">
-      <div className="h-96 w-full">
-        <Chart type='bar' data={chartData} options={options} />
+    <div className="bg-white md:p-6 p-4 md:rounded-lg md:border md:border-gray-200 md:shadow-sm chart-container">
+      {/* SP版のみスワイプ案内を表示 */}
+      {isMobile && (
+        <div className="text-center text-sm text-gray-500 mb-2">
+          ← スワイプで全期間を確認 →
+        </div>
+      )}
+      <div className={isMobile ? "overflow-x-auto -mx-4 px-4" : ""}>
+        <div className={isMobile ? "h-80 min-w-[1200px]" : "h-96 w-full"}>
+          <Chart type='bar' data={chartData} options={options} />
+        </div>
       </div>
     </div>
   );
