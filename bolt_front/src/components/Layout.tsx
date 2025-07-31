@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthContext } from './AuthProvider';
+import Footer from './Footer';
 import { 
   Calculator, 
   User,
@@ -50,18 +51,74 @@ const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Menu Button - Top Right */}
-      <div className="lg:hidden fixed top-4 right-4 z-50">
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 bg-slate-800 text-white rounded-lg shadow-lg"
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </button>
+      {/* Mobile Header - SP版のみ表示 */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 shadow-lg z-40">
+        {/* Logo Section */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600/30">
+          <div className="flex items-center">
+            <Home className="h-6 w-6 text-white mr-2 flex-shrink-0" />
+            <div>
+              <span className="text-xl font-bold text-white" style={{ fontFamily: 'serif' }}>大家DX</span>
+              <p className="text-xs text-white/70 hidden min-[400px]:block">AIが導く、賃貸経営の未来</p>
+            </div>
+          </div>
+          
+          {/* Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
+        </div>
+        
+        {/* Horizontal Scrollable Menu */}
+        <div className="overflow-x-auto">
+          <div className="flex px-2 py-2 space-x-2 min-w-max">
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+                      isActive
+                        ? 'bg-white/20 text-white'
+                        : 'text-white/80 hover:bg-white/10 hover:text-white'
+                    }`
+                  }
+                >
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.name}
+                </NavLink>
+              );
+            })}
+            {supportNavigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+                      isActive
+                        ? 'bg-white/20 text-white'
+                        : 'text-white/80 hover:bg-white/10 hover:text-white'
+                    }`
+                  }
+                >
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.name}
+                </NavLink>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -189,8 +246,11 @@ const Layout: React.FC = () => {
 
       {/* Main Content */}
       <div className="lg:pl-72">
-        <main className="min-h-screen">
-          <Outlet />
+        <main className="min-h-screen pt-24 lg:pt-0 flex flex-col">
+          <div className="flex-grow">
+            <Outlet />
+          </div>
+          <Footer />
         </main>
       </div>
     </div>

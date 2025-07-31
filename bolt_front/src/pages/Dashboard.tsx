@@ -423,7 +423,7 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <Loader className="h-8 w-8 animate-spin text-indigo-600 mx-auto mb-4" />
@@ -437,7 +437,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
         {/* Header */}
         <div className="mb-6">
           <div>
@@ -494,7 +494,7 @@ const Dashboard: React.FC = () => {
               </div>
               <button 
                 onClick={() => navigate('/simulator')}
-                className="flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
+                className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 新規シミュレーション
@@ -513,8 +513,8 @@ const Dashboard: React.FC = () => {
               </div>
             )}
 
-            {/* Search and Filter Controls */}
-            <div className="mb-6">
+            {/* Search and Filter Controls - PC版のみ表示 */}
+            <div className="mb-6 hidden md:block">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0 sm:space-x-4">
                 {/* Search */}
                 <div className="relative flex-1 max-w-md">

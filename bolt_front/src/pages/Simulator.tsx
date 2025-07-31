@@ -621,7 +621,7 @@ const Simulator: React.FC = () => {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto pt-5 md:pt-0">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
@@ -635,19 +635,22 @@ const Simulator: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen print:p-4 print:bg-white">
-      <div className="max-w-6xl mx-auto print:max-w-full">
-        {/* Breadcrumb */}
-        <div className="print:hidden">
+      <div className="max-w-6xl mx-auto print:max-w-full pt-5 md:pt-0">
+        {/* Breadcrumb - PC版のみ表示 */}
+        <div className="print:hidden hidden md:block">
           <Breadcrumb />
         </div>
         
         {/* Header */}
         <div className="mb-6 print:hidden">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-4 md:mb-0">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 物件収益シミュレーター
               </h1>
+              <p className="text-gray-600">
+                物件の収益性を詳細に計算し、投資判断の参考情報を提供します。
+              </p>
             </div>
             <div className="flex items-center space-x-3">
               <button
@@ -657,12 +660,11 @@ const Simulator: React.FC = () => {
                 <span>使い方を見る</span>
                 <span className="text-sm">📖</span>
               </button>
-              <BackButton />
+              <div className="hidden lg:block">
+                <BackButton />
+              </div>
             </div>
           </div>
-          <p className="text-gray-600">
-            物件の収益性を詳細に計算し、投資判断の参考情報を提供します。
-          </p>
         </div>
 
         {/* Legal Disclaimer */}

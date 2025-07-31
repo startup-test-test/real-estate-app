@@ -15,6 +15,7 @@ export { default as Tooltip } from './Tooltip';
 export { default as Layout } from './Layout';
 export { default as BackButton } from './BackButton';
 export { default as Breadcrumb } from './Breadcrumb';
+export { default as Footer } from './Footer';
 
 // 認証コンポーネント
 export { AuthProvider, useAuthContext } from './AuthProvider';
