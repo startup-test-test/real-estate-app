@@ -40,6 +40,8 @@ export default defineConfig({
   },
   // 開発時のパフォーマンス向上
   server: {
+    host: true,
+    port: 5173,
     hmr: {
       overlay: false
     }

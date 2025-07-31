@@ -3,9 +3,21 @@ import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { 
   Calculator, 
+  LogOut, 
+  User,
+  Home,
+  Menu,
+  X,
+  Bell,
+  Settings,
   Building,
+  BookOpen,
+  HelpCircle,
+  Crown,
   Search,
+  Key,
   Plus,
+  Download,
   Edit,
   Trash2,
   ChevronDown,
@@ -98,10 +110,19 @@ const Dashboard: React.FC = () => {
         setLoading(false);
         setIsInitialLoad(false);
         
-        // バックグラウンドで最新データを取得
-        setTimeout(() => {
-          loadSimulations(true);
-        }, 1000);
+        // キャッシュ読み込み後、1秒後に最新データを取得（バックグラウンド）
+        // 無限ループを防ぐため、一度だけ実行
+        if (!(window as any).dashboardDataRefreshed) {
+          (window as any).dashboardDataRefreshed = true;
+          setTimeout(() => {
+            console.log('キャッシュ読み込み後、最新データを取得します');
+            loadSimulations(true);
+            // 5秒後にフラグをリセット（次回のページ読み込み時に再実行可能）
+            setTimeout(() => {
+              (window as any).dashboardDataRefreshed = false;
+            }, 5000);
+          }, 1000);
+        }
         return;
       }
     }
@@ -124,11 +145,7 @@ const Dashboard: React.FC = () => {
         setError(fetchError);
         setSimulations([]);
       } else {
-        console.log('Supabaseから取得したデータ:', data);
-        // 最初のデータの詳細構造をログ出力
-        if (data && data.length > 0) {
-          console.log('最初のシミュレーションデータの詳細:', JSON.stringify(data[0], null, 2));
-        }
+        console.log('Supabaseから取得したデータ件数:', data?.length || 0);
         setSimulations(data || []);
         // キャッシュに保存
         saveToCache(data || []);
@@ -182,44 +199,84 @@ const Dashboard: React.FC = () => {
     if (!authLoading) {
       loadSimulations();
     }
-  }, [user, authLoading]);
+  }, [authLoading]); // userを依存配列から削除して無限ループを防ぐ
+
+  // ページフォーカス時に最新データを取得
+  React.useEffect(() => {
+    const handleFocus = () => {
+      // 最後の更新から5秒以上経過していたら更新
+      const lastUpdate = (window as any).lastDashboardUpdate || 0;
+      const now = Date.now();
+      if (now - lastUpdate > 5000) {
+        console.log('ページフォーカス時にデータを更新');
+        (window as any).lastDashboardUpdate = now;
+        loadSimulations(true);
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
 
   // Supabaseデータを表示用フォーマットに変換
   const formatSimulationData = (simulations: any[]) => {
-    return simulations.map(sim => {
+    return simulations.map((sim, index) => {
       // スキーマに合わせてデータを取得
       const simulationData = sim.simulation_data || {};
       const results = sim.results || {};
-      const cashFlowTable = sim.cash_flow_table || [];
       
-      // 10年目のデータを取得（配列の9番目）
-      const year10Data = cashFlowTable[9] || {};
+      // resultsが空または存在しない場合のフォールバック計算
+      const calculateFallbackValues = () => {
+        const purchasePrice = simulationData.purchasePrice || 0;
+        const monthlyRent = simulationData.monthlyRent || 0;
+        const yearlyRent = monthlyRent * 12;
+        const managementFee = simulationData.managementFee || 0;
+        
+        // 表面利回りの計算
+        const surfaceYield = purchasePrice > 0 
+          ? ((yearlyRent / 10000) / purchasePrice * 100).toFixed(2)
+          : 0;
+        
+        // 月間キャッシュフローの簡易計算（ローン返済額が必要）
+        const loanAmount = simulationData.loanAmount || (purchasePrice * 0.9 * 10000);
+        const interestRate = simulationData.interestRate || 2.0;
+        const loanTerms = simulationData.loanTerms || 30;
+        
+        // 月々の返済額計算（元利均等）
+        const monthlyRate = interestRate / 100 / 12;
+        const totalPayments = loanTerms * 12;
+        const monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalPayments) 
+          / (Math.pow(1 + monthlyRate, totalPayments) - 1);
+        
+        const monthlyCashFlow = monthlyRent - managementFee - monthlyPayment;
+        
+        return {
+          surfaceYield: parseFloat(surfaceYield),
+          monthlyCashFlow: Math.round(monthlyCashFlow)
+        };
+      };
       
-      // デバッグ用ログ（最初のシミュレーションのみ）
-      if (simulations.indexOf(sim) === 0) {
-        console.log('Dashboard: データ構造確認', {
-          cashFlowTable_exists: !!cashFlowTable,
-          cashFlowTable_length: cashFlowTable.length,
-          firstYear_data: cashFlowTable[0],
-          year10_data: year10Data,
-          results_data: results,
-          simulation_data: simulationData
-        });
-      }
+      // resultsが存在しない場合はフォールバック計算
+      const fallbackValues = (!results.surfaceYield || !results.monthlyCashFlow) 
+        ? calculateFallbackValues() 
+        : {};
+      
+      // 安全なデータ取得関数
+      const getSafeValue = (value: any, defaultValue: any) => {
+        return value !== undefined && value !== null ? value : defaultValue;
+      };
       
       return {
         id: sim.id,
         propertyName: simulationData.propertyName || '無題の物件',
         location: simulationData.location || '住所未設定',
         propertyType: simulationData.propertyType || '一棟アパート/マンション',
-        acquisitionPrice: simulationData.purchasePrice || simulationData.purchase_price || 0, // 既に万円単位で保存されている
-        annualIncome: cashFlowTable[0]?.['実効収入'] ? cashFlowTable[0]['実効収入'] / 10000 : ((simulationData.monthlyRent || 0) * 12 * (1 - (simulationData.vacancyRate || 0) / 100)) / 10000, // 実効収入を優先、なければ計算
+        acquisitionPrice: simulationData.purchasePrice || 0, // 既に万円単位で保存されている
+        annualIncome: ((simulationData.monthlyRent || 0) * 12) / 10000, // 月額家賃から年間収入を計算、万円に変換
         managementFee: ((simulationData.managementFee || 0) * 12) / 10000, // 月額管理費×12を万円に変換
-        surfaceYield: results.surfaceYield || 0,
+        surfaceYield: results.surfaceYield || fallbackValues.surfaceYield || 0,
         netYield: results.netYield || 0,
-        cashFlow: results.monthlyCashFlow || 0,
-        annualCF: cashFlowTable[0]?.['営業CF'] || 0, // 初年度の年間CF（円単位）
-        saleCumulativeCF: year10Data['売却時累計CF'] || 0, // 10年目の売却時累計CF（円単位）
+        cashFlow: results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0,
         date: new Date(sim.created_at).toLocaleDateString('ja-JP'),
         status: simulationData.propertyStatus || '検討中',
         thumbnail: simulationData.propertyImageUrl || 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -300,6 +357,9 @@ const Dashboard: React.FC = () => {
     return `${amount.toFixed(1)}万円`;
   };
 
+  const formatNumber = (num: number) => {
+    return num.toLocaleString();
+  };
 
 
   if (loading) {
@@ -371,8 +431,8 @@ const Dashboard: React.FC = () => {
           <div id="property-list" className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                <Calculator className="h-6 w-6 text-purple-500 mr-2" />
-                <h3 className="text-xl font-semibold text-gray-900">登録済み物件一覧</h3>
+                <Calculator className="h-5 w-5 text-purple-500 mr-2" />
+                <h3 className="font-semibold text-gray-900">登録済み物件一覧</h3>
               </div>
               <div className="flex items-center space-x-3">
                 <button 
@@ -381,6 +441,13 @@ const Dashboard: React.FC = () => {
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   新規シミュレーション
+                </button>
+                <button 
+                  onClick={refetch}
+                  className="flex items-center px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  更新
                 </button>
               </div>
             </div>
@@ -476,15 +543,7 @@ const Dashboard: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {paginatedResults.map((sim) => (
-                  <div 
-                    key={sim.id} 
-                    className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-300 bg-white cursor-pointer"
-                    onClick={(e) => {
-                      // ボタンクリック時は除外
-                      if ((e.target as HTMLElement).closest('button')) return;
-                      navigate(`/simulator?view=${sim.id}#results`);
-                    }}
-                  >
+                  <div key={sim.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
                     {/* Property Image */}
                     <div className="relative h-40">
                       <img
@@ -499,14 +558,17 @@ const Dashboard: React.FC = () => {
                       />
                       <div className="absolute top-3 left-3">
                         <div className="bg-black/70 text-white px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm">
-                          <span className="text-xs text-gray-300 block">登録日：{sim.date}</span>
+                          <span className="text-xs text-gray-300 block">物件名</span>
                           <span className="text-sm font-medium">{sim.propertyName}</span>
                         </div>
                       </div>
+                      <div className="absolute top-3 right-3 flex space-x-1">
+                        {/* ステータスバッジ */}
+                      </div>
                       
-                      {/* Status Badge - 右上に配置 */}
-                      <div className="absolute top-3 right-3">
-                        <span className={`px-3 py-2 text-sm rounded-md font-medium ${
+                      {/* Status Badge */}
+                      <div className="absolute bottom-3 left-3">
+                        <span className={`px-2 py-1 text-xs rounded font-medium ${
                           sim.status === '検討中' ? 'bg-blue-100 text-blue-700' :
                           sim.status === '内見予定' ? 'bg-purple-100 text-purple-700' :
                           sim.status === '申込検討' ? 'bg-orange-100 text-orange-700' :
@@ -526,16 +588,18 @@ const Dashboard: React.FC = () => {
                            '🔍 検討中'}
                         </span>
                       </div>
+
                     </div>
 
                     <div className="p-4">
                       {/* Property Info */}
                       <div className="mb-4">
-                        <div className="mb-2">
+                        <div className="mb-2 flex items-center justify-between">
                           <div>
                             <span className="text-sm text-gray-500">住所：</span>
                             <span className="text-base text-gray-900 font-medium">{sim.location}</span>
                           </div>
+                          <span className="text-sm text-gray-600">{sim.date}</span>
                         </div>
                         
                         {/* Property URL and Memo - Compact */}
@@ -563,32 +627,26 @@ const Dashboard: React.FC = () => {
                           </div>
                         </div>
                         
-                        {/* Financial Details - 改善版 */}
+                        {/* Financial Details - Compact */}
                         <div className="grid grid-cols-2 gap-3 mb-3">
                           <div>
-                            <span className="text-sm text-gray-500">購入価格</span>
-                            <div className="font-bold text-lg">{formatCurrency(sim.acquisitionPrice)}</div>
-                            <div className="text-sm text-blue-600 font-medium">実質利回り {sim.netYield.toFixed(1)}%</div>
+                            <span className="text-sm text-gray-500">取得価格</span>
+                            <div className="font-bold text-base">{formatCurrency(sim.acquisitionPrice)}</div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">不動産収入</span>
-                            <div className="font-bold text-lg">{sim.annualIncome}万円</div>
-                            <div className="text-sm text-gray-600">表面利回り {sim.surfaceYield.toFixed(1)}%</div>
+                            <span className="text-sm text-gray-500">年間収入</span>
+                            <div className="font-bold text-base">{sim.annualIncome}万円</div>
                           </div>
                           <div>
-                            <span className="text-sm text-gray-500">年間CF</span>
-                            <div className={`font-bold text-lg ${
-                              sim.annualCF >= 0 ? 'text-green-600' : 'text-red-600'
+                            <span className="text-sm text-gray-500">表面利回り</span>
+                            <div className="font-bold text-green-600 text-base">{sim.surfaceYield}%</div>
+                          </div>
+                          <div>
+                            <span className="text-sm text-gray-500">月間CF</span>
+                            <div className={`font-bold text-sm ${
+                              sim.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
-                              {sim.annualCF >= 0 ? '+' : ''}{Math.round(sim.annualCF / 10000)}万円
-                            </div>
-                          </div>
-                          <div>
-                            <span className="text-sm text-gray-500">売却時累計CF(10年後)</span>
-                            <div className={`font-bold text-lg ${
-                              sim.saleCumulativeCF >= 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              {sim.saleCumulativeCF >= 0 ? '+' : ''}{Math.round(sim.saleCumulativeCF / 10000)}万円
+                              {sim.cashFlow >= 0 ? '+' : ''}{formatNumber(sim.cashFlow)}円
                             </div>
                           </div>
                         </div>
@@ -599,7 +657,7 @@ const Dashboard: React.FC = () => {
                         {/* メインアクション: 結果表示（大きめ） */}
                         <button 
                           onClick={() => navigate(`/simulator?view=${sim.id}#results`)}
-                          className="group w-full flex items-center justify-center px-4 py-3.5 bg-blue-600 text-white text-base font-semibold rounded-lg hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md"
+                          className="group w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
                           title="シミュレーション結果を詳しく確認"
                         >
                           <BarChart3 className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
