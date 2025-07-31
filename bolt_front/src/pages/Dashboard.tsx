@@ -489,25 +489,16 @@ const Dashboard: React.FC = () => {
           <div id="property-list" className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                <Calculator className="h-5 w-5 text-purple-500 mr-2" />
-                <h3 className="font-semibold text-gray-900">登録済み物件一覧</h3>
+                <Calculator className="h-6 w-6 text-purple-500 mr-2" />
+                <h3 className="text-lg font-semibold text-gray-900">登録済み物件一覧</h3>
               </div>
-              <div className="flex items-center space-x-3">
-                <button 
-                  onClick={() => navigate('/simulator')}
-                  className="flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  新規シミュレーション
-                </button>
-                <button 
-                  onClick={refetch}
-                  className="flex items-center px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  更新
-                </button>
-              </div>
+              <button 
+                onClick={() => navigate('/simulator')}
+                className="flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                新規シミュレーション
+              </button>
             </div>
 
             {error && (
@@ -601,7 +592,17 @@ const Dashboard: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {paginatedResults.map((sim) => (
-                  <div key={sim.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
+                  <div 
+                    key={sim.id} 
+                    className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white cursor-pointer"
+                    onClick={(e) => {
+                      // ボタンがクリックされていない場合のみ遷移
+                      const target = e.target as HTMLElement;
+                      if (!target.closest('button')) {
+                        navigate(`/simulator?view=${sim.id}#results`);
+                      }
+                    }}
+                  >
                     {/* Property Image */}
                     <div className="relative h-40">
                       <img

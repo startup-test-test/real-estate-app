@@ -1205,11 +1205,11 @@ const Simulator: React.FC = () => {
                 
                 {/* 自動計算の説明と手動調整リンク */}
                 <div className="text-xs text-gray-500 mt-1">
-                  {inputs.buildingYear && inputs.buildingStructure && !isManualDepreciation ? (
+                  {inputs.yearBuilt && inputs.propertyType && !isManualDepreciation ? (
                     <>
                       {(() => {
                         const currentYear = new Date().getFullYear();
-                        const buildingAge = currentYear - inputs.buildingYear;
+                        const buildingAge = currentYear - inputs.yearBuilt;
                         const getLegalLife = (structure: string) => {
                           switch (structure) {
                             case 'RC': return 47;
@@ -1219,7 +1219,7 @@ const Simulator: React.FC = () => {
                             default: return 27;
                           }
                         };
-                        const legalLife = getLegalLife(inputs.buildingStructure);
+                        const legalLife = getLegalLife(inputs.propertyType);
                         const isExceeded = buildingAge >= legalLife;
                         
                         if (isExceeded) {
@@ -1228,12 +1228,12 @@ const Simulator: React.FC = () => {
                               <span className="text-orange-600 font-medium">
                                 ⚠️ 耐用年数超過物件
                               </span>
-                              ：{inputs.buildingStructure}（法定{legalLife}年）で築{buildingAge}年 
+                              ：{inputs.propertyType}（法定{legalLife}年）で築{buildingAge}年 
                               → 残存{inputs.depreciationYears}年
                             </>
                           );
                         } else {
-                          return `自動計算：${inputs.buildingStructure}（法定${legalLife}年）で築${buildingAge}年 → 残存${inputs.depreciationYears}年`;
+                          return `自動計算：${inputs.propertyType}（法定${legalLife}年）で築${buildingAge}年 → 残存${inputs.depreciationYears}年`;
                         }
                       })()}
                       {' '}
@@ -1251,7 +1251,7 @@ const Simulator: React.FC = () => {
                   ) : isManualDepreciation ? (
                     <>
                       手動編集モード
-                      {inputs.buildingYear && inputs.buildingStructure && (
+                      {inputs.yearBuilt && inputs.propertyType && (
                         <>
                           {' '}
                           <button
@@ -1259,8 +1259,8 @@ const Simulator: React.FC = () => {
                             onClick={() => {
                               setIsManualDepreciation(false);
                               // 自動モードに戻った時に再計算
-                              if (inputs.buildingYear && inputs.buildingStructure) {
-                                handleInputChange('buildingYear', inputs.buildingYear);
+                              if (inputs.yearBuilt && inputs.propertyType) {
+                                handleInputChange('yearBuilt', inputs.yearBuilt);
                               }
                             }}
                             className="text-gray-600 hover:text-gray-800 underline"
