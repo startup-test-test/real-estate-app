@@ -51,6 +51,42 @@ const Simulator: React.FC = () => {
 
   const [inputs, setInputs] = useState<any>(emptyPropertyData);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  
+  // エラー時のフィールドクラス名を取得
+  const getFieldClassName = (fieldName: string, baseClass: string = "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent") => {
+    return `${baseClass} ${
+      fieldErrors[fieldName] 
+        ? 'border-red-300 bg-red-50 focus:ring-red-500' 
+        : 'border-gray-300 focus:ring-indigo-500'
+    }`;
+  };
+  
+  // フィールド変更時のハンドラー（エラークリア付き）
+  const handleFieldChange = (fieldName: string, value: any) => {
+    handleInputChange(fieldName, value);
+    // 入力時にエラーをクリア
+    if (fieldErrors[fieldName]) {
+      setFieldErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldName];
+        return newErrors;
+      });
+    }
+  };
+  
+  // エラーメッセージコンポーネント
+  const ErrorMessage = ({ fieldName }: { fieldName: string }) => {
+    if (!fieldErrors[fieldName]) return null;
+    return (
+      <p className="text-xs text-red-600 mt-1 flex items-center">
+        <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+        </svg>
+        {fieldErrors[fieldName]}
+      </p>
+    );
+  };
 
 
 
@@ -279,29 +315,67 @@ const Simulator: React.FC = () => {
   // バリデーションチェック関数
   const validateForm = () => {
     const errors: string[] = [];
+    const fieldErrorsMap: Record<string, string> = {};
     
     // 物件情報（必須）
-    if (!inputs.propertyName) errors.push('物件名を入力してください');
-    if (!inputs.location) errors.push('所在地を入力してください');
-    if (!inputs.yearBuilt || inputs.yearBuilt <= 0) errors.push('建築年を入力してください');
-    if (!inputs.propertyType) errors.push('建物構造を選択してください');
+    if (!inputs.propertyName) {
+      errors.push('物件名を入力してください');
+      fieldErrorsMap.propertyName = '物件名を入力してください';
+    }
+    if (!inputs.location) {
+      errors.push('所在地を入力してください');
+      fieldErrorsMap.location = '所在地を入力してください';
+    }
+    if (!inputs.yearBuilt || inputs.yearBuilt <= 0) {
+      errors.push('建築年を入力してください');
+      fieldErrorsMap.yearBuilt = '建築年を入力してください';
+    }
+    if (!inputs.propertyType) {
+      errors.push('建物構造を選択してください');
+      fieldErrorsMap.propertyType = '建物構造を選択してください';
+    }
     
     // 取得・初期費用（必須）
-    if (!inputs.purchasePrice || inputs.purchasePrice <= 0) errors.push('物件価格を入力してください');
+    if (!inputs.purchasePrice || inputs.purchasePrice <= 0) {
+      errors.push('物件価格を入力してください');
+      fieldErrorsMap.purchasePrice = '物件価格を入力してください';
+    }
     
     // 収益情報（必須）
-    if (!inputs.monthlyRent || inputs.monthlyRent <= 0) errors.push('月額賃料を入力してください');
+    if (!inputs.monthlyRent || inputs.monthlyRent <= 0) {
+      errors.push('月額賃料を入力してください');
+      fieldErrorsMap.monthlyRent = '月額賃料を入力してください';
+    }
     
     // 借入条件（必須）
-    if (inputs.loanAmount === undefined || inputs.loanAmount < 0) errors.push('借入額を入力してください');
-    if (inputs.interestRate === undefined || inputs.interestRate < 0) errors.push('金利を入力してください');
-    if (!inputs.loanYears || inputs.loanYears <= 0) errors.push('借入年数を入力してください');
-    if (!inputs.loanType) errors.push('借入タイプを選択してください');
+    if (inputs.loanAmount === undefined || inputs.loanAmount < 0) {
+      errors.push('借入額を入力してください');
+      fieldErrorsMap.loanAmount = '借入額を入力してください';
+    }
+    if (inputs.interestRate === undefined || inputs.interestRate < 0) {
+      errors.push('金利を入力してください');
+      fieldErrorsMap.interestRate = '金利を入力してください';
+    }
+    if (!inputs.loanYears || inputs.loanYears <= 0) {
+      errors.push('借入年数を入力してください');
+      fieldErrorsMap.loanYears = '借入年数を入力してください';
+    }
+    if (!inputs.loanType) {
+      errors.push('借入タイプを選択してください');
+      fieldErrorsMap.loanType = '借入タイプを選択してください';
+    }
     
     // 出口戦略（必須）
-    if (!inputs.holdingYears || inputs.holdingYears <= 0) errors.push('保有年数を入力してください');
-    if (!inputs.exitCapRate || inputs.exitCapRate <= 0) errors.push('売却時想定Cap Rateを入力してください');
+    if (!inputs.holdingYears || inputs.holdingYears <= 0) {
+      errors.push('保有年数を入力してください');
+      fieldErrorsMap.holdingYears = '保有年数を入力してください';
+    }
+    if (!inputs.exitCapRate || inputs.exitCapRate <= 0) {
+      errors.push('売却時想定Cap Rateを入力してください');
+      fieldErrorsMap.exitCapRate = '売却時想定Cap Rateを入力してください';
+    }
     
+    setFieldErrors(fieldErrorsMap);
     return errors;
   };
 
@@ -310,10 +384,29 @@ const Simulator: React.FC = () => {
     const errors = validateForm();
     if (errors.length > 0) {
       setValidationErrors(errors);
+      
+      // 最初のエラーフィールドにスクロール
+      setTimeout(() => {
+        const firstErrorField = Object.keys(fieldErrors)[0];
+        if (firstErrorField) {
+          const element = document.querySelector(
+            `[data-field="${firstErrorField}"]`
+          ) as HTMLElement;
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // フォーカスを当てる
+            const input = element.querySelector('input, select') as HTMLElement;
+            if (input) {
+              input.focus();
+            }
+          }
+        }
+      }, 100);
       return;
     }
     
     setValidationErrors([]);
+    setFieldErrors({});
     setIsSimulating(true);
     setSaveError(null);
     
@@ -462,8 +555,13 @@ const Simulator: React.FC = () => {
             setSaveMessage(isEditMode ? '✅ シミュレーション結果を更新しました！' : '✅ シミュレーション結果を保存しました！');
             console.log('保存成功:', data);
             
+            // 新規保存の場合、次回から更新になるようにeditingIdを設定
+            if (!isEditMode && data && data.id) {
+              setEditingId(data.id);
+              console.log('新規保存後、editingIdを設定:', data.id);
+            }
             // 編集モードの場合でも、保存後にeditingIdが正しく設定されていることを確認
-            if (isEditMode && data && data.id && !editingId) {
+            else if (isEditMode && data && data.id && !editingId) {
               setEditingId(data.id);
             }
             
@@ -587,7 +685,7 @@ const Simulator: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏠 物件情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 物件名 */}
-              <div>
+              <div data-field="propertyName">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     物件名
@@ -597,14 +695,15 @@ const Simulator: React.FC = () => {
                 <input
                   type="text"
                   value={inputs.propertyName}
-                  onChange={(e) => handleInputChange('propertyName', e.target.value)}
+                  onChange={(e) => handleFieldChange('propertyName', e.target.value)}
                   placeholder="例：カーサ○○マンション"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={getFieldClassName('propertyName')}
                 />
+                <ErrorMessage fieldName="propertyName" />
               </div>
 
               {/* 住所 */}
-              <div>
+              <div data-field="location">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     住所
@@ -614,10 +713,11 @@ const Simulator: React.FC = () => {
                 <input
                   type="text"
                   value={inputs.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  onChange={(e) => handleFieldChange('location', e.target.value)}
                   placeholder="例：東京都渋谷区神宮前1-1-1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={getFieldClassName('location')}
                 />
+                <ErrorMessage fieldName="location" />
               </div>
 
               {/* 物件ステータス */}
@@ -700,7 +800,7 @@ const Simulator: React.FC = () => {
                 </div>
               </div>
               {/* 建築年 */}
-              <div>
+              <div data-field="yearBuilt">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     建築年
@@ -711,9 +811,9 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.yearBuilt || ''}
-                    onChange={(e) => handleInputChange('yearBuilt', Number(e.target.value) || 0)}
+                    onChange={(e) => handleFieldChange('yearBuilt', Number(e.target.value) || 0)}
                     placeholder="2020"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className={getFieldClassName('yearBuilt')}
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
                 </div>
@@ -722,10 +822,11 @@ const Simulator: React.FC = () => {
                     築{new Date().getFullYear() - inputs.yearBuilt}年（{new Date().getFullYear()}年現在）
                   </div>
                 )}
+                <ErrorMessage fieldName="yearBuilt" />
               </div>
 
               {/* 建物構造 */}
-              <div>
+              <div data-field="propertyType">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     建物構造
@@ -734,8 +835,8 @@ const Simulator: React.FC = () => {
                 </div>
                 <select
                   value={inputs.propertyType || ''}
-                  onChange={(e) => handleInputChange('propertyType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  onChange={(e) => handleFieldChange('propertyType', e.target.value)}
+                  className={getFieldClassName('propertyType')}
                 >
                   {buildingStructureOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -743,6 +844,7 @@ const Simulator: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                <ErrorMessage fieldName="propertyType" />
               </div>
             </div>
           </div>
@@ -752,7 +854,7 @@ const Simulator: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">💰 取得・初期費用 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 購入価格 */}
-              <div>
+              <div data-field="purchasePrice">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     購入価格
@@ -764,12 +866,13 @@ const Simulator: React.FC = () => {
                     type="number"
                     step="0.01"
                     value={inputs.purchasePrice}
-                    onChange={(e) => handleInputChange('purchasePrice', Number(e.target.value))}
+                    onChange={(e) => handleFieldChange('purchasePrice', Number(e.target.value))}
                     placeholder="12000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className={getFieldClassName('purchasePrice')}
                   />
                   <span className="text-sm text-gray-500 ml-2">万円</span>
                 </div>
+                <ErrorMessage fieldName="purchasePrice" />
               </div>
 
               {/* 諸経費 */}
@@ -821,7 +924,7 @@ const Simulator: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">📈 収益情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 月額賃料 */}
-              <div>
+              <div data-field="monthlyRent">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     月額賃料
@@ -832,12 +935,13 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.monthlyRent}
-                    onChange={(e) => handleInputChange('monthlyRent', Number(e.target.value))}
+                    onChange={(e) => handleFieldChange('monthlyRent', Number(e.target.value))}
                     placeholder="250000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className={getFieldClassName('monthlyRent')}
                   />
                   <span className="text-sm text-gray-500 ml-2">円</span>
                 </div>
+                <ErrorMessage fieldName="monthlyRent" />
               </div>
 
               {/* 管理費 */}
@@ -946,7 +1050,7 @@ const Simulator: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🏦 借入条件 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 借入額 */}
-              <div>
+              <div data-field="loanAmount">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     借入額
@@ -958,16 +1062,17 @@ const Simulator: React.FC = () => {
                     type="number"
                     step="0.01"
                     value={inputs.loanAmount}
-                    onChange={(e) => handleInputChange('loanAmount', Number(e.target.value))}
+                    onChange={(e) => handleFieldChange('loanAmount', Number(e.target.value))}
                     placeholder="10000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className={getFieldClassName('loanAmount')}
                   />
                   <span className="text-sm text-gray-500 ml-2">万円</span>
                 </div>
+                <ErrorMessage fieldName="loanAmount" />
               </div>
 
               {/* 金利 */}
-              <div>
+              <div data-field="interestRate">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     金利
@@ -979,16 +1084,17 @@ const Simulator: React.FC = () => {
                     type="number"
                     step="0.01"
                     value={inputs.interestRate}
-                    onChange={(e) => handleInputChange('interestRate', Number(e.target.value))}
+                    onChange={(e) => handleFieldChange('interestRate', Number(e.target.value))}
                     placeholder="2.875"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className={getFieldClassName('interestRate')}
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
                 </div>
+                <ErrorMessage fieldName="interestRate" />
               </div>
 
               {/* 返済期間 */}
-              <div>
+              <div data-field="loanYears">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     返済期間
@@ -999,16 +1105,17 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.loanYears}
-                    onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
+                    onChange={(e) => handleFieldChange('loanYears', Number(e.target.value))}
                     placeholder="25"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className={getFieldClassName('loanYears')}
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
                 </div>
+                <ErrorMessage fieldName="loanYears" />
               </div>
 
               {/* 借入形式 */}
-              <div>
+              <div data-field="loanType">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     借入形式
@@ -1017,8 +1124,8 @@ const Simulator: React.FC = () => {
                 </div>
                 <select
                   value={inputs.loanType}
-                  onChange={(e) => handleInputChange('loanType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  onChange={(e) => handleFieldChange('loanType', e.target.value)}
+                  className={getFieldClassName('loanType')}
                 >
                   {loanTypeOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -1026,6 +1133,7 @@ const Simulator: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                <ErrorMessage fieldName="loanType" />
               </div>
             </div>
           </div>
@@ -1035,7 +1143,7 @@ const Simulator: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 出口戦略 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 保有年数 */}
-              <div>
+              <div data-field="holdingYears">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     保有年数
@@ -1046,15 +1154,16 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.holdingYears}
-                    onChange={(e) => handleInputChange('holdingYears', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    onChange={(e) => handleFieldChange('holdingYears', Number(e.target.value))}
+                    className={getFieldClassName('holdingYears')}
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
                 </div>
+                <ErrorMessage fieldName="holdingYears" />
               </div>
 
               {/* 売却CapRate */}
-              <div>
+              <div data-field="exitCapRate">
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
                     売却CapRate
@@ -1066,11 +1175,12 @@ const Simulator: React.FC = () => {
                     type="number"
                     step="0.01"
                     value={inputs.exitCapRate}
-                    onChange={(e) => handleInputChange('exitCapRate', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    onChange={(e) => handleFieldChange('exitCapRate', Number(e.target.value))}
+                    className={getFieldClassName('exitCapRate')}
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
                 </div>
+                <ErrorMessage fieldName="exitCapRate" />
               </div>
 
               {/* 想定売却価格 */}
