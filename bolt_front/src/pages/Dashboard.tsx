@@ -351,9 +351,9 @@ const Dashboard: React.FC = () => {
       category: '物件収益シミュレーター',
       icon: Calculator,
       color: 'bg-slate-700',
-      description: '物件の収益性と投資指標を詳細に計算・分析します。',
+      description: '60秒で投資判断の全てが分かる。売却時累計CF・キャッシュフロー推移・投資利回りをグラフと数値で診断',
       actions: [
-        { name: '物件を分析する', primary: true, path: '/simulator' }
+        { name: '新規シミュレーション開始', primary: true, path: '/simulator' }
       ]
     },
     // 2次リリース用: AI取引事例検索機能
@@ -594,7 +594,13 @@ const Dashboard: React.FC = () => {
                 {paginatedResults.map((sim) => (
                   <div 
                     key={sim.id} 
-                    className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white cursor-pointer"
+                    className={`relative rounded-lg overflow-hidden transition-all duration-300 cursor-pointer ${
+                      sim.status === '取得済み'
+                        ? 'border-2 border-green-400 bg-green-50 hover:shadow-lg hover:border-green-500'
+                        : sim.status === '契約手続中'
+                        ? 'border-2 border-blue-400 bg-blue-50 hover:shadow-lg hover:border-blue-500'
+                        : 'border border-gray-200 bg-white hover:shadow-lg'
+                    }`}
                     onClick={(e) => {
                       // ボタンがクリックされていない場合のみ遷移
                       const target = e.target as HTMLElement;
@@ -608,7 +614,7 @@ const Dashboard: React.FC = () => {
                       <img
                         src={sim.thumbnail}
                         alt={sim.propertyName}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-all duration-300"
                         onError={(e) => {
                           // 画像読み込みエラー時のフォールバック
                           const target = e.target as HTMLImageElement;
@@ -623,38 +629,44 @@ const Dashboard: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      {/* Status Badge - 右上に配置 */}
-                      <div className="absolute top-3 right-3">
-                        <span className={`px-3 py-1.5 text-sm rounded-md font-medium ${
-                          sim.status === '検討中' ? 'bg-blue-100 text-blue-700' :
-                          sim.status === '内見予定' ? 'bg-purple-100 text-purple-700' :
-                          sim.status === '申込検討' ? 'bg-orange-100 text-orange-700' :
-                          sim.status === '契約手続中' ? 'bg-yellow-100 text-yellow-700' :
-                          sim.status === '取得済み' ? 'bg-green-100 text-green-700' :
-                          sim.status === '見送り' ? 'bg-red-100 text-red-700' :
-                          sim.status === '保留' ? 'bg-gray-100 text-gray-700' :
-                          'bg-blue-100 text-blue-700'
-                        }`}>
-                          {sim.status === '検討中' ? '🔍 検討中' :
-                           sim.status === '内見予定' ? '👀 内見予定' :
-                           sim.status === '申込検討' ? '⏳ 申込検討' :
-                           sim.status === '契約手続中' ? '📋 契約手続中' :
-                           sim.status === '取得済み' ? '✅ 取得済み' :
-                           sim.status === '見送り' ? '❌ 見送り' :
-                           sim.status === '保留' ? '📝 保留' :
-                           '🔍 検討中'}
-                        </span>
-                      </div>
-
+                    </div>
+                    
+                    {/* Status Badge */}
+                    <div className="absolute top-4 right-3">
+                      <span className={`px-4 py-2 text-base rounded-md font-medium ${
+                        sim.status === '検討中' ? 'bg-blue-100 text-blue-700' :
+                        sim.status === '内見予定' ? 'bg-purple-100 text-purple-700' :
+                        sim.status === '申込検討' ? 'bg-orange-100 text-orange-700' :
+                        sim.status === '契約手続中' ? 'bg-yellow-100 text-yellow-700' :
+                        sim.status === '取得済み' ? 'bg-green-100 text-green-700' :
+                        sim.status === '見送り' ? 'bg-red-100 text-red-700' :
+                        sim.status === '保留' ? 'bg-gray-100 text-gray-700' :
+                        'bg-blue-100 text-blue-700'
+                      }`}>
+                        {sim.status === '検討中' ? '🔍 検討中' :
+                         sim.status === '内見予定' ? '👀 内見予定' :
+                         sim.status === '申込検討' ? '⏳ 申込検討' :
+                         sim.status === '契約手続中' ? '📋 契約手続中' :
+                         sim.status === '取得済み' ? '✅ 取得済み' :
+                         sim.status === '見送り' ? '❌ 見送り' :
+                         sim.status === '保留' ? '📝 保留' :
+                         '🔍 検討中'}
+                      </span>
                     </div>
 
-                    <div className="p-4">
+                    <div className={`p-4 ${
+                      sim.status === '取得済み'
+                        ? 'bg-green-50'
+                        : sim.status === '契約手続中'
+                        ? 'bg-blue-50'
+                        : 'bg-white'
+                    }`}>
                       {/* Property Info */}
                       <div className="mb-4">
                         <div className="mb-2">
-                          <div className="overflow-hidden">
-                            <span className="text-sm text-gray-500">住所：</span>
-                            <span className="text-base text-gray-900 font-medium truncate block" title={sim.location}>
+                          <div className="overflow-hidden flex items-center">
+                            <span className="text-sm text-gray-500 flex-shrink-0">住所：</span>
+                            <span className="text-base text-gray-900 font-medium truncate ml-1" title={sim.location}>
                               {sim.location.length > 20 ? `${sim.location.slice(0, 20)}...` : sim.location}
                             </span>
                           </div>
