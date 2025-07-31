@@ -618,7 +618,9 @@ const Dashboard: React.FC = () => {
                       <div className="absolute top-3 left-3">
                         <div className="bg-black/70 text-white px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm">
                           <span className="text-xs text-gray-300 block">登録日：{sim.date}</span>
-                          <span className="text-sm font-medium block mt-1">{sim.propertyName}</span>
+                          <span className="text-sm font-medium block mt-1 truncate" title={sim.propertyName}>
+                            {sim.propertyName.length > 15 ? `${sim.propertyName.slice(0, 15)}...` : sim.propertyName}
+                          </span>
                         </div>
                       </div>
                       {/* Status Badge - 右上に配置 */}
@@ -650,9 +652,11 @@ const Dashboard: React.FC = () => {
                       {/* Property Info */}
                       <div className="mb-4">
                         <div className="mb-2">
-                          <div>
+                          <div className="overflow-hidden">
                             <span className="text-sm text-gray-500">住所：</span>
-                            <span className="text-base text-gray-900 font-medium">{sim.location}</span>
+                            <span className="text-base text-gray-900 font-medium truncate block" title={sim.location}>
+                              {sim.location.length > 20 ? `${sim.location.slice(0, 20)}...` : sim.location}
+                            </span>
                           </div>
                         </div>
                         
