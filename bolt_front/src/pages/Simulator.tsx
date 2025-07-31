@@ -1574,10 +1574,10 @@ const Simulator: React.FC = () => {
               <button 
                 onClick={handleSimulation}
                 disabled={isSimulating}
-                className={`flex items-center justify-center px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 min-h-[56px] touch-manipulation ${
+                className={`flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] touch-manipulation ${
                   isSimulating
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+                    : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                 }`}
               >
                 {isSimulating ? (
@@ -1587,8 +1587,8 @@ const Simulator: React.FC = () => {
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <Zap className="h-5 w-5 mr-2" />
-                    シミュレーション実行
+                    <Zap className="h-6 w-6 mr-3" />
+                    シミュレーションを実行する
                   </div>
                 )}
               </button>

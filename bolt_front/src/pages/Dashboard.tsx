@@ -348,7 +348,7 @@ const Dashboard: React.FC = () => {
 
   const quickActions = [
     {
-      category: '物件収益シミュレーター',
+      category: '収益シミュレーター',
       icon: Calculator,
       color: 'bg-slate-700',
       description: '60秒で投資判断の全てが分かる。売却時累計CF・キャッシュフロー推移・投資利回りをグラフと数値で診断',
