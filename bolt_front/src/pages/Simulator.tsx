@@ -1628,13 +1628,16 @@ const Simulator: React.FC = () => {
             )}
           </div>
         )}
+      </div>
 
-        {/* シミュレーション結果表示 */}
-        {simulationResults && (
-          <div 
-            ref={resultsRef}
-            className="mt-6 bg-white md:bg-white rounded-lg border-2 border-blue-200 shadow-lg p-4 md:p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none"
-          >
+      {/* シミュレーション結果表示 - SP版は枠外、PC版は枠内 */}
+      {simulationResults && (
+        <div className="md:p-4 md:sm:p-6 md:lg:p-8">
+          <div className="md:max-w-6xl md:mx-auto">
+            <div 
+              ref={resultsRef}
+              className="mt-6 bg-white md:rounded-lg md:border-2 md:border-blue-200 md:shadow-lg p-2 sm:p-4 md:p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none"
+            >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
@@ -2081,12 +2084,15 @@ const Simulator: React.FC = () => {
             )}
 
             
+            </div>
           </div>
-        )}
+        </div>
+      )}
 
-
-        {/* 計算ロジック説明・注意事項 */}
-        {simulationResults && (
+      {/* 計算ロジック説明・注意事項 */}
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          {simulationResults && (
           <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <svg className="h-5 w-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2150,15 +2156,15 @@ const Simulator: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
-
-        {/* チュートリアル */}
-        <Tutorial 
-          isOpen={showTutorial} 
-          onClose={() => setShowTutorial(false)} 
-        />
-        
+          )}
+        </div>
       </div>
+
+      {/* チュートリアル */}
+      <Tutorial 
+        isOpen={showTutorial} 
+        onClose={() => setShowTutorial(false)} 
+      />
     </div>
   );
 };
