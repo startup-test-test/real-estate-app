@@ -46,6 +46,8 @@ const Simulator: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
+  const [showDetailPopup, setShowDetailPopup] = useState(false);
+  const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
   
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -1638,36 +1640,119 @@ const Simulator: React.FC = () => {
               ref={resultsRef}
               className="mt-6 bg-white md:rounded-lg md:border-2 md:border-blue-200 md:shadow-lg p-2 sm:p-4 md:p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none"
             >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
-                <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+            <div className="mb-6">
+              {/* PC版: タイトルとボタンを横並び */}
+              <div className="hidden md:flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                  <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+                </div>
+                <div className="flex items-center space-x-3">
+                  {user && saveMessage?.includes('✅') && (
+                    <span className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                      ✓ マイページに保存済み
+                    </span>
+                  )}
+                  
+                  {/* メール招待・共有ボタン */}
+                  
+                  
+                  <button
+                    onClick={handleSaveToPDF}
+                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
+                    title="PDFとして保存"
+                  >
+                    <Download size={18} />
+                    <span>PDF保存</span>
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                {user && saveMessage?.includes('✅') && (
-                  <span className="text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                    ✓ マイページに保存済み
-                  </span>
-                )}
-                
-                {/* メール招待・共有ボタン */}
-                
-                
-                <button
-                  onClick={handleSaveToPDF}
-                  className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
-                  title="PDFとして保存"
-                >
-                  <Download size={18} />
-                  <span>PDF保存</span>
-                </button>
+              
+              {/* SP版: タイトルとボタンを縦並び */}
+              <div className="md:hidden">
+                <div className="flex items-center mb-3">
+                  <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                  <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+                </div>
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={handleSaveToPDF}
+                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm print:hidden"
+                    title="PDFとして保存"
+                  >
+                    <Download size={16} />
+                    <span>PDF保存</span>
+                  </button>
+                  {user && saveMessage?.includes('✅') && (
+                    <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                      ✓ 保存済み
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             
             {/* 物件価値評価と重要投資指標 */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 評価額と投資指標</h3>
-              <div className="flex flex-wrap gap-2">
+              
+              {/* SP版: 4つの重要指標のみ表示 */}
+              <div className="md:hidden">
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {/* 積算評価額 */}
+                  <div className="p-3 bg-blue-100 rounded-lg text-center">
+                    <div className="text-xs text-gray-600 mb-1">積算評価額</div>
+                    <div className="text-lg font-bold">
+                      {simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円
+                    </div>
+                  </div>
+                  
+                  {/* 収益還元評価額 */}
+                  <div className="p-3 bg-green-100 rounded-lg text-center">
+                    <div className="text-xs text-gray-600 mb-1">収益還元</div>
+                    <div className="text-lg font-bold">
+                      {simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円
+                    </div>
+                  </div>
+                  
+                  {/* IRR */}
+                  <div className={`p-3 rounded-lg text-center ${
+                    simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 15 ? 'bg-green-100' :
+                    simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 10 ? 'bg-yellow-100' :
+                    simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 5 ? 'bg-orange-100' :
+                    'bg-red-100'
+                  }`}>
+                    <div className="text-xs text-gray-600 mb-1">IRR</div>
+                    <div className="text-lg font-bold">
+                      {simulationResults?.results['IRR（%）']?.toFixed(1) || '0.0'}%
+                    </div>
+                  </div>
+                  
+                  {/* DSCR */}
+                  <div className={`p-3 rounded-lg text-center ${
+                    simulationResults.results['DSCR（返済余裕率）'] >= 1.5 ? 'bg-green-100' :
+                    simulationResults.results['DSCR（返済余裕率）'] >= 1.3 ? 'bg-yellow-100' :
+                    simulationResults.results['DSCR（返済余裕率）'] >= 1.1 ? 'bg-orange-100' :
+                    'bg-red-100'
+                  }`}>
+                    <div className="text-xs text-gray-600 mb-1">DSCR</div>
+                    <div className="text-lg font-bold">
+                      {simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* もっと見るボタン */}
+                <button
+                  onClick={() => setShowEvaluationPopup(true)}
+                  className="w-full py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                >
+                  もっと見る ▼
+                </button>
+              </div>
+              
+              {/* PC版: 従来の全指標表示 */}
+              <div className="hidden md:flex flex-wrap gap-2">
                 {/* 積算評価額 */}
                 <div className="group relative">
                   <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
@@ -1775,8 +1860,8 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* 2行目: 投資指標 */}
-              <div className="flex flex-wrap gap-2 mt-3">
+              {/* 2行目: 投資指標 - PC版のみ表示 */}
+              <div className="hidden md:flex flex-wrap gap-2 mt-3">
                 {/* IRR */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
@@ -1926,9 +2011,18 @@ const Simulator: React.FC = () => {
             {/* 📋 年次キャッシュフロー詳細 - 最優先表示 */}
             {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
+                {/* PC版: タイトルとデータ数を横並び */}
+                <div className="hidden md:flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
+                    {simulationResults.cash_flow_table.length}年分のデータ
+                  </span>
+                </div>
+                
+                {/* SP版: タイトルとデータ数を縦並び */}
+                <div className="md:hidden mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">📋 年次キャッシュフロー詳細</h3>
+                  <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded inline-block">
                     {simulationResults.cash_flow_table.length}年分のデータ
                   </span>
                 </div>
@@ -2165,6 +2259,199 @@ const Simulator: React.FC = () => {
         isOpen={showTutorial} 
         onClose={() => setShowTutorial(false)} 
       />
+      
+      {/* SP版詳細指標ポップアップ */}
+      {showDetailPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 md:hidden">
+          <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">詳細投資指標</h3>
+              <button
+                onClick={() => setShowDetailPopup(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              {/* 評価額 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 評価額</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">積算評価額</span>
+                    <span className="font-semibold">{simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">収益還元評価額</span>
+                    <span className="font-semibold">{simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">想定実勢価格</span>
+                    <span className="font-semibold">{simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 収益性指標 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 収益性指標</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">ROI（投資収益率）</span>
+                    <span className="font-semibold">{simulationResults?.results['ROI（%）']?.toFixed(0) || '0'}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">IRR（内部収益率）</span>
+                    <span className="font-semibold">{simulationResults?.results['IRR（%）']?.toFixed(1) || '0.0'}%</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 安全性指標 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 安全性指標</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">DSCR（返済余裕率）</span>
+                    <span className="font-semibold">{simulationResults?.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">LTV（借入比率）</span>
+                    <span className="font-semibold">{simulationResults?.results['LTV（%）']?.toFixed(0) || '0'}%</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* その他 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ その他</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">月間キャッシュフロー</span>
+                    <span className="font-semibold">{((simulationResults?.results['月間キャッシュフロー（円）'] || 0) / 10000).toFixed(1)}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">NOI（営業純収益）</span>
+                    <span className="font-semibold">{((simulationResults?.results['NOI（円）'] || 0) / 10000).toFixed(0)}万円</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* SP版評価額と投資指標ポップアップ */}
+      {showEvaluationPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 md:hidden">
+          <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">評価額と投資指標の詳細</h3>
+              <button
+                onClick={() => setShowEvaluationPopup(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              {/* 物件価値評価 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 物件価値評価</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">積算評価額</span>
+                    <span className="font-semibold">{simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">収益還元評価額</span>
+                    <span className="font-semibold">{simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">想定実勢価格</span>
+                    <span className="font-semibold">{simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 利回り指標 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 利回り指標</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">表面利回り</span>
+                    <span className="font-semibold">{simulationResults?.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">実質利回り</span>
+                    <span className="font-semibold">{simulationResults?.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 投資効率指標 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 投資効率指標</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">IRR（内部収益率）</span>
+                    <span className="font-semibold">{simulationResults?.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">CCR（自己資金回収率）</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">ROI（投資収益率）</span>
+                    <span className="font-semibold">{simulationResults?.results['ROI（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 安全性指標 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 安全性指標</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">DSCR（返済余裕率）</span>
+                    <span className="font-semibold">{simulationResults?.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">LTV（借入比率）</span>
+                    <span className="font-semibold">{simulationResults?.results['LTV（%）']?.toFixed(1) || '0.0'}%</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 収益力指標 */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 収益力指標</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">年間キャッシュフロー</span>
+                    <span className="font-semibold">{((simulationResults?.results['年間キャッシュフロー（円）'] || 0) / 10000).toFixed(1)}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">月間キャッシュフロー</span>
+                    <span className="font-semibold">{((simulationResults?.results['月間キャッシュフロー（円）'] || 0) / 10000).toFixed(1)}万円</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">NOI（営業純収益）</span>
+                    <span className="font-semibold">{((simulationResults?.results['NOI（円）'] || 0) / 10000).toFixed(0)}万円</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
