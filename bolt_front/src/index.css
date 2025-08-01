@@ -187,3 +187,45 @@ body {
 .touch-manipulation {
   touch-action: manipulation;
 }
+
+/* SP版詳細キャッシュフロー分析テーブルのカスタムスタイル */
+@media (max-width: 1024px) {
+  .cashflow-table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* 固定列のスタイル */
+  .cashflow-table-container th:first-child,
+  .cashflow-table-container td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+  
+  /* 固定列の背景色を確実に設定 */
+  .cashflow-table-container thead th:first-child {
+    background-color: #1e3a8a;
+  }
+  
+  .cashflow-table-container tbody td:first-child {
+    background-color: white;
+  }
+  
+  /* hover時の背景色も固定列に適用 */
+  .cashflow-table-container tbody tr:hover td:first-child {
+    background-color: #f9fafb;
+  }
+  
+  /* 固定列に影を追加して区別 */
+  .cashflow-table-container th:first-child::after,
+  .cashflow-table-container td:first-child::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -1px;
+    bottom: 0;
+    width: 1px;
+    background-color: #e5e7eb;
+    box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
+  }
+}

@@ -2035,11 +2035,19 @@ const Simulator: React.FC = () => {
                 {/* 詳細キャッシュフロー分析 */}
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
+                  {/* SP版スクロール案内 */}
+                  <p className="text-xs text-gray-500 mb-2 lg:hidden">
+                    <svg className="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                    </svg>
+                    横スクロールで全項目を確認できます
+                  </p>
                 </div>
                 
                 <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <div className="relative max-h-[600px] overflow-y-auto overflow-x-auto lg:overflow-x-hidden">
-                    <table className="min-w-full bg-white">
+                  {/* PC版はそのまま、SP版は横スクロール可能に */}
+                  <div className="relative max-h-[600px] overflow-y-auto overflow-x-auto lg:overflow-x-hidden cashflow-table-container">
+                    <table className="min-w-full lg:min-w-full bg-white" style={{ minWidth: '1200px' }}>
                       <thead className="bg-blue-900 sticky top-0 z-10">
                         <tr>
                         <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
