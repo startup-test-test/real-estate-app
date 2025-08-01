@@ -79,10 +79,8 @@ const Simulator: React.FC = () => {
 
   // フォーカス時の処理（0をクリアまたは全選択）
   const handleNumberInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // モバイルデバイスでは全選択のみ（0のクリアは行わない）
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (!isMobile && e.target.value === '0') {
+    // PC版・SP版共通で0の場合は自動クリア
+    if (e.target.value === '0') {
       e.target.value = '';
     } else if (e.target.value) {
       // setTimeoutを使用してモバイルでの選択を確実に
@@ -2015,7 +2013,7 @@ const Simulator: React.FC = () => {
                 <div className="hidden md:flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
-                    {simulationResults.cash_flow_table.length}年分のデータ
+                    35年分のデータ
                   </span>
                 </div>
                 
@@ -2023,7 +2021,7 @@ const Simulator: React.FC = () => {
                 <div className="md:hidden mb-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded inline-block">
-                    {simulationResults.cash_flow_table.length}年分のデータ
+                    35年分のデータ
                   </span>
                 </div>
 

@@ -28,7 +28,7 @@ export const transformFormDataToApiData = (inputs: any) => {
     interest_rate: inputs.interestRate || 0,
     loan_years: inputs.loanYears || 35,
     loan_type: inputs.loanType || '元利均等',
-    holding_years: inputs.holdingYears || 10,
+    holding_years: 35,  // 常に35年分のデータを要求
     exit_cap_rate: inputs.exitCapRate || 0,
     expected_sale_price: inputs.marketValue || 0,
     price_decline_rate: inputs.priceDeclineRate || 0,
