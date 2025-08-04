@@ -82,14 +82,29 @@ const Simulator: React.FC = () => {
 
   // フォーカス時の処理（0をクリアまたは全選択）
   const handleNumberInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // PC版・SP版共通で0の場合は自動クリア
-    if (e.target.value === '0') {
-      e.target.value = '';
+    const fieldName = e.target.name || e.target.getAttribute('data-field');
+    
+    // 値が0の場合は状態を空にする
+    if (e.target.value === '0' && fieldName) {
+      handleFieldChange(fieldName, '');
     } else if (e.target.value) {
-      // setTimeoutを使用してモバイルでの選択を確実に
-      setTimeout(() => {
+      // 値がある場合は全選択（モバイルでも確実に動作するように）
+      requestAnimationFrame(() => {
         e.target.select();
-      }, 10);
+      });
+    }
+  };
+
+  // キー入力時の処理（0の場合の特別処理）
+  const handleNumberInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const fieldName = e.currentTarget.name || e.currentTarget.getAttribute('data-field');
+    
+    // 値が0で、数字キーまたはDeleteキーが押された場合
+    if (e.currentTarget.value === '0' && fieldName) {
+      if ((e.key >= '0' && e.key <= '9') || e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        handleFieldChange(fieldName, e.key >= '0' && e.key <= '9' ? e.key : '');
+      }
     }
   };
   
@@ -808,6 +823,8 @@ const Simulator: React.FC = () => {
                     value={inputs.landArea}
                     onChange={(e) => handleInputChange('landArea', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="landArea"
                     placeholder="162.52"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -829,6 +846,8 @@ const Simulator: React.FC = () => {
                     value={inputs.buildingArea}
                     onChange={(e) => handleInputChange('buildingArea', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="buildingArea"
                     placeholder="122.5"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -848,6 +867,9 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.roadPrice}
                     onChange={(e) => handleInputChange('roadPrice', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="roadPrice"
                     placeholder="120000"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -868,6 +890,8 @@ const Simulator: React.FC = () => {
                     value={inputs.yearBuilt || ''}
                     onChange={(e) => handleFieldChange('yearBuilt', Number(e.target.value) || 0)}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="yearBuilt"
                     placeholder="2020"
                     className={getFieldClassName('yearBuilt')}
                   />
@@ -925,6 +949,8 @@ const Simulator: React.FC = () => {
                     value={inputs.purchasePrice}
                     onChange={(e) => handleFieldChange('purchasePrice', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="purchasePrice"
                     placeholder="12000"
                     className={getFieldClassName('purchasePrice')}
                   />
@@ -948,6 +974,8 @@ const Simulator: React.FC = () => {
                     value={inputs.otherCosts}
                     onChange={(e) => handleInputChange('otherCosts', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="otherCosts"
                     placeholder="500"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -970,6 +998,8 @@ const Simulator: React.FC = () => {
                     value={inputs.renovationCost}
                     onChange={(e) => handleInputChange('renovationCost', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="renovationCost"
                     placeholder="370"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -998,6 +1028,8 @@ const Simulator: React.FC = () => {
                     value={inputs.monthlyRent}
                     onChange={(e) => handleFieldChange('monthlyRent', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="monthlyRent"
                     placeholder="250000"
                     className={getFieldClassName('monthlyRent')}
                   />
@@ -1020,6 +1052,8 @@ const Simulator: React.FC = () => {
                     value={inputs.managementFee}
                     onChange={(e) => handleInputChange('managementFee', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="managementFee"
                     placeholder="12500"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1041,6 +1075,8 @@ const Simulator: React.FC = () => {
                     value={inputs.fixedCost}
                     onChange={(e) => handleInputChange('fixedCost', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="fixedCost"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">円</span>
@@ -1061,6 +1097,8 @@ const Simulator: React.FC = () => {
                     value={inputs.propertyTax}
                     onChange={(e) => handleInputChange('propertyTax', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="propertyTax"
                     placeholder="100000"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1082,6 +1120,9 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.vacancyRate}
                     onChange={(e) => handleInputChange('vacancyRate', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="vacancyRate"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
@@ -1102,6 +1143,9 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.rentDecline}
                     onChange={(e) => handleInputChange('rentDecline', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="rentDecline"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500">%/年</span>
@@ -1130,6 +1174,8 @@ const Simulator: React.FC = () => {
                     value={inputs.loanAmount}
                     onChange={(e) => handleFieldChange('loanAmount', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="loanAmount"
                     placeholder="10000"
                     className={getFieldClassName('loanAmount')}
                   />
@@ -1154,6 +1200,8 @@ const Simulator: React.FC = () => {
                     value={inputs.interestRate}
                     onChange={(e) => handleFieldChange('interestRate', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="interestRate"
                     placeholder="2.875"
                     className={getFieldClassName('interestRate')}
                   />
@@ -1176,6 +1224,8 @@ const Simulator: React.FC = () => {
                     value={inputs.loanYears}
                     onChange={(e) => handleFieldChange('loanYears', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="loanYears"
                     placeholder="25"
                     className={getFieldClassName('loanYears')}
                   />
@@ -1226,6 +1276,8 @@ const Simulator: React.FC = () => {
                     value={inputs.holdingYears}
                     onChange={(e) => handleFieldChange('holdingYears', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="holdingYears"
                     className={getFieldClassName('holdingYears')}
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
@@ -1248,6 +1300,8 @@ const Simulator: React.FC = () => {
                     value={inputs.exitCapRate}
                     onChange={(e) => handleFieldChange('exitCapRate', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="exitCapRate"
                     className={getFieldClassName('exitCapRate')}
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
@@ -1269,6 +1323,9 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.marketValue}
                     onChange={(e) => handleInputChange('marketValue', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="marketValue"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">万円</span>
@@ -1289,6 +1346,9 @@ const Simulator: React.FC = () => {
                     step="0.1"
                     value={inputs.priceDeclineRate || 0}
                     onChange={(e) => handleInputChange('priceDeclineRate', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="priceDeclineRate"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="1.0"
                   />
@@ -1337,6 +1397,9 @@ const Simulator: React.FC = () => {
                     step="0.1"
                     value={inputs.effectiveTaxRate || 0}
                     onChange={(e) => handleInputChange('effectiveTaxRate', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="effectiveTaxRate"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">%</span>
@@ -1357,6 +1420,9 @@ const Simulator: React.FC = () => {
                     step="100"
                     value={inputs.buildingPriceForDepreciation || 0}
                     onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="buildingPriceForDepreciation"
                     placeholder="8000"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
@@ -1377,6 +1443,9 @@ const Simulator: React.FC = () => {
                     type="number"
                     value={inputs.depreciationYears || 27}
                     onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="depreciationYears"
                     disabled={!isManualDepreciation}
                     className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
                       !isManualDepreciation ? 'bg-gray-50 border-gray-200' : 'border-gray-300'
@@ -1513,6 +1582,9 @@ const Simulator: React.FC = () => {
                     max="35"
                     value={inputs.majorRepairCycle || 0}
                     onChange={(e) => handleInputChange('majorRepairCycle', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="majorRepairCycle"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">年</span>
@@ -1533,6 +1605,9 @@ const Simulator: React.FC = () => {
                     step="10"
                     value={inputs.majorRepairCost || 0}
                     onChange={(e) => handleInputChange('majorRepairCost', Number(e.target.value))}
+                    onFocus={handleNumberInputFocus}
+                    onKeyDown={handleNumberInputKeyDown}
+                    data-field="majorRepairCost"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">万円</span>
@@ -2069,8 +2144,8 @@ const Simulator: React.FC = () => {
                 {/* 詳細キャッシュフロー分析 */}
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
-                  {/* SP版スクロール案内 */}
-                  <p className="text-xs text-gray-500 mb-2 lg:hidden">
+                  {/* スクロール案内 */}
+                  <p className="text-xs text-gray-500 mb-2">
                     <svg className="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
                     </svg>
@@ -2079,79 +2154,79 @@ const Simulator: React.FC = () => {
                 </div>
                 
                 <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  {/* PC版はそのまま、SP版は横スクロール可能に */}
-                  <div className="relative max-h-[600px] overflow-y-auto overflow-x-auto lg:overflow-x-hidden cashflow-table-container">
-                    <table className="min-w-full lg:min-w-full bg-white" style={{ minWidth: '1200px' }}>
+                  {/* PC版・SP版ともに横スクロール可能に */}
+                  <div className="relative max-h-[600px] overflow-y-auto overflow-x-auto cashflow-table-container">
+                    <table className="min-w-full bg-white" style={{ minWidth: '1100px' }}>
                       <thead className="bg-blue-900 sticky top-0 z-10">
                         <tr>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           不動産<br/>収入
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px]">
                             家賃収入の推移。<br/>前面面で家賃下落（上昇）を選択した場合は次第に変化していきます。<br/>また、各年度で売却した際の売却価格（キャピタルゲイン）に影響を与えます。
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           経費
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             ランニングコスト
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           減価<br/>償却
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             減価償却費
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           税金
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             所得税・住民税
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           改装費<br/>修繕費
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             改装費・大規模修繕費
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           ローン<br/>返済
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             年間ローン返済額（元金＋利息）
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           元金<br/>返済
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             ローン返済額のうち元金部分
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           年間<br/>CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             年間キャッシュフロー（税引後）
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           累計<br/>CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             累計キャッシュフロー
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           借入<br/>残高
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             借入残高
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           自己資金<br/>回収率
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             累計CFの自己資金に対する割合
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却<br/>金額
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[320px]">
                             物件の売却価格<br/>
@@ -2174,7 +2249,7 @@ const Simulator: React.FC = () => {
                             </div>
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却<br/>純利益
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[250px]">
                             売却純利益<br/>
@@ -2182,7 +2257,7 @@ const Simulator: React.FC = () => {
                             売却により追加される利益を表します
                           </div>
                         </th>
-                        <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却時<br/>累計CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
                             売却時の累計キャッシュフロー<br/>
@@ -2195,21 +2270,21 @@ const Simulator: React.FC = () => {
                     <tbody>
                       {simulationResults.cash_flow_table.map((row, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                          <td className="px-2 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['実効収入'])}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['経費'])}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['減価償却'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['減価償却'])}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['税金'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['税金'])}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0)) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0))}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['ローン返済'])}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['元金返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['累計CF'])}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
-                          <td className={`px-2 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
+                          <td className="px-0.5 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['実効収入'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['経費'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['減価償却'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['減価償却'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['税金'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['税金'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0)) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol((row['初期リフォーム'] || 0) + (row['大規模修繕'] || 0))}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['ローン返済'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['元金返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['累計CF'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
                         </tr>
                       ))}
                     </tbody>

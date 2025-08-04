@@ -232,6 +232,7 @@ const Dashboard: React.FC = () => {
       const results = sim.results || {};
       
       
+      
       // resultsが空または存在しない場合のフォールバック計算
       const calculateFallbackValues = () => {
         const purchasePrice = simulationData.purchasePrice || 0;
@@ -241,7 +242,7 @@ const Dashboard: React.FC = () => {
         
         // 表面利回りの計算
         const surfaceYield = purchasePrice > 0 
-          ? ((yearlyRent / 10000) / purchasePrice * 100).toFixed(2)
+          ? parseFloat(((yearlyRent / 10000) / purchasePrice * 100).toFixed(2))
           : 0;
         
         // 月間キャッシュフローの簡易計算（ローン返済額が必要）
@@ -258,46 +259,48 @@ const Dashboard: React.FC = () => {
         const monthlyCashFlow = monthlyRent - managementFee - monthlyPayment;
         
         return {
-          surfaceYield: parseFloat(surfaceYield),
-          monthlyCashFlow: Math.round(monthlyCashFlow)
+          surfaceYield: surfaceYield,
+          monthlyCashFlow: Math.round(monthlyCashFlow),
+          annualCashFlow: Math.round(monthlyCashFlow * 12)
         };
       };
       
       // resultsが存在しない場合はフォールバック計算
       const fallbackValues = (!results.surfaceYield || !results.monthlyCashFlow) 
         ? calculateFallbackValues() 
-        : {};
+        : { surfaceYield: 0, monthlyCashFlow: 0, annualCashFlow: 0 };
       
-      // 安全なデータ取得関数
-      const getSafeValue = (value: any, defaultValue: any) => {
-        return value !== undefined && value !== null ? value : defaultValue;
-      };
       
       // 売却時累計CF（10年後）の計算
-      const calculateCumulativeCF10Year = () => {
+      const calculateSaleProfit10Year = () => {
+        
         
         // resultsから売却時累計CFを取得（シミュレーター画面で計算済みの値）
-        if (results.cumulativeCashFlowWithSaleAt10) {
-          return results.cumulativeCashFlowWithSaleAt10;
+        if (results.cumulativeCashFlowWithSaleAt10 !== undefined && results.cumulativeCashFlowWithSaleAt10 !== null) {
+          // resultsの値は円単位なので、万円に変換
+          return results.cumulativeCashFlowWithSaleAt10 / 10000;
         }
         
         // cash_flow_tableから10年目のデータを取得
         if (sim.cash_flow_table && sim.cash_flow_table.length >= 10) {
           const year10Data = sim.cash_flow_table[9]; // 10年目（配列は0から始まる）
-          // 売却時累計CFがある場合はそれを使用
-          if (year10Data.売却時累計CF !== undefined) {
-            return year10Data.売却時累計CF;
+          // 売却時累計CFを使用
+          if (year10Data && year10Data['売却時累計CF'] !== undefined && year10Data['売却時累計CF'] !== null) {
+            const value = year10Data['売却時累計CF'];
+            // 売却時累計CFは円単位で保存されているので、万円に変換
+            return value / 10000;
           }
           // または英語のフィールド名
-          if (year10Data.cumulativeCashFlowWithSale !== undefined) {
-            return year10Data.cumulativeCashFlowWithSale;
+          if (year10Data && year10Data.cumulativeCashFlowWithSale !== undefined && year10Data.cumulativeCashFlowWithSale !== null) {
+            // 円単位から万円単位に変換
+            return year10Data.cumulativeCashFlowWithSale / 10000;
           }
         }
         
-        // フォールバック: 簡易計算
-        const monthlyCF = results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0;
-        const yearlyCF = monthlyCF * 12;
-        const cumulativeCF10Year = yearlyCF * 10;
+        // フォールバック: 簡易計算（最終手段）
+        const annualCF = results.annualCashFlow || fallbackValues.annualCashFlow || 
+                        (results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0) * 12;
+        const cumulativeCF10Year = annualCF * 10;
         
         // 売却益の簡易計算
         const purchasePrice = simulationData.purchasePrice || 0; // 万円単位
@@ -321,7 +324,63 @@ const Dashboard: React.FC = () => {
         const saleProfit = salePrice - loanBalance;
         const total = cumulativeCF10Year + saleProfit;
         
-        return total;
+        if (simulationData.propertyName?.includes('クレメント川越')) {
+          console.log('フォールバック計算（円単位）:', total, '万円変換後:', total / 10000);
+        }
+        
+        // 円単位から万円単位に変換
+        return total / 10000;
+      };
+
+      // 年間CFを詳細キャッシュフローから取得
+      const getAnnualCashFlow = () => {
+        if (simulationData.propertyName?.includes('クレメント川越')) {
+          console.log('年間CF取得開始');
+        }
+        
+        // cash_flow_tableから初年度のデータを取得（改装費が含まれない2年目を使用）
+        if (sim.cash_flow_table && sim.cash_flow_table.length >= 2) {
+          const year2Data = sim.cash_flow_table[1]; // 2年目（通常運営時）
+          
+          if (simulationData.propertyName?.includes('クレメント川越')) {
+            console.log('2年目データのキー:', year2Data ? Object.keys(year2Data) : 'データなし');
+            console.log('2年目データ全体:', year2Data);
+            // キー名を1つずつ表示
+            if (year2Data) {
+              Object.keys(year2Data).forEach(key => {
+                console.log(`キー: "${key}", 値: ${year2Data[key]}`);
+              });
+            }
+          }
+          
+          // 「営業CF」フィールドから年間CFを取得（詳細キャッシュフローの年間CFに相当）
+          if (year2Data && year2Data['営業CF'] !== undefined && year2Data['営業CF'] !== null) {
+            const eigyoCF = year2Data['営業CF'];
+            if (simulationData.propertyName?.includes('クレメント川越')) {
+              console.log('cash_flow_tableから取得: 2年目の営業CF（円）=', eigyoCF);
+              console.log('万円に変換:', eigyoCF / 10000);
+            }
+            // 円単位から万円単位に変換
+            return eigyoCF / 10000;
+          }
+        }
+        
+        // フォールバック: resultsから取得（円単位）
+        const cfInYen = results.annualCashFlow || fallbackValues.annualCashFlow || 
+                        (results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0) * 12;
+        
+        if (simulationData.propertyName?.includes('クレメント川越')) {
+          console.log('フォールバックから取得:', {
+            'results.annualCashFlow': results.annualCashFlow,
+            'fallbackValues.annualCashFlow': fallbackValues.annualCashFlow,
+            'results.monthlyCashFlow': results.monthlyCashFlow,
+            'cfInYen': cfInYen,
+            '万円変換後': cfInYen / 10000
+          });
+        }
+        
+        // 円単位から万円単位に変換
+        return cfInYen / 10000;
       };
 
       return {
@@ -334,8 +393,9 @@ const Dashboard: React.FC = () => {
         managementFee: ((simulationData.managementFee || 0) * 12) / 10000, // 月額管理費×12を万円に変換
         surfaceYield: results.surfaceYield || fallbackValues.surfaceYield || 0,
         netYield: results.netYield || 0,
-        cashFlow: results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0,
-        cumulativeCF10Year: calculateCumulativeCF10Year(),
+        monthlyCashFlow: results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0,
+        annualCashFlow: getAnnualCashFlow(),
+        cumulativeCF10Year: calculateSaleProfit10Year(),
         date: new Date(sim.created_at).toLocaleDateString('ja-JP', {
           year: 'numeric',
           month: '2-digit',
@@ -715,9 +775,9 @@ const Dashboard: React.FC = () => {
                           <div>
                             <span className="text-sm text-gray-500">年間CF</span>
                             <div className={`font-bold text-base ${
-                              sim.cashFlow * 12 >= 0 ? 'text-green-600' : 'text-red-600'
+                              sim.annualCashFlow >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
-                              {sim.cashFlow * 12 >= 0 ? '+' : ''}{formatNumber(Math.round(sim.cashFlow * 12 / 10000))}万円
+                              {sim.annualCashFlow >= 0 ? '+' : ''}{formatNumber(Math.round(sim.annualCashFlow))}万円
                             </div>
                           </div>
                           <div>
@@ -725,7 +785,7 @@ const Dashboard: React.FC = () => {
                             <div className={`font-bold text-base ${
                               sim.cumulativeCF10Year >= 0 ? 'text-green-600' : 'text-red-600'
                             }`}>
-                              {sim.cumulativeCF10Year >= 0 ? '+' : ''}{formatNumber(Math.round(sim.cumulativeCF10Year / 10000))}万円
+                              {sim.cumulativeCF10Year >= 0 ? '+' : ''}{formatNumber(Math.round(sim.cumulativeCF10Year))}万円
                             </div>
                           </div>
                         </div>
