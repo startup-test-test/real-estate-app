@@ -337,7 +337,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         # キャッシュフロー（税引後）
         # 通常修繕のみ経費計上、資本的修繕は減価償却として処理済み
-        cf_i = eff - annual_expenses - annual_loan - current_year_repair - initial_renovation - tax
+        cf_i = eff - annual_expenses - actual_annual_loan - current_year_repair - initial_renovation - tax
         cum += cf_i
         
         # NOI（Net Operating Income）計算
@@ -345,7 +345,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         noi = eff - annual_expenses - current_year_repair - initial_renovation
         
         # DSCR計算
-        dscr = noi / annual_loan if annual_loan > 0 else 0
+        dscr = noi / actual_annual_loan if actual_annual_loan > 0 else 0
         
         # 売却金額を計算（全年度で同じ評価方法を使用）
         price_decline_rate = property_data.get('price_decline_rate', 0)
@@ -389,17 +389,24 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             loan_amount, interest_rate, loan_years, i, loan_type
         )
         
+        # 年次ローン返済額を正しく計算（完済後は0）
+        if i <= loan_years and remaining_loan > 0:
+            # ローン返済期間内かつ残高がある場合
+            actual_annual_loan = annual_loan
+        else:
+            # ローン完済後は返済額0
+            actual_annual_loan = 0
         
         # 元金返済額の計算（年間ローン返済額 - 利息）
-        if interest_rate > 0 and i > 0:
+        if interest_rate > 0 and i > 0 and actual_annual_loan > 0:
             # 前年のローン残高から利息を計算
             prev_remaining = calculate_remaining_loan(
                 loan_amount, interest_rate, loan_years, i-1, loan_type
             )
             annual_interest = prev_remaining * 10000 * (interest_rate / 100)
-            principal_payment = annual_loan - annual_interest
+            principal_payment = actual_annual_loan - annual_interest
         else:
-            principal_payment = annual_loan
+            principal_payment = actual_annual_loan
         
         
         # 自己資金回収率計算
@@ -460,11 +467,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "減価償却": int(depreciation),
             "税金": int(tax),
             "修繕費（参考）": int(repair_info),
-            "ローン返済": int(annual_loan),
+            "ローン返済": int(actual_annual_loan),
             "元金返済": int(principal_payment),  # 元金返済額
             "営業CF": int(cf_i),
             "累計CF": int(cum),
-            "借入残高": int(remaining_loan),  # 借入残高（万円）
+            "借入残高": int(max(0, remaining_loan)),  # 借入残高（万円、負の場合は0）
             "自己資金回収率": round(recovery_rate * 100, 1),  # 自己資金回収率（%）
             "DSCR": round(dscr, 2),  # DSCR計算済み
             "売却金額": int(sale_amount),  # 売却金額
