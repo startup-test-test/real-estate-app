@@ -3,7 +3,7 @@
 Pydanticを使用した厳密な型チェックとバリデーション
 """
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 import re
 from datetime import datetime
@@ -45,9 +45,8 @@ class SimulatorInput(BaseModel):
     # 画像
     propertyImageBase64: Optional[str] = Field(None, description="物件画像（Base64）")
     
-    class Config:
-        # JSONスキーマの例を定義
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "propertyName": "サンプル物件",
                 "location": "東京都渋谷区",
@@ -61,8 +60,10 @@ class SimulatorInput(BaseModel):
                 "holdingYears": 10
             }
         }
+    }
     
-    @validator('propertyName', 'location', 'propertyUrl', 'propertyMemo')
+    @field_validator('propertyName', 'location', 'propertyUrl', 'propertyMemo')
+    @classmethod
     def no_html_tags(cls, v):
         """HTMLタグが含まれていないことを確認"""
         if v is None:
@@ -75,7 +76,8 @@ class SimulatorInput(BaseModel):
         
         return v
     
-    @validator('propertyUrl')
+    @field_validator('propertyUrl')
+    @classmethod
     def validate_url(cls, v):
         """URLの安全性チェック"""
         if v is None or v == '':
@@ -91,7 +93,8 @@ class SimulatorInput(BaseModel):
         
         return v
     
-    @validator('propertyImageBase64')
+    @field_validator('propertyImageBase64')
+    @classmethod
     def validate_image_base64(cls, v):
         """Base64画像の検証"""
         if v is None or v == '':
@@ -122,7 +125,8 @@ class MarketAnalysisInput(BaseModel):
     year_built: int = Field(..., ge=1900, le=datetime.now().year + 10, description="築年")
     purchase_price: float = Field(..., ge=1, le=100000, description="購入価格（万円）")
     
-    @validator('location')
+    @field_validator('location')
+    @classmethod
     def no_html_tags_location(cls, v):
         """HTMLタグが含まれていないことを確認"""
         html_pattern = re.compile(r'<[a-zA-Z][^>]*>|<\/[a-zA-Z][^>]*>')
