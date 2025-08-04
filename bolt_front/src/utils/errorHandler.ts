@@ -68,14 +68,8 @@ export const logError = (context: string, error: any): void => {
       stack: error.stack,
       status: error.status,
       response: error.response,
-      debug_info: error.debug_info,  // デバッグ情報を追加
       timestamp: new Date().toISOString()
     });
-    
-    // レスポンスボディがある場合はそれも表示
-    if (error.response && error.response.data) {
-      console.error(`[${context}] レスポンスデータ:`, error.response.data);
-    }
   } else {
     // 本番環境では最小限のログのみ
     console.error(`[${context}] エラーが発生しました`);
@@ -89,11 +83,6 @@ export const handleApiError = async (response: Response): Promise<ApiError> => {
 
   try {
     const errorData = await response.json();
-    
-    // デバッグ用にレスポンスデータをログ出力
-    if (import.meta.env.DEV) {
-      console.log('API Error Response:', errorData);
-    }
     
     // バックエンドからの詳細メッセージがある場合
     if (errorData.details && Array.isArray(errorData.details)) {
@@ -110,19 +99,8 @@ export const handleApiError = async (response: Response): Promise<ApiError> => {
         details = errorData.error;
       }
     }
-    
-    // debug_infoがある場合はエラーオブジェクトに追加
-    if (errorData.debug_info) {
-      details = {
-        ...details,
-        debug_info: errorData.debug_info
-      };
-    }
   } catch (e) {
     // JSONパースエラーは無視
-    if (import.meta.env.DEV) {
-      console.log('JSON parse error:', e);
-    }
   }
 
   const error: ApiError = new Error(errorMessage);

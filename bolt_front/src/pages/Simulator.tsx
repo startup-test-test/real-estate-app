@@ -507,12 +507,6 @@ const Simulator: React.FC = () => {
         console.log('API起動中...');
       }
       
-      // デバッグ用: 送信データをログ出力
-      if (import.meta.env.DEV) {
-        console.log('送信データ:', apiData);
-        console.log('property_name:', apiData.property_name);
-        console.log('location:', apiData.location);
-      }
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト

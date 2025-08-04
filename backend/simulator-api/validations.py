@@ -93,14 +93,11 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     """シミュレーター入力値の検証"""
     errors = {}
     
-    # デバッグ: 受信データをログ出力
-    print(f"[DEBUG] 受信データのキー: {list(data.keys())}")
-    print(f"[DEBUG] property_name の値: {data.get('property_name', 'キーが存在しません')}")
     
     # 文字列フィールドの検証
     string_fields = {
-        'property_name': {'max_length': 100, 'required': False},  # 一時的に必須を解除
-        'location': {'max_length': 200, 'required': False},       # 一時的に必須を解除
+        'property_name': {'max_length': 100, 'required': True},
+        'location': {'max_length': 200, 'required': True},
         'property_url': {'max_length': 500, 'required': False},
         'property_memo': {'max_length': 1000, 'required': False}
     }
@@ -180,8 +177,8 @@ def validate_market_analysis_input(data: Dict[str, Any]) -> Dict[str, List[str]]
     """市場分析入力値の検証"""
     errors = {}
     
-    # 必須フィールドのチェック（一時的にlocationを除外）
-    required_fields = ['land_area', 'year_built', 'purchase_price']
+    # 必須フィールドのチェック
+    required_fields = ['location', 'land_area', 'year_built', 'purchase_price']
     for field in required_fields:
         if field not in data or data[field] is None or data[field] == "":
             errors[field] = [f"{field}は必須項目です"]

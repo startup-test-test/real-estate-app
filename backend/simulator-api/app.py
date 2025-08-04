@@ -67,19 +67,13 @@ def run_simulation(property_data: dict):
         # 共通計算ロジックを使用してシミュレーション実行
         return run_full_simulation(property_data)
         
-    except Exception as e:
-        # デバッグ用にエラー詳細を出力
-        import traceback
-        print(f"Simulation error: {str(e)}")
-        print(f"Traceback: {traceback.format_exc()}")
-        
+    except Exception:
         # その他のエラーの場合（詳細は隠蔽）
         return JSONResponse(
             status_code=500,
             content={
                 "error": "シミュレーションの実行中にエラーが発生しました",
                 "details": ["システムエラーが発生しました。しばらく時間をおいて再度お試しください。"],
-                "debug_info": str(e),  # デバッグ用
                 "status_code": 500
             }
         )
