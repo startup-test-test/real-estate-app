@@ -89,15 +89,17 @@ describe('Dashboard', () => {
     Storage.prototype.setItem = vi.fn()
   })
 
-  it('マイページのタイトルが表示される', () => {
+  it('マイページのタイトルが表示される', async () => {
     render(
       <BrowserRouter>
         <Dashboard />
       </BrowserRouter>
     )
     
-    expect(screen.getByText('マイページ')).toBeInTheDocument()
-    expect(screen.getByText('投資の成果を一目で確認できます')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('マイページ')).toBeInTheDocument()
+      expect(screen.getByText('投資の成果を一目で確認できます')).toBeInTheDocument()
+    })
   })
 
   it('物件データが正しく表示される', async () => {
