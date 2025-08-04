@@ -119,7 +119,7 @@ export const simulatorValidationRules: {
   purchasePrice: { min: 1, max: 100000, unit: '万円' }, // 1万円〜10億円
   monthlyRent: { min: 0, max: 100000000, unit: '円' }, // 0〜1億円/月
   managementFee: { min: 0, max: 10000000, unit: '円' }, // 0〜1000万円/月
-  propertyTax: { min: 0, max: 5000, unit: '万円' }, // 0〜500万円/年
+  propertyTax: { min: 0, max: 50000000, unit: '円' }, // 0〜5000万円/年
   downPaymentRatio: { min: 0, max: 100, unit: '%' },
   loanYears: { min: 1, max: 50, unit: '年' },
   interestRate: { min: 0, max: 20, unit: '%' },

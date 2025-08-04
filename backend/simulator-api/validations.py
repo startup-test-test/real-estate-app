@@ -140,7 +140,7 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
         'purchase_price': {'min': 1, 'max': 100000, 'unit': '万円'},
         'monthly_rent': {'min': 0, 'max': 100000000, 'unit': '円'},  # 最大1億円/月
         'management_fee': {'min': 0, 'max': 10000000, 'unit': '円'},  # 最大1000万円/月
-        'property_tax': {'min': 0, 'max': 5000, 'unit': '万円'},
+        'property_tax': {'min': 0, 'max': 50000000, 'unit': '円'},  # 最大5000万円/年
         'down_payment_ratio': {'min': 0, 'max': 100, 'unit': '%'},
         'loan_years': {'min': 1, 'max': 50, 'unit': '年'},
         'interest_rate': {'min': 0, 'max': 20, 'unit': '%'},

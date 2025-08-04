@@ -18,7 +18,7 @@ export const emptyPropertyData = {
   fixedCost: 0,
   propertyTax: 0,
   vacancyRate: 0,
-  rentDecline: 0,
+  rentDecline: 1,
   loanAmount: 0,
   interestRate: 0,
   loanYears: 0,
@@ -38,7 +38,7 @@ export const emptyPropertyData = {
   propertyImageUrl: '',
   propertyStatus: '検討中',
   annualDepreciationRate: 1.0,
-  priceDeclineRate: 0
+  priceDeclineRate: 1
 };
 
 export const sampleProperties = {
