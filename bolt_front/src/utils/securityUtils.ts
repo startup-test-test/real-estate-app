@@ -41,6 +41,11 @@ export const sanitizeImageUrl = (
   // 文字列に変換
   const urlString = String(imageUrl).trim();
   
+  // デバッグ用ログ（開発環境のみ）
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Sanitizing image URL:', urlString);
+  }
+  
   // 危険なプロトコルをチェック
   const dangerousProtocols = /^(javascript|data|vbscript|file|about|chrome):/i;
   if (dangerousProtocols.test(urlString)) {
@@ -48,9 +53,14 @@ export const sanitizeImageUrl = (
     return defaultImage;
   }
   
-  // HTTPSまたはHTTPで始まる場合、または相対パスの場合は許可
-  const validImageUrl = /^(https?:\/\/|\/)/i;
-  if (validImageUrl.test(urlString) || !urlString.includes(':')) {
+  // HTTPSまたはHTTPで始まる場合は許可
+  const validImageUrl = /^https?:\/\//i;
+  if (validImageUrl.test(urlString)) {
+    return urlString;
+  }
+  
+  // 相対パスの場合も許可（: を含まない）
+  if (!urlString.includes(':')) {
     return urlString;
   }
   
