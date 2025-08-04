@@ -293,13 +293,25 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax
         
-        # 大規模修繕（カスタマイズ対応）
+        # 大規模修繕（資本的支出対応）
         major_repair_cycle = property_data.get('major_repair_cycle', 10)
         major_repair_cost = property_data.get('major_repair_cost', 200)
         
-        repair = 0
-        if i % major_repair_cycle == 0:  # ユーザー指定周期で大規模修繕
-            repair = major_repair_cost * 10000
+        # 修繕費の分類（20万円以上は資本的支出、未満は通常修繕）
+        capital_repair_threshold = 20  # 20万円
+        
+        current_year_repair = 0  # 通常修繕（経費）
+        capital_repair_amount = 0  # 資本的修繕（今年度実施分）
+        
+        if i % major_repair_cycle == 0:  # ユーザー指定周期で修繕実施
+            if major_repair_cost >= capital_repair_threshold:
+                # 20万円以上は資本的支出として処理
+                capital_repair_amount = major_repair_cost
+                current_year_repair = 0  # 経費としては計上しない
+            else:
+                # 20万円未満は通常修繕として経費計上
+                current_year_repair = major_repair_cost * 10000
+                capital_repair_amount = 0
         
         # 改装費の会計処理（常に資本的支出として扱う）
         renovation_cost = property_data.get('renovation_cost', 0)
@@ -307,8 +319,14 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 初期リフォーム費用は計上しない（減価償却に含める）
         initial_renovation = 0
         
-        # 減価償却費の計算（改装費を建物価格に加算）
-        total_depreciable_amount = building_price + renovation_cost
+        # 過去の資本的修繕の累積額を計算
+        accumulated_capital_repairs = 0
+        for past_year in range(1, i + 1):
+            if past_year % major_repair_cycle == 0 and major_repair_cost >= capital_repair_threshold:
+                accumulated_capital_repairs += major_repair_cost
+        
+        # 減価償却費の計算（建物価格 + 改装費 + 累積資本的修繕）
+        total_depreciable_amount = building_price + renovation_cost + accumulated_capital_repairs
         depreciation = calculate_depreciation(total_depreciable_amount, depreciation_years, i)
         
         # 不動産所得（税金計算用）
@@ -318,11 +336,13 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         tax = calculate_tax(real_estate_income, effective_tax_rate)
         
         # キャッシュフロー（税引後）
-        cf_i = eff - annual_expenses - annual_loan - repair - initial_renovation - tax
+        # 通常修繕のみ経費計上、資本的修繕は減価償却として処理済み
+        cf_i = eff - annual_expenses - annual_loan - current_year_repair - initial_renovation - tax
         cum += cf_i
         
         # NOI（Net Operating Income）計算
-        noi = eff - annual_expenses - repair - initial_renovation
+        # 通常修繕のみ計上、資本的修繕は含めない
+        noi = eff - annual_expenses - current_year_repair - initial_renovation
         
         # DSCR計算
         dscr = noi / annual_loan if annual_loan > 0 else 0
@@ -430,7 +450,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "経費": int(annual_expenses),
             "減価償却": int(depreciation),
             "税金": int(tax),
-            "大規模修繕": int(repair),
+            "大規模修繕": int(current_year_repair),
             "初期リフォーム": int(initial_renovation),
             "ローン返済": int(annual_loan),
             "元金返済": int(principal_payment),  # 元金返済額
