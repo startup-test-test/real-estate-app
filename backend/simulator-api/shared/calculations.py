@@ -335,6 +335,18 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 税金計算
         tax = calculate_tax(real_estate_income, effective_tax_rate)
         
+        # 年次ローン返済額を正しく計算（完済後は0）
+        remaining_loan = calculate_remaining_loan(
+            loan_amount, interest_rate, loan_years, i, loan_type
+        )
+        
+        if i <= loan_years and remaining_loan > 0:
+            # ローン返済期間内かつ残高がある場合
+            actual_annual_loan = annual_loan
+        else:
+            # ローン完済後は返済額0
+            actual_annual_loan = 0
+        
         # キャッシュフロー（税引後）
         # 通常修繕のみ経費計上、資本的修繕は減価償却として処理済み
         cf_i = eff - annual_expenses - actual_annual_loan - current_year_repair - initial_renovation - tax
@@ -385,17 +397,6 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         loan_years = property_data.get('loan_years', 0)
         loan_type = property_data.get('loan_type', '元利均等')
         
-        remaining_loan = calculate_remaining_loan(
-            loan_amount, interest_rate, loan_years, i, loan_type
-        )
-        
-        # 年次ローン返済額を正しく計算（完済後は0）
-        if i <= loan_years and remaining_loan > 0:
-            # ローン返済期間内かつ残高がある場合
-            actual_annual_loan = annual_loan
-        else:
-            # ローン完済後は返済額0
-            actual_annual_loan = 0
         
         # 元金返済額の計算（年間ローン返済額 - 利息）
         if interest_rate > 0 and i > 0 and actual_annual_loan > 0:
