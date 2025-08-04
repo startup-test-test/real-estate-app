@@ -77,7 +77,7 @@ export const logError = (context: string, error: any): void => {
 };
 
 // APIエラーレスポンスの処理
-export const handleApiError = async (response: Response): Promise<Error> => {
+export const handleApiError = async (response: Response): Promise<ApiError> => {
   let errorMessage = getUserFriendlyErrorMessage({ status: response.status });
   let details: any = null;
 
@@ -103,13 +103,20 @@ export const handleApiError = async (response: Response): Promise<Error> => {
     // JSONパースエラーは無視
   }
 
-  const error: any = new Error(errorMessage);
+  const error: ApiError = new Error(errorMessage);
   error.status = response.status;
   error.details = details;
   error.userMessage = errorMessage;
   
   return error;
 };
+
+// カスタムエラー型の定義
+export interface ApiError extends Error {
+  status?: number;
+  details?: any;
+  userMessage?: string;
+}
 
 // エラー境界コンポーネント用のエラー情報
 export interface ErrorInfo {

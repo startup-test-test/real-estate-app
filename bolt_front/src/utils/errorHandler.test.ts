@@ -4,7 +4,8 @@ import {
   logError,
   handleApiError,
   createErrorInfo,
-  ErrorType
+  ErrorType,
+  ApiError
 } from './errorHandler';
 
 describe('errorHandler', () => {
@@ -96,7 +97,7 @@ describe('errorHandler', () => {
         })
       } as any;
 
-      const error = await handleApiError(mockResponse);
+      const error = await handleApiError(mockResponse) as ApiError;
 
       expect(error.message).toBe('フィールドエラー1\nフィールドエラー2');
       expect(error.status).toBe(400);
@@ -122,7 +123,7 @@ describe('errorHandler', () => {
         json: vi.fn().mockRejectedValue(new Error('Invalid JSON'))
       } as any;
 
-      const error = await handleApiError(mockResponse);
+      const error = await handleApiError(mockResponse) as ApiError;
 
       expect(error.message).toBe('サーバーエラーが発生しました。しばらく待ってから再度お試しください。');
       expect(error.status).toBe(500);
