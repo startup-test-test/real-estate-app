@@ -8,8 +8,9 @@
 export const transformFormDataToApiData = (inputs: any) => {
   console.log('transformFormDataToApiData inputs:', inputs);
   console.log('propertyName value:', inputs.propertyName);
+  console.log('treatRenovationAsCapex value:', inputs.treatRenovationAsCapex);
   
-  return {
+  const result = {
     property_name: inputs.propertyName || '不動産投資シミュレーション',
     location: inputs.location || '住所未設定',
     year_built: inputs.yearBuilt || 2020,
@@ -44,8 +45,13 @@ export const transformFormDataToApiData = (inputs: any) => {
     property_url: inputs.propertyUrl || '',
     property_memo: inputs.propertyMemo || '',
     property_image_url: inputs.propertyImageUrl || '',
-    property_status: inputs.propertyStatus || '検討中'
+    property_status: inputs.propertyStatus || '検討中',
+    treat_renovation_as_capex: Boolean(inputs.treatRenovationAsCapex)
   };
+  
+  console.log('API data treat_renovation_as_capex:', result.treat_renovation_as_capex);
+  
+  return result;
 };
 
 /**
@@ -86,7 +92,8 @@ export const transformApiResponseToSupabaseData = (inputs: any, result: any, sha
     propertyUrl: inputs.propertyUrl || '',
     propertyMemo: inputs.propertyMemo || '',
     propertyImageUrl: inputs.propertyImageUrl || '',
-    propertyStatus: inputs.propertyStatus || '検討中'
+    propertyStatus: inputs.propertyStatus || '検討中',
+    treatRenovationAsCapex: inputs.treatRenovationAsCapex || false
   };
 
   const resultData = {
@@ -154,7 +161,8 @@ export const transformSupabaseDataToFormData = (simulationData: any) => {
     propertyMemo: simulationData.propertyMemo || '',
     propertyImageUrl: simulationData.propertyImageUrl || '',
     propertyStatus: simulationData.propertyStatus || '検討中',
-    propertyId: simulationData.propertyId || null
+    propertyId: simulationData.propertyId || null,
+    treatRenovationAsCapex: simulationData.treatRenovationAsCapex || false
   };
 };
 

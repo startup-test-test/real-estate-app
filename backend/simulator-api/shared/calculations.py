@@ -258,6 +258,34 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     building_price = property_data.get('building_price', 2000)
     depreciation_years = property_data.get('depreciation_years', 27)
     
+    # 売却価格評価方法を最初に決定（1年目の評価で判定）
+    expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
+    exit_cap_rate = property_data.get('exit_cap_rate', 5.0)
+    purchase_price = property_data.get('purchase_price', 0)
+    land_price = purchase_price - building_price
+    
+    # 1年目のNOIを計算して評価方法を決定
+    first_year_eff = monthly_rent * 12 * (1 - vacancy_rate / 100)
+    first_year_expenses = (management_fee + fixed_cost) * 12 + property_tax
+    renovation_cost = property_data.get('renovation_cost', 0)
+    first_year_noi = first_year_eff - first_year_expenses - renovation_cost * 10000
+    
+    # 各評価方法の価格を計算
+    manual_price = expected_sale_price
+    cap_rate_price = first_year_noi / (exit_cap_rate / 100) / 10000 if exit_cap_rate > 0 and first_year_noi > 0 else 0
+    
+    # 最も高い評価方法を決定
+    price_method = 'manual'  # デフォルト
+    highest_price = manual_price
+    
+    if cap_rate_price > highest_price:
+        price_method = 'cap_rate'
+        highest_price = cap_rate_price
+    
+    if land_price > highest_price:
+        price_method = 'land'
+        highest_price = land_price
+    
     for i in years_list:
         adjusted_monthly_rent = monthly_rent * (1 - (i - 1) * rent_decline / 100)
         full_annual_rent = adjusted_monthly_rent * 12
@@ -273,14 +301,27 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         if i % major_repair_cycle == 0:  # ユーザー指定周期で大規模修繕
             repair = major_repair_cost * 10000
         
-        # 初期リフォーム費用（1年目のみ）
-        initial_renovation = 0
+        # 改装費の会計処理
+        treat_renovation_as_capex = property_data.get('treat_renovation_as_capex', False)
+        renovation_cost = property_data.get('renovation_cost', 0)
+        
+        # デバッグ用ログ
         if i == 1:
-            renovation_cost = property_data.get('renovation_cost', 0)
+            print(f"treat_renovation_as_capex: {treat_renovation_as_capex}, type: {type(treat_renovation_as_capex)}")
+        
+        # 初期リフォーム費用（資本的支出でない場合のみ1年目に計上）
+        initial_renovation = 0
+        if i == 1 and not treat_renovation_as_capex:
             initial_renovation = renovation_cost * 10000
         
-        # 減価償却費
-        depreciation = calculate_depreciation(building_price, depreciation_years, i)
+        # 減価償却費の計算
+        if treat_renovation_as_capex:
+            # 改装費を建物価格に加算して減価償却
+            total_depreciable_amount = building_price + renovation_cost
+            depreciation = calculate_depreciation(total_depreciable_amount, depreciation_years, i)
+        else:
+            # 従来通り建物のみ減価償却
+            depreciation = calculate_depreciation(building_price, depreciation_years, i)
         
         # 不動産所得（税金計算用）
         real_estate_income = eff - annual_expenses - depreciation
@@ -298,31 +339,26 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # DSCR計算
         dscr = noi / annual_loan if annual_loan > 0 else 0
         
-        # 売却金額を計算（3つの方法から最大値を採用）
-        
-        # 方法1: ユーザー入力の想定売却価格（価格下落率を適用）
-        expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
+        # 売却金額を計算（全年度で同じ評価方法を使用）
         price_decline_rate = property_data.get('price_decline_rate', 0)
         
-        if expected_sale_price > 0 and price_decline_rate > 0:
-            manual_price = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
-        else:
-            manual_price = expected_sale_price
+        if price_method == 'manual':
+            # 方法1: ユーザー入力の想定売却価格（価格下落率を適用）
+            if expected_sale_price > 0 and price_decline_rate > 0:
+                sale_price_current_year = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
+            else:
+                sale_price_current_year = expected_sale_price
         
-        # 方法2: 収益還元法（売却時のNOI ÷ Cap Rate）
-        exit_cap_rate = property_data.get('exit_cap_rate', 5.0)
-        if exit_cap_rate > 0 and noi > 0:
-            cap_rate_price = noi / (exit_cap_rate / 100) / 10000
-        else:
-            cap_rate_price = 0
+        elif price_method == 'cap_rate':
+            # 方法2: 収益還元法（売却時のNOI ÷ Cap Rate）
+            if exit_cap_rate > 0 and noi > 0:
+                sale_price_current_year = noi / (exit_cap_rate / 100) / 10000
+            else:
+                sale_price_current_year = 0
         
-        # 方法3: 土地価格（積算法の簡易版）
-        purchase_price = property_data.get('purchase_price', 0)
-        building_price = property_data.get('building_price', 0)
-        land_price = purchase_price - building_price
-        
-        # 3つの価格から最大値を採用
-        sale_price_current_year = max(manual_price, cap_rate_price, land_price)
+        else:  # price_method == 'land'
+            # 方法3: 土地価格（積算法の簡易版、変動なし）
+            sale_price_current_year = land_price
         
         # 売却価格が0の場合は、最低限購入価格の一定割合で売却できると仮定
         if sale_price_current_year == 0:
@@ -368,7 +404,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             
             # 譲渡所得税の計算
             purchase_price = property_data.get('purchase_price', 0)
-            capital_gain = sale_amount - purchase_price * 10000 - depreciation * i  # 売却益
+            renovation_cost = property_data.get('renovation_cost', 0)
+            other_costs = property_data.get('other_costs', 0)
+            # 取得費 = 購入価格 + 改装費 + 諸経費
+            acquisition_cost = (purchase_price + renovation_cost + other_costs) * 10000
+            capital_gain = sale_amount - acquisition_cost - depreciation * i  # 売却益
             
             if capital_gain > 0:
                 # 短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
@@ -416,9 +456,10 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "売却による純利益": int(sale_net_profit),  # 売却による純利益
             "売却時累計CF": int(sale_cumulative_cf),  # 売却時累計CF（楽待方式）
             "売却価格内訳": {
-                "想定価格": int(manual_price * 10000),
-                "収益還元価格": int(cap_rate_price * 10000),
-                "土地価格": int(land_price * 10000)
+                "想定価格": int(expected_sale_price * pow(1 - price_decline_rate / 100, i - 1) * 10000) if price_decline_rate > 0 else int(expected_sale_price * 10000),
+                "収益還元価格": int(noi / (exit_cap_rate / 100)) if exit_cap_rate > 0 and noi > 0 else 0,
+                "土地価格": int(land_price * 10000),
+                "採用方法": price_method
             }
         })
     
