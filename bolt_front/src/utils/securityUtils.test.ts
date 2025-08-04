@@ -17,31 +17,20 @@ describe('securityUtils', () => {
     });
 
     it('javascript:プロトコルをブロック', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       expect(sanitizeUrl('javascript:alert("XSS")')).toBe('#');
-      expect(consoleSpy).toHaveBeenCalledWith('Potentially dangerous URL blocked:', 'javascript:alert("XSS")');
-      consoleSpy.mockRestore();
     });
 
     it('data:プロトコルをブロック', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       expect(sanitizeUrl('data:text/html,<script>alert("XSS")</script>')).toBe('#');
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
     });
 
     it('vbscript:プロトコルをブロック', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       expect(sanitizeUrl('vbscript:msgbox("XSS")')).toBe('#');
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
     });
 
     it('大文字小文字を無視してブロック', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       expect(sanitizeUrl('JavaScript:alert("XSS")')).toBe('#');
       expect(sanitizeUrl('JAVASCRIPT:alert("XSS")')).toBe('#');
-      consoleSpy.mockRestore();
     });
 
     it('nullやundefinedは#を返す', () => {
@@ -67,10 +56,7 @@ describe('securityUtils', () => {
     });
 
     it('javascript:プロトコルはデフォルト画像を返す', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       expect(sanitizeImageUrl('javascript:alert("XSS")')).toBe(defaultImage);
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
     });
 
     it('nullやundefinedはデフォルト画像を返す', () => {

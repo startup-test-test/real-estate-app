@@ -500,7 +500,20 @@ const Simulator: React.FC = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        throw new Error(`HTTPエラー: ${response.status}`);
+        // エラーレスポンスの詳細を取得
+        let errorMessage = `HTTPエラー: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.details && Array.isArray(errorData.details)) {
+            // バリデーションエラーの詳細を表示
+            errorMessage = errorData.details.join('\n');
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {
+          // JSONパースエラーの場合はデフォルトメッセージを使用
+        }
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();
