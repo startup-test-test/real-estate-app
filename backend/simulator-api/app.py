@@ -2,20 +2,14 @@
 大家DX - 不動産投資シミュレーターAPI（軽量版）
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
-from typing import Dict, List, Optional
-from datetime import datetime
 import os
 from dotenv import load_dotenv
-import requests
-import time
-import re
 import random
 from shared.calculations import run_full_simulation
-from validations import SimulatorInput, MarketAnalysisInput, create_validation_error_response
+from validations import validate_simulator_input, validate_market_analysis_input, create_validation_error_response
 
 # .envファイルの読み込み
 load_dotenv()
@@ -58,24 +52,22 @@ def read_root():
 @app.post("/api/simulate")
 def run_simulation(property_data: dict):
     """収益シミュレーションを実行 - 新機能対応版"""
-    try:
-        # 入力値のバリデーション
-        validated_input = SimulatorInput(**property_data)
-        
-        # バリデーション済みのデータを辞書形式に変換
-        validated_data = validated_input.dict()
-        
-        # 共通計算ロジックを使用してシミュレーション実行
-        return run_full_simulation(validated_data)
-        
-    except ValidationError as e:
+    # 入力値のバリデーション
+    validation_errors = validate_simulator_input(property_data)
+    
+    if validation_errors:
         # バリデーションエラーの場合、統一フォーマットでレスポンス
-        error_response = create_validation_error_response(e.errors())
+        error_response = create_validation_error_response(validation_errors)
         return JSONResponse(
             status_code=400,
             content=error_response
         )
-    except Exception as e:
+    
+    try:
+        # 共通計算ロジックを使用してシミュレーション実行
+        return run_full_simulation(property_data)
+        
+    except Exception:
         # その他のエラーの場合（詳細は隠蔽）
         return JSONResponse(
             status_code=500,
@@ -90,21 +82,29 @@ def run_simulation(property_data: dict):
 @app.post("/api/market-analysis")
 def market_analysis(request: dict):
     """類似物件の市場分析を実行"""
+    # 入力値のバリデーション
+    validation_errors = validate_market_analysis_input(request)
+    
+    if validation_errors:
+        # バリデーションエラーの場合、統一フォーマットでレスポンス
+        error_response = create_validation_error_response(validation_errors)
+        return JSONResponse(
+            status_code=400,
+            content=error_response
+        )
+    
     try:
-        # 入力値のバリデーション
-        validated_input = MarketAnalysisInput(**request)
-        
-        location = validated_input.location
-        land_area = validated_input.land_area
-        year_built = validated_input.year_built
-        purchase_price = validated_input.purchase_price
+        location = request.get('location', '')
+        land_area = request.get('land_area', 0)
+        year_built = request.get('year_built', 2000)
+        purchase_price = request.get('purchase_price', 0)
     
         # ユーザー物件の平米単価を計算
         user_unit_price = purchase_price * 10000 / land_area / 10000 if land_area > 0 else 0
         
         # サンプルデータを生成（実際のAPIは後で実装）
         similar_properties = []
-        for i in range(15):
+        for _ in range(15):
             unit_price = user_unit_price * (1 + random.uniform(-0.3, 0.3))
             area = land_area * (1 + random.uniform(-0.3, 0.3))
             
@@ -154,15 +154,7 @@ def market_analysis(request: dict):
                 "evaluation": evaluation
             }
         }
-        
-    except ValidationError as e:
-        # バリデーションエラーの場合、統一フォーマットでレスポンス
-        error_response = create_validation_error_response(e.errors())
-        return JSONResponse(
-            status_code=400,
-            content=error_response
-        )
-    except Exception as e:
+    except Exception:
         # その他のエラーの場合（詳細は隠蔽）
         return JSONResponse(
             status_code=500,

@@ -1,165 +1,221 @@
 """
 サーバーサイド入力値検証モジュール
-Pydanticを使用した厳密な型チェックとバリデーション
+Pydanticを使わないシンプルな実装
 """
 
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional
 import re
+from typing import Dict, List, Optional, Any
 from datetime import datetime
 
 
-class SimulatorInput(BaseModel):
-    """シミュレーター入力データのバリデーションモデル"""
+def validate_number_range(
+    value: Any,
+    min_val: float,
+    max_val: float,
+    field_name: str
+) -> Optional[str]:
+    """数値の範囲チェック"""
+    try:
+        num = float(value)
+        if num < min_val:
+            return f"{field_name}は{min_val}以上で入力してください"
+        if num > max_val:
+            return f"{field_name}は{max_val}以下で入力してください"
+        return None
+    except (ValueError, TypeError):
+        return f"{field_name}は数値で入力してください"
+
+
+def validate_string_length(
+    value: Any,
+    max_length: int,
+    field_name: str,
+    required: bool = False
+) -> Optional[str]:
+    """文字列長のチェック"""
+    if value is None or value == "":
+        if required:
+            return f"{field_name}は必須項目です"
+        return None
     
-    # 物件情報（文字列）
-    propertyName: str = Field(..., min_length=1, max_length=100, description="物件名")
-    location: str = Field(..., min_length=1, max_length=200, description="住所")
-    propertyUrl: Optional[str] = Field(None, max_length=500, description="物件URL")
-    propertyMemo: Optional[str] = Field(None, max_length=1000, description="メモ")
+    if not isinstance(value, str):
+        return f"{field_name}は文字列で入力してください"
     
-    # 物件情報（数値）
-    purchasePrice: float = Field(..., ge=1, le=100000, description="購入価格（万円）")
-    monthlyRent: float = Field(0, ge=0, le=10000, description="月額賃料（万円）")
-    managementFee: float = Field(0, ge=0, le=1000, description="管理費・修繕積立金（万円）")
-    propertyTax: float = Field(0, ge=0, le=5000, description="年間固定資産税（万円）")
+    if len(value) > max_length:
+        return f"{field_name}は{max_length}文字以下で入力してください"
     
-    # ローン情報
-    downPaymentRatio: float = Field(20, ge=0, le=100, description="頭金比率（%）")
-    loanYears: int = Field(35, ge=1, le=50, description="ローン期間（年）")
-    interestRate: float = Field(1.5, ge=0, le=20, description="借入金利（%）")
+    return None
+
+
+def detect_html_tags(value: str) -> bool:
+    """HTMLタグの検出"""
+    if not isinstance(value, str):
+        return False
+    html_pattern = re.compile(r'<[a-zA-Z][^>]*>|<\/[a-zA-Z][^>]*>')
+    return bool(html_pattern.search(value))
+
+
+def validate_url(value: str) -> Optional[str]:
+    """URLの安全性チェック"""
+    if not value:
+        return None
     
-    # 物件詳細
-    buildingArea: Optional[float] = Field(None, ge=1, le=100000, description="建物面積（㎡）")
-    landArea: Optional[float] = Field(None, ge=0, le=100000, description="土地面積（㎡）")
-    yearBuilt: Optional[int] = Field(None, ge=1900, le=datetime.now().year + 10, description="築年")
+    dangerous_protocols = ['javascript:', 'data:', 'vbscript:', 'file:']
+    url_lower = value.lower()
     
-    # 投資条件
-    holdingYears: int = Field(10, ge=1, le=50, description="保有年数")
-    majorRepairCost: float = Field(0, ge=0, le=50000, description="大規模修繕費用（万円）")
+    for protocol in dangerous_protocols:
+        if url_lower.startswith(protocol):
+            return "許可されていないプロトコルです"
     
-    # 減価償却
-    buildingPriceForDepreciation: Optional[float] = Field(None, ge=0, le=100000, description="建物価格（減価償却用）（万円）")
-    depreciationYears: Optional[int] = Field(None, ge=1, le=50, description="減価償却年数")
+    return None
+
+
+def validate_image_base64(value: str) -> Optional[str]:
+    """Base64画像の検証"""
+    if not value:
+        return None
     
-    # 画像
-    propertyImageBase64: Optional[str] = Field(None, description="物件画像（Base64）")
+    if not value.startswith('data:image/'):
+        return "画像データの形式が正しくありません"
     
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "propertyName": "サンプル物件",
-                "location": "東京都渋谷区",
-                "purchasePrice": 5000,
-                "monthlyRent": 20,
-                "managementFee": 5,
-                "propertyTax": 10,
-                "downPaymentRatio": 20,
-                "loanYears": 35,
-                "interestRate": 1.5,
-                "holdingYears": 10
-            }
-        }
+    allowed_formats = ['data:image/jpeg', 'data:image/jpg', 'data:image/png', 'data:image/gif', 'data:image/webp']
+    if not any(value.lower().startswith(fmt) for fmt in allowed_formats):
+        return "許可されていない画像形式です"
+    
+    # サイズチェック（5MB以下）
+    if len(value) > 6700000:
+        return "画像サイズが大きすぎます（5MB以下にしてください）"
+    
+    return None
+
+
+def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
+    """シミュレーター入力値の検証"""
+    errors = {}
+    
+    # 文字列フィールドの検証
+    string_fields = {
+        'propertyName': {'max_length': 100, 'required': True},
+        'location': {'max_length': 200, 'required': True},
+        'propertyUrl': {'max_length': 500, 'required': False},
+        'propertyMemo': {'max_length': 1000, 'required': False}
     }
     
-    @field_validator('propertyName', 'location', 'propertyUrl', 'propertyMemo')
-    @classmethod
-    def no_html_tags(cls, v):
-        """HTMLタグが含まれていないことを確認"""
-        if v is None:
-            return v
+    for field, rules in string_fields.items():
+        value = data.get(field)
         
-        # HTMLタグのパターン（厳密版）
-        html_pattern = re.compile(r'<[a-zA-Z][^>]*>|<\/[a-zA-Z][^>]*>')
-        if html_pattern.search(v):
-            raise ValueError('HTMLタグは使用できません')
+        # 文字列長チェック
+        error = validate_string_length(
+            value, 
+            rules['max_length'], 
+            field,
+            rules['required']
+        )
+        if error:
+            if field not in errors:
+                errors[field] = []
+            errors[field].append(error)
+            continue
         
-        return v
+        # HTMLタグチェック
+        if value and detect_html_tags(str(value)):
+            if field not in errors:
+                errors[field] = []
+            errors[field].append(f"{field}にHTMLタグは使用できません")
+        
+        # URL検証
+        if field == 'propertyUrl' and value:
+            url_error = validate_url(str(value))
+            if url_error:
+                if field not in errors:
+                    errors[field] = []
+                errors[field].append(url_error)
     
-    @field_validator('propertyUrl')
-    @classmethod
-    def validate_url(cls, v):
-        """URLの安全性チェック"""
-        if v is None or v == '':
-            return v
-        
-        # 危険なプロトコルのチェック
-        dangerous_protocols = ['javascript:', 'data:', 'vbscript:', 'file:']
-        url_lower = v.lower()
-        
-        for protocol in dangerous_protocols:
-            if url_lower.startswith(protocol):
-                raise ValueError('許可されていないプロトコルです')
-        
-        return v
+    # 数値フィールドの検証
+    number_fields = {
+        'purchasePrice': {'min': 1, 'max': 100000, 'unit': '万円'},
+        'monthlyRent': {'min': 0, 'max': 10000, 'unit': '万円'},
+        'managementFee': {'min': 0, 'max': 1000, 'unit': '万円'},
+        'propertyTax': {'min': 0, 'max': 5000, 'unit': '万円'},
+        'downPaymentRatio': {'min': 0, 'max': 100, 'unit': '%'},
+        'loanYears': {'min': 1, 'max': 50, 'unit': '年'},
+        'interestRate': {'min': 0, 'max': 20, 'unit': '%'},
+        'buildingArea': {'min': 1, 'max': 100000, 'unit': '㎡'},
+        'landArea': {'min': 0, 'max': 100000, 'unit': '㎡'},
+        'yearBuilt': {'min': 1900, 'max': datetime.now().year + 10, 'unit': '年'},
+        'holdingYears': {'min': 1, 'max': 50, 'unit': '年'},
+        'majorRepairCost': {'min': 0, 'max': 50000, 'unit': '万円'},
+        'buildingPriceForDepreciation': {'min': 0, 'max': 100000, 'unit': '万円'},
+        'depreciationYears': {'min': 1, 'max': 50, 'unit': '年'}
+    }
     
-    @field_validator('propertyImageBase64')
-    @classmethod
-    def validate_image_base64(cls, v):
-        """Base64画像の検証"""
-        if v is None or v == '':
-            return v
-        
-        # Base64画像の基本的な形式チェック
-        if not v.startswith('data:image/'):
-            raise ValueError('画像データの形式が正しくありません')
-        
-        # 画像形式の確認（jpeg, png, gif, webpのみ許可）
-        allowed_formats = ['data:image/jpeg', 'data:image/jpg', 'data:image/png', 'data:image/gif', 'data:image/webp']
-        if not any(v.lower().startswith(fmt) for fmt in allowed_formats):
-            raise ValueError('許可されていない画像形式です')
-        
-        # サイズチェック（5MB以下）
-        # Base64は元のサイズの約1.33倍になるため、6.7MB以下をチェック
-        if len(v) > 6700000:
-            raise ValueError('画像サイズが大きすぎます（5MB以下にしてください）')
-        
-        return v
+    for field, rules in number_fields.items():
+        value = data.get(field)
+        if value is not None and value != "":
+            error = validate_number_range(
+                value,
+                rules['min'],
+                rules['max'],
+                f"{field}（{rules['unit']}）"
+            )
+            if error:
+                if field not in errors:
+                    errors[field] = []
+                errors[field].append(error)
+    
+    # 画像の検証
+    if 'propertyImageBase64' in data and data['propertyImageBase64']:
+        image_error = validate_image_base64(data['propertyImageBase64'])
+        if image_error:
+            errors['propertyImageBase64'] = [image_error]
+    
+    return errors
 
 
-class MarketAnalysisInput(BaseModel):
-    """市場分析リクエストのバリデーションモデル"""
+def validate_market_analysis_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
+    """市場分析入力値の検証"""
+    errors = {}
     
-    location: str = Field(..., min_length=1, max_length=200, description="所在地")
-    land_area: float = Field(..., ge=0, le=100000, description="土地面積（㎡）")
-    year_built: int = Field(..., ge=1900, le=datetime.now().year + 10, description="築年")
-    purchase_price: float = Field(..., ge=1, le=100000, description="購入価格（万円）")
+    # 必須フィールドのチェック
+    required_fields = ['location', 'land_area', 'year_built', 'purchase_price']
+    for field in required_fields:
+        if field not in data or data[field] is None or data[field] == "":
+            errors[field] = [f"{field}は必須項目です"]
     
-    @field_validator('location')
-    @classmethod
-    def no_html_tags_location(cls, v):
-        """HTMLタグが含まれていないことを確認"""
-        html_pattern = re.compile(r'<[a-zA-Z][^>]*>|<\/[a-zA-Z][^>]*>')
-        if html_pattern.search(v):
-            raise ValueError('所在地にHTMLタグは使用できません')
-        return v
+    # locationの検証
+    if 'location' in data and data['location']:
+        error = validate_string_length(data['location'], 200, 'location', True)
+        if error:
+            errors['location'] = [error]
+        elif detect_html_tags(str(data['location'])):
+            errors['location'] = ["所在地にHTMLタグは使用できません"]
+    
+    # 数値フィールドの検証
+    if 'land_area' in data and data['land_area'] is not None:
+        error = validate_number_range(data['land_area'], 0, 100000, '土地面積（㎡）')
+        if error:
+            errors['land_area'] = [error]
+    
+    if 'year_built' in data and data['year_built'] is not None:
+        error = validate_number_range(data['year_built'], 1900, datetime.now().year + 10, '築年')
+        if error:
+            errors['year_built'] = [error]
+    
+    if 'purchase_price' in data and data['purchase_price'] is not None:
+        error = validate_number_range(data['purchase_price'], 1, 100000, '購入価格（万円）')
+        if error:
+            errors['purchase_price'] = [error]
+    
+    return errors
 
 
-def create_validation_error_response(errors: list) -> dict:
+def create_validation_error_response(errors: Dict[str, List[str]]) -> dict:
     """バリデーションエラーレスポンスの統一フォーマット"""
     error_messages = []
     
-    for error in errors:
-        field = error.get('loc', ['不明'])[0]
-        msg = error.get('msg', 'エラーが発生しました')
-        
-        # エラーメッセージを日本語化
-        if 'less than or equal to' in msg:
-            value = msg.split('less than or equal to')[1].strip()
-            error_messages.append(f"{field}: {value}以下で入力してください")
-        elif 'greater than or equal to' in msg:
-            value = msg.split('greater than or equal to')[1].strip()
-            error_messages.append(f"{field}: {value}以上で入力してください")
-        elif 'ensure this value has at most' in msg:
-            value = msg.split('at most')[1].split('characters')[0].strip()
-            error_messages.append(f"{field}: {value}文字以下で入力してください")
-        elif 'ensure this value has at least' in msg:
-            value = msg.split('at least')[1].split('characters')[0].strip()
-            error_messages.append(f"{field}: {value}文字以上で入力してください")
-        elif 'field required' in msg:
-            error_messages.append(f"{field}: 必須項目です")
-        else:
-            error_messages.append(f"{field}: {msg}")
+    for field, messages in errors.items():
+        for msg in messages:
+            error_messages.append(msg)
     
     return {
         "error": "入力値にエラーがあります",
