@@ -17,6 +17,7 @@ import ImageUpload from '../components/ImageUpload';
 // import { LegalDisclaimer } from '../components';
 import { SimulationResultData, CashFlowData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
+import { validateSimulatorInputs } from '../utils/securityValidation';
 import { transformFormDataToApiData } from '../utils/dataTransform';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
@@ -395,7 +396,35 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
-    // バリデーションチェック
+    // セキュリティバリデーションチェック
+    const securityValidation = validateSimulatorInputs(inputs);
+    if (!securityValidation.isValid) {
+      // エラーメッセージを配列に変換
+      const securityErrors = Object.entries(securityValidation.errors).map(([field, error]) => error);
+      setValidationErrors(securityErrors);
+      setFieldErrors(securityValidation.errors);
+      
+      // 最初のエラーフィールドにスクロール
+      setTimeout(() => {
+        const firstErrorField = Object.keys(securityValidation.errors)[0];
+        if (firstErrorField) {
+          const element = document.querySelector(
+            `[data-field="${firstErrorField}"]`
+          ) as HTMLElement;
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // フォーカスを当てる
+            const input = element.querySelector('input, select') as HTMLElement;
+            if (input) {
+              input.focus();
+            }
+          }
+        }
+      }, 100);
+      return;
+    }
+    
+    // 既存のバリデーションチェック
     const errors = validateForm();
     if (errors.length > 0) {
       setValidationErrors(errors);
