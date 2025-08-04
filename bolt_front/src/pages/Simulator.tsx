@@ -1020,22 +1020,10 @@ const Simulator: React.FC = () => {
               </div>
             </div>
             
-            {/* 改装費の会計処理オプション */}
+            {/* 改装費の説明 */}
             <div className="col-span-2 mt-4">
-              <label className="flex items-center space-x-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="treatRenovationAsCapex"
-                  checked={inputs.treatRenovationAsCapex || false}
-                  onChange={(e) => handleInputChange('treatRenovationAsCapex', e.target.checked)}
-                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <span className="text-gray-700">
-                  改装費を資本的支出として計上（建物と同じ償却年数で減価償却）
-                </span>
-              </label>
-              <p className="mt-1 text-xs text-gray-500 ml-6">
-                チェックすると改装費が初年度の費用ではなく、減価償却資産として計上されます
+              <p className="text-xs text-gray-500">
+                ※ 改装費は資本的支出として計上され、建物と同じ償却年数で減価償却されます
               </p>
             </div>
           </div>

@@ -301,27 +301,15 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         if i % major_repair_cycle == 0:  # ユーザー指定周期で大規模修繕
             repair = major_repair_cost * 10000
         
-        # 改装費の会計処理
-        treat_renovation_as_capex = property_data.get('treat_renovation_as_capex', False)
+        # 改装費の会計処理（常に資本的支出として扱う）
         renovation_cost = property_data.get('renovation_cost', 0)
         
-        # デバッグ用ログ
-        if i == 1:
-            print(f"treat_renovation_as_capex: {treat_renovation_as_capex}, type: {type(treat_renovation_as_capex)}")
-        
-        # 初期リフォーム費用（資本的支出でない場合のみ1年目に計上）
+        # 初期リフォーム費用は計上しない（減価償却に含める）
         initial_renovation = 0
-        if i == 1 and not treat_renovation_as_capex:
-            initial_renovation = renovation_cost * 10000
         
-        # 減価償却費の計算
-        if treat_renovation_as_capex:
-            # 改装費を建物価格に加算して減価償却
-            total_depreciable_amount = building_price + renovation_cost
-            depreciation = calculate_depreciation(total_depreciable_amount, depreciation_years, i)
-        else:
-            # 従来通り建物のみ減価償却
-            depreciation = calculate_depreciation(building_price, depreciation_years, i)
+        # 減価償却費の計算（改装費を建物価格に加算）
+        total_depreciable_amount = building_price + renovation_cost
+        depreciation = calculate_depreciation(total_depreciable_amount, depreciation_years, i)
         
         # 不動産所得（税金計算用）
         real_estate_income = eff - annual_expenses - depreciation
