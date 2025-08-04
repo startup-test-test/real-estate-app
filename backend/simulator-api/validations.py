@@ -134,8 +134,8 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     # 数値フィールドの検証
     number_fields = {
         'purchasePrice': {'min': 1, 'max': 100000, 'unit': '万円'},
-        'monthlyRent': {'min': 0, 'max': 10000, 'unit': '万円'},
-        'managementFee': {'min': 0, 'max': 1000, 'unit': '万円'},
+        'monthlyRent': {'min': 0, 'max': 10000000, 'unit': '円'},  # 最大1000万円/月
+        'managementFee': {'min': 0, 'max': 1000000, 'unit': '円'},  # 最大100万円/月
         'propertyTax': {'min': 0, 'max': 5000, 'unit': '万円'},
         'downPaymentRatio': {'min': 0, 'max': 100, 'unit': '%'},
         'loanYears': {'min': 1, 'max': 50, 'unit': '年'},
