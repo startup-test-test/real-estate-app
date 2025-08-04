@@ -6,6 +6,9 @@
  * フォーム入力データをAPI送信用データに変換
  */
 export const transformFormDataToApiData = (inputs: any) => {
+  console.log('transformFormDataToApiData inputs:', inputs);
+  console.log('propertyName value:', inputs.propertyName);
+  
   return {
     property_name: inputs.propertyName || '不動産投資シミュレーション',
     location: inputs.location || '住所未設定',

@@ -93,12 +93,16 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     """シミュレーター入力値の検証"""
     errors = {}
     
+    # デバッグ: 受信データをログ出力
+    print(f"[DEBUG] 受信データのキー: {list(data.keys())}")
+    print(f"[DEBUG] property_name の値: {data.get('property_name', 'キーが存在しません')}")
+    
     # 文字列フィールドの検証
     string_fields = {
-        'propertyName': {'max_length': 100, 'required': True},
+        'property_name': {'max_length': 100, 'required': True},
         'location': {'max_length': 200, 'required': True},
-        'propertyUrl': {'max_length': 500, 'required': False},
-        'propertyMemo': {'max_length': 1000, 'required': False}
+        'property_url': {'max_length': 500, 'required': False},
+        'property_memo': {'max_length': 1000, 'required': False}
     }
     
     for field, rules in string_fields.items():
@@ -124,7 +128,7 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
             errors[field].append(f"{field}にHTMLタグは使用できません")
         
         # URL検証
-        if field == 'propertyUrl' and value:
+        if field == 'property_url' and value:
             url_error = validate_url(str(value))
             if url_error:
                 if field not in errors:
@@ -133,20 +137,20 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     
     # 数値フィールドの検証
     number_fields = {
-        'purchasePrice': {'min': 1, 'max': 100000, 'unit': '万円'},
-        'monthlyRent': {'min': 0, 'max': 100000000, 'unit': '円'},  # 最大1億円/月
-        'managementFee': {'min': 0, 'max': 10000000, 'unit': '円'},  # 最大1000万円/月
-        'propertyTax': {'min': 0, 'max': 5000, 'unit': '万円'},
-        'downPaymentRatio': {'min': 0, 'max': 100, 'unit': '%'},
-        'loanYears': {'min': 1, 'max': 50, 'unit': '年'},
-        'interestRate': {'min': 0, 'max': 20, 'unit': '%'},
-        'buildingArea': {'min': 1, 'max': 100000, 'unit': '㎡'},
-        'landArea': {'min': 0, 'max': 100000, 'unit': '㎡'},
-        'yearBuilt': {'min': 1900, 'max': datetime.now().year + 10, 'unit': '年'},
-        'holdingYears': {'min': 1, 'max': 50, 'unit': '年'},
-        'majorRepairCost': {'min': 0, 'max': 50000, 'unit': '万円'},
-        'buildingPriceForDepreciation': {'min': 0, 'max': 100000, 'unit': '万円'},
-        'depreciationYears': {'min': 1, 'max': 50, 'unit': '年'}
+        'purchase_price': {'min': 1, 'max': 100000, 'unit': '万円'},
+        'monthly_rent': {'min': 0, 'max': 100000000, 'unit': '円'},  # 最大1億円/月
+        'management_fee': {'min': 0, 'max': 10000000, 'unit': '円'},  # 最大1000万円/月
+        'property_tax': {'min': 0, 'max': 5000, 'unit': '万円'},
+        'down_payment_ratio': {'min': 0, 'max': 100, 'unit': '%'},
+        'loan_years': {'min': 1, 'max': 50, 'unit': '年'},
+        'interest_rate': {'min': 0, 'max': 20, 'unit': '%'},
+        'building_area': {'min': 1, 'max': 100000, 'unit': '㎡'},
+        'land_area': {'min': 0, 'max': 100000, 'unit': '㎡'},
+        'year_built': {'min': 1900, 'max': datetime.now().year + 10, 'unit': '年'},
+        'holding_years': {'min': 1, 'max': 50, 'unit': '年'},
+        'major_repair_cost': {'min': 0, 'max': 50000, 'unit': '万円'},
+        'building_price': {'min': 0, 'max': 100000, 'unit': '万円'},
+        'depreciation_years': {'min': 1, 'max': 50, 'unit': '年'}
     }
     
     for field, rules in number_fields.items():
@@ -164,10 +168,10 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
                 errors[field].append(error)
     
     # 画像の検証
-    if 'propertyImageBase64' in data and data['propertyImageBase64']:
-        image_error = validate_image_base64(data['propertyImageBase64'])
+    if 'property_image_base64' in data and data['property_image_base64']:
+        image_error = validate_image_base64(data['property_image_base64'])
         if image_error:
-            errors['propertyImageBase64'] = [image_error]
+            errors['property_image_base64'] = [image_error]
     
     return errors
 

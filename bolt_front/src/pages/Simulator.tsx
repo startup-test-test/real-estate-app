@@ -396,6 +396,10 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
+    console.log('handleSimulation開始');
+    console.log('現在のinputs:', inputs);
+    console.log('propertyName:', inputs.propertyName);
+    
     // セキュリティバリデーションチェック
     const securityValidation = validateSimulatorInputs(inputs);
     if (!securityValidation.isValid) {
@@ -458,7 +462,14 @@ const Simulator: React.FC = () => {
       // FAST API への送信データを構築
       const apiData = transformFormDataToApiData(inputs);
       
+      // APIデータの必須フィールドチェック
+      if (!apiData.property_name || apiData.property_name.trim() === '') {
+        console.error('property_nameが空です。inputs.propertyName:', inputs.propertyName);
+        throw new Error('物件名を入力してください');
+      }
+      
       console.log('FAST API送信データ:', apiData);
+      console.log('property_name:', apiData.property_name);
       console.log('ローン期間:', apiData.loan_years, '年');
       console.log('保有年数:', apiData.holding_years, '年');
       console.log('新機能フィールド確認:', {
@@ -488,6 +499,9 @@ const Simulator: React.FC = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
       
+      console.log('送信直前のapiData:', JSON.stringify(apiData, null, 2));
+      console.log('property_nameの確認:', apiData.property_name);
+      
       const response = await fetch(`${API_BASE_URL}/api/simulate`, {
         method: 'POST',
         headers: {
@@ -504,13 +518,23 @@ const Simulator: React.FC = () => {
         let errorMessage = `HTTPエラー: ${response.status}`;
         try {
           const errorData = await response.json();
+          console.error('APIエラーレスポンス:', errorData);
+          console.error('エラー詳細:', errorData.details);
+          
           if (errorData.details && Array.isArray(errorData.details)) {
             // バリデーションエラーの詳細を表示
-            errorMessage = errorData.details.join('\n');
+            // バックエンドのエラーメッセージを修正
+            errorMessage = errorData.details
+              .map((msg: string) => msg.replace('propertyName', '物件名'))
+              .join('\n');
           } else if (errorData.error) {
             errorMessage = errorData.error;
+          } else if (errorData.detail) {
+            // FastAPIのデフォルトエラーレスポンス
+            errorMessage = errorData.detail;
           }
         } catch (e) {
+          console.error('エラーレスポンスのパースに失敗:', e);
           // JSONパースエラーの場合はデフォルトメッセージを使用
         }
         throw new Error(errorMessage);
