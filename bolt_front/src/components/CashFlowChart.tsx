@@ -62,13 +62,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   const loanBalance = data.map(row => Math.max(0, row['借入残高'] || 0));
   
   // デバッグ用ログ（最初の3行のみ）
-  data.slice(0, 3).forEach((row, index) => {
-    const cumCF = (row['累計CF'] || 0) / 10000;
-    const saleCumCF = (row['売却時累計CF'] || 0) / 10000;
-    const profit = saleCumCF - cumCF;
-    const loanBal = row['借入残高'] || 0;
-    console.log(`${index + 1}年目: 累計CF=${cumCF}, 売却時累計CF=${saleCumCF}, 売却による純利益=${profit}, 借入残高=${loanBal}`);
-  });
+  // デバッグ用ログは削除
 
   // SP版の判定
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -152,8 +146,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
               const isLine = dataset.type === 'line';
               return {
                 text: dataset.label || '',
-                fillStyle: isLine ? 'transparent' : dataset.backgroundColor,
-                strokeStyle: dataset.borderColor || dataset.backgroundColor,
+                fillStyle: isLine ? 'transparent' : dataset.backgroundColor as string,
+                strokeStyle: (dataset.borderColor || dataset.backgroundColor) as string,
                 lineWidth: isLine ? 3 : 0,
                 pointStyle: isLine ? 'line' : 'rect',
                 hidden: !chart.isDatasetVisible(i),

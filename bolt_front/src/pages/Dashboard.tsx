@@ -228,6 +228,7 @@ const Dashboard: React.FC = () => {
       const simulationData = sim.simulation_data || {};
       const results = sim.results || {};
       
+      
       // resultsが空または存在しない場合のフォールバック計算
       const calculateFallbackValues = () => {
         const purchasePrice = simulationData.purchasePrice || 0;
@@ -338,7 +339,7 @@ const Dashboard: React.FC = () => {
           day: '2-digit'
         }).replace(/\//g, '/'),
         status: simulationData.propertyStatus || '検討中',
-        thumbnail: simulationData.propertyImageUrl ? sanitizeImageUrl(simulationData.propertyImageUrl) : 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
+        thumbnail: sanitizeImageUrl(simulationData.propertyImageUrl, 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400'),
         propertyUrl: sanitizeUrl(simulationData.propertyUrl),
         propertyMemo: simulationData.propertyMemo || ''
       };
@@ -677,7 +678,7 @@ const Dashboard: React.FC = () => {
                         <div className="mb-3 p-2 bg-gray-50 rounded text-sm space-y-1">
                           <div className="flex items-center">
                             <span className="text-gray-600 mr-2">URL:</span>
-                            {sim.propertyUrl ? (
+                            {sim.propertyUrl && sim.propertyUrl !== '#' ? (
                               <a 
                                 href={sim.propertyUrl} 
                                 target="_blank" 

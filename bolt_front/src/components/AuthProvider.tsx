@@ -30,15 +30,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword } = useSupabaseAuth()
 
-  // 認証状態の変更をログに記録
-  React.useEffect(() => {
-    console.log('AuthProvider状態変更:', {
-      user: user ? { id: user.id, email: user.email } : null,
-      session: session ? 'あり' : 'なし',
-      loading,
-      isAuthenticated: !!user
-    })
-  }, [user, session, loading])
+  // 認証状態の変更ログは削除（高頻度のため）
 
   const authValue = {
     user,
