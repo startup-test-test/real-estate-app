@@ -68,8 +68,14 @@ export const logError = (context: string, error: any): void => {
       stack: error.stack,
       status: error.status,
       response: error.response,
+      debug_info: error.debug_info,  // デバッグ情報を追加
       timestamp: new Date().toISOString()
     });
+    
+    // レスポンスボディがある場合はそれも表示
+    if (error.response && error.response.data) {
+      console.error(`[${context}] レスポンスデータ:`, error.response.data);
+    }
   } else {
     // 本番環境では最小限のログのみ
     console.error(`[${context}] エラーが発生しました`);
