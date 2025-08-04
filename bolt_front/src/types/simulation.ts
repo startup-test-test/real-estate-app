@@ -93,8 +93,7 @@ export interface CashFlowData {
   経費: number;
   減価償却: number;
   税金: number;
-  大規模修繕: number;
-  初期リフォーム: number;
+  '修繕費（参考）': number;
   ローン返済: number;
   営業CF: number;
   累計CF: number;

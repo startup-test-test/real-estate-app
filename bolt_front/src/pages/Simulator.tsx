@@ -2241,9 +2241,9 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          修繕費<br/>（参考）
+                          改装費<br/>修繕費
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            ※20万円以上は資本的支出として減価償却処理<br/>CF計算には含まれません
+                            ※20万円以上は資本的支出として減価償却処理<br/>CF計算には含まれません（参考表示）
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
