@@ -2,6 +2,7 @@ import React from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { sanitizeUrl, sanitizeImageUrl } from '../utils/securityUtils';
+import { logError } from '../utils/errorHandler';
 import { 
   Calculator, 
   LogOut, 
@@ -35,13 +36,15 @@ const Dashboard: React.FC = () => {
   const { user, isAuthenticated, loading: authLoading } = useAuthContext();
   const { getSimulations, deleteSimulation } = useSupabaseData();
   
-  // 認証状態をログに記録
+  // 認証状態をログに記録（開発環境のみ）
   React.useEffect(() => {
-    console.log('Dashboard認証状態:', {
-      user: user ? { id: user.id, email: user.email } : null,
-      isAuthenticated,
-      authLoading
-    })
+    if (import.meta.env.DEV) {
+      console.log('Dashboard認証状態:', {
+        user: user ? { id: user.id, email: user.email } : null,
+        isAuthenticated,
+        authLoading
+      })
+    }
   }, [user, isAuthenticated, authLoading])
   
   // Supabase state management
@@ -79,7 +82,7 @@ const Dashboard: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('キャッシュ読み込みエラー:', error);
+      logError('キャッシュ読み込み', error);
     }
     return null;
   };
@@ -92,7 +95,7 @@ const Dashboard: React.FC = () => {
       localStorage.setItem(cacheKey, JSON.stringify(data));
       localStorage.setItem(timestampKey, new Date().toISOString());
     } catch (error) {
-      console.error('キャッシュ保存エラー:', error);
+      logError('キャッシュ保存', error);
     }
   };
   

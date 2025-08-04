@@ -14,6 +14,7 @@ import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
+import ErrorMessage from '../components/ErrorMessage';
 // import { LegalDisclaimer } from '../components';
 import { SimulationResultData, CashFlowData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
@@ -23,6 +24,7 @@ import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
+import { handleApiError, logError, getUserFriendlyErrorMessage } from '../utils/errorHandler';
 
 // FAST API のベースURL
 // const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
@@ -396,10 +398,6 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
-    console.log('handleSimulation開始');
-    console.log('現在のinputs:', inputs);
-    console.log('propertyName:', inputs.propertyName);
-    
     // セキュリティバリデーションチェック
     const securityValidation = validateSimulatorInputs(inputs);
     if (!securityValidation.isValid) {
@@ -464,26 +462,24 @@ const Simulator: React.FC = () => {
       
       // APIデータの必須フィールドチェック
       if (!apiData.property_name || apiData.property_name.trim() === '') {
-        console.error('property_nameが空です。inputs.propertyName:', inputs.propertyName);
+        logError('API送信データ検証', { 
+          message: 'property_nameが空です', 
+          propertyName: inputs.propertyName 
+        });
         throw new Error('物件名を入力してください');
       }
       
-      console.log('FAST API送信データ:', apiData);
-      console.log('property_name:', apiData.property_name);
-      console.log('ローン期間:', apiData.loan_years, '年');
-      console.log('保有年数:', apiData.holding_years, '年');
-      console.log('新機能フィールド確認:', {
-        ownership_type: apiData.ownership_type,
-        effective_tax_rate: apiData.effective_tax_rate,
-        major_repair_cycle: apiData.major_repair_cycle,
-        major_repair_cost: apiData.major_repair_cost,
-        building_price: apiData.building_price,
-        depreciation_years: apiData.depreciation_years
-      });
-      
-      // テスト: 最大期間でのリクエスト
-      if (apiData.holding_years > 10) {
-        console.log('⚠️ 35年のキャッシュフローを要求中...');
+      // 開発環境でのみ詳細ログ
+      if (import.meta.env.DEV) {
+        console.log('FAST API送信データ:', apiData);
+        console.log('新機能フィールド確認:', {
+          ownership_type: apiData.ownership_type,
+          effective_tax_rate: apiData.effective_tax_rate,
+          major_repair_cycle: apiData.major_repair_cycle,
+          major_repair_cost: apiData.major_repair_cost,
+          building_price: apiData.building_price,
+          depreciation_years: apiData.depreciation_years
+        });
       }
       
       // FAST API呼び出し（タイムアウト対応）
@@ -499,9 +495,6 @@ const Simulator: React.FC = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
       
-      console.log('送信直前のapiData:', JSON.stringify(apiData, null, 2));
-      console.log('property_nameの確認:', apiData.property_name);
-      
       const response = await fetch(`${API_BASE_URL}/api/simulate`, {
         method: 'POST',
         headers: {
@@ -514,41 +507,19 @@ const Simulator: React.FC = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        // エラーレスポンスの詳細を取得
-        let errorMessage = `HTTPエラー: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          console.error('APIエラーレスポンス:', errorData);
-          console.error('エラー詳細:', errorData.details);
-          
-          if (errorData.details && Array.isArray(errorData.details)) {
-            // バリデーションエラーの詳細を表示
-            // バックエンドのエラーメッセージを修正
-            errorMessage = errorData.details
-              .map((msg: string) => msg.replace('propertyName', '物件名'))
-              .join('\n');
-          } else if (errorData.error) {
-            errorMessage = errorData.error;
-          } else if (errorData.detail) {
-            // FastAPIのデフォルトエラーレスポンス
-            errorMessage = errorData.detail;
-          }
-        } catch (e) {
-          console.error('エラーレスポンスのパースに失敗:', e);
-          // JSONパースエラーの場合はデフォルトメッセージを使用
-        }
-        throw new Error(errorMessage);
+        const error = await handleApiError(response);
+        throw error;
       }
       
       const result = await response.json();
-      console.log('FAST APIレスポンス:', result);
-      console.log('キャッシュフローテーブルの詳細:', result.cash_flow_table);
-      console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
+      
+      // 開発環境でのみ詳細ログ
+      if (import.meta.env.DEV) {
+        console.log('FAST APIレスポンス:', result);
+        console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
+      }
       
       if (result.results) {
-        console.log('受信したキャッシュフローテーブル長:', result.cash_flow_table?.length);
-        console.log('最初の5行:', result.cash_flow_table?.slice(0, 5));
-        console.log('最後の5行:', result.cash_flow_table?.slice(-5));
         setSimulationResults(result);
         
         // 結果表示後に自動スクロール
@@ -657,17 +628,14 @@ const Simulator: React.FC = () => {
         throw new Error('APIから予期しない形式のレスポンスが返されました');
       }
       
-    } catch (error) {
-      console.error('シミュレーションエラー:', error);
-      console.error('エラースタック:', error instanceof Error ? error.stack : 'スタックなし');
-      let errorMessage = '不明なエラー';
+    } catch (error: any) {
+      logError('シミュレーション', error);
       
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
-        } else {
-          errorMessage = error.message;
-        }
+      let errorMessage: string;
+      if (error.name === 'AbortError') {
+        errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
+      } else {
+        errorMessage = error.userMessage || getUserFriendlyErrorMessage(error);
       }
       
       setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
@@ -753,12 +721,14 @@ const Simulator: React.FC = () => {
         )}
 
         {saveError && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 print:hidden">
-            <div className="flex items-center">
-              <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-              <span className="text-red-800">{saveError}</span>
-            </div>
-          </div>
+          <ErrorMessage 
+            message={saveError} 
+            onRetry={() => {
+              setSaveError(null);
+              handleSimulation();
+            }}
+            className="mb-6 print:hidden"
+          />
         )}
 
         {/* Input Form */}
@@ -1687,10 +1657,10 @@ const Simulator: React.FC = () => {
               </div>
             )}
             {saveError && (
-              <div className="p-4 rounded-lg border flex items-center text-red-700 bg-red-50 border-red-200">
-                <AlertCircle className="h-4 w-4 mr-2" />
-                <span>{saveError}</span>
-              </div>
+              <ErrorMessage 
+                message={saveError} 
+                className="mt-4"
+              />
             )}
           </div>
         )}

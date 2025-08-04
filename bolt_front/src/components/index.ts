@@ -31,4 +31,7 @@ export { default as MetricCard } from './MetricCard';
 // 法的免責事項
 export { LegalDisclaimer } from './LegalDisclaimer';
 
+// エラー表示
+export { default as ErrorMessage } from './ErrorMessage';
+
 // コメント機能関連はすべて削除済み
