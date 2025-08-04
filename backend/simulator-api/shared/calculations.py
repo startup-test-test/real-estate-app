@@ -442,6 +442,15 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # グラフ表示用の売却時累計CF（自己資金を差し引かない）
         sale_cumulative_cf_display = cum + net_sale_proceeds
         
+        # 修繕費の情報表示（参考値）
+        repair_info = 0
+        if i == 1 and renovation_cost > 0:
+            # 1年目に初期改装費を情報表示
+            repair_info = renovation_cost * 10000
+        elif i % major_repair_cycle == 0:
+            # 大規模修繕発生年に修繕費を情報表示
+            repair_info = major_repair_cost * 10000
+        
         cf_data.append({
             "年次": f"{i}年目",
             "満室想定収入": int(full_annual_rent),
@@ -450,8 +459,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "経費": int(annual_expenses),
             "減価償却": int(depreciation),
             "税金": int(tax),
-            "大規模修繕": int(current_year_repair),
-            "初期リフォーム": int(initial_renovation),
+            "修繕費（参考）": int(repair_info),
             "ローン返済": int(annual_loan),
             "元金返済": int(principal_payment),  # 元金返済額
             "営業CF": int(cf_i),
