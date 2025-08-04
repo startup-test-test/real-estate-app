@@ -335,6 +335,12 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 税金計算
         tax = calculate_tax(real_estate_income, effective_tax_rate)
         
+        # ローン関連パラメータの取得
+        loan_amount = property_data.get('loan_amount', 0)
+        interest_rate = property_data.get('interest_rate', 0)
+        loan_years = property_data.get('loan_years', 0)
+        loan_type = property_data.get('loan_type', '元利均等')
+        
         # 年次ローン返済額を正しく計算（完済後は0）
         remaining_loan = calculate_remaining_loan(
             loan_amount, interest_rate, loan_years, i, loan_type
@@ -391,11 +397,6 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         sale_amount = sale_price_current_year * 10000
         
-        # ローン残高計算
-        loan_amount = property_data.get('loan_amount', 0)
-        interest_rate = property_data.get('interest_rate', 0)
-        loan_years = property_data.get('loan_years', 0)
-        loan_type = property_data.get('loan_type', '元利均等')
         
         
         # 元金返済額の計算（年間ローン返済額 - 利息）
