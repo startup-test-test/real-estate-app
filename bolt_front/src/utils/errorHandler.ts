@@ -90,6 +90,11 @@ export const handleApiError = async (response: Response): Promise<ApiError> => {
   try {
     const errorData = await response.json();
     
+    // デバッグ用にレスポンスデータをログ出力
+    if (import.meta.env.DEV) {
+      console.log('API Error Response:', errorData);
+    }
+    
     // バックエンドからの詳細メッセージがある場合
     if (errorData.details && Array.isArray(errorData.details)) {
       // バリデーションエラーの場合は詳細を含める
@@ -105,13 +110,25 @@ export const handleApiError = async (response: Response): Promise<ApiError> => {
         details = errorData.error;
       }
     }
+    
+    // debug_infoがある場合はエラーオブジェクトに追加
+    if (errorData.debug_info) {
+      details = {
+        ...details,
+        debug_info: errorData.debug_info
+      };
+    }
   } catch (e) {
     // JSONパースエラーは無視
+    if (import.meta.env.DEV) {
+      console.log('JSON parse error:', e);
+    }
   }
 
   const error: ApiError = new Error(errorMessage);
   error.status = response.status;
   error.details = details;
+  error.response = response;
   error.userMessage = errorMessage;
   
   return error;
