@@ -128,25 +128,73 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any]:
-    """物件評価額を計算"""
+    """物件評価額を計算（積算法準拠）"""
     exit_cap_rate = property_data.get('exit_cap_rate', 0)
     land_area = property_data.get('land_area', 0)
     road_price = property_data.get('road_price', 0)
     building_area = property_data.get('building_area', 0)
     market_value = property_data.get('market_value', 0)
     
+    # 追加パラメータ
+    year_built = property_data.get('year_built', 2000)
+    property_type = property_data.get('property_type', '木造')
+    
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)
     noi = basic_metrics['noi']
     
-    # 評価額計算
+    # 収益還元評価
     if exit_cap_rate > 0:
         cap_rate_eval = noi / (exit_cap_rate / 100) / 10000
     else:
         cap_rate_eval = 0
     
+    # 土地評価
     land_eval = land_area * road_price / 10000
-    building_eval = building_area * 20
+    
+    # 建物評価（積算法）
+    # 構造別の再調達価格（万円/㎡）
+    replacement_costs = {
+        "木造": 15,
+        "軽量鉄骨造": 18,
+        "重量鉄骨造": 20,
+        "RC造": 22,
+        "SRC造": 25
+    }
+    
+    # 法定耐用年数
+    legal_useful_life = {
+        "木造": 22,
+        "軽量鉄骨造": 27,
+        "重量鉄骨造": 34,
+        "RC造": 47,
+        "SRC造": 47
+    }
+    
+    # 再調達価格と耐用年数を取得（デフォルトは木造）
+    unit_price = replacement_costs.get(property_type, 15)
+    useful_life = legal_useful_life.get(property_type, 22)
+    
+    # 築年数を計算
+    current_year = 2025
+    building_age = current_year - year_built
+    
+    # 新築時の建物価格
+    new_building_cost = building_area * unit_price
+    
+    # 残存年数
+    remaining_years = useful_life - building_age
+    
+    # 建物評価額（積算法）
+    if remaining_years <= 0:
+        # 耐用年数超過 → 0円
+        building_eval = 0
+    else:
+        # 定額法による残存価値率（最終残存価値10%）
+        residual_rate = (remaining_years / useful_life) * 0.9 + 0.1
+        building_eval = new_building_cost * residual_rate
+    
+    # 積算評価合計（リノベーション費用は含めない）
     assessed_total = land_eval + building_eval
     
     return {

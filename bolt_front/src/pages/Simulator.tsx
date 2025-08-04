@@ -1881,11 +1881,28 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">{simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</span>
                     <span className="text-xs ml-1">※</span>
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
-                    <div className="font-semibold mb-1">積算評価額</div>
-                    <div className="mb-2">土地と建物を別々に評価して合計した価格です。</div>
-                    <div className="text-gray-300 text-xs mb-1">計算式：(土地面積 × 路線価) + (建物面積 × 再調達価格)</div>
-                    <div className="text-gray-400 text-xs">※ 銀行融資の際に重視される評価方法</div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
+                    <div className="font-semibold mb-2">積算評価額の内訳</div>
+                    <div className="space-y-1 mb-2">
+                      <div className="flex justify-between">
+                        <span>土地評価額:</span>
+                        <span className="font-semibold">{simulationResults?.results['土地積算評価（万円）']?.toFixed(0) || '0'}万円</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>建物評価額:</span>
+                        <span className="font-semibold">{simulationResults?.results['建物積算評価（万円）']?.toFixed(0) || '0'}万円</span>
+                      </div>
+                      <div className="border-t border-gray-600 pt-1 flex justify-between font-semibold">
+                        <span>合計:</span>
+                        <span>{simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</span>
+                      </div>
+                    </div>
+                    <div className="text-gray-300 text-xs">
+                      {simulationResults?.results['建物積算評価（万円）'] === 0 && (
+                        <div className="mt-1">※建物は耐用年数超過のため評価0円</div>
+                      )}
+                      <div>※改装費は積算評価に含まれません</div>
+                    </div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -2498,6 +2515,19 @@ const Simulator: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-gray-600">積算評価額</span>
                     <span className="font-semibold">{simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</span>
+                  </div>
+                  <div className="ml-4 text-xs text-gray-500 space-y-1">
+                    <div className="flex justify-between">
+                      <span>土地:</span>
+                      <span>{simulationResults?.results['土地積算評価（万円）']?.toFixed(0) || '0'}万円</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>建物:</span>
+                      <span>{simulationResults?.results['建物積算評価（万円）']?.toFixed(0) || '0'}万円</span>
+                    </div>
+                    {simulationResults?.results['建物積算評価（万円）'] === 0 && (
+                      <div className="text-xs text-gray-400">※耐用年数超過</div>
+                    )}
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">収益還元評価額</span>
