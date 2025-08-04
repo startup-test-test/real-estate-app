@@ -14,7 +14,7 @@ import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
-import ErrorMessage from '../components/ErrorMessage';
+import ErrorAlert from '../components/ErrorMessage';
 // import { LegalDisclaimer } from '../components';
 import { SimulationResultData, CashFlowData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
@@ -649,11 +649,23 @@ const Simulator: React.FC = () => {
       let errorMessage: string;
       if (error.name === 'AbortError') {
         errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
+      } else if (error.message && error.message.includes('500')) {
+        errorMessage = 'サーバーでエラーが発生しました。入力内容を確認して再度お試しください。';
       } else {
         errorMessage = error.userMessage || getUserFriendlyErrorMessage(error);
       }
       
       setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
+      
+      // エラーメッセージを画面に表示（結果エリアまでスクロール）
+      setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }, 100);
     } finally {
       setIsSimulating(false);
     }
@@ -736,7 +748,7 @@ const Simulator: React.FC = () => {
         )}
 
         {saveError && (
-          <ErrorMessage 
+          <ErrorAlert 
             message={saveError} 
             onRetry={() => {
               setSaveError(null);
@@ -1732,7 +1744,7 @@ const Simulator: React.FC = () => {
               </div>
             )}
             {saveError && (
-              <ErrorMessage 
+              <ErrorAlert 
                 message={saveError} 
                 className="mt-4"
               />
