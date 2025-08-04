@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
+import { sanitizeUrl, sanitizeImageUrl } from '../utils/securityUtils';
 import { 
   Calculator, 
   LogOut, 
@@ -337,8 +338,8 @@ const Dashboard: React.FC = () => {
           day: '2-digit'
         }).replace(/\//g, '/'),
         status: simulationData.propertyStatus || '検討中',
-        thumbnail: simulationData.propertyImageUrl || 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400',
-        propertyUrl: simulationData.propertyUrl || '',
+        thumbnail: sanitizeImageUrl(simulationData.propertyImageUrl),
+        propertyUrl: sanitizeUrl(simulationData.propertyUrl),
         propertyMemo: simulationData.propertyMemo || ''
       };
     });
