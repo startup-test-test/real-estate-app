@@ -97,6 +97,7 @@ export interface CashFlowData {
   ローン返済: number;
   営業CF: number;
   累計CF: number;
+  自己資金推移: number;
   元金返済: number;
   借入残高: number;
   自己資金回収率: number;

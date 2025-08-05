@@ -218,7 +218,7 @@ const Simulator: React.FC = () => {
           propertyImageUrl: simData.propertyImageUrl || '',
           propertyStatus: simData.propertyStatus || '検討中',
           annualDepreciationRate: simData.annualDepreciationRate || 1.0,
-          priceDeclineRate: simData.priceDeclineRate || 0
+          priceDeclineRate: simData.priceDeclineRate !== undefined && simData.priceDeclineRate !== null ? simData.priceDeclineRate : 0
         });
         
         // 既存の結果も表示
@@ -2067,11 +2067,20 @@ const Simulator: React.FC = () => {
                     {simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 12 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
-                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
                     <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
                     <div className="mb-2">投資した自己資金が年何％戻ってくるかを示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間手取り収入 ÷ 自己資金 × 100</div>
                     <div className="text-gray-400 text-xs">※ 10%なら約10年で元本回収</div>
+                    <div className="text-yellow-400 text-xs border-t border-gray-600 pt-2 mt-2">
+                      <div className="font-semibold mb-1">⚠️ 初年度のCCRについて</div>
+                      初年度に改装費などがある場合、CCRはマイナスになることがあります。
+                      これは、その年に現金収支がマイナスであったことを示す正常な値です。
+                      <div className="mt-1">
+                        長期的な投資判断には、<span className="text-yellow-300">IRR（内部収益率）</span>や
+                        <span className="text-yellow-300">投資回収期間</span>も合わせてご確認ください。
+                      </div>
+                    </div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -2245,8 +2254,17 @@ const Simulator: React.FC = () => {
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           改装費<br/>修繕費
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
-                            ※20万円以上は資本的支出として減価償却処理<br/>CF計算には含まれません（参考表示）
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[320px]">
+                            <div className="mb-2">
+                              <span className="font-semibold">改装費・大規模修繕費の会計処理</span>
+                            </div>
+                            <div className="space-y-1">
+                              <div>• 20万円以上: <span className="text-yellow-400">資本的支出</span></div>
+                              <div className="ml-4 text-gray-300">→ 支出年度のCFから直接差し引かれます</div>
+                              <div className="ml-4 text-gray-300">→ 税金計算上は減価償却処理されます</div>
+                              <div>• 20万円未満: <span className="text-blue-400">通常修繕費</span></div>
+                              <div className="ml-4 text-gray-300">→ 経費として即時計上されます</div>
+                            </div>
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
@@ -2271,6 +2289,14 @@ const Simulator: React.FC = () => {
                           累計<br/>CF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             累計キャッシュフロー
+                          </div>
+                        </th>
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                          自己資金<br/>推移
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[250px]">
+                            投下した自己資金の回収状況<br/>
+                            <div className="text-yellow-400 mt-1">マイナス: まだ回収中</div>
+                            <div className="text-green-400">プラス: 元本回収済み</div>
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
@@ -2339,6 +2365,7 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['元金返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['累計CF'])}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
@@ -2597,6 +2624,19 @@ const Simulator: React.FC = () => {
                     <span className="text-gray-600">CCR（自己資金回収率）</span>
                     <span className="font-semibold">{simulationResults?.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
                   </div>
+                  {simulationResults?.cash_flow_table && simulationResults.cash_flow_table.length >= 2 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 pl-4">├ 2年目以降のCCR</span>
+                      <span className="font-semibold text-green-600">
+                        {(() => {
+                          const selfFunding = simulationResults.results['自己資金（円）'] || 0;
+                          const year2CF = simulationResults.cash_flow_table[1]['営業CF'] || 0;
+                          const ccr2 = selfFunding > 0 ? (year2CF / selfFunding) * 100 : 0;
+                          return ccr2.toFixed(2);
+                        })()}%
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-600">ROI（投資収益率）</span>
                     <span className="font-semibold">{simulationResults?.results['ROI（%）']?.toFixed(2) || '0.00'}%</span>

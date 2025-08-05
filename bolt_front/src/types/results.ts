@@ -23,6 +23,8 @@ export interface SimulationResultData {
   '借入額（円）': number;
   '積算評価合計（万円）': number;
   '収益還元評価額（万円）': number;
+  '土地積算評価（万円）': number;
+  '建物積算評価（万円）': number;
 }
 
 // 市場分析データ型

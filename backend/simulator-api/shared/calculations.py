@@ -449,6 +449,13 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         self_funding = basic_metrics['self_funding']
         recovery_rate = cum / (self_funding * 10000) if self_funding > 0 else 0
         
+        # 自己資金推移計算（初年度は投下自己資金がマイナスからスタート）
+        if i == 1:
+            self_funding_balance = -self_funding * 10000 + cf_i
+        else:
+            # 前年度までの累計CFから初期投下自己資金を差し引く
+            self_funding_balance = cum - self_funding * 10000
+        
         # 売却時手取り計算（全年度で計算）
         if sale_amount > 0:
             sale_cost = sale_amount * 0.03  # 売却コスト3%（楽待基準）
@@ -507,6 +514,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "元金返済": int(principal_payment),  # 元金返済額
             "営業CF": int(cf_i),
             "累計CF": int(cum),
+            "自己資金推移": int(self_funding_balance),  # 自己資金推移（円）
             "借入残高": int(max(0, remaining_loan)),  # 借入残高（万円、負の場合は0）
             "自己資金回収率": round(recovery_rate * 100, 1),  # 自己資金回収率（%）
             "DSCR": round(dscr, 2),  # DSCR計算済み
