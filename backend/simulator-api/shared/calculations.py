@@ -319,15 +319,29 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 初期リフォーム費用は計上しない（減価償却に含める）
         initial_renovation = 0
         
-        # 過去の資本的修繕の累積額を計算
-        accumulated_capital_repairs = 0
+        # 各資産の減価償却を個別に計算
+        # 1. 建物本体の減価償却
+        building_depreciation = 0
+        if i <= depreciation_years:
+            building_depreciation = building_price * 10000 / depreciation_years
+        
+        # 2. 初期改装費の減価償却
+        renovation_depreciation = 0
+        if renovation_cost > 0 and i <= depreciation_years:
+            renovation_depreciation = renovation_cost * 10000 / depreciation_years
+        
+        # 3. 資本的修繕の減価償却（各修繕時期から個別に償却）
+        capital_repairs_depreciation = 0
         for past_year in range(1, i + 1):
             if past_year % major_repair_cycle == 0 and major_repair_cost >= capital_repair_threshold:
-                accumulated_capital_repairs += major_repair_cost
+                # 修繕実施年から償却開始
+                years_since_repair = i - past_year + 1
+                if years_since_repair <= depreciation_years:
+                    # まだ償却期間内
+                    capital_repairs_depreciation += major_repair_cost * 10000 / depreciation_years
         
-        # 減価償却費の計算（建物価格 + 改装費 + 累積資本的修繕）
-        total_depreciable_amount = building_price + renovation_cost + accumulated_capital_repairs
-        depreciation = calculate_depreciation(total_depreciable_amount, depreciation_years, i)
+        # 合計減価償却費
+        depreciation = building_depreciation + renovation_depreciation + capital_repairs_depreciation
         
         # 不動産所得（税金計算用）
         real_estate_income = eff - annual_expenses - depreciation
@@ -492,7 +506,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
 
 
 def calculate_depreciation(building_price: float, depreciation_years: int, year: int) -> float:
-    """減価償却費を計算（定額法）"""
+    """減価償却費を計算（定額法）
+    
+    注：この関数は現在使用されていません。
+    各資産の減価償却は calculate_cash_flow_table 内で個別に計算されています。
+    """
     annual_depreciation = building_price * 10000 / depreciation_years
     return annual_depreciation if year <= depreciation_years else 0
 
