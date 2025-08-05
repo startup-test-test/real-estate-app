@@ -316,8 +316,10 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 改装費の会計処理（常に資本的支出として扱う）
         renovation_cost = property_data.get('renovation_cost', 0)
         
-        # 初期リフォーム費用は計上しない（減価償却に含める）
-        initial_renovation = 0
+        # 初期リフォーム費用の実際の支出（1年目のみ）
+        initial_renovation_cash = 0
+        if i == 1 and renovation_cost > 0:
+            initial_renovation_cash = renovation_cost * 10000
         
         # 各資産の減価償却を個別に計算
         # 1. 建物本体の減価償却
@@ -380,14 +382,19 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             # ローン完済後は返済額0
             actual_annual_loan = 0
         
-        # キャッシュフロー（税引後）
-        # 通常修繕のみ経費計上、資本的修繕は減価償却として処理済み
-        cf_i = eff - annual_expenses - actual_annual_loan - current_year_repair - initial_renovation - tax
+        # 資本的支出の実際の現金支出（その年に実際に支払う金額）
+        capital_expenditure_cash = 0
+        if i % major_repair_cycle == 0 and capital_repair_amount > 0:
+            capital_expenditure_cash = capital_repair_amount * 10000
+        
+        # キャッシュフロー（税引後）- 実際の現金の動きを反映
+        # 通常修繕費 + 初期改装費の実支出 + 資本的修繕の実支出を差し引く
+        cf_i = eff - annual_expenses - actual_annual_loan - current_year_repair - initial_renovation_cash - capital_expenditure_cash - tax
         cum += cf_i
         
         # NOI（Net Operating Income）計算
-        # 通常修繕のみ計上、資本的修繕は含めない
-        noi = eff - annual_expenses - current_year_repair - initial_renovation
+        # 通常修繕のみ計上、資本的修繕は含めない（NOIは会計上の概念なので変更なし）
+        noi = eff - annual_expenses - current_year_repair
         
         # DSCR計算
         dscr = noi / actual_annual_loan if actual_annual_loan > 0 else 0
