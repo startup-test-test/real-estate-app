@@ -360,9 +360,22 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             loan_amount, interest_rate, loan_years, i, loan_type
         )
         
-        if i <= loan_years and remaining_loan > 0:
-            # ローン返済期間内かつ残高がある場合
+        if i < loan_years:
+            # ローン返済期間内（最終年を除く）
             actual_annual_loan = annual_loan
+        elif i == loan_years:
+            # 最終返済年の場合、前年末の残高を確認
+            if i > 1:
+                prev_remaining = calculate_remaining_loan(
+                    loan_amount, interest_rate, loan_years, i-1, loan_type
+                )
+                if prev_remaining > 0:
+                    actual_annual_loan = annual_loan
+                else:
+                    actual_annual_loan = 0
+            else:
+                # 1年返済の場合
+                actual_annual_loan = annual_loan
         else:
             # ローン完済後は返済額0
             actual_annual_loan = 0
