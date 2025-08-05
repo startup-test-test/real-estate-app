@@ -2292,14 +2292,6 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          自己資金<br/>推移
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[250px]">
-                            投下した自己資金の回収状況<br/>
-                            <div className="text-yellow-400 mt-1">マイナス: まだ回収中</div>
-                            <div className="text-green-400">プラス: 元本回収済み</div>
-                          </div>
-                        </th>
-                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           借入<br/>残高
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             借入残高
@@ -2309,6 +2301,14 @@ const Simulator: React.FC = () => {
                           自己資金<br/>回収率
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
                             累計CFの自己資金に対する割合
+                          </div>
+                        </th>
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                          自己資金<br/>推移
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[250px]">
+                            投下した自己資金の回収状況<br/>
+                            <div className="text-yellow-400 mt-1">マイナス: まだ回収中</div>
+                            <div className="text-green-400">プラス: 元本回収済み</div>
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
@@ -2365,9 +2365,9 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['元金返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['元金返済'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['営業CF'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['累計CF'])}</td>
-                          <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
