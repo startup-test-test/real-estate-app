@@ -203,7 +203,7 @@ const Simulator: React.FC = () => {
           rentDecline: simData.rentDecline || 1.00,
           loanAmount: simData.loanAmount || 6500,
           interestRate: simData.interestRate || 0.70,
-          loanYears: simData.loanTerm || 35,
+          loanYears: simData.loanYears || 35,
           loanType: simData.loanType || '元利均等',
           holdingYears: simData.holdingYears || 10,
           exitCapRate: simData.exitCapRate || 6.00,
@@ -216,6 +216,7 @@ const Simulator: React.FC = () => {
           propertyUrl: simData.propertyUrl || '',
           propertyMemo: simData.propertyMemo || '',
           propertyImageUrl: simData.propertyImageUrl || '',
+          propertyStatus: simData.propertyStatus || '検討中',
           annualDepreciationRate: simData.annualDepreciationRate || 1.0,
           priceDeclineRate: simData.priceDeclineRate || 0
         });
@@ -1403,7 +1404,16 @@ const Simulator: React.FC = () => {
                 </div>
                 <select
                   value={inputs.ownershipType || '個人'}
-                  onChange={(e) => handleInputChange('ownershipType', e.target.value)}
+                  onChange={(e) => {
+                    const newOwnershipType = e.target.value;
+                    handleInputChange('ownershipType', newOwnershipType);
+                    // 所有形態に応じて実効税率のデフォルト値を設定
+                    if (newOwnershipType === '個人') {
+                      handleInputChange('effectiveTaxRate', 30); // 個人の一般的な実効税率（所得税20% + 住民税10%）
+                    } else if (newOwnershipType === '法人') {
+                      handleInputChange('effectiveTaxRate', 30); // 法人の一般的な実効税率（中小法人）
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
                   {ownershipTypeOptions.map(option => (
@@ -1946,27 +1956,19 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* 想定実勢価格 */}
+                {/* 想定売却価格 */}
                 <div className="group relative">
                   <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
-                    <span className="font-normal mr-1">実勢</span>
-                    <span className="font-semibold">{(() => {
-                      const assessedTotal = simulationResults?.results['積算評価合計（万円）'] || 0;
-                      const capRateEval = simulationResults?.results['収益還元評価額（万円）'] || 0;
-                      const expectedSalePrice = simulationResults?.results['想定売却価格（万円）'] || 0;
-                      return Math.max(assessedTotal, capRateEval, expectedSalePrice).toFixed(0);
-                    })()}万円</span>
+                    <span className="font-normal mr-1">想定売却価格</span>
+                    <span className="font-semibold">{simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</span>
                     <span className="text-xs ml-1">※</span>
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
-                    <div className="font-semibold mb-1">実勢価格</div>
-                    <div className="mb-2">3つの評価額から最も高い金額を採用します。</div>
-                    <div className="text-gray-300 text-xs space-y-1">
-                      <div>積算評価: {simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</div>
-                      <div>収益還元: {simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円</div>
-                      <div>想定売却: {simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</div>
+                    <div className="font-semibold mb-1">想定売却価格</div>
+                    <div className="mb-2">出口戦略で設定した想定売却価格です。</div>
+                    <div className="text-gray-300 text-xs">
+                      将来の売却時に期待される価格を表示しています。
                     </div>
-                    <div className="text-gray-400 text-xs mt-2">※ 最も高い評価額を実勢価格として表示</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -2399,7 +2401,7 @@ const Simulator: React.FC = () => {
                   <span className="font-medium">・収益還元評価額</span>：年間NOI ÷ CapRate
                 </div>
                 <div>
-                  <span className="font-medium">・想定実勢価格</span>：市場での想定取引価格
+                  <span className="font-medium">・想定売却価格</span>：出口戦略で設定した売却予定価格
                 </div>
               </div>
               <div className="mt-3 p-3 bg-blue-50 rounded text-xs">
@@ -2464,13 +2466,8 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">{simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">想定実勢価格</span>
-                    <span className="font-semibold">{(() => {
-                      const assessedTotal = simulationResults?.results['積算評価合計（万円）'] || 0;
-                      const capRateEval = simulationResults?.results['収益還元評価額（万円）'] || 0;
-                      const expectedSalePrice = simulationResults?.results['想定売却価格（万円）'] || 0;
-                      return Math.max(assessedTotal, capRateEval, expectedSalePrice).toFixed(0);
-                    })()}万円</span>
+                    <span className="text-gray-600">想定売却価格</span>
+                    <span className="font-semibold">{simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</span>
                   </div>
                 </div>
               </div>
@@ -2567,13 +2564,8 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">{simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">想定実勢価格</span>
-                    <span className="font-semibold">{(() => {
-                      const assessedTotal = simulationResults?.results['積算評価合計（万円）'] || 0;
-                      const capRateEval = simulationResults?.results['収益還元評価額（万円）'] || 0;
-                      const expectedSalePrice = simulationResults?.results['想定売却価格（万円）'] || 0;
-                      return Math.max(assessedTotal, capRateEval, expectedSalePrice).toFixed(0);
-                    })()}万円</span>
+                    <span className="text-gray-600">想定売却価格</span>
+                    <span className="font-semibold">{simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</span>
                   </div>
                 </div>
               </div>
