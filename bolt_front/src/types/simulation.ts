@@ -111,4 +111,5 @@ export interface CashFlowData {
     収益還元価格: number;
     土地価格: number;
   };
+  繰越欠損金?: number;
 }

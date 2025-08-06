@@ -8,8 +8,10 @@ from fastapi.responses import JSONResponse
 import os
 from dotenv import load_dotenv
 import random
+import traceback
 from shared.calculations import run_full_simulation
 from validations import validate_simulator_input, validate_market_analysis_input, create_validation_error_response
+from error_codes import ErrorCode, SimulatorError, create_error_response
 
 # .envファイルの読み込み
 load_dotenv()
@@ -67,15 +69,58 @@ def run_simulation(property_data: dict):
         # 共通計算ロジックを使用してシミュレーション実行
         return run_full_simulation(property_data)
         
-    except Exception:
-        # その他のエラーの場合（詳細は隠蔽）
+    except SimulatorError as e:
+        # カスタムエラーの場合
         return JSONResponse(
             status_code=500,
-            content={
-                "error": "シミュレーションの実行中にエラーが発生しました",
-                "details": ["システムエラーが発生しました。しばらく時間をおいて再度お試しください。"],
-                "status_code": 500
-            }
+            content=e.to_dict()
+        )
+    except ZeroDivisionError:
+        # ゼロ除算エラー
+        error_response = create_error_response(
+            ErrorCode.CALC_DIVISION_BY_ZERO,
+            status_code=500
+        )
+        return JSONResponse(
+            status_code=500,
+            content=error_response
+        )
+    except OverflowError:
+        # オーバーフローエラー
+        error_response = create_error_response(
+            ErrorCode.CALC_OVERFLOW,
+            status_code=500
+        )
+        return JSONResponse(
+            status_code=500,
+            content=error_response
+        )
+    except ValueError as e:
+        # 値エラー
+        error_response = create_error_response(
+            ErrorCode.CALC_INVALID_PARAMETER,
+            status_code=500,
+            detail=str(e)
+        )
+        return JSONResponse(
+            status_code=500,
+            content=error_response
+        )
+    except Exception as e:
+        # その他のエラーの場合
+        # 開発環境ではスタックトレースをログ出力
+        if os.getenv("ENV") == "development":
+            print(f"Error: {str(e)}")
+            print(traceback.format_exc())
+        
+        error_response = create_error_response(
+            ErrorCode.SYSTEM_GENERAL,
+            status_code=500,
+            detail="予期しないエラーが発生しました"
+        )
+        return JSONResponse(
+            status_code=500,
+            content=error_response
         )
 
 # 市場分析エンドポイント
@@ -154,15 +199,20 @@ def market_analysis(request: dict):
                 "evaluation": evaluation
             }
         }
-    except Exception:
-        # その他のエラーの場合（詳細は隠蔽）
+    except Exception as e:
+        # その他のエラーの場合
+        if os.getenv("ENV") == "development":
+            print(f"Error: {str(e)}")
+            print(traceback.format_exc())
+        
+        error_response = create_error_response(
+            ErrorCode.SYSTEM_GENERAL,
+            status_code=500,
+            detail="市場分析の実行中にエラーが発生しました"
+        )
         return JSONResponse(
             status_code=500,
-            content={
-                "error": "市場分析の実行中にエラーが発生しました",
-                "details": ["システムエラーが発生しました。しばらく時間をおいて再度お試しください。"],
-                "status_code": 500
-            }
+            content=error_response
         )
 
 # APIドキュメントの自動生成

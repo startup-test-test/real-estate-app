@@ -15,6 +15,7 @@ import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
 import ErrorAlert from '../components/ErrorMessage';
+import ErrorModal from '../components/ErrorModal';
 // import { LegalDisclaimer } from '../components';
 import { SimulationResultData, CashFlowData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
@@ -57,6 +58,13 @@ const Simulator: React.FC = () => {
   const [inputs, setInputs] = useState<any>(emptyPropertyData);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [errorModalData, setErrorModalData] = useState<{
+    isOpen: boolean;
+    errorCode?: string;
+    message: string;
+    solution?: string;
+    details?: string[];
+  }>({ isOpen: false, message: '' });
   
   // エラー時のフィールドクラス名を取得
   const getFieldClassName = (fieldName: string, baseClass: string = "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent") => {
@@ -229,7 +237,11 @@ const Simulator: React.FC = () => {
               '実質利回り（%）': simulation.results.netYield || simulation.results['実質利回り'] || simulation.results['実質利回り（%）'],
               'IRR（%）': simulation.results.irr || simulation.results['IRR'] || simulation.results['IRR（%）'],
               'CCR（%）': simulation.results.ccr || simulation.results['CCR'] || simulation.results['CCR（%）'],
+              'CCR（初年度）（%）': simulation.results['CCR（初年度）（%）'] || 0,
+              'CCR（全期間）（%）': simulation.results['CCR（全期間）（%）'] || 0,
               'ROI（%）': simulation.results.roi || simulation.results['ROI'] || simulation.results['ROI（%）'],
+              'ROI（初年度）（%）': simulation.results['ROI（初年度）（%）'] || 0,
+              'ROI（全期間）（%）': simulation.results['ROI（全期間）（%）'] || 0,
               'DSCR（返済余裕率）': simulation.results.dscr || simulation.results['DSCR'],
               'NOI（円）': simulation.results.noi || simulation.results['NOI'] || simulation.results['NOI（円）'],
               'LTV（%）': simulation.results.ltv || simulation.results['LTV'] || simulation.results['LTV（%）'],
@@ -243,7 +255,9 @@ const Simulator: React.FC = () => {
               '売却益（万円）': simulation.results['売却益（万円）'] || 0,
               '総投資額（円）': simulation.results['総投資額（円）'] || 0,
               '自己資金（円）': simulation.results['自己資金（円）'] || 0,
-              '借入額（円）': simulation.results['借入額（円）'] || 0
+              '借入額（円）': simulation.results['借入額（円）'] || 0,
+              '土地積算評価（万円）': simulation.results['土地積算評価（万円）'] || 0,
+              '建物積算評価（万円）': simulation.results['建物積算評価（万円）'] || 0
             },
             cash_flow_table: simulation.cash_flow_table
           });
@@ -418,7 +432,7 @@ const Simulator: React.FC = () => {
     const securityValidation = validateSimulatorInputs(inputs);
     if (!securityValidation.isValid) {
       // エラーメッセージを配列に変換
-      const securityErrors = Object.entries(securityValidation.errors).map(([field, error]) => error);
+      const securityErrors = Object.entries(securityValidation.errors).map(([, error]) => error);
       setValidationErrors(securityErrors);
       setFieldErrors(securityValidation.errors);
       
@@ -524,6 +538,44 @@ const Simulator: React.FC = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
+        const errorData = await response.json();
+        
+        // エラーコードがある場合はモーダルを表示
+        if (errorData.error_code) {
+          setErrorModalData({
+            isOpen: true,
+            errorCode: errorData.error_code,
+            message: errorData.message || errorData.error || 'エラーが発生しました',
+            solution: errorData.solution,
+            details: errorData.details
+          });
+          setIsSimulating(false);
+          return;
+        }
+        
+        // バリデーションエラーの場合
+        if (errorData.error_details) {
+          const fieldErrorsMap: Record<string, string> = {};
+          errorData.error_details.forEach((detail: any) => {
+            fieldErrorsMap[detail.field] = detail.message;
+          });
+          setFieldErrors(fieldErrorsMap);
+          setValidationErrors(errorData.details || []);
+          
+          // エラーコードも表示
+          if (errorData.error_code) {
+            setErrorModalData({
+              isOpen: true,
+              errorCode: errorData.error_code,
+              message: '入力内容にエラーがあります',
+              solution: '赤色で表示されている項目を修正してください',
+              details: errorData.details
+            });
+          }
+          setIsSimulating(false);
+          return;
+        }
+        
         const error = await handleApiError(response);
         throw error;
       }
@@ -659,16 +711,27 @@ const Simulator: React.FC = () => {
     } catch (error: any) {
       logError('シミュレーション', error);
       
-      let errorMessage: string;
-      if (error.name === 'AbortError') {
-        errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
-      } else if (error.message && error.message.includes('500')) {
-        errorMessage = 'サーバーでエラーが発生しました。入力内容を確認して再度お試しください。';
+      // エラーコードがある場合
+      if (error.error_code) {
+        setErrorModalData({
+          isOpen: true,
+          errorCode: error.error_code,
+          message: error.message,
+          solution: error.solution,
+          details: error.details
+        });
       } else {
-        errorMessage = error.userMessage || getUserFriendlyErrorMessage(error);
+        let errorMessage: string;
+        if (error.name === 'AbortError') {
+          errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
+        } else if (error.message && error.message.includes('500')) {
+          errorMessage = 'サーバーでエラーが発生しました。入力内容を確認して再度お試しください。';
+        } else {
+          errorMessage = error.userMessage || getUserFriendlyErrorMessage(error);
+        }
+        
+        setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
       }
-      
-      setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
       
       // エラーメッセージを画面に表示（結果エリアまでスクロール）
       setTimeout(() => {
@@ -2421,7 +2484,7 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
-                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['繰越欠損金'] || 0) > 0 ? 'text-blue-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['繰越欠損金'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${((row as any)['繰越欠損金'] || 0) > 0 ? 'text-blue-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol((row as any)['繰越欠損金'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
@@ -2735,6 +2798,17 @@ const Simulator: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* エラーモーダル */}
+      <ErrorModal
+        isOpen={errorModalData.isOpen}
+        onClose={() => setErrorModalData({ ...errorModalData, isOpen: false })}
+        errorCode={errorModalData.errorCode}
+        message={errorModalData.message}
+        solution={errorModalData.solution}
+        details={errorModalData.details}
+        onRetry={handleSimulation}
+      />
     </div>
   );
 };

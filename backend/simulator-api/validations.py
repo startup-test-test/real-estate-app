@@ -6,6 +6,7 @@ Pydanticを使わないシンプルな実装
 import re
 from typing import Dict, List, Optional, Any
 from datetime import datetime
+from error_codes import ErrorCode
 
 
 def validate_number_range(
@@ -213,13 +214,40 @@ def validate_market_analysis_input(data: Dict[str, Any]) -> Dict[str, List[str]]
 def create_validation_error_response(errors: Dict[str, List[str]]) -> dict:
     """バリデーションエラーレスポンスの統一フォーマット"""
     error_messages = []
+    error_details = []
     
     for field, messages in errors.items():
         for msg in messages:
             error_messages.append(msg)
+            # エラーコードを判定
+            if "必須" in msg:
+                error_code = ErrorCode.VALIDATION_REQUIRED_FIELD
+            elif "範囲" in msg or "以上" in msg or "以下" in msg:
+                error_code = ErrorCode.VALIDATION_INVALID_RANGE
+            elif "HTML" in msg:
+                error_code = ErrorCode.VALIDATION_HTML_DETECTED
+            elif "URL" in msg:
+                error_code = ErrorCode.VALIDATION_URL_INVALID
+            elif "文字" in msg:
+                error_code = ErrorCode.VALIDATION_STRING_TOO_LONG
+            elif "画像" in msg:
+                error_code = ErrorCode.VALIDATION_IMAGE_TOO_LARGE
+            else:
+                error_code = ErrorCode.VALIDATION_INVALID_FORMAT
+            
+            error_details.append({
+                "field": field,
+                "message": msg,
+                "error_code": error_code.value
+            })
+    
+    # 最初のエラーコードをメインコードとして使用
+    main_error_code = error_details[0]["error_code"] if error_details else ErrorCode.VALIDATION_INVALID_FORMAT.value
     
     return {
         "error": "入力値にエラーがあります",
+        "error_code": main_error_code,
         "details": error_messages,
+        "error_details": error_details,
         "status_code": 400
     }
