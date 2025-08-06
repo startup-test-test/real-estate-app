@@ -50,6 +50,9 @@ def calculate_irr(annual_cf: float, years: int, sale_profit: float,
 def calculate_monthly_loan_payment(loan_amount: float, interest_rate: float, 
                                  loan_years: int) -> float:
     """月間ローン返済額を計算"""
+    if loan_years <= 0:
+        return 0
+    
     if interest_rate > 0:
         r = interest_rate / 100 / 12
         n = loan_years * 12
@@ -105,10 +108,13 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # 税引後キャッシュフロー（正確な計算）
     tax_after_cf = noi - tax
     
+    # 初年度の実際のキャッシュフロー（改装費を考慮）
+    first_year_cf = tax_after_cf - annual_loan - (renovation_cost * 10000)
+    
     # 各種比率（税引後ベース）
     gross_yield = annual_rent / (purchase_price * 10000) * 100 if purchase_price > 0 else 0
     net_yield = (noi - tax) / (purchase_price * 10000) * 100 if purchase_price > 0 else 0  # 実質利回り
-    ccr = ((tax_after_cf - annual_loan) / (self_funding * 10000)) * 100 if self_funding > 0 else 0
+    ccr = (first_year_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0  # 改装費考慮後
     roi = (tax_after_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0
     dscr = noi / annual_loan if annual_loan > 0 else 0
     
@@ -271,7 +277,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     first_year_noi = first_year_eff - first_year_expenses - renovation_cost * 10000
     
     # 各評価方法の価格を計算
-    manual_price = expected_sale_price
+    manual_price = expected_sale_price if expected_sale_price is not None else 0
     cap_rate_price = first_year_noi / (exit_cap_rate / 100) / 10000 if exit_cap_rate > 0 and first_year_noi > 0 else 0
     
     # 最も高い評価方法を決定
