@@ -261,6 +261,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     years_list = list(range(1, holding_years + 1))
     cum = 0
     cf_data = []
+    accumulated_loss = 0  # 繰越欠損金の初期化
     
     # 税金計算用パラメータ
     effective_tax_rate = property_data.get('effective_tax_rate', 20)
@@ -357,8 +358,10 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 不動産所得（税金計算用）
         real_estate_income = eff - annual_expenses - depreciation
         
-        # 税金計算
-        tax = calculate_tax(real_estate_income, effective_tax_rate)
+        # 税金計算（繰越欠損金を考慮）
+        tax, accumulated_loss = calculate_tax_with_loss_carryforward(
+            real_estate_income, effective_tax_rate, accumulated_loss
+        )
         
         # ローン関連パラメータの取得
         loan_amount = property_data.get('loan_amount', 0)
@@ -536,7 +539,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                 "収益還元価格": int(noi / (exit_cap_rate / 100)) if exit_cap_rate > 0 and noi > 0 else 0,
                 "土地価格": int(land_price * 10000),
                 "採用方法": price_method
-            }
+            },
+            "繰越欠損金": int(accumulated_loss)  # 繰越欠損金を追加
         })
     
     return cf_data
@@ -557,6 +561,39 @@ def calculate_tax(income: float, effective_tax_rate: float) -> float:
     if income <= 0:
         return 0
     return income * (effective_tax_rate / 100)
+
+
+def calculate_tax_with_loss_carryforward(
+    income: float, 
+    effective_tax_rate: float,
+    accumulated_loss: float = 0,
+    carryforward_years: int = 10  # 法人10年、個人3年
+) -> tuple[float, float]:
+    """繰越欠損金を考慮した税金計算
+    
+    Args:
+        income: 当年度の不動産所得
+        effective_tax_rate: 実効税率(%)
+        accumulated_loss: 前年度までの繰越欠損金
+        carryforward_years: 繰越可能年数（法人10年、個人3年）
+    
+    Returns:
+        (税金額, 翌年繰越欠損金)
+    """
+    if income <= 0:
+        # 損失の場合、繰越欠損金に加算
+        new_accumulated_loss = accumulated_loss + abs(income)
+        return 0, new_accumulated_loss
+    else:
+        # 利益の場合、繰越欠損金と相殺
+        taxable_income = max(0, income - accumulated_loss)
+        tax = taxable_income * (effective_tax_rate / 100)
+        
+        # 使用した欠損金を差し引いて翌年へ
+        used_loss = min(income, accumulated_loss)
+        new_accumulated_loss = accumulated_loss - used_loss
+        
+        return tax, new_accumulated_loss
 
 
 def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
