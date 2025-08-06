@@ -4,7 +4,7 @@ Streamlit開発版とFastAPI本番版で共通使用
 """
 
 import math
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 
 
 def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int,
@@ -568,7 +568,7 @@ def calculate_tax_with_loss_carryforward(
     income: float,
     effective_tax_rate: float,
     accumulated_loss: float = 0
-) -> tuple[float, float]:
+) -> Tuple[float, float]:
     """繰越欠損金を考慮した税金計算
 
     Args:

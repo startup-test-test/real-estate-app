@@ -108,15 +108,18 @@ def run_simulation(property_data: dict):
         )
     except Exception as e:
         # その他のエラーの場合
-        # 開発環境ではスタックトレースをログ出力
-        if os.getenv("ENV") == "development":
-            print(f"Error: {str(e)}")
-            print(traceback.format_exc())
+        # エラー詳細をログ出力（本番環境でも一時的に有効化）
+        print(f"[ERROR] Simulation error: {str(e)}")
+        print(f"[ERROR] Error type: {type(e).__name__}")
+        print(f"[ERROR] Stack trace:\n{traceback.format_exc()}")
+        
+        # エラーメッセージをより具体的に
+        error_detail = f"{type(e).__name__}: {str(e)}"
         
         error_response = create_error_response(
             ErrorCode.SYSTEM_GENERAL,
             status_code=500,
-            detail="予期しないエラーが発生しました"
+            detail=error_detail if os.getenv("ENV") == "development" else "予期しないエラーが発生しました"
         )
         return JSONResponse(
             status_code=500,
