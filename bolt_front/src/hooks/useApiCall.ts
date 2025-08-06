@@ -125,7 +125,7 @@ export const useApiCall = () => {
 
     try {
       // Supabase用のデータに変換
-      const supabaseData = transformApiResponseToSupabaseData(result, inputs);
+      const supabaseData = transformApiResponseToSupabaseData(inputs, result);
       
       // データベースに保存
       const insertResult = await saveSimulation({
