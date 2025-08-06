@@ -2312,6 +2312,15 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                          繰越<br/>欠損金
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[250px]">
+                            繰越欠損金<br/>
+                            過去の損失を累積し、<br/>
+                            利益発生時に相殺して<br/>
+                            税金を軽減する仕組み
+                          </div>
+                        </th>
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却<br/>金額
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[320px]">
                             物件の売却価格<br/>
@@ -2368,6 +2377,7 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{Math.round(row['借入残高'] || 0).toLocaleString()}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['自己資金回収率'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{(row['自己資金回収率'] || 0).toFixed(1)}%</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['繰越欠損金'] || 0) > 0 ? 'text-blue-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['繰越欠損金'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
