@@ -141,7 +141,7 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
     exit_cap_rate = property_data.get('exit_cap_rate', 0)
     land_area = property_data.get('land_area', 0)
     road_price = property_data.get('road_price', 0)
-    # building_area = property_data.get('building_area', 0)  # 未使用
+    building_area = property_data.get('building_area', 0)
     market_value = property_data.get('market_value', 0)
     
     # 追加パラメータ
@@ -357,8 +357,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         # 不動産所得（税金計算用）
         # 通常修繕費は経費として控除、資本的支出は減価償却で処理
-        # effは万円単位なので円単位に変換
-        real_estate_income = eff * 10000 - annual_expenses - current_year_repair - depreciation
+        real_estate_income = eff - annual_expenses - current_year_repair - depreciation
         
         # 税金計算（繰越欠損金を考慮）
         tax, accumulated_loss = calculate_tax_with_loss_carryforward(
