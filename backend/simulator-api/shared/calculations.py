@@ -111,11 +111,14 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # 初年度の実際のキャッシュフロー（改装費を考慮）
     first_year_cf = tax_after_cf - annual_loan - (renovation_cost * 10000)
     
+    # 総投資額（物件価格 + 諸経費 + 改装費）
+    total_investment = purchase_price + other_costs + renovation_cost
+    
     # 各種比率（税引後ベース）
     gross_yield = annual_rent / (purchase_price * 10000) * 100 if purchase_price > 0 else 0
     net_yield = (noi - tax) / (purchase_price * 10000) * 100 if purchase_price > 0 else 0  # 実質利回り
     ccr = (first_year_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0  # 改装費考慮後
-    roi = (tax_after_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0
+    roi = (first_year_cf / (total_investment * 10000)) * 100 if total_investment > 0 else 0  # 総投資額ベース
     dscr = noi / annual_loan if annual_loan > 0 else 0
     
     return {
