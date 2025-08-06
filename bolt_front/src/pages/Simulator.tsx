@@ -2054,33 +2054,53 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* CCR */}
+                {/* CCR（初年度） */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 12 ? 'bg-green-100 text-green-800' :
-                    simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 8 ? 'bg-yellow-100 text-yellow-800' :
-                    simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] >= 12 ? 'bg-green-100 text-green-800' :
+                    simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] >= 8 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
                     'bg-red-100 text-red-800'
                   }`}>
-                    <span className="font-normal mr-1">CCR</span>
-                    <span className="font-semibold">{simulationResults?.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] >= 12 && <span className="ml-1">⭐</span>}
-                    {simulationResults?.results['CCR（%）'] && simulationResults.results['CCR（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                    <span className="font-normal mr-1">CCR（初年度）</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] >= 12 && <span className="ml-1">⭐</span>}
+                    {simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
-                    <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
-                    <div className="mb-2">投資した自己資金が年何％戻ってくるかを示します。</div>
-                    <div className="text-gray-300 text-xs mb-1">計算式：年間手取り収入 ÷ 自己資金 × 100</div>
-                    <div className="text-gray-400 text-xs">※ 10%なら約10年で元本回収</div>
+                    <div className="font-semibold mb-1">CCR（初年度）</div>
+                    <div className="mb-2">初年度の自己資金回収率を示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 自己資金 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 改装費を含む初年度実質収益</div>
                     <div className="text-yellow-400 text-xs border-t border-gray-600 pt-2 mt-2">
                       <div className="font-semibold mb-1">⚠️ 初年度のCCRについて</div>
                       初年度に改装費などがある場合、CCRはマイナスになることがあります。
                       これは、その年に現金収支がマイナスであったことを示す正常な値です。
-                      <div className="mt-1">
-                        長期的な投資判断には、<span className="text-yellow-300">IRR（内部収益率）</span>や
-                        <span className="text-yellow-300">投資回収期間</span>も合わせてご確認ください。
-                      </div>
                     </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* CCR（全期間） */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] >= 12 ? 'bg-green-100 text-green-800' :
+                    simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] >= 8 ? 'bg-yellow-100 text-yellow-800' :
+                    simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] >= 5 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">CCR（全期間）</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）']?.toFixed(2) || '0.00'}%</span>
+                    {simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] >= 12 && <span className="ml-1">⭐</span>}
+                    {simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] < 5 && <span className="ml-1">⚠️</span>}
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
+                    <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
+                    <div className="mb-2">投資した自己資金が年何％戻ってくるかを示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間平均CF ÷ 自己資金 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 10%なら約10年で元本回収</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -2135,17 +2155,41 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* ROI */}
+                {/* ROI（初年度） */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
-                    (simulationResults.results['ROI（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['ROI（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['ROI（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
+                    (simulationResults.results['ROI（初年度）（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['ROI（初年度）（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['ROI（初年度）（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
                     'bg-red-100 text-red-800'
                   }`}>
-                    <span className="font-normal mr-1">ROI</span>
+                    <span className="font-normal mr-1">ROI（初年度）</span>
                     <span className="font-semibold">
-                      {(simulationResults.results['ROI（%）'] || 0).toFixed(2)}%
+                      {(simulationResults.results['ROI（初年度）（%）'] || 0).toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                    <div className="font-semibold mb-1">ROI（初年度）</div>
+                    <div className="mb-2">初年度の投資収益率を示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 総投資額 × 100</div>
+                    <div className="text-gray-400 text-xs">※ 改装費含む初年度実質収益</div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                      <div className="border-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* ROI（全期間） */}
+                <div className="group relative">
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                    (simulationResults.results['ROI（全期間）（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['ROI（全期間）（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['ROI（全期間）（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">ROI（全期間）</span>
+                    <span className="font-semibold">
+                      {(simulationResults.results['ROI（全期間）（%）'] || 0).toFixed(2)}%
                     </span>
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">

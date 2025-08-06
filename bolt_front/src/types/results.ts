@@ -8,7 +8,11 @@ export interface SimulationResultData {
   '実質利回り（%）': number;
   'IRR（%）': number | null;
   'CCR（%）': number;
+  'CCR（初年度）（%）': number;
+  'CCR（全期間）（%）': number;
   'ROI（%）': number;
+  'ROI（初年度）（%）': number;
+  'ROI（全期間）（%）': number;
   'DSCR（返済余裕率）': number;
   '月間キャッシュフロー（円）': number;
   '年間キャッシュフロー（円）': number;

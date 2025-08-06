@@ -117,7 +117,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # 各種比率（税引後ベース）
     gross_yield = annual_rent / (purchase_price * 10000) * 100 if purchase_price > 0 else 0
     net_yield = (noi - tax) / (purchase_price * 10000) * 100 if purchase_price > 0 else 0  # 実質利回り
-    ccr = (first_year_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0  # 改装費考慮後
+    ccr = (first_year_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0  # 初年度CCR
     roi = (first_year_cf / (total_investment * 10000)) * 100 if total_investment > 0 else 0  # 総投資額ベース
     dscr = noi / annual_loan if annual_loan > 0 else 0
     
@@ -596,6 +596,38 @@ def calculate_tax_with_loss_carryforward(
         return tax, new_accumulated_loss
 
 
+def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> float:
+    """初年度CCRを計算（初年度CF / 自己資金）"""
+    if self_funding <= 0:
+        return 0
+    
+    return (first_year_cf / (self_funding * 10000)) * 100
+
+
+def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> float:
+    """全期間のCCRを計算（平均年間CF / 自己資金）"""
+    if not cash_flow_table or self_funding <= 0:
+        return 0
+    
+    total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
+    years = len(cash_flow_table)
+    average_annual_cf = total_cf / years if years > 0 else 0
+    
+    return (average_annual_cf / (self_funding * 10000)) * 100
+
+
+def calculate_roi_full_period(cash_flow_table: List[Dict[str, Any]], total_investment: float) -> float:
+    """全期間のROIを計算（平均年間CF / 総投資額）"""
+    if not cash_flow_table or total_investment <= 0:
+        return 0
+    
+    total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
+    years = len(cash_flow_table)
+    average_annual_cf = total_cf / years if years > 0 else 0
+    
+    return (average_annual_cf / (total_investment * 10000)) * 100
+
+
 def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """完全なシミュレーションを実行"""
     # 基本指標
@@ -607,13 +639,35 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # 売却分析
     sale_analysis = calculate_sale_analysis(property_data)
     
-    # IRR計算
+    # キャッシュフロー表
+    cash_flow_table = calculate_cash_flow_table(property_data)
+    
+    # CCR計算（初年度ベース） - basic_metricsから取得
+    ccr_first_year = basic_metrics['ccr']
+    
+    # IRR計算（従来の計算）
     irr = calculate_irr(
         basic_metrics['annual_cf'],
         property_data.get('holding_years', 0),
         sale_analysis['sale_profit'],
         basic_metrics['self_funding'],
         basic_metrics['annual_loan']
+    )
+    
+    # 全期間のCCR計算
+    ccr_full_period = calculate_ccr_full_period(
+        cash_flow_table,
+        basic_metrics['self_funding']
+    )
+    
+    # ROI計算（初年度ベース） - basic_metricsから取得
+    roi_first_year = basic_metrics['roi']
+    
+    # 全期間のROI計算
+    total_investment = property_data.get('purchase_price', 0) + property_data.get('other_costs', 0) + property_data.get('renovation_cost', 0)
+    roi_full_period = calculate_roi_full_period(
+        cash_flow_table,
+        total_investment
     )
     
     # LTV計算
@@ -627,8 +681,12 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         "実質利回り（%）": round(basic_metrics['net_yield'], 2),
         "月間キャッシュフロー（円）": int(basic_metrics['monthly_cf']),
         "年間キャッシュフロー（円）": int(basic_metrics['annual_cf']),
-        "CCR（%）": round(basic_metrics['ccr'], 2),
-        "ROI（%）": round(basic_metrics['roi'], 2),
+        "CCR（%）": round(ccr_first_year, 2),  # 従来のキー（互換性維持）
+        "CCR（初年度）（%）": round(ccr_first_year, 2),
+        "CCR（全期間）（%）": round(ccr_full_period, 2),
+        "ROI（%）": round(roi_first_year, 2),  # 従来のキー（互換性維持）
+        "ROI（初年度）（%）": round(roi_first_year, 2),
+        "ROI（全期間）（%）": round(roi_full_period, 2),
         "IRR（%）": round(irr, 2) if irr is not None else None,
         "年間ローン返済額（円）": int(basic_metrics['annual_loan']),
         "NOI（円）": int(basic_metrics['noi']),
@@ -645,9 +703,6 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         "DSCR（返済余裕率）": round(basic_metrics['dscr'], 2),
         "自己資金（万円）": round(basic_metrics['self_funding'], 2)
     }
-    
-    # キャッシュフロー表
-    cash_flow_table = calculate_cash_flow_table(property_data)
     
     return {
         "results": results,
