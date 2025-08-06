@@ -3,31 +3,31 @@
 Streamlit開発版とFastAPI本番版で共通使用
 """
 
-from math import pow
+import math
 from typing import Dict, List, Optional, Any
 
 
-def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int, 
+def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int,
                            elapsed_years: int, loan_type: str = "元利均等") -> float:
     """ローン残高を計算"""
     r = interest_rate / 100 / 12
     n = loan_years * 12
     m = elapsed_years * 12
-    P = loan_amount * 10000
-    
+    principal = loan_amount * 10000
+
     if loan_type == "元利均等":
         if r == 0:
-            remaining = P * (n - m) / n
+            remaining = principal * (n - m) / n
         else:
-            remaining = P * (pow(1 + r, n) - pow(1 + r, m)) / (pow(1 + r, n) - 1)
+            remaining = principal * (math.pow(1 + r, n) - math.pow(1 + r, m)) / (math.pow(1 + r, n) - 1)
     else:
-        monthly_principal = P / n
-        remaining = P - (monthly_principal * m)
-    
+        monthly_principal = principal / n
+        remaining = principal - (monthly_principal * m)
+
     return remaining / 10000
 
 
-def calculate_irr(annual_cf: float, years: int, sale_profit: float, 
+def calculate_irr(annual_cf: float, years: int, sale_profit: float,
                  self_funding: float, annual_loan: float) -> Optional[float]:
     """IRR計算（簡単な近似）"""
     try:
@@ -37,29 +37,29 @@ def calculate_irr(annual_cf: float, years: int, sale_profit: float,
         
         if initial_investment <= 0:
             return None
-            
+
         # 簡単な近似計算
         total_return = total_cf / initial_investment
-        irr_approx = (pow(total_return, 1 / years) - 1) * 100
-        
+        irr_approx = (math.pow(total_return, 1 / years) - 1) * 100
+
         return irr_approx if irr_approx > -100 and irr_approx < 1000 else None
-    except:
+    except Exception:
         return None
 
 
-def calculate_monthly_loan_payment(loan_amount: float, interest_rate: float, 
+def calculate_monthly_loan_payment(loan_amount: float, interest_rate: float,
                                  loan_years: int) -> float:
     """月間ローン返済額を計算"""
     if loan_years <= 0:
         return 0
-    
+
     if interest_rate > 0:
         r = interest_rate / 100 / 12
         n = loan_years * 12
-        monthly_loan = loan_amount * 10000 * (r * pow(1 + r, n)) / (pow(1 + r, n) - 1)
+        monthly_loan = loan_amount * 10000 * (r * math.pow(1 + r, n)) / (math.pow(1 + r, n) - 1)
     else:
         monthly_loan = loan_amount * 10000 / (loan_years * 12)
-    
+
     return monthly_loan
 
 
@@ -141,7 +141,7 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
     exit_cap_rate = property_data.get('exit_cap_rate', 0)
     land_area = property_data.get('land_area', 0)
     road_price = property_data.get('road_price', 0)
-    building_area = property_data.get('building_area', 0)
+    # building_area = property_data.get('building_area', 0)  # 未使用
     market_value = property_data.get('market_value', 0)
     
     # 追加パラメータ
@@ -252,7 +252,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     property_tax = property_data.get('property_tax', 0)
     holding_years = property_data.get('holding_years', 0)
     rent_decline = property_data.get('rent_decline', 0)
-    building_area = property_data.get('building_area', 0)
+    # building_area = property_data.get('building_area', 0)  # 未使用
     
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)
@@ -356,7 +356,9 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         depreciation = building_depreciation + renovation_depreciation + capital_repairs_depreciation
         
         # 不動産所得（税金計算用）
-        real_estate_income = eff - annual_expenses - depreciation
+        # 通常修繕費は経費として控除、資本的支出は減価償却で処理
+        # effは万円単位なので円単位に変換
+        real_estate_income = eff * 10000 - annual_expenses - current_year_repair - depreciation
         
         # 税金計算（繰越欠損金を考慮）
         tax, accumulated_loss = calculate_tax_with_loss_carryforward(
@@ -502,7 +504,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         sale_net_profit = sale_cumulative_cf - cum
         
         # グラフ表示用の売却時累計CF（自己資金を差し引かない）
-        sale_cumulative_cf_display = cum + net_sale_proceeds
+        # sale_cumulative_cf_display = cum + net_sale_proceeds  # 未使用
         
         # 修繕費の情報表示（参考値）
         repair_info = 0
@@ -515,9 +517,9 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         
         cf_data.append({
             "年次": f"{i}年目",
-            "満室想定収入": int(full_annual_rent),
+            "満室想定収入": int(full_annual_rent * 10000),
             "空室率（%）": vacancy_rate,
-            "実効収入": int(eff),
+            "実効収入": int(eff * 10000),
             "経費": int(annual_expenses),
             "減価償却": int(depreciation),
             "税金": int(tax),
@@ -564,19 +566,17 @@ def calculate_tax(income: float, effective_tax_rate: float) -> float:
 
 
 def calculate_tax_with_loss_carryforward(
-    income: float, 
+    income: float,
     effective_tax_rate: float,
-    accumulated_loss: float = 0,
-    carryforward_years: int = 10  # 法人10年、個人3年
+    accumulated_loss: float = 0
 ) -> tuple[float, float]:
     """繰越欠損金を考慮した税金計算
-    
+
     Args:
         income: 当年度の不動産所得
         effective_tax_rate: 実効税率(%)
         accumulated_loss: 前年度までの繰越欠損金
-        carryforward_years: 繰越可能年数（法人10年、個人3年）
-    
+
     Returns:
         (税金額, 翌年繰越欠損金)
     """
@@ -588,11 +588,11 @@ def calculate_tax_with_loss_carryforward(
         # 利益の場合、繰越欠損金と相殺
         taxable_income = max(0, income - accumulated_loss)
         tax = taxable_income * (effective_tax_rate / 100)
-        
+
         # 使用した欠損金を差し引いて翌年へ
         used_loss = min(income, accumulated_loss)
         new_accumulated_loss = accumulated_loss - used_loss
-        
+
         return tax, new_accumulated_loss
 
 
@@ -703,7 +703,7 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         "DSCR（返済余裕率）": round(basic_metrics['dscr'], 2),
         "自己資金（万円）": round(basic_metrics['self_funding'], 2)
     }
-    
+
     return {
         "results": results,
         "cash_flow_table": cash_flow_table
