@@ -2742,25 +2742,20 @@ const Simulator: React.FC = () => {
                     <span className="font-semibold">{simulationResults?.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">CCR（自己資金回収率）</span>
-                    <span className="font-semibold">{simulationResults?.results['CCR（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="text-gray-600">CCR（初年度）</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）']?.toFixed(2) || '0.00'}%</span>
                   </div>
-                  {simulationResults?.cash_flow_table && simulationResults.cash_flow_table.length >= 2 && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 pl-4">├ 2年目以降のCCR</span>
-                      <span className="font-semibold text-green-600">
-                        {(() => {
-                          const selfFunding = simulationResults.results['自己資金（円）'] || 0;
-                          const year2CF = simulationResults.cash_flow_table[1]['営業CF'] || 0;
-                          const ccr2 = selfFunding > 0 ? (year2CF / selfFunding) * 100 : 0;
-                          return ccr2.toFixed(2);
-                        })()}%
-                      </span>
-                    </div>
-                  )}
                   <div className="flex justify-between">
-                    <span className="text-gray-600">ROI（投資収益率）</span>
-                    <span className="font-semibold">{simulationResults?.results['ROI（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="text-gray-600">CCR（全期間）</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">ROI（初年度）</span>
+                    <span className="font-semibold">{simulationResults?.results['ROI（初年度）（%）']?.toFixed(2) || '0.00'}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">ROI（全期間）</span>
+                    <span className="font-semibold">{simulationResults?.results['ROI（全期間）（%）']?.toFixed(2) || '0.00'}%</span>
                   </div>
                 </div>
               </div>

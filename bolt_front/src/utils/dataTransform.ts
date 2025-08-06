@@ -6,6 +6,22 @@
  * フォーム入力データをAPI送信用データに変換
  */
 export const transformFormDataToApiData = (inputs: any) => {
+  // monthly_rentの単位を判定して変換（1000以上なら円単位として万円に変換）
+  const monthlyRentValue = inputs.monthlyRent || 0;
+  const monthlyRentInManYen = monthlyRentValue >= 1000 ? monthlyRentValue / 10000 : monthlyRentValue;
+  
+  // デバッグ用ログ
+  console.log('月額家賃変換:', {
+    入力値: monthlyRentValue,
+    変換後: monthlyRentInManYen,
+    単位: monthlyRentValue >= 1000 ? '円→万円' : '万円のまま'
+  });
+  
+  // management_fee, fixed_cost, property_taxはそのまま使用（すでに円単位）
+  const managementFeeValue = inputs.managementFee || 0;
+  const fixedCostValue = inputs.fixedCost || 0;
+  const propertyTaxValue = inputs.propertyTax || 0;
+  
   const result = {
     property_name: inputs.propertyName || '不動産投資シミュレーション',
     location: inputs.location || '住所未設定',
@@ -18,10 +34,10 @@ export const transformFormDataToApiData = (inputs: any) => {
     purchase_price: inputs.purchasePrice || 0,
     other_costs: inputs.otherCosts || 0,
     renovation_cost: inputs.renovationCost || 0,
-    monthly_rent: inputs.monthlyRent || 0,
-    management_fee: inputs.managementFee || 0,
-    fixed_cost: inputs.fixedCost || 0,
-    property_tax: inputs.propertyTax || 0,
+    monthly_rent: monthlyRentInManYen,  // 万円単位で送信
+    management_fee: managementFeeValue,  // 円単位のまま送信
+    fixed_cost: fixedCostValue,  // 円単位のまま送信
+    property_tax: propertyTaxValue,  // 円単位のまま送信
     vacancy_rate: inputs.vacancyRate || 0,
     rent_decline: inputs.rentDecline || 0,
     loan_amount: inputs.loanAmount || 0,
