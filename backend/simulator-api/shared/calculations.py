@@ -16,6 +16,9 @@ def calculate_remaining_loan(loan_amount: float, interest_rate: float,
     m = elapsed_years * 12
     principal = loan_amount * 10000
 
+    if n == 0:
+        return 0  # ローン期間が0の場合は残高0
+
     if loan_type == "元利均等":
         if r == 0:
             remaining = principal * (n - m) / n
@@ -638,46 +641,40 @@ def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> float
 
 
 def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> float:
-    """全期間のCCRを計算（平均年間CF / 自己資金）"""
+    """全期間のCCRを計算（最終累計CF / 自己資金）"""
     try:
         if not cash_flow_table or self_funding <= 0:
             return 0
 
-        total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
+        # 最終年の累計CFを取得
+        final_cumulative_cf = cash_flow_table[-1].get('累計CF', 0) if cash_flow_table else 0
         years = len(cash_flow_table)
 
-        if years <= 0:
+        if years <= 0 or self_funding <= 0:
             return 0
 
-        average_annual_cf = total_cf / years
-
-        if self_funding <= 0:
-            return 0
-
-        return (average_annual_cf / (self_funding * 10000)) * 100
+        # 全期間CCR = 最終累計CF / 自己資金 / 年数 * 100
+        return (final_cumulative_cf / (self_funding * 10000) / years) * 100
     except (ZeroDivisionError, ValueError) as e:
         print(f"[WARNING] CCR計算でエラー: {e}")
         return 0
 
 
 def calculate_roi_full_period(cash_flow_table: List[Dict[str, Any]], total_investment: float) -> float:
-    """全期間のROIを計算（平均年間CF / 総投資額）"""
+    """全期間のROIを計算（最終累計CF / 総投資額）"""
     try:
         if not cash_flow_table or total_investment <= 0:
             return 0
 
-        total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
+        # 最終年の累計CFを取得
+        final_cumulative_cf = cash_flow_table[-1].get('累計CF', 0) if cash_flow_table else 0
         years = len(cash_flow_table)
 
-        if years <= 0:
+        if years <= 0 or total_investment <= 0:
             return 0
 
-        average_annual_cf = total_cf / years
-
-        if total_investment <= 0:
-            return 0
-
-        return (average_annual_cf / (total_investment * 10000)) * 100
+        # 全期間ROI = 最終累計CF / 総投資額 / 年数 * 100
+        return (final_cumulative_cf / (total_investment * 10000) / years) * 100
     except (ZeroDivisionError, ValueError) as e:
         print(f"[WARNING] ROI計算でエラー: {e}")
         return 0
