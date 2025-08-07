@@ -150,7 +150,8 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     total_investment = purchase_price + other_costs + renovation_cost
 
     # 各種比率（税引後ベース）
-    gross_yield = annual_rent / purchase_price * 100 if purchase_price > 0 else 0
+    # 表面利回り（業界標準：満室想定、空室率考慮なし）
+    gross_yield = (monthly_rent * 12) / purchase_price * 100 if purchase_price > 0 else 0
     # 実質利回り（noiとtaxは円単位）
     net_yield = ((noi - tax) / (purchase_price * 10000) * 100
                 if purchase_price > 0 else 0)
@@ -655,13 +656,21 @@ def calculate_tax_with_loss_carryforward(
         return 0, new_accumulated_loss
     else:
         # 利益の場合、繰越欠損金と相殺
-        taxable_income = max(0, income - accumulated_loss)
+        if accumulated_loss > 0:
+            # 繰越欠損金がある場合、利益から差し引く
+            taxable_income = max(0, income - accumulated_loss)
+            # 使用した欠損金を計算
+            used_loss = min(income, accumulated_loss)
+            # 残りの繰越欠損金
+            new_accumulated_loss = max(0, accumulated_loss - used_loss)
+        else:
+            # 繰越欠損金がない場合
+            taxable_income = income
+            new_accumulated_loss = 0
+        
+        # 税金計算
         tax = taxable_income * (effective_tax_rate / 100)
-
-        # 使用した欠損金を差し引いて翌年へ
-        used_loss = min(income, accumulated_loss)
-        new_accumulated_loss = accumulated_loss - used_loss
-
+        
         return tax, new_accumulated_loss
 
 
@@ -728,9 +737,11 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     cash_flow_table = calculate_cash_flow_table(property_data)
 
     # CCR計算（初年度ベース） - キャッシュフローテーブルから取得
+    # 改装費を含む正しい自己資金を使用
+    actual_self_funding = basic_metrics['self_funding']  # これには改装費が含まれている
     if cash_flow_table and len(cash_flow_table) > 0:
         first_year_actual_cf = cash_flow_table[0].get('営業CF', 0)
-        ccr_first_year = calculate_ccr_first_year(first_year_actual_cf, basic_metrics['self_funding'])
+        ccr_first_year = calculate_ccr_first_year(first_year_actual_cf, actual_self_funding)
     else:
         ccr_first_year = basic_metrics['ccr']
 
