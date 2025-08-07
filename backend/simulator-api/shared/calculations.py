@@ -34,7 +34,7 @@ def calculate_irr(annual_cf: float, years: int, sale_profit: float,
         annual_cf_after_debt = annual_cf - annual_loan
         total_cf = annual_cf_after_debt * years + sale_profit * 10000
         initial_investment = self_funding * 10000
-        
+
         if initial_investment <= 0:
             return None
 
@@ -43,7 +43,8 @@ def calculate_irr(annual_cf: float, years: int, sale_profit: float,
         irr_approx = (math.pow(total_return, 1 / years) - 1) * 100
 
         return irr_approx if irr_approx > -100 and irr_approx < 1000 else None
-    except Exception:
+    except (ValueError, ArithmeticError, TypeError, ZeroDivisionError):
+        # 数値計算エラーの場合はNone
         return None
 
 
@@ -77,50 +78,60 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     renovation_cost = property_data.get('renovation_cost', 0)
     interest_rate = property_data.get('interest_rate', 0)
     loan_years = property_data.get('loan_years', 0)
-    
+
     # キャッシュフロー計算
     annual_rent = monthly_rent * 12 * (1 - vacancy_rate / 100)  # 万円単位
     monthly_cf = monthly_rent * 10000 - management_fee - fixed_cost  # 円単位に変換して計算
     annual_cf = monthly_cf * 12  # 円単位
-    
+
     # 自己資金
     self_funding = purchase_price - loan_amount + other_costs + renovation_cost
-    
+
     # ローン返済
     monthly_loan = calculate_monthly_loan_payment(loan_amount, interest_rate, loan_years)
     annual_loan = monthly_loan * 12
-    
+
     # NOI
     noi = annual_rent * 10000 - (management_fee * 12 + fixed_cost * 12 + property_tax)  # 円単位に統一
-    
+
     # 税金計算用パラメータ（CCR/ROI計算のため）
     effective_tax_rate = property_data.get('effective_tax_rate', 20)
     building_price = property_data.get('building_price', 2000)
     depreciation_years = property_data.get('depreciation_years', 27)
-    
+
     # 減価償却費（1年目）
     annual_depreciation = calculate_depreciation(building_price, depreciation_years, 1)
-    
+
     # 不動産所得と税金
-    real_estate_income = annual_rent * 10000 - (management_fee * 12 + fixed_cost * 12 + property_tax) - annual_depreciation * 10000  # 円単位に統一
+    # 円単位に統一
+    annual_total_expenses = management_fee * 12 + fixed_cost * 12 + property_tax
+    real_estate_income = (annual_rent * 10000 - annual_total_expenses -
+                         annual_depreciation * 10000)
     tax = calculate_tax(real_estate_income, effective_tax_rate)
-    
+
     # 税引後キャッシュフロー（正確な計算）
     tax_after_cf = noi - tax
-    
+
     # 初年度の実際のキャッシュフロー（改装費を考慮）
     first_year_cf = tax_after_cf - annual_loan - (renovation_cost * 10000)
-    
+
     # 総投資額（物件価格 + 諸経費 + 改装費）
     total_investment = purchase_price + other_costs + renovation_cost
-    
+
     # 各種比率（税引後ベース）
     gross_yield = annual_rent / purchase_price * 100 if purchase_price > 0 else 0
-    net_yield = (noi - tax) / (purchase_price * 10000) * 100 if purchase_price > 0 else 0  # 実質利回り（noiとtaxは円単位）
-    ccr = (first_year_cf / (self_funding * 10000)) * 100 if self_funding > 0 else 0  # 初年度CCR（first_year_cfは円単位）
-    roi = (first_year_cf / (total_investment * 10000)) * 100 if total_investment > 0 else 0  # 総投資額ベース（first_year_cfは円単位）
-    dscr = noi / annual_loan if annual_loan > 0 else 0  # noiもannual_loanも円単位
-    
+    # 実質利回り（noiとtaxは円単位）
+    net_yield = ((noi - tax) / (purchase_price * 10000) * 100
+                if purchase_price > 0 else 0)
+    # 初年度CCR（first_year_cfは円単位）
+    ccr = ((first_year_cf / (self_funding * 10000)) * 100
+          if self_funding > 0 else 0)
+    # 総投資額ベース（first_year_cfは円単位）
+    roi = ((first_year_cf / (total_investment * 10000)) * 100
+          if total_investment > 0 else 0)
+    # noiもannual_loanも円単位
+    dscr = noi / annual_loan if annual_loan > 0 else 0
+
     return {
         'annual_rent': annual_rent,
         'annual_cf': annual_cf,
@@ -143,24 +154,24 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
     road_price = property_data.get('road_price', 0)
     building_area = property_data.get('building_area', 0)
     market_value = property_data.get('market_value', 0)
-    
+
     # 追加パラメータ
     year_built = property_data.get('year_built', 2000)
     property_type = property_data.get('property_type', '木造')
-    
+
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)
     noi = basic_metrics['noi']
-    
+
     # 収益還元評価
     if exit_cap_rate > 0:
         cap_rate_eval = noi / (exit_cap_rate / 100) / 10000
     else:
         cap_rate_eval = 0
-    
+
     # 土地評価
     land_eval = land_area * road_price / 10000
-    
+
     # 建物評価（積算法）
     # 構造別の再調達価格（万円/㎡）
     replacement_costs = {
@@ -170,7 +181,7 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
         "RC造": 22,
         "SRC造": 25
     }
-    
+
     # 法定耐用年数
     legal_useful_life = {
         "木造": 22,
@@ -179,21 +190,21 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
         "RC造": 47,
         "SRC造": 47
     }
-    
+
     # 再調達価格と耐用年数を取得（デフォルトは木造）
     unit_price = replacement_costs.get(property_type, 15)
     useful_life = legal_useful_life.get(property_type, 22)
-    
+
     # 築年数を計算
     current_year = 2025
     building_age = current_year - year_built
-    
+
     # 新築時の建物価格
     new_building_cost = building_area * unit_price
-    
+
     # 残存年数
     remaining_years = useful_life - building_age
-    
+
     # 建物評価額（積算法）
     if remaining_years <= 0:
         # 耐用年数超過 → 0円
@@ -202,10 +213,10 @@ def calculate_property_valuation(property_data: Dict[str, Any]) -> Dict[str, Any
         # 定額法による残存価値率（最終残存価値10%）
         residual_rate = (remaining_years / useful_life) * 0.9 + 0.1
         building_eval = new_building_cost * residual_rate
-    
+
     # 積算評価合計（リノベーション費用は含めない）
     assessed_total = land_eval + building_eval
-    
+
     return {
         'cap_rate_eval': cap_rate_eval,
         'land_eval': land_eval,
@@ -223,19 +234,20 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
     loan_type = property_data.get('loan_type', '元利均等')
     holding_years = property_data.get('holding_years', 0)
     # 想定売却価格を優先、なければ市場価格を使用
-    expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
-    
+    market_price = property_data.get('market_value', 0)
+    expected_sale_price = property_data.get('expected_sale_price', market_price)
+
     # 売却時のローン残高
     remaining_loan = calculate_remaining_loan(
         loan_amount, interest_rate, loan_years, holding_years, loan_type
     )
-    
+
     # 売却コスト（5%）
     sale_cost = expected_sale_price * 0.05
-    
+
     # 売却益
     sale_profit = expected_sale_price - remaining_loan - sale_cost
-    
+
     return {
         'remaining_loan': remaining_loan,
         'sale_cost': sale_cost,
@@ -253,66 +265,71 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     holding_years = property_data.get('holding_years', 0)
     rent_decline = property_data.get('rent_decline', 0)
     # building_area = property_data.get('building_area', 0)  # 未使用
-    
+
     # 基本指標を取得
     basic_metrics = calculate_basic_metrics(property_data)
     annual_loan = basic_metrics['annual_loan']
-    
+
     years_list = list(range(1, holding_years + 1))
     cum = 0
     cf_data = []
     accumulated_loss = 0  # 繰越欠損金の初期化
-    
+
     # 税金計算用パラメータ
     effective_tax_rate = property_data.get('effective_tax_rate', 20)
     building_price = property_data.get('building_price', 2000)
     depreciation_years = property_data.get('depreciation_years', 27)
-    
+
     # 売却価格評価方法を最初に決定（1年目の評価で判定）
-    expected_sale_price = property_data.get('expected_sale_price', property_data.get('market_value', 0))
+    market_value = property_data.get('market_value', 0)
+    expected_sale_price = property_data.get('expected_sale_price', market_value)
     exit_cap_rate = property_data.get('exit_cap_rate', 5.0)
     purchase_price = property_data.get('purchase_price', 0)
     land_price = purchase_price - building_price
-    
+
     # 1年目のNOIを計算して評価方法を決定
     first_year_eff = monthly_rent * 12 * (1 - vacancy_rate / 100)  # 万円単位
     first_year_expenses = (management_fee + fixed_cost) * 12 + property_tax  # 円単位
     renovation_cost = property_data.get('renovation_cost', 0)  # 万円単位
-    first_year_noi = first_year_eff * 10000 - first_year_expenses - renovation_cost * 10000  # 円単位に統一
-    
+    # 円単位に統一
+    first_year_noi = (first_year_eff * 10000 - first_year_expenses -
+                     renovation_cost * 10000)
+
     # 各評価方法の価格を計算
     manual_price = expected_sale_price if expected_sale_price is not None else 0
-    cap_rate_price = first_year_noi / (exit_cap_rate / 100) / 10000 if exit_cap_rate > 0 and first_year_noi > 0 else 0
-    
+    cap_rate_price = 0
+    if exit_cap_rate > 0 and first_year_noi > 0:
+        cap_rate_price = first_year_noi / (exit_cap_rate / 100) / 10000
+
     # 最も高い評価方法を決定
     price_method = 'manual'  # デフォルト
     highest_price = manual_price
-    
+
     if cap_rate_price > highest_price:
         price_method = 'cap_rate'
         highest_price = cap_rate_price
-    
+
     if land_price > highest_price:
         price_method = 'land'
         highest_price = land_price
-    
+
     for i in years_list:
         adjusted_monthly_rent = monthly_rent * (1 - (i - 1) * rent_decline / 100)  # 万円単位
         full_annual_rent = adjusted_monthly_rent * 12  # 万円単位
         eff = full_annual_rent * (1 - vacancy_rate / 100)  # 万円単位
-        
+
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax  # 円単位
-        
+
         # 大規模修繕（資本的支出対応）
         major_repair_cycle = property_data.get('major_repair_cycle', 10)
         major_repair_cost = property_data.get('major_repair_cost', 200)
-        
+
         # 修繕費の分類（20万円以上は資本的支出、未満は通常修繕）
         capital_repair_threshold = 20  # 20万円
-        
+
         current_year_repair = 0  # 通常修繕（経費）
         capital_repair_amount = 0  # 資本的修繕（今年度実施分）
-        
+
         if i % major_repair_cycle == 0:  # ユーザー指定周期で修繕実施
             if major_repair_cost >= capital_repair_threshold:
                 # 20万円以上は資本的支出として処理
@@ -322,26 +339,26 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                 # 20万円未満は通常修繕として経費計上
                 current_year_repair = major_repair_cost * 10000
                 capital_repair_amount = 0
-        
+
         # 改装費の会計処理（常に資本的支出として扱う）
         renovation_cost = property_data.get('renovation_cost', 0)
-        
+
         # 初期リフォーム費用の実際の支出（1年目のみ）
         initial_renovation_cash = 0
         if i == 1 and renovation_cost > 0:
             initial_renovation_cash = renovation_cost * 10000
-        
+
         # 各資産の減価償却を個別に計算
         # 1. 建物本体の減価償却
         building_depreciation = 0
         if i <= depreciation_years:
             building_depreciation = building_price * 10000 / depreciation_years
-        
+
         # 2. 初期改装費の減価償却
         renovation_depreciation = 0
         if renovation_cost > 0 and i <= depreciation_years:
             renovation_depreciation = renovation_cost * 10000 / depreciation_years
-        
+
         # 3. 資本的修繕の減価償却（各修繕時期から個別に償却）
         capital_repairs_depreciation = 0
         for past_year in range(1, i + 1):
@@ -351,30 +368,33 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                 if years_since_repair <= depreciation_years:
                     # まだ償却期間内
                     capital_repairs_depreciation += major_repair_cost * 10000 / depreciation_years
-        
+
         # 合計減価償却費
-        depreciation = building_depreciation + renovation_depreciation + capital_repairs_depreciation
-        
+        depreciation = (building_depreciation + renovation_depreciation +
+                       capital_repairs_depreciation)
+
         # 不動産所得（税金計算用）
         # 通常修繕費は経費として控除、資本的支出は減価償却で処理
-        real_estate_income = eff * 10000 - annual_expenses - current_year_repair - depreciation  # 円単位に統一
-        
+        # 円単位に統一
+        real_estate_income = (eff * 10000 - annual_expenses -
+                             current_year_repair - depreciation)
+
         # 税金計算（繰越欠損金を考慮）
         tax, accumulated_loss = calculate_tax_with_loss_carryforward(
             real_estate_income, effective_tax_rate, accumulated_loss
         )
-        
+
         # ローン関連パラメータの取得
         loan_amount = property_data.get('loan_amount', 0)
         interest_rate = property_data.get('interest_rate', 0)
         loan_years = property_data.get('loan_years', 0)
         loan_type = property_data.get('loan_type', '元利均等')
-        
+
         # 年次ローン返済額を正しく計算（完済後は0）
         remaining_loan = calculate_remaining_loan(
             loan_amount, interest_rate, loan_years, i, loan_type
         )
-        
+
         if i < loan_years:
             # ローン返済期間内（最終年を除く）
             actual_annual_loan = annual_loan
@@ -394,21 +414,24 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         else:
             # ローン完済後は返済額0
             actual_annual_loan = 0
-        
+
         # 資本的支出の実際の現金支出（その年に実際に支払う金額）
         capital_expenditure_cash = 0
         if i % major_repair_cycle == 0 and capital_repair_amount > 0:
             capital_expenditure_cash = capital_repair_amount * 10000
-        
+
         # キャッシュフロー（税引後）- 実際の現金の動きを反映
         # 通常修繕費 + 初期改装費の実支出 + 資本的修繕の実支出を差し引く
-        cf_i = eff * 10000 - annual_expenses - actual_annual_loan - current_year_repair - initial_renovation_cash - capital_expenditure_cash - tax  # 円単位に統一
+        # 円単位に統一
+        cf_i = (eff * 10000 - annual_expenses - actual_annual_loan -
+               current_year_repair - initial_renovation_cash -
+               capital_expenditure_cash - tax)
         cum += cf_i
-        
+
         # NOI（Net Operating Income）計算
         # 通常修繕のみ計上、資本的修繕は含めない（NOIは会計上の概念なので変更なし）
         noi = eff * 10000 - annual_expenses - current_year_repair  # 円単位に統一
-        
+
         # DSCR計算（ゼロ除算対策を強化）
         try:
             if actual_annual_loan > 0 and noi >= 0:
@@ -417,28 +440,28 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                 dscr = 0
         except (ZeroDivisionError, ValueError):
             dscr = 0
-        
+
         # 売却金額を計算（全年度で同じ評価方法を使用）
         price_decline_rate = property_data.get('price_decline_rate', 0)
-        
+
         if price_method == 'manual':
             # 方法1: ユーザー入力の想定売却価格（価格下落率を適用）
             if expected_sale_price > 0 and price_decline_rate > 0:
                 sale_price_current_year = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
             else:
                 sale_price_current_year = expected_sale_price
-        
+
         elif price_method == 'cap_rate':
             # 方法2: 収益還元法（売却時のNOI ÷ Cap Rate）
             if exit_cap_rate > 0 and noi > 0:
                 sale_price_current_year = noi / (exit_cap_rate / 100) / 10000
             else:
                 sale_price_current_year = 0
-        
+
         else:  # price_method == 'land'
             # 方法3: 土地価格（積算法の簡易版、変動なし）
             sale_price_current_year = land_price
-        
+
         # 売却価格が0の場合は、最低限購入価格の一定割合で売却できると仮定
         if sale_price_current_year == 0:
             # 価格下落を考慮して購入価格から計算
@@ -447,11 +470,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             else:
                 # 価格下落率が設定されていない場合は、年1%下落と仮定
                 sale_price_current_year = purchase_price * pow(0.99, i - 1)
-        
+
         sale_amount = sale_price_current_year * 10000
-        
-        
-        
+
+
+
         # 元金返済額の計算（年間ローン返済額 - 利息）
         if interest_rate > 0 and i > 0 and actual_annual_loan > 0:
             # 前年のローン残高から利息を計算
@@ -462,23 +485,23 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             principal_payment = actual_annual_loan - annual_interest
         else:
             principal_payment = actual_annual_loan
-        
-        
+
+
         # 自己資金回収率計算
         self_funding = basic_metrics['self_funding']
         recovery_rate = cum / (self_funding * 10000) if self_funding > 0 else 0
-        
+
         # 自己資金推移計算（初年度は投下自己資金がマイナスからスタート）
         if i == 1:
             self_funding_balance = -self_funding * 10000 + cf_i
         else:
             # 前年度までの累計CFから初期投下自己資金を差し引く
             self_funding_balance = cum - self_funding * 10000
-        
+
         # 売却時手取り計算（全年度で計算）
         if sale_amount > 0:
             sale_cost = sale_amount * 0.03  # 売却コスト3%（楽待基準）
-            
+
             # 譲渡所得税の計算
             purchase_price = property_data.get('purchase_price', 0)
             renovation_cost = property_data.get('renovation_cost', 0)
@@ -486,7 +509,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             # 取得費 = 購入価格 + 改装費 + 諸経費
             acquisition_cost = (purchase_price + renovation_cost + other_costs) * 10000
             capital_gain = sale_amount - acquisition_cost - depreciation * i  # 売却益
-            
+
             if capital_gain > 0:
                 # 短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
                 if i <= 5:
@@ -495,22 +518,22 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                     transfer_tax = capital_gain * 0.20
             else:
                 transfer_tax = 0
-            
+
             net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost - transfer_tax
         else:
             net_sale_proceeds = 0
-        
+
         # 売却時累計CF（楽待方式）
         # 累計CF + (売却金額 - 売却費用 - 譲渡所得税 - 残存借入額) - 自己資金
         # ただし、グラフ表示用に自己資金の差し引きは別途計算
         sale_cumulative_cf = cum + net_sale_proceeds - basic_metrics['self_funding'] * 10000
-        
+
         # 売却による純利益（売却時累計CF - 累計CF）
         sale_net_profit = sale_cumulative_cf - cum
-        
+
         # グラフ表示用の売却時累計CF（自己資金を差し引かない）
         # sale_cumulative_cf_display = cum + net_sale_proceeds  # 未使用
-        
+
         # 修繕費の情報表示（参考値）
         repair_info = 0
         if i == 1 and renovation_cost > 0:
@@ -519,7 +542,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         elif i % major_repair_cycle == 0:
             # 大規模修繕発生年に修繕費を情報表示
             repair_info = major_repair_cost * 10000
-        
+
         cf_data.append({
             "年次": f"{i}年目",
             "満室想定収入": int(full_annual_rent * 10000),
@@ -542,20 +565,24 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "売却による純利益": int(sale_net_profit),  # 売却による純利益
             "売却時累計CF": int(sale_cumulative_cf),  # 売却時累計CF（楽待方式）
             "売却価格内訳": {
-                "想定価格": int(expected_sale_price * pow(1 - price_decline_rate / 100, i - 1) * 10000) if price_decline_rate > 0 else int(expected_sale_price * 10000),
-                "収益還元価格": int(noi / (exit_cap_rate / 100)) if exit_cap_rate > 0 and noi > 0 else 0,
+                "想定価格": (int(expected_sale_price *
+                              pow(1 - price_decline_rate / 100, i - 1) * 10000)
+                            if price_decline_rate > 0
+                            else int(expected_sale_price * 10000)),
+                "収益還元価格": (int(noi / (exit_cap_rate / 100))
+                                if exit_cap_rate > 0 and noi > 0 else 0),
                 "土地価格": int(land_price * 10000),
                 "採用方法": price_method
             },
             "繰越欠損金": int(accumulated_loss)  # 繰越欠損金を追加
         })
-    
+
     return cf_data
 
 
 def calculate_depreciation(building_price: float, depreciation_years: int, year: int) -> float:
     """減価償却費を計算（定額法）
-    
+
     注：この関数は現在使用されていません。
     各資産の減価償却は calculate_cash_flow_table 内で個別に計算されています。
     """
@@ -605,7 +632,7 @@ def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> float
     """初年度CCRを計算（初年度CF / 自己資金）"""
     if self_funding <= 0:
         return 0
-    
+
     return (first_year_cf / (self_funding * 10000)) * 100
 
 
@@ -614,18 +641,18 @@ def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_fundin
     try:
         if not cash_flow_table or self_funding <= 0:
             return 0
-        
+
         total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
         years = len(cash_flow_table)
-        
+
         if years <= 0:
             return 0
-            
+
         average_annual_cf = total_cf / years
-        
+
         if self_funding <= 0:
             return 0
-            
+
         return (average_annual_cf / (self_funding * 10000)) * 100
     except (ZeroDivisionError, ValueError) as e:
         print(f"[WARNING] CCR計算でエラー: {e}")
@@ -637,18 +664,18 @@ def calculate_roi_full_period(cash_flow_table: List[Dict[str, Any]], total_inves
     try:
         if not cash_flow_table or total_investment <= 0:
             return 0
-        
+
         total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
         years = len(cash_flow_table)
-        
+
         if years <= 0:
             return 0
-            
+
         average_annual_cf = total_cf / years
-        
+
         if total_investment <= 0:
             return 0
-            
+
         return (average_annual_cf / (total_investment * 10000)) * 100
     except (ZeroDivisionError, ValueError) as e:
         print(f"[WARNING] ROI計算でエラー: {e}")
@@ -659,19 +686,19 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     """完全なシミュレーションを実行"""
     # 基本指標
     basic_metrics = calculate_basic_metrics(property_data)
-    
+
     # 物件評価
     valuation = calculate_property_valuation(property_data)
-    
+
     # 売却分析
     sale_analysis = calculate_sale_analysis(property_data)
-    
+
     # キャッシュフロー表
     cash_flow_table = calculate_cash_flow_table(property_data)
-    
+
     # CCR計算（初年度ベース） - basic_metricsから取得
     ccr_first_year = basic_metrics['ccr']
-    
+
     # IRR計算（従来の計算）
     irr = calculate_irr(
         basic_metrics['annual_cf'],
@@ -680,27 +707,31 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         basic_metrics['self_funding'],
         basic_metrics['annual_loan']
     )
-    
+
     # 全期間のCCR計算
     ccr_full_period = calculate_ccr_full_period(
         cash_flow_table,
         basic_metrics['self_funding']
     )
-    
+
     # ROI計算（初年度ベース） - basic_metricsから取得
     roi_first_year = basic_metrics['roi']
-    
+
     # 全期間のROI計算
-    total_investment = property_data.get('purchase_price', 0) + property_data.get('other_costs', 0) + property_data.get('renovation_cost', 0)
+    purchase = property_data.get('purchase_price', 0)
+    other = property_data.get('other_costs', 0)
+    renovation = property_data.get('renovation_cost', 0)
+    total_investment = purchase + other + renovation
     roi_full_period = calculate_roi_full_period(
         cash_flow_table,
         total_investment
     )
-    
+
     # LTV計算
     loan_amount = property_data.get('loan_amount', 0)
-    ltv = loan_amount / valuation['assessed_total'] * 100 if valuation['assessed_total'] > 0 else 0
-    
+    assessed = valuation['assessed_total']
+    ltv = loan_amount / assessed * 100 if assessed > 0 else 0
+
     # 結果をまとめる
     results = {
         "年間家賃収入（円）": int(basic_metrics['annual_rent']),
