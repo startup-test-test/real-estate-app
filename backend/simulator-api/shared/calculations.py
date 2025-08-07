@@ -144,6 +144,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     tax_after_cf = noi - tax
 
     # 初年度の実際のキャッシュフロー（改装費は含めない - キャッシュフロー表で別途計算）
+    # 注：改装費は別途キャッシュフロー表で処理される
     first_year_cf = tax_after_cf - annual_loan
 
     # 総投資額（物件価格 + 諸経費 + 改装費）
@@ -737,10 +738,12 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     cash_flow_table = calculate_cash_flow_table(property_data)
 
     # CCR計算（初年度ベース） - キャッシュフローテーブルから取得
-    # 改装費を含む正しい自己資金を使用
-    actual_self_funding = basic_metrics['self_funding']  # これには改装費が含まれている
+    # 重要：自己資金は購入価格 - 借入額 + 諸経費 + 改装費
+    actual_self_funding = basic_metrics['self_funding']  # 正しい自己資金（970万円）
+    
     if cash_flow_table and len(cash_flow_table) > 0:
         first_year_actual_cf = cash_flow_table[0].get('営業CF', 0)
+        # 正しい自己資金を使用してCCRを計算
         ccr_first_year = calculate_ccr_first_year(first_year_actual_cf, actual_self_funding)
     else:
         ccr_first_year = basic_metrics['ccr']
