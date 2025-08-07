@@ -7,6 +7,33 @@ import math
 from typing import Dict, List, Optional, Any, Tuple
 
 
+def calculate_brokerage_fee(sale_price_man: float) -> float:
+    """
+    売却時の仲介手数料を計算
+    
+    Args:
+        sale_price_man: 売却価格（万円単位）
+    
+    Returns:
+        仲介手数料（万円単位、消費税込み）
+    """
+    sale_price_yen = sale_price_man * 10000
+    
+    # 宅建業法の上限手数料率に基づく計算
+    if sale_price_yen <= 2000000:
+        fee = sale_price_yen * 0.05
+    elif sale_price_yen <= 4000000:
+        fee = sale_price_yen * 0.04 + 20000
+    else:
+        fee = sale_price_yen * 0.03 + 60000
+    
+    # 消費税10%を加算
+    fee_with_tax = fee * 1.1
+    
+    # 万円単位に変換して返す
+    return fee_with_tax / 10000
+
+
 def calculate_remaining_loan(loan_amount: float, interest_rate: float,
                            loan_years: int, elapsed_years: int,
                            loan_type: str = "元利均等") -> float:
@@ -246,8 +273,10 @@ def calculate_sale_analysis(property_data: Dict[str, Any]) -> Dict[str, Any]:
         loan_amount, interest_rate, loan_years, holding_years, loan_type
     )
 
-    # 売却コスト（5%）
-    sale_cost = expected_sale_price * 0.05
+    # 売却コスト（仲介手数料＋その他費用）
+    brokerage_fee = calculate_brokerage_fee(expected_sale_price)
+    other_costs = expected_sale_price * 0.01  # その他費用（登記費用、印紙税等）約1%
+    sale_cost = brokerage_fee + other_costs
 
     # 売却益
     sale_profit = expected_sale_price - remaining_loan - sale_cost
@@ -504,7 +533,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
 
         # 売却時手取り計算（全年度で計算）
         if sale_amount > 0:
-            sale_cost = sale_amount * 0.03  # 売却コスト3%（楽待基準）
+            # 売却コスト（仲介手数料＋その他費用）
+            sale_price_man = sale_amount / 10000  # 円単位から万円単位に変換
+            brokerage_fee = calculate_brokerage_fee(sale_price_man)
+            other_sale_costs = sale_price_man * 0.01  # その他費用（登記費用、印紙税等）約1%
+            sale_cost = (brokerage_fee + other_sale_costs) * 10000  # 円単位に戻す
 
             # 譲渡所得税の計算
             purchase_price = property_data.get('purchase_price', 0)
@@ -766,5 +799,9 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
         "results": results,
-        "cash_flow_table": cash_flow_table
+        "cash_flow_table": cash_flow_table,
+        "basic_metrics": basic_metrics,
+        "valuation": valuation,
+        "sale_analysis": sale_analysis,
+        "expected_sale_price": property_data.get('expected_sale_price', valuation['market_value'])
     }
