@@ -7,8 +7,9 @@ import math
 from typing import Dict, List, Optional, Any, Tuple
 
 
-def calculate_remaining_loan(loan_amount: float, interest_rate: float, loan_years: int,
-                           elapsed_years: int, loan_type: str = "元利均等") -> float:
+def calculate_remaining_loan(loan_amount: float, interest_rate: float,
+                           loan_years: int, elapsed_years: int,
+                           loan_type: str = "元利均等") -> float:
     """ローン残高を計算"""
     r = interest_rate / 100 / 12
     n = loan_years * 12
@@ -281,8 +282,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     depreciation_years = property_data.get('depreciation_years', 27)
 
     # 売却価格評価方法を最初に決定（1年目の評価で判定）
-    market_value = property_data.get('market_value', 0)
-    expected_sale_price = property_data.get('expected_sale_price', market_value)
+    market_val = property_data.get('market_value', 0)
+    expected_sale_price = property_data.get('expected_sale_price', market_val)
     exit_cap_rate = property_data.get('exit_cap_rate', 5.0)
     purchase_price = property_data.get('purchase_price', 0)
     land_price = purchase_price - building_price
