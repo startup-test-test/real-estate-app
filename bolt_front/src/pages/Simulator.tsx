@@ -191,42 +191,49 @@ const Simulator: React.FC = () => {
       const simulation = data?.find(sim => sim.id === simulationId);
       if (simulation && simulation.simulation_data) {
         const simData = simulation.simulation_data;
+        console.log('📖 読み込みデータ詳細:', {
+          renovationCost: simData.renovationCost,
+          managementFee: simData.managementFee,
+          vacancyRate: simData.vacancyRate,
+          fixedCost: simData.fixedCost,
+          fullData: simData
+        });
         setInputs({
           propertyName: simData.propertyName || '品川区投資物件',
           location: simData.location || '東京都品川区',
-          yearBuilt: simData.yearBuilt || 2020,
+          yearBuilt: simData.yearBuilt !== undefined ? simData.yearBuilt : 2020,
           propertyType: simData.propertyType || '',
-          landArea: simData.landArea || 135.00,
-          buildingArea: simData.buildingArea || 150.00,
-          roadPrice: simData.roadPrice || 250000,
-          marketValue: simData.marketValue || 8000,
-          purchasePrice: simData.purchasePrice || 6980,
-          otherCosts: simData.otherCosts || 300,
-          renovationCost: simData.renovationCost || 200,
-          monthlyRent: simData.monthlyRent || 250000,
-          managementFee: simData.managementFee || 5000,
-          fixedCost: simData.fixedCost || 0,
-          propertyTax: simData.propertyTax || 100000,
-          vacancyRate: simData.vacancyRate || 5.00,
-          rentDecline: simData.rentDecline || 1.00,
-          loanAmount: simData.loanAmount || 6500,
-          interestRate: simData.interestRate || 0.70,
-          loanYears: simData.loanYears || 35,
+          landArea: simData.landArea !== undefined ? simData.landArea : 135.00,
+          buildingArea: simData.buildingArea !== undefined ? simData.buildingArea : 150.00,
+          roadPrice: simData.roadPrice !== undefined ? simData.roadPrice : 250000,
+          marketValue: simData.marketValue !== undefined ? simData.marketValue : 8000,
+          purchasePrice: simData.purchasePrice !== undefined ? simData.purchasePrice : 6980,
+          otherCosts: simData.otherCosts !== undefined ? simData.otherCosts : 300,
+          renovationCost: simData.renovationCost !== undefined ? simData.renovationCost : 200,
+          monthlyRent: simData.monthlyRent !== undefined ? simData.monthlyRent : 250000,
+          managementFee: simData.managementFee !== undefined ? simData.managementFee : 5000,
+          fixedCost: simData.fixedCost !== undefined ? simData.fixedCost : 0,
+          propertyTax: simData.propertyTax !== undefined ? simData.propertyTax : 100000,
+          vacancyRate: simData.vacancyRate !== undefined ? simData.vacancyRate : 5.00,
+          rentDecline: simData.rentDecline !== undefined ? simData.rentDecline : 1.00,
+          loanAmount: simData.loanAmount !== undefined ? simData.loanAmount : 6500,
+          interestRate: simData.interestRate !== undefined ? simData.interestRate : 0.70,
+          loanYears: simData.loanYears !== undefined ? simData.loanYears : 35,
           loanType: simData.loanType || '元利均等',
-          holdingYears: simData.holdingYears || 10,
-          exitCapRate: simData.exitCapRate || 6.00,
-          expectedSalePrice: simData.expectedSalePrice || 1600,
+          holdingYears: simData.holdingYears !== undefined ? simData.holdingYears : 10,
+          exitCapRate: simData.exitCapRate !== undefined ? simData.exitCapRate : 6.00,
+          expectedSalePrice: simData.expectedSalePrice !== undefined ? simData.expectedSalePrice : 1600,
           ownershipType: simData.ownershipType || '個人',
-          effectiveTaxRate: simData.effectiveTaxRate || 20,
-          majorRepairCycle: simData.majorRepairCycle || 10,
-          majorRepairCost: simData.majorRepairCost || 200,
-          buildingPriceForDepreciation: simData.buildingPriceForDepreciation || 3000,
-          depreciationYears: simData.depreciationYears || 27,
+          effectiveTaxRate: simData.effectiveTaxRate !== undefined ? simData.effectiveTaxRate : 20,
+          majorRepairCycle: simData.majorRepairCycle !== undefined ? simData.majorRepairCycle : 10,
+          majorRepairCost: simData.majorRepairCost !== undefined ? simData.majorRepairCost : 200,
+          buildingPriceForDepreciation: simData.buildingPriceForDepreciation !== undefined ? simData.buildingPriceForDepreciation : 3000,
+          depreciationYears: simData.depreciationYears !== undefined ? simData.depreciationYears : 27,
           propertyUrl: simData.propertyUrl || '',
           propertyMemo: simData.propertyMemo || '',
           propertyImageUrl: simData.propertyImageUrl || '',
           propertyStatus: simData.propertyStatus || '検討中',
-          annualDepreciationRate: simData.annualDepreciationRate || 1.0,
+          annualDepreciationRate: simData.annualDepreciationRate !== undefined ? simData.annualDepreciationRate : 1.0,
           priceDeclineRate: simData.priceDeclineRate !== undefined && simData.priceDeclineRate !== null ? simData.priceDeclineRate : 0
         });
         
@@ -674,7 +681,13 @@ const Simulator: React.FC = () => {
               cash_flow_table: result.cash_flow_table || []
             };
             
-            console.log('保存データ:', simulationData);
+            console.log('保存データ詳細:', {
+              renovationCost: simulationData.simulation_data.renovationCost,
+              managementFee: simulationData.simulation_data.managementFee,
+              vacancyRate: simulationData.simulation_data.vacancyRate,
+              fixedCost: simulationData.simulation_data.fixedCost,
+              fullData: simulationData
+            });
             
             // 編集モードかどうかを判定
             const isEditMode = Boolean(editingId);
