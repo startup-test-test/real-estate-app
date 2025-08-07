@@ -409,8 +409,14 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 通常修繕のみ計上、資本的修繕は含めない（NOIは会計上の概念なので変更なし）
         noi = eff * 10000 - annual_expenses - current_year_repair  # 円単位に統一
         
-        # DSCR計算
-        dscr = noi / actual_annual_loan if actual_annual_loan > 0 else 0
+        # DSCR計算（ゼロ除算対策を強化）
+        try:
+            if actual_annual_loan > 0 and noi >= 0:
+                dscr = noi / actual_annual_loan
+            else:
+                dscr = 0
+        except (ZeroDivisionError, ValueError):
+            dscr = 0
         
         # 売却金額を計算（全年度で同じ評価方法を使用）
         price_decline_rate = property_data.get('price_decline_rate', 0)
@@ -605,26 +611,48 @@ def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> float
 
 def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> float:
     """全期間のCCRを計算（平均年間CF / 自己資金）"""
-    if not cash_flow_table or self_funding <= 0:
+    try:
+        if not cash_flow_table or self_funding <= 0:
+            return 0
+        
+        total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
+        years = len(cash_flow_table)
+        
+        if years <= 0:
+            return 0
+            
+        average_annual_cf = total_cf / years
+        
+        if self_funding <= 0:
+            return 0
+            
+        return (average_annual_cf / (self_funding * 10000)) * 100
+    except (ZeroDivisionError, ValueError) as e:
+        print(f"[WARNING] CCR計算でエラー: {e}")
         return 0
-    
-    total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
-    years = len(cash_flow_table)
-    average_annual_cf = total_cf / years if years > 0 else 0
-    
-    return (average_annual_cf / (self_funding * 10000)) * 100
 
 
 def calculate_roi_full_period(cash_flow_table: List[Dict[str, Any]], total_investment: float) -> float:
     """全期間のROIを計算（平均年間CF / 総投資額）"""
-    if not cash_flow_table or total_investment <= 0:
+    try:
+        if not cash_flow_table or total_investment <= 0:
+            return 0
+        
+        total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
+        years = len(cash_flow_table)
+        
+        if years <= 0:
+            return 0
+            
+        average_annual_cf = total_cf / years
+        
+        if total_investment <= 0:
+            return 0
+            
+        return (average_annual_cf / (total_investment * 10000)) * 100
+    except (ZeroDivisionError, ValueError) as e:
+        print(f"[WARNING] ROI計算でエラー: {e}")
         return 0
-    
-    total_cf = sum(row.get('営業CF', 0) for row in cash_flow_table)
-    years = len(cash_flow_table)
-    average_annual_cf = total_cf / years if years > 0 else 0
-    
-    return (average_annual_cf / (total_investment * 10000)) * 100
 
 
 def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
