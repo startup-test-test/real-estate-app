@@ -126,9 +126,9 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     noi = annual_rent * 10000 - (management_fee * 12 + fixed_cost * 12 + property_tax)  # 円単位に統一
 
     # 税金計算用パラメータ（CCR/ROI計算のため）
-    effective_tax_rate = property_data.get('effective_tax_rate', 20)
-    building_price = property_data.get('building_price', 2000)
-    depreciation_years = property_data.get('depreciation_years', 27)
+    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
+    building_price = float(property_data.get('building_price', 2000) or 2000)
+    depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
     # 減価償却費（1年目）
     annual_depreciation = calculate_depreciation(building_price, depreciation_years, 1)
@@ -311,9 +311,9 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     accumulated_loss = 0  # 繰越欠損金の初期化
 
     # 税金計算用パラメータ
-    effective_tax_rate = property_data.get('effective_tax_rate', 20)
-    building_price = property_data.get('building_price', 2000)
-    depreciation_years = property_data.get('depreciation_years', 27)
+    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
+    building_price = float(property_data.get('building_price', 2000) or 2000)
+    depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
     # 売却価格評価方法を最初に決定（1年目の評価で判定）
     market_val = property_data.get('market_value', 0)
@@ -356,8 +356,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax  # 円単位
 
         # 大規模修繕（資本的支出対応）
-        major_repair_cycle = property_data.get('major_repair_cycle', 0)
-        major_repair_cost = property_data.get('major_repair_cost', 0)
+        major_repair_cycle = int(property_data.get('major_repair_cycle', 0) or 0)
+        major_repair_cost = float(property_data.get('major_repair_cost', 0) or 0)
 
         # 修繕費の分類（20万円以上は資本的支出、未満は通常修繕）
         capital_repair_threshold = 20  # 20万円
