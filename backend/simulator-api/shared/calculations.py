@@ -356,8 +356,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax  # 円単位
 
         # 大規模修繕（資本的支出対応）
-        major_repair_cycle = property_data.get('major_repair_cycle', 10)
-        major_repair_cost = property_data.get('major_repair_cost', 200)
+        major_repair_cycle = property_data.get('major_repair_cycle', 0)
+        major_repair_cost = property_data.get('major_repair_cost', 0)
 
         # 修繕費の分類（20万円以上は資本的支出、未満は通常修繕）
         capital_repair_threshold = 20  # 20万円
@@ -365,7 +365,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         current_year_repair = 0  # 通常修繕（経費）
         capital_repair_amount = 0  # 資本的修繕（今年度実施分）
 
-        if i % major_repair_cycle == 0:  # ユーザー指定周期で修繕実施
+        if major_repair_cycle > 0 and i % major_repair_cycle == 0:  # ユーザー指定周期で修繕実施
             if major_repair_cost >= capital_repair_threshold:
                 # 20万円以上は資本的支出として処理
                 capital_repair_amount = major_repair_cost
@@ -397,7 +397,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 3. 資本的修繕の減価償却（各修繕時期から個別に償却）
         capital_repairs_depreciation = 0
         for past_year in range(1, i + 1):
-            if past_year % major_repair_cycle == 0 and major_repair_cost >= capital_repair_threshold:
+            if major_repair_cycle > 0 and past_year % major_repair_cycle == 0 and major_repair_cost >= capital_repair_threshold:
                 # 修繕実施年から償却開始
                 years_since_repair = i - past_year + 1
                 if years_since_repair <= depreciation_years:
@@ -452,7 +452,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
 
         # 資本的支出の実際の現金支出（その年に実際に支払う金額）
         capital_expenditure_cash = 0
-        if i % major_repair_cycle == 0 and capital_repair_amount > 0:
+        if major_repair_cycle > 0 and i % major_repair_cycle == 0 and capital_repair_amount > 0:
             capital_expenditure_cash = capital_repair_amount * 10000
 
         # キャッシュフロー（税引後）- 実際の現金の動きを反映
@@ -578,7 +578,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         if i == 1 and renovation_cost > 0:
             # 1年目に初期改装費を情報表示
             repair_info = renovation_cost * 10000
-        elif i % major_repair_cycle == 0:
+        elif major_repair_cycle > 0 and i % major_repair_cycle == 0:
             # 大規模修繕発生年に修繕費を情報表示
             repair_info = major_repair_cost * 10000
 
