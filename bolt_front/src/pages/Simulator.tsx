@@ -2454,9 +2454,11 @@ const Simulator: React.FC = () => {
                             <div className="mt-2 pt-2 border-t border-gray-600">
                               <div className="font-semibold mb-2">売却価格の算出方法</div>
                               <div className="space-y-1 mb-2">
+                                <div className="text-yellow-300">採用値：</div>
                                 <div>① 想定価格: ユーザー入力値 × 価格下落率</div>
-                                <div>② 収益還元価格: NOI ÷ Cap Rate</div>
-                                <div>③ 土地価格: 購入価格 - 建物価格</div>
+                                <div className="text-gray-400">参考値：</div>
+                                <div className="text-gray-400">② 収益還元価格: NOI ÷ Cap Rate</div>
+                                <div className="text-gray-400">③ 積算評価: 土地評価額 + 建物評価額</div>
                               </div>
                               <div className="pt-2 border-t border-gray-600">
                                 <div className="font-semibold mb-1">現在の評価額</div>
@@ -2466,7 +2468,7 @@ const Simulator: React.FC = () => {
                                   <div>想定売却: {simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</div>
                                 </div>
                               </div>
-                              <div className="mt-2 pt-2 border-t border-gray-600 font-semibold">→ 3つの最大値を採用</div>
+                              <div className="mt-2 pt-2 border-t border-gray-600 font-semibold">→ 想定売却価格を採用しています</div>
                             </div>
                           </div>
                         </th>
@@ -2571,10 +2573,11 @@ const Simulator: React.FC = () => {
               <div className="mt-3 p-3 bg-blue-50 rounded text-xs">
                 <span className="font-medium text-blue-800">💡 売却価格の算定方法</span>
                 <p className="mt-1 text-gray-700">
-                  売却価格は以下の3つから最大値を採用します：<br/>
+                  売却価格は想定売却価格を採用しています：<br/>
                   ① 想定売却価格（手動入力値に価格下落率を適用）<br/>
+                  <span className="text-gray-500">参考値：<br/>
                   ② 収益還元価格（売却時のNOI ÷ 売却時Cap Rate）<br/>
-                  ③ 土地価格（購入価格 - 建物価格）
+                  ③ 積算評価（土地評価額 + 建物評価額）</span>
                 </p>
               </div>
             </div>
