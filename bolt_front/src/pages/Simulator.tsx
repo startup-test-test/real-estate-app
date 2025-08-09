@@ -469,6 +469,40 @@ const Simulator: React.FC = () => {
       return;
     }
     
+    // 表面利回りチェック（BUG_013対応）
+    // 表面利回り = (月額賃料 × 12) / (物件価格 × 10000) × 100
+    if (inputs.purchasePrice > 0 && inputs.monthlyRent > 0) {
+      const surfaceYield = (inputs.monthlyRent * 12) / (inputs.purchasePrice * 10000) * 100;
+      
+      if (surfaceYield > 99) {
+        const maxMonthlyRent = Math.floor((inputs.purchasePrice * 10000 * 99) / (12 * 100));
+        const yieldErrors = [`表面利回りが${surfaceYield.toFixed(1)}%になります。99%を超える値は入力できません。月額賃料は${maxMonthlyRent.toLocaleString()}円以下にしてください。`];
+        const yieldFieldErrors: Record<string, string> = {
+          monthlyRent: `表面利回り99%以下となる値を入力してください（最大: ${maxMonthlyRent.toLocaleString()}円）`
+        };
+        
+        setValidationErrors(yieldErrors);
+        setFieldErrors(yieldFieldErrors);
+        setSaveError('入力エラー: ' + yieldErrors.join(', '));
+        
+        // エラーメッセージ表示後にスクロール
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+        return;
+      }
+      
+      // 警告表示（30%以上の場合）
+      if (surfaceYield >= 30) {
+        console.warn(`⚠️ 表面利回りが${surfaceYield.toFixed(1)}%と高い値です。入力値をご確認ください。`);
+      }
+    }
+    
     // セキュリティバリデーションチェック
     const securityValidation = validateSimulatorInputs(inputs);
     if (!securityValidation.isValid) {
