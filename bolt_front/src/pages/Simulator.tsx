@@ -436,6 +436,39 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
+    // ゼロ値バリデーションチェック（BUG_008対応）
+    const zeroValueErrors: string[] = [];
+    const zeroFieldErrors: Record<string, string> = {};
+    
+    // 必須数値フィールドのゼロチェック
+    if (!inputs.purchasePrice || inputs.purchasePrice <= 0) {
+      zeroValueErrors.push('物件価格は0より大きい値を入力してください');
+      zeroFieldErrors.purchasePrice = '物件価格は必須です（0より大きい値）';
+    }
+    
+    if (!inputs.monthlyRent || inputs.monthlyRent <= 0) {
+      zeroValueErrors.push('月額賃料は0より大きい値を入力してください');
+      zeroFieldErrors.monthlyRent = '月額賃料は必須です（0より大きい値）';
+    }
+    
+    // ゼロ値エラーがある場合は計算を中止
+    if (zeroValueErrors.length > 0) {
+      setValidationErrors(zeroValueErrors);
+      setFieldErrors(zeroFieldErrors);
+      setSaveError('入力エラー: ' + zeroValueErrors.join(', '));
+      
+      // エラーメッセージ表示後にスクロール
+      setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }, 100);
+      return;
+    }
+    
     // セキュリティバリデーションチェック
     const securityValidation = validateSimulatorInputs(inputs);
     if (!securityValidation.isValid) {
