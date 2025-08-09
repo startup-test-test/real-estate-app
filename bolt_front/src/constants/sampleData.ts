@@ -26,7 +26,7 @@ export const emptyPropertyData = {
   holdingYears: 0,
   exitCapRate: 0,
   ownershipType: '個人',
-  effectiveTaxRate: 0,
+  effectiveTaxRate: 20,
   majorRepairCycle: 0,
   majorRepairCost: 0,
   buildingPriceForDepreciation: 0,
