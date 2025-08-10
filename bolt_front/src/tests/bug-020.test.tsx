@@ -28,7 +28,7 @@ describe('BUG_020: 文字数上限チェック', () => {
     vi.clearAllMocks();
   });
 
-  it('物件名は200文字まで入力可能', () => {
+  it('物件名は50文字まで入力可能', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -40,26 +40,26 @@ describe('BUG_020: 文字数上限チェック', () => {
     const propertyNameInput = screen.getByPlaceholderText('例：カーサ○○マンション') as HTMLInputElement;
     
     // maxLength属性が設定されていることを確認
-    expect(propertyNameInput.maxLength).toBe(200);
+    expect(propertyNameInput.maxLength).toBe(50);
     
-    // 200文字の文字列を作成
-    const longText = 'あ'.repeat(200);
+    // 50文字の文字列を作成
+    const longText = 'あ'.repeat(50);
     fireEvent.change(propertyNameInput, { target: { value: longText } });
     
-    // 200文字入力できることを確認
+    // 50文字入力できることを確認
     expect(propertyNameInput.value).toBe(longText);
     
-    // 201文字を入力しようとしても、200文字の値がそのまま維持されることを確認
+    // 51文字を入力しようとしても、50文字の値がそのまま維持されることを確認
     const currentValue = propertyNameInput.value;
-    const tooLongText = 'あ'.repeat(201);
+    const tooLongText = 'あ'.repeat(51);
     fireEvent.change(propertyNameInput, { target: { value: tooLongText } });
     
     // React Testing Libraryではmaxlengthが自動的に適用されないため、
     // 実装側でmaxLengthが設定されていることを確認済み
-    // ブラウザでは自動的に200文字に制限される
+    // ブラウザでは自動的に50文字に制限される
   });
 
-  it('住所は500文字まで入力可能', () => {
+  it('住所は100文字まで入力可能', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -71,17 +71,17 @@ describe('BUG_020: 文字数上限チェック', () => {
     const locationInput = screen.getByPlaceholderText('例：東京都渋谷区神宮前1-1-1') as HTMLInputElement;
     
     // maxLength属性が設定されていることを確認
-    expect(locationInput.maxLength).toBe(500);
+    expect(locationInput.maxLength).toBe(100);
     
-    // 500文字の文字列を作成
-    const longText = 'あ'.repeat(500);
+    // 100文字の文字列を作成
+    const longText = 'あ'.repeat(100);
     fireEvent.change(locationInput, { target: { value: longText } });
     
-    // 500文字入力できることを確認
+    // 100文字入力できることを確認
     expect(locationInput.value).toBe(longText);
   });
 
-  it('物件URLは2000文字まで入力可能', () => {
+  it('物件URLは500文字まで入力可能', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -93,17 +93,17 @@ describe('BUG_020: 文字数上限チェック', () => {
     const urlInput = screen.getByPlaceholderText('https://ooya.tech/...') as HTMLInputElement;
     
     // maxLength属性が設定されていることを確認
-    expect(urlInput.maxLength).toBe(2000);
+    expect(urlInput.maxLength).toBe(500);
     
     // 長いURLを作成
-    const longUrl = 'https://example.com/' + 'a'.repeat(1980);
+    const longUrl = 'https://example.com/' + 'a'.repeat(480);
     fireEvent.change(urlInput, { target: { value: longUrl } });
     
-    // 2000文字まで入力できることを確認
+    // 500文字まで入力できることを確認
     expect(urlInput.value).toBe(longUrl);
   });
 
-  it('メモは1000文字まで入力可能', () => {
+  it('メモは500文字まで入力可能', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -115,13 +115,13 @@ describe('BUG_020: 文字数上限チェック', () => {
     const memoInput = screen.getByPlaceholderText('物件の特徴、気になるポイント、検討事項など...') as HTMLInputElement;
     
     // maxLength属性が設定されていることを確認
-    expect(memoInput.maxLength).toBe(1000);
+    expect(memoInput.maxLength).toBe(500);
     
-    // 1000文字の文字列を作成
-    const longText = 'あ'.repeat(1000);
+    // 500文字の文字列を作成
+    const longText = 'あ'.repeat(500);
     fireEvent.change(memoInput, { target: { value: longText } });
     
-    // 1000文字入力できることを確認
+    // 500文字入力できることを確認
     expect(memoInput.value).toBe(longText);
   });
 
@@ -140,9 +140,9 @@ describe('BUG_020: 文字数上限チェック', () => {
     const memoInput = screen.getByPlaceholderText('物件の特徴、気になるポイント、検討事項など...') as HTMLInputElement;
     
     // 各フィールドのmaxLength属性を確認
-    expect(propertyNameInput.maxLength).toBe(200);
-    expect(locationInput.maxLength).toBe(500);
-    expect(urlInput.maxLength).toBe(2000);
-    expect(memoInput.maxLength).toBe(1000);
+    expect(propertyNameInput.maxLength).toBe(50);
+    expect(locationInput.maxLength).toBe(100);
+    expect(urlInput.maxLength).toBe(500);
+    expect(memoInput.maxLength).toBe(500);
   });
 });
