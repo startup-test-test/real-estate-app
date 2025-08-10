@@ -102,6 +102,18 @@ def run_simulation(property_data: dict):
             property_data['holding_years'] = property_data.get('holdingYears', 0)
         if 'expectedSalePrice' in property_data:
             property_data['expected_sale_price'] = property_data.get('expectedSalePrice', 0)
+        if 'buildingPriceForDepreciation' in property_data:
+            property_data['building_price'] = property_data.get('buildingPriceForDepreciation', 0)
+        if 'exitCapRate' in property_data:
+            property_data['exit_cap_rate'] = property_data.get('exitCapRate', 0)
+        if 'priceDeclineRate' in property_data:
+            property_data['price_decline_rate'] = property_data.get('priceDeclineRate', 0)
+        if 'rentDecline' in property_data:
+            property_data['rent_decline'] = property_data.get('rentDecline', 0)
+        if 'majorRepairCycle' in property_data:
+            property_data['major_repair_cycle'] = property_data.get('majorRepairCycle', 0)
+        if 'majorRepairCost' in property_data:
+            property_data['major_repair_cost'] = property_data.get('majorRepairCost', 0)
         
         # 共通計算ロジックを使用してシミュレーション実行
         return run_full_simulation(property_data)
