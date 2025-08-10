@@ -772,6 +772,13 @@ const Simulator: React.FC = () => {
       // FAST API呼び出し（タイムアウト対応）
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-rwf1.onrender.com';
       
+      // デバッグ用：送信データのログ出力
+      if (import.meta.env.DEV) {
+        console.log('API送信データ:', apiData);
+        console.log('propertyTax:', apiData.propertyTax);
+        console.log('managementFee:', apiData.managementFee);
+      }
+
       // 最初にAPIを起動させる（Health Check）
       try {
         await fetch(`${API_BASE_URL}/`, { method: 'GET' });
@@ -879,6 +886,8 @@ const Simulator: React.FC = () => {
       if (import.meta.env.DEV) {
         console.log('FAST APIレスポンス:', result);
         console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
+        console.log('CCR（初年度）:', result.results?.['CCR（初年度）（%）']);
+        console.log('CCR（全期間）:', result.results?.['CCR（全期間）（%）']);
       }
       
       if (result.results) {
