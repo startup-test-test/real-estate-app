@@ -436,6 +436,32 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
+    // 必須項目チェック（BUG_010対応）
+    const errors = validateForm();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      setSaveError('必須項目を入力してください');
+      
+      // 最初のエラーフィールドにスクロール
+      setTimeout(() => {
+        const firstErrorField = Object.keys(fieldErrors)[0];
+        if (firstErrorField) {
+          const element = document.querySelector(
+            `[data-field="${firstErrorField}"]`
+          ) as HTMLElement;
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // フォーカスを当てる
+            const input = element.querySelector('input, select') as HTMLElement;
+            if (input) {
+              input.focus();
+            }
+          }
+        }
+      }, 100);
+      return;
+    }
+    
     // ゼロ値バリデーションチェック（BUG_008対応）
     const zeroValueErrors: string[] = [];
     const zeroFieldErrors: Record<string, string> = {};
@@ -514,31 +540,6 @@ const Simulator: React.FC = () => {
       // 最初のエラーフィールドにスクロール
       setTimeout(() => {
         const firstErrorField = Object.keys(securityValidation.errors)[0];
-        if (firstErrorField) {
-          const element = document.querySelector(
-            `[data-field="${firstErrorField}"]`
-          ) as HTMLElement;
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // フォーカスを当てる
-            const input = element.querySelector('input, select') as HTMLElement;
-            if (input) {
-              input.focus();
-            }
-          }
-        }
-      }, 100);
-      return;
-    }
-    
-    // 既存のバリデーションチェック
-    const errors = validateForm();
-    if (errors.length > 0) {
-      setValidationErrors(errors);
-      
-      // 最初のエラーフィールドにスクロール
-      setTimeout(() => {
-        const firstErrorField = Object.keys(fieldErrors)[0];
         if (firstErrorField) {
           const element = document.querySelector(
             `[data-field="${firstErrorField}"]`
