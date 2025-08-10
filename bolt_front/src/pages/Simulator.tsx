@@ -88,6 +88,20 @@ const Simulator: React.FC = () => {
     }
   };
 
+  // ペーストイベントハンドラー（BUG_016対応）
+  const handleNumberPaste = (e: React.ClipboardEvent<HTMLInputElement>, fieldName: string) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    const sanitized = sanitizeNumberInput(pastedText);
+    
+    // 入力フィールドに反映
+    const target = e.target as HTMLInputElement;
+    target.value = sanitized;
+    
+    // 状態を更新
+    handleFieldChange(fieldName, sanitized);
+  };
+
   // フォーカス時の処理（0をクリアまたは全選択）
   const handleNumberInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const fieldName = e.target.name || e.target.getAttribute('data-field');
@@ -299,14 +313,30 @@ const Simulator: React.FC = () => {
     return result;
   };
 
+  // 数値入力をサニタイズする関数（BUG_016対応）
+  const sanitizeNumberInput = (value: string): string => {
+    if (typeof value !== 'string') return String(value);
+    
+    // 全角を半角に変換
+    let sanitized = convertFullWidthToHalfWidth(value);
+    
+    // 日本語の単位（円、万円など）を除去
+    sanitized = sanitized.replace(/[円万千億]/g, '');
+    
+    // 空白を除去
+    sanitized = sanitized.trim();
+    
+    return sanitized;
+  };
+
   const handleInputChange = (field: string, value: string | number | boolean) => {
-    // 数値入力フィールドの場合、全角数字を半角に変換
+    // 数値入力フィールドの場合、サニタイズ処理を適用（BUG_016対応）
     if (typeof value === 'string') {
-      const convertedValue = convertFullWidthToHalfWidth(value);
-      const numValue = Number(convertedValue);
-      if (!isNaN(numValue) && convertedValue !== '') {
+      const sanitizedValue = sanitizeNumberInput(value);
+      const numValue = Number(sanitizedValue);
+      if (!isNaN(numValue) && sanitizedValue !== '') {
         value = numValue;
-      } else if (convertedValue === '') {
+      } else if (sanitizedValue === '') {
         value = '';  // 空文字列の場合はそのまま
       }
     } else if (typeof value === 'number' && isNaN(value)) {
@@ -1228,6 +1258,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.purchasePrice || ''}
                     onChange={(e) => handleFieldChange('purchasePrice', e.target.value)}
+                    onPaste={(e) => handleNumberPaste(e, 'purchasePrice')}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="purchasePrice"
@@ -1314,6 +1345,7 @@ const Simulator: React.FC = () => {
                     inputMode="numeric"
                     value={inputs.monthlyRent || ''}
                     onChange={(e) => handleFieldChange('monthlyRent', e.target.value)}
+                    onPaste={(e) => handleNumberPaste(e, 'monthlyRent')}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="monthlyRent"
@@ -1460,6 +1492,7 @@ const Simulator: React.FC = () => {
                     step="0.01"
                     value={inputs.loanAmount || ''}
                     onChange={(e) => handleFieldChange('loanAmount', e.target.value)}
+                    onPaste={(e) => handleNumberPaste(e, 'loanAmount')}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="loanAmount"
