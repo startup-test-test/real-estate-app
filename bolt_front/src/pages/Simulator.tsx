@@ -495,6 +495,71 @@ const Simulator: React.FC = () => {
       return;
     }
     
+    // 上限値チェック（BUG_009対応）
+    const maxValueErrors: string[] = [];
+    const maxFieldErrors: Record<string, string> = {};
+    
+    // 物件価格の上限チェック（最大100億円 = 1,000,000万円）
+    if (inputs.purchasePrice > 1000000) {
+      maxValueErrors.push('物件価格は100億円（1,000,000万円）以下で入力してください');
+      maxFieldErrors.purchasePrice = '最大値: 1,000,000万円';
+    }
+    
+    // 月額賃料の上限チェック（最大1000万円）
+    if (inputs.monthlyRent > 10000000) {
+      maxValueErrors.push('月額賃料は1000万円以下で入力してください');
+      maxFieldErrors.monthlyRent = '最大値: 1,000万円';
+    }
+    
+    // 借入期間の上限チェック（最大50年）
+    if (inputs.loanYears > 50) {
+      maxValueErrors.push('借入期間は50年以下で入力してください');
+      maxFieldErrors.loanYears = '最大値: 50年';
+    }
+    
+    // 金利の上限チェック（最大20%）
+    if (inputs.interestRate > 20) {
+      maxValueErrors.push('金利は20%以下で入力してください');
+      maxFieldErrors.interestRate = '最大値: 20%';
+    }
+    
+    // 建築年の範囲チェック（1900年～現在年）
+    const currentYear = new Date().getFullYear();
+    if (inputs.yearBuilt && (inputs.yearBuilt < 1900 || inputs.yearBuilt > currentYear)) {
+      maxValueErrors.push(`建築年は1900年から${currentYear}年の間で入力してください`);
+      maxFieldErrors.yearBuilt = `範囲: 1900年～${currentYear}年`;
+    }
+    
+    // 保有期間の上限チェック（最大50年）
+    if (inputs.holdingYears > 50) {
+      maxValueErrors.push('保有期間は50年以下で入力してください');
+      maxFieldErrors.holdingYears = '最大値: 50年';
+    }
+    
+    // 管理手数料の上限チェック（賃料の50%まで）
+    if (inputs.monthlyRent > 0 && inputs.managementFee > inputs.monthlyRent * 0.5) {
+      maxValueErrors.push('管理手数料は月額賃料の50%以下で入力してください');
+      maxFieldErrors.managementFee = `最大値: ${Math.floor(inputs.monthlyRent * 0.5).toLocaleString()}円`;
+    }
+    
+    // 上限値エラーがある場合は計算を中止
+    if (maxValueErrors.length > 0) {
+      setValidationErrors(maxValueErrors);
+      setFieldErrors(maxFieldErrors);
+      setSaveError('入力エラー: ' + maxValueErrors.join(', '));
+      
+      // エラーメッセージ表示後にスクロール
+      setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }, 100);
+      return;
+    }
+    
     // 表面利回りチェック（BUG_013対応）
     // 表面利回り = (月額賃料 × 12) / (物件価格 × 10000) × 100
     if (inputs.purchasePrice > 0 && inputs.monthlyRent > 0) {
