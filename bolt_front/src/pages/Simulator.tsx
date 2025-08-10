@@ -62,8 +62,8 @@ const Simulator: React.FC = () => {
     isOpen: boolean;
     errorCode?: string;
     message: string;
-    solution?: string;
-    details?: string[];
+    solution?: string | string[];
+    details?: string | string[];
   }>({ isOpen: false, message: '' });
   
   // エラー時のフィールドクラス名を取得
@@ -781,16 +781,52 @@ const Simulator: React.FC = () => {
       
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒でタイムアウト（BUG_021対応）
       
-      const response = await fetch(`${API_BASE_URL}/api/simulate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiData),
-        signal: controller.signal
-      });
+      let response;
+      try {
+        response = await fetch(`${API_BASE_URL}/api/simulate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(apiData),
+          signal: controller.signal
+        });
+      } catch (error: any) {
+        clearTimeout(timeoutId);
+        
+        // タイムアウトエラーの処理
+        if (error.name === 'AbortError') {
+          setErrorModalData({
+            isOpen: true,
+            errorCode: 'TIMEOUT_ERROR',
+            message: 'リクエストがタイムアウトしました',
+            solution: [
+              'サーバーが混雑している可能性があります',
+              'しばらく待ってから再度お試しください',
+              '問題が続く場合は、入力データを確認してください'
+            ],
+            details: '30秒以内に応答がありませんでした'
+          });
+          setIsSimulating(false);
+          return;
+        }
+        
+        // その他のネットワークエラー
+        setErrorModalData({
+          isOpen: true,
+          errorCode: 'NETWORK_ERROR',
+          message: 'ネットワークエラーが発生しました',
+          solution: [
+            'インターネット接続を確認してください',
+            'サーバーがメンテナンス中の可能性があります'
+          ],
+          details: error.message || 'ネットワーク接続に失敗しました'
+        });
+        setIsSimulating(false);
+        return;
+      }
       
       clearTimeout(timeoutId);
       

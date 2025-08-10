@@ -6,8 +6,8 @@ interface ErrorModalProps {
   onClose: () => void;
   errorCode?: string;
   message: string;
-  solution?: string;
-  details?: string[];
+  solution?: string | string[];
+  details?: string | string[];
   onRetry?: () => void;
 }
 
@@ -58,16 +58,20 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
           </div>
 
           {/* 詳細情報 */}
-          {details && details.length > 0 && (
+          {details && (
             <div className="mb-4">
               <h4 className="text-sm font-semibold text-gray-700 mb-2">詳細:</h4>
-              <ul className="list-disc list-inside space-y-1">
-                {details.map((detail, index) => (
-                  <li key={index} className="text-sm text-gray-600">
-                    {detail}
-                  </li>
-                ))}
-              </ul>
+              {Array.isArray(details) ? (
+                <ul className="list-disc list-inside space-y-1">
+                  {details.map((detail: string, index: number) => (
+                    <li key={index} className="text-sm text-gray-600">
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-600">{details}</p>
+              )}
             </div>
           )}
 
@@ -80,7 +84,17 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
                   <h4 className="text-sm font-semibold text-blue-900 mb-1">
                     対処法
                   </h4>
-                  <p className="text-sm text-blue-800">{solution}</p>
+                  {Array.isArray(solution) ? (
+                    <ul className="list-disc list-inside space-y-1">
+                      {solution.map((item: string, index: number) => (
+                        <li key={index} className="text-sm text-blue-800">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-blue-800">{solution}</p>
+                  )}
                 </div>
               </div>
             </div>
