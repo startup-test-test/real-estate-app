@@ -556,11 +556,12 @@ const Simulator: React.FC = () => {
       maxFieldErrors.interestRate = '最大値: 20%';
     }
     
-    // 建築年の範囲チェック（1900年～現在年）
+    // 建築年の範囲チェック（1900年～未来5年まで許可）
     const currentYear = new Date().getFullYear();
-    if (inputs.yearBuilt && (inputs.yearBuilt < 1900 || inputs.yearBuilt > currentYear)) {
-      maxValueErrors.push(`建築年は1900年から${currentYear}年の間で入力してください`);
-      maxFieldErrors.yearBuilt = `範囲: 1900年～${currentYear}年`;
+    const maxFutureYear = currentYear + 5; // 5年先まで許可（建設予定物件対応）
+    if (inputs.yearBuilt && (inputs.yearBuilt < 1900 || inputs.yearBuilt > maxFutureYear)) {
+      maxValueErrors.push(`建築年は1900年から${maxFutureYear}年の間で入力してください`);
+      maxFieldErrors.yearBuilt = `範囲: 1900年～${maxFutureYear}年`;
     }
     
     // 保有期間の上限チェック（最大50年）
@@ -1173,7 +1174,10 @@ const Simulator: React.FC = () => {
                 </div>
                 {inputs.yearBuilt && inputs.yearBuilt > 0 && (
                   <div className="text-xs text-gray-600 mt-1">
-                    築{new Date().getFullYear() - inputs.yearBuilt}年（{new Date().getFullYear()}年現在）
+                    {inputs.yearBuilt > new Date().getFullYear() 
+                      ? `建設予定（${inputs.yearBuilt}年完成予定）`
+                      : `築${new Date().getFullYear() - inputs.yearBuilt}年（${new Date().getFullYear()}年現在）`
+                    }
                   </div>
                 )}
                 <ErrorMessage fieldName="yearBuilt" />
