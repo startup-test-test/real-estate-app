@@ -259,8 +259,8 @@ const Simulator: React.FC = () => {
               '実質利回り（%）': simulation.results.netYield || simulation.results['実質利回り'] || simulation.results['実質利回り（%）'],
               'IRR（%）': simulation.results.irr || simulation.results['IRR'] || simulation.results['IRR（%）'],
               'CCR（%）': simulation.results.ccr || simulation.results['CCR'] || simulation.results['CCR（%）'],
-              'CCR（初年度）（%）': simulation.results['CCR（初年度）（%）'] || 0,
-              'CCR（全期間）（%）': simulation.results['CCR（全期間）（%）'] || 0,
+              'CCR（初年度）（%）': simulation.results['CCR（初年度）（%）'] ?? null,
+              'CCR（全期間）（%）': simulation.results['CCR（全期間）（%）'] ?? null,
               'ROI（%）': simulation.results.roi || simulation.results['ROI'] || simulation.results['ROI（%）'],
               'ROI（初年度）（%）': simulation.results['ROI（初年度）（%）'] || 0,
               'ROI（全期間）（%）': simulation.results['ROI（全期間）（%）'] || 0,
@@ -944,8 +944,8 @@ const Simulator: React.FC = () => {
                 netYield: result.results['実質利回り（%）'] || 0,
                 irr: result.results['IRR（%）'] || 0,
                 ccr: result.results['CCR（%）'] || 0,
-                'CCR（初年度）（%）': result.results['CCR（初年度）（%）'] || 0,
-                'CCR（全期間）（%）': result.results['CCR（全期間）（%）'] || 0,
+                'CCR（初年度）（%）': result.results['CCR（初年度）（%）'] ?? null,
+                'CCR（全期間）（%）': result.results['CCR（全期間）（%）'] ?? null,
                 roi: result.results['ROI（%）'] || 0,
                 'ROI（初年度）（%）': result.results['ROI（初年度）（%）'] || 0,
                 'ROI（全期間）（%）': result.results['ROI（全期間）（%）'] || 0,
@@ -2444,7 +2444,7 @@ const Simulator: React.FC = () => {
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">CCR（初年度）</span>
-                    <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）'] !== null && simulationResults?.results['CCR（初年度）（%）'] !== undefined ? `${simulationResults.results['CCR（初年度）（%）'].toFixed(2)}%` : 'N/A'}</span>
                     {simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] >= 12 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
@@ -2473,7 +2473,7 @@ const Simulator: React.FC = () => {
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">CCR（全期間）</span>
-                    <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）'] !== null && simulationResults?.results['CCR（全期間）（%）'] !== undefined ? `${simulationResults.results['CCR（全期間）（%）'].toFixed(2)}%` : 'N/A'}</span>
                     {simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] >= 12 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
@@ -3060,11 +3060,11 @@ const Simulator: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">CCR（初年度）</span>
-                    <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）'] !== null && simulationResults?.results['CCR（初年度）（%）'] !== undefined ? `${simulationResults.results['CCR（初年度）（%）'].toFixed(2)}%` : 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">CCR（全期間）</span>
-                    <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）'] !== null && simulationResults?.results['CCR（全期間）（%）'] !== undefined ? `${simulationResults.results['CCR（全期間）（%）'].toFixed(2)}%` : 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">ROI（初年度）</span>

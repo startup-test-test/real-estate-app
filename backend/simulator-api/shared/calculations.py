@@ -762,8 +762,8 @@ def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_fundin
         final_cumulative_cf = cash_flow_table[-1].get('累計CF', 0) if cash_flow_table else 0
         years = len(cash_flow_table)
 
-        if years <= 0 or self_funding <= 0:
-            return 0
+        if years <= 0:
+            return None
 
         # 全期間CCR = 運営累計CF / 自己資金 / 年数 * 100
         # 注：累計CFには売却益が含まれていないため、そのまま使用
