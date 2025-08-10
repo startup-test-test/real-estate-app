@@ -66,6 +66,43 @@ def run_simulation(property_data: dict):
         )
     
     try:
+        # キャメルケースからスネークケースへの変換
+        # フロントエンドから送信される propertyTax を property_tax に変換
+        if 'propertyTax' in property_data:
+            property_data['property_tax'] = property_data.get('propertyTax', 0)
+        if 'fixedCost' in property_data:
+            property_data['fixed_cost'] = property_data.get('fixedCost', 0)
+        if 'managementFee' in property_data:
+            property_data['management_fee'] = property_data.get('managementFee', 0)
+        if 'renovationCost' in property_data:
+            property_data['renovation_cost'] = property_data.get('renovationCost', 0)
+        if 'monthlyRent' in property_data:
+            property_data['monthly_rent'] = property_data.get('monthlyRent', 0)
+        if 'purchasePrice' in property_data:
+            property_data['purchase_price'] = property_data.get('purchasePrice', 0)
+        if 'loanAmount' in property_data:
+            property_data['loan_amount'] = property_data.get('loanAmount', 0)
+        if 'interestRate' in property_data:
+            property_data['interest_rate'] = property_data.get('interestRate', 0)
+        if 'loanYears' in property_data:
+            property_data['loan_years'] = property_data.get('loanYears', 0)
+        if 'loanType' in property_data:
+            property_data['loan_type'] = property_data.get('loanType', '元利均等')
+        if 'otherCosts' in property_data:
+            property_data['other_costs'] = property_data.get('otherCosts', 0)
+        if 'vacancyRate' in property_data:
+            property_data['vacancy_rate'] = property_data.get('vacancyRate', 0)
+        if 'buildingPrice' in property_data:
+            property_data['building_price'] = property_data.get('buildingPrice', 0)
+        if 'depreciationYears' in property_data:
+            property_data['depreciation_years'] = property_data.get('depreciationYears', 0)
+        if 'effectiveTaxRate' in property_data:
+            property_data['effective_tax_rate'] = property_data.get('effectiveTaxRate', 0)
+        if 'holdingYears' in property_data:
+            property_data['holding_years'] = property_data.get('holdingYears', 0)
+        if 'expectedSalePrice' in property_data:
+            property_data['expected_sale_price'] = property_data.get('expectedSalePrice', 0)
+        
         # 共通計算ロジックを使用してシミュレーション実行
         return run_full_simulation(property_data)
         
