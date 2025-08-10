@@ -1041,6 +1041,7 @@ const Simulator: React.FC = () => {
                   onChange={(e) => handleFieldChange('propertyName', e.target.value)}
                   placeholder="例：カーサ○○マンション"
                   className={getFieldClassName('propertyName')}
+                  maxLength={200}
                 />
                 <ErrorMessage fieldName="propertyName" />
               </div>
@@ -1059,6 +1060,7 @@ const Simulator: React.FC = () => {
                   onChange={(e) => handleFieldChange('location', e.target.value)}
                   placeholder="例：東京都渋谷区神宮前1-1-1"
                   className={getFieldClassName('location')}
+                  maxLength={500}
                 />
                 <ErrorMessage fieldName="location" />
               </div>
@@ -1931,6 +1933,7 @@ const Simulator: React.FC = () => {
                         ? 'border-red-300 focus:ring-red-500' 
                         : 'border-gray-300 focus:ring-indigo-500'
                     }`}
+                    maxLength={2000}
                   />
                   {urlError && (
                     <p className="text-xs text-red-600 mt-1">
@@ -1950,6 +1953,7 @@ const Simulator: React.FC = () => {
                     onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
                     placeholder="物件の特徴、気になるポイント、検討事項など..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    maxLength={1000}
                   />
                 </div>
               </div>
