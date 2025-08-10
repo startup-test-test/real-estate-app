@@ -280,7 +280,40 @@ const Simulator: React.FC = () => {
     }
   };
 
+  // 全角数字を半角に変換する関数（BUG_011対応）
+  const convertFullWidthToHalfWidth = (str: string): string => {
+    // 全角数字を半角に変換
+    let result = str.replace(/[０-９]/g, (s) => {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+    
+    // 全角ピリオドを半角に変換
+    result = result.replace(/．/g, '.');
+    
+    // 全角カンマを半角に変換（さらに除去）
+    result = result.replace(/，/g, ',');
+    
+    // カンマを除去（BUG_016対応の準備）
+    result = result.replace(/,/g, '');
+    
+    return result;
+  };
+
   const handleInputChange = (field: string, value: string | number | boolean) => {
+    // 数値入力フィールドの場合、全角数字を半角に変換
+    if (typeof value === 'string') {
+      const convertedValue = convertFullWidthToHalfWidth(value);
+      const numValue = Number(convertedValue);
+      if (!isNaN(numValue) && convertedValue !== '') {
+        value = numValue;
+      } else if (convertedValue === '') {
+        value = '';  // 空文字列の場合はそのまま
+      }
+    } else if (typeof value === 'number' && isNaN(value)) {
+      // NaNの場合は0に変換
+      value = 0;
+    }
+    
     setInputs((prev: any) => {
       const newInputs = {
         ...prev,
@@ -1061,8 +1094,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="1"
-                    value={inputs.landArea}
-                    onChange={(e) => handleInputChange('landArea', Number(e.target.value))}
+                    value={inputs.landArea || ''}
+                    onChange={(e) => handleInputChange('landArea', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="landArea"
@@ -1084,8 +1117,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="1"
-                    value={inputs.buildingArea}
-                    onChange={(e) => handleInputChange('buildingArea', Number(e.target.value))}
+                    value={inputs.buildingArea || ''}
+                    onChange={(e) => handleInputChange('buildingArea', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="buildingArea"
@@ -1106,8 +1139,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.roadPrice}
-                    onChange={(e) => handleInputChange('roadPrice', Number(e.target.value))}
+                    value={inputs.roadPrice || ''}
+                    onChange={(e) => handleInputChange('roadPrice', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="roadPrice"
@@ -1129,7 +1162,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.yearBuilt || ''}
-                    onChange={(e) => handleFieldChange('yearBuilt', Number(e.target.value) || 0)}
+                    onChange={(e) => handleFieldChange('yearBuilt', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="yearBuilt"
@@ -1187,8 +1220,8 @@ const Simulator: React.FC = () => {
                     type="number"
                     inputMode="decimal"
                     step="0.01"
-                    value={inputs.purchasePrice}
-                    onChange={(e) => handleFieldChange('purchasePrice', Number(e.target.value))}
+                    value={inputs.purchasePrice || ''}
+                    onChange={(e) => handleFieldChange('purchasePrice', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="purchasePrice"
@@ -1212,8 +1245,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.otherCosts}
-                    onChange={(e) => handleInputChange('otherCosts', Number(e.target.value))}
+                    value={inputs.otherCosts || ''}
+                    onChange={(e) => handleInputChange('otherCosts', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="otherCosts"
@@ -1236,8 +1269,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.renovationCost}
-                    onChange={(e) => handleInputChange('renovationCost', Number(e.target.value))}
+                    value={inputs.renovationCost || ''}
+                    onChange={(e) => handleInputChange('renovationCost', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="renovationCost"
@@ -1273,8 +1306,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     inputMode="numeric"
-                    value={inputs.monthlyRent}
-                    onChange={(e) => handleFieldChange('monthlyRent', Number(e.target.value))}
+                    value={inputs.monthlyRent || ''}
+                    onChange={(e) => handleFieldChange('monthlyRent', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="monthlyRent"
@@ -1297,8 +1330,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.managementFee}
-                    onChange={(e) => handleInputChange('managementFee', Number(e.target.value))}
+                    value={inputs.managementFee || ''}
+                    onChange={(e) => handleInputChange('managementFee', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="managementFee"
@@ -1320,8 +1353,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.fixedCost}
-                    onChange={(e) => handleInputChange('fixedCost', Number(e.target.value))}
+                    value={inputs.fixedCost || ''}
+                    onChange={(e) => handleInputChange('fixedCost', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="fixedCost"
@@ -1342,8 +1375,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.propertyTax}
-                    onChange={(e) => handleInputChange('propertyTax', Number(e.target.value))}
+                    value={inputs.propertyTax || ''}
+                    onChange={(e) => handleInputChange('propertyTax', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="propertyTax"
@@ -1366,8 +1399,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.vacancyRate}
-                    onChange={(e) => handleInputChange('vacancyRate', Number(e.target.value))}
+                    value={inputs.vacancyRate || ''}
+                    onChange={(e) => handleInputChange('vacancyRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="vacancyRate"
@@ -1389,8 +1422,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.rentDecline}
-                    onChange={(e) => handleInputChange('rentDecline', Number(e.target.value))}
+                    value={inputs.rentDecline || ''}
+                    onChange={(e) => handleInputChange('rentDecline', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="rentDecline"
@@ -1419,8 +1452,8 @@ const Simulator: React.FC = () => {
                     type="number"
                     inputMode="decimal"
                     step="0.01"
-                    value={inputs.loanAmount}
-                    onChange={(e) => handleFieldChange('loanAmount', Number(e.target.value))}
+                    value={inputs.loanAmount || ''}
+                    onChange={(e) => handleFieldChange('loanAmount', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="loanAmount"
@@ -1445,8 +1478,8 @@ const Simulator: React.FC = () => {
                     type="number"
                     inputMode="decimal"
                     step="0.01"
-                    value={inputs.interestRate}
-                    onChange={(e) => handleFieldChange('interestRate', Number(e.target.value))}
+                    value={inputs.interestRate || ''}
+                    onChange={(e) => handleFieldChange('interestRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="interestRate"
@@ -1469,8 +1502,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.loanYears}
-                    onChange={(e) => handleFieldChange('loanYears', Number(e.target.value))}
+                    value={inputs.loanYears || ''}
+                    onChange={(e) => handleFieldChange('loanYears', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="loanYears"
@@ -1521,8 +1554,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.holdingYears}
-                    onChange={(e) => handleFieldChange('holdingYears', Number(e.target.value))}
+                    value={inputs.holdingYears || ''}
+                    onChange={(e) => handleFieldChange('holdingYears', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="holdingYears"
@@ -1545,8 +1578,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.exitCapRate}
-                    onChange={(e) => handleFieldChange('exitCapRate', Number(e.target.value))}
+                    value={inputs.exitCapRate || ''}
+                    onChange={(e) => handleFieldChange('exitCapRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="exitCapRate"
@@ -1569,8 +1602,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.marketValue}
-                    onChange={(e) => handleInputChange('marketValue', Number(e.target.value))}
+                    value={inputs.marketValue || ''}
+                    onChange={(e) => handleInputChange('marketValue', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="marketValue"
@@ -1593,7 +1626,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     step="0.1"
                     value={inputs.priceDeclineRate || 0}
-                    onChange={(e) => handleInputChange('priceDeclineRate', Number(e.target.value))}
+                    onChange={(e) => handleInputChange('priceDeclineRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="priceDeclineRate"
@@ -1652,8 +1685,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.1"
-                    value={inputs.effectiveTaxRate || 0}
-                    onChange={(e) => handleInputChange('effectiveTaxRate', Number(e.target.value))}
+                    value={inputs.effectiveTaxRate || ''}
+                    onChange={(e) => handleFieldChange('effectiveTaxRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="effectiveTaxRate"
@@ -1675,8 +1708,8 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="100"
-                    value={inputs.buildingPriceForDepreciation || 0}
-                    onChange={(e) => handleInputChange('buildingPriceForDepreciation', Number(e.target.value))}
+                    value={inputs.buildingPriceForDepreciation || ''}
+                    onChange={(e) => handleFieldChange('buildingPriceForDepreciation', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="buildingPriceForDepreciation"
@@ -1698,8 +1731,8 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <input
                     type="number"
-                    value={inputs.depreciationYears || 27}
-                    onChange={(e) => handleInputChange('depreciationYears', Number(e.target.value))}
+                    value={inputs.depreciationYears || ''}
+                    onChange={(e) => handleFieldChange('depreciationYears', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="depreciationYears"
