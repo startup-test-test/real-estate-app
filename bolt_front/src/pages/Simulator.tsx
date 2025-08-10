@@ -775,8 +775,8 @@ const Simulator: React.FC = () => {
       // デバッグ用：送信データのログ出力
       if (import.meta.env.DEV) {
         console.log('API送信データ:', apiData);
-        console.log('propertyTax:', apiData.propertyTax);
-        console.log('managementFee:', apiData.managementFee);
+        console.log('property_tax:', apiData.property_tax);
+        console.log('management_fee:', apiData.management_fee);
       }
 
       // 最初にAPIを起動させる（Health Check）
