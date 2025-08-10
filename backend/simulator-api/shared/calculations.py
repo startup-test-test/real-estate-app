@@ -684,19 +684,23 @@ def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> float
 
 
 def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> float:
-    """全期間のCCRを計算（最終累計CF / 自己資金）"""
+    """全期間のCCRを計算（運営累計CF / 自己資金）
+    
+    注：売却益は除外し、運営CFのみで計算する
+    """
     try:
         if not cash_flow_table or self_funding <= 0:
             return 0
 
-        # 最終年の累計CFを取得
+        # 最終年の累計CF（運営のみ、売却益を含まない）を取得
         final_cumulative_cf = cash_flow_table[-1].get('累計CF', 0) if cash_flow_table else 0
         years = len(cash_flow_table)
 
         if years <= 0 or self_funding <= 0:
             return 0
 
-        # 全期間CCR = 最終累計CF / 自己資金 / 年数 * 100
+        # 全期間CCR = 運営累計CF / 自己資金 / 年数 * 100
+        # 注：累計CFには売却益が含まれていないため、そのまま使用
         return (final_cumulative_cf / (self_funding * 10000) / years) * 100
     except (ZeroDivisionError, ValueError) as e:
         print(f"[WARNING] CCR計算でエラー: {e}")
@@ -783,7 +787,7 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
 
     # 結果をまとめる
     results = {
-        "年間家賃収入（円）": int(basic_metrics['annual_rent']),
+        "年間家賃収入（円）": int(basic_metrics['annual_rent'] * 10000),  # 万円→円に変換
         "表面利回り（%）": round(basic_metrics['gross_yield'], 2),
         "実質利回り（%）": round(basic_metrics['net_yield'], 2),
         "月間キャッシュフロー（円）": int(basic_metrics['monthly_cf']),
