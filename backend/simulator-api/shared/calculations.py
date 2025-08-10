@@ -136,8 +136,16 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # 不動産所得と税金
     # 円単位に統一
     annual_total_expenses = management_fee * 12 + fixed_cost * 12 + property_tax
+    
+    # 支払利息の計算（初年度）
+    if interest_rate > 0 and loan_amount > 0:
+        annual_interest = loan_amount * 10000 * (interest_rate / 100)
+    else:
+        annual_interest = 0
+    
+    # 不動産所得（支払利息を損金算入）
     real_estate_income = (annual_rent * 10000 - annual_total_expenses -
-                         annual_depreciation * 10000)
+                         annual_interest - annual_depreciation * 10000)
     tax = calculate_tax(real_estate_income, effective_tax_rate)
 
     # 税引後キャッシュフロー（正確な計算）
@@ -158,7 +166,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
                 if purchase_price > 0 else 0)
     # 初年度CCR（first_year_cfは円単位）
     ccr = ((first_year_cf / (self_funding * 10000)) * 100
-          if self_funding > 0 else 0)
+          if self_funding > 0 else None)  # 自己資金≤0の場合はNone（N/A）
     # 総投資額ベース（first_year_cfは円単位）
     roi = ((first_year_cf / (total_investment * 10000)) * 100
           if total_investment > 0 else 0)
@@ -308,7 +316,12 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     years_list = list(range(1, holding_years + 1))
     cum = 0
     cf_data = []
-    accumulated_loss = 0  # 繰越欠損金の初期化
+    accumulated_loss = 0  # 繰越欠損金の初期化（旧方式、互換性のため残す）
+    
+    # FIFO方式の繰越欠損金管理
+    loss_carryforward_list = []  # [(year_occurred, amount, expiry_year), ...]
+    owner_type = property_data.get('owner_type', '個人')  # デフォルトは個人
+    carryforward_years = 3 if owner_type == '個人' else 10  # 個人3年、法人10年
 
     # 税金計算用パラメータ
     effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
@@ -408,22 +421,71 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         depreciation = (building_depreciation + renovation_depreciation +
                        capital_repairs_depreciation)
 
-        # 不動産所得（税金計算用）
-        # 通常修繕費は経費として控除、資本的支出は減価償却で処理
-        # 円単位に統一
-        real_estate_income = (eff * 10000 - annual_expenses -
-                             current_year_repair - depreciation)
-
-        # 税金計算（繰越欠損金を考慮）
-        tax, accumulated_loss = calculate_tax_with_loss_carryforward(
-            real_estate_income, effective_tax_rate, accumulated_loss
-        )
-
-        # ローン関連パラメータの取得
+        # ローン関連パラメータの取得（支払利息計算に必要）
         loan_amount = property_data.get('loan_amount', 0)
         interest_rate = property_data.get('interest_rate', 0)
         loan_years = property_data.get('loan_years', 0)
         loan_type = property_data.get('loan_type', '元利均等')
+        
+        # 支払利息の計算（各年度）
+        annual_interest = 0
+        if interest_rate > 0 and i > 0 and i <= loan_years:
+            # 前年のローン残高から利息を計算
+            if i == 1:
+                # 初年度は元本全額に対する利息
+                annual_interest = loan_amount * 10000 * (interest_rate / 100)
+            else:
+                prev_remaining = calculate_remaining_loan(
+                    loan_amount, interest_rate, loan_years, i-1, loan_type
+                )
+                annual_interest = prev_remaining * 10000 * (interest_rate / 100)
+        
+        # 不動産所得（税金計算用）
+        # 通常修繕費は経費として控除、資本的支出は減価償却で処理
+        # 支払利息も損金算入
+        # 円単位に統一
+        real_estate_income = (eff * 10000 - annual_expenses -
+                             current_year_repair - annual_interest - depreciation)
+
+        # 税金計算（FIFO方式の繰越欠損金を考慮）
+        # 期限切れの欠損金を削除
+        loss_carryforward_list = [(year, amount, expiry) 
+                                  for year, amount, expiry in loss_carryforward_list 
+                                  if expiry >= i]
+        
+        # 税金計算
+        if real_estate_income <= 0:
+            # 損失の場合、繰越欠損金リストに追加
+            loss_carryforward_list.append((i, abs(real_estate_income), i + carryforward_years))
+            tax = 0
+            # 互換性のため累積値も更新
+            accumulated_loss += abs(real_estate_income)
+        else:
+            # 利益の場合、FIFO方式で古い欠損金から相殺
+            remaining_income = real_estate_income
+            used_losses = []
+            
+            for idx, (year, amount, expiry) in enumerate(loss_carryforward_list):
+                if remaining_income <= 0:
+                    break
+                used = min(amount, remaining_income)
+                remaining_income -= used
+                if amount > used:
+                    # 一部使用の場合、残額を記録
+                    loss_carryforward_list[idx] = (year, amount - used, expiry)
+                else:
+                    # 全額使用の場合、削除対象としてマーク
+                    used_losses.append(idx)
+            
+            # 使用済みの欠損金を削除（インデックスの大きい順から削除）
+            for idx in sorted(used_losses, reverse=True):
+                del loss_carryforward_list[idx]
+            
+            # 課税所得に対して税金計算
+            tax = remaining_income * (effective_tax_rate / 100) if remaining_income > 0 else 0
+            
+            # 互換性のため累積値も更新
+            accumulated_loss = sum(amount for _, amount, _ in loss_carryforward_list)
 
         # 年次ローン返済額を正しく計算（完済後は0）
         remaining_loan = calculate_remaining_loan(
@@ -550,11 +612,15 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             capital_gain = sale_amount - acquisition_cost - depreciation * i  # 売却益
 
             if capital_gain > 0:
-                # 短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
-                if i <= 5:
-                    transfer_tax = capital_gain * 0.40
+                if owner_type == '個人':
+                    # 個人の場合：短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
+                    if i <= 5:
+                        transfer_tax = capital_gain * 0.40
+                    else:
+                        transfer_tax = capital_gain * 0.20
                 else:
-                    transfer_tax = capital_gain * 0.20
+                    # 法人の場合：実効税率を適用
+                    transfer_tax = capital_gain * (effective_tax_rate / 100)
             else:
                 transfer_tax = 0
 
@@ -675,22 +741,22 @@ def calculate_tax_with_loss_carryforward(
         return tax, new_accumulated_loss
 
 
-def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> float:
+def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> Optional[float]:
     """初年度CCRを計算（初年度CF / 自己資金）"""
     if self_funding <= 0:
-        return 0
+        return None  # 自己資金≤0の場合はNone（N/A）
 
     return (first_year_cf / (self_funding * 10000)) * 100
 
 
-def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> float:
+def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> Optional[float]:
     """全期間のCCRを計算（運営累計CF / 自己資金）
     
     注：売却益は除外し、運営CFのみで計算する
     """
     try:
         if not cash_flow_table or self_funding <= 0:
-            return 0
+            return None  # 自己資金≤0の場合はNone（N/A）
 
         # 最終年の累計CF（運営のみ、売却益を含まない）を取得
         final_cumulative_cf = cash_flow_table[-1].get('累計CF', 0) if cash_flow_table else 0
@@ -780,10 +846,10 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         total_investment
     )
 
-    # LTV計算
+    # LTV計算（購入価格ベース）
     loan_amount = property_data.get('loan_amount', 0)
-    assessed = valuation['assessed_total']
-    ltv = loan_amount / assessed * 100 if assessed > 0 else 0
+    purchase_price = property_data.get('purchase_price', 0)
+    ltv = loan_amount / purchase_price * 100 if purchase_price > 0 else 0
 
     # 結果をまとめる
     results = {
@@ -792,9 +858,9 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
         "実質利回り（%）": round(basic_metrics['net_yield'], 2),
         "月間キャッシュフロー（円）": int(basic_metrics['monthly_cf']),
         "年間キャッシュフロー（円）": int(basic_metrics['annual_cf']),
-        "CCR（%）": round(ccr_first_year, 2),  # 従来のキー（互換性維持）
-        "CCR（初年度）（%）": round(ccr_first_year, 2),
-        "CCR（全期間）（%）": round(ccr_full_period, 2),
+        "CCR（%）": round(ccr_first_year, 2) if ccr_first_year is not None else None,  # 従来のキー（互換性維持）
+        "CCR（初年度）（%）": round(ccr_first_year, 2) if ccr_first_year is not None else None,
+        "CCR（全期間）（%）": round(ccr_full_period, 2) if ccr_full_period is not None else None,
         "ROI（%）": round(roi_first_year, 2),  # 従来のキー（互換性維持）
         "ROI（初年度）（%）": round(roi_first_year, 2),
         "ROI（全期間）（%）": round(roi_full_period, 2),
