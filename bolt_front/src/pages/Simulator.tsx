@@ -310,6 +310,9 @@ const Simulator: React.FC = () => {
     // カンマを除去（BUG_016対応の準備）
     result = result.replace(/,/g, '');
     
+    // 全角パーセント記号を半角に変換（BUG_005対応）
+    result = result.replace(/％/g, '%');
+    
     return result;
   };
 
@@ -329,9 +332,58 @@ const Simulator: React.FC = () => {
     return sanitized;
   };
 
+  // パーセント入力を処理する関数（BUG_005対応）
+  const parsePercentageInput = (value: string, baseAmount: number): number | null => {
+    if (typeof value !== 'string') return null;
+    
+    // 全角を半角に変換
+    let normalized = convertFullWidthToHalfWidth(value);
+    
+    // %記号が含まれているかチェック
+    if (normalized.includes('%')) {
+      // %記号と空白を除去して数値を抽出
+      const percentValue = parseFloat(normalized.replace(/%/g, '').trim());
+      
+      if (!isNaN(percentValue) && baseAmount > 0) {
+        // パーセントから実際の金額を計算
+        return Math.round(baseAmount * (percentValue / 100));
+      }
+    }
+    
+    return null;
+  };
+
   const handleInputChange = (field: string, value: string | number | boolean) => {
-    // 数値入力フィールドの場合、サニタイズ処理を適用（BUG_016対応）
-    if (typeof value === 'string') {
+    // 管理手数料フィールドでパーセント入力の処理（BUG_005対応）
+    if (field === 'managementFee' && typeof value === 'string') {
+      // パーセント記号が含まれているかチェック（全角も考慮）
+      const normalizedValue = convertFullWidthToHalfWidth(value);
+      if (normalizedValue.includes('%')) {
+        // パーセント入力の場合
+        if (!inputs.monthlyRent || inputs.monthlyRent <= 0) {
+          // 月額賃料が未入力の場合は空にする
+          value = '';
+        } else {
+          const percentageAmount = parsePercentageInput(value, inputs.monthlyRent);
+          if (percentageAmount !== null) {
+            value = percentageAmount;
+          } else {
+            value = '';
+          }
+        }
+      } else {
+        // パーセント入力でない場合は通常の処理
+        const sanitizedValue = sanitizeNumberInput(value);
+        const numValue = Number(sanitizedValue);
+        if (!isNaN(numValue) && sanitizedValue !== '') {
+          value = numValue;
+        } else if (sanitizedValue === '') {
+          value = '';
+        }
+      }
+    } 
+    // その他の数値入力フィールドの場合、サニタイズ処理を適用（BUG_016対応）
+    else if (typeof value === 'string') {
       const sanitizedValue = sanitizeNumberInput(value);
       const numValue = Number(sanitizedValue);
       if (!isNaN(numValue) && sanitizedValue !== '') {
@@ -1367,16 +1419,19 @@ const Simulator: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <input
-                    type="number"
+                    type="text"
                     value={inputs.managementFee || ''}
                     onChange={(e) => handleInputChange('managementFee', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
                     data-field="managementFee"
-                    placeholder="12500"
+                    placeholder="12500円 または 5%"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                   <span className="text-sm text-gray-500 ml-2">円</span>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  ※「5%」のように入力すると月額賃料から自動計算されます
                 </div>
               </div>
 
