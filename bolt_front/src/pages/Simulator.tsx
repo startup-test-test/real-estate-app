@@ -774,6 +774,11 @@ const Simulator: React.FC = () => {
       
       // デバッグ用：送信データのログ出力
       if (import.meta.env.DEV) {
+        console.log('入力値（inputs）:', {
+          propertyTax: inputs.propertyTax,
+          managementFee: inputs.managementFee,
+          fixedCost: inputs.fixedCost
+        });
         console.log('API送信データ:', apiData);
         console.log('property_tax:', apiData.property_tax);
         console.log('management_fee:', apiData.management_fee);
