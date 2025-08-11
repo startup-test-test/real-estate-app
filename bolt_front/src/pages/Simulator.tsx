@@ -2434,7 +2434,7 @@ const Simulator: React.FC = () => {
                     'bg-red-100 text-red-800'
                   }`}>
                     <span className="font-normal mr-1">IRR</span>
-                    <span className="font-semibold">{simulationResults?.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="font-semibold">{simulationResults?.results['IRR（%）'] !== null && simulationResults?.results['IRR（%）'] !== undefined ? `${simulationResults.results['IRR（%）'].toFixed(2)}%` : 'N/A'}</span>
                     {simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
@@ -2604,12 +2604,16 @@ const Simulator: React.FC = () => {
                     (simulationResults.results['LTV（%）'] || 0) <= 70 ? 'bg-green-100 text-green-800' :
                     (simulationResults.results['LTV（%）'] || 0) <= 80 ? 'bg-yellow-100 text-yellow-800' :
                     (simulationResults.results['LTV（%）'] || 0) <= 90 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
+                    (simulationResults.results['LTV（%）'] || 0) <= 100 ? 'bg-red-100 text-red-800' :
+                    'bg-red-600 text-white animate-pulse'
                   }`}>
                     <span className="font-normal mr-1">LTV</span>
                     <span className="font-semibold">
                       {(simulationResults.results['LTV（%）'] || 0).toFixed(1)}%
                     </span>
+                    {(simulationResults.results['LTV（%）'] || 0) > 100 && (
+                      <span className="ml-1">⚠️</span>
+                    )}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">LTV（融資比率）</div>
@@ -3070,7 +3074,7 @@ const Simulator: React.FC = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">IRR（内部収益率）</span>
-                    <span className="font-semibold">{simulationResults?.results['IRR（%）']?.toFixed(2) || '0.00'}%</span>
+                    <span className="font-semibold">{simulationResults?.results['IRR（%）'] !== null && simulationResults?.results['IRR（%）'] !== undefined ? `${simulationResults.results['IRR（%）'].toFixed(2)}%` : 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">CCR（初年度）</span>
