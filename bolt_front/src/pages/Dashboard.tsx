@@ -418,7 +418,7 @@ const Dashboard: React.FC = () => {
       color: 'bg-slate-700',
       description: '60秒で投資判断の全てが分かる。売却時累計CF・キャッシュフロー推移・投資利回りをグラフと数値で診断',
       actions: [
-        { name: '新規シミュレーション開始', primary: true, path: '/simulator' }
+        { name: 'シミュレーションを開始する', primary: true, path: '/simulator' }
       ]
     },
     // 2次リリース用: AI取引事例検索機能
@@ -562,7 +562,7 @@ const Dashboard: React.FC = () => {
                 className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                新規シミュレーション
+                シミュレーションを開始する
               </button>
             </div>
 
