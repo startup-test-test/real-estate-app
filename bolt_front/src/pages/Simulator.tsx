@@ -2626,6 +2626,16 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* N/A表記の注釈 - 自己資金がマイナスの場合のみ表示 */}
+              {simulationResults && 
+               simulationResults.results && 
+               simulationResults.results['自己資金（円）'] !== undefined &&
+               simulationResults.results['自己資金（円）'] <= 0 && (
+                <div className="mt-3 text-xs text-gray-500">
+                  ※ 自己資金がマイナス（借入額が総投資額を上回る）のため算出できない項目はN/Aと表記しています
+                </div>
+              )}
             </div>
             
             {/* 📋 年次キャッシュフロー詳細 - 最優先表示 */}
