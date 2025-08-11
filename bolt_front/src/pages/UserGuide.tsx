@@ -1,20 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   BookOpen, 
-  Play, 
   CheckCircle, 
-  ArrowRight, 
   Calculator,
   Building,
   TrendingUp,
-  Users,
   Shield,
   Zap,
   Target,
-  BarChart3
+  BarChart3,
+  ChevronDown,
+  ChevronUp,
+  CreditCard,
+  MessageCircle,
+  Mail
 } from 'lucide-react';
 
 const UserGuide: React.FC = () => {
+  const [openItems, setOpenItems] = useState<number[]>([]);
+
+  const toggleItem = (index: number) => {
+    setOpenItems(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
+  };
+
+  // URLのハッシュを監視してFAQセクションへスクロール
+  React.useEffect(() => {
+    if (window.location.hash === '#faq') {
+      setTimeout(() => {
+        const element = document.getElementById('faq');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, []);
   const steps = [
     {
       id: 1,
@@ -30,14 +53,14 @@ const UserGuide: React.FC = () => {
     },
     {
       id: 2,
-      title: 'AI分析の実行',
-      description: 'AIが市場データを基に物件の投資価値を分析します',
+      title: 'シミュレーションの実行',
+      description: '入力した条件を基に収益性を詳細に分析します',
       icon: Zap,
       details: [
-        '2億件超の不動産データから類似物件を抽出',
-        '収益還元法による適正価格の算出',
-        '空室率・賃料下落率の予測',
-        '投資リスクの評価'
+        '収益還元法による投資価値の算出',
+        '各種投資指標の自動計算',
+        '空室率・賃料下落率を考慮した予測',
+        'キャッシュフローの長期予測'
       ]
     },
     {
@@ -46,7 +69,7 @@ const UserGuide: React.FC = () => {
       description: '詳細な分析結果とシミュレーションを確認できます',
       icon: BarChart3,
       details: [
-        'キャッシュフロー予測（最大30年）',
+        'キャッシュフロー予測（最大35年）',
         '投資指標（IRR、CCR、DSCR等）',
         '市場価格との比較分析',
         '将来の売却シミュレーション'
@@ -57,13 +80,13 @@ const UserGuide: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: 'AI物件シミュレーター',
-      description: '2億件超の不動産データを活用したAI分析で、物件の収益性と投資リスクを正確に評価します。'
+      title: '収益シミュレーター',
+      description: '物件の収益性と投資リスクを詳細に分析し、長期的な収支予測を行います。'
     },
     {
       icon: TrendingUp,
       title: '長期収益予測',
-      description: '最大30年間のキャッシュフロー予測と、様々な売却タイミングでの収益シミュレーションが可能です。'
+      description: '最大35年間のキャッシュフロー予測と、様々な売却タイミングでの収益シミュレーションが可能です。'
     },
     {
       icon: Target,
@@ -72,8 +95,8 @@ const UserGuide: React.FC = () => {
     },
     {
       icon: Shield,
-      title: '市場価格分析',
-      description: '周辺の類似物件データと比較して、物件価格の妥当性を評価します。'
+      title: 'リスク分析',
+      description: '空室率や家賃下落率を考慮した、現実的な収益予測を提供します。'
     }
   ];
 
@@ -84,30 +107,13 @@ const UserGuide: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center mb-4">
             <BookOpen className="h-8 w-8 text-indigo-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-900">はじめに・ご利用ガイド</h1>
+            <h1 className="text-3xl font-bold text-gray-900">ご利用ガイド・よくある質問</h1>
           </div>
           <p className="text-lg text-gray-600">
-            大家DXの使い方をご説明します。AIを活用した不動産投資分析で、より良い投資判断をサポートします。
+            大家DXの使い方とよくある質問をまとめました。不動産投資の収益シミュレーションで、より良い投資判断をサポートします。
           </p>
         </div>
 
-        {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-8 mb-8 text-white">
-          <h2 className="text-2xl font-bold mb-4">大家DXへようこそ！</h2>
-          <p className="text-lg mb-6">
-            AIが導く、あなたの賃貸経営の未来。2億件超の不動産データを活用して、最適な投資判断をサポートします。
-          </p>
-          <div className="flex items-center space-x-4">
-            <button className="flex items-center px-6 py-3 bg-white text-indigo-600 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-              <Play className="h-5 w-5 mr-2" />
-              チュートリアル動画を見る
-            </button>
-            <button className="flex items-center px-6 py-3 border border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors">
-              <Calculator className="h-5 w-5 mr-2" />
-              今すぐ始める
-            </button>
-          </div>
-        </div>
 
         {/* Main Features */}
         <div className="mb-8">
@@ -161,11 +167,6 @@ const UserGuide: React.FC = () => {
                         ))}
                       </ul>
                     </div>
-                    {index < steps.length - 1 && (
-                      <div className="flex-shrink-0">
-                        <ArrowRight className="h-6 w-6 text-gray-400" />
-                      </div>
-                    )}
                   </div>
                 </div>
               );
@@ -174,45 +175,237 @@ const UserGuide: React.FC = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="mb-8">
+        <div className="mb-8" id="faq">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">よくある質問</h2>
-          <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
-            <div className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">AI査定価格はどのように算出されますか？</h3>
-              <p className="text-gray-600 text-sm">
-                2億件超の不動産データを機械学習で分析し、収益還元法に基づいて算出しています。立地、築年数、構造などの要素を総合的に評価します。
-              </p>
+          
+          {/* 基本的な使い方 */}
+          <div className="mb-6">
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-200 bg-blue-50">
+                <div className="flex items-center">
+                  <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">基本的な使い方</h3>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200">
+                {[
+                  {
+                    question: '大家DXとは何ですか？',
+                    answer: '大家DXは、不動産投資の収益シミュレーションツールです。物件情報を入力することで、キャッシュフローや投資指標を計算し、投資判断の参考情報を提供します。※本ツールは教育・参考目的であり、投資推奨ではありません。'
+                  },
+                  {
+                    question: 'どのような物件を分析できますか？',
+                    answer: '一棟アパート・マンション、区分マンション、戸建て、商業用不動産など、様々な種類の投資用不動産を分析できます。新築・中古を問わず、全国の物件に対応しています。'
+                  },
+                  {
+                    question: '初心者でも使えますか？',
+                    answer: 'はい。直感的なインターフェースと詳細なガイドにより、不動産投資初心者の方でも簡単にご利用いただけます。また、用語解説や投資指標の説明も充実しています。'
+                  }
+                ].map((item, index) => {
+                  const globalIndex = 100 + index;
+                  const isOpen = openItems.includes(globalIndex);
+                  return (
+                    <div key={index}>
+                      <button
+                        onClick={() => toggleItem(globalIndex)}
+                        className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-gray-900 pr-4">{item.question}</h4>
+                          {isOpen ? (
+                            <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          )}
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 pb-4">
+                          <p className="text-gray-600 text-sm leading-relaxed">{item.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">シミュレーション結果の精度はどの程度ですか？</h3>
-              <p className="text-gray-600 text-sm">
-                過去の実績データとの照合により、高い精度を実現していますが、市場環境の変化により実際の結果と異なる場合があります。投資判断の参考としてご活用ください。
-              </p>
+          </div>
+
+          {/* シミュレーション機能について */}
+          <div className="mb-6">
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-200 bg-purple-50">
+                <div className="flex items-center">
+                  <Zap className="h-5 w-5 text-purple-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">シミュレーション機能について</h3>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200">
+                {[
+                  {
+                    question: 'シミュレーションではどのような計算を行いますか？',
+                    answer: '入力された物件情報、収益情報、借入条件等を基に、IRR（内部収益率）、CCR（自己資金収益率）、キャッシュフロー等の投資指標を算出します。これらは一般的な不動産投資の計算式に基づく参考値です。'
+                  },
+                  {
+                    question: 'シミュレーション結果の精度はどの程度ですか？',
+                    answer: '過去の実績データとの照合により、高い精度を実現していますが、市場環境の変化により実際の結果と異なる場合があります。投資判断の参考としてご活用ください。'
+                  },
+                  {
+                    question: 'シミュレーションの限界はありますか？',
+                    answer: 'シミュレーションは入力値に基づく机上の計算であり、実際の市場動向、物件の個別事情、突発的な事象等は反映されません。あくまで参考情報としてご利用いただき、実際の投資判断は専門家にご相談ください。'
+                  }
+                ].map((item, index) => {
+                  const globalIndex = 200 + index;
+                  const isOpen = openItems.includes(globalIndex);
+                  return (
+                    <div key={index}>
+                      <button
+                        onClick={() => toggleItem(globalIndex)}
+                        className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-gray-900 pr-4">{item.question}</h4>
+                          {isOpen ? (
+                            <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          )}
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 pb-4">
+                          <p className="text-gray-600 text-sm leading-relaxed">{item.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">データはどのくらいの頻度で更新されますか？</h3>
-              <p className="text-gray-600 text-sm">
-                市場データは月次で更新され、AI分析モデルは四半期ごとに最新のデータで再学習を行っています。
-              </p>
+          </div>
+
+          {/* アカウント・セキュリティ */}
+          <div className="mb-6">
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-200 bg-green-50">
+                <div className="flex items-center">
+                  <Shield className="h-5 w-5 text-green-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">アカウント・セキュリティ</h3>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200">
+                {[
+                  {
+                    question: 'アカウントの作成は無料ですか？',
+                    answer: 'はい、アカウントの作成は無料です。基本的な機能は無料プランでご利用いただけます。より高度な分析機能をご希望の場合は、有料プランをご検討ください。'
+                  },
+                  {
+                    question: 'パスワードを忘れた場合はどうすればよいですか？',
+                    answer: 'ログイン画面の「パスワードを忘れた方」リンクをクリックし、登録メールアドレスを入力してください。パスワードリセット用のメールをお送りします。'
+                  },
+                  {
+                    question: 'データのセキュリティは大丈夫ですか？',
+                    answer: 'お客様のデータは、業界標準のSSL暗号化技術により保護されています。また、定期的なセキュリティ監査を実施し、個人情報保護法に準拠した厳格な管理を行っています。'
+                  }
+                ].map((item, index) => {
+                  const globalIndex = 300 + index;
+                  const isOpen = openItems.includes(globalIndex);
+                  return (
+                    <div key={index}>
+                      <button
+                        onClick={() => toggleItem(globalIndex)}
+                        className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-gray-900 pr-4">{item.question}</h4>
+                          {isOpen ? (
+                            <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          )}
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 pb-4">
+                          <p className="text-gray-600 text-sm leading-relaxed">{item.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* 料金・プラン */}
+          <div className="mb-6">
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-200 bg-orange-50">
+                <div className="flex items-center">
+                  <CreditCard className="h-5 w-5 text-orange-600 mr-2" />
+                  <h3 className="font-semibold text-gray-900">料金・プラン</h3>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200">
+                {[
+                  {
+                    question: '無料プランと有料プランの違いは何ですか？',
+                    answer: '無料プランでは月3件までのシミュレーション、基本的な分析機能をご利用いただけます。有料プランでは無制限のシミュレーション、詳細な市場分析、PDF出力、優先サポートなどの機能が追加されます。'
+                  },
+                  {
+                    question: '支払い方法は何がありますか？',
+                    answer: 'クレジットカード（Visa、MasterCard、JCB、American Express）、銀行振込に対応しています。法人のお客様は請求書払いも可能です。'
+                  },
+                  {
+                    question: 'プランの変更はいつでもできますか？',
+                    answer: 'はい、いつでもプランの変更が可能です。アップグレードは即座に反映され、ダウングレードは次回請求日から適用されます。'
+                  }
+                ].map((item, index) => {
+                  const globalIndex = 400 + index;
+                  const isOpen = openItems.includes(globalIndex);
+                  return (
+                    <div key={index}>
+                      <button
+                        onClick={() => toggleItem(globalIndex)}
+                        className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-gray-900 pr-4">{item.question}</h4>
+                          {isOpen ? (
+                            <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                          )}
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 pb-4">
+                          <p className="text-gray-600 text-sm leading-relaxed">{item.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Support Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">サポート・お問い合わせ</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+        {/* Contact Support Section */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-8">
+          <div className="text-center mb-6">
+            <MessageCircle className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">お探しの情報が見つかりませんか？</h2>
+            <p className="text-gray-600">
+              サポートチームが迅速にお答えします。お気軽にお問い合わせください。
+            </p>
+          </div>
+          
+          <div className="flex justify-center">
+            <div className="text-center p-4 bg-white rounded-lg">
+              <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">メールサポート</h3>
-              <p className="text-gray-600 text-sm mb-2">support@ooya-dx.com</p>
-              <p className="text-gray-500 text-xs">平日 9:00-18:00（土日祝除く）</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">オンラインヘルプ</h3>
-              <p className="text-gray-600 text-sm mb-2">詳細なマニュアルとFAQをご用意しています</p>
-              <button className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                ヘルプセンターを見る →
-              </button>
+              <p className="text-sm text-gray-600">ooya.tech2025@gmail.com</p>
             </div>
           </div>
         </div>

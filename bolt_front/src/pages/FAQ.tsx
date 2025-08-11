@@ -225,7 +225,7 @@ const FAQ: React.FC = () => {
             <div className="text-center p-4 bg-white rounded-lg">
               <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">メールサポート</h3>
-              <p className="text-sm text-gray-600 mb-3">support@ooya-dx.com</p>
+              <p className="text-sm text-gray-600 mb-3">ooya.tech2025@gmail.com</p>
               <p className="text-xs text-gray-500">24時間以内に返信</p>
             </div>
             

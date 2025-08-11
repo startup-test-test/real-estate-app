@@ -10,7 +10,6 @@ import {
   X,
   Settings,
   BookOpen,
-  HelpCircle,
   Crown,
   Database,
   LogOut
@@ -42,8 +41,7 @@ const Layout: React.FC = () => {
   ];
 
   const supportNavigation = [
-    { name: 'はじめに・ご利用ガイド', href: '/user-guide', icon: BookOpen },
-    { name: 'よくある質問', href: '/faq', icon: HelpCircle },
+    { name: 'ご利用ガイド・よくある質問', href: '/user-guide', icon: BookOpen },
     { name: '有料プランについて', href: '/premium-plan', icon: Crown },
   ];
 
@@ -128,7 +126,7 @@ const Layout: React.FC = () => {
                     className={({ isActive }) =>
                       `flex items-center px-4 py-4 text-base font-medium rounded-lg transition-colors relative ${
                         isActive
-                          ? 'bg-white/10 text-white border-l-4 border-white'
+                          ? 'bg-white/10 text-white'
                           : 'text-white/80 hover:bg-white/5 hover:text-white'
                       }`
                     }
@@ -186,13 +184,35 @@ const Layout: React.FC = () => {
             </button>
           </div>
 
-          {/* Contact Info */}
+          {/* Legal Links */}
           <div className="p-4 border-t border-slate-600/30">
-            <div className="text-sm">
-              <div className="font-medium text-white mb-1">サポート</div>
-              <div className="text-white/70">support@ooya-dx.com</div>
-              <div className="text-xs text-white/50 mt-1">平日 9:00-18:00</div>
+            <div className="space-y-2 mb-4 px-2">
+              <NavLink
+                to="/terms"
+                className="block text-xs text-white/60 hover:text-white transition-colors"
+              >
+                利用規約
+              </NavLink>
+              <NavLink
+                to="/privacy"
+                className="block text-xs text-white/60 hover:text-white transition-colors"
+              >
+                個人情報取り扱いについて
+              </NavLink>
+              <a
+                href="https://startup-marketing.co.jp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs text-white/60 hover:text-white transition-colors"
+              >
+                運営会社
+              </a>
             </div>
+            
+            {/* Copyright */}
+            <p className="text-xs text-white/50 text-center">
+              © 2025 StartupMarketing Inc.
+            </p>
           </div>
         </div>
       </div>

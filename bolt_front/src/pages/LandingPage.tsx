@@ -698,8 +698,8 @@ const LandingPage: React.FC = () => {
               <div className="space-y-3 text-gray-400 text-lg">
                 <div>
                   <p className="text-base">メールでのお問合せ</p>
-                  <a href="mailto:support@ooya-dx.com" className="text-white hover:text-gray-300 transition-colors">
-                    support@ooya-dx.com
+                  <a href="mailto:ooya.tech2025@gmail.com" className="text-white hover:text-gray-300 transition-colors">
+                    ooya.tech2025@gmail.com
                   </a>
                 </div>
                 <div>

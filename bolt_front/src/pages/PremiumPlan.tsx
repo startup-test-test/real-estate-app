@@ -1,81 +1,50 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Crown, 
   Check, 
   X,
   Zap,
   BarChart3,
-  Download,
   Shield,
-  Users,
-  Clock,
-  Star,
-  ArrowRight,
-  Calculator,
-  TrendingUp,
-  FileText,
-  Headphones
+  TrendingUp
 } from 'lucide-react';
 
 const PremiumPlan: React.FC = () => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-
   const plans = [
     {
       name: 'フリープラン',
-      price: { monthly: 0, yearly: 0 },
+      price: 0,
       description: '基本的な機能を無料でお試し',
       color: 'border-gray-200',
       buttonColor: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
       popular: false,
       features: [
-        { name: 'AI物件シミュレーター', included: true, limit: '月3件まで' },
+        { name: '収益シミュレーター', included: true, limit: '月3件まで' },
         { name: '基本的な収益分析', included: true },
         { name: '表面利回り計算', included: true },
-        { name: 'AI取引事例検索', included: false },
-        { name: 'AI市場分析', included: false },
-        { name: '詳細レポート出力', included: false },
+        { name: 'IRR・CCR計算', included: true },
+        { name: '35年キャッシュフロー予測', included: false },
+        { name: '詳細レポート出力（PDF）', included: false },
         { name: '無制限シミュレーション', included: false },
-        { name: '優先サポート', included: false },
-        { name: 'API連携', included: false }
+        { name: '優先サポート', included: false }
       ]
     },
     {
       name: 'プロプラン',
-      price: { monthly: 2980, yearly: 29800 },
+      price: 2980,
       description: '本格的な不動産投資分析に',
       color: 'border-blue-500 ring-2 ring-blue-500',
       buttonColor: 'bg-blue-600 text-white hover:bg-blue-700',
       popular: true,
       features: [
-        { name: 'AI物件シミュレーター', included: true, limit: '無制限' },
+        { name: '収益シミュレーター', included: true, limit: '無制限' },
         { name: '詳細な収益分析', included: true },
         { name: '全投資指標計算', included: true },
-        { name: 'AI取引事例検索', included: true, limit: '月50件まで' },
-        { name: 'AI市場分析', included: true, limit: '月10エリア' },
-        { name: '詳細レポート出力', included: true },
-        { name: '30年キャッシュフロー予測', included: true },
-        { name: 'メールサポート', included: true },
-        { name: 'API連携', included: false }
-      ]
-    },
-    {
-      name: 'エンタープライズ',
-      price: { monthly: 9800, yearly: 98000 },
-      description: '法人・投資家向けの最上位プラン',
-      color: 'border-purple-500',
-      buttonColor: 'bg-purple-600 text-white hover:bg-purple-700',
-      popular: false,
-      features: [
-        { name: 'AI物件シミュレーター', included: true, limit: '無制限' },
-        { name: '高度な収益分析', included: true },
-        { name: '全投資指標計算', included: true },
-        { name: 'AI取引事例検索', included: true, limit: '無制限' },
-        { name: 'AI市場分析', included: true, limit: '無制限' },
-        { name: '詳細レポート出力', included: true },
-        { name: 'ポートフォリオ分析', included: true },
-        { name: '優先サポート', included: true },
-        { name: 'API連携', included: true }
+        { name: 'IRR・CCR・DSCR・LTV', included: true },
+        { name: '35年キャッシュフロー予測', included: true },
+        { name: '詳細レポート出力（PDF）', included: true },
+        { name: '売却シミュレーション', included: true },
+        { name: 'メールサポート', included: true }
       ]
     }
   ];
@@ -83,8 +52,8 @@ const PremiumPlan: React.FC = () => {
   const additionalFeatures = [
     {
       icon: Zap,
-      title: 'AI分析エンジン',
-      description: '2億件超の不動産データを活用した高精度AI分析',
+      title: '高精度シミュレーション',
+      description: '詳細な収支計算と長期予測で投資判断をサポート',
       color: 'text-yellow-600 bg-yellow-50'
     },
     {
@@ -95,8 +64,8 @@ const PremiumPlan: React.FC = () => {
     },
     {
       icon: TrendingUp,
-      title: '市場予測',
-      description: '将来の市場動向と価格予測分析',
+      title: '長期予測',
+      description: '最大35年間のキャッシュフロー予測',
       color: 'text-green-600 bg-green-50'
     },
     {
@@ -107,35 +76,8 @@ const PremiumPlan: React.FC = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      name: '田中 太郎',
-      role: '不動産投資家',
-      content: 'AI分析の精度が高く、投資判断の精度が大幅に向上しました。特に市場分析機能が素晴らしいです。',
-      rating: 5
-    },
-    {
-      name: '佐藤 花子',
-      role: '不動産会社経営',
-      content: 'クライアントへの提案資料作成が効率化され、成約率も向上しています。',
-      rating: 5
-    },
-    {
-      name: '山田 次郎',
-      role: '個人投資家',
-      content: '初心者でも使いやすく、プロレベルの分析ができるようになりました。',
-      rating: 4
-    }
-  ];
-
   const formatPrice = (price: number) => {
     return price.toLocaleString();
-  };
-
-  const getYearlySavings = (monthlyPrice: number) => {
-    const yearlyTotal = monthlyPrice * 12;
-    const yearlyPrice = plans.find(p => p.price.monthly === monthlyPrice)?.price.yearly || 0;
-    return yearlyTotal - yearlyPrice;
   };
 
   return (
@@ -148,42 +90,13 @@ const PremiumPlan: React.FC = () => {
             <h1 className="text-4xl font-bold text-gray-900">有料プランについて</h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            AIを活用した本格的な不動産投資分析で、より良い投資判断を実現しましょう。
+            本格的な不動産投資シミュレーションで、より良い投資判断を実現しましょう。
             あなたのニーズに合わせたプランをお選びください。
           </p>
         </div>
 
-        {/* Billing Toggle */}
-        <div className="flex items-center justify-center mb-12">
-          <div className="bg-white rounded-lg p-1 border border-gray-200">
-            <button
-              onClick={() => setBillingCycle('monthly')}
-              className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
-                billingCycle === 'monthly'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              月額プラン
-            </button>
-            <button
-              onClick={() => setBillingCycle('yearly')}
-              className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
-                billingCycle === 'yearly'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              年額プラン
-              <span className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
-                最大20%OFF
-              </span>
-            </button>
-          </div>
-        </div>
-
         {/* Pricing Plans */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
           {plans.map((plan, index) => (
             <div
               key={index}
@@ -205,18 +118,10 @@ const PremiumPlan: React.FC = () => {
                 
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-gray-900">
-                    ¥{formatPrice(plan.price[billingCycle])}
+                    ¥{formatPrice(plan.price)}
                   </span>
-                  <span className="text-gray-600 ml-2">
-                    {billingCycle === 'monthly' ? '/月' : '/年'}
-                  </span>
+                  <span className="text-gray-600 ml-2">/月</span>
                 </div>
-
-                {billingCycle === 'yearly' && plan.price.monthly > 0 && (
-                  <p className="text-sm text-green-600 font-medium">
-                    年額プランで¥{formatPrice(getYearlySavings(plan.price.monthly))}お得！
-                  </p>
-                )}
 
                 <button className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${plan.buttonColor}`}>
                   {plan.name === 'フリープラン' ? '現在のプラン' : 'プランを選択'}
@@ -267,34 +172,6 @@ const PremiumPlan: React.FC = () => {
           </div>
         </div>
 
-        {/* Testimonials */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            お客様の声
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${
-                        i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
-                <div>
-                  <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                  <div className="text-sm text-gray-500">{testimonial.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* FAQ Section */}
         <div className="bg-white rounded-lg border border-gray-200 p-8">
           <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
@@ -304,25 +181,25 @@ const PremiumPlan: React.FC = () => {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">プランの変更はいつでもできますか？</h3>
               <p className="text-gray-600 text-sm mb-4">
-                はい、いつでもプランの変更が可能です。アップグレードは即座に反映され、ダウングレードは次回請求日から適用されます。
+                はい、いつでもプランの変更が可能です。アップグレードは即座に反映されます。
               </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">無料トライアルはありますか？</h3>
               <p className="text-gray-600 text-sm mb-4">
-                プロプランは14日間の無料トライアルをご利用いただけます。クレジットカード登録が必要ですが、期間中に解約すれば課金されません。
+                フリープランで基本機能をお試しいただけます。プロプランの全機能を体験したい場合は、ご契約が必要です。
               </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">支払い方法は何がありますか？</h3>
               <p className="text-gray-600 text-sm mb-4">
-                クレジットカード（Visa、MasterCard、JCB、American Express）、銀行振込に対応しています。
+                クレジットカード（Visa、MasterCard、JCB、American Express）に対応しています。
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">法人向けの割引はありますか？</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">解約はできますか？</h3>
               <p className="text-gray-600 text-sm mb-4">
-                複数ユーザーでのご利用や年間契約については、別途お見積もりいたします。お気軽にお問い合わせください。
+                いつでも解約可能です。解約後も当月末まではサービスをご利用いただけます。
               </p>
             </div>
           </div>
@@ -332,11 +209,11 @@ const PremiumPlan: React.FC = () => {
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">今すぐ始めましょう</h2>
           <p className="text-xl mb-8 opacity-90">
-            AIを活用した不動産投資分析で、より良い投資判断を実現しませんか？
+            詳細な収益シミュレーションで、より良い投資判断を実現しませんか？
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <button className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-              14日間無料トライアル
+              無料で始める
             </button>
             <button className="px-8 py-3 border border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors">
               詳細を問い合わせる

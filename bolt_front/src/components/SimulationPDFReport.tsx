@@ -324,7 +324,7 @@ const SimulationPDFReport: React.FC<SimulationPDFReportProps> = ({
       {/* フッター */}
       <div className="pdf-footer">
         <div>大家DX - 不動産投資シミュレーションシステム</div>
-        <div>https://ooya-dx.com | support@ooya-dx.com</div>
+        <div>https://ooya-dx.com | ooya.tech2025@gmail.com</div>
       </div>
     </div>
   );

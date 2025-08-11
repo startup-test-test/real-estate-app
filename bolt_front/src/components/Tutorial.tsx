@@ -8,7 +8,7 @@ interface TutorialProps {
 
 const tutorialSteps = [
   {
-    title: '🎯 ようこそ！不動産投資シミュレーターへ',
+    title: '🎯 ようこそ！収益シミュレーターへ',
     content: (
       <div className="space-y-4">
         <p>このツールでは、不動産投資の収益性を詳しく分析できます。</p>
@@ -16,9 +16,9 @@ const tutorialSteps = [
           <p className="font-medium text-blue-900 mb-2">できること：</p>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• IRR、CCR、DSCR など重要指標の自動計算</li>
-            <li>• 20年間のキャッシュフロー予測</li>
+            <li>• 最大35年間のキャッシュフロー予測</li>
             <li>• グラフでの視覚的な収益推移確認</li>
-            <li>• 複数物件の比較検討</li>
+            <li>• 詳細なPDFレポート出力</li>
           </ul>
         </div>
         <p className="text-sm text-gray-600">
@@ -34,18 +34,19 @@ const tutorialSteps = [
         <p>検討中の物件情報を入力していきましょう。各セクションごとに必要な情報を入力します。</p>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-green-50 p-3 rounded-lg">
-            <h4 className="font-medium text-green-900 mb-2">🏠 物件情報</h4>
+            <h4 className="font-medium text-green-900 mb-2">🏠 物件基本情報</h4>
             <ul className="text-sm text-green-800 space-y-1">
-              <li>• 土地面積・建物面積</li>
-              <li>• 路線価・実勢価格</li>
+              <li>• 物件名・住所</li>
               <li>• 建物構造・築年数</li>
+              <li>• 土地面積・建物面積</li>
             </ul>
           </div>
           <div className="bg-blue-50 p-3 rounded-lg">
             <h4 className="font-medium text-blue-900 mb-2">💰 取得・初期費用</h4>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>• 購入価格・諸経費</li>
-              <li>• 改装費用</li>
+              <li>• 取得価格（土地・建物）</li>
+              <li>• 諸経費・改装費</li>
+              <li>• その他初期費用</li>
             </ul>
           </div>
           <div className="bg-purple-50 p-3 rounded-lg">
@@ -53,6 +54,7 @@ const tutorialSteps = [
             <ul className="text-sm text-purple-800 space-y-1">
               <li>• 月額賃料・管理費</li>
               <li>• 空室率・家賃下落率</li>
+              <li>• その他運営費用</li>
             </ul>
           </div>
           <div className="bg-orange-50 p-3 rounded-lg">
@@ -60,21 +62,23 @@ const tutorialSteps = [
             <ul className="text-sm text-orange-800 space-y-1">
               <li>• 借入金額・金利</li>
               <li>• 返済期間・方式</li>
+              <li>• 頭金・自己資金</li>
             </ul>
           </div>
           <div className="bg-indigo-50 p-3 rounded-lg">
             <h4 className="font-medium text-indigo-900 mb-2">🎯 出口戦略</h4>
             <ul className="text-sm text-indigo-800 space-y-1">
-              <li>• 保有年数・売却CapRate</li>
+              <li>• 保有年数</li>
+              <li>• 売却CapRate</li>
               <li>• 想定売却価格</li>
-              <li>• 年間価値下落率 <span className="text-xs bg-indigo-200 px-1 rounded">NEW</span></li>
             </ul>
           </div>
           <div className="bg-gray-50 p-3 rounded-lg">
             <h4 className="font-medium text-gray-900 mb-2">📊 税務・会計設定</h4>
             <ul className="text-sm text-gray-800 space-y-1">
               <li>• 所有形態（個人/法人）</li>
-              <li>• 実効税率・減価償却</li>
+              <li>• 実効税率</li>
+              <li>• 減価償却設定</li>
             </ul>
           </div>
         </div>
@@ -91,17 +95,23 @@ const tutorialSteps = [
     title: '🚀 Step 2: シミュレーション実行',
     content: (
       <div className="space-y-4">
-        <p>「AI物件シミュレーターを実行する」ボタンをクリックしてシミュレーションを開始しましょう。</p>
+        <p>「シミュレーションを実行する」ボタンをクリックして分析を開始しましょう。</p>
         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-lg text-white">
           <div className="flex items-center justify-center">
             <Play className="h-5 w-5 mr-2" />
-            <span className="font-medium">AI物件シミュレーターを実行する</span>
+            <span className="font-medium">シミュレーションを実行する</span>
           </div>
         </div>
         <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
           <p className="text-sm text-yellow-800">
             <span className="font-medium">⚡ 処理時間：</span>
-            通常5-10秒で完了します。複雑な計算を行っているため、少々お待ちください。
+            通常1-3秒で完了します。詳細な計算を行っているため、少々お待ちください。
+          </p>
+        </div>
+        <div className="bg-blue-50 p-3 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <span className="font-medium">📌 入力値の保存：</span>
+            前回入力した値は自動的に保存され、次回アクセス時に復元されます。
           </p>
         </div>
       </div>
@@ -113,22 +123,23 @@ const tutorialSteps = [
       <div className="space-y-4">
         <p>シミュレーション結果では重要な投資指標とグラフが表示されます。</p>
         <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mb-3">
-          <h4 className="font-medium text-amber-900 mb-2">📊 評価額と投資指標</h4>
+          <h4 className="font-medium text-amber-900 mb-2">📊 主要投資指標</h4>
           <div className="grid grid-cols-2 gap-2 text-xs text-amber-800">
             <div>
-              <p className="font-medium">物件評価額：</p>
+              <p className="font-medium">収益性指標：</p>
               <ul className="space-y-1 ml-2">
-                <li>• 積算評価</li>
-                <li>• 収益還元評価</li>
-                <li>• 実勢価格</li>
+                <li>• 表面利回り・実質利回り</li>
+                <li>• NOI利回り</li>
+                <li>• FCR（総収益率）</li>
               </ul>
             </div>
             <div>
-              <p className="font-medium">利回り・投資指標：</p>
+              <p className="font-medium">投資効率指標：</p>
               <ul className="space-y-1 ml-2">
-                <li>• 表面利回り</li>
-                <li>• 実質利回り <span className="bg-amber-200 px-1 rounded">NEW</span></li>
-                <li>• IRR・CCR・DSCR</li>
+                <li>• IRR（内部収益率）</li>
+                <li>• CCR（自己資金収益率）</li>
+                <li>• DSCR（返済安全率）</li>
+                <li>• LTV（借入比率）</li>
               </ul>
             </div>
           </div>
@@ -137,16 +148,16 @@ const tutorialSteps = [
           <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
             <h4 className="font-medium text-blue-900 mb-2">💰 キャッシュフロー</h4>
             <ul className="text-xs text-blue-800 space-y-1">
-              <li>• 月間手取り収益</li>
-              <li>• 年間手取り収益</li>
-              <li>• 20年間の推移グラフ</li>
+              <li>• 月間・年間手取り収益</li>
+              <li>• 税引前・税引後CF</li>
+              <li>• 35年間の推移グラフ</li>
             </ul>
           </div>
           <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
             <h4 className="font-medium text-purple-900 mb-2">📈 詳細分析</h4>
             <ul className="text-xs text-purple-800 space-y-1">
               <li>• 年次キャッシュフロー表</li>
-              <li>• 売却価格（経年変化対応）</li>
+              <li>• 売却時の総収益</li>
               <li>• 累積収益の推移</li>
             </ul>
           </div>
@@ -159,8 +170,8 @@ const tutorialSteps = [
         </div>
         <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
           <p className="text-sm text-indigo-800">
-            <span className="font-medium">💾 保存・共有機能：</span>
-            ログインすると結果を保存し、PDFダウンロードや他の人との共有ができます。
+            <span className="font-medium">💾 PDFレポート機能：</span>
+            結果をPDF形式でダウンロードして、銀行提出や社内検討資料として活用できます。
           </p>
         </div>
       </div>

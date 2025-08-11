@@ -15,12 +15,12 @@ const Terms: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">利用規約</h1>
           
           <div className="prose prose-gray max-w-none">
-            <p className="text-sm text-gray-600 mb-6">最終更新日: 2024年7月14日</p>
+            <p className="text-sm text-gray-600 mb-6">最終更新日: 2025年8月11日</p>
             
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">第1条（本規約の適用）</h2>
               <p className="text-gray-700 mb-4">
-                本規約は、株式会社大家DX（以下「当社」といいます）が提供する「大家DX」（以下「本サービス」といいます）の利用に関する条件を定めるものです。
+                本規約は、StartupMarketing Inc.（以下「当社」といいます）が提供する「大家DX」（以下「本サービス」といいます）の利用に関する条件を定めるものです。
                 利用者は、本規約に同意した上で、本サービスを利用するものとします。
               </p>
             </section>
@@ -30,7 +30,7 @@ const Terms: React.FC = () => {
               <p className="text-gray-700 mb-4">本規約において使用する用語の定義は、以下のとおりとします。</p>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                 <li>「利用者」とは、本規約に同意し、本サービスを利用する個人または法人をいいます。</li>
-                <li>「本サービス」とは、当社が提供する賃貸物件管理支援サービス及びこれに関連するサービスをいいます。</li>
+                <li>「本サービス」とは、当社が提供する不動産投資収益シミュレーションサービス及びこれに関連するサービスをいいます。</li>
                 <li>「登録情報」とは、利用者が本サービスの利用にあたって登録する情報をいいます。</li>
               </ol>
             </section>
@@ -38,8 +38,9 @@ const Terms: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">第3条（サービスの内容）</h2>
               <p className="text-gray-700 mb-4">
-                本サービスは、AIを活用した賃貸物件管理の効率化、入居者とのコミュニケーション支援、
-                物件情報の管理等の機能を提供します。サービスの詳細は、当社ウェブサイトに掲載するものとします。
+                本サービスは、不動産投資の収益シミュレーション、投資指標の算出、キャッシュフロー予測等の機能を提供します。
+                本サービスは教育・参考目的のツールであり、投資推奨を行うものではありません。
+                サービスの詳細は、当社ウェブサイトに掲載するものとします。
               </p>
             </section>
 
@@ -60,9 +61,10 @@ const Terms: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">第5条（利用料金）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
-                <li>本サービスの利用料金は、当社が別途定める料金表に従うものとします。</li>
-                <li>利用者は、利用料金を当社が指定する方法により支払うものとします。</li>
-                <li>一度支払われた利用料金は、理由の如何を問わず返金しないものとします。</li>
+                <li>本サービスの基本機能は無料でご利用いただけます。</li>
+                <li>プレミアム機能の利用料金は、当社が別途定める料金表に従うものとします。</li>
+                <li>利用者は、有料プランの利用料金を当社が指定する方法により支払うものとします。</li>
+                <li>一度支払われた利用料金は、法令に基づく場合を除き、返金しないものとします。</li>
               </ol>
             </section>
 
@@ -73,7 +75,7 @@ const Terms: React.FC = () => {
                 <li>法令または公序良俗に違反する行為</li>
                 <li>犯罪行為に関連する行為</li>
                 <li>当社、他の利用者、その他第三者の知的財産権、肖像権、プライバシー、名誉その他の権利または利益を侵害する行為</li>
-                <li>本サービスによって得られた情報を商業的に利用する行為</li>
+                <li>本サービスによって得られた情報を商業的に利用する行為（当社の事前の書面による承諾を得た場合を除く）</li>
                 <li>当社のサービスの運営を妨害するおそれのある行為</li>
                 <li>不正アクセスをし、またはこれを試みる行為</li>
                 <li>他の利用者に関する個人情報等を収集または蓄積する行為</li>
@@ -109,6 +111,7 @@ const Terms: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">第9条（免責事項）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                <li>本サービスは教育・参考目的のシミュレーションツールであり、投資の成功を保証するものではありません。実際の投資判断は利用者自身の責任で行ってください。</li>
                 <li>当社は、本サービスに関して、利用者と他の利用者または第三者との間において生じた取引、連絡または紛争等について一切責任を負いません。</li>
                 <li>当社は、本サービスの提供の中断、停止、終了、利用不能または変更、利用者が本サービスに送信したメッセージまたは情報の削除または消失、利用者の登録の抹消、本サービスの利用によるデータの消失または機器の故障もしくは損傷、その他本サービスに関して利用者が被った損害につき、賠償する責任を一切負わないものとします。</li>
               </ol>
@@ -137,9 +140,19 @@ const Terms: React.FC = () => {
               </ol>
             </section>
 
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第13条（お問い合わせ）</h2>
+              <p className="text-gray-700 mb-4">
+                本規約に関するお問い合わせは、下記の窓口までお願いいたします。
+              </p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-gray-700">メール: ooya.tech2025@gmail.com</p>
+              </div>
+            </section>
+
             <div className="mt-12 pt-8 border-t border-gray-200 text-center">
               <p className="text-gray-600">以上</p>
-              <p className="text-gray-600 mt-4">株式会社大家DX</p>
+              <p className="text-gray-600 mt-4">StartupMarketing Inc.</p>
             </div>
           </div>
         </div>

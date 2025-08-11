@@ -15,11 +15,11 @@ const Privacy: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">プライバシーポリシー</h1>
           
           <div className="prose prose-gray max-w-none">
-            <p className="text-sm text-gray-600 mb-6">最終更新日: 2024年7月14日</p>
+            <p className="text-sm text-gray-600 mb-6">最終更新日: 2025年8月11日</p>
             
             <section className="mb-8">
               <p className="text-gray-700 mb-4">
-                株式会社大家DX（以下「当社」といいます）は、当社が提供する「大家DX」（以下「本サービス」といいます）における、
+                StartupMarketing Inc.（以下「当社」といいます）は、当社が提供する「大家DX」（以下「本サービス」といいます）における、
                 利用者の個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます）を定めます。
               </p>
             </section>
@@ -37,7 +37,7 @@ const Privacy: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">第2条（個人情報の収集方法）</h2>
               <p className="text-gray-700 mb-4">
-                当社は、利用者が利用登録をする際に氏名、メールアドレス、電話番号などの個人情報をお尋ねすることがあります。
+                当社は、利用者が利用登録をする際に氏名、メールアドレスなどの個人情報をお尋ねすることがあります。
                 また、利用者と提携先などとの間でなされた利用者の個人情報を含む取引記録や決済に関する情報を、
                 当社の提携先（情報提供元、広告主、広告配信先などを含みます。以下「提携先」といいます）などから収集することがあります。
               </p>
@@ -129,7 +129,16 @@ const Privacy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第9条（プライバシーポリシーの変更）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第9条（Cookie及び類似技術の使用）</h2>
+              <p className="text-gray-700 mb-4">
+                本サービスは、利用者の利便性向上のためCookieおよび類似の技術を使用しています。
+                これにより、利用者のブラウザを識別し、サービスを効率的に提供することができます。
+                利用者はブラウザの設定によりCookieの使用を拒否することができますが、その場合、本サービスの一部機能が利用できなくなる可能性があります。
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第10条（プライバシーポリシーの変更）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                 <li>本ポリシーの内容は、法令その他本ポリシーに別段の定めのある事項を除いて、利用者に通知することなく、変更することができるものとします。</li>
                 <li>当社が別途定める場合を除いて、変更後のプライバシーポリシーは、本ウェブサイトに掲載したときから効力を生じるものとします。</li>
@@ -137,18 +146,18 @@ const Privacy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第10条（お問い合わせ窓口）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第11条（お問い合わせ窓口）</h2>
               <p className="text-gray-700 mb-4">本ポリシーに関するお問い合わせは、下記の窓口までお願いいたします。</p>
               <div className="bg-gray-50 p-4 rounded-lg ml-4">
-                <p className="text-gray-700">社名：株式会社大家DX</p>
+                <p className="text-gray-700">社名：StartupMarketing Inc.</p>
                 <p className="text-gray-700">担当部署：個人情報保護管理責任者</p>
-                <p className="text-gray-700">Eメールアドレス：privacy@ooya-dx.com</p>
+                <p className="text-gray-700">Eメールアドレス：ooya.tech2025@gmail.com</p>
               </div>
             </section>
 
             <div className="mt-12 pt-8 border-t border-gray-200 text-center">
               <p className="text-gray-600">以上</p>
-              <p className="text-gray-600 mt-4">株式会社大家DX</p>
+              <p className="text-gray-600 mt-4">StartupMarketing Inc.</p>
             </div>
           </div>
         </div>
