@@ -1,39 +1,39 @@
 import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 interface LegalDisclaimerProps {
-  variant?: 'full' | 'compact';
+  variant?: 'subtle' | 'info';
+  className?: string;
 }
 
-export const LegalDisclaimer: React.FC<LegalDisclaimerProps> = ({ variant = 'full' }) => {
-  if (variant === 'compact') {
+const LegalDisclaimer: React.FC<LegalDisclaimerProps> = ({ 
+  variant = 'subtle',
+  className = '' 
+}) => {
+  if (variant === 'subtle') {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-xs">
-        <div className="flex items-start space-x-2">
-          <AlertTriangle className="h-4 w-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-          <p className="text-yellow-700">
-            本ツールは教育・参考目的のシミュレーションです。実際の投資判断は専門家にご相談ください。
-          </p>
-        </div>
+      <div className={`text-xs text-gray-500 ${className}`}>
+        <p>
+          ※ 本サービスは教育・参考目的のシミュレーションツールです。
+          実際の投資に関しては、専門家にご相談の上、お客様ご自身の責任で行ってください。
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-      <div className="flex items-start space-x-3">
-        <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
-        <div className="flex-1">
-          <h4 className="font-semibold text-yellow-800 mb-2">重要な注意事項</h4>
-          <ul className="text-sm text-yellow-700 space-y-1 list-disc list-inside">
-            <li>本ツールは教育・参考目的のシミュレーションです</li>
-            <li>算出結果は参考値であり、実際の市場価格や投資成果を保証するものではありません</li>
-            <li>投資の推奨・勧誘を行うものではありません</li>
-            <li>実際の投資判断は、宅地建物取引士・ファイナンシャルプランナー等の専門家にご相談ください</li>
-            <li>不動産投資にはリスクが伴います。投資は自己責任でお願いします</li>
-          </ul>
+    <div className={`bg-gray-50 rounded-lg p-3 ${className}`}>
+      <div className="flex items-start">
+        <Info className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+        <div className="ml-2">
+          <p className="text-xs text-gray-600">
+            本サービスは教育・参考目的のシミュレーションツールです。
+            実際の投資に関しては、専門家にご相談の上、お客様ご自身の責任で行ってください。
+          </p>
         </div>
       </div>
     </div>
   );
 };
+
+export default LegalDisclaimer;

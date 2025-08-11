@@ -90,8 +90,8 @@ const UserGuide: React.FC = () => {
     },
     {
       icon: Target,
-      title: '投資判断サポート',
-      description: 'IRR、CCR、DSCRなどの投資指標を自動計算し、客観的な投資判断をサポートします。'
+      title: '投資分析サポート（参考情報提供）',
+      description: 'IRR、CCR、DSCRなどの投資指標を自動計算し、客観的な分析情報を提供します。'
     },
     {
       icon: Shield,

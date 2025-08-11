@@ -182,7 +182,7 @@ const LandingPage: React.FC = () => {
                 <span className="text-5xl md:text-6xl lg:text-7xl">賃貸経営DX</span>
               </h1>
               <p className="text-2xl lg:text-3xl text-gray-600 mb-10 leading-relaxed">
-                市場分析・収支判断・銀行提出。<br />
+                市場分析・収支シミュレーション・参考資料作成。<br />
                 すべて1分。
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-8">
@@ -375,7 +375,7 @@ const LandingPage: React.FC = () => {
                 <div className="flex-1 text-center lg:text-left">
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">きっかけは、銀行融資の3連敗。</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
-                    融資面談で何度も断られ、収支シミュレーションの重要性を痛感。しかし、使えるツールがありませんでした。
+                    収支シミュレーションの重要性を実感し、参考情報として活用できるツールを開発しました。
                   </p>
                 </div>
               </div>

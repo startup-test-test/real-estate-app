@@ -15,7 +15,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
 import ErrorAlert from '../components/ErrorMessage';
 import ErrorModal from '../components/ErrorModal';
-// import { LegalDisclaimer } from '../components';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 import { SimulationResultData, CashFlowData } from '../types';
 import { validatePropertyUrl } from '../utils/validation';
 import { validateSimulatorInputs } from '../utils/securityValidation';
@@ -1110,7 +1110,7 @@ const Simulator: React.FC = () => {
                 物件収益シミュレーター
               </h1>
               <p className="text-gray-600">
-                物件の収益性を詳細に計算し、投資判断の参考情報を提供します。
+                物件の収益性を詳細に計算し、投資分析の参考情報を提供します。
               </p>
             </div>
             <div className="flex items-center space-x-3">
@@ -2931,6 +2931,10 @@ const Simulator: React.FC = () => {
             </div>
           </div>
           )}
+        </div>
+        {/* Legal Disclaimer - 下部に配置 */}
+        <div className="mt-8 pt-4 border-t border-gray-200 print:hidden">
+          <LegalDisclaimer variant="subtle" />
         </div>
       </div>
 

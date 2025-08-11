@@ -205,21 +205,7 @@ const PremiumPlan: React.FC = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">今すぐ始めましょう</h2>
-          <p className="text-xl mb-8 opacity-90">
-            詳細な収益シミュレーションで、より良い投資判断を実現しませんか？
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <button className="px-8 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-              無料で始める
-            </button>
-            <button className="px-8 py-3 border border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors">
-              詳細を問い合わせる
-            </button>
-          </div>
-        </div>
+        {/* CTA Section - 削除 */}
       </div>
     </div>
   );
