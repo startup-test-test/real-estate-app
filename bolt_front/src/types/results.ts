@@ -24,6 +24,7 @@ export interface SimulationResultData {
   '売却益（万円）': number;
   '総投資額（円）': number;
   '自己資金（円）': number;
+  '自己資金（万円）': number;
   '借入額（円）': number;
   '積算評価合計（万円）': number;
   '収益還元評価額（万円）': number;

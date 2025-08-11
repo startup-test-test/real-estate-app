@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Zap,
   CheckCircle,
   AlertCircle,
   Download
@@ -1206,7 +1205,7 @@ const Simulator: React.FC = () => {
                   <Tooltip content={tooltips.propertyStatus} />
                 </div>
                 <select
-                  value={inputs.propertyStatus || ''}
+                  value={inputs.propertyStatus ?? ''}
                   onChange={(e) => handleInputChange('propertyStatus', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
@@ -1229,7 +1228,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="1"
-                    value={inputs.landArea || ''}
+                    value={inputs.landArea ?? ''}
                     onChange={(e) => handleInputChange('landArea', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1252,7 +1251,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="1"
-                    value={inputs.buildingArea || ''}
+                    value={inputs.buildingArea ?? ''}
                     onChange={(e) => handleInputChange('buildingArea', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1274,7 +1273,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.roadPrice || ''}
+                    value={inputs.roadPrice ?? ''}
                     onChange={(e) => handleInputChange('roadPrice', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1296,7 +1295,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.yearBuilt || ''}
+                    value={inputs.yearBuilt ?? ''}
                     onChange={(e) => handleFieldChange('yearBuilt', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1326,7 +1325,7 @@ const Simulator: React.FC = () => {
                   <Tooltip content="建物の構造を選択してください。構造により法定耐用年数が自動設定されます。" />
                 </div>
                 <select
-                  value={inputs.propertyType || ''}
+                  value={inputs.propertyType ?? ''}
                   onChange={(e) => handleFieldChange('propertyType', e.target.value)}
                   className={getFieldClassName('propertyType')}
                 >
@@ -1358,7 +1357,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     inputMode="decimal"
                     step="0.01"
-                    value={inputs.purchasePrice || ''}
+                    value={inputs.purchasePrice ?? ''}
                     onChange={(e) => handleFieldChange('purchasePrice', e.target.value)}
                     onPaste={(e) => handleNumberPaste(e, 'purchasePrice')}
                     onFocus={handleNumberInputFocus}
@@ -1384,7 +1383,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.otherCosts || ''}
+                    value={inputs.otherCosts ?? ''}
                     onChange={(e) => handleInputChange('otherCosts', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1408,7 +1407,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.renovationCost || ''}
+                    value={inputs.renovationCost ?? ''}
                     onChange={(e) => handleInputChange('renovationCost', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1445,7 +1444,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     inputMode="numeric"
-                    value={inputs.monthlyRent || ''}
+                    value={inputs.monthlyRent ?? ''}
                     onChange={(e) => handleFieldChange('monthlyRent', e.target.value)}
                     onPaste={(e) => handleNumberPaste(e, 'monthlyRent')}
                     onFocus={handleNumberInputFocus}
@@ -1470,7 +1469,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="text"
-                    value={inputs.managementFee || ''}
+                    value={inputs.managementFee ?? ''}
                     onChange={(e) => handleInputChange('managementFee', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1496,7 +1495,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.fixedCost || ''}
+                    value={inputs.fixedCost ?? ''}
                     onChange={(e) => handleInputChange('fixedCost', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1518,7 +1517,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.propertyTax || ''}
+                    value={inputs.propertyTax ?? ''}
                     onChange={(e) => handleInputChange('propertyTax', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1542,7 +1541,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.vacancyRate || ''}
+                    value={inputs.vacancyRate ?? ''}
                     onChange={(e) => handleInputChange('vacancyRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1565,7 +1564,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.rentDecline || ''}
+                    value={inputs.rentDecline ?? ''}
                     onChange={(e) => handleInputChange('rentDecline', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1595,7 +1594,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     inputMode="decimal"
                     step="0.01"
-                    value={inputs.loanAmount || ''}
+                    value={inputs.loanAmount ?? ''}
                     onChange={(e) => handleFieldChange('loanAmount', e.target.value)}
                     onPaste={(e) => handleNumberPaste(e, 'loanAmount')}
                     onFocus={handleNumberInputFocus}
@@ -1622,7 +1621,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     inputMode="decimal"
                     step="0.01"
-                    value={inputs.interestRate || ''}
+                    value={inputs.interestRate ?? ''}
                     onChange={(e) => handleFieldChange('interestRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1646,7 +1645,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.loanYears || ''}
+                    value={inputs.loanYears ?? ''}
                     onChange={(e) => handleFieldChange('loanYears', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1698,7 +1697,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-1">
                   <input
                     type="number"
-                    value={inputs.holdingYears || ''}
+                    value={inputs.holdingYears ?? ''}
                     onChange={(e) => handleFieldChange('holdingYears', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1722,7 +1721,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.exitCapRate || ''}
+                    value={inputs.exitCapRate ?? ''}
                     onChange={(e) => handleFieldChange('exitCapRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1746,7 +1745,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.01"
-                    value={inputs.marketValue || ''}
+                    value={inputs.marketValue ?? ''}
                     onChange={(e) => handleInputChange('marketValue', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1769,7 +1768,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.1"
-                    value={inputs.priceDeclineRate || 0}
+                    value={inputs.priceDeclineRate ?? 0}
                     onChange={(e) => handleInputChange('priceDeclineRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1829,7 +1828,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="0.1"
-                    value={inputs.effectiveTaxRate || ''}
+                    value={inputs.effectiveTaxRate ?? ''}
                     onChange={(e) => handleFieldChange('effectiveTaxRate', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1852,7 +1851,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="100"
-                    value={inputs.buildingPriceForDepreciation || ''}
+                    value={inputs.buildingPriceForDepreciation ?? ''}
                     onChange={(e) => handleFieldChange('buildingPriceForDepreciation', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -1875,7 +1874,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <input
                     type="number"
-                    value={inputs.depreciationYears || ''}
+                    value={inputs.depreciationYears ?? ''}
                     onChange={(e) => handleFieldChange('depreciationYears', e.target.value)}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -2014,7 +2013,7 @@ const Simulator: React.FC = () => {
                     type="number"
                     min="1"
                     max="35"
-                    value={inputs.majorRepairCycle || 0}
+                    value={inputs.majorRepairCycle ?? 0}
                     onChange={(e) => handleInputChange('majorRepairCycle', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -2037,7 +2036,7 @@ const Simulator: React.FC = () => {
                   <input
                     type="number"
                     step="10"
-                    value={inputs.majorRepairCost || 0}
+                    value={inputs.majorRepairCost ?? 0}
                     onChange={(e) => handleInputChange('majorRepairCost', Number(e.target.value))}
                     onFocus={handleNumberInputFocus}
                     onKeyDown={handleNumberInputKeyDown}
@@ -2063,7 +2062,7 @@ const Simulator: React.FC = () => {
                   </label>
                   <input
                     type="url"
-                    value={inputs.propertyUrl || ''}
+                    value={inputs.propertyUrl ?? ''}
                     onChange={(e) => handleInputChange('propertyUrl', e.target.value)}
                     placeholder="https://ooya.tech/..."
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:border-transparent ${
@@ -2087,7 +2086,7 @@ const Simulator: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={inputs.propertyMemo || ''}
+                    value={inputs.propertyMemo ?? ''}
                     onChange={(e) => handleInputChange('propertyMemo', e.target.value)}
                     placeholder="物件の特徴、気になるポイント、検討事項など..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -2145,9 +2144,8 @@ const Simulator: React.FC = () => {
                     計算中...
                   </div>
                 ) : (
-                  <div className="flex items-center">
-                    <Zap className="h-6 w-6 mr-3" />
-                    実行する
+                  <div className="flex items-center justify-center">
+                    シミュレーションを実行する
                   </div>
                 )}
               </button>
@@ -2630,8 +2628,8 @@ const Simulator: React.FC = () => {
               {/* N/A表記の注釈 - 自己資金がマイナスの場合のみ表示 */}
               {simulationResults && 
                simulationResults.results && 
-               simulationResults.results['自己資金（円）'] !== undefined &&
-               simulationResults.results['自己資金（円）'] <= 0 && (
+               ((simulationResults.results['自己資金（万円）'] !== undefined && simulationResults.results['自己資金（万円）'] <= 0) ||
+                (simulationResults.results['自己資金（円）'] !== undefined && simulationResults.results['自己資金（円）'] <= 0)) && (
                 <div className="mt-3 text-xs text-gray-500">
                   ※ 自己資金がマイナス（借入額が総投資額を上回る）のため算出できない項目はN/Aと表記しています
                 </div>
