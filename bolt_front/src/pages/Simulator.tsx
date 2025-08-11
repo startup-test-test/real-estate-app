@@ -2665,16 +2665,29 @@ const Simulator: React.FC = () => {
                 {/* 詳細キャッシュフロー分析 */}
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
-                  {/* スクロール案内 */}
-                  <p className="text-xs text-gray-500 mb-2">
-                    <svg className="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                    </svg>
-                    横スクロールで全項目を確認できます
-                  </p>
                 </div>
                 
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <div className="border border-gray-300 rounded-lg overflow-hidden relative">
+                  {/* スクロール案内 - テーブルの中央に重ねて配置、3秒後に自動フェードアウト */}
+                  <div 
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none animate-fade-out"
+                    style={{
+                      animation: 'fadeOut 0.5s ease-in-out 5s forwards'
+                    }}
+                  >
+                    <div className="bg-gray-700 bg-opacity-90 rounded-lg px-6 py-4 inline-flex items-center gap-3 shadow-lg">
+                      <span className="text-white text-2xl">←</span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-3xl mb-1">👆</span>
+                        <div className="text-sm text-white font-medium text-center">
+                          <div>縦と横に</div>
+                          <div>スクロールできます</div>
+                        </div>
+                      </div>
+                      <span className="text-white text-2xl">→</span>
+                    </div>
+                  </div>
+                  
                   {/* PC版・SP版ともに横スクロール可能に */}
                   <div className="relative max-h-[600px] overflow-y-auto overflow-x-auto cashflow-table-container">
                     <table className="min-w-full bg-white" style={{ minWidth: '1100px' }}>
