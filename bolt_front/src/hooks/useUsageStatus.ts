@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuthContext } from '../components/AuthProvider';
 import { checkUsageLimit, incrementUsage, type UsageStatus } from '../utils/usageLimit';
 
 interface UseUsageStatusReturn {
@@ -15,7 +15,7 @@ interface UseUsageStatusReturn {
 }
 
 export const useUsageStatus = (): UseUsageStatusReturn => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const [usage, setUsage] = useState<UsageStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -127,7 +127,7 @@ export const getUsageStatusMessage = (usage: UsageStatus | null): string => {
   const remaining = usage.limit - usage.currentCount;
   
   if (remaining <= 0) {
-    return '今月の無料利用枠を使い切りました';
+    return '無料利用枠（月3回）を使い切りました';
   }
   
   if (remaining === 1) {

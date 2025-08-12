@@ -70,12 +70,12 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
   // プレミアム会員の場合
   if (usage.isSubscribed) {
     return (
-      <div className={`w-full px-4 py-3 ${colors.bg} border-b ${colors.border}`}>
+      <div className={`w-full px-4 py-4 ${colors.bg} border-b ${colors.border}`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Star className={`h-5 w-5 ${colors.icon} fill-current`} />
-              <span className={`text-sm font-medium ${colors.text}`}>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <Star className={`h-6 w-6 ${colors.icon} fill-current`} />
+              <span className={`text-base font-semibold ${colors.text}`}>
                 プレミアムプラン
               </span>
             </div>
@@ -90,22 +90,23 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
 
   // 無料プランの場合
   return (
-    <div className={`w-full px-4 py-3 ${colors.bg} border-b ${colors.border}`}>
+    <div className={`w-full px-4 py-4 ${colors.bg} border-b ${colors.border}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+          {/* 左側：使用状況表示 */}
           <div className="flex items-center gap-4">
             {/* アイコンと利用状況 */}
-            <div className="flex items-center gap-2">
-              <AlertCircle className={`h-5 w-5 ${colors.icon}`} />
-              <div className="flex items-center gap-3">
-                <span className={`text-sm font-medium ${colors.text}`}>
+            <div className="flex items-center gap-3">
+              <AlertCircle className={`h-6 w-6 ${colors.icon}`} />
+              <div className="flex items-center gap-4">
+                <span className={`text-base font-semibold ${colors.text}`}>
                   {statusMessage}
                 </span>
                 
                 {/* プログレスバー（制限到達時以外） */}
                 {!isError && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2.5 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${
                           isWarning ? 'bg-yellow-500' : 
@@ -115,7 +116,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
                         style={{ width: `${(usage.currentCount / usage.limit) * 100}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-600">
+                    <span className="text-sm font-medium text-gray-700">
                       {usage.currentCount}/{usage.limit}
                     </span>
                   </div>
@@ -123,10 +124,10 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
               </div>
             </div>
 
-            {/* リセット日表示（制限到達時以外） */}
-            {!isError && usage.periodEndDate && (
-              <div className="flex items-center gap-1 text-xs text-gray-500">
-                <Calendar className="h-3 w-3" />
+            {/* リセット日表示 */}
+            {usage.periodEndDate && (
+              <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                <Calendar className="h-4 w-4" />
                 <span>
                   次回リセット: {usage.periodEndDate.toLocaleDateString('ja-JP')}
                   （あと{usage.daysLeft}日）
@@ -135,27 +136,41 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             )}
           </div>
 
-          {/* アップグレードボタン（警告・エラー時） */}
-          {(isWarning || isError) && (
+          {/* 右側：アップグレード促進 */}
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2">
+              <Crown className="h-5 w-5 text-purple-600" />
+              <span className="text-base font-semibold text-gray-800">
+                月額2,980円で無制限
+              </span>
+            </div>
             <button
               onClick={onUpgradeClick}
-              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all flex items-center gap-1 ${
+              className={`px-5 py-2 text-base font-medium rounded-lg transition-all flex items-center gap-2 shadow-sm ${
                 isError 
                   ? 'bg-red-600 text-white hover:bg-red-700' 
-                  : 'bg-yellow-600 text-white hover:bg-yellow-700'
+                  : isWarning
+                  ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                  : 'bg-purple-600 text-white hover:bg-purple-700'
               }`}
             >
-              <Crown className="h-4 w-4" />
-              <span>プレミアムプランで無制限利用</span>
-              <ChevronRight className="h-4 w-4" />
+              <Crown className="h-5 w-5" />
+              <span>今すぐアップグレード</span>
+              <ChevronRight className="h-5 w-5" />
             </button>
-          )}
+          </div>
         </div>
 
         {/* 追加メッセージ（エラー時） */}
         {isError && (
-          <div className="mt-2 text-xs text-red-600">
-            プレミアムプランにアップグレードして、引き続きご利用ください
+          <div className="mt-2 text-sm font-medium text-red-600">
+            <button 
+              onClick={onUpgradeClick}
+              className="underline hover:no-underline cursor-pointer"
+            >
+              プレミアムプランにアップグレード
+            </button>
+            して、引き続きご利用ください
           </div>
         )}
       </div>

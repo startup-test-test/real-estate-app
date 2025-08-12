@@ -94,10 +94,10 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
             <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
             <div>
               <p className="text-sm font-medium text-amber-800">
-                今月の無料利用枠（3回）を使い切りました
+                無料利用枠（月3回）を使い切りました
               </p>
               <p className="text-xs text-amber-600 mt-1">
-                プレミアムプランで全機能を無制限にご利用いただけます
+                <span className="font-semibold">プレミアムプラン</span>で全機能を無制限にご利用いただけます
               </p>
             </div>
           </div>
@@ -135,18 +135,6 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                   </p>
                   <p className="text-xs text-gray-500">
                     シミュレーター、分析機能など制限なし
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    優先サポート
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    メールでの迅速な対応
                   </p>
                 </div>
               </div>

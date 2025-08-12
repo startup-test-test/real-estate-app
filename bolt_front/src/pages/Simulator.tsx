@@ -7,6 +7,8 @@ import {
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
+import { useUsageStatus } from '../hooks/useUsageStatus';
+import UpgradeModal from '../components/UpgradeModal';
 import CashFlowChart from '../components/CashFlowChart';
 import Tooltip from '../components/Tooltip';
 import Tutorial from '../components/Tutorial';
@@ -41,6 +43,8 @@ const Simulator: React.FC = () => {
   const { user } = useAuthContext();
   const { saveSimulation, getSimulations } = useSupabaseData();
   const location = useLocation();
+  const { usage, executeWithLimit } = useUsageStatus();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
@@ -550,6 +554,18 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
+    // 使用制限チェック
+    if (!usage || !executeWithLimit) {
+      setSaveError('使用状況を確認中です。しばらくお待ちください。');
+      return;
+    }
+
+    // 無料プランの制限チェック
+    if (!usage.isSubscribed && usage.currentCount >= usage.limit) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     // 必須項目チェック（BUG_010対応）
     const errors = validateForm();
     if (errors.length > 0) {
@@ -739,12 +755,15 @@ const Simulator: React.FC = () => {
     
     setValidationErrors([]);
     setFieldErrors({});
-    setIsSimulating(true);
     setSaveError(null);
-    
-    try {
-      // FAST API への送信データを構築
-      const apiData = transformFormDataToApiData(inputs);
+
+    // 使用制限チェック付きで実行
+    const simulationSuccess = await executeWithLimit(async () => {
+      setIsSimulating(true);
+      
+      try {
+        // FAST API への送信データを構築
+        const apiData = transformFormDataToApiData(inputs);
       
       // APIデータの必須フィールドチェック
       if (!apiData.property_name || apiData.property_name.trim() === '') {
@@ -1026,42 +1045,48 @@ const Simulator: React.FC = () => {
         throw new Error('APIから予期しない形式のレスポンスが返されました');
       }
       
-    } catch (error: any) {
-      logError('シミュレーション', error);
-      
-      // エラーコードがある場合
-      if (error.error_code) {
-        setErrorModalData({
-          isOpen: true,
-          errorCode: error.error_code,
-          message: error.message,
-          solution: error.solution,
-          details: error.details
-        });
-      } else {
-        let errorMessage: string;
-        if (error.name === 'AbortError') {
-          errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
-        } else if (error.message && error.message.includes('500')) {
-          errorMessage = 'サーバーでエラーが発生しました。入力内容を確認して再度お試しください。';
+      } catch (error: any) {
+        logError('シミュレーション', error);
+        
+        // エラーコードがある場合
+        if (error.error_code) {
+          setErrorModalData({
+            isOpen: true,
+            errorCode: error.error_code,
+            message: error.message,
+            solution: error.solution,
+            details: error.details
+          });
         } else {
-          errorMessage = error.userMessage || getUserFriendlyErrorMessage(error);
+          let errorMessage: string;
+          if (error.name === 'AbortError') {
+            errorMessage = 'APIサーバーの応答がタイムアウトしました。Renderの無料プランでは初回アクセス時に時間がかかる場合があります。再度お試しください。';
+          } else if (error.message && error.message.includes('500')) {
+            errorMessage = 'サーバーでエラーが発生しました。入力内容を確認して再度お試しください。';
+          } else {
+            errorMessage = error.userMessage || getUserFriendlyErrorMessage(error);
+          }
+          
+          setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
         }
         
-        setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
+        // エラーメッセージを画面に表示（結果エリアまでスクロール）
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+      } finally {
+        setIsSimulating(false);
       }
-      
-      // エラーメッセージを画面に表示（結果エリアまでスクロール）
-      setTimeout(() => {
-        if (resultsRef.current) {
-          resultsRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
-          });
-        }
-      }, 100);
-    } finally {
-      setIsSimulating(false);
+    }, 'simulator');  // executeWithLimitの終了
+
+    // 使用制限に到達した場合
+    if (!simulationSuccess) {
+      setShowUpgradeModal(true);
     }
   };
 
@@ -3167,6 +3192,11 @@ const Simulator: React.FC = () => {
         solution={errorModalData.solution}
         details={errorModalData.details}
         onRetry={handleSimulation}
+      />
+      
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
       />
     </div>
   );
