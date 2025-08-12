@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import Stripe from 'https://esm.sh/stripe@13.10.0'
 import { corsHeaders, corsResponse } from '../cors.ts'
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+const stripe = new Stripe(Deno.env.get('DEV_STRIPE_SECRET_KEY') || '', {
   apiVersion: '2023-10-16',
   httpClient: Stripe.createFetchHttpClient(),
 })
@@ -67,8 +67,8 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.get('origin')}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get('origin')}/dashboard?payment=cancelled`,
+      success_url: `https://expert-space-waddle-r46qq6694764fpwj6-5173.app.github.dev/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://expert-space-waddle-r46qq6694764fpwj6-5173.app.github.dev/?payment=cancelled`,
       metadata: {
         user_id: userId,
       },

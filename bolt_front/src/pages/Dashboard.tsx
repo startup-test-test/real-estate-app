@@ -29,6 +29,24 @@ const Dashboard: React.FC = () => {
   const { usage } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
 
+  // 決済成功処理
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    
+    if (paymentStatus === 'success') {
+      // 成功メッセージを表示（後で実装可能）
+      console.log('決済が成功しました！');
+      // URLパラメータをクリーンアップ
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    } else if (paymentStatus === 'cancelled') {
+      console.log('決済がキャンセルされました');
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);
+
   // 認証状態をログに記録（開発環境のみ）
   React.useEffect(() => {
     if (import.meta.env.DEV) {

@@ -5,12 +5,8 @@
 
 import React, { useState } from 'react';
 import { X, CreditCard, Check, Shield, AlertCircle, Loader2, Crown } from 'lucide-react';
-import { loadStripe } from '@stripe/stripe-js';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from './AuthProvider';
-
-// Stripe公開可能キー（環境変数から取得）
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -23,7 +19,11 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
   const [error, setError] = useState<string | null>(null);
 
   const handleUpgrade = async () => {
+    console.log('handleUpgrade called');
+    console.log('User:', user);
+    
     if (!user) {
+      console.log('User is null/undefined');
       setError('ログインが必要です');
       return;
     }
@@ -32,13 +32,16 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
     setError(null);
 
     try {
+      console.log('User ID:', user.id);
+      console.log('User object:', user);
+      
       // Supabase Edge Functionを呼び出してCheckout Session作成
       // GitHub Secretsの STRIPE_PRICE_ID を使用（VITE_プレフィックスなし）
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 
                       import.meta.env.STRIPE_PRICE_ID || 
-                      'price_1Q6oC4P8K6BRPPRIWmwxDwHW'; // デフォルトの価格ID
+                      'price_1RvChRR8rkVVzR7nAeDvfiur'; // デフォルトの価格ID
       
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+      const { data, error } = await supabase.functions.invoke('smart-service', {
         body: { 
           priceId: priceId,
           userId: user.id 
@@ -50,24 +53,12 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
         throw error;
       }
 
-      if (!data?.sessionId) {
-        throw new Error('Checkout session IDが取得できませんでした');
+      if (!data?.url) {
+        throw new Error('Checkout URLが取得できませんでした');
       }
 
-      // Stripe Checkoutへリダイレクト
-      const stripe = await stripePromise;
-      if (stripe) {
-        const { error: redirectError } = await stripe.redirectToCheckout({ 
-          sessionId: data.sessionId 
-        });
-        
-        if (redirectError) {
-          console.error('Stripe redirect error:', redirectError);
-          throw redirectError;
-        }
-      } else {
-        throw new Error('Stripeの初期化に失敗しました');
-      }
+      // Stripe Checkoutへリダイレクト（直接URLを使用）
+      window.location.href = data.url;
     } catch (err) {
       console.error('Upgrade error:', err);
       setError('アップグレード処理中にエラーが発生しました');
