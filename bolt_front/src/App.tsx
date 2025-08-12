@@ -11,6 +11,7 @@ import Simulator from './pages/Simulator';
 import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
 import LandingPage from './pages/LandingPage';
+import PaymentResult from './pages/PaymentResult';
 // 2次リリース用: AI機能のインポート
 // import MarketAnalysis from './pages/MarketAnalysis';
 // import TransactionSearch from './pages/TransactionSearch';
@@ -72,6 +73,7 @@ function App() {
             <Route path="faq" element={<FAQ />} />
             <Route path="premium-plan" element={<PremiumPlan />} />
             <Route path="simulator" element={<Simulator />} />
+            <Route path="payment-result" element={<PaymentResult />} />
             {/* 2次リリース用: AI機能のルート */}
             {/* <Route path="transaction-search" element={<TransactionSearch />} /> */}
             {/* <Route path="market-analysis" element={<MarketAnalysis />} /> */}

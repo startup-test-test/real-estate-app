@@ -32,33 +32,42 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
     setError(null);
 
     try {
-      // TODO: Supabase Edge Functionを呼び出してCheckout Session作成
-      // 現在はモックアップとしてアラート表示
-      alert('決済機能は現在実装中です。\nStripe Checkout画面に遷移します。');
+      // Supabase Edge Functionを呼び出してCheckout Session作成
+      // GitHub Secretsの STRIPE_PRICE_ID を使用（VITE_プレフィックスなし）
+      const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 
+                      import.meta.env.STRIPE_PRICE_ID || 
+                      'price_1Q6oC4P8K6BRPPRIWmwxDwHW'; // デフォルトの価格ID
       
-      // 実際の実装では以下のようなコードになります：
-      /*
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { 
-          priceId: import.meta.env.VITE_STRIPE_PRICE_ID,
+          priceId: priceId,
           userId: user.id 
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Checkout session creation error:', error);
+        throw error;
+      }
 
+      if (!data?.sessionId) {
+        throw new Error('Checkout session IDが取得できませんでした');
+      }
+
+      // Stripe Checkoutへリダイレクト
       const stripe = await stripePromise;
       if (stripe) {
-        await stripe.redirectToCheckout({ 
+        const { error: redirectError } = await stripe.redirectToCheckout({ 
           sessionId: data.sessionId 
         });
+        
+        if (redirectError) {
+          console.error('Stripe redirect error:', redirectError);
+          throw redirectError;
+        }
+      } else {
+        throw new Error('Stripeの初期化に失敗しました');
       }
-      */
-      
-      // デモ用：2秒後に閉じる
-      setTimeout(() => {
-        onClose();
-      }, 2000);
     } catch (err) {
       console.error('Upgrade error:', err);
       setError('アップグレード処理中にエラーが発生しました');
