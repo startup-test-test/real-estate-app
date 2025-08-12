@@ -20,11 +20,14 @@ export interface UsageStatus {
 export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
   try {
     // 1. サブスクリプション状態を確認
-    const { data: subscription } = await supabase
+    const { data: subscriptions } = await supabase
       .from('subscriptions')
       .select('status')
       .eq('user_id', userId)
-      .single();
+      .eq('status', 'active')
+      .limit(1);
+    
+    const subscription = subscriptions?.[0] || null;
 
     // プレミアム会員の場合は無制限
     if (subscription?.status === 'active') {
