@@ -1115,7 +1115,473 @@ async function detectAnomalies(userId: string) {
 
 ---
 
-## 10. 📚 参考資料
+## 10. 📊 ユーザー行動ログ分析機能
+
+### 10.1 要件定義
+
+#### 目的
+- ユーザーの行動パターンを理解し、サービス改善に活用
+- コンバージョン率の向上
+- 機能利用状況の把握
+- ユーザーエクスペリエンスの最適化
+
+#### 収集するデータ
+1. **ページビュー**
+   - URL
+   - 滞在時間
+   - リファラー
+   - デバイス情報
+
+2. **アクション**
+   - ボタンクリック
+   - フォーム送信
+   - エラー発生
+   - 機能利用（シミュレーション実行、PDF出力等）
+
+3. **セッション情報**
+   - セッション開始/終了
+   - セッション時間
+   - ページ遷移パス
+
+### 10.2 実装仕様
+
+#### 10.2.1 データベース設計
+
+```sql
+-- ユーザー行動ログテーブル
+CREATE TABLE user_activity_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  session_id UUID NOT NULL,
+  event_type TEXT NOT NULL, -- 'page_view', 'click', 'form_submit', 'error', 'simulation'
+  event_name TEXT NOT NULL, -- 具体的なイベント名
+  page_url TEXT NOT NULL,
+  page_title TEXT,
+  referrer_url TEXT,
+  user_agent TEXT,
+  ip_address_hash TEXT, -- プライバシー保護のためハッシュ化
+  device_type TEXT, -- 'desktop', 'mobile', 'tablet'
+  browser_name TEXT,
+  browser_version TEXT,
+  os_name TEXT,
+  os_version TEXT,
+  screen_resolution TEXT,
+  viewport_size TEXT,
+  metadata JSONB, -- イベント固有のデータ
+  created_at TIMESTAMP DEFAULT NOW(),
+  
+  -- インデックス
+  INDEX idx_user_activity_user_id (user_id),
+  INDEX idx_user_activity_session_id (session_id),
+  INDEX idx_user_activity_event_type (event_type),
+  INDEX idx_user_activity_created_at (created_at)
+);
+
+-- セッション管理テーブル
+CREATE TABLE user_sessions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  session_start TIMESTAMP DEFAULT NOW(),
+  session_end TIMESTAMP,
+  duration_seconds INTEGER,
+  page_views_count INTEGER DEFAULT 0,
+  events_count INTEGER DEFAULT 0,
+  entry_page TEXT,
+  exit_page TEXT,
+  utm_source TEXT,
+  utm_medium TEXT,
+  utm_campaign TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  
+  INDEX idx_sessions_user_id (user_id),
+  INDEX idx_sessions_created_at (created_at)
+);
+
+-- RLS設定
+ALTER TABLE user_activity_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_sessions ENABLE ROW LEVEL SECURITY;
+
+-- 管理者のみアクセス可能（プライバシー保護）
+CREATE POLICY "Only admins can view activity logs" ON user_activity_logs
+  FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+
+CREATE POLICY "Only admins can view sessions" ON user_sessions
+  FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+```
+
+#### 10.2.2 フロントエンド実装
+
+**`/bolt_front/src/utils/analytics.ts`**
+```typescript
+import { supabase } from '../lib/supabase';
+import { v4 as uuidv4 } from 'uuid';
+import UAParser from 'ua-parser-js';
+import crypto from 'crypto-js';
+
+class AnalyticsTracker {
+  private sessionId: string;
+  private userId: string | null = null;
+  private sessionStartTime: number;
+  private lastActivityTime: number;
+  private pageViewStartTime: number;
+  private currentPageUrl: string;
+
+  constructor() {
+    this.sessionId = this.getOrCreateSessionId();
+    this.sessionStartTime = Date.now();
+    this.lastActivityTime = Date.now();
+    this.pageViewStartTime = Date.now();
+    this.currentPageUrl = window.location.href;
+    this.initializeTracking();
+  }
+
+  private getOrCreateSessionId(): string {
+    let sessionId = sessionStorage.getItem('analytics_session_id');
+    if (!sessionId) {
+      sessionId = uuidv4();
+      sessionStorage.setItem('analytics_session_id', sessionId);
+    }
+    return sessionId;
+  }
+
+  private async initializeTracking() {
+    // ユーザー情報取得
+    const { data: { user } } = await supabase.auth.getUser();
+    this.userId = user?.id || null;
+
+    // セッション開始記録
+    await this.startSession();
+
+    // ページビューイベント監視
+    this.trackPageViews();
+
+    // クリックイベント監視
+    this.trackClicks();
+
+    // エラー監視
+    this.trackErrors();
+
+    // ページ離脱監視
+    this.trackPageUnload();
+
+    // 非アクティブ監視（30分でセッション終了）
+    this.trackInactivity();
+  }
+
+  private async logEvent(
+    eventType: string,
+    eventName: string,
+    metadata?: any
+  ) {
+    const parser = new UAParser();
+    const uaResult = parser.getResult();
+    
+    // IPアドレスのハッシュ化（プライバシー保護）
+    const ipHash = await this.getIpAddressHash();
+
+    const eventData = {
+      user_id: this.userId,
+      session_id: this.sessionId,
+      event_type: eventType,
+      event_name: eventName,
+      page_url: window.location.href,
+      page_title: document.title,
+      referrer_url: document.referrer,
+      user_agent: navigator.userAgent,
+      ip_address_hash: ipHash,
+      device_type: this.getDeviceType(),
+      browser_name: uaResult.browser.name,
+      browser_version: uaResult.browser.version,
+      os_name: uaResult.os.name,
+      os_version: uaResult.os.version,
+      screen_resolution: `${window.screen.width}x${window.screen.height}`,
+      viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+      metadata: metadata || {}
+    };
+
+    // Supabaseに送信
+    try {
+      await supabase.from('user_activity_logs').insert(eventData);
+    } catch (error) {
+      console.error('Analytics error:', error);
+    }
+
+    // 最終アクティビティ時間更新
+    this.lastActivityTime = Date.now();
+  }
+
+  private async getIpAddressHash(): Promise<string> {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      return crypto.SHA256(data.ip).toString();
+    } catch {
+      return 'unknown';
+    }
+  }
+
+  private getDeviceType(): string {
+    const width = window.innerWidth;
+    if (width < 768) return 'mobile';
+    if (width < 1024) return 'tablet';
+    return 'desktop';
+  }
+
+  private trackPageViews() {
+    // 初回ページビュー記録
+    this.logEvent('page_view', window.location.pathname, {
+      time_on_page: 0
+    });
+
+    // SPAのルート変更監視
+    let lastPath = window.location.pathname;
+    const observer = new MutationObserver(() => {
+      if (window.location.pathname !== lastPath) {
+        // 前ページの滞在時間を記録
+        const timeOnPage = Date.now() - this.pageViewStartTime;
+        this.logEvent('page_leave', lastPath, {
+          time_on_page: Math.round(timeOnPage / 1000)
+        });
+
+        // 新ページビュー記録
+        lastPath = window.location.pathname;
+        this.pageViewStartTime = Date.now();
+        this.logEvent('page_view', lastPath);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  private trackClicks() {
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      
+      // 重要な要素のクリックのみ記録
+      if (
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.classList.contains('clickable') ||
+        target.closest('button') ||
+        target.closest('a')
+      ) {
+        const element = target.closest('button') || target.closest('a') || target;
+        const eventName = element.getAttribute('data-analytics') || 
+                         element.textContent?.trim().substring(0, 50) || 
+                         'unknown';
+        
+        this.logEvent('click', eventName, {
+          element_type: element.tagName.toLowerCase(),
+          element_id: element.id,
+          element_classes: element.className,
+          element_href: (element as HTMLAnchorElement).href
+        });
+      }
+    });
+  }
+
+  private trackErrors() {
+    window.addEventListener('error', (e) => {
+      this.logEvent('error', 'javascript_error', {
+        message: e.message,
+        filename: e.filename,
+        line: e.lineno,
+        column: e.colno,
+        stack: e.error?.stack
+      });
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      this.logEvent('error', 'unhandled_promise_rejection', {
+        reason: e.reason
+      });
+    });
+  }
+
+  private trackPageUnload() {
+    window.addEventListener('beforeunload', () => {
+      const timeOnPage = Date.now() - this.pageViewStartTime;
+      const sessionDuration = Date.now() - this.sessionStartTime;
+      
+      // ビーコンAPIで非同期送信（ページ離脱時でも送信される）
+      navigator.sendBeacon('/api/analytics/page-leave', JSON.stringify({
+        session_id: this.sessionId,
+        time_on_page: Math.round(timeOnPage / 1000),
+        session_duration: Math.round(sessionDuration / 1000)
+      }));
+    });
+  }
+
+  private trackInactivity() {
+    let inactivityTimer: NodeJS.Timeout;
+    
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        this.endSession();
+      }, 30 * 60 * 1000); // 30分
+    };
+
+    // ユーザーアクティビティ監視
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+      document.addEventListener(event, resetTimer, true);
+    });
+
+    resetTimer();
+  }
+
+  private async startSession() {
+    const utm = new URLSearchParams(window.location.search);
+    
+    await supabase.from('user_sessions').insert({
+      id: this.sessionId,
+      user_id: this.userId,
+      entry_page: window.location.href,
+      utm_source: utm.get('utm_source'),
+      utm_medium: utm.get('utm_medium'),
+      utm_campaign: utm.get('utm_campaign')
+    });
+  }
+
+  private async endSession() {
+    const sessionDuration = Math.round((Date.now() - this.sessionStartTime) / 1000);
+    
+    await supabase.from('user_sessions').update({
+      session_end: new Date().toISOString(),
+      duration_seconds: sessionDuration,
+      exit_page: window.location.href
+    }).eq('id', this.sessionId);
+  }
+
+  // パブリックメソッド
+  public trackCustomEvent(eventName: string, metadata?: any) {
+    this.logEvent('custom', eventName, metadata);
+  }
+
+  public trackSimulation(simulationData: any) {
+    this.logEvent('simulation', 'simulation_executed', {
+      property_price: simulationData.propertyPrice,
+      loan_amount: simulationData.loanAmount,
+      rental_income: simulationData.rentalIncome,
+      irr: simulationData.results?.irr,
+      ccr: simulationData.results?.ccr
+    });
+  }
+
+  public trackPdfExport(simulationId: string) {
+    this.logEvent('export', 'pdf_generated', {
+      simulation_id: simulationId
+    });
+  }
+
+  public trackFormSubmission(formName: string, formData?: any) {
+    this.logEvent('form_submit', formName, {
+      form_data: formData // 個人情報は除外
+    });
+  }
+}
+
+// シングルトンインスタンス
+const analytics = new AnalyticsTracker();
+export default analytics;
+```
+
+#### 10.2.3 使用例
+
+```typescript
+// pages/Simulator.tsx
+import analytics from '../utils/analytics';
+
+// シミュレーション実行時
+const handleSimulation = async () => {
+  const result = await runSimulation(formData);
+  
+  // 行動ログ記録
+  analytics.trackSimulation({
+    ...formData,
+    results: result
+  });
+};
+
+// PDF出力時
+const handlePdfExport = () => {
+  generatePdf(simulationData);
+  
+  // 行動ログ記録
+  analytics.trackPdfExport(simulationId);
+};
+
+// カスタムイベント
+analytics.trackCustomEvent('premium_plan_viewed', {
+  plan_name: 'Pro',
+  price: 2980
+});
+```
+
+#### 10.2.4 管理画面での分析
+
+```typescript
+// Admin Dashboard用のクエリ例
+const getAnalytics = async (dateRange: DateRange) => {
+  // ページビュー数
+  const { data: pageViews } = await supabase
+    .from('user_activity_logs')
+    .select('*', { count: 'exact' })
+    .eq('event_type', 'page_view')
+    .gte('created_at', dateRange.start)
+    .lte('created_at', dateRange.end);
+
+  // ユニークユーザー数
+  const { data: uniqueUsers } = await supabase
+    .from('user_activity_logs')
+    .select('user_id')
+    .gte('created_at', dateRange.start)
+    .lte('created_at', dateRange.end);
+
+  // 平均セッション時間
+  const { data: sessions } = await supabase
+    .from('user_sessions')
+    .select('duration_seconds')
+    .gte('created_at', dateRange.start)
+    .lte('created_at', dateRange.end);
+
+  return {
+    totalPageViews: pageViews?.length || 0,
+    uniqueUsers: new Set(uniqueUsers?.map(u => u.user_id)).size,
+    avgSessionDuration: sessions?.reduce((acc, s) => acc + s.duration_seconds, 0) / sessions?.length || 0
+  };
+};
+```
+
+### 10.3 プライバシー配慮
+
+- IPアドレスはハッシュ化して保存
+- 個人を特定できる情報は最小限に
+- GDPRに準拠したデータ削除機能
+- オプトアウト機能の提供
+
+### 10.4 実装優先度
+
+**Phase 1（必須）**
+- 基本的なページビュー記録
+- シミュレーション実行記録
+
+**Phase 2（推奨）**
+- クリックイベント記録
+- エラー記録
+- セッション管理
+
+**Phase 3（オプション）**
+- カスタムイベント
+- A/Bテスト統合
+- リアルタイムダッシュボード
+
+---
+
+## 11. 📚 参考資料
 
 - [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
 - [Stripe Security Guide](https://stripe.com/docs/security/stripe)

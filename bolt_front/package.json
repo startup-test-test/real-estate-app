@@ -12,6 +12,7 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^7.8.0",
     "@supabase/supabase-js": "^2.50.2",
     "@types/jspdf": "^1.3.3",
     "chart.js": "^4.5.0",
