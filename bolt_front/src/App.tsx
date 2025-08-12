@@ -18,6 +18,7 @@ import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import GoogleAuthTest from './pages/GoogleAuthTest';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -60,6 +61,7 @@ function App() {
           <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/google-auth-test" element={<GoogleAuthTest />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
