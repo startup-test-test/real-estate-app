@@ -48,20 +48,23 @@ const Layout: React.FC = () => {
   // APIテストページを削除したのでdevNavigationも削除
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Mobile Header - SP版のみ表示 */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 shadow-lg z-40">
+      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-40">
         {/* Logo Section */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-600/30">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <div className="flex items-center">
-            <Home className="h-6 w-6 text-white mr-2 flex-shrink-0" />
-            <span className="text-xl font-bold text-white" style={{ fontFamily: 'serif' }}>大家DX</span>
+            <img 
+              src="/img/logo_250709_2.png" 
+              alt="Logo" 
+              className="h-6 w-auto"
+            />
           </div>
           
           {/* Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
             {isMobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -81,32 +84,35 @@ const Layout: React.FC = () => {
       )}
 
       {/* Sidebar - Integrated Header and Logo Design */}
-      <div className={`fixed left-0 top-0 bottom-0 w-72 bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+      <div className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex h-full flex-col">
           {/* Integrated Header with Logo */}
-          <div className="p-6 border-b border-slate-600/30">
+          <div className="p-6 border-b border-gray-200">
             {/* Logo Section */}
             <div className="mb-6">
-              <div className="flex items-center mb-2">
-                <Home className="h-8 w-8 text-white mr-3" />
-                <span className="text-2xl font-bold text-white" style={{ fontFamily: 'serif' }}>大家DX</span>
+              <div className="flex justify-center mb-3">
+                <img 
+                  src="/img/logo_250709_2.png" 
+                  alt="Logo" 
+                  className="h-10 w-auto"
+                />
               </div>
-              <p className="text-white/70 text-sm font-medium">AIが導く、あなたの賃貸経営の未来。</p>
+              <p className="text-gray-600 text-sm font-medium text-center">AIが導く、あなたの賃貸経営の未来。</p>
             </div>
 
             {/* Profile Section */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <div className="text-white font-medium text-sm">{user?.email || 'ゲストユーザー'}</div>
+                  <div className="text-gray-800 font-medium text-sm">{user?.email || 'ゲストユーザー'}</div>
                 </div>
               </div>
-              <button className="p-1 text-white hover:bg-white/10 rounded transition-colors">
+              <button className="p-1 text-gray-600 hover:bg-gray-100 rounded transition-colors">
                 <Settings className="h-4 w-4" />
               </button>
             </div>
@@ -126,8 +132,8 @@ const Layout: React.FC = () => {
                     className={({ isActive }) =>
                       `flex items-center px-4 py-4 text-base font-medium rounded-lg transition-colors relative ${
                         isActive
-                          ? 'bg-white/10 text-white'
-                          : 'text-white/80 hover:bg-white/5 hover:text-white'
+                          ? 'bg-blue-50 text-blue-600'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                       }`
                     }
                   >
@@ -145,7 +151,7 @@ const Layout: React.FC = () => {
             {/* Support Section */}
             <div className="mb-8">
               <div className="px-4 mb-3">
-                <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider">サポート</h3>
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">サポート</h3>
               </div>
               <div className="space-y-2">
                 {supportNavigation.map((item) => {
@@ -158,8 +164,8 @@ const Layout: React.FC = () => {
                       className={({ isActive }) =>
                         `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                           isActive
-                            ? 'bg-white/10 text-white'
-                            : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                         }`
                       }
                     >
@@ -174,10 +180,10 @@ const Layout: React.FC = () => {
           </nav>
 
           {/* Logout Button */}
-          <div className="p-4 border-t border-slate-600/30">
+          <div className="p-4 border-t border-gray-200">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white rounded-lg transition-colors"
+              className="w-full flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
             >
               <LogOut className="mr-3 h-5 w-5" />
               ログアウト
@@ -185,17 +191,17 @@ const Layout: React.FC = () => {
           </div>
 
           {/* Legal Links */}
-          <div className="p-4 border-t border-slate-600/30">
+          <div className="p-4 border-t border-gray-200">
             <div className="space-y-2 mb-4 px-2">
               <NavLink
                 to="/terms"
-                className="block text-xs text-white/60 hover:text-white transition-colors"
+                className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 利用規約
               </NavLink>
               <NavLink
                 to="/privacy"
-                className="block text-xs text-white/60 hover:text-white transition-colors"
+                className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 個人情報取り扱いについて
               </NavLink>
@@ -203,7 +209,7 @@ const Layout: React.FC = () => {
                 href="https://startup-marketing.co.jp/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-xs text-white/60 hover:text-white transition-colors"
+                className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 運営会社
               </a>

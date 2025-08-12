@@ -36,7 +36,7 @@ const Login: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -348,7 +348,7 @@ const Login: React.FC = () => {
 
             {/* Remember Me & Forgot Password (Login only) */}
             {!isSignUp && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 space-y-2 sm:space-y-0">
                 <div className="flex items-center">
                   <input
                     id="remember"
@@ -358,12 +358,9 @@ const Login: React.FC = () => {
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                   />
                   <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
-                    ログイン状態を保持
+                    ログイン状態を保持する
                   </label>
                 </div>
-                <a href="/reset-password" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
-                  パスワードを忘れた方・変更したい方
-                </a>
               </div>
             )}
 
@@ -412,7 +409,7 @@ const Login: React.FC = () => {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
             <span className="text-gray-700 font-medium text-sm sm:text-base">
-              Googleでログイン
+              Googleアカウントでログインする
             </span>
           </button>
 
@@ -439,6 +436,13 @@ const Login: React.FC = () => {
                 {isSignUp ? 'ログイン' : '新規登録'}
               </button>
             </p>
+            {!isSignUp && (
+              <p className="mt-3">
+                <a href="/reset-password" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                  パスワードを忘れた方・変更したい方
+                </a>
+              </p>
+            )}
           </div>
 
         </div>

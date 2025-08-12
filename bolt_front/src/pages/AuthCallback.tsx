@@ -124,37 +124,53 @@ const AuthCallback: React.FC = () => {
   }, [searchParams, navigate, location]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-600 flex items-center justify-center p-4">
-      <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-white/20 max-w-md w-full text-center">
-        {status === 'loading' && (
-          <>
-            <Loader className="h-12 w-12 text-indigo-600 mx-auto mb-4 animate-spin" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">確認中...</h2>
-            <p className="text-gray-600">メールアドレスの確認を処理しています。</p>
-          </>
-        )}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+        {/* Logo Header */}
+        <div className="p-8 pb-0">
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src="/img/logo_250709_2.png" 
+              alt="Logo" 
+              className="h-16 w-auto"
+            />
+          </div>
+          <p className="text-sm text-gray-600 text-center mb-2">
+            AIが導く、あなたの賃貸経営の未来。
+          </p>
+        </div>
+        
+        <div className="p-8 text-center">
+          {status === 'loading' && (
+            <>
+              <Loader className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">確認中...</h2>
+              <p className="text-gray-600">メールアドレスの確認を処理しています。</p>
+            </>
+          )}
 
-        {status === 'success' && (
-          <>
-            <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">確認完了</h2>
-            <p className="text-gray-600">{message}</p>
-          </>
-        )}
+          {status === 'success' && (
+            <>
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">確認完了</h2>
+              <p className="text-gray-600">{message}</p>
+            </>
+          )}
 
-        {status === 'error' && (
-          <>
-            <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">確認エラー</h2>
-            <p className="text-gray-600 mb-4">{message}</p>
-            <button
-              onClick={() => navigate('/login')}
-              className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg hover:from-indigo-600 hover:via-purple-700 hover:to-pink-700 transition-all duration-200"
-            >
-              ログインページに戻る
-            </button>
-          </>
-        )}
+          {status === 'error' && (
+            <>
+              <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">確認エラー</h2>
+              <p className="text-gray-600 mb-4">{message}</p>
+              <button
+                onClick={() => navigate('/login')}
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg shadow-lg shadow-blue-600/25 hover:shadow-blue-600/40 transition-all duration-200 transform hover:-translate-y-0.5"
+              >
+                ログインページに戻る
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
