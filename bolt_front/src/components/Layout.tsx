@@ -48,7 +48,7 @@ const Layout: React.FC = () => {
   // APIテストページを削除したのでdevNavigationも削除
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile Header - SP版のみ表示 */}
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-40">
         {/* Logo Section */}
@@ -57,7 +57,7 @@ const Layout: React.FC = () => {
             <img 
               src="/img/logo_250709_2.png" 
               alt="Logo" 
-              className="h-6 w-auto"
+              className="h-7 w-auto"
             />
           </div>
           
@@ -96,7 +96,7 @@ const Layout: React.FC = () => {
                 <img 
                   src="/img/logo_250709_2.png" 
                   alt="Logo" 
-                  className="h-10 w-auto"
+                  className="h-11 w-auto"
                 />
               </div>
               <p className="text-gray-600 text-sm font-medium text-center">AIが導く、あなたの賃貸経営の未来。</p>
