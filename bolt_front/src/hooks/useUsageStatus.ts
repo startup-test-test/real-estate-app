@@ -40,7 +40,7 @@ export const useUsageStatus = (): UseUsageStatusReturn => {
       setUsage({
         canUse: true,
         currentCount: 0,
-        limit: 3,
+        limit: 5,
         isSubscribed: false,
         periodEndDate: null,
         daysLeft: 30
@@ -127,14 +127,14 @@ export const getUsageStatusMessage = (usage: UsageStatus | null): string => {
   const remaining = usage.limit - usage.currentCount;
   
   if (remaining <= 0) {
-    return '無料利用枠（月3回）を使い切りました';
+    return '無料利用枠（月5回）を使い切りました';
   }
   
   if (remaining === 1) {
     return `⚠️ 残り${remaining}回（最後の1回）`;
   }
   
-  return `今月の利用可能回数: ${remaining}/${usage.limit}回`;
+  return `今月の利用状況: ${usage.currentCount}/${usage.limit}回`;
 };
 
 /**

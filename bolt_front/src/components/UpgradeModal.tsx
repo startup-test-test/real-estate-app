@@ -94,7 +94,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
             <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
             <div>
               <p className="text-sm font-medium text-amber-800">
-                無料利用枠（月3回）を使い切りました
+                無料利用枠（月5回）を使い切りました
               </p>
               <p className="text-xs text-amber-600 mt-1">
                 <span className="font-semibold">プレミアムプラン</span>で全機能を無制限にご利用いただけます

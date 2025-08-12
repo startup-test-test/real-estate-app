@@ -1,6 +1,6 @@
 /**
  * 使用制限管理ユーティリティ
- * 月3回制限のフリーミアムモデル対応
+ * 月5回制限のフリーミアムモデル対応
  */
 
 import { supabase } from '../lib/supabase';
@@ -8,7 +8,7 @@ import { supabase } from '../lib/supabase';
 export interface UsageStatus {
   canUse: boolean;           // 利用可能かどうか
   currentCount: number;       // 現在の利用回数
-  limit: number;             // 制限回数（無料:3, プレミアム:-1）
+  limit: number;             // 制限回数（無料:5, プレミアム:-1）
   isSubscribed: boolean;      // プレミアム会員かどうか
   periodEndDate: Date | null; // リセット日
   daysLeft: number;          // 残り日数
@@ -48,7 +48,7 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
       return {
         canUse: true,
         currentCount: 0,
-        limit: 3,
+        limit: 5,
         isSubscribed: false,
         periodEndDate: null,
         daysLeft: 30
@@ -60,9 +60,9 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
     const daysLeft = Math.ceil((periodEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
     return {
-      canUse: usage.current_count < 3,  // 月3回制限
+      canUse: usage.current_count < 5,  // 月5回制限
       currentCount: usage.current_count,
-      limit: 3,
+      limit: 5,
       isSubscribed: false,
       periodEndDate: periodEnd,
       daysLeft: Math.max(0, daysLeft)
@@ -73,7 +73,7 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
     return {
       canUse: true,
       currentCount: 0,
-      limit: 3,
+      limit: 5,
       isSubscribed: false,
       periodEndDate: null,
       daysLeft: 30
