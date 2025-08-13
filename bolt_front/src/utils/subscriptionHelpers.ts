@@ -41,26 +41,8 @@ export const calculateRemainingDays = (cancelAt: string | null | undefined): num
 export const formatRemainingTime = (days: number): string => {
   if (days <= 0) return '本日で終了'
   if (days === 1) return 'あと1日'
-  if (days <= 7) return `あと${days}日`
-  if (days <= 30) {
-    const weeks = Math.floor(days / 7)
-    const remainingDays = days % 7
-    if (remainingDays === 0) {
-      return `あと${weeks}週間`
-    }
-    return `あと${weeks}週間${remainingDays}日`
-  }
-  
-  // 30日以上の場合
-  const months = Math.floor(days / 30)
-  const remainingDays = days % 30
-  if (remainingDays === 0) {
-    return months === 1 ? 'あと1ヶ月' : `あと${months}ヶ月`
-  }
-  if (months === 0) {
-    return `あと${days}日`
-  }
-  return `あと約${months}ヶ月${remainingDays}日`
+  // シンプルに日数で表示
+  return `あと${days}日`
 }
 
 /**

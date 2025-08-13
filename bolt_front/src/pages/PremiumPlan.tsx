@@ -223,17 +223,20 @@ const PremiumPlan: React.FC = () => {
                       <div className="space-y-3">
                         {/* 解約予定の場合 */}
                         {subscriptionStatus.isCanceling ? (
-                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                             <div className="flex items-start">
-                              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
-                              <div className="text-sm">
-                                <p className="font-semibold text-amber-800 mb-1">解約予定</p>
-                                <p className="text-amber-700">
-                                  {formatCancelDate(subscription?.cancel_at)}まで利用可能
-                                </p>
-                                <p className="text-amber-600 mt-1">
-                                  {formatRemainingTime(subscriptionStatus.remainingDays || 0)}
-                                </p>
+                              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
+                              <div className="flex-1">
+                                <p className="font-semibold text-amber-800 text-base mb-2">解約予定</p>
+                                <div className="space-y-1 text-sm">
+                                  <p className="text-amber-700">
+                                    <span className="font-medium">利用期限：</span>
+                                    {formatCancelDate(subscription?.cancel_at)}
+                                  </p>
+                                  <p className="text-amber-600 font-medium">
+                                    {formatRemainingTime(subscriptionStatus.remainingDays || 0)}利用可能
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>

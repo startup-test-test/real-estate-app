@@ -65,24 +65,24 @@ describe('subscriptionHelpers', () => {
       expect(formatRemainingTime(7)).toBe('あと7日');
     });
 
-    it('14日の場合「あと2週間」を返す', () => {
-      expect(formatRemainingTime(14)).toBe('あと2週間');
+    it('14日の場合「あと14日」を返す', () => {
+      expect(formatRemainingTime(14)).toBe('あと14日');
     });
 
-    it('15日の場合「あと2週間1日」を返す', () => {
-      expect(formatRemainingTime(15)).toBe('あと2週間1日');
+    it('15日の場合「あと15日」を返す', () => {
+      expect(formatRemainingTime(15)).toBe('あと15日');
     });
 
-    it('30日の場合「あと4週間2日」を返す', () => {
-      expect(formatRemainingTime(30)).toBe('あと4週間2日');
+    it('30日の場合「あと30日」を返す', () => {
+      expect(formatRemainingTime(30)).toBe('あと30日');
     });
 
-    it('31日の場合「あと約1ヶ月1日」を返す', () => {
-      expect(formatRemainingTime(31)).toBe('あと約1ヶ月1日');
+    it('31日の場合「あと31日」を返す', () => {
+      expect(formatRemainingTime(31)).toBe('あと31日');
     });
 
-    it('60日の場合「あと2ヶ月」を返す', () => {
-      expect(formatRemainingTime(60)).toBe('あと2ヶ月');
+    it('60日の場合「あと60日」を返す', () => {
+      expect(formatRemainingTime(60)).toBe('あと60日');
     });
 
     it('負の値の場合「本日で終了」を返す', () => {

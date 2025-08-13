@@ -1,0 +1,80 @@
+
+﻿
+client:495 [vite] connecting...
+client:618 [vite] connected.
+chunk-WRD5HZVH.js?v=4e13c43a:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:36 ProtectedRoute: 認証ローディング中
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:36 ProtectedRoute: 認証ローディング中
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+adminUtils.ts:141 🔧 管理ユーティリティが利用可能です:
+adminUtils.ts:142   window.adminUtils.resetMyUsage() - 使用回数をリセット
+adminUtils.ts:143   window.adminUtils.setMyUsage(2) - 使用回数を2回に設定
+adminUtils.ts:144   window.adminUtils.checkMyUsage() - 現在の使用状況を確認
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+App.tsx:29 ProtectedRoute状態: 
+Object
+App.tsx:45 ProtectedRoute: 認証済み、ページを表示
+chunk-WRD5HZVH.js?v=4e13c43a:521 Warning: Received `true` for a non-boolean attribute `jsx`.
+
+If you want to write it to the DOM, pass a string instead: jsx="true" or jsx={value.toString()}.
+    at style
+    at div
+    at CancelSubscriptionModal (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/src/components/CancelSubscriptionModal.tsx:21:3)
+    at div
+    at PremiumPlan (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/src/pages/PremiumPlan.tsx?t=1755073784132:35:20)
+    at ErrorBoundary (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/src/components/ErrorBoundary.tsx:6:1)
+    at RenderedRoute (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/node_modules/.vite/deps/react-router-dom.js?v=4e13c43a:4088:5)
+    at Outlet (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/node_modules/.vite/deps/react-router-dom.js?v=4e13c43a:4494:26)
+    at div
+    at main
+    at div
+    at div
+    at Layout (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/src/components/Layout.tsx?t=1755073675457:39:57)
+    at ProtectedRoute (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/src/App.tsx?t=1755073784132:38:27)
+    at RenderedRoute (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/node_modules/.vite/deps/react-router-dom.js?v=4e13c43a:4088:5)
+    at Routes (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/node_modules/.vite/deps/react-router-dom.js?v=4e13c43a:4558:5)
+    at Router (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/node_modules/.vite/deps/react-router-dom.js?v=4e13c43a:4501:15)
+    at BrowserRouter (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/node_modules/.vite/deps/react-router-dom.js?v=4e13c43a:5247:5)
+    at AuthProvider (https://ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev/src/components/AuthProvider.tsx:30:32)
+    at App
+gtnzhnsbdmkadfawuzmc…ncel-subscription:1 
+ Failed to load resource: the server responded with a status of 500 ()
+PremiumPlan.tsx:87 Cancel subscription error: FunctionsHttpError: Edge Function returned a non-2xx status code
+    at FunctionsClient.<anonymous> (@supabase_supabase-j…?v=4e13c43a:1395:17)
+    at Generator.next (<anonymous>)
+    at fulfilled (@supabase_supabase-j…?v=4e13c43a:1314:24)
+PremiumPlan.tsx:66 
+ POST https://gtnzhnsbdmkadfawuzmc.supabase.co/functions/v1/cancel-subscription 500 (Internal Server Error)
+PremiumPlan.tsx:87 Cancel subscription error: FunctionsHttpError: Edge Function returned a non-2xx status code
+    at FunctionsClient.<anonymous> (@supabase_supabase-j…?v=4e13c43a:1395:17)
+    at Generator.next (<anonymous>)
+    at fulfilled (@supabase_supabase-j…?v=4e13c43a:1314:24)
