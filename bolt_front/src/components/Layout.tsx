@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthContext } from './AuthProvider';
 import Footer from './Footer';
+import { checkUsageLimit } from '../utils/usageLimit';
 import { 
   Calculator, 
   User,
@@ -11,15 +12,26 @@ import {
   Settings,
   BookOpen,
   Crown,
-  Database,
-  LogOut
+  LogOut,
+  Sparkles
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
   // 認証機能を削除してシンプル化
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   const { user, signOut } = useAuthContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkPremiumStatus = async () => {
+      if (user?.id) {
+        const status = await checkUsageLimit(user.id);
+        setIsPremium(status.isSubscribed);
+      }
+    };
+    checkPremiumStatus();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -110,6 +122,17 @@ const Layout: React.FC = () => {
                 </div>
                 <div>
                   <div className="text-gray-800 font-medium text-sm">{user?.email || 'ゲストユーザー'}</div>
+                  {isPremium ? (
+                    <div className="flex items-center mt-1">
+                      <Sparkles className="h-4 w-4 text-yellow-500 mr-1" />
+                      <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">プレミアム会員</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center mt-1">
+                      <User className="h-4 w-4 text-gray-400 mr-1" />
+                      <span className="text-sm font-bold text-gray-500">無料会員</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <button className="p-1 text-gray-600 hover:bg-gray-100 rounded transition-colors">

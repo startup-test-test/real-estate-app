@@ -1,12 +1,12 @@
 import React from 'react';
 import { 
-  Crown, 
   Check, 
   X,
   Zap,
   BarChart3,
   Shield,
-  TrendingUp
+  TrendingUp,
+  Sparkles
 } from 'lucide-react';
 
 const PremiumPlan: React.FC = () => {
@@ -19,7 +19,7 @@ const PremiumPlan: React.FC = () => {
       buttonColor: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
       popular: false,
       features: [
-        { name: '収益シミュレーター', included: true, limit: '月3件まで' },
+        { name: '収益シミュレーター', included: true, limit: '月5件まで' },
         { name: '基本的な収益分析', included: true },
         { name: '表面利回り計算', included: true },
         { name: 'IRR・CCR計算', included: true },
@@ -85,14 +85,20 @@ const PremiumPlan: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-4">
-            <Crown className="h-12 w-12 text-yellow-500 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900">有料プランについて</h1>
+          <div className="bg-gradient-to-r from-yellow-100 via-yellow-50 to-orange-50 rounded-2xl p-8 max-w-4xl mx-auto shadow-lg border border-yellow-200">
+            <div className="flex items-center justify-center mb-4">
+              <Sparkles className="h-12 w-12 text-yellow-500 mr-3" />
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                プレミアムプラン
+              </h1>
+            </div>
+            <p className="text-xl text-gray-700 font-medium mb-2">
+              全機能が無制限でご利用いただけます
+            </p>
+            <p className="text-gray-600">
+              本格的な不動産投資シミュレーションで、より良い投資判断を実現しましょう
+            </p>
           </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            本格的な不動産投資シミュレーションで、より良い投資判断を実現しましょう。
-            あなたのニーズに合わせたプランをお選びください。
-          </p>
         </div>
 
         {/* Pricing Plans */}

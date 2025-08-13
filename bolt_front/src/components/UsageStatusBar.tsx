@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { AlertCircle, Calendar, Star, Crown, ChevronRight } from 'lucide-react';
+import { AlertCircle, Calendar, Sparkles, Crown, ChevronRight } from 'lucide-react';
 import { useUsageStatus, getUsageStatusMessage, getUsageStatusColor } from '../hooks/useUsageStatus';
 
 interface UsageStatusBarProps {
@@ -70,16 +70,16 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
   // プレミアム会員の場合
   if (usage.isSubscribed) {
     return (
-      <div className={`w-full px-4 py-4 ${colors.bg} border-b ${colors.border}`}>
+      <div className="w-full px-4 py-4 bg-gradient-to-r from-yellow-50 via-yellow-100 to-orange-50 border-b border-yellow-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <Star className={`h-6 w-6 ${colors.icon} fill-current`} />
-              <span className={`text-base font-semibold ${colors.text}`}>
-                プレミアムプラン
+              <Sparkles className="h-6 w-6 text-yellow-500" />
+              <span className="text-base font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+                プレミアム会員
               </span>
             </div>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-700 font-medium">
               全機能が無制限でご利用いただけます
             </span>
           </div>
