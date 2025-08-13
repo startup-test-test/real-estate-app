@@ -21,6 +21,7 @@ import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import GoogleAuthTest from './pages/GoogleAuthTest';
 import Tokushoho from './pages/Tokushoho';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -70,7 +71,11 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="user-guide" element={<UserGuide />} />
             <Route path="faq" element={<FAQ />} />
-            <Route path="premium-plan" element={<PremiumPlan />} />
+            <Route path="premium-plan" element={
+              <ErrorBoundary>
+                <PremiumPlan />
+              </ErrorBoundary>
+            } />
             <Route path="simulator" element={<Simulator />} />
             <Route path="payment-result" element={<PaymentResult />} />
             <Route path="tokushoho" element={<Tokushoho />} />

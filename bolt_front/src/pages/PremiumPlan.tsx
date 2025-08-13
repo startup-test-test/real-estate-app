@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Check, 
   X,
@@ -6,10 +6,90 @@ import {
   BarChart3,
   Shield,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useAuthContext } from '../components/AuthProvider';
+import CancelSubscriptionModal from '../components/CancelSubscriptionModal';
+import { calculateRemainingDays, formatRemainingTime, formatCancelDate, getSubscriptionStatus } from '../utils/subscriptionHelpers';
 
 const PremiumPlan: React.FC = () => {
+  const { user } = useAuthContext();
+  const [subscription, setSubscription] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
+
+  // サブスクリプション情報を取得
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (!user?.id) {
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Subscription fetch error:', error);
+        }
+
+        setSubscription(data);
+      } catch (err) {
+        console.error('Error fetching subscription:', err);
+      } finally {
+        // Loading state removed
+      }
+    };
+
+    fetchSubscription();
+  }, [user]);
+
+  // サブスクリプションステータスを取得
+  const subscriptionStatus = getSubscriptionStatus(subscription);
+
+  // 解約処理
+  const handleCancelSubscription = async () => {
+    if (!user?.id) {
+      alert('ログインが必要です');
+      return;
+    }
+
+    setIsCanceling(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('cancel-subscription', {
+        body: {},
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      // サブスクリプション情報を再取得
+      const { data: updatedSub } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+
+      setSubscription(updatedSub);
+      setIsModalOpen(false);
+      alert(`解約が完了しました。${data.message}`);
+    } catch (error: any) {
+      console.error('Cancel subscription error:', error);
+      alert(error.message || '解約処理中にエラーが発生しました');
+    } finally {
+      setIsCanceling(false);
+    }
+  };
   const plans = [
     {
       name: 'フリープラン',
@@ -129,9 +209,88 @@ const PremiumPlan: React.FC = () => {
                   <span className="text-gray-600 ml-2">/月</span>
                 </div>
 
-                <button className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${plan.buttonColor}`}>
-                  {plan.name === 'フリープラン' ? '現在のプラン' : 'プランを選択'}
-                </button>
+                {/* プランボタンの表示を条件分岐 */}
+                {plan.name === 'フリープラン' ? (
+                  <button 
+                    className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${plan.buttonColor}`}
+                    disabled
+                  >
+                    {subscriptionStatus.isPremium ? 'フリープラン' : '現在のプラン'}
+                  </button>
+                ) : (
+                  <div>
+                    {subscriptionStatus.isPremium ? (
+                      <div className="space-y-3">
+                        {/* 解約予定の場合 */}
+                        {subscriptionStatus.isCanceling ? (
+                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                            <div className="flex items-start">
+                              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
+                              <div className="text-sm">
+                                <p className="font-semibold text-amber-800 mb-1">解約予定</p>
+                                <p className="text-amber-700">
+                                  {formatCancelDate(subscription?.cancel_at)}まで利用可能
+                                </p>
+                                <p className="text-amber-600 mt-1">
+                                  {formatRemainingTime(subscriptionStatus.remainingDays || 0)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center">
+                                <Check className="h-5 w-5 text-green-600 mr-2" />
+                                <span className="text-sm font-semibold text-green-800">現在のプラン</span>
+                              </div>
+                              <Sparkles className="h-5 w-5 text-yellow-500" />
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* 解約ボタン（解約予定でない場合のみ表示） */}
+                        {!subscriptionStatus.isCanceling && (
+                          <button 
+                            onClick={() => setIsModalOpen(true)}
+                            className="w-full px-6 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                          >
+                            プランを解約
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <button 
+                        className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${plan.buttonColor}`}
+                        onClick={async () => {
+                          if (!user) {
+                            alert('ログインが必要です');
+                            return;
+                          }
+                          // Stripe Checkoutへリダイレクト
+                          try {
+                            const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1RvChRR8rkVVzR7nAeDvfiur';
+                            const { data, error } = await supabase.functions.invoke('smart-service', {
+                              body: { 
+                                priceId: priceId,
+                                userId: user.id 
+                              }
+                            });
+                            if (error) throw error;
+                            if (data?.url) {
+                              window.location.href = data.url;
+                            }
+                          } catch (err) {
+                            console.error('Upgrade error:', err);
+                            alert('アップグレード処理中にエラーが発生しました');
+                          }
+                        }}
+                      >
+                        プランを選択
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-4">
@@ -213,6 +372,16 @@ const PremiumPlan: React.FC = () => {
 
         {/* CTA Section - 削除 */}
       </div>
+
+      {/* 解約確認モーダル */}
+      <CancelSubscriptionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleCancelSubscription}
+        cancelDate={formatCancelDate(subscription?.cancel_at || subscription?.current_period_end)}
+        remainingDays={calculateRemainingDays(subscription?.cancel_at || subscription?.current_period_end)}
+        isLoading={isCanceling}
+      />
     </div>
   );
 };

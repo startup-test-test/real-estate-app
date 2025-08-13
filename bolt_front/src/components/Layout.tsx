@@ -3,6 +3,8 @@ import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from './AuthProvider';
 import Footer from './Footer';
 import { checkUsageLimit } from '../utils/usageLimit';
+import { calculateRemainingDays, formatRemainingTime } from '../utils/subscriptionHelpers';
+import { supabase } from '../lib/supabase';
 import { 
   Calculator, 
   User,
@@ -20,14 +22,28 @@ const Layout: React.FC = () => {
   // 認証機能を削除してシンプル化
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [subscription, setSubscription] = useState<any>(null);
   const { user, signOut } = useAuthContext();
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkPremiumStatus = async () => {
       if (user?.id) {
+        // 利用制限ステータスを確認
         const status = await checkUsageLimit(user.id);
         setIsPremium(status.isSubscribed);
+        
+        // サブスクリプション詳細を取得
+        const { data } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .single();
+        
+        if (data) {
+          setSubscription(data);
+        }
       }
     };
     checkPremiumStatus();
@@ -127,7 +143,14 @@ const Layout: React.FC = () => {
                   {isPremium ? (
                     <div className="flex items-center mt-1">
                       <Sparkles className="h-4 w-4 text-yellow-500 mr-1" />
-                      <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">プレミアム会員</span>
+                      <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+                        プレミアム会員
+                        {subscription?.cancel_at_period_end && subscription?.cancel_at && (
+                          <span className="text-xs text-amber-600 ml-1">
+                            ({formatRemainingTime(calculateRemainingDays(subscription.cancel_at))})
+                          </span>
+                        )}
+                      </span>
                     </div>
                   ) : (
                     <div className="flex items-center mt-1">
