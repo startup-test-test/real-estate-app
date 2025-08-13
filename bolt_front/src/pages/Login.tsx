@@ -43,6 +43,7 @@ const Login: React.FC = () => {
       setError(null);
       const returnUrl = redirectUrl || cleanSearchParams.get('return') || localStorage.getItem('pendingReturnUrl');
       
+      // 常に現在のブラウザのURLを使用（Codespaceが変わっても自動対応）
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

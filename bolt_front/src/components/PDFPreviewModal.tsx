@@ -97,7 +97,7 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl h-[95vh] flex flex-col">
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center">
@@ -138,7 +138,7 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         </div>
 
         {/* プレビューエリア */}
-        <div className="flex-1 overflow-auto bg-gray-100 p-4">
+        <div className="flex-1 overflow-auto bg-gray-100 p-6">
           <div className="max-w-none mx-auto">
             <div 
               id="pdf-preview-content"
@@ -147,7 +147,7 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
                 width: '210mm', 
                 minHeight: '297mm',
                 margin: '0 auto',
-                transform: 'scale(0.8)',
+                transform: window.innerWidth >= 1600 ? 'scale(1)' : window.innerWidth >= 1400 ? 'scale(0.9)' : 'scale(0.85)',
                 transformOrigin: 'top center'
               }}
             >

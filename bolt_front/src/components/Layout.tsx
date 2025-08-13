@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from './AuthProvider';
 import Footer from './Footer';
 import { checkUsageLimit } from '../utils/usageLimit';
@@ -104,13 +104,15 @@ const Layout: React.FC = () => {
           <div className="p-6 border-b border-gray-200">
             {/* Logo Section */}
             <div className="mb-6">
-              <div className="flex justify-center mb-3">
-                <img 
-                  src="/img/logo_250709_2.png" 
-                  alt="Logo" 
-                  className="h-11 w-auto"
-                />
-              </div>
+              <Link to="/" className="block">
+                <div className="flex justify-center mb-3 transition-transform hover:scale-105">
+                  <img 
+                    src="/img/logo_250709_2.png" 
+                    alt="Logo" 
+                    className="h-11 w-auto cursor-pointer"
+                  />
+                </div>
+              </Link>
               <p className="text-gray-600 text-sm font-medium text-center">AIが導く、あなたの賃貸経営の未来。</p>
             </div>
 

@@ -129,8 +129,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
               <div className="flex items-center gap-1.5 text-sm text-gray-600">
                 <Calendar className="h-4 w-4" />
                 <span>
-                  次回リセット: {usage.periodEndDate.toLocaleDateString('ja-JP')}
-                  （あと{usage.daysLeft}日）
+                  毎月1日にリセット
                 </span>
               </div>
             )}
