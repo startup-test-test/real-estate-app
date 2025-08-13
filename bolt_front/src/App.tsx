@@ -20,6 +20,7 @@ import PremiumPlan from './pages/PremiumPlan';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import GoogleAuthTest from './pages/GoogleAuthTest';
+import Tokushoho from './pages/Tokushoho';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -60,8 +61,6 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
           <Route path="/google-auth-test" element={<GoogleAuthTest />} />
           <Route path="/" element={
             <ProtectedRoute>
@@ -74,6 +73,9 @@ function App() {
             <Route path="premium-plan" element={<PremiumPlan />} />
             <Route path="simulator" element={<Simulator />} />
             <Route path="payment-result" element={<PaymentResult />} />
+            <Route path="tokushoho" element={<Tokushoho />} />
+            <Route path="terms" element={<Terms />} />
+            <Route path="privacy" element={<Privacy />} />
             {/* 2次リリース用: AI機能のルート */}
             {/* <Route path="transaction-search" element={<TransactionSearch />} /> */}
             {/* <Route path="market-analysis" element={<MarketAnalysis />} /> */}

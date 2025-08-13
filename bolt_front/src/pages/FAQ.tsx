@@ -6,8 +6,6 @@ import {
   ChevronUp,
   MessageCircle,
   Mail,
-  Phone,
-  Clock,
   BookOpen,
   Zap,
   Shield,
@@ -221,26 +219,17 @@ const FAQ: React.FC = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-white rounded-lg">
-              <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">メールサポート</h3>
-              <p className="text-sm text-gray-600 mb-3">ooya.tech2025@gmail.com</p>
-              <p className="text-xs text-gray-500">24時間以内に返信</p>
-            </div>
-            
-            <div className="text-center p-4 bg-white rounded-lg">
-              <Phone className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">電話サポート</h3>
-              <p className="text-sm text-gray-600 mb-3">03-1234-5678</p>
-              <p className="text-xs text-gray-500">平日 9:00-18:00</p>
-            </div>
-            
-            <div className="text-center p-4 bg-white rounded-lg">
-              <Clock className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">チャットサポート</h3>
-              <p className="text-sm text-gray-600 mb-3">リアルタイム対応</p>
-              <p className="text-xs text-gray-500">平日 9:00-18:00</p>
+          <div className="flex justify-center">
+            <div className="text-center p-6 bg-white rounded-lg max-w-md">
+              <Mail className="h-10 w-10 text-blue-600 mx-auto mb-4" />
+              <h3 className="font-semibold text-gray-900 mb-3 text-lg">メールサポート</h3>
+              <a 
+                href="mailto:ooya.tech2025@gmail.com?subject=大家DXについてのお問い合わせ"
+                className="text-blue-600 hover:text-blue-700 underline font-medium"
+              >
+                ooya.tech2025@gmail.com
+              </a>
+              <p className="text-sm text-gray-500 mt-3">ご意見やお問い合わせがある方はこちらにメールしてください</p>
             </div>
           </div>
         </div>

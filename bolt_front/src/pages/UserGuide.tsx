@@ -405,7 +405,13 @@ const UserGuide: React.FC = () => {
             <div className="text-center p-4 bg-white rounded-lg">
               <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">メールサポート</h3>
-              <p className="text-sm text-gray-600">ooya.tech2025@gmail.com</p>
+              <a 
+                href="mailto:ooya.tech2025@gmail.com?subject=大家DXについてのお問い合わせ"
+                className="text-blue-600 hover:text-blue-700 underline text-sm font-medium"
+              >
+                ooya.tech2025@gmail.com
+              </a>
+              <p className="text-xs text-gray-500 mt-2">ご意見やお問い合わせがある方はこちらにメールしてください</p>
             </div>
           </div>
         </div>

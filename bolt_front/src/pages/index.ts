@@ -15,3 +15,4 @@ export { default as FAQ } from './FAQ';
 export { default as PremiumPlan } from './PremiumPlan';
 export { default as PropertyDetail } from './PropertyDetail';
 export { default as UserGuide } from './UserGuide';
+export { default as Tokushoho } from './Tokushoho';
