@@ -19,11 +19,38 @@ serve(async (req) => {
 
   try {
     // リクエストボディを取得
-    const { priceId, userId } = await req.json()
+    const { priceId, userId, returnUrl } = await req.json()
 
     if (!priceId || !userId) {
       throw new Error('Price ID and User ID are required')
     }
+
+    // 許可されたドメインの検証
+    const allowedDomains = [
+      'app.github.dev',     // Codespace
+      'ooya.tech',          // 本番
+      'staging.ooya.tech',  // ステージング  
+      'localhost'           // ローカル開発
+    ]
+
+    let validatedReturnUrl = 'https://ooya.tech' // デフォルト
+    
+    if (returnUrl) {
+      try {
+        const parsedUrl = new URL(returnUrl)
+        const isAllowed = allowedDomains.some(domain => 
+          parsedUrl.hostname.includes(domain)
+        )
+        if (isAllowed) {
+          validatedReturnUrl = returnUrl
+        }
+      } catch {
+        // URLパースエラーの場合はデフォルトを使用
+      }
+    }
+    
+    // 環境変数があればそれを優先
+    const baseUrl = Deno.env.get('APP_URL') || validatedReturnUrl
 
     // Supabaseクライアント作成
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
@@ -79,8 +106,8 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `https://expert-space-waddle-r46qq6694764fpwj6-5173.app.github.dev/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://expert-space-waddle-r46qq6694764fpwj6-5173.app.github.dev/?payment=cancelled`,
+      success_url: `${baseUrl}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/?payment=cancelled`,
       metadata: {
         user_id: userId,
       },

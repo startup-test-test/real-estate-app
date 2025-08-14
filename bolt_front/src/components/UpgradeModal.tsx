@@ -55,10 +55,14 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                       import.meta.env.STRIPE_PRICE_ID || 
                       'price_1RvChRR8rkVVzR7nAeDvfiur'; // デフォルトの価格ID
       
-      const { data, error } = await supabase.functions.invoke('smart-service', {
+      // 現在のURLを取得（Codespace対応）
+      const currentUrl = window.location.origin;
+      
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { 
           priceId: priceId,
-          userId: user.id 
+          userId: user.id,
+          returnUrl: currentUrl // クライアント側のURLを送信
         }
       });
 
