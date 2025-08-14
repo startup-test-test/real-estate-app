@@ -12,6 +12,8 @@ export interface UsageStatus {
   isSubscribed: boolean;      // プレミアム会員かどうか
   periodEndDate: Date | null; // リセット日
   daysLeft: number;          // 残り日数
+  cancelAtPeriodEnd?: boolean; // 解約予定かどうか
+  currentPeriodEnd?: Date | null; // 現在の請求期間終了日
 }
 
 /**
@@ -22,7 +24,7 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
     // 1. サブスクリプション状態を確認
     const { data: subscriptions } = await supabase
       .from('subscriptions')
-      .select('status')
+      .select('status, cancel_at_period_end, current_period_end')
       .eq('user_id', userId)
       .eq('status', 'active')
       .limit(1);
@@ -37,7 +39,9 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
         limit: -1,
         isSubscribed: true,
         periodEndDate: null,
-        daysLeft: -1
+        daysLeft: -1,
+        cancelAtPeriodEnd: subscription.cancel_at_period_end || false,
+        currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end) : null
       };
     }
 
