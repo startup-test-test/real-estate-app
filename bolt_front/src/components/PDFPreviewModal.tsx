@@ -56,8 +56,17 @@ const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             }
             
             .print-container {
-              width: 100%;
-              max-width: none;
+              width: 210mm;
+              max-width: 210mm;
+              margin: 0 auto;
+              box-sizing: border-box;
+            }
+            
+            @media print {
+              .print-container {
+                width: 210mm !important;
+                max-width: 210mm !important;
+              }
             }
             
             .page-break {

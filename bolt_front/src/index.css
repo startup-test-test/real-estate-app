@@ -86,6 +86,35 @@ body {
     display: none !important;
   }
   
+  /* Tailwindのレスポンシブクラスを無効化してPC版レイアウトを強制 */
+  .md\:hidden {
+    display: none !important;
+  }
+  
+  .md\:block {
+    display: block !important;
+  }
+  
+  .md\:flex {
+    display: flex !important;
+  }
+  
+  .md\:grid {
+    display: grid !important;
+  }
+  
+  .hidden.md\:block {
+    display: block !important;
+  }
+  
+  .hidden.md\:flex {
+    display: flex !important;
+  }
+  
+  .hidden.md\:grid {
+    display: grid !important;
+  }
+  
   /* レイアウト調整 */
   body {
     -webkit-print-color-adjust: exact;

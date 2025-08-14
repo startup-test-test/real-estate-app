@@ -40,7 +40,7 @@ const SimulationPDFReport: React.FC<SimulationPDFReportProps> = ({
         
         .preview-mode {
           width: 100%;
-          max-width: 800px;
+          max-width: 210mm;
           margin: 0 auto;
           padding: 20px;
           border: 1px solid #e5e5e5;
@@ -174,12 +174,18 @@ const SimulationPDFReport: React.FC<SimulationPDFReportProps> = ({
         
         @media print {
           .pdf-report {
-            width: 100% !important;
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
+            width: 210mm !important;
+            max-width: 210mm !important;
+            margin: 0 auto !important;
+            padding: 15mm !important;
             border: none !important;
             box-shadow: none !important;
+            box-sizing: border-box !important;
+          }
+          
+          .preview-mode {
+            width: 210mm !important;
+            max-width: 210mm !important;
           }
           
           .pdf-section {
