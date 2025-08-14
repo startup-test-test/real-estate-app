@@ -169,6 +169,12 @@ body {
     border: 1px solid #e5e7eb !important;
   }
   
+  /* キャッシュフローテーブルの印刷時調整 */
+  .cashflow-table-container table {
+    min-width: 100% !important;
+    width: 100% !important;
+  }
+  
   /* グリッドレイアウトの調整 */
   .print\:grid-cols-2 {
     grid-template-columns: repeat(2, 1fr) !important;
