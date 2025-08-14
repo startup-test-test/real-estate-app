@@ -731,7 +731,204 @@ CREATE POLICY "Users can view own history" ON simulation_history
 
 ---
 
-## 5. 📅 実装スケジュール
+## 5. 📱 PDF保存機能のPC版対応
+
+### 5.1 現状の問題点
+
+- 現在のPDF保存機能がモバイル版のみ対応
+- PC版での印刷・保存ができない
+- ユーザビリティの低下
+
+### 5.2 実装仕様
+
+#### 5.2.1 PC版PDF生成の実装
+
+**`/bolt_front/src/components/PDFGenerator.tsx` の修正**
+```typescript
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+
+const generatePDF = async (elementId: string, fileName: string = 'simulation_result.pdf') => {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  // デバイス判定
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    // モバイル版の処理（既存）
+    await generateMobilePDF(element, fileName);
+  } else {
+    // PC版の処理（新規）
+    await generateDesktopPDF(element, fileName);
+  }
+};
+
+const generateDesktopPDF = async (element: HTMLElement, fileName: string) => {
+  // A4サイズでPDF生成
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  // ページサイズ設定
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 10;
+  const contentWidth = pageWidth - (margin * 2);
+  const contentHeight = pageHeight - (margin * 2);
+
+  // HTML要素をキャンバスに変換
+  const canvas = await html2canvas(element, {
+    scale: 2, // 高解像度
+    useCORS: true,
+    logging: false,
+    backgroundColor: '#ffffff'
+  });
+
+  // キャンバスをPDFに追加
+  const imgData = canvas.toDataURL('image/png');
+  const imgWidth = contentWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let position = margin;
+  let heightLeft = imgHeight;
+  let pageNumber = 1;
+
+  // 最初のページに追加
+  pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+  heightLeft -= contentHeight;
+
+  // 複数ページ対応
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight + margin;
+    pdf.addPage();
+    pageNumber++;
+    pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+    heightLeft -= contentHeight;
+  }
+
+  // ヘッダー・フッター追加
+  for (let i = 1; i <= pageNumber; i++) {
+    pdf.setPage(i);
+    
+    // ヘッダー
+    pdf.setFontSize(10);
+    pdf.setTextColor(100);
+    pdf.text('大家DX - 不動産投資シミュレーション結果', pageWidth / 2, 5, { align: 'center' });
+    
+    // フッター
+    pdf.text(`${i} / ${pageNumber}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
+    pdf.setFontSize(8);
+    pdf.text(new Date().toLocaleDateString('ja-JP'), pageWidth - margin, pageHeight - 5, { align: 'right' });
+  }
+
+  // PDFをダウンロード
+  pdf.save(fileName);
+};
+```
+
+#### 5.2.2 印刷用スタイルシート
+
+**`/bolt_front/src/styles/print.css`**
+```css
+@media print {
+  /* 不要な要素を非表示 */
+  .no-print,
+  header,
+  footer,
+  nav,
+  .sidebar,
+  .action-buttons,
+  .modal {
+    display: none !important;
+  }
+
+  /* ページ設定 */
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  /* 印刷用スタイル */
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+
+  /* テーブルの改ページ制御 */
+  table {
+    page-break-inside: avoid;
+  }
+
+  /* グラフの印刷最適化 */
+  .chart-container {
+    page-break-inside: avoid;
+    max-width: 100%;
+    height: auto !important;
+  }
+
+  /* 見出しの改ページ制御 */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  /* リンクのURL表示 */
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  /* カラー最適化 */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+```
+
+#### 5.2.3 ブラウザ印刷対応
+
+```typescript
+// 印刷ボタンの実装
+const handlePrint = () => {
+  // 印刷前の準備
+  document.body.classList.add('printing');
+  
+  // 印刷ダイアログを開く
+  window.print();
+  
+  // 印刷後のクリーンアップ
+  window.addEventListener('afterprint', () => {
+    document.body.classList.remove('printing');
+  }, { once: true });
+};
+
+// 印刷プレビューの最適化
+const preparePrintView = () => {
+  // グラフを静的画像に変換
+  const charts = document.querySelectorAll('.recharts-wrapper');
+  charts.forEach(async (chart) => {
+    const canvas = await html2canvas(chart as HTMLElement);
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL();
+    img.className = 'print-only';
+    chart.parentNode?.insertBefore(img, chart);
+  });
+};
+```
+
+### 5.3 実装優先度
+
+- **優先度**: 高
+- **推定工数**: 1日
+- **影響範囲**: シミュレーション結果表示画面
+
+---
+
+## 6. 📅 実装スケジュール
 
 ### Phase 1: ランディングページ改修（1日）
 - Day 1: ヒーローセクション・登録フロー実装
