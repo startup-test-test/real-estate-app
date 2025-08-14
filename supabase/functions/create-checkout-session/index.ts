@@ -37,6 +37,18 @@ serve(async (req) => {
 
     const email = userData.user.email
 
+    // 既存のアクティブなサブスクリプションがあるか確認
+    const { data: existingSubscription } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single()
+
+    if (existingSubscription && !existingSubscription.cancel_at_period_end) {
+      throw new Error('すでにプレミアムプランに登録されています。複数のサブスクリプションは作成できません。')
+    }
+
     // 既存のStripe顧客を検索、なければ作成
     let customerId: string
     const customers = await stripe.customers.list({

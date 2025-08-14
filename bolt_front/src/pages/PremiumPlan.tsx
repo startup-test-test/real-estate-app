@@ -90,6 +90,47 @@ const PremiumPlan: React.FC = () => {
       setIsCanceling(false);
     }
   };
+
+  // 解約取り消し処理
+  const handleResumeSubscription = async () => {
+    if (!user?.id) {
+      alert('ログインが必要です');
+      return;
+    }
+
+    if (!confirm('プレミアムプランを継続しますか？')) {
+      return;
+    }
+
+    setIsCanceling(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('resume-subscription', {
+        body: {},
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      // サブスクリプション情報を再取得
+      const { data: updatedSub } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+
+      setSubscription(updatedSub);
+      alert('解約が取り消されました。プレミアムプランを継続します。');
+    } catch (error: any) {
+      console.error('Resume subscription error:', error);
+      alert(error.message || '解約の取り消しに失敗しました');
+    } finally {
+      setIsCanceling(false);
+    }
+  };
   const plans = [
     {
       name: 'フリープラン',
@@ -223,23 +264,31 @@ const PremiumPlan: React.FC = () => {
                       <div className="space-y-3">
                         {/* 解約予定の場合 */}
                         {subscriptionStatus.isCanceling ? (
-                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                            <div className="flex items-start">
-                              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
-                              <div className="flex-1">
-                                <p className="font-semibold text-amber-800 text-base mb-2">解約予定</p>
-                                <div className="space-y-1 text-sm">
-                                  <p className="text-amber-700">
-                                    <span className="font-medium">利用期限：</span>
-                                    {formatCancelDate(subscription?.cancel_at)}
-                                  </p>
-                                  <p className="text-amber-600 font-medium">
-                                    {formatRemainingTime(subscriptionStatus.remainingDays || 0)}利用可能
-                                  </p>
+                          <>
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
+                              <div className="flex items-start">
+                                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
+                                <div className="flex-1">
+                                  <p className="font-semibold text-amber-800 text-base mb-2">解約予定</p>
+                                  <div className="space-y-1 text-sm">
+                                    <p className="text-amber-700">
+                                      <span className="font-medium">利用期限：</span>
+                                      {formatCancelDate(subscription?.cancel_at)}
+                                    </p>
+                                    <p className="text-amber-600 font-medium">
+                                      {formatRemainingTime(subscriptionStatus.remainingDays || 0)}利用可能
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
+                            <button 
+                              onClick={handleResumeSubscription}
+                              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                            >
+                              解約を取り消す
+                            </button>
+                          </>
                         ) : (
                           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                             <div className="flex items-center justify-between">

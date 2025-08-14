@@ -270,7 +270,7 @@ const Layout: React.FC = () => {
             </div>
             
             {/* Copyright */}
-            <p className="text-xs text-white/50 text-center">
+            <p className="text-xs text-gray-600 text-center">
               © 2025 StartupMarketing Inc.
             </p>
           </div>

@@ -35,6 +35,20 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
       console.log('User ID:', user.id);
       console.log('User object:', user);
       
+      // 既存のアクティブなサブスクリプションがあるか確認
+      const { data: existingSubscription, error: checkError } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+
+      if (existingSubscription && !existingSubscription.cancel_at_period_end) {
+        setError('すでにプレミアムプランに登録されています');
+        setIsLoading(false);
+        return;
+      }
+      
       // Supabase Edge Functionを呼び出してCheckout Session作成
       // GitHub Secretsの STRIPE_PRICE_ID を使用（VITE_プレフィックスなし）
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 
