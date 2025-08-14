@@ -28,6 +28,8 @@ jobs:
           supabase link --project-ref $SUPABASE_PROJECT_ID --password ""
           supabase functions deploy create-checkout-session --project-ref $SUPABASE_PROJECT_ID
           supabase functions deploy handle-stripe-webhook --project-ref $SUPABASE_PROJECT_ID
+          supabase functions deploy cancel-subscription --project-ref $SUPABASE_PROJECT_ID
+          supabase functions deploy resume-subscription --project-ref $SUPABASE_PROJECT_ID
       
       - name: Set Secrets
         env:
