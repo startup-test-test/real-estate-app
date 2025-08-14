@@ -212,11 +212,13 @@ describe('Dashboard', () => {
 
   it('ローディング状態が表示される', () => {
     // AuthProviderをローディング状態でモック
-    vi.mocked(vi.importActual('../components/AuthProvider')).useAuthContext = () => ({
-      user: null,
-      isAuthenticated: false,
-      loading: true
-    })
+    vi.doMock('../components/AuthProvider', () => ({
+      useAuthContext: () => ({
+        user: null,
+        isAuthenticated: false,
+        loading: true
+      })
+    }))
     
     render(
       <BrowserRouter>
@@ -229,13 +231,15 @@ describe('Dashboard', () => {
 
   it('データがない場合の表示', async () => {
     // 空のデータでモック
-    vi.mocked(vi.importActual('../hooks/useSupabaseData')).useSupabaseData = () => ({
-      getSimulations: vi.fn().mockResolvedValue({
-        data: [],
-        error: null
-      }),
-      deleteSimulation: vi.fn()
-    })
+    vi.doMock('../hooks/useSupabaseData', () => ({
+      useSupabaseData: () => ({
+        getSimulations: vi.fn().mockResolvedValue({
+          data: [],
+          error: null
+        }),
+        deleteSimulation: vi.fn()
+      })
+    }))
     
     render(
       <BrowserRouter>
@@ -256,13 +260,15 @@ describe('Dashboard', () => {
       cash_flow_table: null
     }]
     
-    vi.mocked(vi.importActual('../hooks/useSupabaseData')).useSupabaseData = () => ({
-      getSimulations: vi.fn().mockResolvedValue({
-        data: mockDataWithoutCashFlowTable,
-        error: null
-      }),
-      deleteSimulation: vi.fn()
-    })
+    vi.doMock('../hooks/useSupabaseData', () => ({
+      useSupabaseData: () => ({
+        getSimulations: vi.fn().mockResolvedValue({
+          data: mockDataWithoutCashFlowTable,
+          error: null
+        }),
+        deleteSimulation: vi.fn()
+      })
+    }))
     
     render(
       <BrowserRouter>
