@@ -280,6 +280,7 @@ const Simulator: React.FC = () => {
               '売却益（万円）': simulation.results['売却益（万円）'] || 0,
               '総投資額（円）': simulation.results['総投資額（円）'] || 0,
               '自己資金（円）': simulation.results['自己資金（円）'] || 0,
+              '自己資金（万円）': simulation.results['自己資金（万円）'] || 0,
               '借入額（円）': simulation.results['借入額（円）'] || 0,
               '土地積算評価（万円）': simulation.results['土地積算評価（万円）'] || 0,
               '建物積算評価（万円）': simulation.results['建物積算評価（万円）'] || 0
@@ -788,12 +789,8 @@ const Simulator: React.FC = () => {
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      // 環境変数が設定されていない場合はエラーを明確にする
-      const API_BASE_URL = import.meta.env.VITE_DEV_RENDER_SIMULATOR_API;
-      if (!API_BASE_URL) {
-        console.error('シミュレーターAPIのURLが設定されていません。環境変数VITE_DEV_RENDER_SIMULATOR_APIを設定してください。');
-        throw new Error('シミュレーターAPI設定エラー');
-      }
+      // 環境変数の問題が解決するまで一時的にハードコーディング
+      const API_BASE_URL = 'https://real-estate-app-rwf1.onrender.com';
       
       // デバッグ用：送信データのログ出力
       if (import.meta.env.DEV) {
