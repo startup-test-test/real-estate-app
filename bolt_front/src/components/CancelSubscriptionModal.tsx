@@ -134,7 +134,7 @@ const CancelSubscriptionModal: React.FC<CancelSubscriptionModalProps> = ({
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fadeIn {
           from {
             opacity: 0;
