@@ -18,7 +18,6 @@ def calculate_brokerage_fee(sale_price_man: float) -> float:
         仲介手数料（万円単位、消費税込み）
     """
     sale_price_yen = sale_price_man * 10000
-    
     # 宅建業法の上限手数料率に基づく計算
     if sale_price_yen <= 2000000:
         fee = sale_price_yen * 0.05
@@ -29,7 +28,6 @@ def calculate_brokerage_fee(sale_price_man: float) -> float:
     
     # 消費税10%を加算
     fee_with_tax = fee * 1.1
-    
     # 万円単位に変換して返す
     return fee_with_tax / 10000
 
@@ -50,7 +48,8 @@ def calculate_remaining_loan(loan_amount: float, interest_rate: float,
         if r == 0:
             remaining = principal * (n - m) / n
         else:
-            remaining = principal * (math.pow(1 + r, n) - math.pow(1 + r, m)) / (math.pow(1 + r, n) - 1)
+            remaining = (principal * (math.pow(1 + r, n) - math.pow(1 + r, m)) /
+                        (math.pow(1 + r, n) - 1))
     else:
         monthly_principal = principal / n
         remaining = principal - (monthly_principal * m)
@@ -136,13 +135,11 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # 不動産所得と税金
     # 円単位に統一
     annual_total_expenses = management_fee * 12 + fixed_cost * 12 + property_tax
-    
     # 支払利息の計算（初年度）
     if interest_rate > 0 and loan_amount > 0:
         annual_interest = loan_amount * 10000 * (interest_rate / 100)
     else:
         annual_interest = 0
-    
     # 不動産所得（支払利息を損金算入）
     real_estate_income = (annual_rent * 10000 - annual_total_expenses -
                          annual_interest - annual_depreciation * 10000)
@@ -317,7 +314,6 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     cum = 0
     cf_data = []
     accumulated_loss = 0  # 繰越欠損金の初期化（旧方式、互換性のため残す）
-    
     # FIFO方式の繰越欠損金管理
     loss_carryforward_list = []  # [(year_occurred, amount, expiry_year), ...]
     owner_type = property_data.get('owner_type', '個人')  # デフォルトは個人
@@ -410,7 +406,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         # 3. 資本的修繕の減価償却（各修繕時期から個別に償却）
         capital_repairs_depreciation = 0
         for past_year in range(1, i + 1):
-            if major_repair_cycle > 0 and past_year % major_repair_cycle == 0 and major_repair_cost >= capital_repair_threshold:
+            if (major_repair_cycle > 0 and past_year % major_repair_cycle == 0 and
+                major_repair_cost >= capital_repair_threshold):
                 # 修繕実施年から償却開始
                 years_since_repair = i - past_year + 1
                 if years_since_repair <= depreciation_years:
@@ -426,7 +423,6 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         interest_rate = property_data.get('interest_rate', 0)
         loan_years = property_data.get('loan_years', 0)
         loan_type = property_data.get('loan_type', '元利均等')
-        
         # 支払利息の計算（各年度）
         annual_interest = 0
         if interest_rate > 0 and i > 0 and i <= loan_years:
@@ -439,7 +435,6 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                     loan_amount, interest_rate, loan_years, i-1, loan_type
                 )
                 annual_interest = prev_remaining * 10000 * (interest_rate / 100)
-        
         # 不動産所得（税金計算用）
         # 通常修繕費は経費として控除、資本的支出は減価償却で処理
         # 支払利息も損金算入
@@ -449,14 +444,14 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
 
         # 税金計算（FIFO方式の繰越欠損金を考慮）
         # 期限切れの欠損金を削除
-        loss_carryforward_list = [(year, amount, expiry) 
-                                  for year, amount, expiry in loss_carryforward_list 
+        loss_carryforward_list = [(year, amount, expiry)
+                                  for year, amount, expiry in loss_carryforward_list
                                   if expiry >= i]
-        
         # 税金計算
         if real_estate_income <= 0:
             # 損失の場合、繰越欠損金リストに追加
-            loss_carryforward_list.append((i, abs(real_estate_income), i + carryforward_years))
+            loss_carryforward_list.append(
+                (i, abs(real_estate_income), i + carryforward_years))
             tax = 0
             # 互換性のため累積値も更新
             accumulated_loss += abs(real_estate_income)
@@ -477,13 +472,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                     # 全額使用の場合、削除対象としてマーク
                     used_losses.append(idx)
             
-            # 使用済みの欠損金を削除（インデックスの大きい順から削除）
-            for idx in sorted(used_losses, reverse=True):
+            # 使用済みの欠損金を削除（インデックスの大きい順から削除）for idx in sorted(used_losses, reverse=True):
                 del loss_carryforward_list[idx]
-            
             # 課税所得に対して税金計算
-            tax = remaining_income * (effective_tax_rate / 100) if remaining_income > 0 else 0
-            
+            tax = (remaining_income * (effective_tax_rate / 100)
+                   if remaining_income > 0 else 0)
             # 互換性のため累積値も更新
             accumulated_loss = sum(amount for _, amount, _ in loss_carryforward_list)
 
@@ -514,7 +507,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
 
         # 資本的支出の実際の現金支出（その年に実際に支払う金額）
         capital_expenditure_cash = 0
-        if major_repair_cycle > 0 and i % major_repair_cycle == 0 and capital_repair_amount > 0:
+        if (major_repair_cycle > 0 and i % major_repair_cycle == 0 and
+                capital_repair_amount > 0):
             capital_expenditure_cash = capital_repair_amount * 10000
 
         # キャッシュフロー（税引後）- 実際の現金の動きを反映
@@ -544,7 +538,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         if price_method == 'manual':
             # 方法1: ユーザー入力の想定売却価格（価格下落率を適用）
             if expected_sale_price > 0 and price_decline_rate > 0:
-                sale_price_current_year = expected_sale_price * pow(1 - price_decline_rate / 100, i - 1)
+                sale_price_current_year = (expected_sale_price *
+                                         pow(1 - price_decline_rate / 100, i - 1))
             else:
                 sale_price_current_year = expected_sale_price
 
@@ -734,10 +729,10 @@ def calculate_tax_with_loss_carryforward(
             # 繰越欠損金がない場合
             taxable_income = income
             new_accumulated_loss = 0
-        
+
         # 税金計算
         tax = taxable_income * (effective_tax_rate / 100)
-        
+
         return tax, new_accumulated_loss
 
 
@@ -749,7 +744,8 @@ def calculate_ccr_first_year(first_year_cf: float, self_funding: float) -> Optio
     return (first_year_cf / (self_funding * 10000)) * 100
 
 
-def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_funding: float) -> Optional[float]:
+def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]],
+                             self_funding: float) -> Optional[float]:
     """全期間のCCRを計算（運営累計CF / 自己資金）
     
     注：売却益は除外し、運営CFのみで計算する
@@ -773,7 +769,8 @@ def calculate_ccr_full_period(cash_flow_table: List[Dict[str, Any]], self_fundin
         return 0
 
 
-def calculate_roi_full_period(cash_flow_table: List[Dict[str, Any]], total_investment: float) -> float:
+def calculate_roi_full_period(cash_flow_table: List[Dict[str, Any]],
+                             total_investment: float) -> float:
     """全期間のROIを計算（最終累計CF / 総投資額）"""
     try:
         if not cash_flow_table or total_investment <= 0:
@@ -810,7 +807,6 @@ def run_full_simulation(property_data: Dict[str, Any]) -> Dict[str, Any]:
     # CCR計算（初年度ベース） - キャッシュフローテーブルから取得
     # 重要：自己資金は購入価格 - 借入額 + 諸経費 + 改装費
     actual_self_funding = basic_metrics['self_funding']  # 正しい自己資金（970万円）
-    
     if cash_flow_table and len(cash_flow_table) > 0:
         first_year_actual_cf = cash_flow_table[0].get('営業CF', 0)
         # 正しい自己資金を使用してCCRを計算
