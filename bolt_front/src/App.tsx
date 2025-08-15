@@ -19,7 +19,6 @@ import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
-import GoogleAuthTest from './pages/GoogleAuthTest';
 import Tokushoho from './pages/Tokushoho';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -62,7 +61,6 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
-          <Route path="/google-auth-test" element={<GoogleAuthTest />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
