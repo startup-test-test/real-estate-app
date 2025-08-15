@@ -94,5 +94,5 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
-        local-dir: ./deploy-configs/dev/
+        local-dir: ./server-configs/dev/
         server-dir: /ooya.tech/public_html/dev.ooya.tech/
