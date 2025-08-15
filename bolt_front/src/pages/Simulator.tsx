@@ -788,7 +788,12 @@ const Simulator: React.FC = () => {
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://real-estate-app-rwf1.onrender.com';
+      // 環境変数が設定されていない場合はエラーを明確にする
+      const API_BASE_URL = import.meta.env.VITE_DEV_RENDER_SIMULATOR_API;
+      if (!API_BASE_URL) {
+        console.error('シミュレーターAPIのURLが設定されていません。環境変数VITE_DEV_RENDER_SIMULATOR_APIを設定してください。');
+        throw new Error('シミュレーターAPI設定エラー');
+      }
       
       // デバッグ用：送信データのログ出力
       if (import.meta.env.DEV) {
