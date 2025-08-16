@@ -27,9 +27,10 @@ import { tooltips } from '../constants/tooltips';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 import { handleApiError, logError, getUserFriendlyErrorMessage } from '../utils/errorHandler';
+import { API_ENDPOINTS, debugApiConfig } from '../config/api';
 
 // FAST API のベースURL
-// const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
+// 環境に応じて自動的に切り替わるようになりました（config/api.tsで管理）
 
 interface SimulationResult {
   results: SimulationResultData;
@@ -789,11 +790,11 @@ const Simulator: React.FC = () => {
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      // 環境変数の問題が解決するまで一時的にハードコーディング
-      const API_BASE_URL = 'https://real-estate-app-rwf1.onrender.com';
+      // API URLは環境に応じて自動的に切り替わります（config/api.tsで管理）
       
-      // デバッグ用：送信データのログ出力
+      // デバッグ用：API設定と送信データのログ出力
       if (import.meta.env.DEV) {
+        debugApiConfig(); // API設定をコンソールに表示
         console.log('入力値（inputs）:', {
           propertyTax: inputs.propertyTax,
           managementFee: inputs.managementFee,
@@ -806,7 +807,7 @@ const Simulator: React.FC = () => {
 
       // 最初にAPIを起動させる（Health Check）
       try {
-        await fetch(`${API_BASE_URL}/`, { method: 'GET' });
+        await fetch(API_ENDPOINTS.HEALTH, { method: 'GET' });
       } catch (e) {
         console.log('API起動中...');
       }
@@ -817,7 +818,7 @@ const Simulator: React.FC = () => {
       
       let response;
       try {
-        response = await fetch(`${API_BASE_URL}/api/simulate`, {
+        response = await fetch(API_ENDPOINTS.SIMULATE, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
