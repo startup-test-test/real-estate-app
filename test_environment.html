@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>環境判定テスト</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .info-box {
+            background: #f0f8ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .result {
+            font-family: 'Courier New', monospace;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f2f2f2;
+            font-weight: bold;
+        }
+        .api-url {
+            color: #2196F3;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 API環境判定テスト</h1>
+        
+        <div class="info-box">
+            <strong>このページは環境判定機能をテストします</strong><br>
+            現在のホスト名から適切なRender APIを選択します。
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📍 現在の環境情報</div>
+            <div id="current-env" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🌐 ホスト別シミュレーション</div>
+            <p>各環境でどのAPIが選択されるかをテストします：</p>
+            <table id="simulation-table">
+                <thead>
+                    <tr>
+                        <th>ホスト名</th>
+                        <th>判定される環境</th>
+                        <th>使用されるAPI</th>
+                    </tr>
+                </thead>
+                <tbody id="simulation-results"></tbody>
+            </table>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🚀 API接続テスト</div>
+            <button onclick="testApiConnection()">APIヘルスチェック実行</button>
+            <div id="api-test-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📋 デバッグ情報</div>
+            <button onclick="showDebugInfo()">詳細情報を表示</button>
+            <div id="debug-info" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 環境判定のテスト実装
+        const Environment = {
+            PRODUCTION: 'production',
+            DEVELOPMENT: 'development',
+            CODESPACES: 'codespaces',
+            LOCAL: 'local'
+        };
+
+        const API_URLS = {
+            [Environment.PRODUCTION]: 'https://real-estate-app-1-iii4.onrender.com',
+            [Environment.DEVELOPMENT]: 'https://real-estate-app-rwf1.onrender.com',
+            [Environment.CODESPACES]: 'https://real-estate-app-rwf1.onrender.com',
+            [Environment.LOCAL]: 'https://real-estate-app-rwf1.onrender.com'
+        };
+
+        function getEnvironment(hostname) {
+            if (hostname === 'ooya.tech') {
+                return Environment.PRODUCTION;
+            }
+            if (hostname === 'dev.ooya.tech') {
+                return Environment.DEVELOPMENT;
+            }
+            if (hostname.includes('.app.github.dev')) {
+                return Environment.CODESPACES;
+            }
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return Environment.LOCAL;
+            }
+            return Environment.DEVELOPMENT;
+        }
+
+        function getApiUrl(hostname) {
+            const env = getEnvironment(hostname);
+            return API_URLS[env];
+        }
+
+        // 現在の環境を表示
+        function displayCurrentEnvironment() {
+            const hostname = window.location.hostname;
+            const port = window.location.port;
+            const env = getEnvironment(hostname);
+            const apiUrl = getApiUrl(hostname);
+
+            const html = `
+                <table>
+                    <tr><td><strong>ホスト名:</strong></td><td>${hostname}</td></tr>
+                    <tr><td><strong>ポート:</strong></td><td>${port || '(なし)'}</td></tr>
+                    <tr><td><strong>環境:</strong></td><td><span class="success">${env}</span></td></tr>
+                    <tr><td><strong>API URL:</strong></td><td><a href="${apiUrl}" target="_blank" class="api-url">${apiUrl}</a></td></tr>
+                </table>
+            `;
+            document.getElementById('current-env').innerHTML = html;
+        }
+
+        // ホスト別シミュレーション
+        function simulateEnvironments() {
+            const testCases = [
+                { hostname: 'localhost', description: 'ローカル開発' },
+                { hostname: '127.0.0.1', description: 'ローカル開発（IP）' },
+                { hostname: 'ominous-happiness-q7r697r6gq93xjxq-5173.app.github.dev', description: 'Codespaces' },
+                { hostname: 'dev.ooya.tech', description: '開発環境' },
+                { hostname: 'ooya.tech', description: '本番環境' },
+                { hostname: 'unknown.domain.com', description: '不明なドメイン' }
+            ];
+
+            const tbody = document.getElementById('simulation-results');
+            tbody.innerHTML = '';
+
+            testCases.forEach(test => {
+                const env = getEnvironment(test.hostname);
+                const apiUrl = getApiUrl(test.hostname);
+                const row = `
+                    <tr>
+                        <td>${test.hostname}<br><small>${test.description}</small></td>
+                        <td>${env}</td>
+                        <td><small>${apiUrl}</small></td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // API接続テスト
+        window.testApiConnection = async function() {
+            const resultDiv = document.getElementById('api-test-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '🔄 テスト中...';
+
+            const hostname = window.location.hostname;
+            const apiUrl = getApiUrl(hostname);
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`${apiUrl}/`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                const endTime = Date.now();
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <span class="success">✅ 接続成功!</span><br>
+                        レスポンス時間: ${endTime - startTime}ms<br>
+                        APIレスポンス: ${JSON.stringify(data, null, 2)}
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <span class="error">❌ エラー: HTTP ${response.status}</span><br>
+                        ${response.statusText}
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <span class="error">❌ 接続エラー</span><br>
+                    ${error.message}<br>
+                    <small>CORSエラーの可能性があります。開発者ツールのコンソールを確認してください。</small>
+                `;
+            }
+        };
+
+        // デバッグ情報表示
+        window.showDebugInfo = function() {
+            const debugDiv = document.getElementById('debug-info');
+            debugDiv.style.display = 'block';
+            
+            const info = {
+                'User Agent': navigator.userAgent,
+                'Protocol': window.location.protocol,
+                'Hostname': window.location.hostname,
+                'Port': window.location.port || '(default)',
+                'Pathname': window.location.pathname,
+                'Full URL': window.location.href,
+                'Environment': getEnvironment(window.location.hostname),
+                'API URL': getApiUrl(window.location.hostname),
+                'Timestamp': new Date().toISOString()
+            };
+
+            let html = '<table>';
+            for (const [key, value] of Object.entries(info)) {
+                html += `<tr><td><strong>${key}:</strong></td><td>${value}</td></tr>`;
+            }
+            html += '</table>';
+            
+            debugDiv.innerHTML = html;
+        };
+
+        // ページ読み込み時に実行
+        displayCurrentEnvironment();
+        simulateEnvironments();
+    </script>
+</body>
+</html>
