@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>環境変数テスト</title>
+</head>
+<body>
+    <h1>環境変数テスト</h1>
+    <div id="result"></div>
+    <script type="module">
+        // Viteの環境変数をテスト
+        const testEnv = async () => {
+            try {
+                const response = await fetch('/src/main.tsx');
+                const text = await response.text();
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>環境変数の状態：</h2>
+                    <p>VITE_DEV_RENDER_SIMULATOR_API: ${import.meta.env.VITE_DEV_RENDER_SIMULATOR_API || '未設定'}</p>
+                    <p>VITE_SUPABASE_URL: ${import.meta.env.VITE_SUPABASE_URL || '未設定'}</p>
+                    <p>DEV: ${import.meta.env.DEV}</p>
+                    <p>MODE: ${import.meta.env.MODE}</p>
+                `;
+            } catch (e) {
+                document.getElementById('result').innerHTML = `
+                    <h2>環境変数の状態：</h2>
+                    <p>VITE_DEV_RENDER_SIMULATOR_API: ${import.meta.env.VITE_DEV_RENDER_SIMULATOR_API || '未設定'}</p>
+                    <p>VITE_SUPABASE_URL: ${import.meta.env.VITE_SUPABASE_URL || '未設定'}</p>
+                    <p>DEV: ${import.meta.env.DEV}</p>
+                    <p>MODE: ${import.meta.env.MODE}</p>
+                `;
+            }
+        };
+        
+        testEnv();
+    </script>
+</body>
+</html>
