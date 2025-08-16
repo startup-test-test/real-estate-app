@@ -3,7 +3,7 @@
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
 from dotenv import load_dotenv
@@ -23,13 +23,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS設定
+# CORS設定 - 特定のドメインのみ許可（セキュリティ向上）
+# 許可するドメイン: localhost, 127.0.0.1, Codespaces (*.app.github.dev), dev.ooya.tech, ooya.tech
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex=r"^(https?://localhost(:[0-9]+)?|https?://127\.0\.0\.1(:[0-9]+)?|https?://[a-z0-9-]+\.app\.github\.dev|https://dev\.ooya\.tech|https://ooya\.tech)$",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # APIキーの取得
