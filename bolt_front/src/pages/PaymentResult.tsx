@@ -63,11 +63,11 @@ const PaymentResult: React.FC = () => {
   }, [user, paymentStatus]);
 
   const handleContinue = () => {
-    navigate('/dashboard');
+    navigate('/mypage');
   };
 
   const handleRetry = () => {
-    navigate('/dashboard');
+    navigate('/mypage');
   };
 
   if (isVerifying) {
@@ -175,7 +175,7 @@ const PaymentResult: React.FC = () => {
               ダッシュボードに戻る
             </button>
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/mypage')}
               className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors"
             >
               後で決める
@@ -198,7 +198,7 @@ const PaymentResult: React.FC = () => {
           不正なアクセスです
         </p>
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/mypage')}
           className="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 transition-colors"
         >
           ダッシュボードへ戻る

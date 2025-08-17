@@ -114,7 +114,7 @@ const Login: React.FC = () => {
           // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
           if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
             console.log('🔄 Detected login/invitation loop, redirecting to home instead');
-            navigate('/');
+            navigate('/mypage');
           } else {
             // 絶対URLの場合は、window.location.hrefで直接リダイレクト
             if (decodedUrl.startsWith('http')) {
@@ -181,7 +181,7 @@ const Login: React.FC = () => {
           // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
           if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
             console.log('🔄 Detected login/invitation loop, redirecting to home instead');
-            navigate('/');
+            navigate('/mypage');
           } else {
             // 絶対URLの場合は、window.location.hrefで直接リダイレクト
             if (decodedUrl.startsWith('http')) {

@@ -10,7 +10,7 @@ export { default as AuthCallback } from './AuthCallback';
 export { default as Simulator } from './Simulator';
 
 // その他のページ
-export { default as Dashboard } from './Dashboard';
+export { default as MyPage } from './MyPage';
 export { default as FAQ } from './FAQ';
 export { default as PremiumPlan } from './PremiumPlan';
 export { default as PropertyDetail } from './PropertyDetail';

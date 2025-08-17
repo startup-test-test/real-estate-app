@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import ResetPassword from './pages/ResetPassword';
 import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
-import Dashboard from './pages/Dashboard';
+import MyPage from './pages/MyPage';
 import Simulator from './pages/Simulator';
 import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
@@ -20,6 +20,7 @@ import PremiumPlan from './pages/PremiumPlan';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Tokushoho from './pages/Tokushoho';
+import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -56,34 +57,38 @@ function App() {
       }}>
         <Routes>
           {/* パブリックページ */}
-          <Route path="/landing" element={<LandingPage />} />
+          {/* ランディングページをルートに移動 */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
-          <Route path="/" element={
+          {/* 保護されたページ（Layoutを共有） */}
+          <Route element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
           }>
-            <Route index element={<Dashboard />} />
-            <Route path="user-guide" element={<UserGuide />} />
-            <Route path="faq" element={<FAQ />} />
-            <Route path="premium-plan" element={
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/user-guide" element={<UserGuide />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/premium-plan" element={
               <ErrorBoundary>
                 <PremiumPlan />
               </ErrorBoundary>
             } />
-            <Route path="simulator" element={<Simulator />} />
-            <Route path="payment-result" element={<PaymentResult />} />
-            <Route path="tokushoho" element={<Tokushoho />} />
-            <Route path="terms" element={<Terms />} />
-            <Route path="privacy" element={<Privacy />} />
+            <Route path="/simulator" element={<Simulator />} />
+            <Route path="/payment-result" element={<PaymentResult />} />
+            <Route path="/tokushoho" element={<Tokushoho />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             {/* 2次リリース用: AI機能のルート */}
-            {/* <Route path="transaction-search" element={<TransactionSearch />} /> */}
-            {/* <Route path="market-analysis" element={<MarketAnalysis />} /> */}
-            <Route path="property-detail/:id" element={<PropertyDetail />} />
+            {/* <Route path="/transaction-search" element={<TransactionSearch />} /> */}
+            {/* <Route path="/market-analysis" element={<MarketAnalysis />} /> */}
+            <Route path="/property-detail/:id" element={<PropertyDetail />} />
           </Route>
+          {/* 404ページ - すべてのルートの最後に配置 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>

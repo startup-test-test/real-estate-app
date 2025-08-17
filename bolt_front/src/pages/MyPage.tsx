@@ -22,7 +22,7 @@ import UpgradeModal from "../components/UpgradeModal";
 import { useUsageStatus } from "../hooks/useUsageStatus";
 // Removed useSupabaseData hook dependency
 
-const Dashboard: React.FC = () => {
+const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading: authLoading } = useAuthContext();
   const { getSimulations, deleteSimulation } = useSupabaseData();
@@ -50,7 +50,7 @@ const Dashboard: React.FC = () => {
   // 認証状態をログに記録（開発環境のみ）
   React.useEffect(() => {
     if (import.meta.env.DEV) {
-      console.log("Dashboard認証状態:", {
+      console.log("MyPage認証状態:", {
         user: user ? { id: user.id, email: user.email } : null,
         isAuthenticated,
         authLoading,
@@ -129,14 +129,14 @@ const Dashboard: React.FC = () => {
 
         // キャッシュ読み込み後、1秒後に最新データを取得（バックグラウンド）
         // 無限ループを防ぐため、一度だけ実行
-        if (!(window as any).dashboardDataRefreshed) {
-          (window as any).dashboardDataRefreshed = true;
+        if (!(window as any).mypageDataRefreshed) {
+          (window as any).mypageDataRefreshed = true;
           setTimeout(() => {
             console.log("キャッシュ読み込み後、最新データを取得します");
             loadSimulations(true);
             // 5秒後にフラグをリセット（次回のページ読み込み時に再実行可能）
             setTimeout(() => {
-              (window as any).dashboardDataRefreshed = false;
+              (window as any).mypageDataRefreshed = false;
             }, 5000);
           }, 1000);
         }
@@ -216,7 +216,7 @@ const Dashboard: React.FC = () => {
 
   // 初回読み込み
   React.useEffect(() => {
-    console.log("Dashboard useEffect: 初回読み込み", {
+    console.log("MyPage useEffect: 初回読み込み", {
       user: user?.email,
       authLoading,
     });
@@ -229,12 +229,12 @@ const Dashboard: React.FC = () => {
   React.useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        const lastUpdate = (window as any).lastDashboardUpdate || 0;
+        const lastUpdate = (window as any).lastMypageUpdate || 0;
         const now = Date.now();
         // 最後の更新から10秒以上経過していたら更新
         if (now - lastUpdate > 10000) {
           console.log("タブが表示されたときにデータを更新");
-          (window as any).lastDashboardUpdate = now;
+          (window as any).lastMypageUpdate = now;
           loadSimulations(true);
         }
       }
@@ -1111,4 +1111,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default MyPage;

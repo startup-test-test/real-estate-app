@@ -41,7 +41,7 @@ const AuthCallback: React.FC = () => {
             setStatus('success');
             setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
             setTimeout(() => {
-              navigate('/', { replace: true });
+              navigate('/mypage', { replace: true });
             }, 1500);
             return;
           }
@@ -70,7 +70,7 @@ const AuthCallback: React.FC = () => {
             
             // 即座にダッシュボードにリダイレクト
             setTimeout(() => {
-              navigate('/', { replace: true });
+              navigate('/mypage', { replace: true });
             }, 1500);
             return;
           }
@@ -97,7 +97,7 @@ const AuthCallback: React.FC = () => {
             setStatus('success');
             setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
             setTimeout(() => {
-              navigate('/', { replace: true });
+              navigate('/mypage', { replace: true });
             }, 1500);
             return;
           }

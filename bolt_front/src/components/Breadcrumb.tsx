@@ -20,7 +20,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
     const path = location.pathname;
     const breadcrumbs: BreadcrumbItem[] = [
-      { name: 'マイページ', path: '/' }
+      { name: 'マイページ', path: '/mypage' }
     ];
 
     if (path.includes('/simulator')) {
@@ -37,7 +37,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
       breadcrumbs.push({ name: '有料プラン', path: '/premium-plan', current: true });
     } else if (path.includes('/property-detail')) {
       breadcrumbs.push({ name: '物件詳細', path: path, current: true });
-    } else if (path === '/') {
+    } else if (path === '/mypage') {
       breadcrumbs[0].current = true;
     }
 
@@ -47,7 +47,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   const breadcrumbItems = items || generateBreadcrumbs();
 
   // Don't show breadcrumbs on the homepage unless explicitly provided
-  if (!items && location.pathname === '/') {
+  if (!items && location.pathname === '/mypage') {
     return null;
   }
 

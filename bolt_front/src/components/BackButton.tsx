@@ -9,7 +9,7 @@ interface BackButtonProps {
 }
 
 const BackButton: React.FC<BackButtonProps> = ({ 
-  defaultPath = '/', 
+  defaultPath = '/mypage', 
   label,
   className = "flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors touch-manipulation"
 }) => {

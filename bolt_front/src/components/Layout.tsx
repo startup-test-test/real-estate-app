@@ -61,7 +61,7 @@ const Layout: React.FC = () => {
   };
 
   const navigation = [
-    { name: 'マイページ', href: '/', icon: Home },
+    { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
     // 2次リリース用: AI取引事例検索・AI市場分析
     // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
@@ -120,7 +120,7 @@ const Layout: React.FC = () => {
           <div className="p-6 border-b border-gray-200">
             {/* Logo Section */}
             <div className="mb-6">
-              <Link to="/" className="block">
+              <Link to="/mypage" className="block">
                 <div className="flex justify-center mb-3 transition-transform hover:scale-105">
                   <img 
                     src="/img/logo_250709_2.png" 
