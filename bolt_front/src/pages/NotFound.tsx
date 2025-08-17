@@ -1,20 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, AlertCircle } from 'lucide-react';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(10);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/mypage');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
+          {/* ロゴ */}
+          <div className="flex justify-center mb-4">
+            <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-16 w-auto" />
+          </div>
+          
           <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             404 - ページが見つかりません
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             お探しのページは存在しないか、移動した可能性があります。
+          </p>
+          <p className="mt-4 text-center text-sm text-indigo-600 font-medium">
+            {countdown}秒後にマイページへ自動的に移動します
           </p>
         </div>
 
