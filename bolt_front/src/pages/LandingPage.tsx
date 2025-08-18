@@ -610,13 +610,13 @@ const LandingPage: React.FC = () => {
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
-                    動画配信
+                    お知らせ
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.06.03</p>
+                  <p className="text-sm text-gray-500 mb-1">2025.08.18</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    不動産テックの学校「Gate.School」にて最新動画を公開いたしました
+                    テキストテキストテキストテキストテキストテキスト
                   </h3>
                 </div>
               </div>
@@ -628,9 +628,9 @@ const LandingPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.06.02</p>
+                  <p className="text-sm text-gray-500 mb-1">2025.08.15</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    東京都内の単身者向けマンション賃料、平均7%上昇！一人気エリアは10%以上の値上がりも
+                    テキストテキストテキストテキストテキストテキスト
                   </h3>
                 </div>
               </div>
@@ -638,13 +638,13 @@ const LandingPage: React.FC = () => {
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
-                    セミナー
+                    更新情報
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.05.01</p>
+                  <p className="text-sm text-gray-500 mb-1">2025.08.10</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    【セミナー開催】不動産営業の新時代！AIとインサイドセールスチームの連携で成約数を倍増させる方法
+                    テキストテキストテキストテキストテキストテキスト
                   </h3>
                 </div>
               </div>
@@ -652,13 +652,13 @@ const LandingPage: React.FC = () => {
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
-                    セミナー
+                    お知らせ
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.04.20</p>
+                  <p className="text-sm text-gray-500 mb-1">2025.08.01</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    【セミナー開催】他社はこう提案している！収益物件仲介のリアルな提案例を大公開！
+                    テキストテキストテキストテキストテキストテキスト
                   </h3>
                 </div>
               </div>
