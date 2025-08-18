@@ -70,8 +70,8 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/dist/
-        server-dir: /ooya.tech/public_html/dev.ooya.tech/
-        dangerous-clean-slate: true
+        server-dir: /dev.ooya.tech/public_html/
+        dangerous-clean-slate: false
         log-level: verbose
         state-name: .ftp-deploy-sync-state-dev.json
         exclude: |
@@ -85,7 +85,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/img/
-        server-dir: /ooya.tech/public_html/dev.ooya.tech/img/
+        server-dir: /dev.ooya.tech/public_html/img/
     
     - name: Upload .htaccess for dev
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -95,4 +95,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./server-configs/dev/
-        server-dir: /ooya.tech/public_html/dev.ooya.tech/
+        server-dir: /dev.ooya.tech/public_html/
