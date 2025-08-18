@@ -40,6 +40,13 @@ jobs:
         cd bolt_front
         npm run build
     
+    - name: List build files
+      run: |
+        echo "Listing bolt_front/dist/ contents:"
+        ls -la bolt_front/dist/
+        echo "Listing assets:"
+        ls -la bolt_front/dist/assets/ || echo "No assets directory"
+    
     - name: Deploy to FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
@@ -48,12 +55,8 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/dist/
-        server-dir: /public_html/
-        dangerous-clean-slate: false
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
+        server-dir: /ooya.tech/public_html/
+        dangerous-clean-slate: true
     
     - name: Upload images
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -63,7 +66,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/img/
-        server-dir: /public_html/img/
+        server-dir: /ooya.tech/public_html/img/
     
     - name: Upload .htaccess for production
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -73,4 +76,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./server-configs/main/
-        server-dir: /public_html/
+        server-dir: /ooya.tech/public_html/
