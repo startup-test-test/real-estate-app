@@ -31,7 +31,7 @@ jobs:
         echo "VITE_SUPABASE_ANON_KEY=${{ secrets.MAIN_SUPABASE_ANON_KEY }}" >> .env.production
         echo "VITE_API_BASE_URL=${{ secrets.MAIN_RENDER_SIMULATOR_URL }}" >> .env.production
         echo "VITE_ENABLE_OAUTH=true" >> .env.production
-        echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> .env.production
+        echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.MAIN_VITE_GOOGLE_CLIENT_ID }}" >> .env.production
         echo "VITE_STRIPE_PUBLISHABLE_KEY=${{ secrets.MAIN_STRIPE_PUBLISHABLE_KEY }}" >> .env.production
         echo "VITE_STRIPE_PRICE_ID=${{ secrets.MAIN_STRIPE_PRICE_ID }}" >> .env.production
     
