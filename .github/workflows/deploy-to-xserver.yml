@@ -61,10 +61,11 @@ jobs:
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/dist/
         server-dir: /ooya.tech/public_html/
-        dangerous-clean-slate: false
+        state-name: .ftp-deploy-sync-state-main.json
         exclude: |
           **/media/**
           **/media
+          **/.ftp-deploy-sync-state.json
     
     - name: Upload images
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4

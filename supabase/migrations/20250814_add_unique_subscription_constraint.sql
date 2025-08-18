@@ -1,4 +1,4 @@
-https://ooya.tech/-- 二重決済防止のためのUNIQUE制約を追加
+https://ooya.tech//ooya.tech/public_htmln-- 二重決済防止のためのUNIQUE制約を追加
 -- 1ユーザーにつき、アクティブで解約予定でないサブスクリプションは1つまで
 
 -- 既存のインデックスがあれば削除
