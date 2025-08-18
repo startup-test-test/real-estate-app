@@ -49,7 +49,7 @@ jobs:
         port: ${{ secrets.FTP_PORT }}
         local-dir: ./bolt_front/dist/
         server-dir: /public_html/
-        dangerous-clean-slate: false
+        dangerous-clean-slate: true
     
     - name: Upload images
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
