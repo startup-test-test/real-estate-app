@@ -85,7 +85,18 @@ const PremiumPlan: React.FC = () => {
       alert(`解約が完了しました。${data.message}`);
     } catch (error: any) {
       console.error('Cancel subscription error:', error);
-      alert(error.message || '解約処理中にエラーが発生しました');
+      // エラーメッセージを日本語化
+      let errorMessage = '解約処理中にエラーが発生しました';
+      
+      if (error.message?.includes('already') || error.message?.includes('non-2xx')) {
+        errorMessage = 'この操作はすでに処理済みです。しばらくお待ちいただくか、ページを更新してください。';
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
+      } else if (error.message?.includes('unauthorized') || error.message?.includes('401')) {
+        errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsCanceling(false);
     }
@@ -126,7 +137,18 @@ const PremiumPlan: React.FC = () => {
       alert('解約が取り消されました。プレミアムプランを継続します。');
     } catch (error: any) {
       console.error('Resume subscription error:', error);
-      alert(error.message || '解約の取り消しに失敗しました');
+      // エラーメッセージを日本語化
+      let errorMessage = '解約の取り消しに失敗しました';
+      
+      if (error.message?.includes('already') || error.message?.includes('non-2xx')) {
+        errorMessage = 'この操作はすでに処理済みです。しばらくお待ちいただくか、ページを更新してください。';
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
+      } else if (error.message?.includes('unauthorized') || error.message?.includes('401')) {
+        errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsCanceling(false);
     }
@@ -332,9 +354,20 @@ const PremiumPlan: React.FC = () => {
                             if (data?.url) {
                               window.location.href = data.url;
                             }
-                          } catch (err) {
+                          } catch (err: any) {
                             console.error('Upgrade error:', err);
-                            alert('アップグレード処理中にエラーが発生しました');
+                            // エラーメッセージを日本語化
+                            let errorMessage = 'アップグレード処理中にエラーが発生しました';
+                            
+                            if (err.message?.includes('already') || err.message?.includes('non-2xx')) {
+                              errorMessage = 'すでにプレミアムプランをご利用中です。ページを更新してください。';
+                            } else if (err.message?.includes('network') || err.message?.includes('fetch')) {
+                              errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
+                            } else if (err.message?.includes('unauthorized') || err.message?.includes('401')) {
+                              errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
+                            }
+                            
+                            alert(errorMessage);
                           }
                         }}
                       >
