@@ -63,7 +63,7 @@ jobs:
         server-dir: /ooya.tech/public_html/
         dangerous-clean-slate: false
         log-level: verbose
-        state-name: .ftp-deploy-sync-state-main.json
+        state-name: .ftp-deploy-sync-state-production.json
         exclude: |
           **/.DS_Store
     
