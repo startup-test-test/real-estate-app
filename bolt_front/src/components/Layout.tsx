@@ -34,15 +34,20 @@ const Layout: React.FC = () => {
         setIsPremium(status.isSubscribed);
         
         // サブスクリプション詳細を取得
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('subscriptions')
           .select('*')
           .eq('user_id', user.id)
-          .eq('status', 'active')
-          .single();
+          .eq('status', 'active');
         
-        if (data) {
-          setSubscription(data);
+        // エラーチェック（PGRST116は0件の結果なので無視）
+        if (error && error.code !== 'PGRST116') {
+          console.error('Subscription fetch error:', error);
+        }
+        
+        // 配列の最初の要素を取得
+        if (data && data.length > 0) {
+          setSubscription(data[0]);
         }
       }
     };

@@ -106,8 +106,8 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/?payment=cancelled`,
+      success_url: `${baseUrl}/mypage?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/mypage?payment=cancelled`,
       metadata: {
         user_id: userId,
       },

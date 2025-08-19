@@ -36,24 +36,34 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
       console.log('User object:', user);
       
       // 既存のアクティブなサブスクリプションがあるか確認
-      const { data: existingSubscription, error: checkError } = await supabase
+      const { data: existingSubscriptions, error: checkError } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
+        .eq('status', 'active');
 
-      if (existingSubscription && !existingSubscription.cancel_at_period_end) {
-        setError('すでにプレミアムプランに登録されています');
+      // エラーチェック（RLSエラーなど）
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Subscription check error:', checkError);
+        setError('サブスクリプションの確認中にエラーが発生しました');
         setIsLoading(false);
         return;
       }
+
+      // 既存のアクティブなサブスクリプションがある場合
+      if (existingSubscriptions && existingSubscriptions.length > 0) {
+        const existingSubscription = existingSubscriptions[0];
+        if (!existingSubscription.cancel_at_period_end) {
+          setError('すでにプレミアムプランに登録されています');
+          setIsLoading(false);
+          return;
+        }
+      }
       
       // Supabase Edge Functionを呼び出してCheckout Session作成
-      // GitHub Secretsの STRIPE_PRICE_ID を使用（VITE_プレフィックスなし）
+      // 本番環境の価格IDを使用（開発日報に記載されていない場合は要確認）
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 
-                      import.meta.env.STRIPE_PRICE_ID || 
-                      'price_1RvChRR8rkVVzR7nAeDvfiur'; // デフォルトの価格ID
+                      'price_1RvChRR8rkVVzR7nAeDvfiur'; // 本番価格IDに更新が必要
       
       // 現在のURLを取得（Codespace対応）
       const currentUrl = window.location.origin;
