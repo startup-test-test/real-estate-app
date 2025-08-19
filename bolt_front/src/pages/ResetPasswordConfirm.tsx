@@ -97,10 +97,10 @@ const ResetPasswordConfirm: React.FC = () => {
                 新しいパスワードでログインしてください。
               </p>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/mypage')}
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg"
               >
-                ログインページに移動
+                マイページに移動
               </button>
             </div>
           </div>

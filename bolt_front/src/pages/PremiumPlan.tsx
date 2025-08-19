@@ -32,14 +32,13 @@ const PremiumPlan: React.FC = () => {
           .from('subscriptions')
           .select('*')
           .eq('user_id', user.id)
-          .eq('status', 'active')
-          .single();
+          .eq('status', 'active');
 
         if (error && error.code !== 'PGRST116') {
           console.error('Subscription fetch error:', error);
         }
 
-        setSubscription(data);
+        setSubscription(data && data.length > 0 ? data[0] : null);
       } catch (err) {
         console.error('Error fetching subscription:', err);
       } finally {

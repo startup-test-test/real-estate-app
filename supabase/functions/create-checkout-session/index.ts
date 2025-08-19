@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import Stripe from 'https://esm.sh/stripe@13.10.0'
 import { corsHeaders, corsResponse } from '../cors.ts'
 
-const stripe = new Stripe(Deno.env.get('DEV_STRIPE_SECRET_KEY') || '', {
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
   apiVersion: '2023-10-16',
   httpClient: Stripe.createFetchHttpClient(),
 })
@@ -106,8 +106,8 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/?payment=cancelled`,
+      success_url: `${baseUrl}/mypage?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/mypage?payment=cancelled`,
       metadata: {
         user_id: userId,
       },
