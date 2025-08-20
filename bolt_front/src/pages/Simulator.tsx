@@ -995,7 +995,9 @@ const Simulator: React.FC = () => {
                 '実質利回り': result.results['実質利回り（%）'] || 0,
                 'ROI': result.results['ROI（%）'] || 0,
                 'NOI': result.results['NOI（円）'] || 0,
-                'LTV': result.results['LTV（%）'] || 0
+                'LTV': result.results['LTV（%）'] || 0,
+                '土地積算評価（万円）': result.results['土地積算評価（万円）'] || 0,
+                '建物積算評価（万円）': result.results['建物積算評価（万円）'] || 0
               },
               // cash_flow_table (JSONB) - キャッシュフローテーブル
               cash_flow_table: result.cash_flow_table || []
