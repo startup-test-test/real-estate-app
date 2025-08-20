@@ -235,7 +235,7 @@ const Signup: React.FC = () => {
           {/* Terms Agreement Notice - Googleボタンの下に配置 */}
           <div className="text-center mb-6">
             <p className="text-xs text-gray-600">
-              登録することで<br />
+              Googleアカウントで新規登録することで<br />
               <a href="/terms" target="_blank" className="text-blue-600 hover:text-blue-700 underline">利用規約</a>
               と
               <a href="/privacy" target="_blank" className="text-blue-600 hover:text-blue-700 underline">プライバシーポリシー</a>
