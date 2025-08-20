@@ -214,23 +214,12 @@ const Signup: React.FC = () => {
             </div>
           )}
 
-          {/* Terms Agreement Notice - Google登録の上に配置 */}
-          <div className="text-center mb-3">
-            <p className="text-xs text-gray-600">
-              登録することで
-              <a href="/terms" target="_blank" className="text-blue-600 hover:text-blue-700 underline">利用規約</a>
-              と
-              <a href="/privacy" target="_blank" className="text-blue-600 hover:text-blue-700 underline">プライバシーポリシー</a>
-              に同意したものとみなされます
-            </p>
-          </div>
-
           {/* Google Sign Up Button - 優先配置 */}
           <button
             type="button"
             onClick={handleGoogleSignUp}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 px-6 py-3 sm:py-4 bg-white border-2 border-blue-500 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:bg-blue-50 mb-6"
+            className="w-full flex items-center justify-center gap-3 px-6 py-3 sm:py-4 bg-white border-2 border-blue-500 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:bg-blue-50 mb-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -242,6 +231,17 @@ const Signup: React.FC = () => {
               Googleアカウントで新規登録
             </span>
           </button>
+
+          {/* Terms Agreement Notice - Googleボタンの下に配置 */}
+          <div className="text-center mb-6">
+            <p className="text-xs text-gray-600">
+              登録することで<br />
+              <a href="/terms" target="_blank" className="text-blue-600 hover:text-blue-700 underline">利用規約</a>
+              と
+              <a href="/privacy" target="_blank" className="text-blue-600 hover:text-blue-700 underline">プライバシーポリシー</a>
+              に同意したものとみなされます
+            </p>
+          </div>
 
           {/* Divider */}
           <div className="my-6 sm:my-8 flex items-center">
