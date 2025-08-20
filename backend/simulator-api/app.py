@@ -116,6 +116,20 @@ def run_simulation(property_data: dict):
         if 'majorRepairCost' in property_data:
             property_data['major_repair_cost'] = property_data.get('majorRepairCost', 0)
         
+        # 重要：積算評価額計算に必要なパラメータの変換
+        if 'landArea' in property_data:
+            property_data['land_area'] = property_data.get('landArea', 0)
+        if 'roadPrice' in property_data:
+            property_data['road_price'] = property_data.get('roadPrice', 0)
+        if 'buildingArea' in property_data:
+            property_data['building_area'] = property_data.get('buildingArea', 0)
+        if 'yearBuilt' in property_data:
+            property_data['year_built'] = property_data.get('yearBuilt', 2000)
+        if 'propertyType' in property_data:
+            property_data['property_type'] = property_data.get('propertyType', '木造')
+        if 'marketValue' in property_data:
+            property_data['market_value'] = property_data.get('marketValue', 0)
+        
         # 共通計算ロジックを使用してシミュレーション実行
         return run_full_simulation(property_data)
         
