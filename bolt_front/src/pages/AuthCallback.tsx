@@ -46,6 +46,43 @@ const AuthCallback: React.FC = () => {
             return;
           }
         }
+        
+        // トークンベースの確認（メール確認リンクから）
+        const token = searchParams.get('token') || hashParams.get('token');
+        // typeは既に上で宣言済み
+        
+        if (token && type === 'signup') {
+          console.log('Found signup token, verifying...');
+          // OTPトークンを使用した検証
+          const { data, error: verifyError } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: 'signup'
+          });
+          
+          if (verifyError) {
+            console.error('Token verification error:', verifyError);
+            // トークンエラーの場合でも、セッションをチェック
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+              setStatus('success');
+              setMessage('既にログイン済みです。ダッシュボードに移動します...');
+              setTimeout(() => {
+                navigate('/mypage', { replace: true });
+              }, 1500);
+              return;
+            }
+            throw verifyError;
+          }
+          
+          if (data.session || data.user) {
+            setStatus('success');
+            setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
+            setTimeout(() => {
+              navigate('/mypage', { replace: true });
+            }, 1500);
+            return;
+          }
+        }
 
         // エラーがある場合
         if (error) {
@@ -76,32 +113,6 @@ const AuthCallback: React.FC = () => {
           }
         }
 
-        // Supabase v1形式のトークン確認も試みる
-        const token = searchParams.get('token');
-        if (token && type === 'signup') {
-          console.log('Attempting to verify with token:', token);
-          // tokenベースの確認を試みる（古い形式）
-          const { error: verifyError } = await supabase.auth.verifyOtp({
-            token_hash: token,
-            type: 'signup'
-          });
-
-          if (verifyError) {
-            console.error('Token verification error:', verifyError);
-            throw verifyError;
-          }
-
-          // 認証成功後、現在のセッションを確認
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            setStatus('success');
-            setMessage('メールアドレスの確認が完了しました。ダッシュボードに移動します...');
-            setTimeout(() => {
-              navigate('/mypage', { replace: true });
-            }, 1500);
-            return;
-          }
-        }
 
         // どちらの形式でもない場合
         throw new Error('メールリンクの認証に失敗しました。新しいアカウント作成をお試しください。');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { Building2, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
@@ -35,6 +35,7 @@ const Login: React.FC = () => {
     password: ''
   });
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -67,6 +68,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
 
     // 新規登録時は利用規約への同意を確認
     if (isSignUp && !agreedToTerms) {
@@ -80,12 +82,37 @@ const Login: React.FC = () => {
       if (isSignUp) {
         const { data, error } = await signUp(formData.email, formData.password);
         console.log('サインアップ結果:', { data, error });
-        if (error) throw error;
         
-        // サインアップ成功時のメッセージ
-        if (data?.user && !data.session) {
-          setError('アカウントが作成されました。メールアドレスに送信された確認リンクをクリックしてアカウントを有効化してください。');
-          return;
+        // 既存ユーザーのエラーをチェック
+        if (error) {
+          // Supabaseの既存ユーザーエラーメッセージをチェック
+          if (error.message?.includes('already registered') || 
+              error.message?.includes('User already registered') ||
+              error.message?.includes('already exists')) {
+            setError('このメールアドレスは既に登録されています。ログインするか、パスワードをお忘れの場合はリセットしてください。');
+            return;
+          }
+          throw error;
+        }
+        
+        // Supabaseは既存ユーザーでもsuccessを返すことがあるので、追加チェック
+        // identitiesが空の場合は既存ユーザーの可能性が高い
+        if (data?.user) {
+          // ユーザーのidentitiesをチェック
+          const identities = data.user.identities;
+          console.log('User identities:', identities);
+          
+          // identitiesが空または存在しない場合は既存ユーザー
+          if (!identities || identities.length === 0) {
+            setError('このメールアドレスは既に登録されています。ログインするか、パスワードをお忘れの場合はリセットしてください。');
+            return;
+          }
+          
+          // 新規ユーザーの場合（セッションがない = メール確認待ち）
+          if (!data.session) {
+            setSuccessMessage('アカウントが作成されました。メールアドレスに送信された確認リンクをクリックしてアカウントを有効化してください。');
+            return;
+          }
         }
         
         console.log('サインアップ成功、自動ログイン');
@@ -204,7 +231,23 @@ const Login: React.FC = () => {
       }
     } catch (err: any) {
       console.error('認証エラー:', err);
-      setError(err.message || '認証に失敗しました');
+      
+      // エラーメッセージのカスタマイズ
+      let errorMessage = '認証に失敗しました';
+      
+      if (err.message?.includes('already registered') || 
+          err.message?.includes('User already registered') ||
+          err.message?.includes('already exists')) {
+        errorMessage = 'このメールアドレスは既に登録されています。ログインするか、パスワードをお忘れの場合はリセットしてください。';
+      } else if (err.message?.includes('Invalid email')) {
+        errorMessage = '有効なメールアドレスを入力してください。';
+      } else if (err.message?.includes('password')) {
+        errorMessage = 'パスワードは6文字以上で入力してください。';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     }
   };
 
@@ -266,6 +309,13 @@ const Login: React.FC = () => {
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center">
               <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
               <span className="text-red-700 text-sm">{error}</span>
+            </div>
+          )}
+          
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              <span className="text-green-700 text-sm">{successMessage}</span>
             </div>
           )}
 
@@ -429,6 +479,7 @@ const Login: React.FC = () => {
                 onClick={() => {
                   setIsSignUp(!isSignUp);
                   setError(null);
+                  setSuccessMessage(null);
                   setFormData({ email: '', password: '' });
                   setAgreedToTerms(false);
                 }}
