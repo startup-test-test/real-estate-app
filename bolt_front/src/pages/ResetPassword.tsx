@@ -171,12 +171,6 @@ const ResetPassword: React.FC = () => {
             </button>
           </form>
 
-          {/* SNS Login Notice */}
-          <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs text-blue-700">
-              SNSログインで登録されている場合は、まずパスワードを設定してください。
-            </p>
-          </div>
         </div>
 
         {/* Security Notice */}
