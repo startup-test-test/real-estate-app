@@ -150,7 +150,7 @@ const LandingPage: React.FC = () => {
               {/* ログイン・サインアップボタン */}
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => navigate('/login?signup=true')}
+                  onClick={() => navigate('/signup')}
                   className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
                 >
                   無料ではじめる
@@ -187,7 +187,7 @@ const LandingPage: React.FC = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-8">
                 <button
-                  onClick={() => navigate('/login?signup=true')}
+                  onClick={() => navigate('/signup')}
                   className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   1分で悩み解決を体験
@@ -459,7 +459,7 @@ const LandingPage: React.FC = () => {
                 <button
                   onClick={() => {
                     if (plan.buttonText === '1分で悩み解決を体験') {
-                      navigate('/login?signup=true');
+                      navigate('/signup');
                     } else {
                       navigate('/login');
                     }

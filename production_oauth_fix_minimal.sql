@@ -1,7 +1,7 @@
 -- 本番環境用：Google OAuth対応（最小限の変更でエラーを防ぐ）
 
 -- 1. 現在のトリガー関数を確認（バックアップ用）
-SELECT prosrc FROM pg_proc WHERE proname = 'handle_new_user' \gset
+SELECT prosrc FROM pg_proc WHERE proname = 'handle_new_user';
 
 -- 2. 最小限の修正版（Google OAuth対応 + エラー防止）
 CREATE OR REPLACE FUNCTION public.handle_new_user()

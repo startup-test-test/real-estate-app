@@ -1,42 +1,25 @@
 import React, { useState } from 'react';
-import { Building2, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, loading } = useAuthContext();
+  const { signIn, loading } = useAuthContext();
   const [showPassword, setShowPassword] = useState(false);
   
-  // URLパラメータから新規登録モードかどうかを判定（ハッシュ部分を除去）
-  const cleanUrl = window.location.href.split('#')[0]; // ハッシュ部分を除去
+  // URLパラメータから取得
+  const cleanUrl = window.location.href.split('#')[0];
   const cleanSearchParams = new URLSearchParams(new URL(cleanUrl).search);
-  
-  const isSignupMode = cleanSearchParams.get('signup') === 'true';
-  const [isSignUp, setIsSignUp] = useState(isSignupMode);
-  
-  // 招待情報の取得（クリーンなURLから）
-  const isInvitation = cleanSearchParams.get('invitation') === 'true';
-  const inviterName = cleanSearchParams.get('from');
   const redirectUrl = cleanSearchParams.get('redirect');
   
-  console.log('🔍 URL解析結果:', {
-    原URL: window.location.href,
-    クリーンURL: cleanUrl,
-    isInvitation,
-    inviterName,
-    redirectUrl,
-    hasError: window.location.hash.includes('error'),
-    URLSearchParams: Object.fromEntries(cleanSearchParams)
-  });
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
   const handleGoogleSignIn = async () => {
@@ -44,7 +27,6 @@ const Login: React.FC = () => {
       setError(null);
       const returnUrl = redirectUrl || cleanSearchParams.get('return') || localStorage.getItem('pendingReturnUrl');
       
-      // 常に現在のブラウザのURLを使用（Codespaceが変わっても自動対応）
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -70,164 +52,74 @@ const Login: React.FC = () => {
     setError(null);
     setSuccessMessage(null);
 
-    // 新規登録時は利用規約への同意を確認
-    if (isSignUp && !agreedToTerms) {
-      setError('利用規約・プライバシーポリシーへの同意が必要です。');
-      return;
-    }
-
-    console.log('ログイン試行:', { email: formData.email, isSignUp });
+    console.log('ログイン試行:', { email: formData.email });
 
     try {
-      if (isSignUp) {
-        const { data, error } = await signUp(formData.email, formData.password);
-        console.log('サインアップ結果:', { data, error });
-        
-        // 既存ユーザーのエラーをチェック
-        if (error) {
-          // Supabaseの既存ユーザーエラーメッセージをチェック
-          if (error.message?.includes('already registered') || 
-              error.message?.includes('User already registered') ||
-              error.message?.includes('already exists')) {
-            setError('このメールアドレスは既に登録されています。ログインするか、パスワードをお忘れの場合はリセットしてください。');
-            return;
-          }
+      const { data, error } = await signIn(formData.email, formData.password, rememberMe);
+      console.log('ログイン結果:', { data, error });
+      if (error) {
+        // 具体的なエラーメッセージを表示
+        if (error.message.includes('Email not confirmed')) {
+          throw new Error('メールアドレスが確認されていません。メールボックスを確認し、確認リンクをクリックしてください。');
+        } else if (error.message.includes('Invalid login credentials')) {
+          throw new Error('メールアドレスまたはパスワードが正しくありません。');
+        } else {
           throw error;
         }
+      }
+      console.log('ログイン成功');
+      
+      // ログイン成功フラグを設定（認証状態反映の遅延対策）
+      localStorage.setItem('recentLogin', 'true');
+      setTimeout(() => {
+        localStorage.removeItem('recentLogin');
+      }, 5000); // 5秒後に削除
+      
+      // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
+      const urlReturnParam = cleanSearchParams.get('return');
+      const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
+      const returnUrl = redirectUrl || urlReturnParam || localStorageReturnUrl;
+      console.log('📍 Checking return URL after login:', {
+        redirectUrl,
+        urlReturnParam,
+        localStorageReturnUrl,
+        finalReturnUrl: returnUrl,
+        cleanSearchParamsAll: Object.fromEntries(cleanSearchParams)
+      });
+      
+      if (returnUrl) {
+        localStorage.removeItem('pendingReturnUrl');
+        const decodedUrl = decodeURIComponent(returnUrl);
         
-        // Supabaseは既存ユーザーでもsuccessを返すことがあるので、追加チェック
-        // identitiesが空の場合は既存ユーザーの可能性が高い
-        if (data?.user) {
-          // ユーザーのidentitiesをチェック
-          const identities = data.user.identities;
-          console.log('User identities:', identities);
-          
-          // identitiesが空または存在しない場合は既存ユーザー
-          if (!identities || identities.length === 0) {
-            setError('このメールアドレスは既に登録されています。ログインするか、パスワードをお忘れの場合はリセットしてください。');
-            return;
-          }
-          
-          // 新規ユーザーの場合（セッションがない = メール確認待ち）
-          if (!data.session) {
-            setSuccessMessage('アカウントが作成されました。メールアドレスに送信された確認リンクをクリックしてアカウントを有効化してください。');
-            return;
-          }
-        }
-        
-        console.log('サインアップ成功、自動ログイン');
-        
-        // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
-        const urlReturnParam = cleanSearchParams.get('return');
-        const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
-        const returnUrl = redirectUrl || urlReturnParam || localStorageReturnUrl;
-        console.log('📍 Checking return URL after signup:', {
-          urlReturnParam,
-          localStorageReturnUrl,
-          finalReturnUrl: returnUrl
+        console.log('📍 Processing redirect URL:', {
+          original: returnUrl,
+          decoded: decodedUrl,
+          isAbsolute: decodedUrl.startsWith('http'),
+          currentOrigin: window.location.origin
         });
         
-        if (returnUrl) {
-          localStorage.removeItem('pendingReturnUrl');
-          const decodedUrl = decodeURIComponent(returnUrl);
-          
-          console.log('📍 Processing signup redirect URL:', {
-            original: returnUrl,
-            decoded: decodedUrl,
-            isAbsolute: decodedUrl.startsWith('http'),
-            currentOrigin: window.location.origin
-          });
-          
-          // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
-          if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
-            console.log('🔄 Detected login/invitation loop, redirecting to home instead');
-            navigate('/mypage');
-          } else {
-            // 絶対URLの場合は、window.location.hrefで直接リダイレクト
-            if (decodedUrl.startsWith('http')) {
-              console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
-              setTimeout(() => {
-                window.location.href = decodedUrl;
-              }, 200);
-            } else {
-              // 相対URLの場合はnavigate()を使用
-              console.log('🔗 Relative URL detected, using navigate():', decodedUrl);
-              setTimeout(() => {
-                navigate(decodedUrl);
-              }, 200);
-            }
-          }
-        } else {
-          console.log('🏠 No return URL, redirecting to mypage');
+        // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
+        if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
+          console.log('🔄 Detected login/invitation loop, redirecting to home instead');
           navigate('/mypage');
+        } else {
+          // 絶対URLの場合は、window.location.hrefで直接リダイレクト
+          if (decodedUrl.startsWith('http')) {
+            console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
+            setTimeout(() => {
+              window.location.href = decodedUrl;
+            }, 200);
+          } else {
+            // 相対URLの場合はnavigate()を使用
+            console.log('🔗 Relative URL detected, using navigate():', decodedUrl);
+            setTimeout(() => {
+              navigate(decodedUrl);
+            }, 200);
+          }
         }
       } else {
-        const { data, error } = await signIn(formData.email, formData.password, rememberMe);
-        console.log('ログイン結果:', { data, error });
-        if (error) {
-          // 具体的なエラーメッセージを表示
-          if (error.message.includes('Email not confirmed')) {
-            throw new Error('メールアドレスが確認されていません。メールボックスを確認し、確認リンクをクリックしてください。');
-          } else if (error.message.includes('Invalid login credentials')) {
-            throw new Error('メールアドレスまたはパスワードが正しくありません。');
-          } else {
-            throw error;
-          }
-        }
-        console.log('ログイン成功');
-        
-        // ログイン成功フラグを設定（認証状態反映の遅延対策）
-        localStorage.setItem('recentLogin', 'true');
-        setTimeout(() => {
-          localStorage.removeItem('recentLogin');
-        }, 5000); // 5秒後に削除
-        
-        // 招待からの場合は適切にリダイレクト（複数の方法でreturnURLを確認）
-        const urlReturnParam = cleanSearchParams.get('return');
-        const localStorageReturnUrl = localStorage.getItem('pendingReturnUrl');
-        const returnUrl = redirectUrl || urlReturnParam || localStorageReturnUrl;
-        console.log('📍 Checking return URL after login:', {
-          redirectUrl,
-          urlReturnParam,
-          localStorageReturnUrl,
-          finalReturnUrl: returnUrl,
-          cleanSearchParamsAll: Object.fromEntries(cleanSearchParams)
-        });
-        
-        if (returnUrl) {
-          localStorage.removeItem('pendingReturnUrl');
-          const decodedUrl = decodeURIComponent(returnUrl);
-          
-          console.log('📍 Processing redirect URL:', {
-            original: returnUrl,
-            decoded: decodedUrl,
-            isAbsolute: decodedUrl.startsWith('http'),
-            currentOrigin: window.location.origin
-          });
-          
-          // ログインページへのリダイレクトループを防ぐ（招待URLも含む）
-          if (decodedUrl.includes('/login') || decodedUrl.includes('invitation=true')) {
-            console.log('🔄 Detected login/invitation loop, redirecting to home instead');
-            navigate('/mypage');
-          } else {
-            // 絶対URLの場合は、window.location.hrefで直接リダイレクト
-            if (decodedUrl.startsWith('http')) {
-              console.log('🌐 Absolute URL detected, using window.location.href:', decodedUrl);
-              setTimeout(() => {
-                window.location.href = decodedUrl;
-              }, 200);
-            } else {
-              // 相対URLの場合はnavigate()を使用
-              console.log('🔗 Relative URL detected, using navigate():', decodedUrl);
-              setTimeout(() => {
-                navigate(decodedUrl);
-              }, 200);
-            }
-          }
-        } else {
-          console.log('🏠 No return URL, redirecting to mypage');
-          navigate('/mypage');
-        }
+        console.log('🏠 No return URL, redirecting to mypage');
+        navigate('/mypage');
       }
     } catch (err: any) {
       console.error('認証エラー:', err);
@@ -235,14 +127,8 @@ const Login: React.FC = () => {
       // エラーメッセージのカスタマイズ
       let errorMessage = '認証に失敗しました';
       
-      if (err.message?.includes('already registered') || 
-          err.message?.includes('User already registered') ||
-          err.message?.includes('already exists')) {
-        errorMessage = 'このメールアドレスは既に登録されています。ログインするか、パスワードをお忘れの場合はリセットしてください。';
-      } else if (err.message?.includes('Invalid email')) {
+      if (err.message?.includes('Invalid email')) {
         errorMessage = '有効なメールアドレスを入力してください。';
-      } else if (err.message?.includes('password')) {
-        errorMessage = 'パスワードは6文字以上で入力してください。';
       } else if (err.message) {
         errorMessage = err.message;
       }
@@ -278,32 +164,6 @@ const Login: React.FC = () => {
             <p className="text-gray-600 text-sm sm:text-base">AIが導く、あなたの賃貸経営の未来。</p>
           </div>
 
-          {/* Invitation Message */}
-          {isInvitation && inviterName && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center mb-2">
-                <Building2 className="h-5 w-5 text-blue-500 mr-2" />
-                <span className="text-blue-800 font-semibold text-sm">不動産投資シミュレーションに招待されました</span>
-              </div>
-              <p className="text-blue-700 text-sm">
-                <strong>{inviterName}</strong>さんから投資判断の検討にご招待いただきました。
-              </p>
-              {window.location.hash.includes('otp_expired') && (
-                <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded">
-                  <p className="text-xs text-blue-700">
-                    ✉️ メールリンクの有効期限が切れていますが、下記からログインすることで共有コンテンツにアクセスできます。
-                  </p>
-                </div>
-              )}
-              <div className="mt-3 p-3 bg-white/70 rounded-md">
-                <p className="text-xs text-blue-600">
-                  <strong>新規の方：</strong> 無料でアカウント作成してアクセス<br/>
-                  <strong>既存の方：</strong> ログイン後、自動でシミュレーション結果を表示
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Error Message */}
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center">
@@ -324,7 +184,7 @@ const Login: React.FC = () => {
             {/* Form Title */}
             <div className="text-center mb-4">
               <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">
-                {isSignUp ? '新規会員登録' : 'ログイン'}
+                ログイン
               </h2>
             </div>
 
@@ -378,42 +238,21 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            {/* Terms Agreement (Sign up only) */}
-            {isSignUp && (
-              <div className="flex items-start">
+            {/* Remember Me & Forgot Password */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 space-y-2 sm:space-y-0">
+              <div className="flex items-center">
                 <input
-                  id="terms"
+                  id="remember"
                   type="checkbox"
-                  checked={agreedToTerms}
-                  onChange={(e) => setAgreedToTerms(e.target.checked)}
-                  className="h-4 w-4 mt-0.5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />
-                <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                  <a href="/terms" target="_blank" className="text-blue-600 hover:text-blue-700 underline">利用規約</a>
-                  および
-                  <a href="/privacy" target="_blank" className="text-blue-600 hover:text-blue-700 underline">プライバシーポリシー</a>
-                  に同意する
+                <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+                  ログイン状態を保持する
                 </label>
               </div>
-            )}
-
-            {/* Remember Me & Forgot Password (Login only) */}
-            {!isSignUp && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 space-y-2 sm:space-y-0">
-                <div className="flex items-center">
-                  <input
-                    id="remember"
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
-                    ログイン状態を保持する
-                  </label>
-                </div>
-              </div>
-            )}
+            </div>
 
             {/* Submit Button */}
             <button
@@ -428,11 +267,11 @@ const Login: React.FC = () => {
               {loading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                  {isSignUp ? 'アカウント作成中...' : 'ログイン中...'}
+                  ログイン中...
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
-                  <span>{isSignUp ? 'アカウント作成' : 'ログイン'}</span>
+                  <span>ログイン</span>
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </div>
               )}
@@ -460,7 +299,7 @@ const Login: React.FC = () => {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
             <span className="text-gray-700 font-medium text-sm sm:text-base">
-              Googleアカウントでログインする
+              Googleアカウントでログイン
             </span>
           </button>
 
@@ -471,30 +310,19 @@ const Login: React.FC = () => {
             <div className="flex-1 border-t border-gray-200"></div>
           </div>
 
-          {/* Toggle Auth Mode */}
+          {/* Links */}
           <div className="text-center">
             <p className="text-gray-600 text-sm sm:text-base">
-              {isSignUp ? 'すでにアカウントをお持ちの方は' : 'アカウントをお持ちでない方は'}{' '}
-              <button
-                onClick={() => {
-                  setIsSignUp(!isSignUp);
-                  setError(null);
-                  setSuccessMessage(null);
-                  setFormData({ email: '', password: '' });
-                  setAgreedToTerms(false);
-                }}
-                className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-              >
-                {isSignUp ? 'ログイン' : '新規登録'}
-              </button>
+              アカウントをお持ちでない方は{' '}
+              <a href="/signup" className="text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                新規登録
+              </a>
             </p>
-            {!isSignUp && (
-              <p className="mt-3">
-                <a href="/reset-password" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
-                  パスワードを忘れた方・変更したい方
-                </a>
-              </p>
-            )}
+            <p className="mt-3">
+              <a href="/reset-password" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                パスワードを忘れた方・変更したい方
+              </a>
+            </p>
           </div>
 
         </div>
