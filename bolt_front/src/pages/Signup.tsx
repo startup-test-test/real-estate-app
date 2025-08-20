@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { Building2, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
@@ -230,7 +230,7 @@ const Signup: React.FC = () => {
               </svg>
             </div>
             <span className="text-white font-semibold text-sm sm:text-base">
-              Googleアカウントで新規登録
+              Googleアカウントで新規登録する
             </span>
           </button>
 
@@ -325,10 +325,10 @@ const Signup: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full font-medium py-3 sm:py-4 px-6 rounded-lg transition-all duration-200 shadow-lg text-sm sm:text-base ${
+              className={`w-full font-medium py-3 sm:py-4 px-6 rounded-lg transition-all duration-200 text-sm sm:text-base border shadow-md ${
                 loading
-                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-blue-600/25 hover:shadow-blue-600/40 transform hover:-translate-y-0.5'
+                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed border-gray-400'
+                  : 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700 hover:border-blue-700'
               }`}
             >
               {loading ? (
@@ -338,8 +338,11 @@ const Signup: React.FC = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
-                  <span>アカウント作成</span>
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
+                  <span>メールでアカウント作成する</span>
                 </div>
               )}
             </button>
