@@ -1,7 +1,8 @@
 # Stripe連携統合仕様書
 
 作成日: 2025年8月14日  
-バージョン: 2.0.0 (統合版)
+更新日: 2025年8月20日  
+バージョン: 3.0.0 (本番検証完了版)
 
 ## 1. 概要
 
@@ -28,7 +29,7 @@ MVPとして最小限の機能に絞りつつ、確実に動作する決済・�
 
 ## 3. データベース設計
 
-### 3.1 テーブル構造
+### 3.1 テーブル構造（本番環境検証済み）
 
 ```sql
 -- ユーザー利用状況テーブル
@@ -43,12 +44,13 @@ CREATE TABLE user_usage (
   UNIQUE(user_id)
 );
 
--- サブスクリプション管理テーブル
+-- サブスクリプション管理テーブル（本番環境で動作確認済み）
 CREATE TABLE subscriptions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   stripe_customer_id TEXT UNIQUE,
   stripe_subscription_id TEXT UNIQUE,
+  stripe_price_id TEXT,  -- 価格ID（price_1RxYHyJ5L72FsLLNBuEXuob3）
   status TEXT DEFAULT 'inactive', -- active, canceled, past_due
   current_period_start TIMESTAMP,
   current_period_end TIMESTAMP,
@@ -408,7 +410,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import Stripe from 'https://esm.sh/stripe@12.0.0?target=deno';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-01-27',  // 本番環境で検証済みバージョン
 });
 
 const supabase = createClient(
@@ -681,7 +683,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
 import Stripe from 'https://esm.sh/stripe@12.0.0?target=deno';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-01-27',  // 本番環境で検証済みバージョン
 });
 
 const supabase = createClient(
@@ -916,8 +918,12 @@ serve(async (req) => {
 - [ ] 使用制限テスト完了
 - [ ] エラーハンドリングテスト完了
 
-### 本番環境
-- [ ] 本番APIキー設定完了
-- [ ] 本番Webhook設定完了
-- [ ] 本番環境デプロイ完了
-- [ ] 本番環境テスト完了
+### 本番環境（2025年8月20日検証完了）
+- [x] 本番APIキー設定完了
+- [x] 本番Webhook設定完了
+- [x] 本番環境デプロイ完了
+- [x] 本番環境テスト完了
+- [x] 決済・返金・解約・再開の完全動作確認
+- [x] Webhook署名検証（APIバージョン2025-01-27）
+- [x] 日本語化完了（メール・UI）
+- [ ] 新規登録時の決済完了メール確認（テスト環境で要確認）
