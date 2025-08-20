@@ -158,8 +158,8 @@ const Login: React.FC = () => {
             }
           }
         } else {
-          console.log('🏠 No return URL, redirecting to home');
-          navigate('/');
+          console.log('🏠 No return URL, redirecting to mypage');
+          navigate('/mypage');
         }
       } else {
         const { data, error } = await signIn(formData.email, formData.password, rememberMe);
@@ -225,8 +225,8 @@ const Login: React.FC = () => {
             }
           }
         } else {
-          console.log('🏠 No return URL, redirecting to home');
-          navigate('/');
+          console.log('🏠 No return URL, redirecting to mypage');
+          navigate('/mypage');
         }
       }
     } catch (err: any) {
