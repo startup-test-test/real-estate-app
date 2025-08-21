@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calculator, 
@@ -10,6 +10,10 @@ import {
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'ホーム | 大家DX - 現役大家が開発した賃貸経営DX';
+  }, []);
 
   const personas = [
     {

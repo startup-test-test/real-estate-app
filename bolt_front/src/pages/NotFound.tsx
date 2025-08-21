@@ -7,6 +7,10 @@ const NotFound: React.FC = () => {
   const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
+    document.title = 'ページが見つかりません | 大家DX';
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {

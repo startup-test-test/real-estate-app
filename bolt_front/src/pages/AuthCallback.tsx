@@ -11,6 +11,10 @@ const AuthCallback: React.FC = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    document.title = '認証中 | 大家DX';
+  }, []);
+
+  useEffect(() => {
     const handleAuthCallback = async () => {
       try {
         console.log('AuthCallback - Full URL:', window.location.href);

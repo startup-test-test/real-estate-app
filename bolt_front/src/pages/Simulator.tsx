@@ -48,6 +48,10 @@ const Simulator: React.FC = () => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = '収益シミュレーター | 大家DX';
+  }, []);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);

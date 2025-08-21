@@ -20,6 +20,10 @@ const PremiumPlan: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
 
+  useEffect(() => {
+    document.title = '料金プラン | 大家DX';
+  }, []);
+
   // サブスクリプション情報を取得
   useEffect(() => {
     const fetchSubscription = async () => {

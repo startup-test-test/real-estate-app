@@ -7,6 +7,10 @@ const ResetPasswordConfirm: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { updatePassword } = useAuthContext();
+
+  useEffect(() => {
+    document.title = 'パスワード再設定 | 大家DX';
+  }, []);
   
   const [formData, setFormData] = useState({
     password: '',

@@ -10,6 +10,10 @@ const PaymentResult: React.FC = () => {
   const { user } = useAuthContext();
   const [isVerifying, setIsVerifying] = useState(true);
   const [subscriptionStatus, setSubscriptionStatus] = useState<'active' | 'pending' | 'failed'>('pending');
+
+  useEffect(() => {
+    document.title = '決済結果 | 大家DX';
+  }, []);
   
   const paymentStatus = searchParams.get('payment');
   const sessionId = searchParams.get('session_id');

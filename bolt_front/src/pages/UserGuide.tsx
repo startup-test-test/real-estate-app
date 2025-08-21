@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, 
   CheckCircle, 
@@ -18,6 +18,10 @@ import {
 
 const UserGuide: React.FC = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
+
+  useEffect(() => {
+    document.title = '使い方ガイド | 大家DX';
+  }, []);
 
   const toggleItem = (index: number) => {
     setOpenItems(prev => 

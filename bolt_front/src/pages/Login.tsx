@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
@@ -8,6 +8,10 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { signIn, loading } = useAuthContext();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    document.title = 'ログイン | 大家DX';
+  }, []);
   
   // URLパラメータから取得
   const cleanUrl = window.location.href.split('#')[0];

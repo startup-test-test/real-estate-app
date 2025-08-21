@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const Tokushoho: React.FC = () => {
+  useEffect(() => {
+    document.title = '特定商取引法に基づく表記 | 大家DX';
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">特定商取引法に基づく表記</h1>

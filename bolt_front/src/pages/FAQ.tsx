@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   HelpCircle, 
   Search, 
@@ -15,6 +15,10 @@ import {
 const FAQ: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [openItems, setOpenItems] = useState<number[]>([]);
+
+  useEffect(() => {
+    document.title = 'よくある質問 | 大家DX';
+  }, []);
 
   const toggleItem = (index: number) => {
     setOpenItems(prev => 

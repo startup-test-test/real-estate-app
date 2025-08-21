@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSupabaseData } from "../hooks/useSupabaseData";
 import { useAuthContext } from "../components/AuthProvider";
 import { sanitizeUrl, sanitizeImageUrl } from "../utils/securityUtils";
@@ -28,6 +28,10 @@ const MyPage: React.FC = () => {
   const { getSimulations, deleteSimulation } = useSupabaseData();
   const { usage } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
+
+  useEffect(() => {
+    document.title = 'マイページ | 大家DX';
+  }, []);
 
   // 決済成功処理
   React.useEffect(() => {

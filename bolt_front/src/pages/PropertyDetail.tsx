@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building,
   MapPin,
@@ -36,6 +36,10 @@ import Breadcrumb from '../components/Breadcrumb';
 const PropertyDetail: React.FC = () => {
   const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState(10);
+
+  useEffect(() => {
+    document.title = '物件詳細 | 大家DX';
+  }, []);
 
   // 物件データ
   const propertyData = {

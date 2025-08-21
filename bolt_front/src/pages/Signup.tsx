@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../components/AuthProvider';
@@ -8,6 +8,10 @@ const Signup: React.FC = () => {
   const navigate = useNavigate();
   const { signUp, loading } = useAuthContext();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    document.title = '新規登録 | 大家DX';
+  }, []);
   
   // URLパラメータから招待情報を取得
   const cleanUrl = window.location.href.split('#')[0];
