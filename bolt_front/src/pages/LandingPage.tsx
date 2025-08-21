@@ -563,15 +563,6 @@ const LandingPage: React.FC = () => {
             
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q. 楽待以外の物件情報も分析できますか？
-              </h3>
-              <p className="text-gray-600">
-                A. 現在は楽待のURL貼り付けによる自動分析に対応しています。他のサイトへの対応は今後順次拡張予定です。
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Q. スマートフォンでも利用できますか？
               </h3>
               <p className="text-gray-600">
