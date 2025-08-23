@@ -4,7 +4,6 @@ import {
   Calculator, 
   CheckCircle,
   ArrowRight,
-  Users,
   Smartphone
 } from 'lucide-react';
 
@@ -68,12 +67,6 @@ const LandingPage: React.FC = () => {
       title: "機能2. スマホで完結する資産管理",
       description: "授乳中でも、通勤中でも。親指だけでサクサク操作できるモバイル完全対応設計。",
       image: "/img/feature_2.png"
-    },
-    {
-      icon: Users,
-      title: "機能3. 家族で共有する投資戦略",
-      description: "配偶者も理解できる見える化で、家族みんなで資産形成。事業承継の準備も万全。",
-      image: "/img/feature_3.png"
     }
   ];
 
@@ -84,10 +77,9 @@ const LandingPage: React.FC = () => {
       period: "/月",
       description: "個人利用に最適",
       features: [
-        "月10件のシミュレーション計算",
+        "月5件のシミュレーション計算",
         "基本的な収益指標の表示",
-        "PDFレポート出力（ウォーターマーク付き）",
-        "メールサポート"
+        "PDFレポート出力（ウォーターマーク付き）"
       ],
       buttonText: "1分で悩み解決を体験",
       buttonStyle: "bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200"
@@ -98,30 +90,14 @@ const LandingPage: React.FC = () => {
       period: "/月",
       description: "個人・小規模法人向け",
       features: [
-        "月500件のシミュレーション計算",
+        "無制限のシミュレーション計算",
         "詳細な収益指標の表示",
         "データ保存・共有機能",
-        "優先メールサポート",
         "PDFレポート出力（ウォーターマーク無し）"
       ],
       buttonText: "プロプランを選択",
       buttonStyle: "bg-gradient-to-r from-slate-700 to-slate-900 text-white hover:from-slate-800 hover:to-slate-950",
       popular: true
-    },
-    {
-      name: "エンタープライズ",
-      price: "¥9,800",
-      period: "/月",
-      description: "法人・チーム向け",
-      features: [
-        "無制限のシミュレーション計算",
-        "カスタムレポート作成",
-        "API連携機能",
-        "複数ユーザー管理",
-        "専任サポート・電話対応"
-      ],
-      buttonText: "お問い合わせ",
-      buttonStyle: "bg-slate-900 text-white hover:bg-slate-800"
     }
   ];
 
@@ -306,7 +282,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              3つの革新的機能
+              2つの革新的機能
             </h2>
             <p className="text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               現役大家が実際に使いながら開発した、本当に必要な機能だけを厳選。
@@ -402,7 +378,7 @@ const LandingPage: React.FC = () => {
           
           {/* プラン比較表 */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200">
               {/* ヘッダー */}
               <div className="p-6 bg-gray-50">
                 <h3 className="text-xl font-semibold text-gray-900">機能</h3>
@@ -422,19 +398,16 @@ const LandingPage: React.FC = () => {
                 <div className="text-base text-gray-600">分析回数</div>
               </div>
               <div className="p-6 text-center">
-                <div className="text-gray-900 font-medium text-lg">月10件</div>
+                <div className="text-gray-900 font-medium text-lg">月5件</div>
               </div>
               <div className="p-6 text-center bg-blue-50">
-                <div className="text-gray-900 font-medium text-lg">月500件</div>
-              </div>
-              <div className="p-6 text-center">
                 <div className="text-gray-900 font-medium text-lg">無制限</div>
               </div>
             </div>
           </div>
           
           {/* 詳細プラン */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {pricingPlans.map((plan, index) => (
               <div key={index} className={`bg-white rounded-2xl border-2 p-10 relative transition-all duration-300 ${plan.popular ? 'border-blue-500 shadow-2xl scale-105 transform' : 'border-gray-100 shadow-lg hover:shadow-xl hover:border-gray-200'}`}>
                 {plan.popular && (
@@ -461,13 +434,7 @@ const LandingPage: React.FC = () => {
                   ))}
                 </ul>
                 <button
-                  onClick={() => {
-                    if (plan.buttonText === '1分で悩み解決を体験') {
-                      navigate('/signup');
-                    } else {
-                      navigate('/login');
-                    }
-                  }}
+                  onClick={() => navigate('/signup')}
                   className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${plan.popular ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700' : plan.buttonStyle}`}
                 >
                   {plan.buttonText}
@@ -483,60 +450,19 @@ const LandingPage: React.FC = () => {
         {/* 背景オーバーレイ */}
         <div className="absolute inset-0 bg-blue-50 opacity-60"></div>
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
-          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6" style={{lineHeight: '1.3'}}>
+          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{lineHeight: '1.3'}}>
             3分で無料登録。<br />クレカ不要で今すぐ体験。
           </h2>
           
-          {/* 新規会員登録フォーム */}
-          <div className="max-w-2xl mx-auto mb-10">
-            <form className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <label htmlFor="email" className="w-32 text-sm font-medium text-gray-700 text-right">
-                  E-Mail <span className="text-blue-600">(必須)</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder=""
-                />
-              </div>
-              <div className="flex items-center space-x-4">
-                <label htmlFor="password" className="w-32 text-sm font-medium text-gray-700 text-right">
-                  パスワード <span className="text-blue-600">(必須)</span>
-                </label>
-                <div className="flex-1">
-                  <input
-                    type="password"
-                    id="password"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder=""
-                  />
-                  <p className="text-xs text-gray-500 mt-1">半角英数字8文字以上</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                  <a href="#" className="text-blue-600 hover:underline">個人情報の取り扱い</a>
-                  <span className="mx-1">・</span>
-                  <a href="#" className="text-blue-600 hover:underline">利用規約</a>
-                  <span className="ml-1">に同意する。</span>
-                </label>
-              </div>
-              <div className="text-center">
-                <button
-                  type="submit"
-                  className="w-full max-w-md px-12 py-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-lg"
-                >
-                  1分で悩み解決を体験
-                </button>
-              </div>
-            </form>
+          {/* CTAボタン */}
+          <div className="flex justify-center">
+            <button
+              onClick={() => navigate('/signup')}
+              className="px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              1分で悩み解決を体験
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </button>
           </div>
           
         </div>
@@ -557,7 +483,7 @@ const LandingPage: React.FC = () => {
                 Q. 無料プランでどこまで利用できますか？
               </h3>
               <p className="text-gray-600">
-                A. 月10件までの物件シミュレーションと基本的な収益指標の表示が可能です。PDFレポートの出力も可能ですが、ウォーターマークが付きます。
+                A. 月5件までの物件シミュレーションと基本的な収益指標の表示が可能です。PDFレポートの出力も可能ですが、ウォーターマークが付きます。
               </p>
             </div>
             
@@ -567,15 +493,6 @@ const LandingPage: React.FC = () => {
               </h3>
               <p className="text-gray-600">
                 A. はい、完全にモバイル対応しています。授乳中や通勤中など、いつでもどこでも物件分析が可能です。
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q. 家族でアカウントを共有できますか？
-              </h3>
-              <p className="text-gray-600">
-                A. プロプラン以上では複数ユーザーでの共有機能をご利用いただけます。ご家族での投資戦略共有に最適です。
               </p>
             </div>
             
@@ -605,55 +522,13 @@ const LandingPage: React.FC = () => {
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
-                    お知らせ
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.08.18</p>
-                  <h3 className="text-gray-900 font-normal text-base">
-                    テキストテキストテキストテキストテキストテキスト
-                  </h3>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
-                <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
                     リリース
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.08.15</p>
+                  <p className="text-sm text-gray-500 mb-1">2025.08.19</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    テキストテキストテキストテキストテキストテキスト
-                  </h3>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
-                <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
-                    更新情報
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.08.10</p>
-                  <h3 className="text-gray-900 font-normal text-base">
-                    テキストテキストテキストテキストテキストテキスト
-                  </h3>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
-                <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
-                    お知らせ
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">2025.08.01</p>
-                  <h3 className="text-gray-900 font-normal text-base">
-                    テキストテキストテキストテキストテキストテキスト
+                    大家DXをBETA版にはリリース致しました。
                   </h3>
                 </div>
               </div>
