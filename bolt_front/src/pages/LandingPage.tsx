@@ -24,7 +24,7 @@ const LandingPage: React.FC = () => {
       color: 'from-blue-500 to-blue-700',
       title: '悩み1.\nシミュレーションに時間がかかる',
       problem: '「良い物件を発見したのだが、Excelでのシミュレーションに時間がかかる。他にも周辺調査や銀行書類提出を作らないといけない。」',
-      solution: '楽待URL貼り付けで即分析',
+      solution: '物件情報入力で即分析',
       story: '7物件のExcel管理に限界。シミュレーション作成に毎回2時間かかって、家族時間を削るのが辛い。',
       features: [] as { icon: any; title: string; desc: string }[]
     },
@@ -35,7 +35,7 @@ const LandingPage: React.FC = () => {
       job: '育休中プランナー',
       image: '/img/people_2.png',
       color: 'from-pink-500 to-rose-700',
-      problem: '「授乳中に楽待チェック、でも分析は娘が寝た後...復職後どうしよう」',
+      problem: '「授乳中に物件チェック、でも分析は娘が寝た後...復職後どうしよう」',
       solution: 'スマホで完結、夫婦で共有',
       story: '育児の合間での物件管理が大変。銀行訪問も娘連れで効率悪い。復職後の両立が不安。',
       features: [] as { icon: any; title: string; desc: string }[]
@@ -59,7 +59,7 @@ const LandingPage: React.FC = () => {
     {
       icon: Calculator,
       title: "機能1. 1分で完了する物件分析",
-      description: "楽待URLを貼り付けるだけで、IRR・CCR・DSCRなどの投資指標を自動計算。もうExcelで悩む必要はありません。",
+      description: "物件情報を入力するだけで、IRR・CCR・DSCRなどの投資指標を自動計算。もうExcelで悩む必要はありません。",
       image: "/img/feature_1.png"
     },
     {
