@@ -104,7 +104,7 @@ const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white/75 backdrop-blur-md border-b border-gray-200/30 md:fixed md:top-0 md:left-0 md:right-0 md:z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-3">
@@ -146,6 +146,9 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* ヘッダー固定時のスペーサー（PC版のみ） */}
+      <div className="hidden md:block h-[88px]"></div>
 
       {/* ヒーローセクション */}
       <section id="about" className="py-16 bg-white bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_001.jpg)'}}>
@@ -528,7 +531,7 @@ const LandingPage: React.FC = () => {
                 <div className="flex-1">
                   <p className="text-sm text-gray-500 mb-1">2025.08.19</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    大家DXをBETA版にはリリース致しました。
+                    大家DXをBETA版でリリースしました。
                   </h3>
                 </div>
               </div>
