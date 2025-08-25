@@ -17,37 +17,30 @@ const LandingPage: React.FC = () => {
   const personas = [
     {
       id: 'fujita',
-      name: '藤田 健太',
-      age: '37歳',
-      job: 'ITコンサルタント',
       image: '/img/people_1.png',
       color: 'from-blue-500 to-blue-700',
-      title: '悩み1.\nシミュレーションに時間がかかる',
-      problem: '「良い物件を発見したのだが、Excelでのシミュレーションに時間がかかる。他にも周辺調査や銀行書類提出を作らないといけない。」',
+      title: '課題1.\nシミュレーションに時間がかかる',
+      problem: '良い物件を発見したのだが、Excelでのシミュレーションに時間がかかる。他にも周辺調査や銀行書類提出を作らないといけない。',
       solution: '物件情報入力で即分析',
       story: '7物件のExcel管理に限界。シミュレーション作成に毎回2時間かかって、家族時間を削るのが辛い。',
       features: [] as { icon: any; title: string; desc: string }[]
     },
     {
       id: 'yamamoto',
-      name: '山本 理恵',
-      age: '34歳',
-      job: '育休中プランナー',
       image: '/img/people_2.png',
       color: 'from-pink-500 to-rose-700',
-      problem: '「授乳中に物件チェック、でも分析は娘が寝た後...復職後どうしよう」',
+      title: '課題2.\n表面利回りだけでは判断できない',
+      problem: '減価償却・税金・修繕・出口まで入れた実質収益性（IRR/DSCR/NOI）で見たいが、Excelではモデルが複雑すぎる。',
       solution: 'スマホで完結、夫婦で共有',
       story: '育児の合間での物件管理が大変。銀行訪問も娘連れで効率悪い。復職後の両立が不安。',
       features: [] as { icon: any; title: string; desc: string }[]
     },
     {
       id: 'sato',
-      name: '佐藤 慎一',
-      age: '45歳',
-      job: '大手メーカー部長',
       image: '/img/people_3.png',
       color: 'from-green-500 to-green-700',
-      problem: '「58室の管理で確定申告3日間...税理士に『整理が必要』と言われた」',
+      title: '課題3.\n金利・空室・家賃下落の\n感度が取れない',
+      problem: '金利+0.5%／空室+5%／家賃-3%で35年CFやDSCRがどこで赤字化するのか、しきい値を知りたい。',
       solution: '大規模対応、事業承継準備',
       story: '58室の管理が限界。修繕履歴の把握も困難で、息子への引き継ぎ準備も進まない。',
       features: [] as { icon: any; title: string; desc: string }[]
@@ -101,7 +94,7 @@ const LandingPage: React.FC = () => {
         "データ保存・共有機能",
         "PDFレポート出力（ウォーターマーク無し）"
       ],
-      buttonText: "プロプランを選択",
+      buttonText: "まずは無料で体験する",
       buttonStyle: "bg-gradient-to-r from-slate-700 to-slate-900 text-white hover:from-slate-800 hover:to-slate-950",
       popular: true
     }
@@ -128,7 +121,7 @@ const LandingPage: React.FC = () => {
                 <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
                   料金
                 </a>
-                <a href="#media" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <a href="https://ooya.tech/media/" className="text-gray-600 hover:text-gray-900 transition-colors" target="_blank" rel="noopener noreferrer">
                   メディア
                 </a>
               </nav>
@@ -178,7 +171,7 @@ const LandingPage: React.FC = () => {
                   onClick={() => navigate('/signup')}
                   className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  1分で悩み解決を体験
+                  まずは無料ではじめる
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </button>
               </div>
@@ -194,7 +187,7 @@ const LandingPage: React.FC = () => {
                 src="/img/kakushin_img01.png"
                 alt="大家DX メインビジュアル"
                 className="w-full h-auto max-w-3xl transform"
-                style={{transform: 'scale(1.2) translateX(50px)', marginLeft: '40px'}}
+                style={{transform: 'scale(1.32) translateX(30px)', marginLeft: '20px'}}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -214,7 +207,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              大家DXとは？
+              大家DXでできること
             </h2>
             <p className="text-xl text-gray-900 max-w-4xl mx-auto leading-relaxed">
               現役大家の判断軸を実装した高性能シミュレーター。融資・税務・修繕・出口を一体計算し、IRR/DSCR/LTV/NOIや35年CF、3価（積算/収益還元/想定売却）を1分で可視化。エクセル不要、銀行が重視する指標をワンクリック。
@@ -264,13 +257,10 @@ const LandingPage: React.FC = () => {
           <div className="text-center mb-16">
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight relative">
               <span className="relative inline-block">
-                こんなお悩みありませんか？
+                多くの大家さんが直面する3つの課題
                 <span className="absolute left-0 w-full h-3 bg-blue-500 opacity-80 z-0" style={{bottom: '-10px'}}></span>
               </span>
             </h2>
-            <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
-              多くの大家さんが抱える3つの共通課題
-            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -281,7 +271,7 @@ const LandingPage: React.FC = () => {
                   <div className="w-40 h-32 mx-auto mb-5">
                     <img 
                       src={persona.image} 
-                      alt={persona.name}
+                      alt="ペルソナ画像"
                       className="w-full h-full object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -327,7 +317,7 @@ const LandingPage: React.FC = () => {
           
           {/* 統一CTA */}
           <div className="text-center mt-16">
-            <p className="text-2xl text-gray-700 mb-6">
+            <p className="text-3xl lg:text-4xl text-gray-700 mb-6">
               どのタイプでも、<span className="font-bold text-blue-600">1分でシミュレーション体験</span>できます
             </p>
           </div>
@@ -343,7 +333,7 @@ const LandingPage: React.FC = () => {
             </h2>
           </div>
           
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg border border-gray-200">
               <div className="flex flex-col lg:flex-row items-center gap-8">
                 {/* 左側: 画像 */}
@@ -360,11 +350,25 @@ const LandingPage: React.FC = () => {
                 </div>
                 
                 {/* 右側: テキスト */}
-                <div className="flex-1 text-center lg:text-left">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">きっかけは、銀行融資の3連敗。</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
-                    収支シミュレーションの重要性を実感し、参考情報として活用できるツールを開発しました。
-                  </p>
+                <div className="flex-1">
+                  <div className="flex flex-col gap-4">
+                    <p className="text-base text-gray-900 leading-relaxed">
+                      良い案件を見つけても、夜中までExcel。式が壊れ、修繕や税金の影響を入れ忘れ、
+                      翌日、銀行で「この前提は？」と詰まる——3行連続の否決を経験しました。
+                    </p>
+                    <p className="text-base text-gray-900 leading-relaxed">
+                      「早く・漏れなく・根拠を説明できる」ことが投資の生命線だと痛感。
+                      そこで自分のために、IRR/DSCR/LTV と 35年CF、3価（積算/収益還元/想定）を
+                      1分で一体計算し、採用値と前提をその場で示せるツールを作成。
+                    </p>
+                    <p className="text-base text-gray-900 leading-relaxed">
+                      結果、銀行との会話が数字中心に変わり、比較・判断が圧倒的に速くなった。
+                      同じ悩みの大家仲間から声がかかり、プロダクト化したのが大家DXです。
+                    </p>
+                    <p className="text-base text-gray-900 leading-relaxed font-bold">
+                      設計思想は精度・速度・透明性。現場で使える数字だけを、最短で。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -382,36 +386,6 @@ const LandingPage: React.FC = () => {
             <p className="text-2xl text-gray-600 leading-relaxed">
               初心者から大規模投資家まで。投資規模に応じて最適なプランを選択できます。
             </p>
-          </div>
-          
-          {/* プラン比較表 */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-              {/* ヘッダー */}
-              <div className="p-6 bg-gray-50">
-                <h3 className="text-xl font-semibold text-gray-900">機能</h3>
-              </div>
-              {pricingPlans.map((plan, index) => (
-                <div key={index} className={`p-6 text-center ${plan.popular ? 'bg-blue-50' : 'bg-gray-50'}`}>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-xl text-gray-600 ml-1">{plan.period}</span>
-                  </div>
-                </div>
-              ))}
-              
-              {/* 機能比較 */}
-              <div className="p-6">
-                <div className="text-base text-gray-600">分析回数</div>
-              </div>
-              <div className="p-6 text-center">
-                <div className="text-gray-900 font-medium text-lg">月5件</div>
-              </div>
-              <div className="p-6 text-center bg-blue-50">
-                <div className="text-gray-900 font-medium text-lg">無制限</div>
-              </div>
-            </div>
           </div>
           
           {/* 詳細プラン */}
@@ -459,7 +433,7 @@ const LandingPage: React.FC = () => {
         <div className="absolute inset-0 bg-blue-50 opacity-60"></div>
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{lineHeight: '1.3'}}>
-            3分で無料登録。<br />クレカ不要で今すぐ体験。
+            10秒で無料登録。<br />クレカ不要で今すぐ体験。
           </h2>
           
           {/* CTAボタン */}
@@ -579,15 +553,6 @@ const LandingPage: React.FC = () => {
                   <a href="mailto:ooya.tech2025@gmail.com" className="text-white hover:text-gray-300 transition-colors">
                     ooya.tech2025@gmail.com
                   </a>
-                </div>
-                <div>
-                  <p className="text-base">サポート時間</p>
-                  <p className="text-gray-400">平日 9:00-18:00</p>
-                </div>
-                <div className="pt-2">
-                  <p className="text-sm text-gray-500">
-                    ※ お返事までお時間をいただく場合があります
-                  </p>
                 </div>
               </div>
             </div>
