@@ -58,15 +58,21 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: "機能1. 1分で完了する物件分析",
-      description: "物件情報を入力するだけで、IRR・CCR・DSCRなどの投資指標を自動計算。もうExcelで悩む必要はありません。",
+      title: "機能1. 1分分析",
+      description: "入力は最小限。IRR/DSCR/LTV/NOI と 35年CF、3価を一括算出。",
       image: "/img/feature_1.png"
     },
     {
       icon: Smartphone,
-      title: "機能2. スマホで完結する資産管理",
-      description: "授乳中でも、通勤中でも。親指だけでサクサク操作できるモバイル完全対応設計。",
+      title: "機能2. スマホ完結の物件管理",
+      description: "物件の保存・比較／URL・写真・メモ。減価償却／資本的支出も自動反映。",
       image: "/img/feature_2.png"
+    },
+    {
+      icon: CheckCircle,
+      title: "機能3. 出口＆PDF",
+      description: "CapRate等から売却価格・残債・純利益を自動計算。主要指標／年次CFをPDF化。",
+      image: "/img/feature_3.png"
     }
   ];
 
@@ -157,16 +163,15 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* 左側：メインコピー */}
-            <div className="text-center lg:text-left">
+            <div className="text-left">
               <div className="mb-6">
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
-                <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した、</span><br />
-                <span className="text-5xl md:text-6xl lg:text-7xl">賃貸経営DX</span>
+                <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した</span><br />
+                <span className="text-5xl md:text-6xl lg:text-7xl">不動産投資<br />シミュレーター</span>
               </h1>
-              <p className="text-2xl lg:text-3xl text-gray-600 mb-10 leading-relaxed">
-                市場分析・収支シミュレーション・参考資料作成。<br />
-                すべて1分。
+              <p className="text-2xl lg:text-3xl text-gray-900 mb-10 leading-relaxed" style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                融資・税務・修繕・出口戦略まで完全再現。プロも納得の高性能シミュレーター。
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-8">
                 <button
@@ -184,12 +189,12 @@ const LandingPage: React.FC = () => {
             </div>
             
             {/* 右側：画像 */}
-            <div className="flex justify-center lg:justify-end pr-4 sm:pr-6 lg:pr-8">
+            <div className="flex justify-center lg:justify-end">
               <img
                 src="/img/kakushin_img01.png"
                 alt="大家DX メインビジュアル"
-                className="w-full h-auto max-w-4xl transform"
-                style={{transform: 'scale(1.2) translateX(-15px)'}}
+                className="w-full h-auto max-w-3xl transform"
+                style={{transform: 'scale(1.2) translateX(50px)', marginLeft: '40px'}}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -201,6 +206,55 @@ const LandingPage: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 機能紹介セクション */}
+      <section id="features" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              大家DXとは？
+            </h2>
+            <p className="text-xl text-gray-900 max-w-4xl mx-auto leading-relaxed">
+              現役大家の判断軸を実装した高性能シミュレーター。融資・税務・修繕・出口を一体計算し、IRR/DSCR/LTV/NOIや35年CF、3価（積算/収益還元/想定売却）を1分で可視化。エクセル不要、銀行が重視する指標をワンクリック。
+            </p>
+          </div>
+          
+          {/* メインレイアウト: 左側PC画像、右側機能リスト */}
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            {/* 左側: PC画像 */}
+            <div className="w-full lg:w-3/5 lg:pl-0">
+              <div className="relative -ml-4 sm:-ml-6 lg:-ml-8">
+                <img
+                  src="/img/kakushin_img01.png"
+                  alt="大家DX システム画面"
+                  className="w-full h-auto rounded-xl"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* 右側: 機能リスト */}
+            <div className="w-full lg:w-2/5">
+              <div className="space-y-12">
+                {features.map((feature, index) => (
+                  <div key={index}>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 text-lg leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
         </div>
       </section>
 
@@ -277,55 +331,6 @@ const LandingPage: React.FC = () => {
               どのタイプでも、<span className="font-bold text-blue-600">1分でシミュレーション体験</span>できます
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* 機能紹介セクション */}
-      <section id="features" className="py-24 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              2つの革新的機能
-            </h2>
-            <p className="text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              現役大家が実際に使いながら開発した、本当に必要な機能だけを厳選。
-            </p>
-          </div>
-          
-          {/* メインレイアウト: 左側PC画像、右側機能リスト */}
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            {/* 左側: PC画像 */}
-            <div className="w-full lg:w-3/5 lg:pl-0">
-              <div className="relative -ml-4 sm:-ml-6 lg:-ml-8">
-                <img
-                  src="/img/kakushin_img01.png"
-                  alt="大家DX システム画面"
-                  className="w-full h-auto rounded-xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
-                  }}
-                />
-              </div>
-            </div>
-            
-            {/* 右側: 機能リスト */}
-            <div className="w-full lg:w-2/5">
-              <div className="space-y-12">
-                {features.map((feature, index) => (
-                  <div key={index}>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          
         </div>
       </section>
 
