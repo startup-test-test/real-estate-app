@@ -51,19 +51,19 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: "機能1. 1分分析",
+      title: "特徴1. 1分分析",
       description: "入力は最小限。IRR/DSCR/LTV/NOI と 35年CF、3価を一括算出。",
       image: "/img/feature_1.png"
     },
     {
       icon: Smartphone,
-      title: "機能2. スマホ完結の物件管理",
+      title: "特徴2. スマホ完結の物件管理",
       description: "物件の保存・比較／URL・写真・メモ。減価償却／資本的支出も自動反映。",
       image: "/img/feature_2.png"
     },
     {
       icon: CheckCircle,
-      title: "機能3. 出口＆PDF",
+      title: "特徴3. 出口＆PDF",
       description: "CapRate等から売却価格・残債・純利益を自動計算。主要指標／年次CFをPDF化。",
       image: "/img/feature_3.png"
     }
@@ -206,8 +206,9 @@ const LandingPage: React.FC = () => {
       <section id="features" className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <p className="text-lg text-blue-600 font-semibold mb-5">What is 大家DX！</p>
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              大家DXでできること
+              大家DXの3つの特徴
             </h2>
             <p className="text-xl text-gray-900 max-w-4xl mx-auto leading-relaxed">
               現役大家の判断軸を実装した高性能シミュレーター。融資・税務・修繕・出口を一体計算し、IRR/DSCR/LTV/NOIや35年CF、3価（積算/収益還元/想定売却）を1分で可視化。エクセル不要、銀行が重視する指標をワンクリック。
@@ -251,10 +252,107 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 課題セクション */}
+      {/* 機能詳細セクション */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* 機能1 */}
+          <div className="flex flex-col lg:flex-row items-center gap-16 mb-32">
+            <div className="w-full lg:w-1/2">
+              <div>
+                <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">01</div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                  特徴1. 1分分析
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  入力は最小限。IRR/DSCR/LTV/NOI と 35年CF、3価を一括算出。
+                </p>
+                <p className="text-gray-600">
+                  必要な情報を入力するだけで、銀行が重視する重要指標を瞬時に算出。
+                  Excel作業から解放され、物件検討に集中できます。
+                  35年間の収支シミュレーションも自動で作成されます。
+                </p>
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2">
+              <img
+                src="/img/kakushin_img01.png"
+                alt="機能1の画面"
+                className="w-full h-auto rounded-xl shadow-lg"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                }}
+              />
+            </div>
+          </div>
+
+          {/* 機能2 */}
+          <div className="flex flex-col lg:flex-row-reverse items-center gap-16 mb-32">
+            <div className="w-full lg:w-1/2">
+              <div>
+                <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">02</div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                  特徴2. スマホ完結の物件管理
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  物件の保存・比較／URL・写真・メモ。減価償却／資本的支出も自動反映。
+                </p>
+                <p className="text-gray-600">
+                  スマートフォンから簡単にアクセスでき、外出先でも物件情報の確認や更新が可能。
+                  写真やメモを追加して、物件の詳細情報を一元管理できます。
+                </p>
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2">
+              <img
+                src="/img/feature_2.png"
+                alt="機能2の画面"
+                className="w-full h-auto rounded-xl shadow-lg"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                }}
+              />
+            </div>
+          </div>
+
+          {/* 機能3 */}
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="w-full lg:w-1/2">
+              <div>
+                <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">03</div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                  特徴3. 出口＆PDF
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  CapRate等から売却価格・残債・純利益を自動計算。主要指標／年次CFをPDF化。
+                </p>
+                <p className="text-gray-600">
+                  銀行提出用の資料作成も簡単。プロフェッショナルなレポートを自動生成し、
+                  投資判断に必要な全ての情報を見やすくまとめます。
+                </p>
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2">
+              <img
+                src="/img/feature_3.png"
+                alt="機能3の画面"
+                className="w-full h-auto rounded-xl shadow-lg"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 課題セクション */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <p className="text-lg text-blue-600 font-semibold mb-5">Top 3 Pain Points for Real Estate Investors</p>
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight relative">
               <span className="relative inline-block">
                 多くの大家さんが直面する3つの課題
