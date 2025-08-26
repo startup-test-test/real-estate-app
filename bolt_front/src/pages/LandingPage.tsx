@@ -51,20 +51,20 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: "特徴1. 1分分析",
-      description: "入力は最小限。IRR/DSCR/LTV/NOI と 35年CF、3価を一括算出。",
+      title: "特徴1. 35年CF可視化",
+      description: "収入・費用・税金・返済・残債・自己資金回収率を年次表示。",
       image: "/img/feature_1.png"
     },
     {
       icon: Smartphone,
-      title: "特徴2. スマホ完結の物件管理",
-      description: "物件の保存・比較／URL・写真・メモ。減価償却／資本的支出も自動反映。",
+      title: "特徴2. ステータス管理",
+      description: "検討中～取得済みまで一元管理。URL・写真・メモ・償却を保存。",
       image: "/img/feature_2.png"
     },
     {
       icon: CheckCircle,
-      title: "特徴3. 出口＆PDF",
-      description: "CapRate等から売却価格・残債・純利益を自動計算。主要指標／年次CFをPDF化。",
+      title: "特徴3. PDF自動生成",
+      description: "前提・計算式つきで主要指標／年次CF／3価をレポート化。",
       image: "/img/feature_3.png"
     }
   ];
@@ -261,15 +261,14 @@ const LandingPage: React.FC = () => {
               <div>
                 <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">01</div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  特徴1. 1分分析
+                  特徴1. 35年のキャッシュフローを可視化
                 </h3>
                 <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  入力は最小限。IRR/DSCR/LTV/NOI と 35年CF、3価を一括算出。
+                  収入・費用・税金・返済・残債・自己資金回収率を年ごとに表示。35年の推移が一目で分かる。
                 </p>
                 <p className="text-gray-600">
-                  必要な情報を入力するだけで、銀行が重視する重要指標を瞬時に算出。
-                  Excel作業から解放され、物件検討に集中できます。
-                  35年間の収支シミュレーションも自動で作成されます。
+                  各年度の収入、費用、税金、ローン返済、残債額、自己資金回収率まで、
+                  すべての重要指標を年次で可視化。投資判断を強力にサポートします。
                 </p>
               </div>
             </div>
@@ -292,14 +291,14 @@ const LandingPage: React.FC = () => {
               <div>
                 <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">02</div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  特徴2. スマホ完結の物件管理
+                  特徴2. 物件のステータス管理
                 </h3>
                 <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  物件の保存・比較／URL・写真・メモ。減価償却／資本的支出も自動反映。
+                  検討中／内見予定／買付／保有中／取得済みを保存して、URL・写真・メモや償却まで保存。
                 </p>
                 <p className="text-gray-600">
-                  スマートフォンから簡単にアクセスでき、外出先でも物件情報の確認や更新が可能。
-                  写真やメモを追加して、物件の詳細情報を一元管理できます。
+                  物件URL、現地写真、メモ、減価償却情報など、
+                  投資に必要な情報をステータスごとに整理して保存。
                 </p>
               </div>
             </div>
@@ -322,14 +321,14 @@ const LandingPage: React.FC = () => {
               <div>
                 <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">03</div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  特徴3. 出口＆PDF
+                  特徴3. ワンクリックでPDF保存
                 </h3>
                 <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  CapRate等から売却価格・残債・純利益を自動計算。主要指標／年次CFをPDF化。
+                  前提・計算式つきで主要指標／年次CF／3価を自動レポート化。銀行が重視する指標を整理した資料として共有できます。
                 </p>
                 <p className="text-gray-600">
-                  銀行提出用の資料作成も簡単。プロフェッショナルなレポートを自動生成し、
-                  投資判断に必要な全ての情報を見やすくまとめます。
+                  計算根拠を含めた詳細レポートをワンクリックで生成。
+                  銀行融資審査に必要な重要指標を整理。※提出要件は金融機関により異なります。
                 </p>
               </div>
             </div>

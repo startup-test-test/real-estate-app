@@ -2721,7 +2721,7 @@ const Simulator: React.FC = () => {
                   </div>
                   
                   {/* PC版・SP版ともに横スクロール可能に */}
-                  <div className="relative max-h-[600px] overflow-y-auto overflow-x-auto cashflow-table-container">
+                  <div className="relative overflow-x-auto cashflow-table-container">
                     <table className="min-w-full bg-white" style={{ minWidth: '1100px' }}>
                       <thead className="bg-blue-900 sticky top-0 z-10">
                         <tr>

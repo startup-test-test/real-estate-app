@@ -64,8 +64,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   // デバッグ用ログ（最初の3行のみ）
   // デバッグ用ログは削除
 
-  // SP版の判定
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  // SP版の判定 - 印刷時は常にPC版として扱う
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768 && !window.matchMedia('print').matches;
 
   const chartData = {
     labels: years,
@@ -259,15 +259,15 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   };
 
   return (
-    <div className="bg-white md:p-6 p-4 md:rounded-lg md:border md:border-gray-200 md:shadow-sm chart-container">
+    <div className="bg-white md:p-6 p-4 md:rounded-lg md:border md:border-gray-200 md:shadow-sm chart-container print:p-4 print:border-0">
       {/* SP版のみスワイプ案内を表示 */}
       {isMobile && (
-        <div className="text-center text-sm text-gray-500 mb-2">
+        <div className="text-center text-sm text-gray-500 mb-2 print:hidden">
           ← スワイプで全期間を確認 →
         </div>
       )}
-      <div className={isMobile ? "overflow-x-auto -mx-4 px-4" : ""}>
-        <div className={isMobile ? "h-80 min-w-[1200px]" : "h-96 w-full"}>
+      <div className={isMobile ? "overflow-x-auto -mx-4 px-4 print:overflow-visible print:mx-0" : ""}>
+        <div className={isMobile ? "h-80 min-w-[1200px] print:h-96 print:min-w-0 print:w-full" : "h-96 w-full"}>
           <Chart type='bar' data={chartData} options={options} />
         </div>
       </div>
