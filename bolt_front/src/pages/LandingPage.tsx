@@ -135,7 +135,7 @@ const LandingPage: React.FC = () => {
               {/* ナビゲーションメニュー */}
               <nav className="hidden md:flex items-center space-x-6">
                 <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  大家DXとは？
+                  大家DXの特徴
                 </a>
                 <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
                   機能
