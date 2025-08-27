@@ -1,18 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calculator, 
   CheckCircle,
   ArrowRight,
-  Smartphone
+  Smartphone,
+  Play,
+  Pause
 } from 'lucide-react';
+import BlogPosts from '../components/BlogPosts';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     document.title = 'ホーム | 大家DX - 現役大家が開発した賃貸経営DX';
   }, []);
+
+  useEffect(() => {
+    if (isPlaying && videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.error('Video play failed:', error);
+      });
+    }
+  }, [isPlaying]);
+
+  const handleVideoClick = () => {
+    if (isPlaying && videoRef.current) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      setIsPlaying(true);
+    }
+  };
 
   const personas = [
     {
@@ -112,7 +134,7 @@ const LandingPage: React.FC = () => {
             <div className="flex items-center space-x-6">
               {/* ナビゲーションメニュー */}
               <nav className="hidden md:flex items-center space-x-6">
-                <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
                   大家DXとは？
                 </a>
                 <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
@@ -225,15 +247,53 @@ const LandingPage: React.FC = () => {
             {/* 左側: PC画像 */}
             <div className="w-full lg:w-3/5 lg:pl-0">
               <div className="relative -ml-4 sm:-ml-6 lg:-ml-8">
-                <img
-                  src="/img/kakushin_img01.png"
-                  alt="大家DX システム画面"
-                  className="w-full h-auto rounded-xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
-                  }}
-                />
+                <div className="relative group cursor-pointer" onClick={handleVideoClick}>
+                  {!isPlaying ? (
+                    <>
+                      {/* サムネイル画像 */}
+                      <img
+                        src="/img/kakushin_img01.png"
+                        alt="大家DX システム画面"
+                        className="w-full h-auto rounded-xl"
+                      />
+                      {/* 再生ボタンオーバーレイ */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-black/60 rounded-full p-6 transition-all duration-300 hover:bg-black/70 hover:scale-110">
+                          <Play className="w-16 h-16 text-white ml-2" />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* 動画 */}
+                      <video
+                        ref={videoRef}
+                        src="/img/douga_250827_1.mp4"
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        className="w-full h-auto rounded-xl"
+                        onError={(e) => {
+                          const target = e.target as HTMLVideoElement;
+                          target.style.display = 'none';
+                          const fallback = document.createElement('div');
+                          fallback.className = 'w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center text-gray-500';
+                          fallback.textContent = 'システム画面';
+                          target.parentNode?.appendChild(fallback);
+                        }}
+                      >
+                        お使いのブラウザは動画タグをサポートしていません。
+                      </video>
+                      {/* 一時停止ボタンオーバーレイ */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className={`bg-black/50 rounded-full p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100`}>
+                          <Pause className="w-12 h-12 text-white" />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -591,6 +651,9 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ブログ記事セクション */}
+      <BlogPosts />
 
       {/* ニュースセクション */}
       <section id="news" className="py-16 bg-white">
