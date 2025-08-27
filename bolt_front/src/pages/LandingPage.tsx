@@ -52,7 +52,7 @@ const LandingPage: React.FC = () => {
     {
       icon: Calculator,
       title: "特徴1. 35年CF可視化",
-      description: "収入・費用・税金・返済・残債・自己資金回収率を年次表示。",
+      description: "収入・経費・税金・返済・残債・自己資金回収率を年次表示。",
       image: "/img/feature_1.png"
     },
     {
@@ -163,8 +163,13 @@ const LandingPage: React.FC = () => {
                 <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した</span><br />
                 <span className="text-5xl md:text-6xl lg:text-7xl">不動産投資<br />シミュレーター</span>
               </h1>
-              <p className="text-2xl lg:text-3xl text-gray-900 mb-10 leading-relaxed" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                融資・税務・修繕・出口戦略まで完全再現。プロも納得の高性能シミュレーター。
+              <div className="text-3xl lg:text-4xl text-gray-900 mb-6" style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                <p className="mb-2">Excelで半日かかる収支計算、</p>
+                <p>「大家DX」なら60秒で解決</p>
+              </div>
+              <p className="text-lg lg:text-xl text-gray-700 mb-10 leading-relaxed" style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                収入・経費・税金・返済・残債・自己資金回収率を<br />
+                年ごとに可視化。35年の推移がひと目でわかる。
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-8">
                 <button
@@ -187,7 +192,7 @@ const LandingPage: React.FC = () => {
                 src="/img/kakushin_img01.png"
                 alt="大家DX メインビジュアル"
                 className="w-full h-auto max-w-3xl transform"
-                style={{transform: 'scale(1.32) translateX(30px)', marginLeft: '20px'}}
+                style={{transform: 'scale(1.4) translateX(30px)', marginLeft: '20px'}}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -264,10 +269,10 @@ const LandingPage: React.FC = () => {
                   特徴1. 35年のキャッシュフローを可視化
                 </h3>
                 <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  収入・費用・税金・返済・残債・自己資金回収率を年ごとに表示。35年の推移が一目で分かる。
+                  収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。35年の推移が一目で分かる。
                 </p>
                 <p className="text-gray-600">
-                  各年度の収入、費用、税金、ローン返済、残債額、自己資金回収率まで、
+                  各年度の収入、経費、税金、ローン返済、残債額、自己資金回収率まで、
                   すべての重要指標を年次で可視化。投資判断を強力にサポートします。
                 </p>
               </div>
