@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '../hooks/useImageUpload';
-import { getFileSizeInMB } from '../utils/imageUtils';
 
 interface ImageUploadProps {
   onImageUploaded: (imageUrl: string) => void;
@@ -120,7 +119,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             クリックして選択
           </p>
           <p className="text-xs text-gray-400 mt-1 hidden md:block">
-            JPEG, PNG, WebP (最大2MB)
+            JPEG, PNG, WebP (最大1MB)
           </p>
         </div>
       </button>

@@ -17,9 +17,9 @@ export const resizeImage = (
   options: ImageResizeOptions = {}
 ): Promise<File> => {
   const { 
-    maxWidth = 600, 
-    maxHeight = 400, 
-    quality = 0.7 
+    maxWidth = 1200, 
+    maxHeight = 800, 
+    quality = 0.85 
   } = options;
 
   return new Promise((resolve, reject) => {
@@ -82,7 +82,7 @@ export const isImageFile = (file: File): boolean => {
 /**
  * ファイルサイズチェック
  */
-export const isValidFileSize = (file: File, maxSizeInMB: number = 2): boolean => {
+export const isValidFileSize = (file: File, maxSizeInMB: number = 1): boolean => {
   const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
   return file.size <= maxSizeInBytes;
 };
@@ -98,10 +98,10 @@ export const validateImageFile = (file: File): { isValid: boolean; error?: strin
     };
   }
 
-  if (!isValidFileSize(file, 2)) {
+  if (!isValidFileSize(file, 1)) {
     return {
       isValid: false,
-      error: 'ファイルサイズは2MB以下にしてください'
+      error: 'ファイルサイズは1MB以下にしてください'
     };
   }
 

@@ -53,9 +53,9 @@ export const useImageUpload = () => {
       // 画像をリサイズ・圧縮
       setUploadState(prev => ({ ...prev, progress: 30 }));
       const resizedFile = await resizeImage(file, {
-        maxWidth: 600,
-        maxHeight: 400,
-        quality: 0.7
+        maxWidth: 1200,
+        maxHeight: 800,
+        quality: 0.85
       });
 
       // ファイル名を生成（タイムスタンプ + ランダム文字列）
@@ -111,7 +111,7 @@ export const useImageUpload = () => {
         console.log('✅ property-imagesバケットを使用');
       }
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from(targetBucket)
         .upload(fileName, resizedFile, {
           cacheControl: '3600',
