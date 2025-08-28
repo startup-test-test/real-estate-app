@@ -1,0 +1,33 @@
+@keyframes slideIn {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.underline-animation {
+  animation: slideIn 1.5s ease-out forwards;
+}
+
+@keyframes wave {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+}
+
+.underline-wave {
+  animation: wave 2s ease-in-out infinite;
+}

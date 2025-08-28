@@ -1,40 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calculator, 
   CheckCircle,
   ArrowRight,
-  Smartphone,
-  Play,
-  Pause
+  Smartphone
 } from 'lucide-react';
 import BlogPosts from '../components/BlogPosts';
+import '../styles/animations.css';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     document.title = 'ホーム | 大家DX - 現役大家が開発した賃貸経営DX';
   }, []);
-
-  useEffect(() => {
-    if (isPlaying && videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.error('Video play failed:', error);
-      });
-    }
-  }, [isPlaying]);
-
-  const handleVideoClick = () => {
-    if (isPlaying && videoRef.current) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      setIsPlaying(true);
-    }
-  };
 
   const personas = [
     {
@@ -70,26 +50,6 @@ const LandingPage: React.FC = () => {
   ];
 
 
-  const features = [
-    {
-      icon: Calculator,
-      title: "特徴1. 35年CF可視化",
-      description: "収入・経費・税金・返済・残債・自己資金回収率を年次表示。",
-      image: "/img/feature_1.png"
-    },
-    {
-      icon: Smartphone,
-      title: "特徴2. ステータス管理",
-      description: "検討中～取得済みまで一元管理。URL・写真・メモ・償却を保存。",
-      image: "/img/feature_2.png"
-    },
-    {
-      icon: CheckCircle,
-      title: "特徴3. PDF自動生成",
-      description: "前提・計算式つきで主要指標／年次CF／3価をレポート化。",
-      image: "/img/feature_3.png"
-    }
-  ];
 
   const pricingPlans = [
     {
@@ -186,8 +146,15 @@ const LandingPage: React.FC = () => {
                 <span className="text-5xl md:text-6xl lg:text-7xl">不動産投資<br />シミュレーター</span>
               </h1>
               <div className="text-3xl lg:text-4xl text-gray-900 mb-6" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                <p className="mb-2">Excelで半日かかる収支計算、</p>
-                <p>「大家DX」なら60秒で解決</p>
+                <p className="mb-4 relative inline-block">
+                  Excelで半日かかる収支計算、
+                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
+                </p>
+                <br />
+                <p className="relative inline-block">
+                  「大家DX」なら60秒で解決
+                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px', animationDelay: '0.5s'}}></span>
+                </p>
               </div>
               <p className="text-lg lg:text-xl text-gray-700 mb-10 leading-relaxed" style={{paddingLeft: '10px', paddingRight: '10px'}}>
                 収入・経費・税金・返済・残債・自己資金回収率を<br />
@@ -306,7 +273,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能詳細セクション */}
-      <section className="pt-12 pb-24 bg-white">
+      <section className="pt-12 pb-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 機能1 */}
           <div className="flex flex-col mb-32">
@@ -393,7 +360,7 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* 機能3 */}
-          <div className="flex flex-col mb-32">
+          <div className="flex flex-col">
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
                 <div>
@@ -437,14 +404,14 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 課題セクション */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-6 pb-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="text-center mb-16">
             <p className="text-lg text-blue-600 font-semibold mb-5">Top 3 Pain Points for Real Estate Investors</p>
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight relative">
               <span className="relative inline-block">
                 多くの大家さんが直面する3つの課題
-                <span className="absolute left-0 w-full h-3 bg-blue-500 opacity-80 z-0" style={{bottom: '-10px'}}></span>
+                <span className="absolute left-0 w-full h-3 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-10px', animationDelay: '1.0s'}}></span>
               </span>
             </h2>
           </div>
