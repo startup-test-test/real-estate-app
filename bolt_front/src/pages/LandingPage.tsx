@@ -321,92 +321,128 @@ const LandingPage: React.FC = () => {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 機能1 */}
-          <div className="flex flex-col lg:flex-row items-center gap-16 mb-32">
-            <div className="w-full lg:w-1/2">
-              <div>
-                <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">01</div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  特徴1. 35年のキャッシュフローを可視化
-                </h3>
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。35年の推移が一目で分かる。
-                </p>
-                <p className="text-gray-600">
-                  各年度の収入、経費、税金、ローン返済、残債額、自己資金回収率まで、
-                  すべての重要指標を年次で可視化。投資判断を強力にサポートします。
-                </p>
+          <div className="flex flex-col mb-32">
+            <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
+              <div className="w-full lg:w-1/3">
+                <div>
+                  <div className="text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                    35年のキャッシュフローを<br />
+                    グラフと表で可視化
+                  </h3>
+                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-3">
+                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。
+                  </p>
+                  <p className="text-sm lg:text-base text-gray-600">
+                    各年度の重要指標を年次で可視化。投資判断を強力にサポート。
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="w-full lg:w-1/2">
-              <img
-                src="/img/kakushin_img01.png"
-                alt="機能1の画面"
+              <div className="w-full lg:w-2/3">
+              <video
+                src="/img/tokuchou_01.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-auto rounded-xl shadow-lg"
                 onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                  const target = e.target as HTMLVideoElement;
+                  // エラー時は静止画にフォールバック
+                  const img = document.createElement('img');
+                  img.src = '/img/tokuchou01.jpg';
+                  img.alt = '特徴1: 35年のキャッシュフローを可視化';
+                  img.className = target.className;
+                  target.parentNode?.replaceChild(img, target);
                 }}
-              />
+              >
+                お使いのブラウザは動画タグをサポートしていません。
+              </video>
+              </div>
             </div>
           </div>
 
           {/* 機能2 */}
-          <div className="flex flex-col lg:flex-row-reverse items-center gap-16 mb-32">
-            <div className="w-full lg:w-1/2">
-              <div>
-                <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">02</div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  特徴2. 物件のステータス管理
-                </h3>
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  検討中／内見予定／買付／保有中／取得済みを保存して、URL・写真・メモや償却まで保存。
-                </p>
-                <p className="text-gray-600">
-                  物件URL、現地写真、メモ、減価償却情報など、
-                  投資に必要な情報をステータスごとに整理して保存。
-                </p>
+          <div className="flex flex-col mb-32">
+            <div className="flex flex-col lg:flex-row-reverse items-start gap-8 mb-8">
+              <div className="w-full lg:w-1/3">
+                <div>
+                  <div className="text-6xl lg:text-7xl font-bold text-gray-900 mb-4">02</div>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                    物件のステータスを<br />
+                    一元管理
+                  </h3>
+                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-3">
+                    検討中／内見予定／買付／保有中／取得済みを保存。
+                  </p>
+                  <p className="text-sm lg:text-base text-gray-600">
+                    URL・写真・メモや償却まで保存。投資情報を整理。
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="w-full lg:w-1/2">
-              <img
-                src="/img/feature_2.png"
-                alt="機能2の画面"
+              <div className="w-full lg:w-2/3">
+              <video
+                src="/img/tokuchou_02.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-auto rounded-xl shadow-lg"
                 onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                  const target = e.target as HTMLVideoElement;
+                  // エラー時は静止画にフォールバック
+                  const img = document.createElement('img');
+                  img.src = '/img/tokuchou02.jpg';
+                  img.alt = '特徴2: 物件のステータス管理';
+                  img.className = target.className;
+                  target.parentNode?.replaceChild(img, target);
                 }}
-              />
+              >
+                お使いのブラウザは動画タグをサポートしていません。
+              </video>
+              </div>
             </div>
           </div>
 
           {/* 機能3 */}
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="w-full lg:w-1/2">
-              <div>
-                <div className="text-6xl lg:text-8xl font-bold text-gray-900 mb-6">03</div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  特徴3. ワンクリックでPDF保存
-                </h3>
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  前提・計算式つきで主要指標／年次CF／3価を自動レポート化。銀行が重視する指標を整理した資料として共有できます。
-                </p>
-                <p className="text-gray-600">
-                  計算根拠を含めた詳細レポートをワンクリックで生成。
-                  銀行融資審査に必要な重要指標を整理。※提出要件は金融機関により異なります。
-                </p>
+          <div className="flex flex-col mb-32">
+            <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
+              <div className="w-full lg:w-1/3">
+                <div>
+                  <div className="text-6xl lg:text-7xl font-bold text-gray-900 mb-4">03</div>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                    金融機関に提出資料も<br />
+                    1クリックでPDF保存
+                  </h3>
+                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-3">
+                    前提・計算式つきで主要指標／年次CF／3価をレポート化。
+                  </p>
+                  <p className="text-sm lg:text-base text-gray-600">
+                    銀行が重視する指標を整理。融資審査資料として活用可能。
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="w-full lg:w-1/2">
-              <img
-                src="/img/feature_3.png"
-                alt="機能3の画面"
+              <div className="w-full lg:w-2/3">
+              <video
+                src="/img/tokuchou_03.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-auto rounded-xl shadow-lg"
                 onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDYwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUIxQzFDIiBmb250LXNpemU9IjI0cHgiPuOCt+OCueODhuODoOeUu+mdojwvdGV4dD4KPC9zdmc+Cg==';
+                  const target = e.target as HTMLVideoElement;
+                  // エラー時は静止画にフォールバック
+                  const img = document.createElement('img');
+                  img.src = '/img/tokuchou03.jpg';
+                  img.alt = '特徴3: ワンクリックでPDF保存';
+                  img.className = target.className;
+                  target.parentNode?.replaceChild(img, target);
                 }}
-              />
+              >
+                お使いのブラウザは動画タグをサポートしていません。
+              </video>
+              </div>
             </div>
           </div>
         </div>
