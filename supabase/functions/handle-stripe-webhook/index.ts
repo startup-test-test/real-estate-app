@@ -1,5 +1,5 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
+import { serve } from 'https://deno.land/std@0.177.1/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import Stripe from 'https://esm.sh/stripe@13.10.0?target=deno'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
@@ -35,8 +35,8 @@ serve(async (req) => {
 
     let event: Stripe.Event
     try {
-      // constructEventAsyncを使用して非同期で検証
-      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret)
+      // constructEventを使用して同期で検証（Denoの互換性のため）
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
     } catch (err) {
       console.error('Webhook signature verification failed:', err)
       return new Response('Webhook signature verification failed', { 
@@ -81,6 +81,8 @@ serve(async (req) => {
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
+          }, {
+            onConflict: 'user_id'
           })
 
         if (insertError) {
