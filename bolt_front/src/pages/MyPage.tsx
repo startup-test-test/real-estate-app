@@ -26,7 +26,7 @@ const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading: authLoading } = useAuthContext();
   const { getSimulations, deleteSimulation } = useSupabaseData();
-  const { usage } = useUsageStatus();
+  const { usage, refetch: refetchUsage } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
 
   useEffect(() => {
@@ -41,6 +41,10 @@ const MyPage: React.FC = () => {
     if (paymentStatus === 'success') {
       // 成功メッセージを表示（後で実装可能）
       console.log('決済が成功しました！');
+      // 使用状況を更新
+      if (refetchUsage) {
+        refetchUsage();
+      }
       // URLパラメータをクリーンアップ
       const newUrl = window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
