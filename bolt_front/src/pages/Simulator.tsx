@@ -1496,7 +1496,7 @@ const Simulator: React.FC = () => {
               <div>
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
-                    管理費
+                    修繕費・管理費
                   </label>
                   <Tooltip content={tooltips.managementFee} />
                 </div>

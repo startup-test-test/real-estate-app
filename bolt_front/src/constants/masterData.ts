@@ -9,6 +9,7 @@ export const propertyStatusOptions = [
   { value: '申込検討', label: '📝 申込検討' },
   { value: '契約手続中', label: '📋 契約手続中' },
   { value: '取得済み', label: '🏠 取得済み' },
+  { value: '売却済み', label: '💰 売却済み' },
   { value: '見送り', label: '❌ 見送り' },
   { value: '保留', label: '⏸️ 保留' }
 ];

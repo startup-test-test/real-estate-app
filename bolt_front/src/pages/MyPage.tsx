@@ -861,11 +861,13 @@ const MyPage: React.FC = () => {
                                       ? "bg-yellow-100 text-yellow-700"
                                       : sim.status === "取得済み"
                                         ? "bg-green-100 text-green-700"
-                                        : sim.status === "見送り"
-                                          ? "bg-red-100 text-red-700"
-                                          : sim.status === "保留"
-                                            ? "bg-gray-100 text-gray-700"
-                                            : "bg-blue-100 text-blue-700"
+                                        : sim.status === "売却済み"
+                                          ? "bg-indigo-100 text-indigo-700"
+                                          : sim.status === "見送り"
+                                            ? "bg-red-100 text-red-700"
+                                            : sim.status === "保留"
+                                              ? "bg-gray-100 text-gray-700"
+                                              : "bg-blue-100 text-blue-700"
                             }`}
                           >
                             {sim.status === "検討中"
@@ -878,11 +880,13 @@ const MyPage: React.FC = () => {
                                     ? "📋 契約手続中"
                                     : sim.status === "取得済み"
                                       ? "✅ 取得済み"
-                                      : sim.status === "見送り"
-                                        ? "❌ 見送り"
-                                        : sim.status === "保留"
-                                          ? "📝 保留"
-                                          : "🔍 検討中"}
+                                      : sim.status === "売却済み"
+                                        ? "💰 売却済み"
+                                        : sim.status === "見送り"
+                                          ? "❌ 見送り"
+                                          : sim.status === "保留"
+                                            ? "📝 保留"
+                                            : "🔍 検討中"}
                           </span>
                         </div>
 
