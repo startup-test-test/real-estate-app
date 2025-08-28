@@ -347,10 +347,11 @@ const PremiumPlan: React.FC = () => {
                           // Stripe Checkoutへリダイレクト
                           try {
                             const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1RvChRR8rkVVzR7nAeDvfiur';
-                            const { data, error } = await supabase.functions.invoke('smart-service', {
+                            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
                               body: { 
                                 priceId: priceId,
-                                userId: user.id 
+                                userId: user.id,
+                                returnUrl: window.location.origin
                               }
                             });
                             if (error) throw error;
