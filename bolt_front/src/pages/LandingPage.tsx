@@ -230,86 +230,74 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能紹介セクション */}
-      <section id="features" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+      <section id="features" className="pt-24 pb-12 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-lg text-blue-600 font-semibold mb-5">What is 大家DX！</p>
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <p className="text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
+            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-12 leading-tight">
               大家DXの3つの特徴
             </h2>
-            <p className="text-xl text-gray-900 max-w-4xl mx-auto leading-relaxed">
-              現役大家の判断軸を実装した高性能シミュレーター。融資・税務・修繕・出口を一体計算し、IRR/DSCR/LTV/NOIや35年CF、3価（積算/収益還元/想定売却）を1分で可視化。エクセル不要、銀行が重視する指標をワンクリック。
-            </p>
           </div>
           
-          {/* メインレイアウト: 左側PC画像、右側機能リスト */}
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            {/* 左側: PC画像 */}
-            <div className="w-full lg:w-3/5 lg:pl-0">
-              <div className="relative -ml-4 sm:-ml-6 lg:-ml-8">
-                <div className="relative group cursor-pointer" onClick={handleVideoClick}>
-                  {!isPlaying ? (
-                    <>
-                      {/* サムネイル画像 */}
-                      <img
-                        src="/img/kakushin_img01.png"
-                        alt="大家DX システム画面"
-                        className="w-full h-auto rounded-xl"
-                      />
-                      {/* 再生ボタンオーバーレイ */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-black/60 rounded-full p-6 transition-all duration-300 hover:bg-black/70 hover:scale-110">
-                          <Play className="w-16 h-16 text-white ml-2" />
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* 動画 */}
-                      <video
-                        ref={videoRef}
-                        src="/img/douga_250827_1.mp4"
-                        muted
-                        loop
-                        playsInline
-                        autoPlay
-                        className="w-full h-auto rounded-xl"
-                        onError={(e) => {
-                          const target = e.target as HTMLVideoElement;
-                          target.style.display = 'none';
-                          const fallback = document.createElement('div');
-                          fallback.className = 'w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center text-gray-500';
-                          fallback.textContent = 'システム画面';
-                          target.parentNode?.appendChild(fallback);
-                        }}
-                      >
-                        お使いのブラウザは動画タグをサポートしていません。
-                      </video>
-                      {/* 一時停止ボタンオーバーレイ */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className={`bg-black/50 rounded-full p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100`}>
-                          <Pause className="w-12 h-12 text-white" />
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
+          {/* 3つの特徴を横並び */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            {/* 特徴1 */}
+            <div className="text-center px-6 py-3 border-2 border-gray-200 rounded-2xl">
+              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">01</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
+                35年のキャッシュフローを<br />
+                グラフと表で可視化
+              </h3>
+              <div className="flex justify-center">
+                <img
+                  src="/img/tokuchou01.jpg"
+                  alt="35年のキャッシュフローを可視化"
+                  className="w-full h-48 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
               </div>
             </div>
-            
-            {/* 右側: 機能リスト */}
-            <div className="w-full lg:w-2/5">
-              <div className="space-y-12">
-                {features.map((feature, index) => (
-                  <div key={index}>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                ))}
+
+            {/* 特徴2 */}
+            <div className="text-center px-6 py-3 border-2 border-gray-200 rounded-2xl">
+              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">02</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
+                物件のステータスを<br />
+                一元管理
+              </h3>
+              <div className="flex justify-center">
+                <img
+                  src="/img/tokuchou02.jpg"
+                  alt="物件のステータスを一元管理"
+                  className="w-full h-48 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* 特徴3 */}
+            <div className="text-center px-6 py-3 border-2 border-gray-200 rounded-2xl">
+              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">03</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
+                金融機関に提出資料も<br />
+                1クリックでPDF保存
+              </h3>
+              <div className="flex justify-center">
+                <img
+                  src="/img/tokuchou03.jpg"
+                  alt="金融機関に提出資料も1クリックでPDF保存"
+                  className="w-full h-48 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -318,7 +306,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能詳細セクション */}
-      <section className="py-24 bg-white">
+      <section className="pt-12 pb-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 機能1 */}
           <div className="flex flex-col mb-32">
