@@ -1,214 +1,170 @@
-import { serve } from 'https://deno.land/std@0.177.1/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
-import Stripe from 'https://esm.sh/stripe@13.10.0?target=deno'
+// Supabase Edge Functions（Deno Deploy互換）版：Stripe Webhook
+import Stripe from 'https://esm.sh/stripe@14.0.0?target=denonext';
+import { createClient } from 'jsr:@supabase/supabase-js@2';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+  // Stripe API Version - 2023-10-16 is stable
   apiVersion: '2023-10-16',
   httpClient: Stripe.createFetchHttpClient(),
-})
+});
+const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-serve(async (req) => {
-  // CORS対応
+Deno.serve(async (req) => {
+  // CORS（ブラウザから直叩きしないWebhookでも残してOK）
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
-  }
-
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { status: 200, headers })
-  }
+    'Access-Control-Allow-Headers':
+      'authorization, x-client-info, apikey, content-type, stripe-signature',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
+  if (req.method === 'OPTIONS') return new Response('ok', { status: 200, headers });
 
   try {
-    // Webhook署名の検証（非同期で実行）
-    const signature = req.headers.get('stripe-signature')
-    const body = await req.text()
-    
-    if (!signature) {
-      console.error('No stripe-signature header found')
-      return new Response('No signature', { status: 400, headers })
-    }
+    const signature = req.headers.get('stripe-signature');
+    if (!signature) return new Response('No signature', { status: 400, headers });
 
-    let event: Stripe.Event
-    try {
-      // constructEventを使用して同期で検証（Denoの互換性のため）
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
-    } catch (err) {
-      console.error('Webhook signature verification failed:', err)
-      return new Response('Webhook signature verification failed', { 
-        status: 400,
-        headers 
-      })
-    }
+    // 署名検証は raw body 必須
+    const body = await req.text();
+    const event = await stripe.webhooks.constructEventAsync(
+      body,
+      signature,
+      Deno.env.get('STRIPE_WEBHOOK_SECRET')!,
+      undefined,
+      cryptoProvider,
+    );
 
-    // Supabaseクライアント作成（Service Roleキーを使用）
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    console.log(`Processing webhook event: ${event.type}`);
 
-    console.log(`Processing webhook event: ${event.type}`)
-
-    // イベントタイプに応じて処理
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
-        const userId = session.metadata?.user_id
-        
-        if (!userId) {
-          console.error('User ID not found in session metadata')
-          break
+        const session: any = event.data.object;
+        const userId = session.metadata?.user_id;
+        if (!userId) break;
+
+        console.log(`Checkout completed for user: ${userId}`);
+
+        // 購読詳細を取得
+        if (session.subscription) {
+          const sub = await stripe.subscriptions.retrieve(
+            String(session.subscription),
+          );
+          const { error } = await supabase.from('subscriptions').upsert(
+            {
+              user_id: userId,
+              stripe_subscription_id: sub.id,
+              stripe_customer_id: sub.customer as string,
+              status: 'active',
+              current_period_start: new Date(
+                sub.current_period_start * 1000,
+              ).toISOString(),
+              current_period_end: new Date(
+                sub.current_period_end * 1000,
+              ).toISOString(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'user_id' },
+          );
+          if (error) console.error('Error saving subscription:', error);
+          else console.log('Subscription created/updated for user:', userId);
         }
-
-        console.log(`Checkout completed for user: ${userId}`)
-
-        // サブスクリプション情報を取得
-        const subscription = await stripe.subscriptions.retrieve(
-          session.subscription as string
-        )
-
-        // Supabaseにサブスクリプション情報を保存
-        const { error: insertError } = await supabase
-          .from('subscriptions')
-          .upsert({
-            user_id: userId,
-            stripe_subscription_id: subscription.id,
-            stripe_customer_id: subscription.customer as string,
-            stripe_price_id: subscription.items.data[0].price.id,
-            status: 'active',
-            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }, {
-            onConflict: 'user_id'
-          })
-
-        if (insertError) {
-          console.error('Error saving subscription:', insertError)
-        } else {
-          console.log('Subscription created/updated for user:', userId)
-        }
-        break
+        break;
       }
 
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription
-        const userId = subscription.metadata?.user_id
+        const sub: any = event.data.object;
+        const status =
+          sub.status === 'active'
+            ? 'active'
+            : sub.status === 'trialing'
+              ? 'trialing'
+              : sub.status === 'past_due'
+                ? 'past_due'
+                : 'inactive';
 
-        if (!userId) {
-          console.log('No user_id in subscription metadata, skipping')
-          break
-        }
-
-        console.log(`Subscription updated for user: ${userId}`)
-
-        // サブスクリプション状態を更新
-        const { error: updateError } = await supabase
+        const { error } = await supabase
           .from('subscriptions')
           .update({
-            status: subscription.status === 'active' ? 'active' : 'inactive',
-            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            status,
+            current_period_start: new Date(
+              sub.current_period_start * 1000,
+            ).toISOString(),
+            current_period_end: new Date(
+              sub.current_period_end * 1000,
+            ).toISOString(),
             updated_at: new Date().toISOString(),
           })
-          .eq('stripe_subscription_id', subscription.id)
+          .eq('stripe_subscription_id', sub.id);
 
-        if (updateError) {
-          console.error('Error updating subscription:', updateError)
-        } else {
-          console.log('Subscription updated for:', subscription.id)
-        }
-        break
+        if (error) console.error('Error updating subscription:', error);
+        else console.log('Subscription updated for:', sub.id);
+        break;
       }
 
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription
-
-        console.log(`Subscription deleted: ${subscription.id}`)
-
-        // サブスクリプションを無効化
-        const { error: deleteError } = await supabase
+        const sub: any = event.data.object;
+        const { error } = await supabase
           .from('subscriptions')
           .update({
             status: 'cancelled',
             cancelled_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
-          .eq('stripe_subscription_id', subscription.id)
+          .eq('stripe_subscription_id', sub.id);
 
-        if (deleteError) {
-          console.error('Error cancelling subscription:', deleteError)
-        } else {
-          console.log('Subscription cancelled:', subscription.id)
-        }
-        break
+        if (error) console.error('Error cancelling subscription:', error);
+        else console.log('Subscription cancelled:', sub.id);
+        break;
       }
 
       case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
-
-        if (subscriptionId) {
-          console.log(`Payment succeeded for subscription: ${subscriptionId}`)
-          
-          // サブスクリプションのステータスを確実にactiveにする
+        const invoice: any = event.data.object;
+        if (invoice.subscription) {
           const { error } = await supabase
             .from('subscriptions')
             .update({
               status: 'active',
               updated_at: new Date().toISOString(),
             })
-            .eq('stripe_subscription_id', subscriptionId)
-
-          if (error) {
-            console.error('Error updating subscription status:', error)
-          } else {
-            console.log('Subscription status updated to active')
-          }
+            .eq('stripe_subscription_id', String(invoice.subscription));
+          if (error) console.error('Error updating subscription status:', error);
+          else console.log('Subscription status updated to active');
         }
-        break
+        break;
       }
 
       case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
-
-        if (subscriptionId) {
-          console.log(`Payment failed for subscription: ${subscriptionId}`)
-          
+        const invoice: any = event.data.object;
+        if (invoice.subscription) {
           const { error } = await supabase
             .from('subscriptions')
             .update({
               status: 'past_due',
               updated_at: new Date().toISOString(),
             })
-            .eq('stripe_subscription_id', subscriptionId)
-
-          if (error) {
-            console.error('Error updating subscription status:', error)
-          }
+            .eq('stripe_subscription_id', String(invoice.subscription));
+          if (error) console.error('Error updating subscription status:', error);
         }
-        break
+        break;
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        console.log(`Unhandled event type: ${event.type}`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
-      headers: { ...headers, 'Content-Type': 'application/json' },
       status: 200,
-    })
+      headers: { ...headers, 'Content-Type': 'application/json' },
+    });
   } catch (err) {
-    console.error('Error processing webhook:', err)
-    return new Response(
-      JSON.stringify({ error: 'Webhook processing failed' }),
-      { 
-        status: 500,
-        headers: { ...headers, 'Content-Type': 'application/json' }
-      }
-    )
+    console.error('Error processing webhook:', err);
+    return new Response(JSON.stringify({ error: 'Webhook processing failed' }), {
+      status: 500,
+      headers: { ...headers, 'Content-Type': 'application/json' },
+    });
   }
-})
+});
