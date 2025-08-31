@@ -11,7 +11,10 @@ test.describe('基本動作確認', () => {
     await expect(page).toHaveTitle(/大家DX/);
     
     // スクリーンショットを撮る（デバッグ用）
-    await page.screenshot({ path: 'screenshots/top-page.png' });
+    await page.screenshot({ 
+      path: '../テスト結果_スクリーンショット/トップページ.png',
+      fullPage: true
+    });
   });
 
   test('ログインページに遷移できる', async ({ page }) => {
@@ -29,6 +32,12 @@ test.describe('基本動作確認', () => {
     
     // URLが/loginに変わることを確認
     await expect(page).toHaveURL(/.*login/);
+    
+    // ログインページのスクリーンショット
+    await page.screenshot({ 
+      path: '../テスト結果_スクリーンショット/ログインページ遷移後.png',
+      fullPage: true
+    });
   });
 
   test('ログインフォームの要素が存在する', async ({ page }) => {
@@ -46,6 +55,12 @@ test.describe('基本動作確認', () => {
     // ログインボタンがあるか
     const submitButton = page.locator('button[type="submit"]');
     await expect(submitButton).toBeVisible();
+    
+    // ログインフォーム要素のスクリーンショット
+    await page.screenshot({ 
+      path: '../テスト結果_スクリーンショット/ログインフォーム要素.png',
+      fullPage: true
+    });
   });
 });
 
@@ -57,6 +72,12 @@ test.describe('ログイン機能の検証', () => {
     
     // 何も入力せずにログインボタンをクリック
     await page.locator('button[type="submit"]').click();
+    
+    // エラー表示のスクリーンショット
+    await page.screenshot({ 
+      path: '../テスト結果_スクリーンショット/空欄ログインエラー.png',
+      fullPage: true
+    });
     
     // エラーメッセージまたは必須フィールドの警告が表示されるはず
     // （実際のエラーメッセージに合わせて調整が必要）
@@ -79,6 +100,13 @@ test.describe('ログイン機能の検証', () => {
     
     // エラーが表示されるか、まだログインページにいることを確認
     await page.waitForTimeout(1000); // 少し待つ
+    
+    // 無効メールエラーのスクリーンショット
+    await page.screenshot({ 
+      path: '../テスト結果_スクリーンショット/無効メールエラー.png',
+      fullPage: true
+    });
+    
     await expect(page).toHaveURL(/.*login/);
   });
 });

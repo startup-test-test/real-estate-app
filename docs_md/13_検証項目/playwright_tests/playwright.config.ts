@@ -15,7 +15,7 @@ export default defineConfig({
   
   // レポート設定
   reporter: [
-    ['html', { outputFolder: './test-results/html' }],
+    ['html', { outputFolder: './playwright-report' }],
     ['list'], // コンソールに結果を表示
   ],
   
@@ -46,6 +46,21 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         // ビューポートサイズ
         viewport: { width: 1280, height: 720 },
+        // 日本語フォント対応
+        locale: 'ja-JP',
+        // ヘッドレスモードを強制（ブラウザを表示しない）
+        headless: true,
+        // ブラウザ起動オプション
+        launchOptions: {
+          args: [
+            '--lang=ja',
+            '--font-render-hinting=medium',
+            '--force-device-scale-factor=1',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
+          ],
+        },
       },
     },
     // モバイルテスト用（必要に応じて）
@@ -53,6 +68,13 @@ export default defineConfig({
       name: 'mobile',
       use: {
         ...devices['iPhone 13'],
+        // 日本語フォント対応
+        locale: 'ja-JP',
+        // ヘッドレスモードを強制
+        headless: true,
+        // タイムアウトを長めに
+        actionTimeout: 30000,
+        navigationTimeout: 60000,
       },
     },
   ],
