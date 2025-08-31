@@ -1,0 +1,17 @@
+{
+  "name": "verification-tests",
+  "version": "1.0.0",
+  "description": "大家DX 検証項目テスト",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:headed": "playwright test --headed",
+    "test:auth": "playwright test 01_認証機能テスト",
+    "test:simple": "playwright test 00_簡単テスト例",
+    "report": "playwright show-report test-results/html"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
