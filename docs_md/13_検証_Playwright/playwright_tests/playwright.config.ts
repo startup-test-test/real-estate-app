@@ -22,7 +22,7 @@ export default defineConfig({
   // 共通設定
   use: {
     // ベースURL
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5174',
     
     // トレース（デバッグ用）
     trace: 'on', // 常にトレースを取る
