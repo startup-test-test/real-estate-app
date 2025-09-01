@@ -12,6 +12,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: 0, // リトライなし（問題を明確にするため）
   workers: 1, // 1つずつ実行
+  maxFailures: 1, // 1つ失敗したら停止
   
   // レポート設定
   reporter: [
