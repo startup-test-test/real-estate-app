@@ -26,7 +26,7 @@ const BlogPosts: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('https://ooya.tech/media/wp-json/wp/v2/posts?per_page=6&_embed');
+      const response = await fetch('https://ooya.tech/media/wp-json/wp/v2/posts?per_page=3&_embed');
       if (!response.ok) {
         throw new Error('記事の取得に失敗しました');
       }
@@ -73,15 +73,16 @@ const BlogPosts: React.FC = () => {
   }
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            大家の教科書
+        <div className="text-center mb-16">
+          <p className="text-lg text-blue-600 font-semibold mb-5">Real Estate Investment Simulation Examples</p>
+          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight relative">
+            <span className="relative inline-block">
+              不動産投資シミュレーション事例集
+              <span className="absolute left-0 w-full h-3 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-10px', animationDelay: '1.0s'}}></span>
+            </span>
           </h2>
-          <p className="text-lg text-gray-600">
-            不動産投資に関する最新情報をお届けします
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -13,7 +13,7 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'ホーム | 大家DX - 現役大家が開発した賃貸経営DX';
+    document.title = 'ホーム | 大家DX - 賃貸経営DX';
   }, []);
 
   const personas = [
@@ -142,7 +142,6 @@ const LandingPage: React.FC = () => {
               <div className="mb-6">
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
-                <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した</span><br />
                 <span className="text-5xl md:text-6xl lg:text-7xl">不動産投資<br />シミュレーター</span>
               </h1>
               <div className="text-3xl lg:text-4xl text-gray-900 mb-6" style={{paddingLeft: '10px', paddingRight: '10px'}}>
@@ -197,7 +196,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能紹介セクション */}
-      <section id="features" className="pt-24 pb-12 bg-gradient-to-b from-gray-50 to-white">
+      <section id="features" className="py-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
@@ -273,7 +272,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能詳細セクション */}
-      <section className="pt-12 pb-8 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 機能1 */}
           <div className="flex flex-col mb-32">
@@ -404,8 +403,8 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 課題セクション */}
-      <section className="pt-6 pb-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-lg text-blue-600 font-semibold mb-5">Top 3 Pain Points for Real Estate Investors</p>
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight relative">
@@ -469,68 +468,19 @@ const LandingPage: React.FC = () => {
           </div>
           
           {/* 統一CTA */}
-          <div className="text-center mt-16">
-            <p className="text-3xl lg:text-4xl text-gray-700 mb-6">
+          <div className="text-center mt-12">
+            <p className="text-3xl lg:text-4xl text-gray-700">
               どのタイプでも、<span className="font-bold text-blue-600">1分でシミュレーション体験</span>できます
             </p>
           </div>
         </div>
       </section>
 
-      {/* 開発者セクション */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              なぜ現役大家が開発したのか
-            </h2>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg border border-gray-200">
-              <div className="flex flex-col lg:flex-row items-center gap-8">
-                {/* 左側: 画像 */}
-                <div className="flex-shrink-0">
-                  <img 
-                    src="/img/people_4.png" 
-                    alt="開発者"
-                    className="w-48 h-48 object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                </div>
-                
-                {/* 右側: テキスト */}
-                <div className="flex-1">
-                  <div className="flex flex-col gap-4">
-                    <p className="text-base text-gray-900 leading-relaxed">
-                      良い案件を見つけても、夜中までExcel。式が壊れ、修繕や税金の影響を入れ忘れ、
-                      翌日、銀行で「この前提は？」と詰まる——3行連続の否決を経験しました。
-                    </p>
-                    <p className="text-base text-gray-900 leading-relaxed">
-                      「早く・漏れなく・根拠を説明できる」ことが投資の生命線だと痛感。
-                      そこで自分のために、IRR/DSCR/LTV と 35年CF、3価（積算/収益還元/想定）を
-                      1分で一体計算し、採用値と前提をその場で示せるツールを作成。
-                    </p>
-                    <p className="text-base text-gray-900 leading-relaxed">
-                      結果、銀行との会話が数字中心に変わり、比較・判断が圧倒的に速くなった。
-                      同じ悩みの大家仲間から声がかかり、プロダクト化したのが大家DXです。
-                    </p>
-                    <p className="text-base text-gray-900 leading-relaxed font-bold">
-                      設計思想は精度・速度・透明性。現場で使える数字だけを、最短で。
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ブログ記事セクション */}
+      <BlogPosts />
 
       {/* 料金プランセクション */}
-      <section id="pricing" className="py-24 bg-gradient-to-b from-blue-50 to-white">
+      <section id="pricing" className="py-16 bg-gradient-to-b from-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -581,7 +531,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* CTAセクション */}
-      <section className="py-24 bg-blue-50 bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_002.jpg)'}}>
+      <section className="py-16 bg-blue-50 bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_002.jpg)'}}>
         {/* 背景オーバーレイ */}
         <div className="absolute inset-0 bg-blue-50 opacity-60"></div>
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
@@ -643,9 +593,6 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ブログ記事セクション */}
-      <BlogPosts />
-
       {/* ニュースセクション */}
       <section id="news" className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -676,7 +623,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* フッター */}
-      <footer id="contact" className="bg-gradient-to-b from-gray-900 to-black text-white py-20">
+      <footer id="contact" className="bg-gradient-to-b from-gray-900 to-black text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
