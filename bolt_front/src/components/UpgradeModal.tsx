@@ -54,7 +54,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
       if (existingSubscriptions && existingSubscriptions.length > 0) {
         const existingSubscription = existingSubscriptions[0];
         if (!existingSubscription.cancel_at_period_end) {
-          setError('すでにプレミアムプランに登録されています');
+          setError('すでにベーシックプランに登録されています');
           setIsLoading(false);
           return;
         }
@@ -104,7 +104,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900">
-              プレミアムプランにアップグレード
+              ベーシックプランにアップグレード
             </h2>
             <button
               onClick={onClose}
@@ -125,7 +125,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
                 無料利用枠（月5回）を使い切りました
               </p>
               <p className="text-xs text-amber-600 mt-1">
-                <span className="font-semibold">プレミアムプラン</span>で全機能を無制限にご利用いただけます
+                <span className="font-semibold">ベーシックプラン</span>で全機能を無制限にご利用いただけます
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Crown className="h-5 w-5 text-purple-600" />
-                  <p className="text-sm text-gray-600">プレミアムプラン</p>
+                  <p className="text-sm text-gray-600">ベーシックプラン</p>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-gray-900">

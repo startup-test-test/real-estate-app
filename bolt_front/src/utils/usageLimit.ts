@@ -8,8 +8,8 @@ import { supabase } from '../lib/supabase';
 export interface UsageStatus {
   canUse: boolean;           // 利用可能かどうか
   currentCount: number;       // 現在の利用回数
-  limit: number;             // 制限回数（無料:5, プレミアム:-1）
-  isSubscribed: boolean;      // プレミアム会員かどうか
+  limit: number;             // 制限回数（無料:5, ベーシック:-1）
+  isSubscribed: boolean;      // ベーシック会員かどうか
   periodEndDate: Date | null; // リセット日
   daysLeft: number;          // 残り日数
   cancelAtPeriodEnd?: boolean; // 解約予定かどうか
@@ -31,7 +31,7 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
     
     const subscription = subscriptions?.[0] || null;
 
-    // プレミアム会員の場合は無制限
+    // ベーシック会員の場合は無制限
     if (subscription?.status === 'active') {
       return {
         canUse: true,

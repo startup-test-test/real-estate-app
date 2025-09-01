@@ -99,19 +99,19 @@ export const getSubscriptionStatus = (subscription: any) => {
       isPremium: true,
       isCanceling: true,
       remainingDays,
-      displayText: `プレミアム会員（${formatRemainingTime(remainingDays)}）`,
+      displayText: `ベーシック会員（${formatRemainingTime(remainingDays)}）`,
       statusColor: 'amber'
     }
   }
   
-  // アクティブなプレミアムプラン
+  // アクティブなベーシックプラン
   if (subscription.status === 'active') {
     return {
       isActive: true,
       isPremium: true,
       isCanceling: false,
       remainingDays: null,
-      displayText: 'プレミアム会員',
+      displayText: 'ベーシック会員',
       statusColor: 'yellow'
     }
   }

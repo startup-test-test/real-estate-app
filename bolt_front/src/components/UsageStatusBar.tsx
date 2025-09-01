@@ -52,7 +52,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
 
       // 成功時は使用状況を再取得
       await refetch();
-      alert('プレミアムプランを継続します');
+      alert('ベーシックプランを継続します');
     } catch (error) {
       console.error('解約取り消しエラー:', error);
       alert('解約取り消しに失敗しました。サポートにお問い合わせください。');
@@ -103,7 +103,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
 
   const colors = colorClasses[statusColor as keyof typeof colorClasses] || colorClasses.gray;
 
-  // プレミアム会員の場合
+  // ベーシック会員の場合
   if (usage.isSubscribed) {
     // 解約予定の場合の残り日数計算
     const daysRemaining = usage.cancelAtPeriodEnd && usage.currentPeriodEnd
@@ -117,7 +117,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             <div className="flex items-center gap-3">
               <Sparkles className="h-6 w-6 text-yellow-500" />
               <span className="text-base font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                プレミアム会員
+                ベーシック会員
               </span>
             </div>
             <span className="text-sm text-gray-700 font-medium">
@@ -240,7 +240,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
               onClick={onUpgradeClick}
               className="underline hover:no-underline cursor-pointer"
             >
-              プレミアムプランにアップグレード
+              ベーシックプランにアップグレード
             </button>
             して、引き続きご利用ください
           </div>

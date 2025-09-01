@@ -112,7 +112,7 @@ const PremiumPlan: React.FC = () => {
       return;
     }
 
-    if (!confirm('プレミアムプランを継続しますか？')) {
+    if (!confirm('ベーシックプランを継続しますか？')) {
       return;
     }
 
@@ -137,7 +137,7 @@ const PremiumPlan: React.FC = () => {
         .single();
 
       setSubscription(updatedSub);
-      alert('解約が取り消されました。プレミアムプランを継続します。');
+      alert('解約が取り消されました。ベーシックプランを継続します。');
     } catch (error: any) {
       console.error('Resume subscription error:', error);
       // エラーメッセージを日本語化
@@ -176,7 +176,7 @@ const PremiumPlan: React.FC = () => {
       ]
     },
     {
-      name: 'プロプラン',
+      name: 'ベーシックプラン',
       price: 2980,
       description: '本格的な不動産投資分析に',
       color: 'border-blue-500 ring-2 ring-blue-500',
@@ -235,7 +235,7 @@ const PremiumPlan: React.FC = () => {
             <div className="flex items-center justify-center mb-4">
               <Sparkles className="h-12 w-12 text-yellow-500 mr-3" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                プレミアムプラン
+                ベーシックプラン
               </h1>
             </div>
             <p className="text-xl text-gray-700 font-medium mb-2">
@@ -364,7 +364,7 @@ const PremiumPlan: React.FC = () => {
                             let errorMessage = 'アップグレード処理中にエラーが発生しました';
                             
                             if (err.message?.includes('already') || err.message?.includes('non-2xx')) {
-                              errorMessage = 'すでにプレミアムプランをご利用中です。ページを更新してください。';
+                              errorMessage = 'すでにベーシックプランをご利用中です。ページを更新してください。';
                             } else if (err.message?.includes('network') || err.message?.includes('fetch')) {
                               errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
                             } else if (err.message?.includes('unauthorized') || err.message?.includes('401')) {
@@ -441,7 +441,7 @@ const PremiumPlan: React.FC = () => {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">無料トライアルはありますか？</h3>
               <p className="text-gray-600 text-sm mb-4">
-                フリープランで基本機能をお試しいただけます。プロプランの全機能を体験したい場合は、ご契約が必要です。
+                フリープランで基本機能をお試しいただけます。ベーシックプランの全機能を体験したい場合は、ご契約が必要です。
               </p>
             </div>
             <div>

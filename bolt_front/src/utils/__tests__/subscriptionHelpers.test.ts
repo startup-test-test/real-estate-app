@@ -122,7 +122,7 @@ describe('subscriptionHelpers', () => {
       });
     });
 
-    it('アクティブなプレミアムプランの場合', () => {
+    it('アクティブなベーシックプランの場合', () => {
       const subscription = {
         status: 'active',
         cancel_at_period_end: false,
@@ -134,12 +134,12 @@ describe('subscriptionHelpers', () => {
         isPremium: true,
         isCanceling: false,
         remainingDays: null,
-        displayText: 'プレミアム会員',
+        displayText: 'ベーシック会員',
         statusColor: 'yellow'
       });
     });
 
-    it('解約予定のプレミアムプランの場合', () => {
+    it('解約予定のベーシックプランの場合', () => {
       const subscription = {
         status: 'active',
         cancel_at_period_end: true,
@@ -150,7 +150,7 @@ describe('subscriptionHelpers', () => {
       expect(status.isPremium).toBe(true);
       expect(status.isCanceling).toBe(true);
       expect(status.remainingDays).toBe(7);
-      expect(status.displayText).toContain('プレミアム会員');
+      expect(status.displayText).toContain('ベーシック会員');
       expect(status.displayText).toContain('あと');
       expect(status.statusColor).toBe('amber');
     });

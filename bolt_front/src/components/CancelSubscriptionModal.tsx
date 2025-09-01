@@ -100,7 +100,7 @@ const CancelSubscriptionModal: React.FC<CancelSubscriptionModalProps> = ({
         {/* 追加情報 */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-blue-800">
-            💡 ヒント：解約後も再度プレミアムプランに加入することができます。
+            💡 ヒント：解約後も再度ベーシックプランに加入することができます。
             解約を取り消したい場合は、サポート（ooya.tech2025@gmail.com）までご連絡ください。
           </p>
         </div>

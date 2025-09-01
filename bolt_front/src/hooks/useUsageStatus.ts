@@ -60,7 +60,7 @@ export const useUsageStatus = (): UseUsageStatusReturn => {
       return false;
     }
 
-    // プレミアム会員は制限なし
+    // ベーシック会員は制限なし
     if (usage.isSubscribed) {
       await callback();
       return true;
@@ -121,7 +121,7 @@ export const getUsageStatusMessage = (usage: UsageStatus | null): string => {
   if (!usage) return '';
   
   if (usage.isSubscribed) {
-    return 'プレミアム会員 - 無制限利用可能';
+    return 'ベーシック会員 - 無制限利用可能';
   }
   
   const remaining = usage.limit - usage.currentCount;
