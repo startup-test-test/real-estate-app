@@ -12,7 +12,8 @@
     "report": "playwright show-report test-results/html"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0"
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^24.3.0"
   },
   "dependencies": {
     "dotenv": "^17.2.1"

@@ -28,8 +28,8 @@ if [ -d "docs_md/13_検証項目/playwright_tests" ]; then
     npm install
   fi
   
-  # Playwrightブラウザをインストール
-  npx playwright install chromium
+  # Playwrightブラウザをインストール（Chromium、Firefox、WebKit全て）
+  npx playwright install
   npx playwright install-deps
   
   echo "✅ Playwrightのセットアップ完了"
