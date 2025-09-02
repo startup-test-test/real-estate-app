@@ -13,7 +13,7 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'ホーム | 大家DX - 賃貸経営DX';
+    document.title = '現役大家が開発した不動産投資シミュレーター｜大家DX';
   }, []);
 
   const personas = [
@@ -135,10 +135,10 @@ const LandingPage: React.FC = () => {
               </p>
               <button
                 onClick={() => navigate('/signup')}
-                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold inline-flex items-end justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                まずは10秒で無料登録する
-                <ArrowRight className="h-5 w-5 ml-2" />
+                10秒で無料登録<span className="text-base ml-1 pb-0.5">（クレカ不要）</span>
+                <ArrowRight className="h-5 w-5 ml-2 mb-0.5" />
               </button>
             </div>
             
@@ -569,15 +569,12 @@ const LandingPage: React.FC = () => {
           
           {/* 統一CTAボタン */}
           <div className="text-center mt-12">
-            <p className="text-xl text-gray-700 mb-4 font-medium">
-              クレジットカード登録不要で、
-            </p>
             <button
               onClick={() => navigate('/signup')}
-              className="px-14 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-2xl font-semibold flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mx-auto"
+              className="px-14 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-2xl font-semibold flex items-end justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mx-auto"
             >
-              まずは10秒で無料登録する
-              <ArrowRight className="h-6 w-6 ml-2" />
+              10秒で無料登録<span className="text-lg ml-1 pb-0.5">（クレカ不要）</span>
+              <ArrowRight className="h-6 w-6 ml-2 mb-1" />
             </button>
           </div>
         </div>
