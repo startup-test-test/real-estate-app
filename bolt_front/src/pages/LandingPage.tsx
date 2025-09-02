@@ -114,9 +114,9 @@ const LandingPage: React.FC = () => {
             <div className="text-left">
               <div className="mb-6">
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
                 <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した</span><br />
-                <span style={{ fontSize: '110%' }}>不動産投資<br />シミュレーション</span>
+                <span style={{ fontSize: '110%', lineHeight: '1.3' }}>不動産投資<br />シミュレーション</span>
               </h1>
               <div className="text-3xl lg:text-4xl text-gray-900 mb-6" style={{paddingLeft: '10px', paddingRight: '10px'}}>
                 <p className="mb-4 relative inline-block">
