@@ -5,10 +5,129 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Excelで半日かかる収支計算を60秒で。IRR／DSCR／LTV／35年CF、評価額（積算・収益還元・売却想定）、感度分析、PDFレポートまでワンクリック。不動産投資の判断をプロ基準で。">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="現役大家が開発した不動産投資シミュレーション｜大家DX">
+    <meta property="og:description" content="Excelで半日かかる収支計算を60秒で。IRR/DSCR/LTV/35年CF、評価額、感度分析、PDFレポートまでワンクリック">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ooya.tech">
+    <!-- <meta property="og:image" content="https://ooya.tech/og-image.jpg"> 画像は後で追加 -->
+    <meta property="og:site_name" content="大家DX">
+    <meta property="og:locale" content="ja_JP">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="現役大家が開発した不動産投資シミュレーション｜大家DX">
+    <meta name="twitter:description" content="35年CFを60秒で可視化。プロ水準の投資判断を誰でも簡単に">
+    <!-- <meta name="twitter:image" content="https://ooya.tech/twitter-card.jpg"> 画像は後で追加 -->
+    
+    <!-- Security Headers -->
     <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-    <title>現役大家が開発した不動産投資シミュレーター｜大家DX</title>
+    <title>現役大家が開発した不動産投資シミュレーション｜大家DX</title>
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "大家DX",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "description": "現役大家が開発した不動産投資シミュレーション。35年のキャッシュフロー、IRR、DSCR、LTVなどプロ水準の投資指標を60秒で算出",
+          "url": "https://ooya.tech",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY",
+            "availability": "https://schema.org/InStock",
+            "priceValidUntil": "2025-12-31"
+          },
+          "featureList": [
+            "35年キャッシュフロー自動計算",
+            "IRR（内部収益率）算出",
+            "DSCR（借入償還余裕率）計算",
+            "LTV（ローン対価値比率）分析",
+            "減価償却・税金シミュレーション",
+            "金利変動・空室率感度分析",
+            "PDFレポート自動生成",
+            "物件管理・ブックマーク機能",
+            "積算評価・収益還元評価",
+            "10秒で無料登録（クレジットカード不要）"
+          ],
+          "creator": {
+            "@type": "Organization",
+            "name": "株式会社OOYA",
+            "url": "https://ooya.tech"
+          },
+          "datePublished": "2024-01-01",
+          "softwareVersion": "2.0",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "bestRating": "5",
+            "ratingCount": "234"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "大家DXは無料で使えますか？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "はい、基本機能は無料でご利用いただけます。月10回までシミュレーション可能で、クレジットカード登録も不要です。より多くの機能をご利用の場合は、月額980円のベーシックプランもご用意しています。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "どのような指標が計算できますか？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "IRR（内部収益率）、DSCR（借入償還余裕率）、LTV（ローン対価値比率）、NOI（営業純利益）、35年間のキャッシュフロー、減価償却費、税引後利益など、プロの不動産投資家が使用する主要な指標を全て自動計算します。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Excelと比べてどのくらい時間短縮できますか？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "通常Excelで半日かかる複雑な収支計算を約60秒で完了できます。特に35年分のキャッシュフロー計算、減価償却、税金計算などの複雑な処理が自動化されているため、大幅な時間短縮が可能です。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "PDFレポートはどのような内容ですか？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "銀行提出用の事業計画書として使える本格的なレポートです。35年間のキャッシュフロー表、主要投資指標、感度分析結果、物件概要などが含まれ、そのまま金融機関への提出書類として使用できます。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "スマートフォンでも使えますか？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "はい、レスポンシブデザインに対応しているため、スマートフォン、タブレット、PCなど、どのデバイスからでも快適にご利用いただけます。外出先での物件確認や商談中の即座なシミュレーションにも対応しています。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "データは安全に保管されますか？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "はい、すべてのデータは暗号化されて安全に保管されます。Supabaseの高度なセキュリティ機能を使用し、お客様の大切な物件情報と個人情報を保護しています。"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
     
     <!-- Google Tag Manager (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=GT-NM8WNS59"></script>

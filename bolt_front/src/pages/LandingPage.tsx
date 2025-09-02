@@ -13,7 +13,7 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = '現役大家が開発した不動産投資シミュレーター｜大家DX';
+    document.title = '現役大家が開発した不動産投資シミュレーション｜大家DX';
   }, []);
 
   const personas = [
@@ -116,7 +116,7 @@ const LandingPage: React.FC = () => {
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.4' }}>
                 <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した</span><br />
-                <span className="text-5xl md:text-6xl lg:text-7xl">不動産投資<br />シミュレーター</span>
+                <span style={{ fontSize: '110%' }}>不動産投資<br />シミュレーション</span>
               </h1>
               <div className="text-3xl lg:text-4xl text-gray-900 mb-6" style={{paddingLeft: '10px', paddingRight: '10px'}}>
                 <p className="mb-4 relative inline-block">
@@ -135,10 +135,13 @@ const LandingPage: React.FC = () => {
               </p>
               <button
                 onClick={() => navigate('/signup')}
-                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-xl font-semibold inline-flex items-end justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                10秒で無料登録<span className="text-base ml-1 pb-0.5">（クレカ不要）</span>
-                <ArrowRight className="h-5 w-5 ml-2 mb-0.5" />
+                <div className="flex flex-col items-center mr-3">
+                  <span className="text-xl">まずは10秒で無料登録する</span>
+                  <span className="text-xs mt-1 opacity-90">（クレジットカード登録不要）</span>
+                </div>
+                <ArrowRight className="h-6 w-6 ml-2" />
               </button>
             </div>
             
@@ -571,10 +574,13 @@ const LandingPage: React.FC = () => {
           <div className="text-center mt-12">
             <button
               onClick={() => navigate('/signup')}
-              className="px-14 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-2xl font-semibold flex items-end justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mx-auto"
+              className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mx-auto"
             >
-              10秒で無料登録<span className="text-lg ml-1 pb-0.5">（クレカ不要）</span>
-              <ArrowRight className="h-6 w-6 ml-2 mb-1" />
+              <div className="flex flex-col items-center mr-3">
+                <span className="text-xl">まずは10秒で無料登録する</span>
+                <span className="text-xs mt-1 opacity-90">（クレジットカード登録不要）</span>
+              </div>
+              <ArrowRight className="h-6 w-6 ml-2" />
             </button>
           </div>
         </div>
