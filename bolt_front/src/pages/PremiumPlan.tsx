@@ -2,10 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   Check, 
   X,
-  Zap,
-  BarChart3,
-  Shield,
-  TrendingUp,
   Sparkles,
   AlertCircle
 } from 'lucide-react';
@@ -190,37 +186,10 @@ const PremiumPlan: React.FC = () => {
         { name: '35年キャッシュフロー予測', included: true },
         { name: '詳細レポート出力（PDF）', included: true },
         { name: '売却シミュレーション', included: true },
-        { name: 'メールサポート', included: true }
       ]
     }
   ];
 
-  const additionalFeatures = [
-    {
-      icon: Zap,
-      title: '高精度シミュレーション',
-      description: '詳細な収支計算と長期予測で投資判断をサポート',
-      color: 'text-yellow-600 bg-yellow-50'
-    },
-    {
-      icon: BarChart3,
-      title: '詳細レポート',
-      description: 'PDF形式での詳細分析レポート出力機能',
-      color: 'text-blue-600 bg-blue-50'
-    },
-    {
-      icon: TrendingUp,
-      title: '長期予測',
-      description: '最大35年間のキャッシュフロー予測',
-      color: 'text-green-600 bg-green-50'
-    },
-    {
-      icon: Shield,
-      title: 'セキュリティ',
-      description: '企業レベルのセキュリティとデータ保護',
-      color: 'text-purple-600 bg-purple-50'
-    }
-  ];
 
   const formatPrice = (price: number) => {
     return price.toLocaleString();
@@ -405,26 +374,6 @@ const PremiumPlan: React.FC = () => {
           ))}
         </div>
 
-        {/* Additional Features */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            プレミアム機能の詳細
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {additionalFeatures.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div key={index} className="text-center">
-                  <div className={`w-16 h-16 rounded-lg ${feature.color} flex items-center justify-center mx-auto mb-4`}>
-                    <Icon className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm">{feature.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
         {/* FAQ Section */}
         <div className="bg-white rounded-lg border border-gray-200 p-8">
