@@ -186,9 +186,10 @@ const LandingPage: React.FC = () => {
           {/* 3つの特徴を横並び */}
           <div className="hidden sm:grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-12">
             {/* 特徴1 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                01. 35年のキャッシュフローを<br />
+                <span className="text-2xl sm:text-3xl lg:text-4xl">01</span><br />
+                35年のキャッシュフローを<br />
                 グラフと表で可視化
               </h3>
               <div className="flex justify-center">
@@ -205,9 +206,10 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* 特徴2 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                02. 物件のステータスを<br />
+                <span className="text-2xl sm:text-3xl lg:text-4xl">02</span><br />
+                物件のステータスを<br />
                 一元管理
               </h3>
               <div className="flex justify-center">
@@ -224,9 +226,10 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* 特徴3 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                03. 金融機関に提出資料も<br />
+                <span className="text-2xl sm:text-3xl lg:text-4xl">03</span><br />
+                金融機関に提出資料も<br />
                 1クリックでPDF保存
               </h3>
               <div className="flex justify-center">
