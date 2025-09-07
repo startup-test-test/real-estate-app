@@ -86,13 +86,13 @@ const Layout: React.FC = () => {
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-40">
         {/* Logo Section */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-          <div className="flex items-center">
+          <Link to="/mypage" className="flex items-center">
             <img 
               src="/img/logo_250709_2.png" 
               alt="Logo" 
-              className="h-7 w-auto"
+              className="h-7 w-auto cursor-pointer hover:opacity-80 transition-opacity"
             />
-          </div>
+          </Link>
           
           {/* Menu Button */}
           <button
