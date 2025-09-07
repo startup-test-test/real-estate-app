@@ -8,12 +8,34 @@ interface Post {
   };
   link: string;
   date: string;
+  featured_media?: number;
   _embedded?: {
     'wp:featuredmedia'?: Array<{
       source_url: string;
+      media_details?: {
+        sizes?: {
+          medium?: {
+            source_url: string;
+          };
+          thumbnail?: {
+            source_url: string;
+          };
+          full?: {
+            source_url: string;
+          };
+        };
+      };
     }>;
   };
 }
+
+// 記事に対応するサムネイル画像のマッピング（WordPressの実際の画像）
+const ARTICLE_THUMBNAILS: { [key: string]: string } = {
+  'レントロール': 'https://ooya.tech/media/wp-content/uploads/2025/04/towfiqu-barbhuiya-B0q9AkKV6Mk-unsplash-2048x1367.jpg',
+  'アパート経営の見積もり': 'https://ooya.tech/media/wp-content/uploads/2025/04/austin-distel-EMPZ7yRZoGw-unsplash-1-2048x1365.jpg',
+  '会計ソフト': 'https://ooya.tech/media/wp-content/uploads/2025/04/austin-distel-nGc5RT2HmF0-unsplash-2048x1348.jpg',
+  'default': 'https://ooya.tech/media/wp-content/uploads/2025/04/towfiqu-barbhuiya-B0q9AkKV6Mk-unsplash-2048x1367.jpg'
+};
 
 const BlogPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -31,6 +53,8 @@ const BlogPosts: React.FC = () => {
         throw new Error('記事の取得に失敗しました');
       }
       const data = await response.json();
+      console.log('Fetched posts with embedded data:', data);
+      console.log('First post embedded media:', data[0]?._embedded);
       setPosts(data);
       setLoading(false);
     } catch (err) {
@@ -50,10 +74,19 @@ const BlogPosts: React.FC = () => {
   };
 
   const getImageUrl = (post: Post): string => {
-    if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]) {
-      return post._embedded['wp:featuredmedia'][0].source_url;
+    // タイトルから適切な画像を選択
+    const title = post.title.rendered;
+    
+    if (title.includes('レントロール')) {
+      return ARTICLE_THUMBNAILS['レントロール'];
+    } else if (title.includes('アパート経営') && title.includes('見積')) {
+      return ARTICLE_THUMBNAILS['アパート経営の見積もり'];
+    } else if (title.includes('会計ソフト')) {
+      return ARTICLE_THUMBNAILS['会計ソフト'];
     }
-    return '/img/default-blog-image.png';
+    
+    // デフォルト画像を返す
+    return ARTICLE_THUMBNAILS['default'];
   };
 
   if (loading) {
@@ -75,10 +108,11 @@ const BlogPosts: React.FC = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <p className="text-lg text-blue-600 font-semibold mb-5">Real Estate Investment Simulation Examples</p>
-          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-            不動産投資シミュレーション事例集
+        <div className="text-center mb-8 sm:mb-16">
+          <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Real Estate Investment Simulation Examples</p>
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 leading-tight">
+            <span className="sm:hidden">不動産投資<br />シミュレーション事例集</span>
+            <span className="hidden sm:inline">不動産投資シミュレーション事例集</span>
           </h2>
         </div>
 
