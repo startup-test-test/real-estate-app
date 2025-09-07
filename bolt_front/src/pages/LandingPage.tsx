@@ -174,29 +174,28 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能紹介セクション */}
-      <section id="features" className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <section id="features" className="py-2 sm:py-8 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-3 sm:mb-8">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 sm:mb-12 leading-tight">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               大家DXの3つの特徴
             </h2>
           </div>
           
           {/* 3つの特徴を横並び */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="hidden sm:grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-12">
             {/* 特徴1 */}
-            <div className="text-center px-6 py-3 border-2 border-gray-200 rounded-2xl">
-              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">01</div>
-              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
-                35年のキャッシュフローを<br />
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
+                01. 35年のキャッシュフローを<br />
                 グラフと表で可視化
               </h3>
               <div className="flex justify-center">
                 <img
                   src="/img/tokuchou01.jpg"
                   alt="35年のキャッシュフローを可視化"
-                  className="w-full h-48 object-contain"
+                  className="w-full h-48 sm:h-56 lg:h-64 object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
@@ -206,17 +205,16 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* 特徴2 */}
-            <div className="text-center px-6 py-3 border-2 border-gray-200 rounded-2xl">
-              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">02</div>
-              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
-                物件のステータスを<br />
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
+                02. 物件のステータスを<br />
                 一元管理
               </h3>
               <div className="flex justify-center">
                 <img
                   src="/img/tokuchou02.jpg"
                   alt="物件のステータスを一元管理"
-                  className="w-full h-48 object-contain"
+                  className="w-full h-48 sm:h-56 lg:h-64 object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
@@ -226,17 +224,16 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* 特徴3 */}
-            <div className="text-center px-6 py-3 border-2 border-gray-200 rounded-2xl">
-              <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">03</div>
-              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
-                金融機関に提出資料も<br />
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
+                03. 金融機関に提出資料も<br />
                 1クリックでPDF保存
               </h3>
               <div className="flex justify-center">
                 <img
                   src="/img/tokuchou03.jpg"
                   alt="金融機関に提出資料も1クリックでPDF保存"
-                  className="w-full h-48 object-contain"
+                  className="w-full h-48 sm:h-56 lg:h-64 object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
@@ -250,14 +247,14 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能詳細セクション */}
-      <section className="py-16 bg-white">
+      <section className="py-2 sm:py-8 lg:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 機能1 */}
-          <div className="flex flex-col mb-32">
+          <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
                 <div>
-                  <div className="text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
+                  <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                     35年のキャッシュフローを<br />
                     グラフと表で可視化
@@ -295,11 +292,11 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* 機能2 */}
-          <div className="flex flex-col mb-32">
+          <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
             <div className="flex flex-col lg:flex-row-reverse items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
                 <div>
-                  <div className="text-6xl lg:text-7xl font-bold text-gray-900 mb-4">02</div>
+                  <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">02</div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                     物件のステータスを<br />
                     一元管理
@@ -341,7 +338,7 @@ const LandingPage: React.FC = () => {
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
                 <div>
-                  <div className="text-6xl lg:text-7xl font-bold text-gray-900 mb-4">03</div>
+                  <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">03</div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                     金融機関に提出資料も<br />
                     1クリックでPDF保存
@@ -381,12 +378,13 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 課題セクション */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-2 sm:py-8 lg:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Top 3 Pain Points for Real Estate Investors</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              多くの大家さんが直面する3つの課題
+              <span className="sm:hidden">多くの大家さんが<br />直面する3つの課題</span>
+              <span className="hidden sm:inline">多くの大家さんが直面する3つの課題</span>
             </h2>
           </div>
           
@@ -444,9 +442,25 @@ const LandingPage: React.FC = () => {
           
           {/* 統一CTA */}
           <div className="text-center mt-12">
-            <p className="text-3xl lg:text-4xl text-gray-700 relative inline-block">
-              どのタイプでも、<span className="font-bold text-blue-600">1分でシミュレーション体験</span>できます
-              <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
+            <p className="text-3xl lg:text-4xl text-gray-700">
+              {/* SP版: 改行あり */}
+              <span className="sm:hidden">
+                <span className="relative inline-block">
+                  どのタイプでも1分で
+                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
+                </span>
+                <br />
+                <span className="relative inline-block">
+                  <span className="font-bold text-blue-600">シミュレーション体験</span>できます
+                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
+                </span>
+              </span>
+              
+              {/* PC版: 改行なし */}
+              <span className="hidden sm:inline-block relative">
+                どのタイプでも1分で<span className="font-bold text-blue-600">シミュレーション体験</span>できます
+                <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
+              </span>
             </p>
           </div>
         </div>
@@ -456,7 +470,7 @@ const LandingPage: React.FC = () => {
       <BlogPosts />
 
       {/* 料金プランセクション */}
-      <section id="pricing" className="py-16 bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_002.jpg)'}}>
+      <section id="pricing" className="py-2 sm:py-8 lg:py-16 bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_002.jpg)'}}>
         {/* 背景オーバーレイ */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/60 to-white/60"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -470,8 +484,8 @@ const LandingPage: React.FC = () => {
             </p>
           </div>
           
-          {/* 比較表形式のプラン */}
-          <div className="overflow-x-auto pt-4">
+          {/* PC版: 比較表形式のプラン */}
+          <div className="hidden md:block overflow-x-auto pt-4">
             <table className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-xl border border-gray-200">
               <thead>
                 <tr>
@@ -577,6 +591,91 @@ const LandingPage: React.FC = () => {
             </table>
           </div>
           
+          {/* SP版: カード形式のプラン */}
+          <div className="md:hidden space-y-4 pt-4">
+            {/* フリープラン */}
+            <div className="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">フリープラン</h3>
+              <div className="flex items-baseline mb-2">
+                <span className="text-3xl font-bold text-gray-900">¥0</span>
+                <span className="text-sm text-gray-600 ml-1">/月</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-4">個人利用に最適</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">シミュレーション</span>
+                  <span className="font-semibold">月5件まで</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">全機能利用</span>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">AI市場分析</span>
+                  <span className="text-gray-400">−</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* ベーシックプラン */}
+            <div className="bg-blue-50 rounded-lg shadow-lg p-4 border-2 border-blue-500 relative">
+              <div className="absolute -top-3 left-4">
+                <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  人気プラン
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2 mt-2">ベーシックプラン</h3>
+              <div className="flex items-baseline mb-2">
+                <span className="text-3xl font-bold text-gray-900">¥2,980</span>
+                <span className="text-sm text-gray-600 ml-1">/月</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-4">個人・小規模法人向け</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">シミュレーション</span>
+                  <span className="font-bold text-blue-600">無制限</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">全機能利用</span>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">AI市場分析</span>
+                  <span className="text-gray-400">−</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* プロプラン */}
+            <div className="bg-gray-100 rounded-lg shadow-lg p-4 border border-gray-300 relative opacity-70">
+              <div className="absolute -top-3 left-4">
+                <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  Coming Soon
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-500 mb-2 mt-2">プロプラン</h3>
+              <div className="flex items-baseline mb-2">
+                <span className="text-3xl font-bold text-gray-400">¥9,800</span>
+                <span className="text-sm text-gray-400 ml-1">/月</span>
+              </div>
+              <p className="text-xs text-gray-500 mb-4">法人・プロ投資家向け</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">シミュレーション</span>
+                  <span className="text-gray-500">無制限</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">全機能利用</span>
+                  <CheckCircle className="h-4 w-4 text-gray-400" />
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">AI市場分析</span>
+                  <CheckCircle className="h-4 w-4 text-purple-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+          
           {/* 統一CTAボタン */}
           <div className="text-center mt-12">
             <button
@@ -594,7 +693,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* よくある質問セクション */}
-      <section id="faq" className="py-16 bg-gray-50">
+      <section id="faq" className="py-2 sm:py-8 lg:py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
@@ -690,7 +789,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* ニュースセクション */}
-      <section id="news" className="py-16 bg-white">
+      <section id="news" className="py-2 sm:py-8 lg:py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
@@ -733,7 +832,8 @@ const LandingPage: React.FC = () => {
             </div>
             
             <div className="flex flex-col items-end">
-              <nav className="flex items-center space-x-6 mb-2">
+              {/* PC版ナビゲーション */}
+              <nav className="hidden md:flex items-center space-x-6 mb-2">
                 <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   大家DXの特徴
                 </a>
@@ -753,7 +853,58 @@ const LandingPage: React.FC = () => {
                   お問合せ
                 </a>
               </nav>
-              <div className="flex flex-col items-end">
+              
+              {/* SP版ナビゲーション - 2行表示 */}
+              <nav className="md:hidden w-full mb-2">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex justify-start space-x-3">
+                    <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      大家DXの特徴
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      料金
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      よくある質問
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a href="#news" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      ニュース
+                    </a>
+                  </div>
+                  <div className="flex justify-start space-x-3">
+                    <a href="https://ooya.tech/media/" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap" target="_blank" rel="noopener noreferrer">
+                      メディア
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a href="mailto:ooya.tech2025@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      お問合せ
+                    </a>
+                  </div>
+                </div>
+              </nav>
+              {/* PC版: 右寄せ */}
+              <div className="hidden md:flex flex-col items-end">
+                <div className="flex items-center space-x-4 text-xs mb-1">
+                  <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    運営会社
+                  </a>
+                  <a href="/terms" className="text-gray-500 hover:text-gray-700">
+                    利用規約
+                  </a>
+                  <a href="/privacy" className="text-gray-500 hover:text-gray-700">
+                    個人情報保護方針
+                  </a>
+                </div>
+                <div className="text-xs text-gray-500">
+                  © 2025 大家DX. All rights reserved.
+                </div>
+              </div>
+              
+              {/* SP版: 左寄せ */}
+              <div className="md:hidden flex flex-col items-start">
                 <div className="flex items-center space-x-4 text-xs mb-1">
                   <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     運営会社

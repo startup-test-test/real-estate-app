@@ -111,7 +111,8 @@ const BlogPosts: React.FC = () => {
         <div className="text-center mb-16">
           <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Real Estate Investment Simulation Examples</p>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-            不動産投資シミュレーション事例集
+            <span className="sm:hidden">不動産投資<br />シミュレーション事例集</span>
+            <span className="hidden sm:inline">不動産投資シミュレーション事例集</span>
           </h2>
         </div>
 
