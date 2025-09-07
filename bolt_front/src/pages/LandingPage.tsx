@@ -53,13 +53,15 @@ const LandingPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       {/* ヘッダー */}
       <header className="bg-white/75 backdrop-blur-md border-b border-gray-200/30 md:fixed md:top-0 md:left-0 md:right-0 md:z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-3">
-              <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-10 w-auto" />
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4 sm:py-6">
+            <div className="flex items-center">
+              <a href="/" className="block">
+                <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" />
+              </a>
             </div>
             <div className="flex items-center space-x-6">
               {/* ナビゲーションメニュー */}
@@ -82,16 +84,17 @@ const LandingPage: React.FC = () => {
               </nav>
               
               {/* ログイン・サインアップボタン */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <button
                   onClick={() => navigate('/signup')}
-                  className="px-6 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
+                  className="px-4 sm:px-5 py-2.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
                 >
-                  10秒で無料登録
+                  <span className="hidden sm:inline">10秒で無料登録</span>
+                  <span className="sm:hidden">10秒無料登録</span>
                 </button>
                 <button
                   onClick={() => navigate('/login')}
-                  className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm"
+                  className="px-4 sm:px-5 py-2.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
                 >
                   ログイン
                 </button>
@@ -105,53 +108,57 @@ const LandingPage: React.FC = () => {
       <div className="hidden md:block h-[88px]"></div>
 
       {/* ヒーローセクション */}
-      <section id="about" className="py-16 bg-white bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_001.jpg)'}}>
+      <section 
+        id="about" 
+        className="py-4 sm:py-8 md:py-16 bg-white bg-cover bg-no-repeat relative" 
+        style={{
+          backgroundImage: 'url(/img/background_001.jpg)',
+          backgroundPosition: 'center 20%'
+        }}
+      >
         {/* 背景オーバーレイ */}
         <div className="absolute inset-0 bg-white opacity-70"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* 左側：メインコピー */}
             <div className="text-left">
-              <div className="mb-6">
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
-                <span className="text-3xl md:text-4xl lg:text-5xl" style={{ fontSize: '85%' }}>現役大家が開発した</span><br />
-                <span style={{ fontSize: '110%', lineHeight: '1.3' }}>不動産投資<br />シミュレーション</span>
+              <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6" style={{ lineHeight: '1.3' }}>
+                <span className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl block mb-1" style={{ fontSize: '85%' }}>現役大家が開発した</span>
+                <span className="block text-4xl sm:text-4xl md:text-5xl lg:text-6xl" style={{ fontSize: '110%', lineHeight: '1.2' }}>不動産投資<br />シミュレーション</span>
               </h1>
-              <div className="text-3xl lg:text-4xl text-gray-900 mb-6" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                <p className="mb-4 relative inline-block">
+              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-4 sm:mb-6" style={{paddingLeft: '0', paddingRight: '0'}}>
+                <p className="mb-3 sm:mb-4 relative inline-block">
                   Excelで半日かかる収支計算、
-                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
+                  <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px'}}></span>
                 </p>
                 <br />
                 <p className="relative inline-block">
                   「大家DX」なら60秒で解決
-                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px', animationDelay: '0.5s'}}></span>
+                  <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px', animationDelay: '0.5s'}}></span>
                 </p>
               </div>
-              <p className="text-lg lg:text-xl text-gray-700 mb-10 leading-relaxed" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                収入・経費・税金・返済・残債・自己資金回収率を<br />
+              <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-6 sm:mb-8 md:mb-10 leading-relaxed">
+                収入・経費・税金・返済・残債・自己資金回収率を<br className="hidden sm:inline" />
                 年ごとに可視化。35年の推移がひと目でわかる。
               </p>
               <button
                 onClick={() => navigate('/signup')}
-                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                <div className="flex flex-col items-center mr-3">
-                  <span className="text-xl">まずは10秒で無料登録する</span>
+                <div className="flex flex-col items-center mr-2 sm:mr-3">
+                  <span className="text-lg sm:text-xl">まずは10秒で無料登録する</span>
                   <span className="text-xs mt-1 opacity-90">（クレジットカード登録不要）</span>
                 </div>
-                <ArrowRight className="h-6 w-6 ml-2" />
+                <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 ml-1 sm:ml-2" />
               </button>
             </div>
             
             {/* 右側：画像 */}
-            <div className="flex justify-center lg:justify-end">
+            <div className="flex justify-center lg:justify-end overflow-hidden sm:overflow-visible">
               <img
                 src="/img/kakushin_img01.png"
                 alt="大家DX メインビジュアル"
-                className="w-full h-auto max-w-3xl transform"
-                style={{transform: 'scale(1.4) translateX(30px)', marginLeft: '20px'}}
+                className="w-full h-auto max-w-2xl sm:max-w-3xl main-visual-image"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -170,8 +177,8 @@ const LandingPage: React.FC = () => {
       <section id="features" className="py-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-12 leading-tight">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 sm:mb-12 leading-tight">
               大家DXの3つの特徴
             </h2>
           </div>
@@ -377,8 +384,8 @@ const LandingPage: React.FC = () => {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-lg text-blue-600 font-semibold mb-5">Top 3 Pain Points for Real Estate Investors</p>
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Top 3 Pain Points for Real Estate Investors</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
               多くの大家さんが直面する3つの課題
             </h2>
           </div>
@@ -454,11 +461,11 @@ const LandingPage: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/60 to-white/60"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8">
-            <p className="text-lg text-blue-600 font-semibold mb-5">Pricing Plans</p>
-            <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Pricing Plans</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
               成長に合わせた料金プラン
             </h2>
-            <p className="text-2xl text-gray-600 leading-relaxed">
+            <p className="text-lg sm:text-2xl text-gray-600 leading-relaxed">
               初心者から大規模投資家まで。投資規模に応じて最適なプランを選択できます。
             </p>
           </div>
