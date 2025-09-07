@@ -253,7 +253,27 @@ const LandingPage: React.FC = () => {
           <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
-                <div>
+                {/* SP版: 横並びレイアウト */}
+                <div className="sm:hidden">
+                  <div className="flex items-start gap-4">
+                    <div className="text-5xl font-bold text-gray-900">01</div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                        35年のキャッシュフローを<br />
+                        グラフと表で可視化
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-3 mt-4">
+                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    各年度の重要指標を年次で可視化。投資判断を強力にサポート。
+                  </p>
+                </div>
+                
+                {/* PC版: 従来のレイアウト */}
+                <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                     35年のキャッシュフローを<br />
@@ -295,7 +315,27 @@ const LandingPage: React.FC = () => {
           <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
             <div className="flex flex-col lg:flex-row-reverse items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
-                <div>
+                {/* SP版: 横並びレイアウト */}
+                <div className="sm:hidden">
+                  <div className="flex items-start gap-4">
+                    <div className="text-5xl font-bold text-gray-900">02</div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                        物件のステータスを<br />
+                        一元管理
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-3 mt-4">
+                    検討中／内見予定／買付／保有中／取得済みを保存。
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    URL・写真・メモや償却まで保存。投資情報を整理。
+                  </p>
+                </div>
+                
+                {/* PC版: 従来のレイアウト */}
+                <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">02</div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                     物件のステータスを<br />
@@ -337,7 +377,27 @@ const LandingPage: React.FC = () => {
           <div className="flex flex-col">
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
-                <div>
+                {/* SP版: 横並びレイアウト */}
+                <div className="sm:hidden">
+                  <div className="flex items-start gap-4">
+                    <div className="text-5xl font-bold text-gray-900">03</div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                        金融機関に提出資料も<br />
+                        1クリックでPDF保存
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="text-base text-gray-700 leading-relaxed mb-3 mt-4">
+                    前提・計算式つきで主要指標／年次CF／3価をレポート化。
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    銀行が重視する指標を整理。融資審査資料として活用可能。
+                  </p>
+                </div>
+                
+                {/* PC版: 従来のレイアウト */}
+                <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">03</div>
                   <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                     金融機関に提出資料も<br />
@@ -380,9 +440,9 @@ const LandingPage: React.FC = () => {
       {/* 課題セクション */}
       <section className="py-2 sm:py-8 lg:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-4 sm:mb-16">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Top 3 Pain Points for Real Estate Investors</p>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-2 sm:mb-8 leading-tight">
               <span className="sm:hidden">多くの大家さんが<br />直面する3つの課題</span>
               <span className="hidden sm:inline">多くの大家さんが直面する3つの課題</span>
             </h2>
@@ -445,7 +505,7 @@ const LandingPage: React.FC = () => {
             <p className="text-3xl lg:text-4xl text-gray-700">
               {/* SP版: 改行あり */}
               <span className="sm:hidden">
-                <span className="relative inline-block">
+                <span className="relative inline-block mb-2">
                   どのタイプでも1分で
                   <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
                 </span>
@@ -474,9 +534,9 @@ const LandingPage: React.FC = () => {
         {/* 背景オーバーレイ */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/60 to-white/60"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-8">
+          <div className="text-center mb-4 sm:mb-8">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Pricing Plans</p>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 leading-tight">
               成長に合わせた料金プラン
             </h2>
             <p className="text-lg sm:text-2xl text-gray-600 leading-relaxed">
@@ -693,10 +753,10 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* よくある質問セクション */}
-      <section id="faq" className="py-2 sm:py-8 lg:py-16 bg-gray-50">
+      <section id="faq" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+          <div className="text-center mb-2 sm:mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
               よくある質問
             </h2>
           </div>
@@ -789,10 +849,10 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* ニュースセクション */}
-      <section id="news" className="py-2 sm:py-8 lg:py-16 bg-white">
+      <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+          <div className="text-center mb-2 sm:mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
               ニュース
             </h2>
           </div>

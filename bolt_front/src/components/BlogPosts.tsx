@@ -108,9 +108,9 @@ const BlogPosts: React.FC = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 sm:mb-16">
           <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">Real Estate Investment Simulation Examples</p>
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 leading-tight">
             <span className="sm:hidden">不動産投資<br />シミュレーション事例集</span>
             <span className="hidden sm:inline">不動産投資シミュレーション事例集</span>
           </h2>
