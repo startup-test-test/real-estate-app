@@ -7,6 +7,7 @@ import {
   Smartphone
 } from 'lucide-react';
 import BlogPosts from '../components/BlogPosts';
+import CompanyProfile from '../components/CompanyProfile';
 import '../styles/animations.css';
 
 const LandingPage: React.FC = () => {
@@ -71,6 +72,9 @@ const LandingPage: React.FC = () => {
                 </a>
                 <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
                   料金
+                </a>
+                <a href="#company" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  会社概要
                 </a>
                 <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors">
                   よくある質問
@@ -186,9 +190,10 @@ const LandingPage: React.FC = () => {
           {/* 3つの特徴を横並び */}
           <div className="hidden sm:grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-12">
             {/* 特徴1 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                01. 35年のキャッシュフローを<br />
+                <span className="text-2xl sm:text-3xl lg:text-4xl">01</span><br />
+                35年のキャッシュフローを<br />
                 グラフと表で可視化
               </h3>
               <div className="flex justify-center">
@@ -205,9 +210,10 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* 特徴2 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                02. 物件のステータスを<br />
+                <span className="text-2xl sm:text-3xl lg:text-4xl">02</span><br />
+                物件のステータスを<br />
                 一元管理
               </h3>
               <div className="flex justify-center">
@@ -224,9 +230,10 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* 特徴3 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 rounded-2xl">
+            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                03. 金融機関に提出資料も<br />
+                <span className="text-2xl sm:text-3xl lg:text-4xl">03</span><br />
+                金融機関に提出資料も<br />
                 1クリックでPDF保存
               </h3>
               <div className="flex justify-center">
@@ -754,23 +761,23 @@ const LandingPage: React.FC = () => {
 
       {/* よくある質問セクション */}
       <section id="faq" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-2 sm:mb-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
               よくある質問
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Q1. どんな分析ができるサービスですか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                物件の収益性を約1分で総合的に分析できます。
-                主要指標（IRR：内部収益率、DSCR：借入返済余裕度、LTV：借入比率、NOI：実質収益）から
-                35年間のキャッシュフロー、3つの評価額まで一括計算。
-                銀行提出用のPDF出力にも対応しています。
+                物件の収益性を約1分で分析。
+                IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算。
+                金利上昇や空室増加などのリスクシナリオもワンクリックで検証でき、
+                銀行提出用PDF出力にも対応しています。
               </p>
             </div>
             
@@ -787,19 +794,7 @@ const LandingPage: React.FC = () => {
             
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q3. リスク分析（感度分析）は可能ですか？
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                はい、リスクシナリオの検証が簡単にできます。
-                例えば「金利が0.5%上昇」「空室率が5%増加」「家賃が3%下落」した場合の
-                収支への影響をワンクリックで確認。
-                キャッシュフローが赤字になる条件も把握できます。
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q4. スマートフォンでも利用できますか？
+                Q3. スマートフォンでも利用できますか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
                 はい、完全にモバイル対応しています。
@@ -811,7 +806,7 @@ const LandingPage: React.FC = () => {
             
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q5. データは安全に管理されていますか？
+                Q4. データは安全に管理されていますか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
                 お客様のデータは厳重に保護されています。
@@ -823,7 +818,7 @@ const LandingPage: React.FC = () => {
             
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q6. 解約はいつでもできますか？
+                Q5. 解約はいつでもできますか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
                 はい、いつでも解約可能です。
@@ -835,7 +830,7 @@ const LandingPage: React.FC = () => {
 
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q7. どのような支払い方法がありますか？
+                Q6. どのような支払い方法がありますか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
                 クレジットカード決済のみ対応しております。
@@ -848,11 +843,14 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 会社概要セクション */}
+      <CompanyProfile />
+
       {/* ニュースセクション */}
       <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-2 sm:mb-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
               ニュース
             </h2>
           </div>
@@ -900,6 +898,9 @@ const LandingPage: React.FC = () => {
                 <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   料金
                 </a>
+                <a href="#company" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+                  会社概要
+                </a>
                 <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   よくある質問
                 </a>
@@ -924,6 +925,10 @@ const LandingPage: React.FC = () => {
                     <span className="text-gray-300">|</span>
                     <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
                       料金
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a href="#company" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      会社概要
                     </a>
                     <span className="text-gray-300">|</span>
                     <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
