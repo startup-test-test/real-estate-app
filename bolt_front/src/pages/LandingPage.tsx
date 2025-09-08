@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import BlogPosts from '../components/BlogPosts';
 import CompanyProfile from '../components/CompanyProfile';
+import DeveloperProfile from '../components/DeveloperProfile';
 import '../styles/animations.css';
 
 const LandingPage: React.FC = () => {
@@ -78,6 +79,9 @@ const LandingPage: React.FC = () => {
                 </a>
                 <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors">
                   よくある質問
+                </a>
+                <a href="#developer" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  開発者プロフィール
                 </a>
                 <a href="#news" className="text-gray-600 hover:text-gray-900 transition-colors">
                   ニュース
@@ -843,6 +847,9 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 開発者プロフィールセクション */}
+      <DeveloperProfile />
+
       {/* 会社概要セクション */}
       <CompanyProfile />
 
@@ -904,6 +911,9 @@ const LandingPage: React.FC = () => {
                 <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   よくある質問
                 </a>
+                <a href="#developer" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+                  開発者プロフィール
+                </a>
                 <a href="#news" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   ニュース
                 </a>
@@ -933,6 +943,10 @@ const LandingPage: React.FC = () => {
                     <span className="text-gray-300">|</span>
                     <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
                       よくある質問
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a href="#developer" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                      開発者
                     </a>
                     <span className="text-gray-300">|</span>
                     <a href="#news" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
