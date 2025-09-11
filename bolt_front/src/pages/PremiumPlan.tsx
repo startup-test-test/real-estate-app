@@ -156,7 +156,7 @@ const PremiumPlan: React.FC = () => {
     {
       name: 'フリープラン',
       price: 0,
-      description: '基本的な機能を無料でお試し',
+      description: '基本的な機能を月に5回まで無料でお試し',
       color: 'border-gray-200',
       buttonColor: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
       popular: false,
@@ -165,10 +165,9 @@ const PremiumPlan: React.FC = () => {
         { name: '基本的な収益分析', included: true },
         { name: '表面利回り計算', included: true },
         { name: 'IRR・CCR計算', included: true },
-        { name: '35年キャッシュフロー予測', included: false },
-        { name: '詳細レポート出力（PDF）', included: false },
-        { name: '無制限シミュレーション', included: false },
-        { name: '優先サポート', included: false }
+        { name: '35年キャッシュフロー予測', included: true },
+        { name: '詳細レポート出力（PDF）', included: true },
+        { name: '無制限シミュレーション', included: false }
       ]
     },
     {

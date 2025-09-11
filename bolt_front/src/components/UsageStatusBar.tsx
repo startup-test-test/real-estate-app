@@ -103,7 +103,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
 
   const colors = colorClasses[statusColor as keyof typeof colorClasses] || colorClasses.gray;
 
-  // ベーシック会員の場合
+  // ベーシックプランの場合
   if (usage.isSubscribed) {
     // 解約予定の場合の残り日数計算
     const daysRemaining = usage.cancelAtPeriodEnd && usage.currentPeriodEnd
@@ -118,7 +118,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-6 w-6 text-yellow-500 flex-shrink-0" />
               <span className="text-base font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                ベーシック会員
+                ベーシックプラン
               </span>
             </div>
             <p className="text-sm text-gray-700 font-medium mb-2">
@@ -162,7 +162,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
               <div className="flex items-center gap-3">
                 <Sparkles className="h-6 w-6 text-yellow-500" />
                 <span className="text-base font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                  ベーシック会員
+                  ベーシックプラン
                 </span>
               </div>
               <span className="text-sm text-gray-700 font-medium">

@@ -148,19 +148,21 @@ const Layout: React.FC = () => {
                   {isPremium ? (
                     <div className="flex items-center mt-1">
                       <Sparkles className="h-4 w-4 text-yellow-500 mr-1" />
-                      <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                        ベーシック会員
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+                          ベーシックプラン
+                        </span>
                         {subscription?.cancel_at_period_end && subscription?.cancel_at && (
-                          <span className="text-xs text-amber-600 ml-1">
+                          <span className="text-sm text-amber-600 font-medium">
                             ({formatRemainingTime(calculateRemainingDays(subscription.cancel_at))})
                           </span>
                         )}
-                      </span>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center mt-1">
                       <User className="h-4 w-4 text-gray-400 mr-1" />
-                      <span className="text-sm font-bold text-gray-500">無料会員</span>
+                      <span className="text-sm font-bold text-gray-500">フリープラン</span>
                     </div>
                   )}
                 </div>
