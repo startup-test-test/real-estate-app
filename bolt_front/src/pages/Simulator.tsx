@@ -1106,6 +1106,8 @@ const Simulator: React.FC = () => {
     document.title = `${inputs.propertyName} - 不動産投資シミュレーション結果`;
     
     // 印刷ダイアログを表示
+    // 注意: ブラウザの印刷設定で「ヘッダーとフッター」のチェックを外すと、
+    // ページ番号やURLなどが非表示になります
     window.print();
     
     // タイトルを元に戻す
@@ -2211,7 +2213,7 @@ const Simulator: React.FC = () => {
 
       {/* シミュレーション結果表示 - SP版は枠外、PC版は枠内 */}
       {simulationResults && (
-        <div className="md:p-4 md:sm:p-6 md:lg:p-8">
+        <div className="md:p-4 md:sm:p-6 md:lg:p-8 print:p-2">
           <div className="md:max-w-6xl md:mx-auto">
             <div 
               ref={resultsRef}
@@ -2270,8 +2272,8 @@ const Simulator: React.FC = () => {
             </div>
             
             {/* 物件価値評価と重要投資指標 */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 評価額と投資指標</h3>
+            <div className="mb-6 print:mb-2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と投資指標</h3>
               
               {/* SP版: 4つの重要指標のみ表示 */}
               <div className="md:hidden">
@@ -2672,9 +2674,9 @@ const Simulator: React.FC = () => {
             
             {/* 📋 年次キャッシュフロー詳細 - 最優先表示 */}
             {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
-              <div className="mb-6">
+              <div className="mb-6 print:mb-1">
                 {/* PC版: タイトルとデータ数を横並び */}
-                <div className="hidden md:flex items-center justify-between mb-4">
+                <div className="hidden md:flex items-center justify-between mb-4 print:mb-2">
                   <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
                     35年分のデータ
@@ -2694,15 +2696,15 @@ const Simulator: React.FC = () => {
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
                 
-                {/* 詳細キャッシュフロー分析 */}
-                <div className="mb-4">
+                {/* 詳細キャッシュフロー分析 - 印刷時は2ページ目に配置 */}
+                <div className="mb-4 print:break-before-page">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
                 </div>
                 
                 <div className="border border-gray-300 rounded-lg overflow-hidden relative">
-                  {/* スクロール案内 - テーブルの中央に重ねて配置、3秒後に自動フェードアウト */}
+                  {/* スクロール案内 - テーブルの中央に重ねて配置、3秒後に自動フェードアウト、印刷時は非表示 */}
                   <div 
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none animate-fade-out"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none animate-fade-out print:hidden"
                     style={{
                       animation: 'fadeOut 0.5s ease-in-out 5s forwards'
                     }}
@@ -2721,32 +2723,32 @@ const Simulator: React.FC = () => {
                   </div>
                   
                   {/* PC版・SP版ともに横スクロール可能に */}
-                  <div className="relative overflow-x-auto cashflow-table-container">
-                    <table className="min-w-full bg-white" style={{ minWidth: '1100px' }}>
+                  <div className="relative overflow-x-auto cashflow-table-container print:overflow-visible">
+                    <table className="min-w-full bg-white print:min-w-0 print:w-full print:table-fixed" style={{ minWidth: '1100px' }}>
                       <thead className="bg-blue-900 sticky top-0 z-10">
                         <tr>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           不動産<br/>収入
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px]">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                             家賃収入の推移。<br/>前面面で家賃下落（上昇）を選択した場合は次第に変化していきます。<br/>また、各年度で売却した際の売却価格（キャピタルゲイン）に影響を与えます。
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           経費
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             ランニングコスト
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           減価<br/>償却
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             減価償却費
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           税金
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             所得税・住民税
                           </div>
                         </th>
@@ -2767,37 +2769,37 @@ const Simulator: React.FC = () => {
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           ローン<br/>返済
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             年間ローン返済額（元金＋利息）
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           元金<br/>返済
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             ローン返済額のうち元金部分
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           年間<br/>CF
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             年間キャッシュフロー（税引後）
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           累計<br/>CF
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             累計キャッシュフロー
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           借入<br/>残高
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             借入残高
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           自己資金<br/>回収率
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none">
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none print:hidden">
                             累計CFの自己資金に対する割合
                           </div>
                         </th>
@@ -2863,7 +2865,7 @@ const Simulator: React.FC = () => {
                     </thead>
                     <tbody>
                       {simulationResults.cash_flow_table.map((row, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+                        <tr key={index} className={`hover:bg-gray-50 ${index >= 30 ? 'print:hidden' : ''}`}>
                           <td className="px-0.5 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['実効収入'])}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['経費'])}</td>
@@ -2896,8 +2898,8 @@ const Simulator: React.FC = () => {
         </div>
       )}
 
-      {/* 計算ロジック説明・注意事項 */}
-      <div className="p-4 sm:p-6 lg:p-8">
+      {/* 計算ロジック説明・注意事項 - 印刷時は3ページ目に配置 */}
+      <div className="p-4 sm:p-6 lg:p-8 print:break-before-page">
         <div className="max-w-6xl mx-auto">
           {simulationResults && (
           <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">

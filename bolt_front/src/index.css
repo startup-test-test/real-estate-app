@@ -109,10 +109,16 @@ body {
 
 /* PDF印刷用スタイル */
 @media print {
-  /* ページ設定 */
+  /* ページ設定 - 横向きA4 */
   @page {
-    margin: 0.5in;
-    size: A4;
+    margin: 0.2in;
+    size: A4 landscape;
+  }
+  
+  /* 2ページ目以降も同じ設定 */
+  @page :not(:first) {
+    margin: 0.2in;
+    size: A4 landscape;
   }
   
   /* 印刷時に非表示にする要素 */
@@ -121,10 +127,12 @@ body {
   }
   
   /* Tailwindのレスポンシブクラスを無効化してPC版レイアウトを強制 */
+  /* SP版要素を非表示 */
   .md\:hidden {
     display: none !important;
   }
   
+  /* PC版要素を表示 */
   .md\:block {
     display: block !important;
   }
@@ -149,6 +157,33 @@ body {
     display: grid !important;
   }
   
+  /* グリッドレイアウトをPC版に強制 */
+  .grid-cols-2.md\:grid-cols-3,
+  .grid-cols-2.md\:grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  /* SP版のグリッドもPC版と同じに */
+  .grid-cols-2 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
   /* レイアウト調整 */
   body {
     -webkit-print-color-adjust: exact;
@@ -170,6 +205,11 @@ body {
     break-after: page;
   }
   
+  .print\:break-before-page {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+  
   /* 印刷時のフォントサイズ調整 */
   .print\:text-sm {
     font-size: 0.875rem !important;
@@ -188,12 +228,29 @@ body {
   canvas {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    max-width: 100% !important;
+    height: auto !important;
   }
   
   /* グラフコンテナの印刷時調整 */
   .chart-container {
     break-inside: avoid;
     page-break-inside: avoid;
+    width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* 印刷時のコンテンツ間隔を縮小 */
+  .print\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .print\:mb-4 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .print\:p-2 {
+    padding: 0.5rem !important;
   }
   
   /* シミュレーション結果の印刷時レイアウト */
@@ -203,10 +260,42 @@ body {
     border: 1px solid #e5e7eb !important;
   }
   
-  /* キャッシュフローテーブルの印刷時調整 */
-  .cashflow-table-container table {
-    min-width: 100% !important;
+  /* キャッシュフローテーブルの印刷時調整 - 横向きA4用 */
+  .cashflow-table-container {
+    overflow: visible !important;
     width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .cashflow-table-container table {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    table-layout: auto !important;
+    font-size: 12px !important;
+    border-collapse: collapse !important;
+  }
+  
+  .cashflow-table-container th,
+  .cashflow-table-container td {
+    padding: 2px 2px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    line-height: 1.25 !important;
+  }
+  
+  /* ヘッダーのツールチップを非表示 */
+  .cashflow-table-container .group-hover\:opacity-100 {
+    display: none !important;
+  }
+  
+  /* 年次列を固定幅に - 2桁の数字に対応 */
+  .cashflow-table-container th:first-child,
+  .cashflow-table-container td:first-child {
+    width: 45px !important;
+    min-width: 45px !important;
+    max-width: 45px !important;
+    padding: 1px 4px !important;
   }
   
   /* グリッドレイアウトの調整 */

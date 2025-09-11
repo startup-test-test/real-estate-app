@@ -65,7 +65,19 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   // デバッグ用ログは削除
 
   // SP版の判定 - 印刷時は常にPC版として扱う
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768 && !window.matchMedia('print').matches;
+  const [isMobile, setIsMobile] = React.useState(false);
+  
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768 && !window.matchMedia('print').matches;
+      setIsMobile(mobile);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const chartData = {
     labels: years,
@@ -131,11 +143,11 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         align: 'center' as const,
         labels: {
           usePointStyle: false,
-          padding: 15,
-          boxWidth: 40,
+          padding: isMobile ? 10 : 10,
+          boxWidth: isMobile ? 35 : 30,
           boxHeight: 2,
           font: {
-            size: 16,
+            size: isMobile ? 16 : 12,
             weight: 'normal',
             family: 'system-ui, -apple-system, sans-serif',
           },
@@ -259,15 +271,15 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   };
 
   return (
-    <div className="bg-white md:p-6 p-4 md:rounded-lg md:border md:border-gray-200 md:shadow-sm chart-container print:p-4 print:border-0">
+    <div className="bg-white md:p-6 p-4 md:rounded-lg md:border md:border-gray-200 md:shadow-sm chart-container print:p-1 print:border-0 print:mb-1">
       {/* SP版のみスワイプ案内を表示 */}
       {isMobile && (
         <div className="text-center text-sm text-gray-500 mb-2 print:hidden">
           ← スワイプで全期間を確認 →
         </div>
       )}
-      <div className={isMobile ? "overflow-x-auto -mx-4 px-4 print:overflow-visible print:mx-0" : ""}>
-        <div className={isMobile ? "h-80 min-w-[1200px] print:h-96 print:min-w-0 print:w-full" : "h-96 w-full"}>
+      <div className={isMobile ? "overflow-x-auto -mx-4 px-4 print:overflow-visible print:mx-0 print:px-0 print:w-full" : "w-full"}>
+        <div className={isMobile ? "h-80 min-w-[1200px] print:h-48 print:w-full print:min-w-0" : "h-96 w-full print:h-48"}>
           <Chart type='bar' data={chartData} options={options} />
         </div>
       </div>

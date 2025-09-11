@@ -4,7 +4,10 @@ import {
   Calculator, 
   CheckCircle,
   ArrowRight,
-  Smartphone
+  Smartphone,
+  UserPlus,
+  Home,
+  FileText
 } from 'lucide-react';
 import BlogPosts from '../components/BlogPosts';
 import CompanyProfile from '../components/CompanyProfile';
@@ -537,9 +540,6 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ブログ記事セクション */}
-      <BlogPosts />
-
       {/* 料金プランセクション */}
       <section id="pricing" className="py-2 sm:py-8 lg:py-16 bg-cover bg-center bg-no-repeat relative" style={{backgroundImage: 'url(/img/background_002.jpg)'}}>
         {/* 背景オーバーレイ */}
@@ -763,6 +763,129 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 使い方セクション */}
+      <section className="py-8 sm:py-12 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">How to Use</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 leading-tight">
+              3ステップで今すぐ始める
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+              面倒な設定は不要。今すぐ不動産投資シミュレーションを始められます
+            </p>
+          </div>
+
+          {/* ステップカード */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12">
+            {/* STEP 1 */}
+            <div className="relative bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 sm:p-8 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white rounded-full px-4 py-2 text-sm font-bold shadow-lg">
+                STEP 1
+              </div>
+              <div className="mt-4 text-center">
+                <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6 mx-auto">
+                  <UserPlus className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+                  無料アカウント作成
+                  <span className="block text-sm text-gray-500 mt-2 font-normal">10秒で完了</span>
+                </h3>
+                <ul className="space-y-3 text-gray-700 text-left inline-block">
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>メールアドレスのみで登録</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>面倒な個人情報入力不要</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>クレジットカード登録不要</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* STEP 2 */}
+            <div className="relative bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 sm:p-8 shadow-lg border border-green-100 hover:shadow-xl transition-all duration-300">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-600 text-white rounded-full px-4 py-2 text-sm font-bold shadow-lg">
+                STEP 2
+              </div>
+              <div className="mt-4 text-center">
+                <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6 mx-auto">
+                  <Home className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+                  物件情報を入力
+                  <span className="block text-sm text-gray-500 mt-2 font-normal">30秒で入力</span>
+                </h3>
+                <ul className="space-y-3 text-gray-700 text-left inline-block">
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>物件価格・月額家賃を入力</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>融資条件（金利・期間）を設定</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>必須項目は最小限でOK</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* STEP 3 */}
+            <div className="relative bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 sm:p-8 shadow-lg border border-purple-100 hover:shadow-xl transition-all duration-300">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white rounded-full px-4 py-2 text-sm font-bold shadow-lg">
+                STEP 3
+              </div>
+              <div className="mt-4 text-center">
+                <div className="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6 mx-auto">
+                  <FileText className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+                  結果を即座に確認
+                  <span className="block text-sm text-gray-500 mt-2 font-normal">20秒で分析完了</span>
+                </h3>
+                <ul className="space-y-3 text-gray-700 text-left inline-block">
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>35年間のキャッシュフロー表示</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>IRR/DSCR/NOIなど投資指標算出</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>PDFレポート出力で銀行提出も簁単</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA ボタン */}
+          <div className="text-center mt-12">
+            <button
+              onClick={() => navigate('/signup')}
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+            >
+              <div className="flex flex-col items-center mr-3">
+                <span className="text-xl">まずは10秒で無料登録する</span>
+                <span className="text-xs mt-1 opacity-90">（クレジットカード登録不要）</span>
+              </div>
+              <ArrowRight className="h-6 w-6 ml-2" />
+            </button>
+          </div>
+
+        </div>
+      </section>
+
       {/* よくある質問セクション */}
       <section id="faq" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -852,6 +975,9 @@ const LandingPage: React.FC = () => {
 
       {/* 会社概要セクション */}
       <CompanyProfile />
+
+      {/* ブログ記事セクション */}
+      <BlogPosts />
 
       {/* ニュースセクション */}
       <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-white">
