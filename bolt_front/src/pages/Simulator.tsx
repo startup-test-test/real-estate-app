@@ -24,6 +24,7 @@ import { validateSimulatorInputs } from '../utils/securityValidation';
 import { transformFormDataToApiData } from '../utils/dataTransform';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
+import { sampleProperty } from '../data/sampleProperty';
 import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 import { handleApiError, logError, getUserFriendlyErrorMessage } from '../utils/errorHandler';
@@ -169,7 +170,10 @@ const Simulator: React.FC = () => {
     const editId = searchParams.get('edit');
     const viewId = searchParams.get('view');
     
-    if (editId) {
+    // サンプル物件の場合
+    if (viewId === 'sample-property-001') {
+      loadSamplePropertyData();
+    } else if (editId) {
       setEditingId(editId);
       loadExistingData(editId);
     } else if (viewId) {
@@ -197,6 +201,84 @@ const Simulator: React.FC = () => {
     }
   }, [location.hash, simulationResults]);
 
+  // サンプル物件データを読み込む
+  const loadSamplePropertyData = () => {
+    const data = sampleProperty.simulation_data;
+    
+    // フォームに値を設定
+    setInputs({
+      propertyName: '【サンプル】シミュレーション',
+      location: '東京都サンプル住所',
+      yearBuilt: 2014,  // 築10年
+      propertyType: 'RC造',  // 建物構造をpropertyTypeフィールドに設定
+      landArea: 18.2,  // 土地持分面積
+      buildingArea: 25.5,  // 専有面積
+      roadPrice: 850000,  // 路線価 85万円/㎡（渋谷区の標準的な価格）
+      marketValue: data.purchasePrice + 200,  // 市場価格は購入価格より少し高め
+      purchasePrice: data.purchasePrice,
+      otherCosts: 150,  // 諸費用150万円
+      renovationCost: 80,  // 軽微なリフォーム費用80万円
+      monthlyRent: data.monthlyRent,
+      managementFee: data.managementFee,
+      fixedCost: data.repairReserve,  // 修繕積立金
+      propertyTax: 8.4,  // 固定資産税年間8.4万円
+      vacancyRate: 5.00,  // 空室率5%
+      rentDecline: 1.00,  // 賃料下落率1%
+      loanAmount: data.loanAmount,
+      interestRate: data.interestRate,
+      loanYears: data.loanTerms,
+      loanType: '元利均等',
+      holdingYears: data.saleYears,
+      exitCapRate: 5.50,
+      expectedSalePrice: data.salePrice,
+      ownershipType: '個人',
+      effectiveTaxRate: 20,
+      majorRepairCycle: 15,
+      majorRepairCost: 120,  // 大規模修繕120万円
+      buildingPriceForDepreciation: 1960,  // 建物価格1,960万円（全体の70%）
+      depreciationYears: 47,  // RC造の法定耐用年数
+      propertyUrl: 'https://ooya.tech/',
+      propertyMemo: 'サンプル物件で入れております。',
+      propertyImageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+      propertyStatus: '検討中',
+      annualDepreciationRate: 1.0,
+      priceDeclineRate: 1.0  // 年1%下落
+    });
+    
+    // サンプル結果も設定（事前計算済み）
+    setSimulationResults({
+      results: {
+        '表面利回り（%）': 5.36,
+        '実質利回り（%）': 4.12,
+        'IRR（%）': 8.7,
+        'CCR（%）': 6.3,
+        'CCR（初年度）（%）': 6.3,
+        'CCR（全期間）（%）': 7.8,
+        'ROI（%）': 11.25,
+        'ROI（初年度）（%）': 6.8,
+        'ROI（全期間）（%）': 11.25,
+        'DSCR（返済余裕率）': 1.23,
+        'NOI（円）': 1425000,  // 年間NOI 142.5万円
+        'LTV（%）': 90,  // LTV 90%
+        '月間キャッシュフロー（円）': 15800,
+        '年間キャッシュフロー（円）': 189600,
+        '積算評価合計（万円）': 2654,  // 土地+建物評価
+        '収益還元評価額（万円）': 2590,  // 収益還元法による評価
+        '想定売却価格（万円）': 2520,
+        '残債（万円）': 1890,  // 10年後の残債
+        '売却コスト（万円）': 85,  // 売却費用約3.5%
+        '売却益（万円）': 545,  // 売却価格-残債-売却コスト
+        '総投資額（円）': 30300000,  // 購入価格+諸費用+リフォーム
+        '自己資金（円）': 5100000,  // 頭金+諸費用+リフォーム
+        '自己資金（万円）': 510,
+        '借入額（円）': 25200000,
+        '土地積算評価（万円）': 1547,  // 土地評価額
+        '建物積算評価（万円）': 1107  // 建物評価額
+      },
+      cash_flow_table: []
+    });
+  };
+  
   // 既存データを読み込む
   const loadExistingData = async (simulationId: string) => {
     if (!user) return;
@@ -1015,15 +1097,41 @@ const Simulator: React.FC = () => {
               fullData: simulationData
             });
             
-            // 編集モードかどうかを判定
-            const isEditMode = Boolean(editingId);
-            console.log('🔍 編集モード:', isEditMode, 'editingId:', editingId);
+            // サンプル物件の特別処理
+            let actualEditingId = editingId;
+            const isSampleProperty = editingId === 'sample-property-001';
+            
+            if (isSampleProperty) {
+              // サンプル物件の場合、既存のサンプル物件を検索
+              const { data: existingSimulations, error: fetchError } = await getSimulations();
+              
+              if (!fetchError && existingSimulations) {
+                // 物件名が【サンプル】で始まる物件を探す
+                const existingSample = existingSimulations.find(
+                  (sim: any) => sim.simulation_data?.propertyName?.startsWith('【サンプル】')
+                );
+                
+                if (existingSample) {
+                  // 既存のサンプル物件がある場合は、そのIDを使用して更新
+                  actualEditingId = existingSample.id;
+                  console.log('既存のサンプル物件を更新:', actualEditingId);
+                } else {
+                  // 既存のサンプル物件がない場合は新規作成
+                  actualEditingId = null;
+                  console.log('新規サンプル物件として作成');
+                }
+              }
+            }
+            
+            // 編集モードかどうかを判定（サンプル物件の既存IDも考慮）
+            const isEditMode = Boolean(actualEditingId) && actualEditingId !== 'sample-property-001';
+            console.log('🔍 編集モード:', isEditMode, 'editingId:', actualEditingId);
             
             // シミュレーションデータを保存（編集モードの場合は更新、新規の場合は作成）
             const { data, error: saveError } = await saveSimulation(
               simulationData, 
               undefined, // 共有トークンは不要
-              isEditMode ? editingId ?? undefined : undefined
+              isEditMode ? actualEditingId ?? undefined : undefined
             );
             
             if (saveError) {
@@ -1038,9 +1146,10 @@ const Simulator: React.FC = () => {
               setEditingId(data.id);
               console.log('新規保存後、editingIdを設定:', data.id);
             }
-            // 編集モードの場合でも、保存後にeditingIdが正しく設定されていることを確認
-            else if (isEditMode && data && data.id && !editingId) {
-              setEditingId(data.id);
+            // サンプル物件の場合も、保存後のIDを記憶
+            else if (isSampleProperty && data && data.id) {
+              // 次回からは更新モードになるように、実際のIDを保持
+              console.log('サンプル物件のIDを記憶:', data.id);
             }
             
           } catch (saveError) {

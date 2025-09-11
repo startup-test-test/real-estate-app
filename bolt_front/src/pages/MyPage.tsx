@@ -15,11 +15,19 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
+  Info,
+  Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
 import UpgradeModal from "../components/UpgradeModal";
 import { useUsageStatus } from "../hooks/useUsageStatus";
+import { 
+  sampleProperty, 
+  shouldShowSampleProperty, 
+  hasTutorialBeenCompleted,
+  isSampleProperty 
+} from "../data/sampleProperty";
 // Removed useSupabaseData hook dependency
 
 const MyPage: React.FC = () => {
@@ -192,7 +200,13 @@ const MyPage: React.FC = () => {
     loadSimulations(true); // 強制リフレッシュ
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, propertyName?: string) => {
+    // サンプル物件は削除不可（IDまたは物件名でチェック）
+    if (id === 'sample-property-001' || propertyName?.startsWith('【サンプル】')) {
+      alert("サンプル物件は削除できません。\n\nサンプル物件は体験用のため、削除することはできません。");
+      return;
+    }
+    
     try {
       setLoading(true);
       const { error } = await deleteSimulation(id);
@@ -452,6 +466,34 @@ const MyPage: React.FC = () => {
         return cfInYen / 10000;
       };
 
+      // サンプル物件の特別処理
+      if (sim.id === 'sample-property-001') {
+        return {
+          id: sim.id,
+          propertyName: '【サンプル】シミュレーション',
+          location: '東京都サンプル住所',
+          propertyType: 'RC造',
+          acquisitionPrice: simulationData.purchasePrice || 2800,
+          annualIncome: ((simulationData.monthlyRent || 125000) * 12) / 10000,
+          managementFee: ((simulationData.managementFee || 8500) * 12) / 10000,
+          surfaceYield: results.surfaceYield || 5.36,
+          netYield: results.netYield || 4.12,
+          monthlyCashFlow: results.monthlyCashFlow || 15800,
+          annualCashFlow: results.annualCashFlow || 189600,
+          cumulativeCF10Year: 315,  // 10年後売却込み累計CF
+          date: new Date().toLocaleDateString("ja-JP", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }).replace(/\//g, "/"),
+          status: '検討中',
+          thumbnail: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+          propertyUrl: 'https://ooya.tech/',
+          propertyMemo: 'サンプル物件で入れております。',
+        };
+      }
+
+      // 通常の物件処理
       return {
         id: sim.id,
         propertyName: simulationData.propertyName || "無題の物件",
@@ -484,7 +526,23 @@ const MyPage: React.FC = () => {
     });
   };
 
-  const formattedSimulations = formatSimulationData(simulations);
+  // サンプル物件の表示判定
+  const hasSeenTutorial = user ? hasTutorialBeenCompleted(user.id) : false;
+  
+  // DBに既にサンプル物件が存在するかチェック
+  const hasSampleInDB = simulations.some(sim => 
+    sim.simulation_data?.propertyName?.startsWith('【サンプル】')
+  );
+  
+  // DBにサンプル物件がない場合のみ、フロントエンドのサンプル物件を表示
+  const showSample = !hasSampleInDB && simulations.length === 0;
+  
+  // サンプル物件を含めたデータの準備
+  const allSimulations = showSample 
+    ? [sampleProperty, ...simulations]
+    : simulations;
+  
+  const formattedSimulations = formatSimulationData(allSimulations);
 
   const quickActions = [
     {
@@ -1047,7 +1105,7 @@ const MyPage: React.FC = () => {
                                         "本当に削除しますか？\n\n削除後は復元できません。",
                                       )
                                     ) {
-                                      handleDelete(sim.id);
+                                      handleDelete(sim.id, sim.propertyName);
                                     }
                                   }
                                 }}
