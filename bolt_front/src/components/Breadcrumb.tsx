@@ -52,7 +52,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   }
 
   return (
-    <nav className="flex mb-4" aria-label="Breadcrumb">
+    <nav className="flex mb-4 print:hidden" aria-label="Breadcrumb">
       <ol className="flex items-center space-x-1 text-sm">
         {breadcrumbItems.map((item, index) => (
           <li key={item.path} className="flex items-center">

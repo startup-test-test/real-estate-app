@@ -82,8 +82,8 @@ const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Header - SP版のみ表示 */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-40">
+      {/* Mobile Header - SP版のみ表示、印刷時は非表示 */}
+      <div className="lg:hidden print:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-40">
         {/* Logo Section */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <Link to="/mypage" className="flex items-center">
@@ -108,16 +108,16 @@ const Layout: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - 印刷時は非表示 */}
       {isMobileMenuOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          className="lg:hidden print:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar - Integrated Header and Logo Design */}
-      <div className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+      {/* Sidebar - Integrated Header and Logo Design - 印刷時は非表示 */}
+      <div className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 print:hidden ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex h-full flex-col">
@@ -282,9 +282,9 @@ const Layout: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="lg:pl-72">
-        <main className="min-h-screen pt-16 lg:pt-0 flex flex-col">
+      {/* Main Content - 印刷時はパディングなし */}
+      <div className="lg:pl-72 print:pl-0">
+        <main className="min-h-screen pt-16 lg:pt-0 print:pt-0 flex flex-col print:min-h-0">
           <div className="flex-grow">
             <Outlet />
           </div>
