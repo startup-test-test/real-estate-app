@@ -71,7 +71,7 @@ const Simulator: React.FC = () => {
     
     // ステップ2: シミュレーター画面到着（入力フォーム説明）
     steps.push({
-      target: '.property-info-section',  // より具体的なターゲットに変更
+      target: '.property-form-container',  // フォーム全体をターゲットに
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 2/7</div>
@@ -89,6 +89,7 @@ const Simulator: React.FC = () => {
         styles: {
           floater: {
             filter: 'none',
+            marginTop: '120px',  // 120px下に移動
           }
         },
         offset: 10,  // セクションからの距離を調整
@@ -351,7 +352,7 @@ const Simulator: React.FC = () => {
         // ステップインデックスに基づいてターゲットを決定
         switch(tutorialStep) {
           case 0: // ステップ2: 物件情報入力
-            targetSelector = '.property-info-section';
+            targetSelector = '.property-form-container';
             break;
           case 1: // ステップ3: シミュレーション実行ボタン
             targetSelector = '.simulate-button';
@@ -577,23 +578,15 @@ const Simulator: React.FC = () => {
               if (window.location.hash === '#results') {
                 window.history.replaceState(null, '', window.location.pathname + window.location.search);
               }
+              // チュートリアル中はスクロールしない - すぐにチュートリアルを開始
+              console.log('📌 Tutorial in progress - NOT scrolling, starting tutorial directly');
+              
+              // チュートリアル開始（スクロール無し）
               setTimeout(() => {
-                // フォーム部分にスクロール
-                const formElement = document.querySelector('.property-form-container');
-                console.log('📌 Attempting to scroll to FORM (saved sample):', !!formElement);
-                if (formElement) {
-                  console.log('📌 SCROLLING TO FORM NOW! (saved sample)');
-                  formElement.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'center'
-                  });
-                }
-                // チュートリアル開始
-                setTimeout(() => {
-                  setRunTutorial(true);
-                  setTutorialStep(0);
-                }, 500);
-              }, 1000);
+                setRunTutorial(true);
+                setTutorialStep(0);
+                console.log('🎯 Tutorial started without scrolling');
+              }, 500);
             }
           }
         }
@@ -1493,12 +1486,15 @@ const Simulator: React.FC = () => {
               setRunTutorial(true); // チュートリアルを確実に継続
               console.log('📝 Tutorial advanced to step:', 2);
               
-              // 結果セクションを少しスクロールして表示
+              // 結果セクションへ直接スクロール（上へのスクロールは不要）
               setTimeout(() => {
                 const resultsSection = document.querySelector('.investment-metrics-section');
                 if (resultsSection) {
                   console.log('📍 Scrolling to investment-metrics-section');
-                  resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  resultsSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                  });
                 }
               }, 500);
             }, 2000);

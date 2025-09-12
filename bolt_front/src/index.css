@@ -46,6 +46,16 @@
   overflow: visible !important;
 }
 
+/* チュートリアル中の物件情報入力フォーム全体のハイライト（ステップ2専用） */
+.property-form-container.tutorial-highlight {
+  position: relative !important;
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+  border-radius: 8px !important;
+  z-index: 9998 !important;
+}
+
 /* チュートリアル中の結果セクションのハイライト */
 .cashflow-table-container.tutorial-highlight,
 .detail-cashflow-table-wrapper.tutorial-highlight,
@@ -69,8 +79,10 @@
 }
 
 
-/* 物件情報入力エリア全体のハイライト - チュートリアル実行中 */
-body:has(.react-joyride__tooltip) .property-form-container {
+/* 物件情報入力エリア全体のハイライト - チュートリアル実行中（ステップ2-3のみ） */
+/* React Joyrideのスポットライトターゲット要素に対する外枠 */
+.property-form-container[data-joyride-target="true"],
+.property-info-section[data-joyride-target="true"] {
   outline: 5px dashed #fbbf24 !important;
   outline-offset: 10px !important;
   box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
@@ -78,12 +90,23 @@ body:has(.react-joyride__tooltip) .property-form-container {
   z-index: 9998 !important;
 }
 
-/* Joyrideがフォーカスしている時の property-form-container */
-.property-form-container[aria-describedby*="react-joyride"] {
+/* フォールバック: tooltipが存在する場合の外枠 */
+body:has(.react-joyride__tooltip) .property-info-section.tutorial-highlight,
+body:has(.react-joyride__tooltip) .property-form-container.tutorial-highlight {
   outline: 5px dashed #fbbf24 !important;
   outline-offset: 10px !important;
   box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+  position: relative !important;
+  z-index: 9998 !important;
 }
+
+/* Joyrideがフォーカスしている時の property-form-container - ステップ1-2のみ適用 */
+/* 注: このセレクタは現在使用されていない可能性があるため、コメントアウト */
+/* .property-form-container[aria-describedby*="react-joyride"] {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+} */
 
 /* チュートリアルアクティブ時のフォーム */
 .tutorial-active-form {
