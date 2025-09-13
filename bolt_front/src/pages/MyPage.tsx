@@ -838,10 +838,10 @@ const MyPage: React.FC = () => {
                     </h3>
                   </div>
                   <div className="flex gap-2">
-                    {/* 全ユーザーに表示 */}
+                    {/* 全ユーザーに表示（SP版・PC版両方） */}
                     <button
                       onClick={handleStartTutorial}
-                      className="hidden md:flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <HelpCircle className="h-4 w-4 mr-2" />
                       使い方を確認
