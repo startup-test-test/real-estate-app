@@ -609,8 +609,8 @@ const MyPage: React.FC = () => {
     sim.simulation_data?.propertyName?.startsWith('【サンプル】')
   );
   
-  // DBにサンプル物件がない場合のみ、フロントエンドのサンプル物件を表示
-  const showSample = !hasSampleInDB && simulations.length === 0;
+  // DBにサンプル物件がない全ユーザーに、フロントエンドのサンプル物件を表示
+  const showSample = !hasSampleInDB;
   
   // チュートリアル開始ボタンのハンドラー
   const handleStartTutorial = () => {
@@ -628,9 +628,9 @@ const MyPage: React.FC = () => {
   
   // 初回サンプル物件表示時に自動でチュートリアルを開始
   React.useEffect(() => {
-    // サンプル物件がある && チュートリアル未完了 && 初回表示
-    if ((showSample || hasSampleInDB) && !hasSeenTutorial && !loading) {
-      // 他の実物件がない場合のみ（サンプル物件のみの場合）
+    // チュートリアル未完了 && 初回表示 && 実物件が0件の場合のみ自動開始
+    if (!hasSeenTutorial && !loading) {
+      // サンプル物件のみ（実物件がない）場合
       const onlyHasSample = simulations.length === 0 || 
         (simulations.length === 1 && hasSampleInDB);
       
@@ -641,7 +641,7 @@ const MyPage: React.FC = () => {
         }, 1500);
       }
     }
-  }, [showSample, hasSampleInDB, hasSeenTutorial, simulations.length, loading]);
+  }, [hasSeenTutorial, simulations.length, hasSampleInDB, loading]);
   
   // サンプル物件を含めたデータの準備
   const allSimulations = showSample 
@@ -838,16 +838,14 @@ const MyPage: React.FC = () => {
                     </h3>
                   </div>
                   <div className="flex gap-2">
-                    {/* サンプル物件がある場合のみ表示 */}
-                    {(showSample || hasSampleInDB) && (
-                      <button
-                        onClick={handleStartTutorial}
-                        className="hidden md:flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                      >
-                        <HelpCircle className="h-4 w-4 mr-2" />
-                        使い方を確認
-                      </button>
-                    )}
+                    {/* 全ユーザーに表示 */}
+                    <button
+                      onClick={handleStartTutorial}
+                      className="hidden md:flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      使い方を確認
+                    </button>
                     <button
                       onClick={async () => {
                         // 使用制限をチェック

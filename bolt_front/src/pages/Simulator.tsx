@@ -1485,18 +1485,7 @@ const Simulator: React.FC = () => {
               setTutorialStep(2); // ステップ4（インデックス2: 評価額と投資指標）へ
               setRunTutorial(true); // チュートリアルを確実に継続
               console.log('📝 Tutorial advanced to step:', 2);
-              
-              // 結果セクションへ直接スクロール（上へのスクロールは不要）
-              setTimeout(() => {
-                const resultsSection = document.querySelector('.investment-metrics-section');
-                if (resultsSection) {
-                  console.log('📍 Scrolling to investment-metrics-section');
-                  resultsSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                  });
-                }
-              }, 500);
+              // Joyrideが自動的にスクロールするため、手動スクロールは不要
             }, 2000);
           }
           // チュートリアル中は絶対にスクロールしない
