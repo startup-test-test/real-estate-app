@@ -184,6 +184,7 @@ body:has(.react-joyride__tooltip) .sample-property-card {
   z-index: 2 !important;
 }
 
+
 .tutorial-highlight-button::before,
 .simulate-button.tutorial-highlight::before {
   content: '👉';
@@ -195,6 +196,28 @@ body:has(.react-joyride__tooltip) .sample-property-card {
   z-index: 999999 !important;  /* 最大値に設定 */
   filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
   pointer-events: none;  /* クリックイベントを透過 */
+}
+
+/* SP版で👉をボタンの上に配置 */
+@media (max-width: 767px) {
+  .tutorial-highlight-button::before,
+  .simulate-button.tutorial-highlight::before {
+    content: '👇';  /* 下向きの指に変更 */
+    left: 50%;
+    top: -60px;  /* ボタンの上に配置 */
+    transform: translateX(-50%) rotate(0deg);  /* 中央揃え */
+    animation: pointingDown 1s ease-in-out infinite;  /* 下向きアニメーション */
+  }
+}
+
+/* SP版用の下向きアニメーション */
+@keyframes pointingDown {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
 }
 
 

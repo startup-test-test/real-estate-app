@@ -46,6 +46,9 @@ const MyPage: React.FC = () => {
   const tutorialSteps = React.useMemo<Step[]>(() => {
     const steps: Step[] = [];
     
+    // デバイス判定（768px未満をモバイルとする）
+    const isMobile = window.innerWidth < 768;
+    
     // サンプル物件カードが存在する場合
     const hasSampleCard = document.querySelector('.sample-property-card');
     
@@ -59,8 +62,8 @@ const MyPage: React.FC = () => {
             <p className="text-gray-700">下の「シミュレーション結果を見る」ボタンをクリック！</p>
           </div>
         ),
-        disableBeacon: true,
-        placement: 'bottom',
+        disableBeacon: true,  // ビーコンを非表示
+        placement: isMobile ? 'top' : 'bottom',  // SP版は上、PC版は下
         spotlightClicks: true,  // スポットライトされた要素をクリック可能にする
         disableScrolling: false,
         styles: {
