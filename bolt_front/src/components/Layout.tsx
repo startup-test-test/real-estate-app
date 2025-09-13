@@ -112,7 +112,7 @@ const Layout: React.FC = () => {
       {isMobileMenuOpen && (
         <div 
           className="lg:hidden print:hidden fixed inset-0 bg-black/50"
-          style={{ zIndex: 10001 }}
+          style={{ zIndex: 100001 }}
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -121,7 +121,7 @@ const Layout: React.FC = () => {
       <div className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 print:hidden ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
-      style={{ zIndex: 10002 }}>
+      style={{ zIndex: 100002 }}>
         <div className="flex h-full flex-col">
           {/* Integrated Header with Logo */}
           <div className="p-6 border-b border-gray-200">
