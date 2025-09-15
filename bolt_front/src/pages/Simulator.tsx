@@ -248,7 +248,7 @@ const Simulator: React.FC = () => {
     
     // ステップ7: PDF保存機能説明
     steps.push({
-      target: '.pdf-save-button',
+      target: '.pdf-save-button-sp',
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 7/7</div>
@@ -284,7 +284,7 @@ const Simulator: React.FC = () => {
     
     // ステップ8: チュートリアル完了
     steps.push({
-      target: '.pdf-save-button',  // PDF保存ボタンをターゲットに変更
+      target: '.pdf-save-button-sp',  // PDF保存ボタンをターゲットに変更
       content: (
         <div className="py-1">
           <h3 className="font-bold text-lg mb-1">🎉 チュートリアル完了！</h3>
@@ -324,7 +324,9 @@ const Simulator: React.FC = () => {
     // ハイライトクラスの管理
     const elements = [
       '.detail-cashflow-table-wrapper',
-      '.pdf-save-button', 
+      '.pdf-save-button',
+      '.pdf-save-button-sp',
+      '.pdf-save-button-pc',
       '.investment-metrics-section',
       '.cashflow-chart-container',
       '.property-info-section',  // 物件情報セクションも追加
@@ -368,10 +370,10 @@ const Simulator: React.FC = () => {
             targetSelector = '.detail-cashflow-table-wrapper';
             break;
           case 5: // ステップ7: PDF保存
-            targetSelector = '.pdf-save-button';
+            targetSelector = '.pdf-save-button-sp';
             break;
           case 6: // ステップ8: 完了
-            targetSelector = '.pdf-save-button';
+            targetSelector = '.pdf-save-button-sp';
             break;
         }
         
@@ -2870,7 +2872,7 @@ const Simulator: React.FC = () => {
                   
                   <button
                     onClick={handleSaveToPDF}
-                    className="pdf-save-button flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
+                    className="pdf-save-button pdf-save-button-pc flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
                     title="PDFとして保存"
                   >
                     <Download size={18} />
@@ -2888,7 +2890,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <button
                     onClick={handleSaveToPDF}
-                    className="pdf-save-button flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm print:hidden"
+                    className="pdf-save-button pdf-save-button-sp flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm print:hidden"
                     title="PDFとして保存"
                   >
                     <Download size={16} />
