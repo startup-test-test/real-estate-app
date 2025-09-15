@@ -46,6 +46,13 @@
   overflow: visible !important;
 }
 
+/* SP版のステップ2/7用のスクロールマージン */
+@media (max-width: 767px) {
+  [data-field="propertyName"] {
+    scroll-margin-top: 80px; /* ヘッダーの高さ + 余白 */
+  }
+}
+
 /* チュートリアル中の物件情報入力フォーム全体のハイライト（ステップ2専用） */
 .property-form-container.tutorial-highlight {
   position: relative !important;

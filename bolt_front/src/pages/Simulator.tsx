@@ -71,7 +71,7 @@ const Simulator: React.FC = () => {
     
     // ステップ2: シミュレーター画面到着（入力フォーム説明）
     steps.push({
-      target: '.property-form-container',  // フォーム全体をターゲットに
+      target: '[data-field="propertyName"]',  // 物件名フィールドをターゲットに
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 2/7</div>
@@ -82,17 +82,16 @@ const Simulator: React.FC = () => {
         </div>
       ),
       disableBeacon: true,
-      placement: 'bottom',  // 下側に配置（物件情報セクションの直下）
+      placement: 'bottom',  // 下側に配置
       spotlightClicks: true,  // スポットライトで強調
-      disableScrolling: false,
+      disableScrolling: false,  // スクロールを有効化
       floaterProps: {
         styles: {
           floater: {
             filter: 'none',
-            marginTop: '120px',  // 120px下に移動
           }
         },
-        offset: 10,  // セクションからの距離を調整
+        offset: 10,
       },
       styles: {
         options: {
@@ -3850,11 +3849,26 @@ const Simulator: React.FC = () => {
         disableOverlayClose={false}
         disableCloseOnEsc={false}
         scrollToFirstStep={false}
-        scrollOffset={20}
+        scrollOffset={window.innerWidth < 768 ? 100 : 20}
+        disableScrollParentFix={window.innerWidth < 768}
         callback={(data: CallBackProps) => {
           const { status, index, type, action } = data;
           
           console.log('🎯 Joyride callback:', { status, index, type, action });
+          
+          // SP版でステップ2（index=0）が表示される前のスクロール調整
+          if (window.innerWidth < 768 && type === 'step:before' && index === 0) {
+            const target = document.querySelector('[data-field="propertyName"]');
+            if (target) {
+              const rect = target.getBoundingClientRect();
+              const absoluteTop = rect.top + window.pageYOffset;
+              // ヘッダーの高さを考慮してスクロール
+              window.scrollTo({
+                top: absoluteTop - 100,
+                behavior: 'smooth'
+              });
+            }
+          }
           
           // ステップが変更されたとき（次へボタンクリック後）
           if (type === 'step:after') {
