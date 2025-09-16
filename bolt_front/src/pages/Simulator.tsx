@@ -3338,7 +3338,7 @@ const Simulator: React.FC = () => {
                 
                 <div className="border border-gray-300 rounded-lg overflow-hidden relative detail-cashflow-table-wrapper">
                   {/* スクロール案内 - テーブルの中央に重ねて配置、3秒後に自動フェードアウト、印刷時は非表示 */}
-                  <div 
+                  <div
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none animate-fade-out print:hidden"
                     style={{
                       animation: 'fadeOut 0.5s ease-in-out 5s forwards'
@@ -3356,11 +3356,11 @@ const Simulator: React.FC = () => {
                       <span className="text-white text-2xl">→</span>
                     </div>
                   </div>
-                  
-                  {/* PC版・SP版ともに横スクロール可能に */}
-                  <div className="relative overflow-x-auto cashflow-table-container print:overflow-visible">
+
+                  {/* PC版・SP版ともに横スクロール可能に、ヘッダー固定のため高さを制限 */}
+                  <div className="relative overflow-x-auto overflow-y-auto max-h-[600px] md:max-h-[700px] cashflow-table-container print:overflow-visible print:max-h-none">
                     <table className="min-w-full bg-white print:min-w-0 print:w-full print:table-fixed" style={{ minWidth: '1100px' }}>
-                      <thead className="bg-blue-900 sticky top-0 z-10">
+                      <thead className="bg-blue-900 sticky top-0 z-30 shadow-lg">
                         <tr>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
