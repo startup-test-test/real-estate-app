@@ -979,11 +979,12 @@ const Simulator: React.FC = () => {
           // 法定耐用年数の取得
           const getLegalUsefulLife = (structure: string): number => {
             switch (structure) {
-              case 'RC': return 47;
-              case 'SRC': return 39;
-              case 'S': return 34; // 重量鉄骨造
+              case 'RC造': return 47;
+              case 'SRC造': return 47;
+              case '重量鉄骨造': return 34;
+              case '軽量鉄骨造': return 27;
               case '木造': return 22;
-              default: return 27; // 軽量鉄骨造をデフォルト
+              default: return 27; // デフォルト
             }
           };
           
@@ -2565,9 +2566,10 @@ const Simulator: React.FC = () => {
                         const buildingAge = currentYear - inputs.yearBuilt;
                         const getLegalLife = (structure: string) => {
                           switch (structure) {
-                            case 'RC': return 47;
-                            case 'SRC': return 39;
-                            case 'S': return 34;
+                            case 'RC造': return 47;
+                            case 'SRC造': return 47;
+                            case '重量鉄骨造': return 34;
+                            case '軽量鉄骨造': return 27;
                             case '木造': return 22;
                             default: return 27;
                           }
