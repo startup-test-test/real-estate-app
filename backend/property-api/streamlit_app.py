@@ -41,13 +41,14 @@ def get_districts_cached(prefecture_code, municipality_code=None):
 
 # APIキーの確認（クライアントのapi_keyを直接チェック）
 if not client.api_key:
-    st.error("⚠️ APIキーが設定されていません。.envファイルにREAL_ESTATE_API_KEYを設定してください。")
+    st.error("⚠️ APIキーが設定されていません。GitHub SecretsにMAIN_REAL_ESTATE_API_KEYを設定してください。")
     # デバッグ情報を表示
     with st.expander("デバッグ情報"):
+        st.write(f"os.getenv('MAIN_REAL_ESTATE_API_KEY'): {os.getenv('MAIN_REAL_ESTATE_API_KEY')}")
         st.write(f"os.getenv('REAL_ESTATE_API_KEY'): {os.getenv('REAL_ESTATE_API_KEY')}")
         st.write(f"client.api_key: {client.api_key}")
         st.write(f"現在のディレクトリ: {os.getcwd()}")
-        st.write(f".envファイルの存在: {os.path.exists('.env')}")
+        st.info("💡 GitHub Secretsを設定した後は、Codespacesの再起動が必要な場合があります。")
     st.stop()
 
 # サイドバーで検索条件入力
