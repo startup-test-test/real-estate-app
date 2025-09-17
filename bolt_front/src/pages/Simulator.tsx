@@ -247,7 +247,7 @@ const Simulator: React.FC = () => {
     
     // ステップ7: PDF保存機能説明
     steps.push({
-      target: '.pdf-save-button-sp',
+      target: window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc',
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 7/7</div>
@@ -283,7 +283,7 @@ const Simulator: React.FC = () => {
     
     // ステップ8: チュートリアル完了
     steps.push({
-      target: '.pdf-save-button-sp',  // PDF保存ボタンをターゲットに変更
+      target: window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc',  // デバイスに応じて切り替え
       content: (
         <div className="py-1">
           <h3 className="font-bold text-lg mb-1">🎉 チュートリアル完了！</h3>
@@ -369,10 +369,10 @@ const Simulator: React.FC = () => {
             targetSelector = '.detail-cashflow-table-wrapper';
             break;
           case 5: // ステップ7: PDF保存
-            targetSelector = '.pdf-save-button-sp';
+            targetSelector = window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc';
             break;
           case 6: // ステップ8: 完了
-            targetSelector = '.pdf-save-button-sp';
+            targetSelector = window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc';
             break;
         }
         
