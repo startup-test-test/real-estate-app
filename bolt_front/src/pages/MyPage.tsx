@@ -397,9 +397,9 @@ const MyPage: React.FC = () => {
           ? calculateFallbackValues()
           : { surfaceYield: 0, monthlyCashFlow: 0, annualCashFlow: 0 };
 
-      // 売却時累計CF（10年後）の計算
-      const calculateSaleProfit10Year = () => {
-        // resultsから売却時累計CFを取得（シミュレーター画面で計算済みの値）
+      // 売却時ネットCF（10年後）の計算
+      const calculateSaleNetCF10Year = () => {
+        // resultsから売却時ネットCFを取得（シミュレーター画面で計算済みの値）
         if (
           results.cumulativeCashFlowWithSaleAt10 !== undefined &&
           results.cumulativeCashFlowWithSaleAt10 !== null
@@ -411,14 +411,24 @@ const MyPage: React.FC = () => {
         // cash_flow_tableから10年目のデータを取得
         if (sim.cash_flow_table && sim.cash_flow_table.length >= 10) {
           const year10Data = sim.cash_flow_table[9]; // 10年目（配列は0から始まる）
-          // 売却時累計CFを使用
+
+          // 新フィールド: 売却時ネットCFを直接取得
+          const saleNetCF = year10Data["売却時ネットCF"] || 0;
+
+          if (saleNetCF !== 0) {
+            // 売却時ネットCFを万円単位で返す
+            return saleNetCF / 10000;
+          }
+
+          // 旧フィールドのフォールバック（互換性のため）
+          // 旧データでは売却時ネットCFが存在しないため、近似値を計算
           if (
             year10Data &&
-            year10Data["売却時累計CF"] !== undefined &&
-            year10Data["売却時累計CF"] !== null
+            year10Data["売却純利益"] !== undefined &&
+            year10Data["売却純利益"] !== null
           ) {
-            const value = year10Data["売却時累計CF"];
-            // 売却時累計CFは円単位で保存されているので、万円に変換
+            // 売却純利益を売却時ネットCFの近似値として使用
+            const value = year10Data["売却純利益"];
             return value / 10000;
           }
           // または英語のフィールド名
@@ -585,7 +595,7 @@ const MyPage: React.FC = () => {
         monthlyCashFlow:
           results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0,
         annualCashFlow: getAnnualCashFlow(),
-        cumulativeCF10Year: calculateSaleProfit10Year(),
+        cumulativeCF10Year: calculateSaleNetCF10Year(),
         date: new Date(sim.created_at)
           .toLocaleDateString("ja-JP", {
             year: "numeric",
@@ -659,7 +669,7 @@ const MyPage: React.FC = () => {
       icon: Calculator,
       color: "bg-slate-700",
       description:
-        "60秒で投資判断の全てが分かる。売却時累計CF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
+        "60秒で投資判断の全てが分かる。売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
       actions: [
         {
           name: "シミュレーションを開始する",
@@ -1173,7 +1183,7 @@ const MyPage: React.FC = () => {
                               </div>
                               <div>
                                 <span className="text-sm text-gray-500">
-                                  売却時累計CF(10年)
+                                  売却時ネットCF(10年)
                                 </span>
                                 <div
                                   className={`font-bold text-base ${
