@@ -616,6 +616,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             capital_gain = sale_amount - acquisition_cost - depreciation * i - sale_cost  # 譲渡費用も控除
 
             if capital_gain > 0:
+                # デバッグ用ログ
+                print(f"Year {i}: owner_type={owner_type}, effective_tax_rate={effective_tax_rate}, capital_gain={capital_gain/10000:.1f}万円")
                 if owner_type == '個人':
                     # 個人の場合：短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
                     if i <= 5:
@@ -627,6 +629,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                     transfer_tax = capital_gain * (effective_tax_rate / 100)
             else:
                 transfer_tax = 0
+                print(f"Year {i}: capital_gain is negative or zero: {capital_gain/10000:.1f}万円")
 
             net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost - transfer_tax
             # 売却費用の合計（仲介手数料 + 譲渡税）
