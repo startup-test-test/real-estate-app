@@ -48,15 +48,17 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     return (row['累計CF'] || 0) / 10000;
   });
   
-  // 売却による純利益（売却時累計CF - 累計CF）
-  const saleNetProfit = data.map((row) => {
-    const cumCF = (row['累計CF'] || 0) / 10000;
-    const saleCumCF = (row['売却時累計CF'] || 0) / 10000;
-    return saleCumCF - cumCF;
+  // 売却時ネットCF（手取り金額）
+  const saleNetCF = data.map((row) => {
+    return (row['売却時ネットCF'] || 0) / 10000;
   });
   
-  // 売却時累計CF（線グラフ用）
-  const saleCumulativeCF = data.map(row => (row['売却時累計CF'] || 0) / 10000);
+  // 売却後累計CF（線グラフ用）：累計CF + 売却時ネットCF
+  const saleAfterCumulativeCF = data.map((row) => {
+    const cumCF = (row['累計CF'] || 0) / 10000;
+    const saleNetCF = (row['売却時ネットCF'] || 0) / 10000;
+    return cumCF + saleNetCF;
+  });
   
   // 借入残高（線グラフ用）- 既に万円単位で返されるため変換不要、負の値は0にする
   const loanBalance = data.map(row => Math.max(0, row['借入残高'] || 0));
@@ -94,8 +96,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       },
       {
         type: 'bar' as const,
-        label: '②売却純利益',
-        data: saleNetProfit,
+        label: '②売却時ネットCF',
+        data: saleNetCF,
         backgroundColor: 'rgba(59, 130, 246, 0.6)', // 青系
         borderColor: 'rgba(59, 130, 246, 0)',
         borderWidth: 0,
@@ -104,8 +106,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
       },
       {
         type: 'line' as const,
-        label: '③売却時累計CF（①＋②）',
-        data: saleCumulativeCF,
+        label: '③売却後累計CF（①＋②）',
+        data: saleAfterCumulativeCF,
         borderColor: 'rgb(236, 72, 153)', // ピンク系
         backgroundColor: 'transparent',
         borderWidth: 3,

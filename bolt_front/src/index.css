@@ -13,6 +13,221 @@
   }
 }
 
+/* チュートリアルボタンのアニメーション */
+@keyframes dashMove {
+  0% {
+    background-position: 0 0, 100% 100%, 0 100%, 100% 0;
+  }
+  100% {
+    background-position: 100% 0, 0 100%, 0 0, 100% 100%;
+  }
+}
+
+@keyframes pointingArrow {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-50%) translateX(10px);
+  }
+}
+
+.tutorial-highlight-button,
+.simulate-button.tutorial-highlight {
+  position: relative;
+  outline: 3px dashed #fbbf24 !important;
+  outline-offset: 6px;
+  box-shadow: 0 0 0 8px rgba(251, 191, 36, 0.1) !important;
+  overflow: visible !important;
+}
+
+/* サンプル物件カード全体のオーバーフロー設定 */
+.sample-property-card {
+  overflow: visible !important;
+}
+
+/* SP版のステップ2/7用のスクロールマージン */
+@media (max-width: 767px) {
+  [data-field="propertyName"] {
+    scroll-margin-top: 80px; /* ヘッダーの高さ + 余白 */
+  }
+}
+
+/* チュートリアル中の物件情報入力フォーム全体のハイライト（ステップ2専用） */
+.property-form-container.tutorial-highlight {
+  position: relative !important;
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+  border-radius: 8px !important;
+  z-index: 9998 !important;
+}
+
+/* チュートリアル中の結果セクションのハイライト */
+.cashflow-table-container.tutorial-highlight,
+.detail-cashflow-table-wrapper.tutorial-highlight,
+.pdf-save-button.tutorial-highlight,
+.investment-metrics-section.tutorial-highlight,
+.cashflow-chart-container.tutorial-highlight {
+  position: relative !important;
+  outline: 3px dashed #fbbf24 !important;
+  outline-offset: 6px !important;
+  box-shadow: 0 0 0 8px rgba(251, 191, 36, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+/* チュートリアル中のサンプル物件カードのハイライト */
+.sample-property-card[data-joyride-target="true"] {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 8px !important;
+  box-shadow: 0 0 0 16px rgba(251, 191, 36, 0.1) !important;
+  position: relative !important;
+  z-index: 9998 !important;
+}
+
+
+/* 物件情報入力エリア全体のハイライト - チュートリアル実行中（ステップ2-3のみ） */
+/* React Joyrideのスポットライトターゲット要素に対する外枠 */
+.property-form-container[data-joyride-target="true"],
+.property-info-section[data-joyride-target="true"] {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+  position: relative !important;
+  z-index: 9998 !important;
+}
+
+/* フォールバック: tooltipが存在する場合の外枠 */
+body:has(.react-joyride__tooltip) .property-info-section.tutorial-highlight,
+body:has(.react-joyride__tooltip) .property-form-container.tutorial-highlight {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+  position: relative !important;
+  z-index: 9998 !important;
+}
+
+/* Joyrideがフォーカスしている時の property-form-container - ステップ1-2のみ適用 */
+/* 注: このセレクタは現在使用されていない可能性があるため、コメントアウト */
+/* .property-form-container[aria-describedby*="react-joyride"] {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+} */
+
+/* チュートリアルアクティブ時のフォーム */
+.tutorial-active-form {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 10px !important;
+  box-shadow: 0 0 0 20px rgba(251, 191, 36, 0.1) !important;
+  position: relative !important;
+}
+
+/* Joyrideのスポットライトをカスタマイズ - グレイアウトなし */
+.react-joyride__spotlight {
+  background-color: transparent !important;
+  border: 5px dashed #fbbf24 !important;
+  border-radius: 12px;
+  box-shadow: 0 0 0 12px rgba(251, 191, 36, 0.15) !important;
+  position: relative;
+  z-index: 9999 !important;
+}
+
+/* チュートリアル実行中のサンプル物件カード */
+body:has(.react-joyride__tooltip) .sample-property-card {
+  outline: 5px dashed #fbbf24 !important;
+  outline-offset: 8px !important;
+}
+
+/* Joyrideのツールチップの背景色をカスタマイズ */
+.react-joyride__tooltip {
+  background-color: #FFFBEB !important;  /* より薄い黄色 */
+  border: none !important;  /* 外枠なし */
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  position: relative !important;
+}
+
+/* 次へボタンを大きくする */
+.react-joyride__tooltip button[data-action="primary"] {
+  padding: 12px 24px !important;  /* 内側の余白を増やす */
+  font-size: 18px !important;  /* 文字サイズを大きく */
+  font-weight: 600 !important;  /* 文字を太く */
+  min-width: 100px !important;  /* 最小幅を設定 */
+  border-radius: 8px !important;  /* 角を丸く */
+  transition: all 0.2s ease !important;
+}
+
+/* MyPageで「完了」ボタンが空の場合は非表示 */
+.react-joyride__tooltip button[data-action="primary"]:empty {
+  display: none !important;
+}
+
+/* 「閉じる」と表示されているプライマリボタンを非表示 */
+.react-joyride__tooltip button[data-action="primary"][title="閉じる"] {
+  display: none !important;
+}
+
+/* 次へボタンのホバー効果 */
+.react-joyride__tooltip button[data-action="primary"]:hover {
+  transform: scale(1.05) !important;  /* 少し大きくする */
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;  /* 影を追加 */
+}
+
+/* スキップボタンのスタイル調整 */
+.react-joyride__tooltip button[data-action="skip"] {
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+}
+
+/* 矢印のスタイル - 外枠なし */
+.__floater__arrow polygon {
+  fill: #FFFBEB !important;
+  stroke: none !important;  /* 外枠なし */
+}
+
+/* 矢印の位置微調整 */
+.__floater__arrow {
+  z-index: 2 !important;
+}
+
+
+.tutorial-highlight-button::before,
+.simulate-button.tutorial-highlight::before {
+  content: '👉';
+  position: absolute;
+  left: -70px;
+  top: 50%;
+  font-size: 40px;
+  animation: pointingArrow 1s ease-in-out infinite;
+  z-index: 999999 !important;  /* 最大値に設定 */
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+  pointer-events: none;  /* クリックイベントを透過 */
+}
+
+/* SP版で👉をボタンの上に配置 */
+@media (max-width: 767px) {
+  .tutorial-highlight-button::before,
+  .simulate-button.tutorial-highlight::before {
+    content: '👇';  /* 下向きの指に変更 */
+    left: 50%;
+    top: -60px;  /* ボタンの上に配置 */
+    transform: translateX(-50%) rotate(0deg);  /* 中央揃え */
+    animation: pointingDown 1s ease-in-out infinite;  /* 下向きアニメーション */
+  }
+}
+
+/* SP版用の下向きアニメーション */
+@keyframes pointingDown {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+
 /* グローバルフォント設定と横スクロール防止 */
 html {
   overflow-x: hidden;
@@ -114,15 +329,37 @@ body {
     margin: 0.2in;
     size: A4 landscape;
   }
-  
-  /* 2ページ目以降も同じ設定 */
-  @page :not(:first) {
-    margin: 0.2in;
-    size: A4 landscape;
-  }
-  
+
+  /* すべてのページで同じ設定 */
+
   /* 印刷時に非表示にする要素 */
   .print\:hidden {
+    display: none !important;
+  }
+
+  /* React Joyrideのチュートリアル要素を印刷時に非表示 */
+  .react-joyride__tooltip,
+  .react-joyride__spotlight,
+  .react-joyride__overlay,
+  .react-joyride__beacon,
+  .__floater,
+  .__floater__arrow,
+  [class*="react-joyride"] {
+    display: none !important;
+  }
+
+  /* チュートリアルハイライトを印刷時に無効化 */
+  .tutorial-highlight,
+  .tutorial-highlight-button,
+  .tutorial-active-form {
+    outline: none !important;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+
+  /* チュートリアルの指差しアイコンを非表示 */
+  .tutorial-highlight-button::before,
+  .simulate-button.tutorial-highlight::before {
     display: none !important;
   }
   

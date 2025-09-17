@@ -125,7 +125,11 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     noi = annual_rent * 10000 - (management_fee * 12 + fixed_cost * 12 + property_tax)  # 円単位に統一
 
     # 税金計算用パラメータ（CCR/ROI計算のため）
-    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
+    effective_tax_rate_value = property_data.get('effective_tax_rate')
+    if effective_tax_rate_value is None:
+        effective_tax_rate = 20.0
+    else:
+        effective_tax_rate = float(effective_tax_rate_value)
     building_price = float(property_data.get('building_price', 2000) or 2000)
     depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
@@ -316,11 +320,15 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     accumulated_loss = 0  # 繰越欠損金の初期化（旧方式、互換性のため残す）
     # FIFO方式の繰越欠損金管理
     loss_carryforward_list = []  # [(year_occurred, amount, expiry_year), ...]
-    owner_type = property_data.get('owner_type', '個人')  # デフォルトは個人
+    owner_type = property_data.get('ownership_type', '個人')  # デフォルトは個人
     carryforward_years = 3 if owner_type == '個人' else 10  # 個人3年、法人10年
 
     # 税金計算用パラメータ
-    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
+    effective_tax_rate_value = property_data.get('effective_tax_rate')
+    if effective_tax_rate_value is None:
+        effective_tax_rate = 20.0
+    else:
+        effective_tax_rate = float(effective_tax_rate_value)
     building_price = float(property_data.get('building_price', 2000) or 2000)
     depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
@@ -365,8 +373,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax  # 円単位
 
         # 大規模修繕（資本的支出対応）
-        major_repair_cycle = int(property_data.get('major_repair_cycle', 0) or 0)
-        major_repair_cost = float(property_data.get('major_repair_cost', 0) or 0)
+        major_repair_cycle = int(property_data.get('major_repair_cycle', 0))
+        major_repair_cost = float(property_data.get('major_repair_cost', 0))
 
         # 修繕費の分類（20万円以上は資本的支出、未満は通常修繕）
         capital_repair_threshold = 20  # 20万円
@@ -594,8 +602,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         if sale_amount > 0:
             # 売却コスト（仲介手数料＋その他費用）
             sale_price_man = sale_amount / 10000  # 円単位から万円単位に変換
-            brokerage_fee = calculate_brokerage_fee(sale_price_man)
-            other_sale_costs = sale_price_man * 0.01  # その他費用（登記費用、印紙税等）約1%
+            brokerage_fee = calculate_brokerage_fee(sale_price_man)  # 万円単位で返される
+            other_sale_costs = sale_price_man * 0.01  # その他費用（登記費用、印紙税等）約1% 万円単位
             sale_cost = (brokerage_fee + other_sale_costs) * 10000  # 円単位に戻す
 
             # 譲渡所得税の計算
@@ -604,9 +612,12 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             other_costs = property_data.get('other_costs', 0)
             # 取得費 = 購入価格 + 改装費 + 諸経費
             acquisition_cost = (purchase_price + renovation_cost + other_costs) * 10000
-            capital_gain = sale_amount - acquisition_cost - depreciation * i  # 売却益
+            # 譲渡費用（仲介手数料 + その他費用）を控除して譲渡所得を計算
+            capital_gain = sale_amount - acquisition_cost - depreciation * i - sale_cost  # 譲渡費用も控除
 
             if capital_gain > 0:
+                # デバッグ用ログ
+                print(f"Year {i}: owner_type={owner_type}, effective_tax_rate={effective_tax_rate}, capital_gain={capital_gain/10000:.1f}万円")
                 if owner_type == '個人':
                     # 個人の場合：短期譲渡（5年以内）: 40%、長期譲渡（6年以降）: 20%
                     if i <= 5:
@@ -618,17 +629,24 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                     transfer_tax = capital_gain * (effective_tax_rate / 100)
             else:
                 transfer_tax = 0
+                print(f"Year {i}: capital_gain is negative or zero: {capital_gain/10000:.1f}万円")
 
             net_sale_proceeds = sale_amount - remaining_loan * 10000 - sale_cost - transfer_tax
+            # 売却費用の合計（仲介手数料 + 譲渡税）
+            total_sale_cost = int(brokerage_fee * 10000 + other_sale_costs * 10000 + transfer_tax)
         else:
             net_sale_proceeds = 0
+            brokerage_fee = 0
+            other_sale_costs = 0
+            transfer_tax = 0
+            total_sale_cost = 0
 
-        # 売却時累計CF（楽待方式）
+        # 売却時累計CF（楽待方式）- 互換性のため一時的に残す
         # 累計CF + (売却金額 - 売却費用 - 譲渡所得税 - 残存借入額) - 自己資金
         # ただし、グラフ表示用に自己資金の差し引きは別途計算
         sale_cumulative_cf = cum + net_sale_proceeds - basic_metrics['self_funding'] * 10000
 
-        # 売却による純利益（売却時累計CF - 累計CF）
+        # 売却による純利益（売却時累計CF - 累計CF）- 互換性のため一時的に残す
         sale_net_profit = sale_cumulative_cf - cum
 
         # グラフ表示用の売却時累計CF（自己資金を差し引かない）
@@ -662,8 +680,16 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             "DSCR": round(dscr, 2),  # DSCR計算済み
             "売却金額": int(sale_amount),  # 売却金額
             "売却時手取り": int(net_sale_proceeds),  # 売却時手取り
-            "売却による純利益": int(sale_net_profit),  # 売却による純利益
-            "売却時累計CF": int(sale_cumulative_cf),  # 売却時累計CF（楽待方式）
+            "売却による純利益": int(sale_net_profit),  # 売却による純利益（互換性のため残す）
+            "売却時累計CF": int(sale_cumulative_cf),  # 売却時累計CF（互換性のため残す）
+            # 新規フィールド（v2.0.0）
+            "schema_version": "v2.0.0",  # バージョン管理
+            "broker_fee": brokerage_fee,  # 仲介手数料（万円単位）
+            "other_disposal_fee": other_sale_costs,  # その他費用（万円単位）
+            "transfer_tax": int(transfer_tax),  # 譲渡税（円単位）
+            "売却費用": total_sale_cost,  # 表示用（仲介＋その他費用＋税金）
+            "売却時ネットCF": int(net_sale_proceeds),  # 手取り金額
+            "期末残債": int(remaining_loan * 10000),  # 期末残債（円単位）
             "売却価格内訳": {
                 "想定価格": (int(expected_sale_price *
                               pow(1 - price_decline_rate / 100, i - 1) * 10000)

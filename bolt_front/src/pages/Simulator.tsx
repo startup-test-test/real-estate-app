@@ -4,6 +4,7 @@ import {
   AlertCircle,
   Download
 } from 'lucide-react';
+import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
@@ -11,7 +12,6 @@ import { useUsageStatus } from '../hooks/useUsageStatus';
 import UpgradeModal from '../components/UpgradeModal';
 import CashFlowChart from '../components/CashFlowChart';
 import Tooltip from '../components/Tooltip';
-import Tutorial from '../components/Tutorial';
 import BackButton from '../components/BackButton';
 import Breadcrumb from '../components/Breadcrumb';
 import ImageUpload from '../components/ImageUpload';
@@ -24,7 +24,8 @@ import { validateSimulatorInputs } from '../utils/securityValidation';
 import { transformFormDataToApiData } from '../utils/dataTransform';
 import { emptyPropertyData } from '../constants/sampleData';
 import { tooltips } from '../constants/tooltips';
-import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions } from '../constants/masterData';
+import { sampleProperty } from '../data/sampleProperty';
+import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingStructureOptions, corporateTaxRateOptions, individualTaxRateOptions } from '../constants/masterData';
 import { formatCurrencyNoSymbol } from '../utils/formatHelpers';
 import { handleApiError, logError, getUserFriendlyErrorMessage } from '../utils/errorHandler';
 import { API_ENDPOINTS, debugApiConfig } from '../config/api';
@@ -56,10 +57,392 @@ const Simulator: React.FC = () => {
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
   const [showDetailPopup, setShowDetailPopup] = useState(false);
   const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
+  
+  // チュートリアル用のステート
+  const [runTutorial, setRunTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+
+  // チュートリアルステップの定義
+  const tutorialSteps = React.useMemo<Step[]>(() => {
+    const steps: Step[] = [];
+    
+    // ステップ2: シミュレーター画面到着（入力フォーム説明）
+    steps.push({
+      target: '[data-field="propertyName"]',  // 物件名フィールドをターゲットに
+      content: (
+        <div className="py-1">
+          <div className="text-sm text-gray-500 mb-2">ステップ 2/7</div>
+          <h3 className="font-bold text-lg mb-1">📝 まずは物件情報の入力が必要です</h3>
+          <p className="mb-1">通常はここに物件情報を入力しますが、</p>
+          <p className="text-blue-600 font-medium">今回はサンプルデータを入力済みです！</p>
+          <p className="text-sm mt-2 text-gray-600">下にスクロールして実行ボタンへ→</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'bottom',  // 下側に配置
+      spotlightClicks: true,  // スポットライトで強調
+      disableScrolling: false,  // スクロールを有効化
+      floaterProps: {
+        styles: {
+          floater: {
+            filter: 'none',
+          }
+        },
+        offset: 10,
+      },
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          width: 400,
+          arrowColor: '#FFFBEB',  // 矢印の色も調整
+        },
+        tooltip: {
+          padding: '15px 20px',  // 内側の余白
+          border: '2px solid #000000',  // 黒色の外枠を追加
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',  // 影も追加
+        },
+        tooltipContent: {
+          textAlign: 'left',
+        }
+      }
+    });
+    
+    // ステップ3: シミュレーション実行ボタン
+    steps.push({
+      target: '.simulate-button',
+      content: (
+        <div className="py-1">
+          <div className="text-sm text-gray-500 mb-2">ステップ 3/7</div>
+          <h3 className="font-bold text-lg mb-1">🚀 シミュレーション実行</h3>
+          <p className="text-base">実際にこのボタンをクリックして</p>
+          <p className="text-base">シミュレーションを実行してください！</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'top',
+      spotlightClicks: true,  // 実際のボタンをクリック可能
+      hideFooter: true,  // フッター（次へボタン等）を非表示
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          arrowColor: '#FFFBEB',
+        },
+        tooltip: {
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        }
+      }
+    });
+    
+    // ステップ4: 評価額と投資指標説明
+    steps.push({
+      target: '.investment-metrics-section',
+      content: (
+        <div className="py-1">
+          <div className="text-sm text-gray-500 mb-2">ステップ 4/7</div>
+          <h3 className="font-bold text-lg mb-1">📊 評価額と投資指標</h3>
+          <p className="mb-1">物件価値の推移や投資効率を確認できます。</p>
+          <p className="text-sm text-gray-600">IRRや回収期間など重要な指標が表示されます。</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'bottom',
+      spotlightClicks: false,
+      floaterProps: {
+        offset: 20,
+      },
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          arrowColor: '#FFFBEB',
+        },
+        tooltip: {
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        },
+        spotlight: {
+          borderRadius: '8px',
+        }
+      }
+    });
+    
+    // ステップ5: 年次キャッシュフロー説明
+    steps.push({
+      target: '.cashflow-chart-container',
+      content: (
+        <div className="py-1">
+          <div className="text-sm text-gray-500 mb-2">ステップ 5/7</div>
+          <h3 className="font-bold text-lg mb-1">📊 年次キャッシュフロー</h3>
+          <p className="mb-1">35年間の収支推移をグラフで確認できます。</p>
+          <p className="text-sm text-gray-600">累積キャッシュフローで投資回収時期も分かります。</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'bottom',
+      spotlightClicks: false,
+      floaterProps: {
+        offset: 20,
+      },
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          arrowColor: '#FFFBEB',
+        },
+        tooltip: {
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        },
+        spotlight: {
+          borderRadius: '8px',
+        }
+      }
+    });
+    
+    // ステップ6: 詳細キャッシュフロー分析説明
+    steps.push({
+      target: '.detail-cashflow-table-wrapper',
+      content: (
+        <div className="py-1">
+          <div className="text-sm text-gray-500 mb-2">ステップ 6/7</div>
+          <h3 className="font-bold text-lg mb-1">📊 詳細キャッシュフロー分析</h3>
+          <p className="mb-1">年ごとの詳細な収支内訳を表形式で確認できます。</p>
+          <p className="text-sm text-gray-600">不動産収入、経費、税金、ローン返済額、累積キャッシュフローなどが詳細に分析されています。</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'top',
+      spotlightClicks: false,
+      disableScrolling: false,
+      floaterProps: {
+        offset: 10,
+      },
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          arrowColor: '#FFFBEB',
+          overlayColor: 'transparent',
+        },
+        tooltip: {
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        },
+        spotlight: {
+          backgroundColor: 'transparent',
+        }
+      }
+    });
+    
+    // ステップ7: PDF保存機能説明
+    steps.push({
+      target: window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc',
+      content: (
+        <div className="py-1">
+          <div className="text-sm text-gray-500 mb-2">ステップ 7/7</div>
+          <h3 className="font-bold text-lg mb-1">💾 分析結果の保存</h3>
+          <p className="mb-1">シミュレーション結果はPDFとして</p>
+          <p className="text-sm text-gray-600">保存・印刷することができます。</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'bottom',
+      spotlightClicks: false,
+      disableScrolling: false,
+      floaterProps: {
+        offset: 10,
+      },
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          arrowColor: '#FFFBEB',
+          overlayColor: 'transparent',
+        },
+        tooltip: {
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        },
+        spotlight: {
+          backgroundColor: 'transparent',
+        }
+      }
+    });
+    
+    // ステップ8: チュートリアル完了
+    steps.push({
+      target: window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc',  // デバイスに応じて切り替え
+      content: (
+        <div className="py-1">
+          <h3 className="font-bold text-lg mb-1">🎉 チュートリアル完了！</h3>
+          <p className="mb-1">お疲れ様でした！</p>
+          <p className="text-sm text-gray-600">実際の物件でもぜひお試しください。</p>
+        </div>
+      ),
+      disableBeacon: true,
+      placement: 'bottom',
+      spotlightClicks: false,
+      styles: {
+        options: {
+          primaryColor: '#3B82F6',
+          zIndex: 10000,
+          arrowColor: '#FFFBEB',
+        },
+        tooltip: {
+          padding: '15px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        }
+      }
+    });
+    
+    console.log('📚 Tutorial steps created:', steps.length);
+    return steps;
+  }, []);
+
+  // チュートリアルのステート変更を監視
+  useEffect(() => {
+    console.log('📚 Tutorial state changed:', {
+      runTutorial,
+      tutorialStep,
+      stepsCount: tutorialSteps?.length || 0
+    });
+    
+    // ハイライトクラスの管理
+    const elements = [
+      '.detail-cashflow-table-wrapper',
+      '.pdf-save-button',
+      '.pdf-save-button-sp',
+      '.pdf-save-button-pc',
+      '.investment-metrics-section',
+      '.cashflow-chart-container',
+      '.property-info-section',  // 物件情報セクションも追加
+      '.property-form-container',  // フォームコンテナも追加
+      '.simulate-button'  // シミュレーションボタンも追加
+    ];
+    
+    // 全要素からハイライトクラスを削除
+    elements.forEach(selector => {
+      const el = document.querySelector(selector);
+      if (el) {
+        el.classList.remove('tutorial-highlight');
+        el.classList.remove('tutorial-active-form');  // 古いクラスも削除
+      }
+    });
+    
+    // 現在のステップに応じてハイライトクラスを追加
+    if (runTutorial) {
+      // 少し遅延させてJoyrideのレンダリングと同期
+      setTimeout(() => {
+        let targetSelector = '';
+        
+        console.log('🎯 Current tutorial step for highlight:', tutorialStep);
+        
+        // ステップインデックスに基づいてターゲットを決定
+        switch(tutorialStep) {
+          case 0: // ステップ2: 物件情報入力
+            targetSelector = '.property-form-container';
+            break;
+          case 1: // ステップ3: シミュレーション実行ボタン
+            targetSelector = '.simulate-button';
+            break;
+          case 2: // ステップ4: 評価額と投資指標
+            targetSelector = '.investment-metrics-section';
+            break;
+          case 3: // ステップ5: 年次キャッシュフロー
+            targetSelector = '.cashflow-chart-container';
+            console.log('📊 Step 5: Highlighting cash flow chart');
+            break;
+          case 4: // ステップ6: 詳細キャッシュフロー分析
+            targetSelector = '.detail-cashflow-table-wrapper';
+            break;
+          case 5: // ステップ7: PDF保存
+            targetSelector = window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc';
+            break;
+          case 6: // ステップ8: 完了
+            targetSelector = window.innerWidth < 768 ? '.pdf-save-button-sp' : '.pdf-save-button-pc';
+            break;
+        }
+        
+        // まず全要素からハイライトクラスを再度削除（確実性のため）
+        elements.forEach(selector => {
+          const el = document.querySelector(selector);
+          if (el) {
+            el.classList.remove('tutorial-highlight');
+            el.classList.remove('tutorial-active-form');
+          }
+        });
+        
+        // 特に物件情報セクションからは確実に削除
+        const propertyInfoEl = document.querySelector('.property-info-section');
+        if (propertyInfoEl) {
+          propertyInfoEl.classList.remove('tutorial-highlight');
+          propertyInfoEl.classList.remove('tutorial-active-form');
+        }
+        
+        // ターゲット要素にハイライトを追加
+        if (targetSelector) {
+          const targetEl = document.querySelector(targetSelector);
+          if (targetEl) {
+            targetEl.classList.add('tutorial-highlight');
+            console.log(`✨ Added highlight to: ${targetSelector}`);
+            console.log('📍 Element classes:', targetEl.className);
+
+            // ステップ3（シミュレーション実行ボタン）の場合、自動スクロール
+            if (tutorialStep === 1 && targetSelector === '.simulate-button') {
+              setTimeout(() => {
+                targetEl.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'center'
+                });
+                console.log('📌 Auto-scrolled to simulate button for step 3');
+              }, 100);
+            }
+            
+            // 結果表示系のステップ（4以降）では、物件情報セクションからハイライトを確実に削除
+            if (tutorialStep >= 2) {
+              const propertySection = document.querySelector('.property-info-section');
+              if (propertySection) {
+                propertySection.classList.remove('tutorial-highlight');
+                propertySection.classList.remove('tutorial-active-form');
+                console.log('🚫 Removed all highlights from property-info-section for step:', tutorialStep);
+              }
+              
+              // フォームコンテナからも削除
+              const formContainer = document.querySelector('.property-form-container');
+              if (formContainer) {
+                formContainer.classList.remove('tutorial-highlight');
+                formContainer.classList.remove('tutorial-active-form');
+                console.log('🚫 Removed all highlights from property-form-container');
+              }
+              
+              // シミュレーションボタンからも削除（ステップ3実行後は不要）
+              if (tutorialStep >= 2) {
+                const simButton = document.querySelector('.simulate-button');
+                if (simButton) {
+                  simButton.classList.remove('tutorial-highlight');
+                }
+              }
+            }
+          } else {
+            console.log(`⚠️ Target element not found: ${targetSelector}`);
+          }
+        }
+      }, 100);
+    }
+  }, [runTutorial, tutorialStep, tutorialSteps]);
   
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -154,14 +537,6 @@ const Simulator: React.FC = () => {
 
 
 
-  // 初回アクセス時にチュートリアルを表示
-  useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-    if (!hasSeenTutorial) {
-      setShowTutorial(true);
-      localStorage.setItem('hasSeenTutorial', 'true');
-    }
-  }, []);
 
   // URLパラメータから編集IDまたは閲覧IDを取得
   useEffect(() => {
@@ -169,23 +544,101 @@ const Simulator: React.FC = () => {
     const editId = searchParams.get('edit');
     const viewId = searchParams.get('view');
     
-    if (editId) {
+    // サンプル物件の場合
+    if (viewId === 'sample-property-001') {
+      loadSamplePropertyData();
+      // サンプル物件からの遷移時、チュートリアルを開始
+      const fromTutorial = sessionStorage.getItem('tutorial_in_progress');
+      if (fromTutorial === 'true') {
+        // チュートリアル中はハッシュをクリア
+        if (window.location.hash === '#results') {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+        setTimeout(() => {
+          // フォーム部分にスクロール
+          const formElement = document.querySelector('.property-form-container');
+          console.log('📌 Attempting to scroll to FORM:', !!formElement);
+          if (formElement) {
+            console.log('📌 SCROLLING TO FORM NOW!');
+            formElement.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+          // チュートリアル開始
+          setTimeout(() => {
+            setRunTutorial(true);
+            setTutorialStep(0); // ステップ2（インデックス0）から開始
+          }, 500);
+        }, 1000);
+      }
+    } else if (editId) {
       setEditingId(editId);
       loadExistingData(editId);
     } else if (viewId) {
       setEditingId(viewId);
       loadExistingData(viewId);
+      // DBに保存されたサンプル物件の場合もチェック
+      const checkIfSampleAndStartTutorial = async () => {
+        const result = await getSimulations();
+        if (result.data) {
+          const sim = result.data.find((s: any) => s.id === viewId);
+          if (sim?.simulation_data?.propertyName?.startsWith('【サンプル】')) {
+            const fromTutorial = sessionStorage.getItem('tutorial_in_progress');
+            if (fromTutorial === 'true') {
+              // チュートリアル中はハッシュをクリア
+              if (window.location.hash === '#results') {
+                window.history.replaceState(null, '', window.location.pathname + window.location.search);
+              }
+              // チュートリアル中はスクロールしない - すぐにチュートリアルを開始
+              console.log('📌 Tutorial in progress - NOT scrolling, starting tutorial directly');
+              
+              // チュートリアル開始（スクロール無し）
+              setTimeout(() => {
+                setRunTutorial(true);
+                setTutorialStep(0);
+                console.log('🎯 Tutorial started without scrolling');
+              }, 500);
+            }
+          }
+        }
+      };
+      checkIfSampleAndStartTutorial();
     }
   }, [location.search]);
 
 
   // Hash-based scrolling to results section
   useEffect(() => {
+    // チュートリアル中はスクロールしない
+    const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+    
+    console.log('🔍 Scroll useEffect triggered:');
+    console.log('  - isTutorialActive:', isTutorialActive);
+    console.log('  - location.hash:', location.hash);
+    console.log('  - hasResults:', !!simulationResults);
+    console.log('  - hasRef:', !!resultsRef.current);
+    console.log('  - runTutorial state:', runTutorial);
+    console.log('  - tutorialStep:', tutorialStep);
+    
+    // チュートリアル中の場合はハッシュをクリアして何もしない
+    if (isTutorialActive) {
+      if (location.hash === '#results') {
+        console.log('⚠️ Tutorial active: clearing hash #results');
+        // ハッシュをクリア（履歴に残さない）
+        window.history.replaceState(null, '', location.pathname + location.search);
+      }
+      console.log('✅ Tutorial active: skipping scroll');
+      return; // 早期リターンで以降の処理をスキップ
+    }
+    
     // Check if URL contains #results hash
     if (location.hash === '#results' && simulationResults && resultsRef.current) {
+      console.log('📍 SCROLLING TO RESULTS SECTION NOW!');
       // Delay scroll to ensure results are fully rendered
       const timer = setTimeout(() => {
         if (resultsRef.current) {
+          console.log('📍 Actually scrolling now!');
           resultsRef.current.scrollIntoView({ 
             behavior: 'smooth',
             block: 'start'
@@ -197,6 +650,84 @@ const Simulator: React.FC = () => {
     }
   }, [location.hash, simulationResults]);
 
+  // サンプル物件データを読み込む
+  const loadSamplePropertyData = () => {
+    const data = sampleProperty.simulation_data;
+    
+    // フォームに値を設定
+    setInputs({
+      propertyName: '【サンプル】シミュレーション',
+      location: '東京都サンプル住所',
+      yearBuilt: 2014,  // 築10年
+      propertyType: 'RC造',  // 建物構造をpropertyTypeフィールドに設定
+      landArea: 18.2,  // 土地持分面積
+      buildingArea: 25.5,  // 専有面積
+      roadPrice: 850000,  // 路線価 85万円/㎡（渋谷区の標準的な価格）
+      marketValue: data.purchasePrice + 200,  // 市場価格は購入価格より少し高め
+      purchasePrice: data.purchasePrice,
+      otherCosts: 150,  // 諸費用150万円
+      renovationCost: 80,  // 軽微なリフォーム費用80万円
+      monthlyRent: data.monthlyRent,
+      managementFee: data.managementFee,
+      fixedCost: data.repairReserve,  // 修繕積立金
+      propertyTax: 8.4,  // 固定資産税年間8.4万円
+      vacancyRate: 5.00,  // 空室率5%
+      rentDecline: 1.00,  // 賃料下落率1%
+      loanAmount: data.loanAmount,
+      interestRate: data.interestRate,
+      loanYears: data.loanTerms,
+      loanType: '元利均等',
+      holdingYears: data.saleYears,
+      exitCapRate: 5.50,
+      expectedSalePrice: data.salePrice,
+      ownershipType: '個人',
+      effectiveTaxRate: 20,
+      majorRepairCycle: 15,
+      majorRepairCost: 120,  // 大規模修繕120万円
+      buildingPriceForDepreciation: 1960,  // 建物価格1,960万円（全体の70%）
+      depreciationYears: 47,  // RC造の法定耐用年数
+      propertyUrl: 'https://ooya.tech/',
+      propertyMemo: 'サンプル物件で入れております。',
+      propertyImageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+      propertyStatus: '検討中',
+      annualDepreciationRate: 1.0,
+      priceDeclineRate: 1.0  // 年1%下落
+    });
+    
+    // サンプル結果も設定（事前計算済み）
+    setSimulationResults({
+      results: {
+        '表面利回り（%）': 5.36,
+        '実質利回り（%）': 4.12,
+        'IRR（%）': 8.7,
+        'CCR（%）': 6.3,
+        'CCR（初年度）（%）': 6.3,
+        'CCR（全期間）（%）': 7.8,
+        'ROI（%）': 11.25,
+        'ROI（初年度）（%）': 6.8,
+        'ROI（全期間）（%）': 11.25,
+        'DSCR（返済余裕率）': 1.23,
+        'NOI（円）': 1425000,  // 年間NOI 142.5万円
+        'LTV（%）': 90,  // LTV 90%
+        '月間キャッシュフロー（円）': 15800,
+        '年間キャッシュフロー（円）': 189600,
+        '積算評価合計（万円）': 2654,  // 土地+建物評価
+        '収益還元評価額（万円）': 2590,  // 収益還元法による評価
+        '想定売却価格（万円）': 2520,
+        '残債（万円）': 1890,  // 10年後の残債
+        '売却コスト（万円）': 85,  // 売却費用約3.5%
+        '売却益（万円）': 545,  // 売却価格-残債-売却コスト
+        '総投資額（円）': 30300000,  // 購入価格+諸費用+リフォーム
+        '自己資金（円）': 5100000,  // 頭金+諸費用+リフォーム
+        '自己資金（万円）': 510,
+        '借入額（円）': 25200000,
+        '土地積算評価（万円）': 1547,  // 土地評価額
+        '建物積算評価（万円）': 1107  // 建物評価額
+      },
+      cash_flow_table: []
+    });
+  };
+  
   // 既存データを読み込む
   const loadExistingData = async (simulationId: string) => {
     if (!user) return;
@@ -259,8 +790,15 @@ const Simulator: React.FC = () => {
           priceDeclineRate: simData.priceDeclineRate !== undefined && simData.priceDeclineRate !== null ? simData.priceDeclineRate : 0
         });
         
-        // 既存の結果も表示
-        if (simulation.results) {
+        // 既存の結果も表示（チュートリアル中は除く）
+        const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+        console.log('🔍 loadExistingData: Setting simulation results');
+        console.log('  - isTutorialActive:', isTutorialActive);
+        console.log('  - has simulation.results:', !!simulation.results);
+        console.log('  - current location.hash:', location.hash);
+        
+        if (simulation.results && !isTutorialActive) {
+          console.log('⚠️ SETTING SIMULATION RESULTS FROM EXISTING DATA');
           setSimulationResults({
             results: {
               '表面利回り（%）': simulation.results.surfaceYield || simulation.results['表面利回り（%）'],
@@ -452,11 +990,12 @@ const Simulator: React.FC = () => {
           // 法定耐用年数の取得
           const getLegalUsefulLife = (structure: string): number => {
             switch (structure) {
-              case 'RC': return 47;
-              case 'SRC': return 39;
-              case 'S': return 34; // 重量鉄骨造
+              case 'RC造': return 47;
+              case 'SRC造': return 47;
+              case '重量鉄骨造': return 34;
+              case '軽量鉄骨造': return 27;
               case '木造': return 22;
-              default: return 27; // 軽量鉄骨造をデフォルト
+              default: return 27; // デフォルト
             }
           };
           
@@ -619,15 +1158,19 @@ const Simulator: React.FC = () => {
       setFieldErrors(zeroFieldErrors);
       setSaveError('入力エラー: ' + zeroValueErrors.join(', '));
       
-      // エラーメッセージ表示後にスクロール
-      setTimeout(() => {
-        if (resultsRef.current) {
-          resultsRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
-          });
-        }
-      }, 100);
+      // チュートリアル中はスクロールしない
+      const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+      if (!isTutorialActive) {
+        // エラーメッセージ表示後にスクロール
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+      }
       return;
     }
     
@@ -685,15 +1228,19 @@ const Simulator: React.FC = () => {
       setFieldErrors(maxFieldErrors);
       setSaveError('入力エラー: ' + maxValueErrors.join(', '));
       
-      // エラーメッセージ表示後にスクロール
-      setTimeout(() => {
-        if (resultsRef.current) {
-          resultsRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
-          });
-        }
-      }, 100);
+      // チュートリアル中はスクロールしない
+      const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+      if (!isTutorialActive) {
+        // エラーメッセージ表示後にスクロール
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+      }
       return;
     }
     
@@ -713,15 +1260,19 @@ const Simulator: React.FC = () => {
         setFieldErrors(yieldFieldErrors);
         setSaveError('入力エラー: ' + yieldErrors.join(', '));
         
-        // エラーメッセージ表示後にスクロール
-        setTimeout(() => {
-          if (resultsRef.current) {
-            resultsRef.current.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'start' 
-            });
-          }
-        }, 100);
+        // チュートリアル中はスクロールしない
+        const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+        if (!isTutorialActive) {
+          // エラーメッセージ表示後にスクロール
+          setTimeout(() => {
+            if (resultsRef.current) {
+              resultsRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+              });
+            }
+          }, 100);
+        }
         return;
       }
       
@@ -923,15 +1474,46 @@ const Simulator: React.FC = () => {
       if (result.results) {
         setSimulationResults(result);
         
-        // 結果表示後に自動スクロール
-        setTimeout(() => {
-          if (resultsRef.current) {
-            resultsRef.current.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'start' 
-            });
+        // チュートリアル中はスクロールしない
+        const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+        console.log('🎯 Simulation completed:');
+        console.log('  - isTutorialActive:', isTutorialActive);
+        console.log('  - tutorialStep:', tutorialStep);
+        console.log('  - location.hash:', location.hash);
+        
+        if (isTutorialActive) {
+          console.log('✅ Tutorial active: NOT scrolling after simulation');
+          console.log('  - Current tutorialStep:', tutorialStep);
+          console.log('  - runTutorial:', runTutorial);
+          
+          // チュートリアル中の場合
+          // ステップ3（シミュレーション実行ボタン）クリック時の処理
+          if (runTutorial && tutorialStep === 1) {
+            // シミュレーション実行ボタンをクリックした場合
+            // 結果が表示されたら次のステップ（ステップ4: 評価額と投資指標）へ
+            console.log('🎯 Tutorial: Simulation button clicked at step 1');
+            console.log('📝 Will move to step 4 (評価額と投資指標) after results load');
+            
+            setTimeout(() => {
+              setTutorialStep(2); // ステップ4（インデックス2: 評価額と投資指標）へ
+              setRunTutorial(true); // チュートリアルを確実に継続
+              console.log('📝 Tutorial advanced to step:', 2);
+              // Joyrideが自動的にスクロールするため、手動スクロールは不要
+            }, 2000);
           }
-        }, 100);
+          // チュートリアル中は絶対にスクロールしない
+        } else {
+          // チュートリアル中でない場合のみ自動スクロール
+          console.log('📍 Tutorial NOT active: scrolling to results');
+          setTimeout(() => {
+            if (resultsRef.current) {
+              resultsRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+              });
+            }
+          }, 100);
+        }
         
         // ユーザーがログインしている場合はSupabaseに保存
         if (user) {
@@ -1015,15 +1597,41 @@ const Simulator: React.FC = () => {
               fullData: simulationData
             });
             
-            // 編集モードかどうかを判定
-            const isEditMode = Boolean(editingId);
-            console.log('🔍 編集モード:', isEditMode, 'editingId:', editingId);
+            // サンプル物件の特別処理
+            let actualEditingId = editingId;
+            const isSampleProperty = editingId === 'sample-property-001';
+            
+            if (isSampleProperty) {
+              // サンプル物件の場合、既存のサンプル物件を検索
+              const { data: existingSimulations, error: fetchError } = await getSimulations();
+              
+              if (!fetchError && existingSimulations) {
+                // 物件名が【サンプル】で始まる物件を探す
+                const existingSample = existingSimulations.find(
+                  (sim: any) => sim.simulation_data?.propertyName?.startsWith('【サンプル】')
+                );
+                
+                if (existingSample) {
+                  // 既存のサンプル物件がある場合は、そのIDを使用して更新
+                  actualEditingId = existingSample.id;
+                  console.log('既存のサンプル物件を更新:', actualEditingId);
+                } else {
+                  // 既存のサンプル物件がない場合は新規作成
+                  actualEditingId = null;
+                  console.log('新規サンプル物件として作成');
+                }
+              }
+            }
+            
+            // 編集モードかどうかを判定（サンプル物件の既存IDも考慮）
+            const isEditMode = Boolean(actualEditingId) && actualEditingId !== 'sample-property-001';
+            console.log('🔍 編集モード:', isEditMode, 'editingId:', actualEditingId);
             
             // シミュレーションデータを保存（編集モードの場合は更新、新規の場合は作成）
             const { data, error: saveError } = await saveSimulation(
               simulationData, 
               undefined, // 共有トークンは不要
-              isEditMode ? editingId ?? undefined : undefined
+              isEditMode ? actualEditingId ?? undefined : undefined
             );
             
             if (saveError) {
@@ -1038,9 +1646,10 @@ const Simulator: React.FC = () => {
               setEditingId(data.id);
               console.log('新規保存後、editingIdを設定:', data.id);
             }
-            // 編集モードの場合でも、保存後にeditingIdが正しく設定されていることを確認
-            else if (isEditMode && data && data.id && !editingId) {
-              setEditingId(data.id);
+            // サンプル物件の場合も、保存後のIDを記憶
+            else if (isSampleProperty && data && data.id) {
+              // 次回からは更新モードになるように、実際のIDを保持
+              console.log('サンプル物件のIDを記憶:', data.id);
             }
             
           } catch (saveError) {
@@ -1079,15 +1688,19 @@ const Simulator: React.FC = () => {
           setSaveError(`シミュレーション処理でエラーが発生しました: ${errorMessage}`);
         }
         
-        // エラーメッセージを画面に表示（結果エリアまでスクロール）
-        setTimeout(() => {
-          if (resultsRef.current) {
-            resultsRef.current.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'start' 
-            });
-          }
-        }, 100);
+        // チュートリアル中はスクロールしない
+        const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+        if (!isTutorialActive) {
+          // エラーメッセージを画面に表示（結果エリアまでスクロール）
+          setTimeout(() => {
+            if (resultsRef.current) {
+              resultsRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+              });
+            }
+          }, 100);
+        }
       } finally {
         setIsSimulating(false);
       }
@@ -1151,7 +1764,39 @@ const Simulator: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <button
-                onClick={() => setShowTutorial(true)}
+                onClick={() => {
+                  console.log('📖 使い方を見るボタンがクリックされました');
+                  
+                  // 要素の存在確認
+                  const propertySection = document.querySelector('.property-info-section');
+                  const simulateButton = document.querySelector('.simulate-button');
+                  console.log('要素の存在確認:', { 
+                    propertySection: !!propertySection,
+                    simulateButton: !!simulateButton 
+                  });
+                  
+                  // チュートリアルを開始
+                  sessionStorage.setItem('tutorial_in_progress', 'true');
+                  
+                  // 結果が表示されている場合はステップ4から、そうでない場合はステップ2から開始
+                  if (simulationResults) {
+                    console.log('結果あり: ステップ4から開始');
+                    setTutorialStep(2); // ステップ4（評価額と投資指標）から開始
+                  } else {
+                    console.log('結果なし: ステップ2から開始');
+                    setTutorialStep(0); // ステップ2（物件情報入力）から開始
+                  }
+                  
+                  // チュートリアルを開始（少し遅延を入れて確実に開始）
+                  setTimeout(() => {
+                    setRunTutorial(true);
+                    console.log('チュートリアル開始実行:', { 
+                      runTutorial: true, 
+                      tutorialStep: simulationResults ? 3 : 0,
+                      stepsLength: 8
+                    });
+                  }, 100);
+                }}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <span>使い方を見る</span>
@@ -1189,9 +1834,9 @@ const Simulator: React.FC = () => {
         )}
 
         {/* Input Form */}
-        <div className="bg-transparent md:bg-white md:rounded-lg md:border md:border-gray-200 p-0 md:p-6 space-y-6 print:hidden">
+        <div className="property-form-container bg-transparent md:bg-white md:rounded-lg md:border md:border-gray-200 p-0 md:p-6 space-y-6 print:hidden">
           {/* 🏠 物件情報 */}
-          <div>
+          <div className="property-info-section">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 md:border-0 md:pb-0">🏠 物件情報 <span className="text-red-500 text-xs bg-red-100 px-2 py-1 rounded ml-2">必須</span></h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* 物件名 */}
@@ -1837,9 +2482,9 @@ const Simulator: React.FC = () => {
                     handleInputChange('ownershipType', newOwnershipType);
                     // 所有形態に応じて実効税率のデフォルト値を設定
                     if (newOwnershipType === '個人') {
-                      handleInputChange('effectiveTaxRate', 30); // 個人の一般的な実効税率（所得税20% + 住民税10%）
+                      handleInputChange('effectiveTaxRate', 20); // 個人のデフォルト（課税所得695万円以下）
                     } else if (newOwnershipType === '法人') {
-                      handleInputChange('effectiveTaxRate', 30); // 法人の一般的な実効税率（中小法人）
+                      handleInputChange('effectiveTaxRate', 30); // 法人のデフォルト（一般法人）
                     }
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -1856,22 +2501,33 @@ const Simulator: React.FC = () => {
               <div>
                 <div className="flex items-center mb-2">
                   <label className="text-sm font-medium text-gray-700">
-                    実効税率
+                    {inputs.ownershipType === '法人' ? '実効税率' : '所得税率'}
                   </label>
                   <Tooltip content={tooltips.effectiveTaxRate} />
                 </div>
-                <div className="flex items-center space-x-1">
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={inputs.effectiveTaxRate ?? ''}
-                    onChange={(e) => handleFieldChange('effectiveTaxRate', e.target.value)}
-                    onFocus={handleNumberInputFocus}
-                    onKeyDown={handleNumberInputKeyDown}
-                    data-field="effectiveTaxRate"
+                <div className="space-y-2">
+                  <select
+                    value={String(inputs.effectiveTaxRate)}
+                    onChange={(e) => {
+                      handleInputChange('effectiveTaxRate', parseFloat(e.target.value));
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  />
-                  <span className="text-sm text-gray-500 ml-2">%</span>
+                  >
+                    {(inputs.ownershipType === '法人' ? corporateTaxRateOptions : individualTaxRateOptions).map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* 個人の場合の譲渡税説明 */}
+                  {inputs.ownershipType === '個人' && (
+                    <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded">
+                      <div className="font-semibold mb-1">この税率は運用中の家賃収入に適用されます</div>
+                      ※ 売却時の譲渡所得税は保有期間により自動決定<br/>
+                      　（5年以内：40%、5年超：20%）
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1932,9 +2588,10 @@ const Simulator: React.FC = () => {
                         const buildingAge = currentYear - inputs.yearBuilt;
                         const getLegalLife = (structure: string) => {
                           switch (structure) {
-                            case 'RC': return 47;
-                            case 'SRC': return 39;
-                            case 'S': return 34;
+                            case 'RC造': return 47;
+                            case 'SRC造': return 47;
+                            case '重量鉄骨造': return 34;
+                            case '軽量鉄骨造': return 27;
                             case '木造': return 22;
                             default: return 27;
                           }
@@ -2168,11 +2825,11 @@ const Simulator: React.FC = () => {
               <button 
                 onClick={handleSimulation}
                 disabled={isSimulating}
-                className={`flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] touch-manipulation ${
+                className={`simulate-button flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] touch-manipulation ${
                   isSimulating
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-                }`}
+                } ${runTutorial && tutorialStep === 1 ? 'tutorial-highlight' : ''}`}
               >
                 {isSimulating ? (
                   <div className="flex items-center">
@@ -2238,7 +2895,7 @@ const Simulator: React.FC = () => {
                   
                   <button
                     onClick={handleSaveToPDF}
-                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
+                    className="pdf-save-button pdf-save-button-pc flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
                     title="PDFとして保存"
                   >
                     <Download size={18} />
@@ -2256,7 +2913,7 @@ const Simulator: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <button
                     onClick={handleSaveToPDF}
-                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm print:hidden"
+                    className="pdf-save-button pdf-save-button-sp flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm print:hidden"
                     title="PDFとして保存"
                   >
                     <Download size={16} />
@@ -2272,7 +2929,7 @@ const Simulator: React.FC = () => {
             </div>
             
             {/* 物件価値評価と重要投資指標 */}
-            <div className="mb-6 print:mb-2">
+            <div className="mb-6 print:mb-2 investment-metrics-section">
               <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と投資指標</h3>
               
               {/* SP版: 4つの重要指標のみ表示 */}
@@ -2692,18 +3349,19 @@ const Simulator: React.FC = () => {
                 </div>
 
                 {/* キャッシュフローグラフ */}
-                <div className="mb-6">
+                <div className="mb-6 cashflow-chart-container">
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
-                
+
                 {/* 詳細キャッシュフロー分析 - 印刷時は2ページ目に配置 */}
-                <div className="mb-4 print:break-before-page">
+                <div className="mb-4 print:break-before-page detail-cashflow-analysis-section">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
+
                 </div>
                 
-                <div className="border border-gray-300 rounded-lg overflow-hidden relative">
+                <div className="border border-gray-300 rounded-lg overflow-hidden relative detail-cashflow-table-wrapper">
                   {/* スクロール案内 - テーブルの中央に重ねて配置、3秒後に自動フェードアウト、印刷時は非表示 */}
-                  <div 
+                  <div
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none animate-fade-out print:hidden"
                     style={{
                       animation: 'fadeOut 0.5s ease-in-out 5s forwards'
@@ -2721,11 +3379,11 @@ const Simulator: React.FC = () => {
                       <span className="text-white text-2xl">→</span>
                     </div>
                   </div>
-                  
-                  {/* PC版・SP版ともに横スクロール可能に */}
-                  <div className="relative overflow-x-auto cashflow-table-container print:overflow-visible">
+
+                  {/* PC版・SP版ともに横スクロール可能に、ヘッダー固定のため高さを制限 */}
+                  <div className="relative overflow-x-auto overflow-y-auto max-h-[600px] md:max-h-[700px] cashflow-table-container print:overflow-visible print:max-h-none">
                     <table className="min-w-full bg-white print:min-w-0 print:w-full print:table-fixed" style={{ minWidth: '1100px' }}>
-                      <thead className="bg-blue-900 sticky top-0 z-10">
+                      <thead className="bg-blue-900 sticky top-0 z-30 shadow-lg">
                         <tr>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
@@ -2846,19 +3504,19 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却<br/>純利益
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[250px]">
-                            売却純利益<br/>
-                            = 売却時累計CF - 累計CF<br/>
-                            売却により追加される利益を表します
+                          売却費用<br/>(仲介+税金)
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
+                            売却時にかかる費用<br/>
+                            = 仲介手数料 + 譲渡税<br/>
+                            売却価格から差し引かれる費用です
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却時<br/>累計CF
+                          売却時<br/>ネットCF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
-                            売却時の累計キャッシュフロー<br/>
-                            = 累計CF + 売却による純利益<br/>
-                            投資全体の純利益を表します
+                            売却時の手取り金額<br/>
+                            = 売却金額 - 売却費用 - 期末残債<br/>
+                            実際に手元に残る金額です
                           </div>
                         </th>
                       </tr>
@@ -2881,8 +3539,8 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${((row as any)['繰越欠損金'] || 0) > 0 ? 'text-blue-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol((row as any)['繰越欠損金'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
-                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
-                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却費用'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却費用'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時ネットCF'] || row['売却時手取り'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時ネットCF'] || row['売却時手取り'] || 0)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -2974,11 +3632,6 @@ const Simulator: React.FC = () => {
         </div>
       </div>
 
-      {/* チュートリアル */}
-      <Tutorial 
-        isOpen={showTutorial} 
-        onClose={() => setShowTutorial(false)} 
-      />
       
       {/* SP版詳細指標ポップアップ */}
       {showDetailPopup && (
@@ -3208,6 +3861,113 @@ const Simulator: React.FC = () => {
       <UpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
+      />
+      
+      {/* チュートリアル */}
+      <Joyride
+        steps={tutorialSteps}
+        run={runTutorial}
+        stepIndex={tutorialStep}
+        continuous={true}
+        showSkipButton={true}
+        disableOverlay={true}
+        disableOverlayClose={false}
+        disableCloseOnEsc={false}
+        scrollToFirstStep={false}
+        scrollOffset={window.innerWidth < 768 ? 100 : 20}
+        disableScrollParentFix={window.innerWidth < 768}
+        callback={(data: CallBackProps) => {
+          const { status, index, type, action } = data;
+          
+          console.log('🎯 Joyride callback:', { status, index, type, action });
+          
+          // SP版でステップ2（index=0）が表示される前のスクロール調整
+          if (window.innerWidth < 768 && type === 'step:before' && index === 0) {
+            const target = document.querySelector('[data-field="propertyName"]');
+            if (target) {
+              const rect = target.getBoundingClientRect();
+              const absoluteTop = rect.top + window.pageYOffset;
+              // ヘッダーの高さを考慮してスクロール
+              window.scrollTo({
+                top: absoluteTop - 100,
+                behavior: 'smooth'
+              });
+            }
+          }
+          
+          // ステップが変更されたとき（次へボタンクリック後）
+          if (type === 'step:after') {
+            console.log('📍 Step completed, current index:', index);
+            console.log('📍 Action:', action);
+            
+            // ステップ3（シミュレーション実行ボタン）以外の場合
+            // またはスキップの場合は次へ進む
+            if (action === 'skip' || (action === 'next' && index !== 1)) {
+              const nextIndex = index + 1;
+              console.log('📝 Moving to next step:', nextIndex);
+              setTutorialStep(nextIndex);
+            }
+            
+            // ステップ3（シミュレーション実行ボタン）の場合
+            if (index === 0 && (action === 'next' || action === 'update')) {
+              // ステップ2からステップ3へ
+              console.log('🚀 Moving to simulation button step');
+              setTutorialStep(1);
+            }
+          }
+          
+          // ツアーが開始された時
+          if (type === 'tour:start') {
+            console.log('🚀 Tour started');
+            setTutorialStep(0);
+          }
+          
+          // チュートリアル終了時
+          const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+          if (finishedStatuses.includes(status)) {
+            console.log('🏁 Tutorial finished or skipped');
+            setRunTutorial(false);
+            sessionStorage.removeItem('tutorial_in_progress');
+            if (user) {
+              localStorage.setItem(`tutorial_completed_${user.id}`, 'true');
+            }
+          }
+        }}
+        locale={{
+          back: '',  // 戻るボタンを非表示
+          close: '閉じる',
+          last: '完了',
+          next: '次へ',
+          skip: 'スキップ',
+          open: '開く',
+          nextLabelWithProgress: '次へ'
+        }}
+        showProgress={true}
+        styles={{
+          options: {
+            primaryColor: '#3B82F6',
+            textColor: '#1F2937',
+            backgroundColor: '#FFFFFF',
+            arrowColor: '#FFFFFF',
+            zIndex: 10000,
+          },
+          tooltip: {
+            borderRadius: 8,
+            fontSize: 16,
+            padding: '12px 16px',
+          },
+          tooltipContainer: {
+            textAlign: 'left',
+          },
+          buttonNext: {
+            backgroundColor: '#3B82F6',
+            borderRadius: 6,
+            color: '#FFFFFF',
+          },
+          buttonSkip: {
+            color: '#6B7280',
+          },
+        }}
       />
     </div>
   );

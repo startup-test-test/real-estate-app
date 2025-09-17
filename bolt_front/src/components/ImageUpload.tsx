@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '../hooks/useImageUpload';
 
@@ -18,6 +18,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
   const { uploadState, uploadImage, resetUploadState, deleteImage } = useImageUpload();
+  
+  // currentImageUrlが変更されたときにpreviewUrlを更新
+  useEffect(() => {
+    setPreviewUrl(currentImageUrl || null);
+  }, [currentImageUrl]);
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();

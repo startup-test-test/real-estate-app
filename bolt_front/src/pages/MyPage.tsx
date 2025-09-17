@@ -15,11 +15,21 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
+  Info,
+  Sparkles,
+  HelpCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
 import UpgradeModal from "../components/UpgradeModal";
 import { useUsageStatus } from "../hooks/useUsageStatus";
+import { 
+  sampleProperty, 
+  shouldShowSampleProperty, 
+  hasTutorialBeenCompleted,
+  isSampleProperty 
+} from "../data/sampleProperty";
+import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 // Removed useSupabaseData hook dependency
 
 const MyPage: React.FC = () => {
@@ -28,6 +38,82 @@ const MyPage: React.FC = () => {
   const { getSimulations, deleteSimulation } = useSupabaseData();
   const { usage, refetch: refetchUsage } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
+  
+  // チュートリアル用のステート
+  const [runTutorial, setRunTutorial] = React.useState(false);
+  
+  // サンプル物件があるかどうかを動的に判定してステップを生成
+  const tutorialSteps = React.useMemo<Step[]>(() => {
+    const steps: Step[] = [];
+    
+    // デバイス判定（768px未満をモバイルとする）
+    const isMobile = window.innerWidth < 768;
+    
+    // サンプル物件カードが存在する場合
+    const hasSampleCard = document.querySelector('.sample-property-card');
+    
+    if (hasSampleCard) {
+      steps.push({
+        target: '.sample-property-card',
+        content: (
+          <div className="py-2">
+            <div className="text-sm text-gray-500 mb-2">ステップ 1/7</div>
+            <h3 className="font-bold text-lg mb-1 text-gray-800">🎯 サンプル物件で体験</h3>
+            <p className="text-gray-700">下の「シミュレーション結果を見る」ボタンをクリック！</p>
+          </div>
+        ),
+        disableBeacon: true,  // ビーコンを非表示
+        placement: isMobile ? 'top' : 'bottom',  // SP版は上、PC版は下
+        spotlightClicks: true,  // スポットライトされた要素をクリック可能にする
+        disableScrolling: false,
+        styles: {
+          options: {
+            primaryColor: '#3B82F6',
+            zIndex: 10000,
+            arrowColor: '#FFFBEB',  // 矢印の色
+          },
+          tooltip: {
+            padding: '15px 20px',
+            border: '2px solid #000000',  // 黒色の外枠
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          },
+          tooltipContent: {
+            textAlign: 'left',
+          }
+        }
+      });
+    } else {
+      // サンプル物件が見つからない場合の代替ステップ
+      steps.push({
+        target: 'body',
+        content: (
+          <div>
+            <h3 className="font-bold text-lg mb-2">🎯 シミュレーション機能の使い方</h3>
+            <p>物件情報を登録してシミュレーションを実行できます。</p>
+            <p className="mt-2">「シミュレーションを開始する」ボタンから新規物件を登録してみましょう。</p>
+          </div>
+        ),
+        disableBeacon: true,
+        placement: 'center',
+        styles: {
+          options: {
+            primaryColor: '#3B82F6',
+            zIndex: 10000,
+            arrowColor: '#FFFBEB',
+          },
+          tooltip: {
+            padding: '15px 20px',
+            border: '2px solid #000000',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          }
+        }
+      });
+    }
+    
+    return steps;
+  }, [runTutorial]);
 
   useEffect(() => {
     document.title = 'マイページ | 大家DX';
@@ -192,7 +278,13 @@ const MyPage: React.FC = () => {
     loadSimulations(true); // 強制リフレッシュ
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, propertyName?: string) => {
+    // サンプル物件は削除不可（IDまたは物件名でチェック）
+    if (id === 'sample-property-001' || propertyName?.startsWith('【サンプル】')) {
+      alert("サンプル物件は削除できません。\n\nサンプル物件は体験用のため、削除することはできません。");
+      return;
+    }
+    
     try {
       setLoading(true);
       const { error } = await deleteSimulation(id);
@@ -452,6 +544,34 @@ const MyPage: React.FC = () => {
         return cfInYen / 10000;
       };
 
+      // サンプル物件の特別処理
+      if (sim.id === 'sample-property-001') {
+        return {
+          id: sim.id,
+          propertyName: '【サンプル】シミュレーション',
+          location: '東京都サンプル住所',
+          propertyType: 'RC造',
+          acquisitionPrice: simulationData.purchasePrice || 2800,
+          annualIncome: ((simulationData.monthlyRent || 125000) * 12) / 10000,
+          managementFee: ((simulationData.managementFee || 8500) * 12) / 10000,
+          surfaceYield: results.surfaceYield || 5.36,
+          netYield: results.netYield || 4.12,
+          monthlyCashFlow: results.monthlyCashFlow || 15800,
+          annualCashFlow: results.annualCashFlow || 189600,
+          cumulativeCF10Year: 315,  // 10年後売却込み累計CF
+          date: new Date().toLocaleDateString("ja-JP", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }).replace(/\//g, "/"),
+          status: '検討中',
+          thumbnail: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+          propertyUrl: 'https://ooya.tech/',
+          propertyMemo: 'サンプル物件で入れております。',
+        };
+      }
+
+      // 通常の物件処理
       return {
         id: sim.id,
         propertyName: simulationData.propertyName || "無題の物件",
@@ -484,7 +604,54 @@ const MyPage: React.FC = () => {
     });
   };
 
-  const formattedSimulations = formatSimulationData(simulations);
+  // サンプル物件の表示判定
+  const hasSeenTutorial = user ? hasTutorialBeenCompleted(user.id) : false;
+  
+  // DBに既にサンプル物件が存在するかチェック
+  const hasSampleInDB = simulations.some(sim => 
+    sim.simulation_data?.propertyName?.startsWith('【サンプル】')
+  );
+  
+  // DBにサンプル物件がない全ユーザーに、フロントエンドのサンプル物件を表示
+  const showSample = !hasSampleInDB;
+  
+  // チュートリアル開始ボタンのハンドラー
+  const handleStartTutorial = () => {
+    console.log('チュートリアル開始');
+    // チュートリアル進行中フラグをセット
+    sessionStorage.setItem('tutorial_in_progress', 'true');
+    // 一旦falseにしてリセット
+    setRunTutorial(false);
+    // 少し遅延させてから開始（DOMの更新を待つ）
+    setTimeout(() => {
+      console.log('サンプル物件カード要素:', document.querySelector('.sample-property-card'));
+      setRunTutorial(true);
+    }, 100);
+  };
+  
+  // 初回サンプル物件表示時に自動でチュートリアルを開始
+  React.useEffect(() => {
+    // チュートリアル未完了 && 初回表示 && 実物件が0件の場合のみ自動開始
+    if (!hasSeenTutorial && !loading) {
+      // サンプル物件のみ（実物件がない）場合
+      const onlyHasSample = simulations.length === 0 || 
+        (simulations.length === 1 && hasSampleInDB);
+      
+      if (onlyHasSample) {
+        // 少し遅延させてからチュートリアルを開始
+        setTimeout(() => {
+          setRunTutorial(true);
+        }, 1500);
+      }
+    }
+  }, [hasSeenTutorial, simulations.length, hasSampleInDB, loading]);
+  
+  // サンプル物件を含めたデータの準備
+  const allSimulations = showSample 
+    ? [sampleProperty, ...simulations]
+    : simulations;
+  
+  const formattedSimulations = formatSimulationData(allSimulations);
 
   const quickActions = [
     {
@@ -673,24 +840,34 @@ const MyPage: React.FC = () => {
                       登録済み物件一覧
                     </h3>
                   </div>
-                  <button
-                    onClick={async () => {
-                      // 使用制限をチェック
-                      if (
-                        usage &&
-                        !usage.isSubscribed &&
-                        usage.currentCount >= usage.limit
-                      ) {
-                        setShowUpgradeModal(true);
-                      } else {
-                        navigate("/simulator");
-                      }
-                    }}
-                    className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    シミュレーションを開始する
-                  </button>
+                  <div className="flex gap-2">
+                    {/* 全ユーザーに表示（SP版・PC版両方） */}
+                    <button
+                      onClick={handleStartTutorial}
+                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      使い方を確認
+                    </button>
+                    <button
+                      onClick={async () => {
+                        // 使用制限をチェック
+                        if (
+                          usage &&
+                          !usage.isSubscribed &&
+                          usage.currentCount >= usage.limit
+                        ) {
+                          setShowUpgradeModal(true);
+                        } else {
+                          navigate("/simulator");
+                        }
+                      }}
+                      className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      シミュレーションを開始する
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
@@ -807,6 +984,8 @@ const MyPage: React.FC = () => {
                       <div
                         key={sim.id}
                         className={`relative rounded-lg overflow-hidden transition-all duration-300 cursor-pointer ${
+                          sim.id === 'sample-property-001' || sim.propertyName?.startsWith('【サンプル】') ? 'sample-property-card' : ''
+                        } ${
                           sim.status === "取得済み"
                             ? "border-2 border-green-400 bg-green-50 hover:shadow-lg hover:border-green-500"
                             : sim.status === "契約手続中"
@@ -817,7 +996,12 @@ const MyPage: React.FC = () => {
                           // ボタンがクリックされていない場合のみ遷移
                           const target = e.target as HTMLElement;
                           if (!target.closest("button")) {
-                            navigate(`/simulator?view=${sim.id}#results`);
+                            // チュートリアル中はハッシュを付けない
+                            const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
+                            const url = isTutorial 
+                              ? `/simulator?view=${sim.id}` 
+                              : `/simulator?view=${sim.id}#results`;
+                            navigate(url);
                           }
                         }}
                       >
@@ -1012,10 +1196,19 @@ const MyPage: React.FC = () => {
                           <div className="space-y-3">
                             {/* メインアクション: 結果表示（大きめ） */}
                             <button
-                              onClick={() =>
-                                navigate(`/simulator?view=${sim.id}#results`)
-                              }
-                              className="group w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm"
+                              onClick={() => {
+                                // チュートリアル中はハッシュを付けない
+                                const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
+                                const url = isTutorial 
+                                  ? `/simulator?view=${sim.id}` 
+                                  : `/simulator?view=${sim.id}#results`;
+                                navigate(url);
+                              }}
+                              className={`group w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm ${
+                                runTutorial && (sim.id === 'sample-property-001' || sim.propertyName?.startsWith('【サンプル】'))
+                                  ? 'tutorial-highlight-button'
+                                  : ''
+                              }`}
                               title="シミュレーション結果を詳しく確認"
                             >
                               <BarChart3 className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -1047,7 +1240,7 @@ const MyPage: React.FC = () => {
                                         "本当に削除しますか？\n\n削除後は復元できません。",
                                       )
                                     ) {
-                                      handleDelete(sim.id);
+                                      handleDelete(sim.id, sim.propertyName);
                                     }
                                   }
                                 }}
@@ -1118,6 +1311,72 @@ const MyPage: React.FC = () => {
       <UpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
+      />
+      
+      {/* チュートリアル */}
+      <Joyride
+        steps={tutorialSteps}
+        run={runTutorial}
+        continuous={false}  // 自動的に次のステップへ進まない
+        showProgress={true}  // プログレス表示を有効化
+        showSkipButton={true}
+        hideBackButton={true}  // 戻るボタンは非表示
+        hideCloseButton={true}  // 閉じるボタンも非表示
+        spotlightClicks={true}
+        disableOverlay={true}
+        disableOverlayClose={false}
+        callback={(data: CallBackProps) => {
+          const { status } = data;
+          const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+          
+          if (finishedStatuses.includes(status)) {
+            setRunTutorial(false);
+            // チュートリアル完了時にsessionStorageをクリア
+            sessionStorage.removeItem('tutorial_in_progress');
+            // チュートリアル完了をLocalStorageに保存
+            if (user) {
+              localStorage.setItem(`tutorial_completed_${user.id}`, 'true');
+            }
+          }
+        }}
+        locale={{
+          back: '',  // 戻るボタンを非表示
+          close: '',  // 閉じるボタンを非表示
+          last: '',  // 完了ボタンを非表示
+          next: '',  // 次へボタンを非表示
+          skip: 'スキップ'
+        }}
+        styles={{
+          options: {
+            primaryColor: '#3B82F6',
+            textColor: '#1F2937',
+            backgroundColor: '#FFFBEB',  // より薄い黄色の背景
+            arrowColor: '#FFFBEB',  // 矢印も同じ色に
+            zIndex: 10000,
+          },
+          tooltip: {
+            borderRadius: 8,
+            fontSize: 16,
+            padding: '12px 16px',
+          },
+          tooltipContainer: {
+            textAlign: 'left',
+          },
+          tooltipTitle: {
+            marginBottom: 10,
+          },
+          buttonNext: {
+            backgroundColor: '#3B82F6',
+            borderRadius: 6,
+            color: '#FFFFFF',
+          },
+          buttonBack: {
+            marginRight: 10,
+          },
+          buttonSkip: {
+            color: '#6B7280',
+          },
+        }}
       />
     </>
   );

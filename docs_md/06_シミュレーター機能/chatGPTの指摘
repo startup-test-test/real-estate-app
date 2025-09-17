@@ -1,0 +1,135 @@
+めっちゃ良いです。ほぼこの計画でいけます👌
+そのうえで実装前に直しておくと事故らない差分だけ、キュッと3点に絞って指摘します。
+
+最優先で直す3点
+1) 「売却費用」に**その他費用(例: 売価×1%)**を戻す
+
+計画の前半では brokerage + other_fees + transfer_tax でしたが、後半の「計算式の統一」で
+「仲介手数料（税込）＋譲渡税」になっており、その他費用が落ちています。
+
+表示列は「売却費用（仲介＋税金）」でOK（1行表示で簡潔）。
+
+ただしバックエンドでは内訳を保持し、KPIの**キャピタルゲイン（税前）**計算時は
+譲渡費用＝仲介+その他のみを使い、譲渡税の計算ベースからも控除してください。
+（譲渡税はキャピタルゲインに対して課税されるため、譲渡税自体をベースに入れないこと）
+
+実装スニペット（TS/pyどちらでも）
+
+const broker = stairBrokerFee(salePrice) * 1.10;   // 階段式×消費税
+const other  = salePrice * (otherFeeRate ?? 0.01); // 既定1%
+const disposalCost = broker + other;               // 譲渡費用（課税ベースに入れる費用）
+const capGainPre   = salePrice - disposalCost - adjustedBasis;
+const capTax       = Math.max(0, capGainPre) * capTaxRate; // 長期 0.20315 など
+const saleNetCF    = salePrice - disposalCost - capTax - loanBalanceT;
+
+
+表では「売却費用（仲介＋税金）」= broker + capTax の合算表示でOK（1行化）。
+ただし内部では other を保持し、capGainPre の計算に使います。
+
+2) 既存データの逆算ロジックはそのままだと危険
+
+計画の Day2 の逆算：
+
+// NG（旧「売却純利益」の定義が案件ごとでブレるため破綻しやすい）
+if (!data.売却費用) {
+  data.売却費用 = data.売却金額 - data.売却純利益 - data.期末残債;
+}
+
+
+旧システムの「売却純利益」は “当年増分CF” に近いものや “自己資金差引後” を混ぜていた可能性があり、一意に復元できません。
+
+推奨：レスポンスに schema_version を持たせ、v1(旧) は表示のみにし、
+v2(新) で初めて「売却費用」「売却時ネットCF」を正規に保存。
+どうしても補完するなら次の安全な近似に（譲渡税0・その他費用既定1%などの仮定を明示）：
+
+// 近似補完（注意書き表示を必ず）:
+const brokerApprox = stairBrokerFee(salePrice) * 1.10;
+const otherApprox  = salePrice * 0.01;
+const disposalCostApprox = brokerApprox + otherApprox;
+
+const capGainPreApprox = salePrice - disposalCostApprox - adjustedBasisApprox; // 基礎が取れないと不可能
+const capTaxApprox = Math.max(0, capGainPreApprox) * capTaxRate;
+
+data.売却費用 = brokerApprox + capTaxApprox; // 表示用のみ
+data.売却時ネットCF = salePrice - (brokerApprox + capTaxApprox) - loanBalanceT;
+
+
+ポイント：旧データの「売却純利益」を直接使って逆算しない。モード判定と注意書きで逃がすのが安全。
+
+3) 「年間の税金」列と譲渡税の二重計上を回避
+
+年次の「税金（所得税・住民税）」は運用益の税。
+
+譲渡税は売却ブロックにのみ計上し、年次の税金列には絶対に入れない（二重計上防止）。
+
+テーブルは以下でスリム＆明快（売却年のみ増える列は2つ）：
+
+売却金額（既存）
+
+売却費用（仲介＋税金）（新）
+
+期末残債（既存）
+
+売却時ネットCF（手取り）（新）
+
+そのほか良いところ＆小さな提案
+
+✅ 列構成の判断は◎：
+「売却純利益」「売却時累計CF」を削除 → 「売却費用」「売却時ネットCF」を追加。
+意思決定に直結する“手取り”を前に出せます。
+
+✅ IRRの定義も◎：
+t=0: −自己資金、各年: 税引後CF、最終年: 通常CF＋売却時ネットCF。
+
+🔹 KPIに2つだけ追加（列は増やさない）：
+
+キャピタルゲイン（税前）（＝会計益、残債を引かない）
+
+売却後累計CF（= 累計CF + 売却時ネットCF）
+→ “益”と“手取り”の両目線が1秒で伝わる
+
+🔹 schema_versionをJSONBに入れる：
+例）result_data.schema_version = "v2.0.0"。APIで分岐し、移行期間中はv1/v2混在に強く。
+
+🔹 恒等式アサート（ユニテスト）：
+
+salePrice === saleNetCF + loanBalanceT + disposalCost + capTax
+
+(売却時累計CF − 売却直前累計CF − その年の通常CF) === saleNetCF
+
+DSCR, NOI の単位ズレ検出（円/万円）
+
+この計画に反映する差分パッチ（コピペ可）
+
+フェーズ1 / Day1 実装詳細 修正
+
+# 新フィールド（内部は内訳保持、表は集約表示）
+'broker_fee': broker,              # 階段式×1.10
+'other_disposal_fee': other,       # 例: 売価×1%
+'transfer_tax': cap_tax,           # 譲渡税
+'disposal_cost': broker + other,   # 譲渡費用（課税ベース）
+'売却費用(表示)': broker + cap_tax,  # 表の1列（仲介＋税金）
+
+# 核心値
+'売却時ネットCF': sale_price - (broker + other) - cap_tax - loan_balance_t,
+
+# 旧フィールド
+'売却純利益': None,
+'売却時累計CF': None,
+'schema_version': 'v2.0.0',
+
+
+フェーズ2 互換レイヤー 修正
+
+逆算は「旧値を信頼せず、近似を明示」の方針へ変更（上の“近似補完”参照）。
+
+UIに小さく「※旧データは売却費用を概算で補完しています」の注記。
+
+まとめ
+
+設計はバッチリ。差分は3点だけ：
+① その他費用を内部に戻し、譲渡税ベースに確実に反映
+② 旧データの逆算は避け、schema_version＋近似補完で安全運転
+③ 譲渡税は年次税と分離して売却ブロックのみで計上
+
+これで透明性/一貫性/互換性の3拍子が揃います。リリース後の問い合わせも激減するはずです。

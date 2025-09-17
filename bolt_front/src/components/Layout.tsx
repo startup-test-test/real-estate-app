@@ -83,7 +83,7 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header - SP版のみ表示、印刷時は非表示 */}
-      <div className="lg:hidden print:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-40">
+      <div className="lg:hidden print:hidden fixed top-0 left-0 right-0 bg-white shadow-lg" style={{ zIndex: 99999 }}>
         {/* Logo Section */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <Link to="/mypage" className="flex items-center">
@@ -111,15 +111,17 @@ const Layout: React.FC = () => {
       {/* Mobile Menu Overlay - 印刷時は非表示 */}
       {isMobileMenuOpen && (
         <div 
-          className="lg:hidden print:hidden fixed inset-0 bg-black/50 z-40"
+          className="lg:hidden print:hidden fixed inset-0 bg-black/50"
+          style={{ zIndex: 100001 }}
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Sidebar - Integrated Header and Logo Design - 印刷時は非表示 */}
-      <div className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 print:hidden ${
+      <div className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 print:hidden ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      }`}
+      style={{ zIndex: 100002 }}>
         <div className="flex h-full flex-col">
           {/* Integrated Header with Logo */}
           <div className="p-6 border-b border-gray-200">
