@@ -320,7 +320,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     accumulated_loss = 0  # 繰越欠損金の初期化（旧方式、互換性のため残す）
     # FIFO方式の繰越欠損金管理
     loss_carryforward_list = []  # [(year_occurred, amount, expiry_year), ...]
-    owner_type = property_data.get('owner_type', '個人')  # デフォルトは個人
+    owner_type = property_data.get('ownership_type', '個人')  # デフォルトは個人
     carryforward_years = 3 if owner_type == '個人' else 10  # 個人3年、法人10年
 
     # 税金計算用パラメータ
