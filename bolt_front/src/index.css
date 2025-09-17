@@ -329,15 +329,37 @@ body {
     margin: 0.2in;
     size: A4 landscape;
   }
-  
-  /* 2ページ目以降も同じ設定 */
-  @page :not(:first) {
-    margin: 0.2in;
-    size: A4 landscape;
-  }
-  
+
+  /* すべてのページで同じ設定 */
+
   /* 印刷時に非表示にする要素 */
   .print\:hidden {
+    display: none !important;
+  }
+
+  /* React Joyrideのチュートリアル要素を印刷時に非表示 */
+  .react-joyride__tooltip,
+  .react-joyride__spotlight,
+  .react-joyride__overlay,
+  .react-joyride__beacon,
+  .__floater,
+  .__floater__arrow,
+  [class*="react-joyride"] {
+    display: none !important;
+  }
+
+  /* チュートリアルハイライトを印刷時に無効化 */
+  .tutorial-highlight,
+  .tutorial-highlight-button,
+  .tutorial-active-form {
+    outline: none !important;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+
+  /* チュートリアルの指差しアイコンを非表示 */
+  .tutorial-highlight-button::before,
+  .simulate-button.tutorial-highlight::before {
     display: none !important;
   }
   
