@@ -125,7 +125,7 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     noi = annual_rent * 10000 - (management_fee * 12 + fixed_cost * 12 + property_tax)  # 円単位に統一
 
     # 税金計算用パラメータ（CCR/ROI計算のため）
-    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
+    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) if property_data.get('effective_tax_rate') is None else property_data.get('effective_tax_rate'))
     building_price = float(property_data.get('building_price', 2000) or 2000)
     depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
@@ -320,7 +320,7 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     carryforward_years = 3 if owner_type == '個人' else 10  # 個人3年、法人10年
 
     # 税金計算用パラメータ
-    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) or 20)
+    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) if property_data.get('effective_tax_rate') is None else property_data.get('effective_tax_rate'))
     building_price = float(property_data.get('building_price', 2000) or 2000)
     depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
@@ -365,8 +365,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
         annual_expenses = (management_fee + fixed_cost) * 12 + property_tax  # 円単位
 
         # 大規模修繕（資本的支出対応）
-        major_repair_cycle = int(property_data.get('major_repair_cycle', 0) or 0)
-        major_repair_cost = float(property_data.get('major_repair_cost', 0) or 0)
+        major_repair_cycle = int(property_data.get('major_repair_cycle', 0))
+        major_repair_cost = float(property_data.get('major_repair_cost', 0))
 
         # 修繕費の分類（20万円以上は資本的支出、未満は通常修繕）
         capital_repair_threshold = 20  # 20万円
