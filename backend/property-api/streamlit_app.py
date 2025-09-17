@@ -41,9 +41,10 @@ def get_districts_cached(prefecture_code, municipality_code=None):
 
 # APIキーの確認（クライアントのapi_keyを直接チェック）
 if not client.api_key:
-    st.error("⚠️ APIキーが設定されていません。GitHub SecretsにMAIN_REAL_ESTATE_API_KEYを設定してください。")
+    st.error("⚠️ APIキーが設定されていません。GitHub SecretsにVITE_REAL_ESTATE_API_KEYを設定してください。")
     # デバッグ情報を表示
     with st.expander("デバッグ情報"):
+        st.write(f"os.getenv('VITE_REAL_ESTATE_API_KEY'): {os.getenv('VITE_REAL_ESTATE_API_KEY')}")
         st.write(f"os.getenv('MAIN_REAL_ESTATE_API_KEY'): {os.getenv('MAIN_REAL_ESTATE_API_KEY')}")
         st.write(f"os.getenv('REAL_ESTATE_API_KEY'): {os.getenv('REAL_ESTATE_API_KEY')}")
         st.write(f"client.api_key: {client.api_key}")

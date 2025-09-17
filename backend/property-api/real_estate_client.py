@@ -12,8 +12,8 @@ class RealEstateAPIClient:
     
     def __init__(self):
         self.base_url = "https://www.reinfolib.mlit.go.jp/ex-api/external"
-        # GitHub SecretsのMAIN_REAL_ESTATE_API_KEYを使用
-        self.api_key = os.getenv("MAIN_REAL_ESTATE_API_KEY", os.getenv("REAL_ESTATE_API_KEY", ""))
+        # GitHub SecretsのVITE_REAL_ESTATE_API_KEYを使用
+        self.api_key = os.getenv("VITE_REAL_ESTATE_API_KEY", os.getenv("MAIN_REAL_ESTATE_API_KEY", os.getenv("REAL_ESTATE_API_KEY", "")))
         self.headers = {
             "Ocp-Apim-Subscription-Key": self.api_key
         }
