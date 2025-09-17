@@ -41,8 +41,7 @@ export const corporateTaxRateOptions = [
   { value: '15', label: '15% - 中小法人（所得800万円以下）' },
   { value: '23', label: '23% - 中小法人（所得800万円超）' },
   { value: '30', label: '30% - 一般法人' },
-  { value: '34', label: '34% - 大企業（地方税込み）' },
-  { value: 'custom', label: 'その他（カスタム入力）' }
+  { value: '34', label: '34% - 大企業（地方税込み）' }
 ];
 
 // 個人向け所得税率選択肢
@@ -53,6 +52,5 @@ export const individualTaxRateOptions = [
   { value: '23', label: '23% - 課税所得900万円以下' },
   { value: '33', label: '33% - 課税所得1800万円以下' },
   { value: '40', label: '40% - 課税所得4000万円以下' },
-  { value: '45', label: '45% - 課税所得4000万円超' },
-  { value: 'custom', label: 'その他（カスタム入力）' }
+  { value: '45', label: '45% - 課税所得4000万円超' }
 ];

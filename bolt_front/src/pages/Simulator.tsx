@@ -2496,18 +2496,9 @@ const Simulator: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <select
-                    value={
-                      // カスタム値かどうかチェック
-                      (inputs.ownershipType === '法人' ? corporateTaxRateOptions : individualTaxRateOptions)
-                        .find(opt => opt.value === String(inputs.effectiveTaxRate))
-                        ? String(inputs.effectiveTaxRate)
-                        : 'custom'
-                    }
+                    value={String(inputs.effectiveTaxRate)}
                     onChange={(e) => {
-                      const value = e.target.value;
-                      if (value !== 'custom') {
-                        handleInputChange('effectiveTaxRate', parseFloat(value));
-                      }
+                      handleInputChange('effectiveTaxRate', parseFloat(e.target.value));
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
@@ -2518,30 +2509,12 @@ const Simulator: React.FC = () => {
                     ))}
                   </select>
 
-                  {/* カスタム入力フィールド */}
-                  {((inputs.ownershipType === '法人' ? corporateTaxRateOptions : individualTaxRateOptions)
-                    .find(opt => opt.value === String(inputs.effectiveTaxRate)) === undefined) && (
-                    <div className="flex items-center space-x-1">
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={inputs.effectiveTaxRate ?? ''}
-                        onChange={(e) => handleFieldChange('effectiveTaxRate', e.target.value)}
-                        onFocus={handleNumberInputFocus}
-                        onKeyDown={handleNumberInputKeyDown}
-                        data-field="effectiveTaxRate"
-                        placeholder="カスタム税率を入力"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      />
-                      <span className="text-sm text-gray-500 ml-2">%</span>
-                    </div>
-                  )}
-
                   {/* 個人の場合の譲渡税説明 */}
                   {inputs.ownershipType === '個人' && (
                     <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded">
-                      ※ 売却時の譲渡所得税は自動計算されます<br/>
-                      （5年以内：40%、5年超：20%）
+                      <div className="font-semibold mb-1">この税率は運用中の家賃収入に適用されます</div>
+                      ※ 売却時の譲渡所得税は保有期間により自動決定<br/>
+                      　（5年以内：40%、5年超：20%）
                     </div>
                   )}
                 </div>
