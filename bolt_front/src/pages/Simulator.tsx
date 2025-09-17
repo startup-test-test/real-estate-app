@@ -3330,10 +3330,11 @@ const Simulator: React.FC = () => {
                 <div className="mb-6 cashflow-chart-container">
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
-                
+
                 {/* 詳細キャッシュフロー分析 - 印刷時は2ページ目に配置 */}
                 <div className="mb-4 print:break-before-page detail-cashflow-analysis-section">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
+
                 </div>
                 
                 <div className="border border-gray-300 rounded-lg overflow-hidden relative detail-cashflow-table-wrapper">
@@ -3481,19 +3482,19 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却<br/>純利益
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[250px]">
-                            売却純利益<br/>
-                            = 売却時累計CF - 累計CF<br/>
-                            売却により追加される利益を表します
+                          売却費用<br/>(仲介+税金)
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
+                            売却時にかかる費用<br/>
+                            = 仲介手数料 + 譲渡税<br/>
+                            売却価格から差し引かれる費用です
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却時<br/>累計CF
+                          売却時<br/>ネットCF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
-                            売却時の累計キャッシュフロー<br/>
-                            = 累計CF + 売却による純利益<br/>
-                            投資全体の純利益を表します
+                            売却時の手取り金額<br/>
+                            = 売却金額 - 売却費用 - 期末残債<br/>
+                            実際に手元に残る金額です
                           </div>
                         </th>
                       </tr>
@@ -3516,8 +3517,8 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(row['自己資金推移'] || 0) < 0 ? 'text-orange-600' : 'text-green-600'}`}>{formatCurrencyNoSymbol(row['自己資金推移'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${((row as any)['繰越欠損金'] || 0) > 0 ? 'text-blue-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol((row as any)['繰越欠損金'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
-                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却による純利益'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却による純利益'] || 0)}</td>
-                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却費用'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却費用'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時ネットCF'] || row['売却時手取り'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時ネットCF'] || row['売却時手取り'] || 0)}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -106,10 +106,21 @@ export interface CashFlowData {
   売却益: number;
   売却による純利益?: number;
   売却時累計CF?: number;
+  // v2.0.0新規フィールド
+  schema_version?: string;
+  broker_fee?: number;
+  other_disposal_fee?: number;
+  transfer_tax?: number;
+  売却費用?: number;
+  売却時ネットCF?: number;
+  期末残債?: number;
   売却価格内訳?: {
     想定価格: number;
     収益還元価格: number;
     土地価格: number;
+    採用方法?: string;
   };
   繰越欠損金?: number;
+  // インデックスシグネチャ（動的アクセス用）
+  [key: string]: any;
 }
