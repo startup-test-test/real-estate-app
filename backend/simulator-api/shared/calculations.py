@@ -125,7 +125,11 @@ def calculate_basic_metrics(property_data: Dict[str, Any]) -> Dict[str, Any]:
     noi = annual_rent * 10000 - (management_fee * 12 + fixed_cost * 12 + property_tax)  # 円単位に統一
 
     # 税金計算用パラメータ（CCR/ROI計算のため）
-    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) if property_data.get('effective_tax_rate') is None else property_data.get('effective_tax_rate'))
+    effective_tax_rate_value = property_data.get('effective_tax_rate')
+    if effective_tax_rate_value is None:
+        effective_tax_rate = 20.0
+    else:
+        effective_tax_rate = float(effective_tax_rate_value)
     building_price = float(property_data.get('building_price', 2000) or 2000)
     depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
@@ -320,7 +324,11 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
     carryforward_years = 3 if owner_type == '個人' else 10  # 個人3年、法人10年
 
     # 税金計算用パラメータ
-    effective_tax_rate = float(property_data.get('effective_tax_rate', 20) if property_data.get('effective_tax_rate') is None else property_data.get('effective_tax_rate'))
+    effective_tax_rate_value = property_data.get('effective_tax_rate')
+    if effective_tax_rate_value is None:
+        effective_tax_rate = 20.0
+    else:
+        effective_tax_rate = float(effective_tax_rate_value)
     building_price = float(property_data.get('building_price', 2000) or 2000)
     depreciation_years = int(property_data.get('depreciation_years', 27) or 27)
 
