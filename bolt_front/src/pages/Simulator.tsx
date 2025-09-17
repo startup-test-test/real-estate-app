@@ -399,6 +399,17 @@ const Simulator: React.FC = () => {
             targetEl.classList.add('tutorial-highlight');
             console.log(`✨ Added highlight to: ${targetSelector}`);
             console.log('📍 Element classes:', targetEl.className);
+
+            // ステップ3（シミュレーション実行ボタン）の場合、自動スクロール
+            if (tutorialStep === 1 && targetSelector === '.simulate-button') {
+              setTimeout(() => {
+                targetEl.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'center'
+                });
+                console.log('📌 Auto-scrolled to simulate button for step 3');
+              }, 100);
+            }
             
             // 結果表示系のステップ（4以降）では、物件情報セクションからハイライトを確実に削除
             if (tutorialStep >= 2) {
