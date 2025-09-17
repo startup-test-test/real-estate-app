@@ -146,6 +146,7 @@ body:has(.react-joyride__tooltip) .sample-property-card {
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   position: relative !important;
+  z-index: 999999 !important;  /* 最高優先度で表示 */
 }
 
 /* 次へボタンを大きくする */

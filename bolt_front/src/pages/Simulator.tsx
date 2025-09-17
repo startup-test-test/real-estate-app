@@ -3870,8 +3870,8 @@ const Simulator: React.FC = () => {
         stepIndex={tutorialStep}
         continuous={true}
         showSkipButton={true}
-        disableOverlay={false}  // オーバーレイを有効化して操作の安定性向上
-        disableOverlayClose={true}  // オーバーレイクリックでの閉じるを無効化
+        disableOverlay={true}  // グレイアウトを無効化（ユーザー要望）
+        disableOverlayClose={true}  // オーバーレイクリック防止（念のため）
         disableCloseOnEsc={false}
         scrollToFirstStep={false}
         scrollOffset={window.innerWidth < 768 ? 100 : 20}
