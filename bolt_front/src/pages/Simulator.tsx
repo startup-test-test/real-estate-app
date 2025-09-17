@@ -3870,12 +3870,13 @@ const Simulator: React.FC = () => {
         stepIndex={tutorialStep}
         continuous={true}
         showSkipButton={true}
-        disableOverlay={true}
-        disableOverlayClose={false}
+        disableOverlay={false}  // オーバーレイを有効化して操作の安定性向上
+        disableOverlayClose={true}  // オーバーレイクリックでの閉じるを無効化
         disableCloseOnEsc={false}
         scrollToFirstStep={false}
         scrollOffset={window.innerWidth < 768 ? 100 : 20}
         disableScrollParentFix={window.innerWidth < 768}
+        spotlightClicks={false}  // 強調エリア外のクリックを防止
         callback={(data: CallBackProps) => {
           const { status, index, type, action } = data;
           
