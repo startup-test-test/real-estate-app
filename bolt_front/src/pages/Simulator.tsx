@@ -3519,7 +3519,7 @@ const Simulator: React.FC = () => {
                           売却時<br/>ネットCF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
                             売却時の手取り金額<br/>
-                            = 売却金額 - 売却費用 - 期末残債<br/>
+                            = 売却金額 - 売却費用 - 借入残高<br/>
                             実際に手元に残る金額です
                           </div>
                         </th>
