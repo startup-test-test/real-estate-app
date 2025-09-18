@@ -36,12 +36,12 @@ class RealEstateAPIClient:
         
         # 取引種類マッピング
         self.trade_types = {
-            "01": "宅地(土地)",
-            "02": "宅地(土地と建物)",
+            "01": "土地",
+            "02": "戸建て",
             "03": "林地",
             "04": "農地",
             "05": "宅地見込地",
-            "07": "中古マンション等"
+            "07": "マンション"
         }
 
     def search_real_estate_prices(
@@ -176,9 +176,29 @@ class RealEstateAPIClient:
     
     def _get_type_code(self, type_name: str) -> str:
         """取引種類名からコードを取得"""
-        for code, name in self.trade_types.items():
-            if name in type_name:
+        # APIから返される実際の値とのマッピング
+        api_type_mapping = {
+            "宅地(土地)": "01",
+            "宅地(土地と建物)": "02",  # 戸建て
+            "林地": "03",
+            "農地": "04",
+            "宅地見込地": "05",
+            "中古マンション等": "07"
+        }
+
+        # 完全一致でチェック
+        for api_name, code in api_type_mapping.items():
+            if api_name == type_name:
                 return code
+
+        # 部分一致でもチェック（フォールバック）
+        if "土地と建物" in type_name:
+            return "02"
+        elif "マンション" in type_name:
+            return "07"
+        elif "宅地(土地)" in type_name:
+            return "01"
+
         return ""
     
     def _format_results(self, results: List[Dict]) -> List[Dict]:
