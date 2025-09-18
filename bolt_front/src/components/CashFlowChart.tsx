@@ -53,11 +53,9 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     return (row['売却時ネットCF'] || 0) / 10000;
   });
   
-  // 売却後累計CF（線グラフ用）：累計CF + 売却時ネットCF
+  // 売却後累計CF（線グラフ用）：APIから取得
   const saleAfterCumulativeCF = data.map((row) => {
-    const cumCF = (row['累計CF'] || 0) / 10000;
-    const saleNetCF = (row['売却時ネットCF'] || 0) / 10000;
-    return cumCF + saleNetCF;
+    return (row['売却時累計CF'] || 0) / 10000;
   });
   
   // 借入残高（線グラフ用）- 既に万円単位で返されるため変換不要、負の値は0にする

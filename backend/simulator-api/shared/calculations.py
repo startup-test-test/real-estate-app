@@ -641,10 +641,9 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
             transfer_tax = 0
             total_sale_cost = 0
 
-        # 売却時累計CF（楽待方式）- 互換性のため一時的に残す
-        # 累計CF + (売却金額 - 売却費用 - 譲渡所得税 - 残存借入額) - 自己資金
-        # ただし、グラフ表示用に自己資金の差し引きは別途計算
-        sale_cumulative_cf = cum + net_sale_proceeds - basic_metrics['self_funding'] * 10000
+        # 売却時累計CF
+        # 累計CF + 売却時ネットCF（売却金額 - 売却費用 - 譲渡所得税 - 残存借入額）
+        sale_cumulative_cf = cum + net_sale_proceeds
 
         # 売却による純利益（売却時累計CF - 累計CF）- 互換性のため一時的に残す
         sale_net_profit = sale_cumulative_cf - cum

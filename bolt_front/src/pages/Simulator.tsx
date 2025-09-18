@@ -1467,6 +1467,12 @@ const Simulator: React.FC = () => {
       if (import.meta.env.DEV) {
         console.log('FAST APIレスポンス:', result);
         console.log('キャッシュフローテーブルの件数:', result.cash_flow_table?.length);
+        if (result.cash_flow_table && result.cash_flow_table.length > 0) {
+          console.log('1年目のデータ:', result.cash_flow_table[0]);
+          console.log('売却時累計CFフィールド存在チェック:', '売却時累計CF' in result.cash_flow_table[0]);
+          console.log('10年目のデータ（売却費用確認）:', result.cash_flow_table[9]);
+          console.log('売却費用の内訳 - broker_fee:', result.cash_flow_table[9]['broker_fee'], 'transfer_tax:', result.cash_flow_table[9]['transfer_tax']);
+        }
         console.log('CCR（初年度）:', result.results?.['CCR（初年度）（%）']);
         console.log('CCR（全期間）:', result.results?.['CCR（全期間）（%）']);
       }
@@ -2848,7 +2854,7 @@ const Simulator: React.FC = () => {
 
         {/* 保存状況表示 */}
         {(saveMessage || saveError) && (
-          <div className="mt-6">
+          <div className="mt-6 print:hidden">
             {saveMessage && (
               <div className={`p-4 rounded-lg border flex items-center ${
                 saveMessage.includes('✅') ? 'text-green-700 bg-green-50 border-green-200' :
@@ -3504,19 +3510,33 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却費用<br/>(仲介+税金)
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
-                            売却時にかかる費用<br/>
-                            = 仲介手数料 + 譲渡税<br/>
-                            売却価格から差し引かれる費用です
+                          売却費用<br/>仲介+譲渡税
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[320px]">
+                            売却時にかかる総費用<br/>
+                            <div className="mt-2 space-y-1">
+                              <div>• 仲介手数料（約3%+消費税）</div>
+                              <div>• その他諸費用（約1%）</div>
+                              <div className="ml-3 text-gray-300 text-xs">登記費用・印紙税等</div>
+                              <div>• 譲渡税（売却益に対して）</div>
+                              <div className="ml-3 text-gray-300 text-xs">個人：5年以内40%、5年超20%</div>
+                              <div className="ml-3 text-gray-300 text-xs">法人：実効税率</div>
+                            </div>
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却時<br/>ネットCF
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
                             売却時の手取り金額<br/>
-                            = 売却金額 - 売却費用 - 期末残債<br/>
+                            = 売却金額 - 売却費用 - 借入残高<br/>
                             実際に手元に残る金額です
+                          </div>
+                        </th>
+                        <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                          売却後<br/>累計CF
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
+                            売却後の累計キャッシュフロー<br/>
+                            = 累計CF + 売却時ネットCF<br/>
+                            投資期間全体での総キャッシュフローです
                           </div>
                         </th>
                       </tr>
@@ -3541,6 +3561,13 @@ const Simulator: React.FC = () => {
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却金額'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却金額'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却費用'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却費用'] || 0)}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['売却時ネットCF'] || row['売却時手取り'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['売却時ネットCF'] || row['売却時手取り'] || 0)}</td>
+                          <td className={`px-0.5 py-2 text-sm border-b text-center font-semibold ${(() => {
+                            // APIから提供される売却時累計CFをそのまま使用
+                            const totalAfterSale = row['売却時累計CF'] || 0;
+                            return totalAfterSale < 0 ? 'text-red-600' : 'text-green-600';
+                          })()}`}>
+                            {formatCurrencyNoSymbol(row['売却時累計CF'] || 0)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
