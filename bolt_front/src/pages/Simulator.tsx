@@ -2852,7 +2852,7 @@ const Simulator: React.FC = () => {
 
         {/* 保存状況表示 */}
         {(saveMessage || saveError) && (
-          <div className="mt-6">
+          <div className="mt-6 print:hidden">
             {saveMessage && (
               <div className={`p-4 rounded-lg border flex items-center ${
                 saveMessage.includes('✅') ? 'text-green-700 bg-green-50 border-green-200' :
