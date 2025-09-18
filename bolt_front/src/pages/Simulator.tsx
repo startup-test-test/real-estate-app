@@ -1470,6 +1470,8 @@ const Simulator: React.FC = () => {
         if (result.cash_flow_table && result.cash_flow_table.length > 0) {
           console.log('1年目のデータ:', result.cash_flow_table[0]);
           console.log('売却時累計CFフィールド存在チェック:', '売却時累計CF' in result.cash_flow_table[0]);
+          console.log('10年目のデータ（売却費用確認）:', result.cash_flow_table[9]);
+          console.log('売却費用の内訳 - broker_fee:', result.cash_flow_table[9]['broker_fee'], 'transfer_tax:', result.cash_flow_table[9]['transfer_tax']);
         }
         console.log('CCR（初年度）:', result.results?.['CCR（初年度）（%）']);
         console.log('CCR（全期間）:', result.results?.['CCR（全期間）（%）']);
@@ -3508,11 +3510,11 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却費用<br/>仲介+税金
+                          売却費用<br/>仲介+譲渡税
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
                             売却時にかかる費用<br/>
-                            = 仲介手数料 + 譲渡税<br/>
-                            売却価格から差し引かれる費用です
+                            = 仲介手数料 + その他費用 + 譲渡税<br/>
+                            売却価格から差し引かれる総費用です
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
