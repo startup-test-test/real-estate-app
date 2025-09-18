@@ -3511,10 +3511,16 @@ const Simulator: React.FC = () => {
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                           売却費用<br/>仲介+譲渡税
-                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
-                            売却時にかかる費用<br/>
-                            = 仲介手数料 + その他費用 + 譲渡税<br/>
-                            売却価格から差し引かれる総費用です
+                          <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[320px]">
+                            売却時にかかる総費用<br/>
+                            <div className="mt-2 space-y-1">
+                              <div>• 仲介手数料（約3%+消費税）</div>
+                              <div>• その他諸費用（約1%）</div>
+                              <div className="ml-3 text-gray-300 text-xs">登記費用・印紙税等</div>
+                              <div>• 譲渡税（売却益に対して）</div>
+                              <div className="ml-3 text-gray-300 text-xs">個人：5年以内40%、5年超20%</div>
+                              <div className="ml-3 text-gray-300 text-xs">法人：実効税率</div>
+                            </div>
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
