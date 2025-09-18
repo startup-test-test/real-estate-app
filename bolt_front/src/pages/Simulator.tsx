@@ -3508,7 +3508,7 @@ const Simulator: React.FC = () => {
                           </div>
                         </th>
                         <th className="px-0.5 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
-                          売却費用<br/>(仲介+税金)
+                          売却費用<br/>仲介+税金
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
                             売却時にかかる費用<br/>
                             = 仲介手数料 + 譲渡税<br/>
