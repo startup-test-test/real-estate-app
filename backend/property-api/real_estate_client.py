@@ -221,17 +221,34 @@ class RealEstateAPIClient:
                 area = float(area_str)
             except:
                 pass
-                
-            # ㎡単価を計算
-            unit_price = price / area if area > 0 else 0
+
+            # 建物面積を取得（マンションの場合はAreaが専有面積、戸建ての場合はTotalFloorAreaが延床面積）
+            building_area = 0
+            type_name = r.get("Type", "")
+            if "マンション" in type_name:
+                # マンションの場合：Areaが専有面積
+                building_area = area
+                land_area = 0  # マンションは土地面積なし
+            else:
+                # 戸建て・土地の場合：Areaが土地面積、TotalFloorAreaが延床面積
+                land_area = area
+                building_area_str = r.get("TotalFloorArea", "0")
+                try:
+                    building_area = float(building_area_str) if building_area_str else 0
+                except:
+                    pass
+
+            # ㎡単価を計算（建物がある場合は建物面積、土地のみの場合は土地面積で計算）
+            calc_area = building_area if building_area > 0 else land_area
+            unit_price = price / calc_area if calc_area > 0 else 0
             tsubo_price = unit_price * 3.306  # 坪単価
-            
+
             # 最寄駅と駅距離の情報
             # 注意：不動産情報ライブラリAPIの仕様書によると、
             # 不動産取引価格情報には最寄駅・駅距離のフィールドが含まれていません
             station_name = "-"
             station_distance = "-"
-            
+
             formatted.append({
                 "no": i,
                 "type": r.get("Type", ""),
@@ -242,8 +259,8 @@ class RealEstateAPIClient:
                 "station_distance": station_distance,
                 "price": price,
                 "price_formatted": f"{price/10000:,.0f}万円" if price > 0 else "",
-                "land_area": area,
-                "building_area": float(r.get("TotalFloorArea", 0) or 0),
+                "land_area": land_area,
+                "building_area": building_area,
                 "build_year": r.get("BuildingYear", ""),
                 "structure": r.get("Structure", ""),
                 "floor_plan": r.get("FloorPlan", ""),

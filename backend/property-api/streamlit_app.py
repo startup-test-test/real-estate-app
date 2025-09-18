@@ -413,8 +413,9 @@ if search_button:
                         st.warning("土地面積のデータがある物件が見つかりませんでした。")
 
                 else:
-                    # 戸建て・マンション用の分析グラフ（延床面積）
-                    st.subheader("📈 延床面積と成約価格の分布")
+                    # 戸建て・マンション用の分析グラフ（延床面積/専有面積）
+                    area_label = "専有面積" if selected_type_code == "07" else "延床面積"
+                    st.subheader(f"📈 {area_label}と成約価格の分布")
 
                     # 延床面積がある物件のみをフィルタリング
                     scatter_df = df[df['building_area'] > 0].copy()
@@ -436,9 +437,9 @@ if search_button:
                             linewidth=0.5
                         )
 
-                        ax.set_xlabel('延床面積（㎡）', fontsize=12)
+                        ax.set_xlabel(f'{area_label}（㎡）', fontsize=12)
                         ax.set_ylabel('価格（万円）', fontsize=12)
-                        ax.set_title(f'延床面積と価格の分布 - {len(scatter_df)}件', fontsize=14)
+                        ax.set_title(f'{area_label}と価格の分布 - {len(scatter_df)}件', fontsize=14)
                         ax.grid(True, alpha=0.3)
 
                         # Y軸を1000万円刻みで設定（0〜10000万円）
@@ -465,13 +466,13 @@ if search_button:
                             st.metric("対象物件数", f"{len(scatter_df)}件")
                         with col2:
                             avg_building_area = scatter_df['building_area'].mean()
-                            st.metric("平均延床面積", f"{avg_building_area:.1f}㎡")
+                            st.metric(f"平均{area_label}", f"{avg_building_area:.1f}㎡")
                         with col3:
                             avg_price_scatter = scatter_df['price'].mean() / 10000
                             st.metric("平均価格", f"{avg_price_scatter:,.0f}万円")
                     
-                    # 延床面積と価格の分布表（クロス集計）
-                    st.subheader("📊 延床面積別売出価格の内訳")
+                    # 面積と価格の分布表（クロス集計）
+                    st.subheader(f"📊 {area_label}別売出価格の内訳")
                     
                     # 価格帯を定義（万円）- 1000万円刻み
                     price_bins = list(range(0, 11000, 1000))  # 0, 1000, 2000, ..., 10000
@@ -483,7 +484,7 @@ if search_button:
                         else:
                             price_labels.append(f'{price_bins[i]:,}~{price_bins[i+1]:,}')
 
-                    # 延床面積帯を定義（㎡）- 10㎡刻み
+                    # 面積帯を定義（㎡）- 10㎡刻み
                     area_bins = list(range(50, 210, 10))  # 50, 60, 70, ..., 200
                     area_bins.append(210)  # 最後のbinを追加
                     area_labels = [f"{area_bins[i]}" for i in range(len(area_bins)-1)]
@@ -509,7 +510,7 @@ if search_button:
                     # 表示用に整形
                     cross_table_display = cross_table.copy()
                     cross_table_display.index.name = '価格(万円)'
-                    cross_table_display.columns.name = '延床面積(㎡)'
+                    cross_table_display.columns.name = f'{area_label}(㎡)'
                     
                     # ヒートマップで表示
                     import matplotlib.pyplot as plt
@@ -527,7 +528,7 @@ if search_button:
                     ax.set_yticklabels(cross_table_display.index)
                     
                     # 軸ラベル
-                    ax.set_xlabel('延床面積(㎡)')
+                    ax.set_xlabel(f'{area_label}(㎡)')
                     ax.set_ylabel('価格(万円)')
                     
                     # 各セルに数値を表示
@@ -544,17 +545,17 @@ if search_button:
                     ax.set_yticks(np.arange(len(cross_table_display.index)+1)-.5, minor=True)
                     ax.grid(which="minor", color="white", linestyle='-', linewidth=2)
                     
-                    plt.title(f'{results["search_conditions"]["location"]}の延床面積別売出価格の内訳', fontsize=14, pad=20)
+                    plt.title(f'{results["search_conditions"]["location"]}の{area_label}別売出価格の内訳', fontsize=14, pad=20)
                     plt.tight_layout()
                     
                     st.pyplot(fig)
                     
                     
-                    # 延床面積における割合を表示
+                    # 面積における割合を表示
                     if len(scatter_df_copy) > 0:
-                        st.subheader("📈 延床面積における割合")
-                        
-                        # 延床面積帯別の割合を計算
+                        st.subheader(f"📈 {area_label}における割合")
+
+                        # 面積帯別の割合を計算
                         area_counts = scatter_df_copy['area_range'].value_counts().sort_index()
                         total_count = len(scatter_df_copy)
                         
@@ -578,7 +579,7 @@ if search_button:
                                 st.metric(range_name, f"{percentage:.0f}%", f"{count}件")
                     
                     else:
-                        st.warning("延床面積のデータがある物件が見つかりませんでした。")
+                        st.warning(f"{area_label}のデータがある物件が見つかりませんでした。")
 
                     # 建築年別価格分布グラフを追加（土地以外の場合のみ）
                     st.subheader("🏗️ 建築年別価格分布")
