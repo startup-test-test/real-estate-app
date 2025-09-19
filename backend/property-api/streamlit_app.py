@@ -7,6 +7,8 @@ from real_estate_client import RealEstateAPIClient
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import plotly.express as px
+import plotly.graph_objects as go
 
 # .envファイルの読み込み
 load_dotenv()
@@ -54,14 +56,16 @@ if not client.api_key:
 
 # サイドバーで検索条件入力
 st.sidebar.header("🔍 検索条件")
+st.sidebar.markdown("**\u203b すべての項目が必須です**")
 
 # 都道府県選択
 prefectures = client.get_prefectures()
 prefecture_names = [p["name"] for p in prefectures]
 selected_prefecture = st.sidebar.selectbox(
-    "都道府県",
+    "都道府県 *",
     prefecture_names,
-    index=prefecture_names.index("東京都") if "東京都" in prefecture_names else 0
+    index=prefecture_names.index("東京都") if "東京都" in prefecture_names else 0,
+    help="都道府県を選択してください（必須）"
 )
 
 # 選択された都道府県のコードを取得
@@ -82,22 +86,23 @@ if selected_prefecture_code:
             cities = get_cities_cached(selected_prefecture_code)
     
     if cities:
-        city_options = ["すべて"] + [c["name"] for c in cities]
+        city_names = [c["name"] for c in cities]
         selected_city_name = st.sidebar.selectbox(
-            "市区町村",
-            city_options,
-            index=0
+            "市区町村 *",
+            city_names,
+            index=0,
+            help="市区町村を選択してください（必須）"
         )
-        
-        if selected_city_name != "すべて":
-            selected_city = selected_city_name
-            # 市区町村コードを取得
-            for c in cities:
-                if c["name"] == selected_city_name:
-                    selected_municipality_code = c["code"]
-                    break
+
+        selected_city = selected_city_name
+        # 市区町村コードを取得
+        for c in cities:
+            if c["name"] == selected_city_name:
+                selected_municipality_code = c["code"]
+                break
     else:
-        st.sidebar.info("この都道府県にはデータがありません")
+        st.sidebar.error("この都道府県にはデータがありません")
+        selected_city = None
 
 # 地区名選択（動的に取得）
 districts = []
@@ -109,18 +114,20 @@ if selected_prefecture_code:
             districts = get_districts_cached(selected_prefecture_code, selected_municipality_code)
     
     if districts:
-        district_options = ["すべて"] + districts
         selected_district_name = st.sidebar.selectbox(
-            "地区名",
-            district_options,
-            index=0
+            "地区名 *",
+            districts,
+            index=0,
+            help="地区名を選択してください（必須）"
         )
-        
-        if selected_district_name != "すべて":
-            selected_district = selected_district_name
+
+        selected_district = selected_district_name
+    else:
+        st.sidebar.error("このエリアには地区名データがありません")
+        selected_district = None
 
 # 取引種類選択
-st.sidebar.subheader("取引種類")
+st.sidebar.subheader("取引種類 *")
 trade_type_options = {
     "01": "土地",
     "02": "戸建て",
@@ -139,6 +146,62 @@ selected_type_name = st.sidebar.radio(
 selected_type_code = [code for code, name in trade_type_options.items() if name == selected_type_name][0]
 selected_types = [selected_type_code]
 
+# 希望面積入力（必須）
+st.sidebar.subheader("希望面積での絞り込み *")
+# 取引種類に応じて表示を変更
+area_type_label = "専有面積" if selected_type_code == "07" else "延床面積" if selected_type_code == "02" else "土地面積"
+
+col1, col2 = st.sidebar.columns(2)
+with col1:
+    target_area = st.number_input(
+        f"希望{area_type_label}(㎡) *",
+        min_value=10,
+        max_value=500,
+        value=100,
+        step=10,
+        help=f"探したい{area_type_label}を入力してください（必須）"
+    )
+with col2:
+    area_tolerance = st.slider(
+        "許容範囲(±㎡) *",
+        min_value=5,
+        max_value=50,
+        value=10,
+        step=5,
+        help="希望面積からの許容範囲（必須）"
+    )
+
+st.sidebar.info(f"🎯 {target_area-area_tolerance}〜{target_area+area_tolerance}㎡の物件を強調表示します")
+
+use_target_area = True  # 常に有効
+
+# 建築年入力（必須）
+st.sidebar.subheader("建築年での絞り込み *")
+col1, col2 = st.sidebar.columns(2)
+with col1:
+    current_year = datetime.now().year
+    target_year = st.number_input(
+        "建築年 *",
+        min_value=1950,
+        max_value=current_year,
+        value=2015,
+        step=1,
+        help="探したい建築年を入力してください（必須）"
+    )
+with col2:
+    year_tolerance = st.slider(
+        "許容範囲(±年) *",
+        min_value=1,
+        max_value=20,
+        value=5,
+        step=1,
+        help="建築年からの許容範囲（必須）"
+    )
+
+st.sidebar.info(f"🎯 {target_year-year_tolerance}〜{target_year+year_tolerance}年の物件を強調表示します")
+
+use_target_year = True  # 常に有効
+
 # 期間選択
 st.sidebar.subheader("取引時期")
 current_year = datetime.now().year
@@ -152,8 +215,20 @@ search_button = st.sidebar.button("🔍 検索実行", type="primary", use_conta
 
 # メインエリア
 if search_button:
+    # 必須項目のチェック
+    errors = []
+    if not selected_prefecture:
+        errors.append("都道府県を選択してください")
+    if not selected_city:
+        errors.append("市区町村を選択してください")
+    if not selected_district:
+        errors.append("地区名を選択してください")
     if not selected_types:
-        st.error("取引種類を選択してください")
+        errors.append("取引種類を選択してください")
+
+    if errors:
+        for error in errors:
+            st.error(error)
     else:
         # 検索実行
         with st.spinner("検索中..."):
@@ -214,10 +289,26 @@ if search_button:
                 
                 # 取引事例の詳細表（全データ表示、1番上に配置）
                 st.subheader("📋 取引事例")
-                
+
                 # 表示用のデータフレームを作成
                 table_df = df.copy()
-                table_df = table_df.sort_values('building_area')  # 延床面積でソート
+
+                # 希望面積での色分け準備
+                if use_target_area and target_area:
+                    # 取引種類に応じて適切な面積フィールドを選択
+                    if selected_type_code == "01":  # 土地
+                        area_field = 'land_area'
+                    else:  # 戸建て・マンション
+                        area_field = 'building_area'
+
+                    # 希望面積との差を計算
+                    table_df['area_diff'] = abs(table_df[area_field] - target_area)
+                    table_df['is_target'] = table_df['area_diff'] <= area_tolerance
+
+                    # 希望面積に近い順でソート
+                    table_df = table_df.sort_values('area_diff')
+                else:
+                    table_df = table_df.sort_values('building_area')  # 延床面積でソート
                 
                 # 全ての情報を表示用に整形
                 display_table = pd.DataFrame({
@@ -249,13 +340,35 @@ if search_button:
                     '取引時期': table_df['trade_period']
                 })
                 
-                # 表を表示
-                st.dataframe(
-                    display_table,
-                    use_container_width=True,
-                    hide_index=True,
-                    height=600
-                )
+                # 希望面積に応じた色分け設定
+                if use_target_area and target_area and 'is_target' in table_df.columns:
+                    # 強調表示される物件数を表示
+                    target_count = table_df['is_target'].sum()
+                    st.success(f"✨ 広さ {target_area}㎡ (±{area_tolerance}㎡) に該当する物件: {target_count}件")
+
+                    # 該当する物件に色付けマークを追加
+                    display_table['該当'] = table_df['is_target'].map({True: '🟢', False: ''})
+
+                    # 列の順番を調整（該当列を最初に）
+                    cols = display_table.columns.tolist()
+                    cols = ['該当', 'No.'] + [col for col in cols if col not in ['該当', 'No.']]
+                    display_table = display_table[cols]
+
+                    # 表を表示（マーク付き）
+                    st.dataframe(
+                        display_table,
+                        use_container_width=True,
+                        hide_index=True,
+                        height=600
+                    )
+                else:
+                    # 表を表示
+                    st.dataframe(
+                        display_table,
+                        use_container_width=True,
+                        hide_index=True,
+                        height=600
+                    )
                 
                 # 価格分布のグラフ（全データ対象）
                 if st.checkbox("📊 価格分布を表示"):
@@ -296,16 +409,57 @@ if search_button:
 
                         fig, ax = plt.subplots(figsize=(10, 4))
 
-                        # 散布図を作成
-                        scatter = ax.scatter(
-                            land_df['land_area'],
-                            land_df['price'] / 10000,
-                            alpha=0.6,
-                            s=50,
-                            color='lightgreen',
-                            edgecolors='darkgreen',
-                            linewidth=0.5
-                        )
+                        # 散布図を作成（希望面積に応じて色分け）
+                        if use_target_area and target_area:
+                            # 希望面積との差を計算
+                            land_df['area_diff'] = abs(land_df['land_area'] - target_area)
+                            land_df['is_target'] = land_df['area_diff'] <= area_tolerance
+
+                            # 色分けして散布図を作成
+                            # 範囲外の物件
+                            non_target = land_df[~land_df['is_target']]
+                            ax.scatter(
+                                non_target['land_area'],
+                                non_target['price'] / 10000,
+                                alpha=0.4,
+                                s=30,
+                                color='lightgray',
+                                edgecolors='gray',
+                                linewidth=0.5,
+                                label='範囲外'
+                            )
+
+                            # 範囲内の物件（希望面積に近いほど濃い色）
+                            target = land_df[land_df['is_target']]
+                            if len(target) > 0:
+                                # 距離に応じて色の濃さを調整
+                                colors = plt.cm.Greens(1 - target['area_diff'] / area_tolerance)
+                                ax.scatter(
+                                    target['land_area'],
+                                    target['price'] / 10000,
+                                    alpha=0.8,
+                                    s=80,
+                                    c=colors,
+                                    edgecolors='darkgreen',
+                                    linewidth=1.5,
+                                    label=f'{target_area}±{area_tolerance}㎡'
+                                )
+
+                                # 広さに縦線を追加
+                                ax.axvline(x=target_area, color='red', linestyle='--', linewidth=1, alpha=0.5, label=f'広さ {target_area}㎡')
+                                ax.axvspan(target_area-area_tolerance, target_area+area_tolerance, alpha=0.1, color='green')
+
+                                ax.legend(loc='upper left')
+                        else:
+                            scatter = ax.scatter(
+                                land_df['land_area'],
+                                land_df['price'] / 10000,
+                                alpha=0.6,
+                                s=50,
+                                color='lightgreen',
+                                edgecolors='darkgreen',
+                                linewidth=0.5
+                            )
 
                         # Y軸を1000万円刻みで設定
                         ax.set_ylim(0, 10000)
@@ -421,44 +575,143 @@ if search_button:
                     scatter_df = df[df['building_area'] > 0].copy()
 
                     if len(scatter_df) > 0:
-                        import matplotlib.pyplot as plt
-                        import japanize_matplotlib  # 日本語フォント対応
+                        # Plotlyでインタラクティブな散布図を作成
+                        scatter_df['price_man'] = scatter_df['price'] / 10000
 
-                        fig, ax = plt.subplots(figsize=(10, 4))
-
-                        # 散布図を作成
-                        scatter = ax.scatter(
-                            scatter_df['building_area'],
-                            scatter_df['price'] / 10000,
-                            alpha=0.6,
-                            s=50,
-                            color='lightblue',
-                            edgecolors='black',
-                            linewidth=0.5
+                        # ホバー時に表示する情報を準備
+                        scatter_df['hover_text'] = (
+                            '所在地: ' + scatter_df['location'] + '<br>' +
+                            '価格: ' + scatter_df['price_formatted'] + '<br>' +
+                            f'{area_label}: ' + scatter_df['building_area'].astype(str) + '㎡<br>' +
+                            '㎡単価: ' + scatter_df['unit_price_formatted'] + '<br>' +
+                            '建築年: ' + scatter_df['build_year'].astype(str) + '<br>' +
+                            '間取り: ' + scatter_df['floor_plan'].astype(str) + '<br>' +
+                            '取引時期: ' + scatter_df['trade_period'].astype(str)
                         )
 
-                        ax.set_xlabel(f'{area_label}（㎡）', fontsize=12)
-                        ax.set_ylabel('価格（万円）', fontsize=12)
-                        ax.set_title(f'{area_label}と価格の分布 - {len(scatter_df)}件', fontsize=14)
-                        ax.grid(True, alpha=0.3)
+                        fig = go.Figure()
 
-                        # Y軸を1000万円刻みで設定（0〜10000万円）
-                        ax.set_ylim(0, 10000)
-                        y_ticks = list(range(0, 11000, 1000))  # 0から10000まで1000刻み
-                        ax.set_yticks(y_ticks)
-                        ax.set_yticklabels([f'{y:,}' for y in y_ticks])
+                        if use_target_area and target_area:
+                            # 希望面積との差を計算
+                            scatter_df['area_diff'] = abs(scatter_df['building_area'] - target_area)
+                            scatter_df['is_target'] = scatter_df['area_diff'] <= area_tolerance
 
-                        # X軸の範囲を調整し、10㎡刻みで表示
-                        min_area = max(50, int(scatter_df['building_area'].min() / 10) * 10)
-                        max_area = min(200, int(scatter_df['building_area'].max() / 10 + 1) * 10)
-                        ax.set_xlim(min_area, max_area)
+                            # 範囲外の物件
+                            non_target = scatter_df[~scatter_df['is_target']]
+                            if len(non_target) > 0:
+                                fig.add_trace(go.Scatter(
+                                    x=non_target['building_area'],
+                                    y=non_target['price_man'],
+                                    mode='markers',
+                                    name='その他',
+                                    marker=dict(
+                                        color='#4169E1',
+                                        size=8,
+                                        opacity=0.6,
+                                        line=dict(color='#000080', width=0.5)
+                                    ),
+                                    text=non_target['hover_text'],
+                                    hovertemplate='%{text}<extra></extra>'
+                                ))
 
-                        # X軸を10㎡刻みで設定
-                        x_ticks = list(range(min_area, max_area + 1, 10))
-                        ax.set_xticks(x_ticks)
-                        ax.set_xticklabels([str(x) for x in x_ticks])
+                            # 範囲内の物件
+                            target = scatter_df[scatter_df['is_target']]
+                            if len(target) > 0:
+                                fig.add_trace(go.Scatter(
+                                    x=target['building_area'],
+                                    y=target['price_man'],
+                                    mode='markers',
+                                    name=f'{target_area}±{area_tolerance}㎡',
+                                    marker=dict(
+                                        color='#FF4500',
+                                        size=12,
+                                        opacity=0.8,
+                                        line=dict(color='#8B0000', width=1),
+                                    ),
+                                    text=target['hover_text'],
+                                    hovertemplate='%{text}<extra></extra>'
+                                ))
 
-                        st.pyplot(fig)
+                                # 希望面積に縦線を追加
+                                fig.add_vline(x=target_area, line_dash="dash", line_color="red",
+                                            annotation_text=f"広さ {target_area}㎡", annotation_position="top")
+
+                                # 許容範囲を背景色で表示
+                                fig.add_vrect(x0=target_area-area_tolerance, x1=target_area+area_tolerance,
+                                            fillcolor="blue", opacity=0.1, layer="below", line_width=0)
+                        else:
+                            # 通常の散布図
+                            fig.add_trace(go.Scatter(
+                                x=scatter_df['building_area'],
+                                y=scatter_df['price_man'],
+                                mode='markers',
+                                name='物件',
+                                marker=dict(
+                                    color='#FFD700',
+                                    size=10,
+                                    opacity=0.7,
+                                    line=dict(color='#FFA500', width=1)
+                                ),
+                                text=scatter_df['hover_text'],
+                                hovertemplate='%{text}<extra></extra>'
+                            ))
+
+                        # レイアウトの設定
+                        fig.update_layout(
+                            title={
+                                'text': f'{area_label}と価格の分布 - {len(scatter_df)}件',
+                                'font': {'color': 'black', 'size': 16}
+                            },
+                            xaxis_title={
+                                'text': f'{area_label}（㎡）',
+                                'font': {'color': 'black', 'size': 14}
+                            },
+                            yaxis_title={
+                                'text': '価格（万円）',
+                                'font': {'color': 'black', 'size': 14}
+                            },
+                            height=500,
+                            hovermode='closest',
+                            showlegend=True,
+                            plot_bgcolor='white',
+                            paper_bgcolor='white',
+                            font=dict(color='black'),
+                            xaxis=dict(
+                                gridcolor='#E0E0E0',
+                                gridwidth=0.5,
+                                dtick=10,
+                                range=[max(50, scatter_df['building_area'].min() - 5),
+                                      min(200, scatter_df['building_area'].max() + 5)],
+                                showgrid=True,
+                                zeroline=True,
+                                zerolinecolor='#E0E0E0',
+                                showline=True,
+                                linecolor='black',
+                                linewidth=1,
+                                tickfont=dict(color='black', size=12),
+                                tickcolor='black'
+                            ),
+                            yaxis=dict(
+                                gridcolor='#E0E0E0',
+                                gridwidth=0.5,
+                                dtick=1000,
+                                range=[0, min(10000, scatter_df['price_man'].max() + 500)],
+                                showgrid=True,
+                                zeroline=True,
+                                zerolinecolor='#E0E0E0',
+                                showline=True,
+                                linecolor='black',
+                                linewidth=1,
+                                tickfont=dict(color='black', size=12),
+                                tickcolor='black',
+                                tickformat=',d',
+                                ticksuffix='万円',
+                                tickvals=list(range(0, int(min(10000, scatter_df['price_man'].max() + 500)) + 1, 1000)),
+                                ticktext=[f'{i:,}万円' if i > 0 else '0' for i in range(0, int(min(10000, scatter_df['price_man'].max() + 500)) + 1, 1000)]
+                            )
+                        )
+
+                        st.plotly_chart(fig, use_container_width=True)
 
                         # 統計情報
                         col1, col2, col3 = st.columns(3)
@@ -586,7 +839,7 @@ if search_button:
 
                     # 建築年のデータをフィルタリング（建築年が有効なデータのみ）
                     # dfから直接建築年データを取得
-                    build_year_df = df[['build_year', 'price']].copy()
+                    build_year_df = df.copy()
 
                     # 建築年が有効なデータのみフィルタリング
                     build_year_df = build_year_df[
@@ -637,42 +890,142 @@ if search_button:
                     ]
 
                     # 価格を万円単位に変換
-                    build_year_df['price'] = build_year_df['price'] / 10000
+                    build_year_df['price_man'] = build_year_df['price'] / 10000
 
                     if len(build_year_df) > 0:
-                        import matplotlib.pyplot as plt
-                        import japanize_matplotlib
+                        # ホバー時に表示する情報を準備
+                        build_year_df['hover_text'] = (
+                            '所在地: ' + build_year_df['location'] + '<br>' +
+                            '価格: ' + build_year_df['price_formatted'] + '<br>' +
+                            '建築年: ' + build_year_df['year'].astype(str) + '年<br>' +
+                            '延床面積: ' + build_year_df['building_area'].astype(str) + '㎡<br>' +
+                            '㎡単価: ' + build_year_df['unit_price_formatted'] + '<br>' +
+                            '間取り: ' + build_year_df['floor_plan'].astype(str) + '<br>' +
+                            '取引時期: ' + build_year_df['trade_period'].astype(str)
+                        )
 
-                        fig, ax = plt.subplots(figsize=(14, 4))
+                        fig = go.Figure()
 
-                        # 散布図を作成
-                        ax.scatter(build_year_df['year'], build_year_df['price'],
-                                 alpha=0.6, color='#1f77b4', s=50)
+                        if use_target_year and target_year:
+                            # 希望建築年との差を計算
+                            build_year_df['year_diff'] = abs(build_year_df['year'] - target_year)
+                            build_year_df['is_target_year'] = build_year_df['year_diff'] <= year_tolerance
 
-                        # Y軸を1000万円刻みで設定
-                        ax.set_ylim(0, 10000)
-                        y_ticks = list(range(0, 11000, 1000))
-                        ax.set_yticks(y_ticks)
-                        ax.set_yticklabels([f'{y:,}' for y in y_ticks])
+                            # 範囲外の物件
+                            non_target = build_year_df[~build_year_df['is_target_year']]
+                            if len(non_target) > 0:
+                                fig.add_trace(go.Scatter(
+                                    x=non_target['year'],
+                                    y=non_target['price_man'],
+                                    mode='markers',
+                                    name='その他',
+                                    marker=dict(
+                                        color='#4169E1',
+                                        size=8,
+                                        opacity=0.6,
+                                        line=dict(color='#000080', width=0.5)
+                                    ),
+                                    text=non_target['hover_text'],
+                                    hovertemplate='%{text}<extra></extra>'
+                                ))
 
-                        # X軸を5年刻みで設定
-                        min_year = int(build_year_df['year'].min() / 5) * 5
-                        max_year = int((build_year_df['year'].max() + 4) / 5) * 5
-                        x_ticks = list(range(min_year, max_year + 1, 5))
-                        ax.set_xticks(x_ticks)
-                        ax.set_xticklabels([str(x) for x in x_ticks], rotation=45)
+                            # 範囲内の物件
+                            target = build_year_df[build_year_df['is_target_year']]
+                            if len(target) > 0:
+                                fig.add_trace(go.Scatter(
+                                    x=target['year'],
+                                    y=target['price_man'],
+                                    mode='markers',
+                                    name=f'{target_year}±{year_tolerance}年',
+                                    marker=dict(
+                                        color='#FF4500',
+                                        size=12,
+                                        opacity=0.8,
+                                        line=dict(color='#8B0000', width=1),
+                                    ),
+                                    text=target['hover_text'],
+                                    hovertemplate='%{text}<extra></extra>'
+                                ))
 
-                        # グリッド線を追加
-                        ax.grid(True, alpha=0.3, linestyle='--')
+                                # 希望建築年に縦線を追加
+                                fig.add_vline(x=target_year, line_dash="dash", line_color="red",
+                                            annotation_text=f"建築年 {target_year}年", annotation_position="top")
 
-                        # ラベル
-                        ax.set_xlabel('建築年', fontsize=12)
-                        ax.set_ylabel('価格（万円）', fontsize=12)
-                        ax.set_title(f'{results["search_conditions"]["location"]}の建築年別価格分布',
-                                   fontsize=14, pad=20)
+                                # 許容範囲を背景色で表示
+                                fig.add_vrect(x0=target_year-year_tolerance, x1=target_year+year_tolerance,
+                                            fillcolor="red", opacity=0.1, layer="below", line_width=0)
+                        else:
+                            # 通常の散布図
+                            fig.add_trace(go.Scatter(
+                                x=build_year_df['year'],
+                                y=build_year_df['price_man'],
+                                mode='markers',
+                                name='物件',
+                                marker=dict(
+                                    color='#FFD700',
+                                    size=10,
+                                    opacity=0.7,
+                                    line=dict(color='#FFA500', width=1)
+                                ),
+                                text=build_year_df['hover_text'],
+                                hovertemplate='%{text}<extra></extra>'
+                            ))
 
-                    plt.tight_layout()
-                    st.pyplot(fig)
+                        # レイアウトの設定
+                        fig.update_layout(
+                            title={
+                                'text': f'{results["search_conditions"]["location"]}の建築年別価格分布',
+                                'font': {'color': 'black', 'size': 16}
+                            },
+                            xaxis_title={
+                                'text': '建築年',
+                                'font': {'color': 'black', 'size': 14}
+                            },
+                            yaxis_title={
+                                'text': '価格（万円）',
+                                'font': {'color': 'black', 'size': 14}
+                            },
+                            height=500,
+                            hovermode='closest',
+                            showlegend=True,
+                            plot_bgcolor='white',
+                            paper_bgcolor='white',
+                            font=dict(color='black'),
+                            xaxis=dict(
+                                gridcolor='#E0E0E0',
+                                gridwidth=0.5,
+                                dtick=5,
+                                range=[build_year_df['year'].min() - 2, build_year_df['year'].max() + 2],
+                                showgrid=True,
+                                zeroline=True,
+                                zerolinecolor='#E0E0E0',
+                                showline=True,
+                                linecolor='black',
+                                linewidth=1,
+                                tickfont=dict(color='black', size=12),
+                                tickcolor='black'
+                            ),
+                            yaxis=dict(
+                                gridcolor='#E0E0E0',
+                                gridwidth=0.5,
+                                dtick=1000,
+                                range=[0, min(10000, build_year_df['price_man'].max() + 500)],
+                                showgrid=True,
+                                zeroline=True,
+                                zerolinecolor='#E0E0E0',
+                                showline=True,
+                                linecolor='black',
+                                linewidth=1,
+                                tickfont=dict(color='black', size=12),
+                                tickcolor='black',
+                                tickformat=',d',
+                                ticksuffix='万円',
+                                tickvals=list(range(0, int(min(10000, build_year_df['price_man'].max() + 500)) + 1, 1000)),
+                                ticktext=[f'{i:,}万円' if i > 0 else '0' for i in range(0, int(min(10000, build_year_df['price_man'].max() + 500)) + 1, 1000)]
+                            )
+                        )
+
+                        st.plotly_chart(fig, use_container_width=True)
 
                     # 統計情報を表示
                     col1, col2, col3, col4 = st.columns(4)
