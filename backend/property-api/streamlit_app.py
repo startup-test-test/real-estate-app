@@ -146,69 +146,48 @@ selected_type_name = st.sidebar.radio(
 selected_type_code = [code for code, name in trade_type_options.items() if name == selected_type_name][0]
 selected_types = [selected_type_code]
 
-# 希望面積入力（必須）
-st.sidebar.subheader("希望面積での絞り込み *")
-# 取引種類に応じて表示を変更
-area_type_label = "専有面積" if selected_type_code == "07" else "延床面積" if selected_type_code == "02" else "土地面積"
+# 希望延床面積入力（必須）
+st.sidebar.subheader("希望延床面積 *")
 
-col1, col2 = st.sidebar.columns(2)
-with col1:
-    target_area = st.number_input(
-        f"希望{area_type_label}(㎡) *",
-        min_value=10,
-        max_value=500,
-        value=100,
-        step=10,
-        help=f"探したい{area_type_label}を入力してください（必須）"
-    )
-with col2:
-    area_tolerance = st.slider(
-        "許容範囲(±㎡) *",
-        min_value=5,
-        max_value=50,
-        value=10,
-        step=5,
-        help="希望面積からの許容範囲（必須）"
-    )
+target_area = st.sidebar.number_input(
+    "延床面積(㎡) *",
+    min_value=10,
+    max_value=500,
+    value=100,
+    step=10,
+    help="探したい延床面積を入力してください（必須）"
+)
 
-st.sidebar.info(f"🎯 {target_area-area_tolerance}〜{target_area+area_tolerance}㎡の物件を強調表示します")
+# 許容範囲は自動設定（±10㎡）
+area_tolerance = 10
 
 use_target_area = True  # 常に有効
 
 # 建築年入力（必須）
-st.sidebar.subheader("建築年での絞り込み *")
-col1, col2 = st.sidebar.columns(2)
-with col1:
-    current_year = datetime.now().year
-    target_year = st.number_input(
-        "建築年 *",
-        min_value=1950,
-        max_value=current_year,
-        value=2015,
-        step=1,
-        help="探したい建築年を入力してください（必須）"
-    )
-with col2:
-    year_tolerance = st.slider(
-        "許容範囲(±年) *",
-        min_value=1,
-        max_value=20,
-        value=5,
-        step=1,
-        help="建築年からの許容範囲（必須）"
-    )
+st.sidebar.subheader("建築年 *")
 
-st.sidebar.info(f"🎯 {target_year-year_tolerance}〜{target_year+year_tolerance}年の物件を強調表示します")
+current_year = datetime.now().year
+target_year = st.sidebar.number_input(
+    "建築年 *",
+    min_value=1950,
+    max_value=current_year,
+    value=2015,
+    step=1,
+    help="探したい建築年を入力してください（必須）"
+)
+
+# 許容範囲は自動設定（±5年）
+year_tolerance = 5
 
 use_target_year = True  # 常に有効
 
-# 期間選択
+# 期間選択（直近3年分を自動設定）
 st.sidebar.subheader("取引時期")
 current_year = datetime.now().year
-years = list(range(current_year, 2005, -1))  # 2005年から現在まで
 
-from_year = st.sidebar.selectbox("開始年", years, index=years.index(2023) if 2023 in years else 2)
-to_year = st.sidebar.selectbox("終了年", years, index=0)  # 現在年をデフォルト
+# 直近3年分を自動的に設定
+from_year = current_year - 3
+to_year = current_year
 
 # 検索ボタン
 search_button = st.sidebar.button("🔍 検索実行", type="primary", use_container_width=True)
@@ -310,34 +289,16 @@ if search_button:
                 else:
                     table_df = table_df.sort_values('building_area')  # 延床面積でソート
                 
-                # 全ての情報を表示用に整形
+                # 表示する列を限定
                 display_table = pd.DataFrame({
                     'No.': range(1, len(table_df) + 1),
-                    '価格情報区分': table_df['price_type'],
-                    '種別': table_df['type'],
                     '所在地': table_df['location'],
-                    '地区': table_df['region'],
+                    '取引時期': table_df['trade_period'],
                     '取引価格': table_df['price_formatted'],
-                    '坪単価': table_df['tsubo_price_formatted'],
-                    '㎡単価': table_df['unit_price_formatted'],
                     '土地面積(㎡)': table_df['land_area'].astype(int),
                     '延床面積(㎡)': table_df['building_area'].astype(int),
-                    '建築年': table_df['build_year'],
-                    '構造': table_df['structure'],
                     '間取り': table_df['floor_plan'],
-                    '用途': table_df['use'],
-                    '利用目的': table_df['purpose'],
-                    '土地形状': table_df['land_shape'],
-                    '間口(m)': table_df['road_width'],
-                    '前面道路方位': table_df['road_direction'],
-                    '前面道路種類': table_df['road_type'],
-                    '前面道路幅員(m)': table_df['breadth'],
-                    '都市計画': table_df['city_planning'],
-                    '建蔽率(%)': table_df['coverage_ratio'],
-                    '容積率(%)': table_df['floor_area_ratio'],
-                    '改装': table_df['renovation'],
-                    '取引事情等': table_df['remarks'],
-                    '取引時期': table_df['trade_period']
+                    '前面道路': table_df['road_type'] + ' ' + table_df['breadth'].astype(str) + 'm'
                 })
                 
                 # 希望面積に応じた色分け設定
@@ -765,43 +726,72 @@ if search_button:
                     cross_table_display.index.name = '価格(万円)'
                     cross_table_display.columns.name = f'{area_label}(㎡)'
                     
-                    # ヒートマップで表示
-                    import matplotlib.pyplot as plt
+                    # Plotlyでインタラクティブなヒートマップを作成
+                    import plotly.graph_objects as go
                     import numpy as np
-                    
-                    fig, ax = plt.subplots(figsize=(12, 4))
-                    
-                    # ヒートマップ作成
-                    im = ax.imshow(cross_table_display.values, cmap='Blues', aspect='auto')
-                    
-                    # 軸ラベル設定
-                    ax.set_xticks(np.arange(len(cross_table_display.columns)))
-                    ax.set_yticks(np.arange(len(cross_table_display.index)))
-                    ax.set_xticklabels(cross_table_display.columns)
-                    ax.set_yticklabels(cross_table_display.index)
-                    
-                    # 軸ラベル
-                    ax.set_xlabel(f'{area_label}(㎡)')
-                    ax.set_ylabel('価格(万円)')
-                    
-                    # 各セルに数値を表示
+
+                    # ホバーテキストを作成
+                    hover_text = []
                     for i in range(len(cross_table_display.index)):
+                        row_text = []
                         for j in range(len(cross_table_display.columns)):
-                            value = cross_table_display.iloc[i, j]
-                            if value > 0:
-                                text = ax.text(j, i, int(value), ha="center", va="center", 
-                                             color="black" if value < cross_table_display.values.max()/2 else "white",
-                                             fontsize=10, fontweight='bold')
-                    
-                    # グリッド線を追加
-                    ax.set_xticks(np.arange(len(cross_table_display.columns)+1)-.5, minor=True)
-                    ax.set_yticks(np.arange(len(cross_table_display.index)+1)-.5, minor=True)
-                    ax.grid(which="minor", color="white", linestyle='-', linewidth=2)
-                    
-                    plt.title(f'{results["search_conditions"]["location"]}の{area_label}別売出価格の内訳', fontsize=14, pad=20)
-                    plt.tight_layout()
-                    
-                    st.pyplot(fig)
+                            value = int(cross_table_display.iloc[i, j])
+                            price_range = cross_table_display.index[i]
+                            area_range = cross_table_display.columns[j]
+                            text = f'価格: {price_range}<br>{area_label}: {area_range}㎡<br>件数: {value}件'
+                            row_text.append(text)
+                        hover_text.append(row_text)
+
+                    # ヒートマップ作成
+                    fig = go.Figure(data=go.Heatmap(
+                        z=cross_table_display.values,
+                        x=cross_table_display.columns,
+                        y=cross_table_display.index,
+                        colorscale='Blues',
+                        text=cross_table_display.values,
+                        texttemplate='%{text:.0f}',
+                        textfont={"size": 12},
+                        hovertext=hover_text,
+                        hovertemplate='%{hovertext}<extra></extra>',
+                        colorbar=dict(title="件数")
+                    ))
+
+                    # レイアウトの設定
+                    fig.update_layout(
+                        title={
+                            'text': f'{results["search_conditions"]["location"]}の{area_label}別売出価格の内訳',
+                            'font': {'color': 'black', 'size': 16}
+                        },
+                        xaxis_title={
+                            'text': f'{area_label}(㎡)',
+                            'font': {'color': 'black', 'size': 14}
+                        },
+                        yaxis_title={
+                            'text': '価格(万円)',
+                            'font': {'color': 'black', 'size': 14}
+                        },
+                        height=400,
+                        plot_bgcolor='white',
+                        paper_bgcolor='white',
+                        font=dict(color='black'),
+                        xaxis=dict(
+                            side='bottom',
+                            tickfont=dict(color='black', size=12),
+                            tickangle=0,
+                            showgrid=False,
+                            showline=True,
+                            linecolor='black'
+                        ),
+                        yaxis=dict(
+                            side='left',
+                            tickfont=dict(color='black', size=12),
+                            showgrid=False,
+                            showline=True,
+                            linecolor='black'
+                        )
+                    )
+
+                    st.plotly_chart(fig, use_container_width=True)
                     
                     
                     # 面積における割合を表示
