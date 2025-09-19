@@ -237,6 +237,208 @@ if search_button:
                 # データフレームに変換
                 df = pd.DataFrame(results['results'])
 
+                # AIトレンド分析セクション
+                st.markdown("### 📊 AIトレンド分析")
+
+                # 統計データの計算（外れ値を除外）
+                # IQR法で外れ値を検出
+                Q1 = df['price'].quantile(0.25)
+                Q3 = df['price'].quantile(0.75)
+                IQR = Q3 - Q1
+
+                # 外れ値の境界を計算（通常の1.5倍を2.5倍に緩和して、ある程度の高額物件は残す）
+                lower_bound = Q1 - 2.5 * IQR
+                upper_bound = Q3 + 2.5 * IQR
+
+                # 外れ値を除いたデータ
+                df_filtered = df[(df['price'] >= lower_bound) & (df['price'] <= upper_bound)]
+
+                # 外れ値を除いた統計値を計算
+                avg_price = df_filtered['price'].mean() / 10000  # 万円単位
+                median_price = df_filtered['price'].median() / 10000
+                price_std = df_filtered['price'].std() / 10000
+                total_count = len(df)
+                outlier_count = len(df) - len(df_filtered)
+
+                # 価格トレンドの計算（外れ値を除いたデータで計算）
+                if 'trade_period' in df_filtered.columns:
+                    # 取引時期から年を抽出
+                    df_filtered['year'] = df_filtered['trade_period'].str.extract(r'(\d{4})').astype(float)
+
+                    # デバッグ：取引時期の年を確認
+                    unique_years = df_filtered['year'].dropna().unique()
+                    unique_years_sorted = sorted(unique_years) if len(unique_years) > 0 else []
+
+                    if len(unique_years_sorted) >= 2:
+                        # 年ごとの平均価格を計算
+                        yearly_prices = df_filtered.groupby('year')['price'].mean() / 10000
+                        # 単純な年次成長率を計算
+                        first_year_price = yearly_prices.loc[unique_years_sorted[0]]
+                        last_year_price = yearly_prices.loc[unique_years_sorted[-1]]
+                        year_span = unique_years_sorted[-1] - unique_years_sorted[0]
+
+                        if year_span > 0:
+                            growth_rate = ((last_year_price - first_year_price) / first_year_price / year_span) * 100
+                        else:
+                            growth_rate = 0
+                    else:
+                        growth_rate = 0
+                else:
+                    growth_rate = 0
+                    unique_years_sorted = []
+
+                # 面積あたりの平均単価（外れ値を除いたデータで計算）
+                if 'area' in df_filtered.columns:
+                    df_filtered['unit_price'] = df_filtered['price'] / df_filtered['area'] / 10000  # 万円/㎡
+                    avg_unit_price = df_filtered['unit_price'].mean()
+                else:
+                    avg_unit_price = 0
+
+                # メトリクスを4列で表示
+                col1, col2, col3, col4 = st.columns(4)
+
+                with col1:
+                    # データの期間を取得して価格トレンドを表示
+                    if 'trade_period' in df_filtered.columns and df_filtered['trade_period'].notna().any():
+                        # 実際の年データを確認
+                        if len(unique_years_sorted) >= 2:
+                            # 実際のデータの期間を取得
+                            periods_by_year = df_filtered.groupby('year')['trade_period'].first()
+                            oldest_period = periods_by_year.loc[unique_years_sorted[0]]
+                            newest_period = periods_by_year.loc[unique_years_sorted[-1]]
+
+                            # 成長率を表示
+                            if growth_rate > 0:
+                                trend_value = f"年間 +{growth_rate:.1f}%"
+                            else:
+                                trend_value = f"年間 {growth_rate:.1f}%"
+                            delta_text = f"{oldest_period} → {newest_period}"
+                            years_list = ", ".join([str(int(y)) for y in unique_years_sorted])
+                            help_text = f"データ年: {years_list} ({len(df_filtered)}件)"
+
+                        elif len(unique_years_sorted) == 1:
+                            # 1年分のデータのみ
+                            year_str = str(int(unique_years_sorted[0]))
+                            trend_value = "算出不可"
+                            delta_text = f"{year_str}年のデータのみ（{len(df_filtered)}件）"
+                            help_text = "トレンド分析には複数年のデータが必要です"
+
+                        else:
+                            # 年データが取得できない
+                            trend_value = "算出不可"
+                            delta_text = f"データ{len(df_filtered)}件"
+                            help_text = "取引時期が不明または解析できません"
+                    else:
+                        trend_value = "算出不可"
+                        delta_text = "取引時期データなし"
+                        help_text = "APIレスポンスに取引時期が含まれていません"
+
+                    st.metric(
+                        label="価格トレンド",
+                        value=trend_value,
+                        delta=delta_text,
+                        help=help_text
+                    )
+
+                with col2:
+                    # 平均と中央値の差を計算
+                    price_diff = avg_price - median_price
+                    diff_percent = (price_diff / median_price * 100) if median_price > 0 else 0
+
+                    if outlier_count > 0:
+                        st.metric(
+                            label="平均価格",
+                            value=f"{avg_price:,.0f}万円",
+                            delta=None,
+                            help=f"平均: {avg_price:,.0f}万円\n中央値: {median_price:,.0f}万円\n差額: {abs(price_diff):,.0f}万円\n（外れ値{outlier_count}件除外済）"
+                        )
+                    else:
+                        st.metric(
+                            label="平均価格",
+                            value=f"{avg_price:,.0f}万円",
+                            delta=None,
+                            help=f"平均: {avg_price:,.0f}万円\n中央値: {median_price:,.0f}万円\n差額: {abs(price_diff):,.0f}万円"
+                        )
+
+                with col3:
+                    # 中央値を独立したメトリクスとして表示
+                    st.metric(
+                        label="中央値",
+                        value=f"{median_price:,.0f}万円",
+                        delta=None,
+                        help="データを小さい順に並べた時の真ん中の値。外れ値の影響を受けにくい"
+                    )
+
+                with col4:
+                    if avg_unit_price > 0:
+                        st.metric(
+                            label="平均単価",
+                            value=f"{avg_unit_price:.1f}万円/㎡",
+                            delta=f"分析対象: {len(df_filtered)}/{total_count}件"
+                        )
+                    else:
+                        st.metric(
+                            label="サンプル数",
+                            value=f"{total_count}件",
+                            delta=f"分析対象: {len(df_filtered)}件"
+                        )
+
+                # 詳細分析（エキスパンダーで折り畳み可能）
+                with st.expander("📈 詳細なトレンド分析を見る"):
+                    # 駅からの距離分析（外れ値を除いたデータで分析）
+                    if 'minutes_to_station' in df_filtered.columns:
+                        station_stats = df_filtered.groupby(pd.cut(df_filtered['minutes_to_station'],
+                                                         bins=[0, 5, 10, 15, 30, 100],
+                                                         labels=['5分以内', '6-10分', '11-15分', '16-30分', '30分超']))['price'].mean() / 10000
+
+                    # 築年数分析（外れ値を除いたデータで分析）
+                    if 'building_year' in df_filtered.columns:
+                        current_year = pd.Timestamp.now().year
+                        df_filtered['age'] = current_year - pd.to_numeric(df_filtered['building_year'], errors='coerce')
+                        age_stats = df_filtered.groupby(pd.cut(df_filtered['age'],
+                                                     bins=[0, 5, 10, 20, 30, 100],
+                                                     labels=['築5年以内', '築6-10年', '築11-20年', '築21-30年', '築30年超'],
+                                                     include_lowest=True))['price'].mean() / 10000
+
+                    analysis_text = f"""
+                    **📊 統計サマリー**
+                    - 分析対象物件数: {len(df_filtered)}件 （全{total_count}件中）
+                    """
+
+                    if outlier_count > 0:
+                        analysis_text += f"    - 外れ値として除外: {outlier_count}件\n"
+
+                    analysis_text += f"""    - 平均価格: {avg_price:,.0f}万円
+                    - 中央値: {median_price:,.0f}万円
+                    - 価格帯: {df_filtered['price'].min()/10000:,.0f}万円 〜 {df_filtered['price'].max()/10000:,.0f}万円
+
+                    **📈 価格動向分析**
+                    - 年間成長率: {growth_rate:.1f}%
+                    - 価格のばらつき（標準偏差）: ±{price_std:,.0f}万円
+                    """
+
+                    st.write(analysis_text)
+
+                    if 'minutes_to_station' in df_filtered.columns and 'station_stats' in locals() and not station_stats.empty:
+                        st.write("**🚉 駅距離別の平均価格**")
+                        for distance, price in station_stats.items():
+                            if pd.notna(price):
+                                st.write(f"- {distance}: {price:,.0f}万円")
+
+                    if 'building_year' in df_filtered.columns and 'age_stats' in locals() and not age_stats.empty:
+                        st.write("**🏢 築年数別の平均価格**")
+                        for age_range, price in age_stats.items():
+                            if pd.notna(price):
+                                st.write(f"- {age_range}: {price:,.0f}万円")
+
+                    st.info("""
+                    ⚠️ **ご注意**
+                    - 本分析は過去の公開データに基づく統計情報です
+                    - 将来の価格動向を保証するものではありません
+                    - 投資判断の推奨や助言ではありません
+                    - 実際の取引には専門家にご相談ください
+                    """)
+
                 # 類似物件の詳細表（最大10件表示、1番上に配置）
                 # 表示用のデータフレームを作成
                 table_df = df.copy()
