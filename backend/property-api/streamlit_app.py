@@ -236,30 +236,8 @@ if search_button:
             if results['search_count'] > 0:
                 # データフレームに変換
                 df = pd.DataFrame(results['results'])
-                
-                # 統計情報
-                st.subheader("📈 統計情報")
-                col1, col2, col3, col4 = st.columns(4)
-                
-                with col1:
-                    avg_price = df['price'].mean() / 10000
-                    st.metric("平均取引価格", f"{avg_price:,.0f}万円")
-                
-                with col2:
-                    avg_unit = df['unit_price'].mean() / 10000
-                    st.metric("平均㎡単価", f"{avg_unit:,.1f}万円")
-                
-                with col3:
-                    avg_area = df['land_area'].mean()
-                    st.metric("平均土地面積", f"{avg_area:,.0f}㎡")
-                
-                with col4:
-                    count_by_type = df['type'].value_counts()
-                    st.metric("最多取引種類", count_by_type.index[0])
-                
-                # 参考事例の詳細表（最大10件表示、1番上に配置）
-                st.subheader("📋 参考事例")
 
+                # 類似物件の詳細表（最大10件表示、1番上に配置）
                 # 表示用のデータフレームを作成
                 table_df = df.copy()
 
@@ -291,39 +269,61 @@ if search_button:
                     '取引価格': table_df_limited['price_formatted'].values,
                     '土地面積(㎡)': table_df_limited['land_area'].astype(int).values,
                     '延床面積(㎡)': table_df_limited['building_area'].astype(int).values,
-                    '間取り': table_df_limited['floor_plan'].values,
+                    '間取り': table_df_limited['floor_plan'].fillna('-').replace('', '-').values,
                     '前面道路': (table_df_limited['road_type'] + ' ' + table_df_limited['breadth'].astype(str) + 'm').values
                 })
-                
-                # 希望面積に応じた色分け設定
-                if use_target_area and target_area and 'is_target' in table_df.columns:
-                    # 強調表示される物件数を表示（全体での該当件数）
-                    target_count = table_df['is_target'].sum()
-                    st.success(f"✨ 広さ {target_area}㎡ (±{area_tolerance}㎡) に該当する物件: {target_count}件 (表示は最大10件)")
 
-                    # 該当する物件に色付けマークを追加（限定されたデータに対して）
-                    display_table['該当'] = table_df_limited['is_target'].map({True: '🟢', False: ''}).values
+                # タイトル表示
+                st.subheader("📋 類似物件")
 
-                    # 列の順番を調整（該当列を最初に）
-                    cols = display_table.columns.tolist()
-                    cols = ['該当', 'No.'] + [col for col in cols if col not in ['該当', 'No.']]
-                    display_table = display_table[cols]
+                # HTMLテーブルのスタイル設定
+                table_style = """
+                <style>
+                .property-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    background-color: white;
+                }
+                .property-table th {
+                    background-color: white;
+                    color: black;
+                    text-align: left;
+                    padding: 10px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    border-bottom: 2px solid #ddd;
+                }
+                .property-table td {
+                    background-color: white;
+                    color: black;
+                    text-align: left;
+                    padding: 10px;
+                    font-size: 18px;
+                    border-bottom: 1px solid #eee;
+                }
+                .property-table tr:hover td {
+                    background-color: #fafafa;
+                }
+                </style>
+                """
 
-                    # 表を表示（マーク付き）
-                    st.dataframe(
-                        display_table,
-                        use_container_width=True,
-                        hide_index=True,
-                        height=400  # 10件分の高さに調整
-                    )
-                else:
-                    # 表を表示
-                    st.dataframe(
-                        display_table,
-                        use_container_width=True,
-                        hide_index=True,
-                        height=400  # 10件分の高さに調整
-                    )
+                # HTMLテーブルの作成
+                html_table = table_style + '<table class="property-table">'
+                html_table += '<thead><tr>'
+                for col in display_table.columns:
+                    html_table += f'<th>{col}</th>'
+                html_table += '</tr></thead><tbody>'
+
+                for _, row in display_table.iterrows():
+                    html_table += '<tr>'
+                    for val in row:
+                        html_table += f'<td>{val}</td>'
+                    html_table += '</tr>'
+                html_table += '</tbody></table>'
+
+                # HTMLテーブルを表示
+                st.markdown(html_table, unsafe_allow_html=True)
                 
 
                 # 取引種類が土地かどうか判定
@@ -410,8 +410,8 @@ if search_button:
                         ax.grid(True, alpha=0.3, linestyle='--')
 
                         # ラベル
-                        ax.set_xlabel('土地面積（㎡）', fontsize=12)
-                        ax.set_ylabel('価格（万円）', fontsize=12)
+                        ax.set_xlabel('土地面積（㎡）', fontsize=14)
+                        ax.set_ylabel('価格（万円）', fontsize=14)
                         ax.set_title(f'{results["search_conditions"]["location"]}の土地面積と成約価格の分布',
                                    fontsize=14, pad=20)
 
@@ -485,7 +485,7 @@ if search_button:
                                 if value > 0:
                                     text = ax.text(j, i, int(value), ha="center", va="center",
                                                  color="black" if value < cross_table_display.values.max()/2 else "white",
-                                                 fontsize=10, fontweight='bold')
+                                                 fontsize=14, fontweight='bold')
 
                         # グリッド線を追加
                         ax.set_xticks(np.arange(len(cross_table_display.columns)+1)-.5, minor=True)
@@ -510,6 +510,21 @@ if search_button:
                         # Plotlyでインタラクティブな散布図を作成
                         scatter_df['price_man'] = scatter_df['price'] / 10000
 
+                        # 四半期を月表記に変換する関数
+                        def quarter_to_months(period_str):
+                            if pd.isna(period_str):
+                                return period_str
+                            period_str = str(period_str)
+                            if "第1四半期" in period_str:
+                                return period_str.replace("第1四半期", "1月〜3月")
+                            elif "第2四半期" in period_str:
+                                return period_str.replace("第2四半期", "4月〜6月")
+                            elif "第3四半期" in period_str:
+                                return period_str.replace("第3四半期", "7月〜9月")
+                            elif "第4四半期" in period_str:
+                                return period_str.replace("第4四半期", "10月〜12月")
+                            return period_str
+
                         # ホバー時に表示する情報を準備
                         scatter_df['hover_text'] = (
                             '所在地: ' + scatter_df['location'] + '<br>' +
@@ -518,7 +533,7 @@ if search_button:
                             '㎡単価: ' + scatter_df['unit_price_formatted'] + '<br>' +
                             '建築年: ' + scatter_df['build_year'].astype(str) + '<br>' +
                             '間取り: ' + scatter_df['floor_plan'].astype(str) + '<br>' +
-                            '取引時期: ' + scatter_df['trade_period'].astype(str)
+                            '取引時期: ' + scatter_df['trade_period'].apply(quarter_to_months).astype(str)
                         )
 
                         fig = go.Figure()
@@ -595,16 +610,14 @@ if search_button:
                                 'text': f'{area_label}（㎡）',
                                 'font': {'color': 'black', 'size': 14}
                             },
-                            yaxis_title={
-                                'text': '価格（万円）',
-                                'font': {'color': 'black', 'size': 14}
-                            },
+                            yaxis_title=None,
                             height=500,
                             hovermode='closest',
                             showlegend=True,
                             plot_bgcolor='white',
                             paper_bgcolor='white',
                             font=dict(color='black'),
+                            margin=dict(t=40, b=20, l=20, r=20),
                             xaxis=dict(
                                 gridcolor='#E0E0E0',
                                 gridwidth=0.5,
@@ -617,7 +630,7 @@ if search_button:
                                 showline=True,
                                 linecolor='black',
                                 linewidth=1,
-                                tickfont=dict(color='black', size=12),
+                                tickfont=dict(color='black', size=14),
                                 tickcolor='black'
                             ),
                             yaxis=dict(
@@ -631,7 +644,7 @@ if search_button:
                                 showline=True,
                                 linecolor='black',
                                 linewidth=1,
-                                tickfont=dict(color='black', size=12),
+                                tickfont=dict(color='black', size=14),
                                 tickcolor='black',
                                 tickformat=',d',
                                 ticksuffix='万円',
@@ -640,7 +653,9 @@ if search_button:
                             )
                         )
 
-                        st.plotly_chart(fig, use_container_width=True)
+
+                        st.markdown("<h4>1. 延べ床と価格</h4>", unsafe_allow_html=True)
+                        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
                     
                     # 面積と価格の分布表（クロス集計）
@@ -651,11 +666,11 @@ if search_button:
                     price_labels = []
                     for i in range(len(price_bins)-1):
                         if price_bins[i+1] == float('inf'):
-                            price_labels.append('10,000~')
+                            price_labels.append('10,000万円~')
                         elif price_bins[i] == 0:
-                            price_labels.append(f'0~1,000')
+                            price_labels.append(f'0~1,000万円')
                         else:
-                            price_labels.append(f'{price_bins[i]:,}')
+                            price_labels.append(f'{price_bins[i]:,}万円')
 
                     # 面積帯を定義（㎡）- 10㎡刻み
                     area_bins = list(range(50, 210, 10))  # 50, 60, 70, ..., 200
@@ -709,7 +724,7 @@ if search_button:
                         colorscale='Blues',
                         text=cross_table_display.values,
                         texttemplate='%{text:.0f}',
-                        textfont={"size": 12},
+                        textfont={"size": 14},
                         hovertext=hover_text,
                         hovertemplate='%{hovertext}<extra></extra>',
                         colorbar=dict(title="件数")
@@ -717,25 +732,20 @@ if search_button:
 
                     # レイアウトの設定
                     fig.update_layout(
-                        title={
-                            'text': f'{results["search_conditions"]["location"]}の{area_label}別売出価格の内訳',
-                            'font': {'color': 'black', 'size': 16}
-                        },
+                        title=None,
                         xaxis_title={
                             'text': f'{area_label}(㎡)',
                             'font': {'color': 'black', 'size': 14}
                         },
-                        yaxis_title={
-                            'text': '価格(万円)',
-                            'font': {'color': 'black', 'size': 14}
-                        },
+                        yaxis_title=None,
                         height=400,
                         plot_bgcolor='white',
                         paper_bgcolor='white',
                         font=dict(color='black'),
+                        margin=dict(t=40, b=20, l=20, r=20),
                         xaxis=dict(
                             side='bottom',
-                            tickfont=dict(color='black', size=12),
+                            tickfont=dict(color='black', size=14),
                             tickangle=0,
                             showgrid=False,
                             showline=True,
@@ -743,14 +753,16 @@ if search_button:
                         ),
                         yaxis=dict(
                             side='left',
-                            tickfont=dict(color='black', size=12),
+                            tickfont=dict(color='black', size=14),
                             showgrid=False,
                             showline=True,
                             linecolor='black'
                         )
                     )
 
-                    st.plotly_chart(fig, use_container_width=True)
+
+                    st.markdown("<h4>2. 延床面積別価格分布</h4>", unsafe_allow_html=True)
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
                     # 建築年別価格分布グラフを追加（土地以外の場合のみ）
 
@@ -810,6 +822,21 @@ if search_button:
                     build_year_df['price_man'] = build_year_df['price'] / 10000
 
                     if len(build_year_df) > 0:
+                        # 四半期を月表記に変換する関数
+                        def quarter_to_months_year(period_str):
+                            if pd.isna(period_str):
+                                return period_str
+                            period_str = str(period_str)
+                            if "第1四半期" in period_str:
+                                return period_str.replace("第1四半期", "1月〜3月")
+                            elif "第2四半期" in period_str:
+                                return period_str.replace("第2四半期", "4月〜6月")
+                            elif "第3四半期" in period_str:
+                                return period_str.replace("第3四半期", "7月〜9月")
+                            elif "第4四半期" in period_str:
+                                return period_str.replace("第4四半期", "10月〜12月")
+                            return period_str
+
                         # ホバー時に表示する情報を準備
                         build_year_df['hover_text'] = (
                             '所在地: ' + build_year_df['location'] + '<br>' +
@@ -818,7 +845,7 @@ if search_button:
                             '延床面積: ' + build_year_df['building_area'].astype(str) + '㎡<br>' +
                             '㎡単価: ' + build_year_df['unit_price_formatted'] + '<br>' +
                             '間取り: ' + build_year_df['floor_plan'].astype(str) + '<br>' +
-                            '取引時期: ' + build_year_df['trade_period'].astype(str)
+                            '取引時期: ' + build_year_df['trade_period'].apply(quarter_to_months_year).astype(str)
                         )
 
                         fig = go.Figure()
@@ -890,24 +917,19 @@ if search_button:
 
                         # レイアウトの設定
                         fig.update_layout(
-                            title={
-                                'text': f'{results["search_conditions"]["location"]}の建築年別価格分布',
-                                'font': {'color': 'black', 'size': 16}
-                            },
+                            title=None,
                             xaxis_title={
                                 'text': '建築年',
                                 'font': {'color': 'black', 'size': 14}
                             },
-                            yaxis_title={
-                                'text': '価格（万円）',
-                                'font': {'color': 'black', 'size': 14}
-                            },
+                            yaxis_title=None,
                             height=500,
                             hovermode='closest',
                             showlegend=True,
                             plot_bgcolor='white',
                             paper_bgcolor='white',
                             font=dict(color='black'),
+                            margin=dict(t=40, b=20, l=20, r=20),
                             xaxis=dict(
                                 gridcolor='#E0E0E0',
                                 gridwidth=0.5,
@@ -919,7 +941,7 @@ if search_button:
                                 showline=True,
                                 linecolor='black',
                                 linewidth=1,
-                                tickfont=dict(color='black', size=12),
+                                tickfont=dict(color='black', size=14),
                                 tickcolor='black'
                             ),
                             yaxis=dict(
@@ -933,7 +955,7 @@ if search_button:
                                 showline=True,
                                 linecolor='black',
                                 linewidth=1,
-                                tickfont=dict(color='black', size=12),
+                                tickfont=dict(color='black', size=14),
                                 tickcolor='black',
                                 tickformat=',d',
                                 ticksuffix='万円',
@@ -942,7 +964,9 @@ if search_button:
                             )
                         )
 
-                        st.plotly_chart(fig, use_container_width=True)
+
+                        st.markdown("<h4>3. 建築年別価格分布</h4>", unsafe_allow_html=True)
+                        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
                     # 建築年別価格分布のヒートマップ
@@ -953,11 +977,11 @@ if search_button:
                     price_labels = []
                     for i in range(len(price_bins)-1):
                         if price_bins[i+1] == float('inf'):
-                            price_labels.append('10,000~')
+                            price_labels.append('10,000万円~')
                         elif price_bins[i] == 0:
-                            price_labels.append(f'0~1,000')
+                            price_labels.append(f'0~1,000万円')
                         else:
-                            price_labels.append(f'{price_bins[i]:,}')
+                            price_labels.append(f'{price_bins[i]:,}万円')
 
                     # 建築年帯を定義（5年刻み）
                     min_year = int(build_year_df['year'].min() / 5) * 5
@@ -967,7 +991,7 @@ if search_button:
 
                     # データを分類
                     heatmap_df = build_year_df.copy()
-                    heatmap_df['price_range'] = pd.cut(heatmap_df['price'], bins=price_bins, labels=price_labels, right=False)
+                    heatmap_df['price_range'] = pd.cut(heatmap_df['price']/10000, bins=price_bins, labels=price_labels, right=False)
                     heatmap_df['year_range'] = pd.cut(heatmap_df['year'], bins=year_bins, labels=year_labels, right=False)
 
                     # クロス集計表を作成
@@ -1011,7 +1035,7 @@ if search_button:
                         colorscale='Oranges',
                         text=cross_table_year_display.values,
                         texttemplate='%{text:.0f}',
-                        textfont={"size": 10},
+                        textfont={"size": 14},
                         hovertext=hover_text,
                         hovertemplate='%{hovertext}<extra></extra>',
                         colorbar=dict(title="件数")
@@ -1019,40 +1043,40 @@ if search_button:
 
                     # レイアウトの設定
                     fig.update_layout(
-                        title={
-                            'text': f'{results["search_conditions"]["location"]}の建築年別価格分布',
-                            'font': {'color': 'black', 'size': 16}
-                        },
+                        title=None,
                         xaxis_title={
-                            'text': '建築年（5年刻み）',
+                            'text': '建築年',
                             'font': {'color': 'black', 'size': 14}
                         },
-                        yaxis_title={
-                            'text': '価格(万円)',
-                            'font': {'color': 'black', 'size': 14}
-                        },
+                        yaxis_title=None,
                         height=400,
                         plot_bgcolor='white',
                         paper_bgcolor='white',
                         font=dict(color='black'),
+                        margin=dict(t=40, b=20, l=100, r=20),
                         xaxis=dict(
                             side='bottom',
-                            tickfont=dict(color='black', size=12),
-                            tickangle=45,
+                            tickfont=dict(color='black', size=14),
+                            tickangle=0,
                             showgrid=False,
                             showline=True,
                             linecolor='black'
                         ),
                         yaxis=dict(
                             side='left',
-                            tickfont=dict(color='black', size=12),
+                            tickfont=dict(color='black', size=14),
                             showgrid=False,
                             showline=True,
-                            linecolor='black'
+                            linecolor='black',
+                            tickmode='array',
+                            tickvals=list(range(len(cross_table_year_display.index))),
+                            ticktext=list(cross_table_year_display.index)
                         )
                     )
 
-                    st.plotly_chart(fig, use_container_width=True)
+
+                    st.markdown("<h4>4. 建築年別価格分布（ヒートマップ）</h4>", unsafe_allow_html=True)
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
                 # 成約件数の推移グラフ
@@ -1071,17 +1095,21 @@ if search_button:
                     # 期間別に集計
                     period_counts = period_df.groupby('period')['count'].sum().sort_index()
 
-                    # 四半期を月表記に変換
+                    # 四半期を月表記に変換（改行付き）
                     def convert_quarter_to_month(period_str):
-                        """四半期表記を月表記に変換"""
+                        """四半期表記を月表記に変換（年と月を改行で分ける）"""
                         if "第1四半期" in period_str:
-                            return period_str.replace("第1四半期", "1月〜3月")
+                            year = period_str.split("年")[0] + "年"
+                            return year + "<br>1月〜3月"
                         elif "第2四半期" in period_str:
-                            return period_str.replace("第2四半期", "4月〜6月")
+                            year = period_str.split("年")[0] + "年"
+                            return year + "<br>4月〜6月"
                         elif "第3四半期" in period_str:
-                            return period_str.replace("第3四半期", "7月〜9月")
+                            year = period_str.split("年")[0] + "年"
+                            return year + "<br>7月〜9月"
                         elif "第4四半期" in period_str:
-                            return period_str.replace("第4四半期", "10月〜12月")
+                            year = period_str.split("年")[0] + "年"
+                            return year + "<br>10月〜12月"
                         return period_str
 
                     x_labels = [convert_quarter_to_month(str(period)) for period in period_counts.index]
@@ -1107,7 +1135,7 @@ if search_button:
                         ),
                         text=[f'{int(count)}件' for count in period_counts.values],
                         textposition='outside',
-                        textfont=dict(size=12, color='black'),
+                        textfont=dict(size=14, color='black'),
                         hovertext=hover_texts,
                         hovertemplate='%{hovertext}<extra></extra>'
                     ))
@@ -1115,32 +1143,27 @@ if search_button:
                     # レイアウトの設定
                     max_count = int(period_counts.max()) + 2
                     fig.update_layout(
-                        title={
-                            'text': f'{results["search_conditions"]["location"]}の成約件数推移',
-                            'font': {'color': 'black', 'size': 16}
-                        },
+                        title=None,
                         xaxis_title={
                             'text': '取引時期',
                             'font': {'color': 'black', 'size': 14}
                         },
-                        yaxis_title={
-                            'text': '成約件数（件）',
-                            'font': {'color': 'black', 'size': 14}
-                        },
+                        yaxis_title=None,
                         height=500,
                         plot_bgcolor='white',
                         paper_bgcolor='white',
                         font=dict(color='black'),
+                        margin=dict(t=40, b=60, l=20, r=20),
                         xaxis=dict(
-                            tickfont=dict(color='black', size=11),
-                            tickangle=45,
+                            tickfont=dict(color='black', size=14),
+                            tickangle=0,
                             showgrid=False,
                             showline=True,
                             linecolor='black',
                             linewidth=1
                         ),
                         yaxis=dict(
-                            tickfont=dict(color='black', size=12),
+                            tickfont=dict(color='black', size=14),
                             showgrid=True,
                             gridcolor='#E0E0E0',
                             gridwidth=0.5,
@@ -1149,13 +1172,16 @@ if search_button:
                             linewidth=1,
                             range=[0, max_count],
                             dtick=1,
-                            tickmode='linear'
+                            tickmode='linear',
+                            ticksuffix='件'
                         ),
                         showlegend=False,
                         bargap=0.2
                     )
 
-                    st.plotly_chart(fig, use_container_width=True)
+
+                    st.markdown("<h4>5. 成約件数推移</h4>", unsafe_allow_html=True)
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
                 else:
                     st.info("取引時期データが含まれる物件がありません。")
@@ -1166,4 +1192,8 @@ if search_button:
 
 # フッター
 st.markdown("---")
-st.markdown("データ提供: [国土交通省 不動産情報ライブラリ](https://www.reinfolib.mlit.go.jp/)")
+st.markdown("""
+**データ提供**: [国土交通省 不動産情報ライブラリ](https://www.reinfolib.mlit.go.jp/)
+**注意事項**: 本サービスは国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。
+表示される価格情報は参考情報であり、実際の取引価格を保証するものではありません。
+""")
