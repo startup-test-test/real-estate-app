@@ -20,10 +20,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# タイトル
-st.title("🏢 不動産取引価格検索システム")
-st.markdown("国土交通省 不動産情報ライブラリのデータを検索します")
-
 # APIクライアントの初期化
 # キャッシュを削除して毎回新しいインスタンスを作成（修正反映のため）
 def get_api_client():
@@ -236,11 +232,6 @@ if search_button:
             with col2:
                 st.metric("検索条件", results['search_conditions']['location'])
             
-            # 検索条件の詳細
-            with st.expander("検索条件の詳細"):
-                st.write(f"**場所**: {results['search_conditions']['location']}")
-                st.write(f"**種類**: {', '.join(results['search_conditions']['types'])}")
-                st.write(f"**期間**: {results['search_conditions']['period']}")
             
             if results['search_count'] > 0:
                 # データフレームに変換
@@ -266,8 +257,8 @@ if search_button:
                     count_by_type = df['type'].value_counts()
                     st.metric("最多取引種類", count_by_type.index[0])
                 
-                # 取引事例の詳細表（全データ表示、1番上に配置）
-                st.subheader("📋 取引事例")
+                # 参考事例の詳細表（最大10件表示、1番上に配置）
+                st.subheader("📋 参考事例")
 
                 # 表示用のデータフレームを作成
                 table_df = df.copy()
@@ -288,27 +279,30 @@ if search_button:
                     table_df = table_df.sort_values('area_diff')
                 else:
                     table_df = table_df.sort_values('building_area')  # 延床面積でソート
-                
+
+                # 最大10件に制限
+                table_df_limited = table_df.head(10)
+
                 # 表示する列を限定
                 display_table = pd.DataFrame({
-                    'No.': range(1, len(table_df) + 1),
-                    '所在地': table_df['location'],
-                    '取引時期': table_df['trade_period'],
-                    '取引価格': table_df['price_formatted'],
-                    '土地面積(㎡)': table_df['land_area'].astype(int),
-                    '延床面積(㎡)': table_df['building_area'].astype(int),
-                    '間取り': table_df['floor_plan'],
-                    '前面道路': table_df['road_type'] + ' ' + table_df['breadth'].astype(str) + 'm'
+                    'No.': range(1, len(table_df_limited) + 1),
+                    '所在地': table_df_limited['location'].values,
+                    '取引時期': table_df_limited['trade_period'].values,
+                    '取引価格': table_df_limited['price_formatted'].values,
+                    '土地面積(㎡)': table_df_limited['land_area'].astype(int).values,
+                    '延床面積(㎡)': table_df_limited['building_area'].astype(int).values,
+                    '間取り': table_df_limited['floor_plan'].values,
+                    '前面道路': (table_df_limited['road_type'] + ' ' + table_df_limited['breadth'].astype(str) + 'm').values
                 })
                 
                 # 希望面積に応じた色分け設定
                 if use_target_area and target_area and 'is_target' in table_df.columns:
-                    # 強調表示される物件数を表示
+                    # 強調表示される物件数を表示（全体での該当件数）
                     target_count = table_df['is_target'].sum()
-                    st.success(f"✨ 広さ {target_area}㎡ (±{area_tolerance}㎡) に該当する物件: {target_count}件")
+                    st.success(f"✨ 広さ {target_area}㎡ (±{area_tolerance}㎡) に該当する物件: {target_count}件 (表示は最大10件)")
 
-                    # 該当する物件に色付けマークを追加
-                    display_table['該当'] = table_df['is_target'].map({True: '🟢', False: ''})
+                    # 該当する物件に色付けマークを追加（限定されたデータに対して）
+                    display_table['該当'] = table_df_limited['is_target'].map({True: '🟢', False: ''}).values
 
                     # 列の順番を調整（該当列を最初に）
                     cols = display_table.columns.tolist()
@@ -320,7 +314,7 @@ if search_button:
                         display_table,
                         use_container_width=True,
                         hide_index=True,
-                        height=600
+                        height=400  # 10件分の高さに調整
                     )
                 else:
                     # 表を表示
@@ -328,31 +322,9 @@ if search_button:
                         display_table,
                         use_container_width=True,
                         hide_index=True,
-                        height=600
+                        height=400  # 10件分の高さに調整
                     )
                 
-                # 価格分布のグラフ（全データ対象）
-                if st.checkbox("📊 価格分布を表示"):
-                    st.subheader("価格分布（全データ対象）")
-                    
-                    # ヒストグラム
-                    import matplotlib.pyplot as plt
-                    
-                    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-                    
-                    # 取引価格分布（全データ）
-                    ax1.hist(df['price'] / 10000, bins=20, edgecolor='black')
-                    ax1.set_xlabel('取引価格（万円）')
-                    ax1.set_ylabel('件数')
-                    ax1.set_title(f'取引価格の分布 (全 {total_items} 件)')
-                    
-                    # ㎡単価分布（全データ）
-                    ax2.hist(df['unit_price'] / 10000, bins=20, edgecolor='black')
-                    ax2.set_xlabel('㎡単価（万円）')
-                    ax2.set_ylabel('件数')
-                    ax2.set_title(f'㎡単価の分布 (全 {total_items} 件)')
-
-                    st.pyplot(fig)
 
                 # 取引種類が土地かどうか判定
                 is_land = selected_type_code == "01"  # 01が土地のコード
@@ -530,7 +502,6 @@ if search_button:
                 else:
                     # 戸建て・マンション用の分析グラフ（延床面積/専有面積）
                     area_label = "専有面積" if selected_type_code == "07" else "延床面積"
-                    st.subheader(f"📈 {area_label}と成約価格の分布")
 
                     # 延床面積がある物件のみをフィルタリング
                     scatter_df = df[df['building_area'] > 0].copy()
@@ -619,10 +590,7 @@ if search_button:
 
                         # レイアウトの設定
                         fig.update_layout(
-                            title={
-                                'text': f'{area_label}と価格の分布 - {len(scatter_df)}件',
-                                'font': {'color': 'black', 'size': 16}
-                            },
+                            title=None,
                             xaxis_title={
                                 'text': f'{area_label}（㎡）',
                                 'font': {'color': 'black', 'size': 14}
@@ -674,19 +642,8 @@ if search_button:
 
                         st.plotly_chart(fig, use_container_width=True)
 
-                        # 統計情報
-                        col1, col2, col3 = st.columns(3)
-                        with col1:
-                            st.metric("対象物件数", f"{len(scatter_df)}件")
-                        with col2:
-                            avg_building_area = scatter_df['building_area'].mean()
-                            st.metric(f"平均{area_label}", f"{avg_building_area:.1f}㎡")
-                        with col3:
-                            avg_price_scatter = scatter_df['price'].mean() / 10000
-                            st.metric("平均価格", f"{avg_price_scatter:,.0f}万円")
                     
                     # 面積と価格の分布表（クロス集計）
-                    st.subheader(f"📊 {area_label}別売出価格の内訳")
                     
                     # 価格帯を定義（万円）- 1000万円刻み
                     price_bins = list(range(0, 11000, 1000))  # 0, 1000, 2000, ..., 10000
@@ -695,8 +652,10 @@ if search_button:
                     for i in range(len(price_bins)-1):
                         if price_bins[i+1] == float('inf'):
                             price_labels.append('10,000~')
+                        elif price_bins[i] == 0:
+                            price_labels.append(f'0~1,000')
                         else:
-                            price_labels.append(f'{price_bins[i]:,}~{price_bins[i+1]:,}')
+                            price_labels.append(f'{price_bins[i]:,}')
 
                     # 面積帯を定義（㎡）- 10㎡刻み
                     area_bins = list(range(50, 210, 10))  # 50, 60, 70, ..., 200
@@ -715,10 +674,10 @@ if search_button:
                     available_cols = [col for col in area_labels if col in cross_table.columns]
                     cross_table = cross_table.reindex(columns=available_cols, fill_value=0)
                     
-                    # 行の順序を調整（下から上へ：0万円→5,000万円→10,000万円）
+                    # 行の順序を調整（下から上へ：0万円→10,000万円）
                     available_rows = [row for row in price_labels if row in cross_table.index]
                     cross_table = cross_table.reindex(index=available_rows, fill_value=0)
-                    # Y軸を反転（下から上へ価格が上がるように）
+                    # Y軸を反転（上から下へ価格が下がるように）- 下が0円、上が高額
                     cross_table = cross_table.iloc[::-1]
                     
                     # 表示用に整形
@@ -792,40 +751,8 @@ if search_button:
                     )
 
                     st.plotly_chart(fig, use_container_width=True)
-                    
-                    
-                    # 面積における割合を表示
-                    if len(scatter_df_copy) > 0:
-                        st.subheader(f"📈 {area_label}における割合")
-
-                        # 面積帯別の割合を計算
-                        area_counts = scatter_df_copy['area_range'].value_counts().sort_index()
-                        total_count = len(scatter_df_copy)
-                        
-                        # 主要な面積帯の割合を表示
-                        col1, col2, col3, col4 = st.columns(4)
-                        
-                        # 面積帯を定義
-                        ranges = [
-                            ("100~120", ["100", "120"]),
-                            ("80~100", ["80", "100"]), 
-                            ("140~160", ["140", "160"]),
-                            ("160~180", ["160", "180"])
-                        ]
-                        
-                        for i, (range_name, area_list) in enumerate(ranges):
-                            count = sum(area_counts.get(area, 0) for area in area_list if area in area_counts.index)
-                            percentage = (count / total_count * 100) if total_count > 0 else 0
-                            
-                            cols = [col1, col2, col3, col4]
-                            with cols[i]:
-                                st.metric(range_name, f"{percentage:.0f}%", f"{count}件")
-                    
-                    else:
-                        st.warning(f"{area_label}のデータがある物件が見つかりませんでした。")
 
                     # 建築年別価格分布グラフを追加（土地以外の場合のみ）
-                    st.subheader("🏗️ 建築年別価格分布")
 
                     # 建築年のデータをフィルタリング（建築年が有効なデータのみ）
                     # dfから直接建築年データを取得
@@ -1017,20 +944,8 @@ if search_button:
 
                         st.plotly_chart(fig, use_container_width=True)
 
-                    # 統計情報を表示
-                    col1, col2, col3, col4 = st.columns(4)
-                    with col1:
-                        st.metric("データ件数", f"{len(build_year_df)}件")
-                    with col2:
-                        st.metric("最古建築年", f"{int(build_year_df['year'].min())}年")
-                    with col3:
-                        st.metric("最新建築年", f"{int(build_year_df['year'].max())}年")
-                    with col4:
-                        avg_price = build_year_df['price'].mean()
-                        st.metric("平均価格", f"{avg_price:,.0f}万円")
 
                     # 建築年別価格分布のヒートマップ
-                    st.subheader("📊 建築年別価格分布（ヒートマップ）")
 
                     # 価格帯を定義（万円）- 1000万円刻み
                     price_bins = list(range(0, 11000, 1000))  # 0, 1000, 2000, ..., 10000
@@ -1039,8 +954,10 @@ if search_button:
                     for i in range(len(price_bins)-1):
                         if price_bins[i+1] == float('inf'):
                             price_labels.append('10,000~')
+                        elif price_bins[i] == 0:
+                            price_labels.append(f'0~1,000')
                         else:
-                            price_labels.append(f'{price_bins[i]:,}~{price_bins[i+1]:,}')
+                            price_labels.append(f'{price_bins[i]:,}')
 
                     # 建築年帯を定義（5年刻み）
                     min_year = int(build_year_df['year'].min() / 5) * 5
@@ -1071,70 +988,74 @@ if search_button:
                     cross_table_year_display.index.name = '価格(万円)'
                     cross_table_year_display.columns.name = '建築年'
 
-                    # ヒートマップで表示
-                    fig, ax = plt.subplots(figsize=(14, 4))
+                    # Plotlyでインタラクティブなヒートマップを作成
+                    import numpy as np
+
+                    # ホバーテキストを作成
+                    hover_text = []
+                    for i in range(len(cross_table_year_display.index)):
+                        row_text = []
+                        for j in range(len(cross_table_year_display.columns)):
+                            value = int(cross_table_year_display.iloc[i, j])
+                            price_range = cross_table_year_display.index[i]
+                            year_range = cross_table_year_display.columns[j]
+                            text = f'価格: {price_range}<br>建築年: {year_range}年<br>件数: {value}件'
+                            row_text.append(text)
+                        hover_text.append(row_text)
 
                     # ヒートマップ作成
-                    im = ax.imshow(cross_table_year_display.values, cmap='Oranges', aspect='auto')
+                    fig = go.Figure(data=go.Heatmap(
+                        z=cross_table_year_display.values,
+                        x=cross_table_year_display.columns,
+                        y=cross_table_year_display.index,
+                        colorscale='Oranges',
+                        text=cross_table_year_display.values,
+                        texttemplate='%{text:.0f}',
+                        textfont={"size": 10},
+                        hovertext=hover_text,
+                        hovertemplate='%{hovertext}<extra></extra>',
+                        colorbar=dict(title="件数")
+                    ))
 
-                    # 軸ラベル設定
-                    ax.set_xticks(np.arange(len(cross_table_year_display.columns)))
-                    ax.set_yticks(np.arange(len(cross_table_year_display.index)))
-                    ax.set_xticklabels(cross_table_year_display.columns, rotation=45)
-                    ax.set_yticklabels(cross_table_year_display.index)
+                    # レイアウトの設定
+                    fig.update_layout(
+                        title={
+                            'text': f'{results["search_conditions"]["location"]}の建築年別価格分布',
+                            'font': {'color': 'black', 'size': 16}
+                        },
+                        xaxis_title={
+                            'text': '建築年（5年刻み）',
+                            'font': {'color': 'black', 'size': 14}
+                        },
+                        yaxis_title={
+                            'text': '価格(万円)',
+                            'font': {'color': 'black', 'size': 14}
+                        },
+                        height=400,
+                        plot_bgcolor='white',
+                        paper_bgcolor='white',
+                        font=dict(color='black'),
+                        xaxis=dict(
+                            side='bottom',
+                            tickfont=dict(color='black', size=12),
+                            tickangle=45,
+                            showgrid=False,
+                            showline=True,
+                            linecolor='black'
+                        ),
+                        yaxis=dict(
+                            side='left',
+                            tickfont=dict(color='black', size=12),
+                            showgrid=False,
+                            showline=True,
+                            linecolor='black'
+                        )
+                    )
 
-                    # 軸ラベル
-                    ax.set_xlabel('建築年（5年刻み）', fontsize=12)
-                    ax.set_ylabel('価格（万円）', fontsize=12)
+                    st.plotly_chart(fig, use_container_width=True)
 
-                    # 各セルに数値を表示
-                    for i in range(len(cross_table_year_display.index)):
-                        for j in range(len(cross_table_year_display.columns)):
-                            value = cross_table_year_display.iloc[i, j]
-                            if value > 0:
-                                text = ax.text(j, i, int(value), ha="center", va="center",
-                                             color="black" if value < cross_table_year_display.values.max()/2 else "white",
-                                             fontsize=9, fontweight='bold')
-
-                    # グリッド線を追加
-                    ax.set_xticks(np.arange(len(cross_table_year_display.columns)+1)-.5, minor=True)
-                    ax.set_yticks(np.arange(len(cross_table_year_display.index)+1)-.5, minor=True)
-                    ax.grid(which="minor", color="white", linestyle='-', linewidth=2)
-
-                    plt.title(f'{results["search_conditions"]["location"]}の建築年別価格分布', fontsize=14, pad=20)
-                    plt.tight_layout()
-
-                    st.pyplot(fig)
-
-                    # 建築年代別の統計情報
-                    st.subheader("📈 建築年代別の統計")
-
-                    # 年代別に分類（10年刻み）
-                    decade_bins = list(range(min_year, max_year + 10, 10))
-                    decade_labels = [f"{decade_bins[i]}年代" for i in range(len(decade_bins)-1)]
-                    heatmap_df['decade'] = pd.cut(heatmap_df['year'], bins=decade_bins, labels=decade_labels, right=False)
-
-                    # 年代別の統計
-                    decade_stats = heatmap_df.groupby('decade').agg({
-                        'price': ['count', 'mean', 'median', 'std']
-                    }).round(0)
-
-                    # カラム名を整理
-                    decade_stats.columns = ['件数', '平均価格', '中央値', '標準偏差']
-
-                    # 表示
-                    col1, col2 = st.columns([2, 1])
-                    with col1:
-                        st.dataframe(decade_stats)
-                    with col2:
-                        # 最も多い年代を表示
-                        if len(decade_stats) > 0:
-                            most_common_decade = decade_stats['件数'].idxmax()
-                            st.metric("最多取引年代", most_common_decade)
-                            st.metric("該当件数", f"{int(decade_stats.loc[most_common_decade, '件数'])}件")
 
                 # 成約件数の推移グラフ
-                st.subheader("📊 成約件数の推移")
 
                 # 取引時期のデータを集計
                 period_df = pd.DataFrame()
@@ -1150,30 +1071,9 @@ if search_button:
                     # 期間別に集計
                     period_counts = period_df.groupby('period')['count'].sum().sort_index()
 
-                    import matplotlib.pyplot as plt
-                    import japanize_matplotlib
-
-                    fig, ax = plt.subplots(figsize=(14, 5))
-
-                    # 棒グラフを作成
-                    bars = ax.bar(range(len(period_counts)), period_counts.values,
-                                  color='skyblue', edgecolor='navy', linewidth=0.5)
-
-                    # 棒の上に件数を表示
-                    for i, (bar, count) in enumerate(zip(bars, period_counts.values)):
-                        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1,
-                               f'{int(count)}件', ha='center', va='bottom', fontsize=10)
-
-                    # Y軸を1件刻みで設定
-                    max_count = int(period_counts.max()) + 2
-                    y_ticks = list(range(0, max_count + 1, 1))
-                    ax.set_ylim(0, max_count)
-                    ax.set_yticks(y_ticks)
-
-                    # X軸ラベルを設定（四半期を月表記に変換）
+                    # 四半期を月表記に変換
                     def convert_quarter_to_month(period_str):
                         """四半期表記を月表記に変換"""
-                        # 例: "2023年第1四半期" -> "2023年1月〜3月"
                         if "第1四半期" in period_str:
                             return period_str.replace("第1四半期", "1月〜3月")
                         elif "第2四半期" in period_str:
@@ -1185,64 +1085,84 @@ if search_button:
                         return period_str
 
                     x_labels = [convert_quarter_to_month(str(period)) for period in period_counts.index]
-                    ax.set_xticks(range(len(period_counts)))
-                    ax.set_xticklabels(x_labels, rotation=45, ha='right')
 
-                    # グリッド線を追加
-                    ax.grid(True, axis='y', alpha=0.3, linestyle='--')
+                    # Plotlyでインタラクティブな棒グラフを作成
+                    fig = go.Figure()
 
-                    # ラベル
-                    ax.set_xlabel('取引時期', fontsize=12)
-                    ax.set_ylabel('成約件数（件）', fontsize=12)
-                    ax.set_title(f'{results["search_conditions"]["location"]}の成約件数推移',
-                               fontsize=14, pad=20)
+                    # ホバーテキストを作成
+                    hover_texts = []
+                    for i, (period, count) in enumerate(zip(x_labels, period_counts.values)):
+                        hover_texts.append(f'取引時期: {period}<br>成約件数: {int(count)}件')
 
-                    plt.tight_layout()
-                    st.pyplot(fig)
+                    # 棒グラフを追加
+                    fig.add_trace(go.Bar(
+                        x=x_labels,
+                        y=period_counts.values,
+                        marker=dict(
+                            color='#87CEEB',  # skyblue
+                            line=dict(
+                                color='#000080',  # navy
+                                width=1.5
+                            )
+                        ),
+                        text=[f'{int(count)}件' for count in period_counts.values],
+                        textposition='outside',
+                        textfont=dict(size=12, color='black'),
+                        hovertext=hover_texts,
+                        hovertemplate='%{hovertext}<extra></extra>'
+                    ))
 
-                    # 統計情報
-                    col1, col2, col3, col4 = st.columns(4)
-                    with col1:
-                        st.metric("総成約件数", f"{period_counts.sum()}件")
-                    with col2:
-                        st.metric("期間数", f"{len(period_counts)}期間")
-                    with col3:
-                        avg_count = period_counts.mean()
-                        st.metric("平均成約件数", f"{avg_count:.1f}件/期")
-                    with col4:
-                        max_period = period_counts.idxmax()
-                        st.metric("最多成約期", max_period)
+                    # レイアウトの設定
+                    max_count = int(period_counts.max()) + 2
+                    fig.update_layout(
+                        title={
+                            'text': f'{results["search_conditions"]["location"]}の成約件数推移',
+                            'font': {'color': 'black', 'size': 16}
+                        },
+                        xaxis_title={
+                            'text': '取引時期',
+                            'font': {'color': 'black', 'size': 14}
+                        },
+                        yaxis_title={
+                            'text': '成約件数（件）',
+                            'font': {'color': 'black', 'size': 14}
+                        },
+                        height=500,
+                        plot_bgcolor='white',
+                        paper_bgcolor='white',
+                        font=dict(color='black'),
+                        xaxis=dict(
+                            tickfont=dict(color='black', size=11),
+                            tickangle=45,
+                            showgrid=False,
+                            showline=True,
+                            linecolor='black',
+                            linewidth=1
+                        ),
+                        yaxis=dict(
+                            tickfont=dict(color='black', size=12),
+                            showgrid=True,
+                            gridcolor='#E0E0E0',
+                            gridwidth=0.5,
+                            showline=True,
+                            linecolor='black',
+                            linewidth=1,
+                            range=[0, max_count],
+                            dtick=1,
+                            tickmode='linear'
+                        ),
+                        showlegend=False,
+                        bargap=0.2
+                    )
+
+                    st.plotly_chart(fig, use_container_width=True)
+
                 else:
                     st.info("取引時期データが含まれる物件がありません。")
 
             else:
                 st.info("検索条件に一致する物件が見つかりませんでした。")
 
-else:
-    # 初期表示
-    st.info("👈 左側のサイドバーで検索条件を入力し、検索ボタンをクリックしてください。")
-    
-    # 使い方
-    with st.expander("💡 使い方"):
-        st.markdown("""
-        1. **都道府県**を選択します
-        2. **市区町村**を入力します（任意）
-        3. **地区名**を入力します（任意）
-        4. **取引種類**を選択します（複数選択可）
-        5. **取引時期**を指定します
-        6. **検索実行**ボタンをクリックします
-        
-        ※ APIキーが必要です。[不動産情報ライブラリ](https://www.reinfolib.mlit.go.jp/)で取得してください。
-        """)
-    
-    # 注意事項
-    with st.expander("⚠️ 注意事項"):
-        st.markdown("""
-        - このアプリは国土交通省の不動産情報ライブラリAPIを使用しています
-        - APIの利用にはAPIキー（Subscription Key）が必要です
-        - 大量のデータを取得する場合は時間がかかることがあります
-        - 取引価格情報は実際の取引事例に基づくものです
-        """)
 
 # フッター
 st.markdown("---")
