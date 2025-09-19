@@ -26,11 +26,13 @@ st.set_page_config(
 )
 
 # APIクライアントの初期化
-# キャッシュを削除して毎回新しいインスタンスを作成（修正反映のため）
-def get_api_client():
-    return RealEstateAPIClient()
+# 強制的にモジュールをリロードして最新の定義を取得
+import importlib
+import real_estate_client
+importlib.reload(real_estate_client)
+from real_estate_client import RealEstateAPIClient
 
-client = get_api_client()
+client = RealEstateAPIClient()
 
 # 市区町村データをキャッシュ
 @st.cache_data(ttl=3600)  # 1時間キャッシュ
@@ -700,7 +702,7 @@ if search_button:
                     color: black;
                     text-align: left;
                     padding: 10px;
-                    font-size: 18px;
+                    font-size: 14px;
                     font-weight: bold;
                     border-bottom: 2px solid #ddd;
                 }
@@ -709,7 +711,7 @@ if search_button:
                     color: black;
                     text-align: left;
                     padding: 10px;
-                    font-size: 18px;
+                    font-size: 14px;
                     border-bottom: 1px solid #eee;
                 }
                 .property-table tr:hover td {
@@ -1592,6 +1594,219 @@ if search_button:
 
                     st.markdown("<h4>5. 成約件数推移</h4>", unsafe_allow_html=True)
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+
+                    # 6. 公示地価データの表示
+                    st.markdown("<h4>6. 📍 周辺の公示地価</h4>", unsafe_allow_html=True)
+
+                    # 公示地価データを取得
+                    try:
+                        land_price_data = client.search_land_prices(
+                            prefecture=selected_prefecture,
+                            city=selected_city if selected_city else None,
+                            district=selected_district if selected_district else None,
+                            year="2024"
+                        )
+                    except AttributeError as e:
+                        st.error(f"エラー: search_land_pricesメソッドが見つかりません - {e}")
+                        land_price_data = None
+                    except Exception as e:
+                        st.error(f"エラー: {e}")
+                        land_price_data = None
+
+                    if land_price_data:
+                        # 表示用のデータフレームを作成
+                        land_price_list = []
+                        for i, item in enumerate(land_price_data[:10], 1):  # 最大10件
+                            land_price_list.append({
+                                "No": i,
+                                "住所": item["address"],
+                                "価格時点": f"{item['price_time']}年" if item.get('price_time') else "-",
+                                "価格(円/㎡)": f"{item['price_per_sqm']:,}",
+                                "坪単価": f"{item['price_per_tsubo']:,}",
+                                "前年比": f"{item['change_rate']}%" if item['change_rate'] else "-",
+                                f"{item['station']}駅からの距離": f"{item['station_distance']}m" if item['station_distance'] else "-"
+                            })
+
+                        land_price_df = pd.DataFrame(land_price_list)
+
+                        # HTMLテーブルのスタイル設定（統一されたスタイル）
+                        land_table_style = """
+                        <style>
+                        .land-price-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                            background-color: white;
+                        }
+                        .land-price-table th {
+                            background-color: white;
+                            color: black;
+                            text-align: left;
+                            padding: 10px;
+                            font-size: 14px;
+                            font-weight: bold;
+                            border-bottom: 2px solid #ddd;
+                        }
+                        .land-price-table td {
+                            background-color: white;
+                            color: black;
+                            text-align: left;
+                            padding: 10px;
+                            font-size: 14px;
+                            border-bottom: 1px solid #eee;
+                        }
+                        .land-price-table tr:hover td {
+                            background-color: #fafafa;
+                        }
+                        </style>
+                        """
+
+                        # HTMLテーブルの作成
+                        land_html_table = land_table_style + '<table class="land-price-table">'
+                        land_html_table += '<thead><tr>'
+                        for col in land_price_df.columns:
+                            land_html_table += f'<th>{col}</th>'
+                        land_html_table += '</tr></thead><tbody>'
+
+                        for _, row in land_price_df.iterrows():
+                            land_html_table += '<tr>'
+                            for val in row:
+                                land_html_table += f'<td>{val}</td>'
+                            land_html_table += '</tr>'
+                        land_html_table += '</tbody></table>'
+
+                        # HTMLテーブルを表示
+                        st.markdown(land_html_table, unsafe_allow_html=True)
+
+                        # 統計情報を表示
+                        if len(land_price_data) > 0:
+                            prices = [item['price_per_sqm'] for item in land_price_data]
+                            avg_price = sum(prices) / len(prices)
+                            max_price = max(prices)
+                            min_price = min(prices)
+
+                            st.caption(f"""
+                            📊 公示地価統計（{len(land_price_data)}地点）
+                            • 平均価格: {avg_price:,.0f}円/㎡
+                            • 最高価格: {max_price:,.0f}円/㎡
+                            • 最低価格: {min_price:,.0f}円/㎡
+                            """)
+
+                        # 価格推移グラフを追加
+                        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+                        st.markdown("<h4>7. 📈 公示地価の推移</h4>", unsafe_allow_html=True)
+
+                        # 複数年のデータを取得（利用可能な4年間：2021-2024）
+                        try:
+                            historical_data = client.search_land_price_history(
+                                prefecture=selected_prefecture,
+                                city=selected_city if selected_city else None,
+                                district=selected_district if selected_district else None,
+                                years=["2021", "2022", "2023", "2024"]
+                            )
+                        except AttributeError:
+                            # メソッドが存在しない場合の処理
+                            historical_data = None
+                        except Exception as e:
+                            st.error(f"履歴データ取得エラー: {e}")
+                            historical_data = None
+
+                        if historical_data and len(historical_data) > 0:
+                            # グラフ用のデータを準備
+                            fig_data = []
+                            colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+                                    '#FFD93D', '#6C5CE7', '#A8E6CF', '#FDA7DF', '#C7CEEA']
+
+                            # 最大10地点までを表示
+                            for idx, (address, data) in enumerate(list(historical_data.items())[:10]):
+                                years = [price_data["year"] for price_data in data["yearly_prices"]]
+                                prices = [price_data["price_per_sqm"] for price_data in data["yearly_prices"]]
+
+                                if len(years) > 1:  # 2年以上のデータがある場合のみ表示
+                                    # 住所を短縮表示
+                                    short_address = address
+                                    if len(address) > 20:
+                                        short_address = address[:20] + "..."
+
+                                    fig_data.append(go.Scatter(
+                                        x=years,
+                                        y=prices,
+                                        mode='lines+markers+text',
+                                        name=short_address,
+                                        text=[f'{price:,.0f}' for price in prices],
+                                        textposition='top center',
+                                        textfont=dict(
+                                            size=14,
+                                            color=colors[idx % len(colors)]
+                                        ),
+                                        line=dict(
+                                            color=colors[idx % len(colors)],
+                                            width=2
+                                        ),
+                                        marker=dict(
+                                            size=6,
+                                            color=colors[idx % len(colors)]
+                                        ),
+                                        hovertemplate='%{y:,.0f}円/㎡<br>%{x}年<extra></extra>'
+                                    ))
+
+                            if fig_data:
+                                # グラフを作成
+                                fig = go.Figure(data=fig_data)
+
+                                # レイアウト設定
+                                fig.update_layout(
+                                    height=400,
+                                    margin=dict(t=20, b=40, l=60, r=20),
+                                    plot_bgcolor='white',
+                                    paper_bgcolor='white',
+                                    xaxis=dict(
+                                        title=dict(
+                                            text="年",
+                                            font=dict(size=14, color='black')
+                                        ),
+                                        gridcolor='#E0E0E0',
+                                        showline=True,
+                                        linewidth=1,
+                                        linecolor='black',
+                                        tickfont=dict(size=14, color='black'),
+                                        tickmode='linear',
+                                        dtick=1
+                                    ),
+                                    yaxis=dict(
+                                        title=dict(
+                                            text="価格 (円/㎡)",
+                                            font=dict(size=14, color='black')
+                                        ),
+                                        gridcolor='#E0E0E0',
+                                        showline=True,
+                                        linewidth=1,
+                                        linecolor='black',
+                                        tickfont=dict(size=14, color='black'),
+                                        tickformat=',.0f'
+                                    ),
+                                    legend=dict(
+                                        orientation="v",
+                                        yanchor="top",
+                                        y=1,
+                                        xanchor="left",
+                                        x=1.02,
+                                        font=dict(size=12, color='black'),
+                                        bgcolor='white',
+                                        bordercolor='black',
+                                        borderwidth=1
+                                    ),
+                                    hovermode='x unified'
+                                )
+
+                                # インタラクティブグラフとして表示
+                                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                            else:
+                                st.info("複数年のデータがある地点が見つかりませんでした")
+                        else:
+                            st.info("価格推移データを取得できませんでした")
+                    else:
+                        st.info("該当地域の公示地価データは見つかりませんでした")
 
                 else:
                     st.info("取引時期データが含まれる物件がありません。")
