@@ -184,9 +184,42 @@ async def search_properties(
 
         logger.info(f"Search request: prefecture={prefecture}, city={city}, type={property_type}")
 
+        # Map prefecture code to name
+        prefecture_map = {
+            "01": "北海道", "02": "青森県", "03": "岩手県", "04": "宮城県",
+            "05": "秋田県", "06": "山形県", "07": "福島県", "08": "茨城県",
+            "09": "栃木県", "10": "群馬県", "11": "埼玉県", "12": "千葉県",
+            "13": "東京都", "14": "神奈川県", "15": "新潟県", "16": "富山県",
+            "17": "石川県", "18": "福井県", "19": "山梨県", "20": "長野県",
+            "21": "岐阜県", "22": "静岡県", "23": "愛知県", "24": "三重県",
+            "25": "滋賀県", "26": "京都府", "27": "大阪府", "28": "兵庫県",
+            "29": "奈良県", "30": "和歌山県", "31": "鳥取県", "32": "島根県",
+            "33": "岡山県", "34": "広島県", "35": "山口県", "36": "徳島県",
+            "37": "香川県", "38": "愛媛県", "39": "高知県", "40": "福岡県",
+            "41": "佐賀県", "42": "長崎県", "43": "熊本県", "44": "大分県",
+            "45": "宮崎県", "46": "鹿児島県", "47": "沖縄県"
+        }
+
+        # Convert prefecture code to name
+        prefecture_name = prefecture_map.get(prefecture, prefecture)
+
+        # Get city name from code
+        city_name = city  # Default to code if name not found
+        if city:
+            try:
+                # Get list of cities for this prefecture
+                cities = client.get_cities(prefecture)
+                # Find the city name from the code
+                for city_data in cities:
+                    if city_data.get('code') == city:
+                        city_name = city_data.get('name', city)
+                        break
+            except:
+                pass  # If error, use city code as-is
+
         # Map property type to trade type code
         trade_type_map = {
-            'マンション': ['02'],  # 中古マンション
+            'マンション': ['07'],  # マンションは07
             '戸建': ['02'],  # 宅地(建物付き)
             '戸建て': ['02'],
             '土地': ['01']  # 宅地(土地)
@@ -195,8 +228,8 @@ async def search_properties(
 
         # Call the method with correct parameters
         response = client.search_real_estate_prices(
-            prefecture=prefecture,
-            city=city,
+            prefecture=prefecture_name,  # Use prefecture name instead of code
+            city=city_name,  # Use city name instead of code
             district=district,
             trade_types=trade_types,
             from_year=year,
