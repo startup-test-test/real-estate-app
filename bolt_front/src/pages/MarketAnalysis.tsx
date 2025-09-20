@@ -169,19 +169,15 @@ const MarketAnalysis: React.FC = () => {
             quarter: quarter
           };
 
-          // フィルタ条件を適用（データが存在する場合のみ）
-          // まずはフィルタなしで試し、データがあればフィルタを適用
-          // 天沼町のようにデータが少ない地域では、フィルタを緩める必要がある
-
-          // 一旦フィルタなしでリクエスト（後でクライアント側でフィルタリング）
-          // if (targetArea > 0) {
-          //   params.min_area = targetArea - areaTolerance;
-          //   params.max_area = targetArea + areaTolerance;
-          // }
-          // if (targetYear > 0) {
-          //   params.min_year = targetYear - yearTolerance;
-          //   params.max_year = targetYear + yearTolerance;
-          // }
+          // フィルタ条件を適用（Streamlitと同じロジック）
+          if (targetArea > 0) {
+            params.min_area = targetArea - areaTolerance;
+            params.max_area = targetArea + areaTolerance;
+          }
+          if (targetYear > 0) {
+            params.min_year = targetYear - yearTolerance;
+            params.max_year = targetYear + yearTolerance;
+          }
           console.log(`Requesting Year ${year} Q${quarter} with params:`, params);
           promises.push(propertyApi.searchProperties(params));
         }
@@ -222,38 +218,8 @@ const MarketAnalysis: React.FC = () => {
         }
       }
 
-      // クライアント側でフィルタリング（Streamlitと同じロジック）
-      let filteredData = [...allData];
-
-      // 面積フィルタ（建物面積を使用）
-      if (targetArea > 0 && filteredData.length > 0) {
-        const originalCount = filteredData.length;
-        filteredData = filteredData.filter(item => {
-          const area = getArea(item);
-          const isInRange = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
-          if (area > 0) {
-            console.log(`物件面積: ${area}㎡, 範囲: ${targetArea-areaTolerance}-${targetArea+areaTolerance}㎡, 適合: ${isInRange}`);
-          }
-          return isInRange;
-        });
-        console.log(`面積フィルタ適用: ${originalCount}件 → ${filteredData.length}件`);
-        console.log('フィルタ後データサンプル:', filteredData.slice(0, 3));
-      }
-
-      // 築年数フィルタ
-      if (targetYear > 0 && filteredData.length > 0) {
-        const originalCount = filteredData.length;
-        filteredData = filteredData.filter(item => {
-          const buildYear = getBuildYear(item);
-          const isInRange = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
-          if (buildYear > 0) {
-            console.log(`建築年: ${buildYear}年, 範囲: ${targetYear-yearTolerance}-${targetYear+yearTolerance}年, 適合: ${isInRange}`);
-          }
-          return isInRange;
-        });
-        console.log(`築年数フィルタ適用: ${originalCount}件 → ${filteredData.length}件`);
-        console.log('最終フィルタ後データサンプル:', filteredData.slice(0, 3));
-      }
+      // バックエンドAPIで既にフィルタリング済みのため、クライアント側フィルタリングは不要
+      const filteredData = [...allData];
 
       console.log('==== データ分析結果 ====');
       console.log('総データ数（フィルタ前）:', allData.length);
