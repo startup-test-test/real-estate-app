@@ -179,7 +179,8 @@ const MarketAnalysis: React.FC = () => {
         console.log(`Response ${year} Q${quarter}:`, {
           status: resp.status,
           dataCount: resp.data?.length || 0,
-          message: resp.message || null
+          message: resp.message || null,
+          sampleData: resp.data?.[0] || null
         });
       });
 
@@ -209,8 +210,8 @@ const MarketAnalysis: React.FC = () => {
       if (targetArea > 0 && filteredData.length > 0) {
         const originalCount = filteredData.length;
         filteredData = filteredData.filter(item => {
-          // 複数のフィールド名をチェック（APIによって異なる場合がある）
-          const area = item.building_area || item.面積 || item.延床面積 || item.area || 0;
+          // 日本語フィールド名を優先的にチェック（API仕様書による）
+          const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
           const isInRange = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
           if (area > 0) {
             console.log(`物件面積: ${area}㎡, 範囲: ${targetArea-areaTolerance}-${targetArea+areaTolerance}㎡, 適合: ${isInRange}`);
@@ -225,8 +226,8 @@ const MarketAnalysis: React.FC = () => {
       if (targetYear > 0 && filteredData.length > 0) {
         const originalCount = filteredData.length;
         filteredData = filteredData.filter(item => {
-          // 複数のフィールド名をチェック
-          const buildYear = parseInt(item.build_year || item.建築年 || item.building_year || '0');
+          // 日本語フィールド名を優先的にチェック（API仕様書による）
+          const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
           const isInRange = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
           if (buildYear > 0) {
             console.log(`建築年: ${buildYear}年, 範囲: ${targetYear-yearTolerance}-${targetYear+yearTolerance}年, 適合: ${isInRange}`);
@@ -247,17 +248,24 @@ const MarketAnalysis: React.FC = () => {
         console.log('データサンプル:', sampleData);
         console.log('利用可能フィールド:', Object.keys(sampleData));
 
-        // 面積フィールドの確認
-        const areaFields = ['building_area', '面積', '延床面積', 'area'];
+        // 面積フィールドの確認（API仕様書の日本語フィールド名を含む）
+        const areaFields = ['延べ床面積（㎡）', 'building_area', '面積', '延床面積', 'area'];
         areaFields.forEach(field => {
           const hasField = allData.filter(item => item[field] && item[field] > 0).length;
           console.log(`${field}フィールド有効データ:`, hasField);
         });
 
-        // 建築年フィールドの確認
-        const yearFields = ['build_year', '建築年', 'building_year'];
+        // 建築年フィールドの確認（API仕様書の日本語フィールド名を含む）
+        const yearFields = ['建築年', 'build_year', 'building_year'];
         yearFields.forEach(field => {
           const hasField = allData.filter(item => item[field] && parseInt(item[field]) > 1950).length;
+          console.log(`${field}フィールド有効データ:`, hasField);
+        });
+
+        // 価格フィールドの確認
+        const priceFields = ['取引価格（万円）', 'price', '取引価格'];
+        priceFields.forEach(field => {
+          const hasField = allData.filter(item => item[field] && item[field] > 0).length;
           console.log(`${field}フィールド有効データ:`, hasField);
         });
       }
@@ -271,8 +279,15 @@ const MarketAnalysis: React.FC = () => {
         const yearData = filteredData.filter(item => item.dataYear === year);
 
         if (yearData.length > 0) {
-          const prices = yearData.map(item => item.price || item.取引価格 || 0);
-          const areas = yearData.map(item => item.building_area || item.面積 || 0);
+          const prices = yearData.map(item => {
+            // 取引価格（万円）フィールドがある場合はそのまま使用、ない場合は円から万円に変換
+            const price = item['取引価格（万円）'];
+            if (price !== undefined && price !== null) {
+              return price; // 既に万円単位
+            }
+            return (item.price || item.取引価格 || 0) / 10000; // 円を万円に変換
+          });
+          const areas = yearData.map(item => item['延べ床面積（㎡）'] || item.building_area || item.面積 || 0);
 
           const totalPrice = prices.reduce((sum, price) => sum + price, 0);
           const avgPrice = totalPrice / prices.length;
@@ -281,12 +296,12 @@ const MarketAnalysis: React.FC = () => {
 
           yearlyResults.push({
             year: year,
-            averagePrice: Math.round(avgPrice / 10000),
+            averagePrice: Math.round(avgPrice),  // 既に万円単位なのでそのまま
             totalTransactions: yearData.length,
             averagePricePerSqm: Math.round(avgPricePerSqm),
-            q25: Math.round(getPercentile(prices, 0.25) / 10000),
-            q50: Math.round(getPercentile(prices, 0.50) / 10000),
-            q75: Math.round(getPercentile(prices, 0.75) / 10000)
+            q25: Math.round(getPercentile(prices, 0.25)),  // 既に万円単位なのでそのまま
+            q50: Math.round(getPercentile(prices, 0.50)),  // 既に万円単位なのでそのまま
+            q75: Math.round(getPercentile(prices, 0.75))   // 既に万円単位なのでそのまま
           });
         }
       }
@@ -295,10 +310,17 @@ const MarketAnalysis: React.FC = () => {
 
       if (filteredData.length > 0) {
         // フィルタ後の全データから統計を計算
-        const allPrices = filteredData.map(item => item.price || item.取引価格 || 0);
-        const q25 = Math.round(getPercentile(allPrices, 0.25) / 10000);
-        const q50 = Math.round(getPercentile(allPrices, 0.50) / 10000);
-        const q75 = Math.round(getPercentile(allPrices, 0.75) / 10000);
+        const allPrices = filteredData.map(item => {
+          // 取引価格（万円）フィールドがある場合はそのまま使用、ない場合は円から万円に変換
+          const price = item['取引価格（万円）'];
+          if (price !== undefined && price !== null) {
+            return price; // 既に万円単位
+          }
+          return (item.price || item.取引価格 || 0) / 10000; // 円を万円に変換
+        });
+        const q25 = Math.round(getPercentile(allPrices, 0.25));
+        const q50 = Math.round(getPercentile(allPrices, 0.50));
+        const q75 = Math.round(getPercentile(allPrices, 0.75));
         const avgPrice = allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
 
         // 価格トレンドを線形回帰で計算（streamlit_app.pyと完全に同じロジック）
@@ -375,7 +397,7 @@ const MarketAnalysis: React.FC = () => {
           prefecture: selectedPrefecture,
           city: selectedCity,
           district: selectedDistrict || '全体',
-          averagePrice: Math.round(avgPrice / 10000),
+          averagePrice: Math.round(avgPrice),
           priceChange: priceChange,
           totalTransactions: filteredData.length,
           averagePricePerSqm: 0,  // 必要に応じて計算
@@ -464,17 +486,24 @@ const MarketAnalysis: React.FC = () => {
         if (allData.length > 0) {
           console.log('フィルタ条件が厳しすぎるため、全データで表示します');
 
-          const allPrices = allData.map(item => item.price || item.取引価格 || 0);
-          const q25 = Math.round(getPercentile(allPrices, 0.25) / 10000);
-          const q50 = Math.round(getPercentile(allPrices, 0.50) / 10000);
-          const q75 = Math.round(getPercentile(allPrices, 0.75) / 10000);
+          const allPrices = allData.map(item => {
+            // 取引価格（万円）フィールドがある場合はそのまま使用、ない場合は円から万円に変換
+            const price = item['取引価格（万円）'];
+            if (price !== undefined && price !== null) {
+              return price; // 既に万円単位
+            }
+            return (item.price || item.取引価格 || 0) / 10000; // 円を万円に変換
+          });
+          const q25 = Math.round(getPercentile(allPrices, 0.25));
+          const q50 = Math.round(getPercentile(allPrices, 0.50));
+          const q75 = Math.round(getPercentile(allPrices, 0.75));
           const avgPrice = allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
 
           setMarketData({
             prefecture: selectedPrefecture,
             city: selectedCity,
             district: selectedDistrict || '全体',
-            averagePrice: Math.round(avgPrice / 10000),
+            averagePrice: Math.round(avgPrice),
             priceChange: 0,
             totalTransactions: allData.length,
             averagePricePerSqm: 0,
@@ -916,8 +945,8 @@ const MarketAnalysis: React.FC = () => {
                       {allProperties
                         .filter(item => {
                           // フィルタ条件に合致する物件のみ表示
-                          const area = item.building_area || item.面積 || item.延床面積 || item.area || 0;
-                          const buildYear = parseInt(item.build_year || item.建築年 || item.building_year || '0');
+                          const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
+                          const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
                           const areaMatch = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
                           const yearMatch = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
                           return areaMatch && yearMatch;
@@ -929,9 +958,17 @@ const MarketAnalysis: React.FC = () => {
                             <td className="px-4 py-3 text-sm text-gray-900">{index + 1}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{property.location || property.所在地 || '-'}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{property.trade_period || property.取引時期 || '-'}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{((property.price || property.取引価格) / 10000).toLocaleString()}万円</td>
+                            <td className="px-4 py-3 text-sm text-gray-900">
+                              {(() => {
+                                const price = property['取引価格（万円）'];
+                                if (price !== undefined && price !== null) {
+                                  return price.toLocaleString(); // 既に万円単位
+                                }
+                                return ((property.price || property.取引価格 || 0) / 10000).toLocaleString(); // 円を万円に変換
+                              })()}万円
+                            </td>
                             <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(property.land_area || property.土地面積 || 0)}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(property.building_area || property.面積 || 0)}</td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(property['延べ床面積（㎡）'] || property.building_area || property.面積 || 0)}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{property.floor_plan || property.間取り || '-'}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">
                               {property.road_type || property.前面道路 || ''} {property.breadth || property.道路幅員 || ''}m
