@@ -36,13 +36,14 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# CORS設定
+# CORS設定 - 特定のドメインのみ許可（セキュリティ向上）
+# 許可するドメイン: localhost, 127.0.0.1, Codespaces (*.app.github.dev), dev.ooya.tech, ooya.tech
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 本番環境では具体的なオリジンを指定
+    allow_origin_regex=r"^(https?://localhost(:[0-9]+)?|https?://127\.0\.0\.1(:[0-9]+)?|https?://[a-z0-9-]+\.app\.github\.dev|https://dev\.ooya\.tech|https://ooya\.tech)$",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # APIクライアントの初期化
@@ -183,18 +184,64 @@ async def search_properties(
 
         logger.info(f"Search request: prefecture={prefecture}, city={city}, type={property_type}")
 
-        results = client.search_real_estate_prices(
+        # Map property type to trade type code
+        trade_type_map = {
+            'マンション': ['02'],  # 中古マンション
+            '戸建': ['02'],  # 宅地(建物付き)
+            '戸建て': ['02'],
+            '土地': ['01']  # 宅地(土地)
+        }
+        trade_types = trade_type_map.get(property_type, ['02'])  # Default to 宅地(建物付き)
+
+        # Call the method with correct parameters
+        response = client.search_real_estate_prices(
             prefecture=prefecture,
             city=city,
             district=district,
-            property_type=property_type,
-            year=year,
-            quarter=quarter,
-            min_area=min_area,
-            max_area=max_area,
-            min_year=min_year,
-            max_year=max_year
+            trade_types=trade_types,
+            from_year=year,
+            from_quarter=quarter,
+            to_year=year,
+            to_quarter=quarter
         )
+
+        # Extract results list from response dictionary
+        results = response.get('results', []) if isinstance(response, dict) else []
+
+        # Filter results by area and year if specified
+        if results and isinstance(results, list):
+            filtered = []
+            for item in results:
+                # Check area range
+                if min_area or max_area:
+                    try:
+                        area = float(item.get('面積', 0) or item.get('Area', 0) or 0)
+                        if min_area and area < min_area:
+                            continue
+                        if max_area and area > max_area:
+                            continue
+                    except:
+                        pass
+
+                # Check building year range
+                if min_year or max_year:
+                    try:
+                        build_year_str = item.get('建築年', '') or item.get('BuildingYear', '')
+                        if build_year_str:
+                            # Extract year from various formats
+                            import re
+                            match = re.search(r'\d{4}', build_year_str)
+                            if match:
+                                build_year = int(match.group())
+                                if min_year and build_year < min_year:
+                                    continue
+                                if max_year and build_year > max_year:
+                                    continue
+                    except:
+                        pass
+
+                filtered.append(item)
+            results = filtered
 
         return PropertySearchResponse(
             status="success",
