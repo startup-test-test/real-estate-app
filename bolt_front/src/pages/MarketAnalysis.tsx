@@ -136,7 +136,8 @@ const MarketAnalysis: React.FC = () => {
     setYearlyData([]);
 
     try {
-      const currentYear = new Date().getFullYear();
+      // 2024年を最新年として設定（2025年のデータはまだ存在しない）
+      const currentYear = Math.min(new Date().getFullYear(), 2024);
       const promises = [];
 
       // 直近3年分のデータを取得（streamlit_app.pyと同じ）
@@ -144,21 +145,22 @@ const MarketAnalysis: React.FC = () => {
         const year = currentYear - i;
         // 全四半期のデータを取得
         for (let quarter = 1; quarter <= 4; quarter++) {
-          promises.push(
-            propertyApi.searchProperties({
-              prefecture: selectedPrefecture,
-              city: selectedCity,
-              district: selectedDistrict || undefined,  // Send district name directly
-              property_type: selectedPropertyType === '07' ? 'マンション' :
-                           selectedPropertyType === '02' ? '戸建' : '土地',
-              year: year,
-              quarter: quarter,
-              min_area: targetArea - areaTolerance,
-              max_area: targetArea + areaTolerance,
-              min_year: targetYear - yearTolerance,
-              max_year: targetYear + yearTolerance
-            })
-          );
+          const params = {
+            prefecture: selectedPrefecture,
+            city: selectedCity,
+            district: selectedDistrict || undefined,  // Send district name directly
+            property_type: selectedPropertyType === '07' ? 'マンション' :
+                         selectedPropertyType === '02' ? '戸建' : '土地',
+            year: year,
+            quarter: quarter
+            // 一時的にフィルタを削除してテスト
+            // min_area: targetArea - areaTolerance,
+            // max_area: targetArea + areaTolerance,
+            // min_year: targetYear - yearTolerance,
+            // max_year: targetYear + yearTolerance
+          };
+          console.log(`Requesting Year ${year} Q${quarter} with params:`, params);
+          promises.push(propertyApi.searchProperties(params));
         }
       }
 

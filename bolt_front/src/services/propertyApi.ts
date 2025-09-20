@@ -7,6 +7,7 @@ import { getApiUrl } from '../config/api.config';
 
 // APIのベースURL
 const API_BASE_URL = getApiUrl();
+console.log('PropertyApi using URL:', API_BASE_URL); // デバッグログ追加
 
 /**
  * APIレスポンスの基本型
