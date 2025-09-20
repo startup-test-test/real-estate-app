@@ -18,18 +18,20 @@ import {
   Info,
   Sparkles,
   HelpCircle,
+  Globe,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
 import UpgradeModal from "../components/UpgradeModal";
 import { useUsageStatus } from "../hooks/useUsageStatus";
-import { 
-  sampleProperty, 
-  shouldShowSampleProperty, 
+import {
+  sampleProperty,
+  shouldShowSampleProperty,
   hasTutorialBeenCompleted,
-  isSampleProperty 
+  isSampleProperty
 } from "../data/sampleProperty";
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+import { propertyApi } from "../services/propertyApi";
 // Removed useSupabaseData hook dependency
 
 const MyPage: React.FC = () => {
@@ -161,6 +163,8 @@ const MyPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isInitialLoad, setIsInitialLoad] = React.useState(true); // 初回読み込みフラグ
+  const [apiTestResult, setApiTestResult] = React.useState<string | null>(null); // APIテスト結果
+  const [apiTestLoading, setApiTestLoading] = React.useState(false); // APIテスト中フラグ
   const itemsPerPage = 12;
 
   // キャッシュキーの生成（ユーザーごとに異なるキャッシュ）
@@ -638,6 +642,35 @@ const MyPage: React.FC = () => {
       setRunTutorial(true);
     }, 100);
   };
+
+  // Property API接続テスト
+  const testPropertyApi = async () => {
+    setApiTestLoading(true);
+    setApiTestResult(null);
+
+    try {
+      console.log('Property API接続テスト開始...');
+
+      // 1. ヘルスチェック
+      const healthCheck = await propertyApi.healthCheck();
+      console.log('ヘルスチェック成功:', healthCheck);
+
+      // 2. 都道府県リストを取得
+      const prefectures = await propertyApi.getPrefectures();
+      console.log('都道府県リスト取得成功:', prefectures);
+
+      if (prefectures.status === 'success' && prefectures.data) {
+        setApiTestResult(`✅ API接続成功！\n${prefectures.data.length}件の都道府県データを取得しました。`);
+      } else {
+        setApiTestResult('⚠️ API接続は成功しましたが、データが取得できませんでした。');
+      }
+    } catch (error) {
+      console.error('API接続エラー:', error);
+      setApiTestResult(`❌ API接続エラー: ${error instanceof Error ? error.message : '不明なエラー'}`);
+    } finally {
+      setApiTestLoading(false);
+    }
+  };
   
   // 初回サンプル物件表示時に自動でチュートリアルを開始
   React.useEffect(() => {
@@ -771,12 +804,42 @@ const MyPage: React.FC = () => {
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">
             {/* Header */}
             <div className="mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
-                <p className="text-gray-600 mt-1">
-                  投資の成果を一目で確認できます
-                </p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
+                  <p className="text-gray-600 mt-1">
+                    投資の成果を一目で確認できます
+                  </p>
+                </div>
+
+                {/* API接続テストボタン（開発用） */}
+                <button
+                  onClick={testPropertyApi}
+                  disabled={apiTestLoading}
+                  className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Property API接続テスト"
+                >
+                  {apiTestLoading ? (
+                    <Loader className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Globe className="h-4 w-4 mr-2" />
+                  )}
+                  {apiTestLoading ? 'テスト中...' : 'API接続テスト'}
+                </button>
               </div>
+
+              {/* APIテスト結果表示 */}
+              {apiTestResult && (
+                <div className={`mt-4 p-4 rounded-lg border ${
+                  apiTestResult.startsWith('✅')
+                    ? 'bg-green-50 border-green-200 text-green-800'
+                    : apiTestResult.startsWith('❌')
+                      ? 'bg-red-50 border-red-200 text-red-800'
+                      : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                }`}>
+                  <pre className="whitespace-pre-wrap text-sm">{apiTestResult}</pre>
+                </div>
+              )}
             </div>
 
             <div className="space-y-6">

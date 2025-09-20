@@ -5,8 +5,8 @@ import Footer from './Footer';
 import { checkUsageLimit } from '../utils/usageLimit';
 import { calculateRemainingDays, formatRemainingTime } from '../utils/subscriptionHelpers';
 import { supabase } from '../lib/supabase';
-import { 
-  Calculator, 
+import {
+  Calculator,
   User,
   Home,
   Menu,
@@ -15,7 +15,8 @@ import {
   BookOpen,
   Crown,
   LogOut,
-  Sparkles
+  Sparkles,
+  TrendingUp
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
@@ -68,9 +69,9 @@ const Layout: React.FC = () => {
   const navigation = [
     { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
-    // 2次リリース用: AI取引事例検索・AI市場分析
+    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
+    // 2次リリース用: AI取引事例検索
     // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
-    // { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
   ];
 
   const supportNavigation = [
