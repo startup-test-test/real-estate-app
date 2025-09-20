@@ -382,21 +382,17 @@ const MarketAnalysis: React.FC = () => {
                     <Home className="inline h-4 w-4 mr-1" />
                     物件種別 <span className="text-red-500">*</span>
                   </label>
-                  <div className="space-y-2">
+                  <select
+                    value={selectedPropertyType}
+                    onChange={(e) => setSelectedPropertyType(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
                     {propertyTypes.map((type) => (
-                      <label key={type.code} className="flex items-center">
-                        <input
-                          type="radio"
-                          name="propertyType"
-                          value={type.code}
-                          checked={selectedPropertyType === type.code}
-                          onChange={(e) => setSelectedPropertyType(e.target.value)}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">{type.name}</span>
-                      </label>
+                      <option key={type.code} value={type.code}>
+                        {type.name}
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
 
                 {/* 希望延床面積 */}
@@ -447,9 +443,6 @@ const MarketAnalysis: React.FC = () => {
             <div className="bg-blue-50 rounded-lg p-4">
               <div className="flex items-center">
                 <Info className="h-5 w-5 text-blue-600 mr-2 flex-shrink-0" />
-                <p className="text-sm text-blue-800">
-                  直近3年間の取引データを自動的に分析します
-                </p>
               </div>
             </div>
           </div>
@@ -463,11 +456,15 @@ const MarketAnalysis: React.FC = () => {
           )}
 
           {/* 分析実行ボタン */}
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center">
             <button
               onClick={handleAnalyze}
               disabled={isLoading}
-              className="w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className={`flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] ${
+                isLoading
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+              }`}
             >
               {isLoading ? (
                 <>
@@ -477,7 +474,7 @@ const MarketAnalysis: React.FC = () => {
               ) : (
                 <>
                   <Search className="h-5 w-5 mr-2" />
-                  検索実行
+                  AI市場分析を実行する
                 </>
               )}
             </button>
