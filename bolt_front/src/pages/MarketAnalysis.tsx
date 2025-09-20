@@ -169,15 +169,8 @@ const MarketAnalysis: React.FC = () => {
             quarter: quarter
           };
 
-          // フィルタ条件を適用（Streamlitと同じロジック）
-          if (targetArea > 0) {
-            params.min_area = targetArea - areaTolerance;
-            params.max_area = targetArea + areaTolerance;
-          }
-          if (targetYear > 0) {
-            params.min_year = targetYear - yearTolerance;
-            params.max_year = targetYear + yearTolerance;
-          }
+          // まずフィルタなしでデータを取得（後で適応的にフィルタリング）
+          // APIフィルタは地域によってデータが0件になる可能性があるため
           console.log(`Requesting Year ${year} Q${quarter} with params:`, params);
           promises.push(propertyApi.searchProperties(params));
         }
@@ -218,8 +211,42 @@ const MarketAnalysis: React.FC = () => {
         }
       }
 
-      // バックエンドAPIで既にフィルタリング済みのため、クライアント側フィルタリングは不要
-      const filteredData = [...allData];
+      // Streamlit風の適応的フィルタリング
+      let filteredData = [...allData];
+
+      console.log(`🔍 フィルタリング開始: 全データ ${allData.length}件`);
+
+      // 1. 面積フィルタ（100±10㎡）
+      if (targetArea > 0 && allData.length > 0) {
+        const areaFiltered = allData.filter(item => {
+          const area = getArea(item);
+          return area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
+        });
+        console.log(`📐 面積フィルタ (${targetArea}±${areaTolerance}㎡): ${areaFiltered.length}件`);
+
+        // 2. 築年数フィルタ（2015±5年）
+        if (targetYear > 0) {
+          const fullFiltered = areaFiltered.filter(item => {
+            const buildYear = getBuildYear(item);
+            return buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
+          });
+          console.log(`🏗️ 築年数フィルタ (${targetYear}±${yearTolerance}年): ${fullFiltered.length}件`);
+
+          // 完全フィルタで十分なデータがあるか確認
+          if (fullFiltered.length >= 10) {
+            filteredData = fullFiltered;
+            console.log(`✅ 完全フィルタ採用: ${filteredData.length}件`);
+          } else if (areaFiltered.length >= 10) {
+            filteredData = areaFiltered;
+            console.log(`⚠️ 面積のみフィルタ採用: ${filteredData.length}件`);
+          } else {
+            filteredData = allData;
+            console.log(`⚠️ フィルタなしで表示: ${filteredData.length}件`);
+          }
+        } else {
+          filteredData = areaFiltered.length >= 10 ? areaFiltered : allData;
+        }
+      }
 
       console.log('==== データ分析結果 ====');
       console.log('総データ数（フィルタ前）:', allData.length);
