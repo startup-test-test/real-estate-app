@@ -15,6 +15,25 @@ import Plot from 'react-plotly.js';
 
 const MarketAnalysis: React.FC = () => {
 
+  // ヘルパー関数：価格を取得（万円単位で返す）
+  const getPrice = (item: any): number => {
+    const price = item['取引価格（万円）'];
+    if (price !== undefined && price !== null) {
+      return price; // 既に万円単位
+    }
+    return (item.price || item.取引価格 || 0) / 10000; // 円を万円に変換
+  };
+
+  // ヘルパー関数：面積を取得
+  const getArea = (item: any): number => {
+    return item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
+  };
+
+  // ヘルパー関数：建築年を取得
+  const getBuildYear = (item: any): number => {
+    return parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
+  };
+
   // フォーム状態（streamlit_app.pyと同じロジック）
   const [selectedPrefecture, setSelectedPrefecture] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
@@ -210,8 +229,7 @@ const MarketAnalysis: React.FC = () => {
       if (targetArea > 0 && filteredData.length > 0) {
         const originalCount = filteredData.length;
         filteredData = filteredData.filter(item => {
-          // 日本語フィールド名を優先的にチェック（API仕様書による）
-          const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
+          const area = getArea(item);
           const isInRange = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
           if (area > 0) {
             console.log(`物件面積: ${area}㎡, 範囲: ${targetArea-areaTolerance}-${targetArea+areaTolerance}㎡, 適合: ${isInRange}`);
@@ -226,8 +244,7 @@ const MarketAnalysis: React.FC = () => {
       if (targetYear > 0 && filteredData.length > 0) {
         const originalCount = filteredData.length;
         filteredData = filteredData.filter(item => {
-          // 日本語フィールド名を優先的にチェック（API仕様書による）
-          const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
+          const buildYear = getBuildYear(item);
           const isInRange = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
           if (buildYear > 0) {
             console.log(`建築年: ${buildYear}年, 範囲: ${targetYear-yearTolerance}-${targetYear+yearTolerance}年, 適合: ${isInRange}`);
@@ -867,7 +884,15 @@ const MarketAnalysis: React.FC = () => {
                     <li>- 分析対象物件数: {marketData.similarPropertiesCount}件</li>
                     <li>- 平均価格: {marketData.averagePrice?.toLocaleString()}万円</li>
                     <li>- 中央値: {marketData.q50?.toLocaleString() || 0}万円</li>
-                    <li>- 価格帯: {Math.min(...allProperties.map(p => (p.price || p.取引価格) / 10000)).toLocaleString()}万円 〜 {Math.max(...allProperties.map(p => (p.price || p.取引価格) / 10000)).toLocaleString()}万円</li>
+                    <li>- 価格帯: {Math.min(...allProperties.map(p => {
+                      const price = p['取引価格（万円）'];
+                      if (price !== undefined && price !== null) return price;
+                      return (p.price || p.取引価格 || 0) / 10000;
+                    })).toLocaleString()}万円 〜 {Math.max(...allProperties.map(p => {
+                      const price = p['取引価格（万円）'];
+                      if (price !== undefined && price !== null) return price;
+                      return (p.price || p.取引価格 || 0) / 10000;
+                    })).toLocaleString()}万円</li>
                   </ul>
                 </div>
 
@@ -875,7 +900,11 @@ const MarketAnalysis: React.FC = () => {
                   <h4 className="font-bold mb-2">📈 価格動向分析</h4>
                   <ul className="space-y-1 ml-4">
                     <li>- 年間成長率: {marketData.priceChange?.toFixed(1)}%</li>
-                    <li>- 価格のばらつき（標準偏差）: ±{(Math.sqrt(allProperties.map(p => Math.pow((p.price || p.取引価格) / 10000 - marketData.averagePrice, 2)).reduce((a, b) => a + b, 0) / allProperties.length)).toFixed(0)}万円</li>
+                    <li>- 価格のばらつき（標準偏差）: ±{(Math.sqrt(allProperties.map(p => {
+                      const price = p['取引価格（万円）'];
+                      const priceInManYen = price !== undefined && price !== null ? price : (p.price || p.取引価格 || 0) / 10000;
+                      return Math.pow(priceInManYen - marketData.averagePrice, 2);
+                    }).reduce((a, b) => a + b, 0) / allProperties.length)).toFixed(0)}万円</li>
                   </ul>
                 </div>
 
@@ -991,13 +1020,16 @@ const MarketAnalysis: React.FC = () => {
                     data={[
                       {
                         x: allProperties
-                          .filter(p => (p.building_area || p.面積) > 0)
-                          .filter(p => Math.abs((p.building_area || p.面積) - targetArea) > areaTolerance)
-                          .map(p => p.building_area || p.面積),
+                          .filter(p => (p['延べ床面積（㎡）'] || p.building_area || p.面積) > 0)
+                          .filter(p => Math.abs((p['延べ床面積（㎡）'] || p.building_area || p.面積) - targetArea) > areaTolerance)
+                          .map(p => p['延べ床面積（㎡）'] || p.building_area || p.面積),
                         y: allProperties
-                          .filter(p => (p.building_area || p.面積) > 0)
-                          .filter(p => Math.abs((p.building_area || p.面積) - targetArea) > areaTolerance)
-                          .map(p => (p.price || p.取引価格) / 10000),
+                          .filter(p => (p['延べ床面積（㎡）'] || p.building_area || p.面積) > 0)
+                          .filter(p => Math.abs((p['延べ床面積（㎡）'] || p.building_area || p.面積) - targetArea) > areaTolerance)
+                          .map(p => {
+                            const price = p['取引価格（万円）'];
+                            return price !== undefined && price !== null ? price : (p.price || p.取引価格 || 0) / 10000;
+                          }),
                         mode: 'markers',
                         type: 'scatter',
                         name: 'その他',
@@ -1011,13 +1043,16 @@ const MarketAnalysis: React.FC = () => {
                       },
                       {
                         x: allProperties
-                          .filter(p => (p.building_area || p.面積) > 0)
-                          .filter(p => Math.abs((p.building_area || p.面積) - targetArea) <= areaTolerance)
-                          .map(p => p.building_area || p.面積),
+                          .filter(p => (p['延べ床面積（㎡）'] || p.building_area || p.面積) > 0)
+                          .filter(p => Math.abs((p['延べ床面積（㎡）'] || p.building_area || p.面積) - targetArea) <= areaTolerance)
+                          .map(p => p['延べ床面積（㎡）'] || p.building_area || p.面積),
                         y: allProperties
-                          .filter(p => (p.building_area || p.面積) > 0)
-                          .filter(p => Math.abs((p.building_area || p.面積) - targetArea) <= areaTolerance)
-                          .map(p => (p.price || p.取引価格) / 10000),
+                          .filter(p => (p['延べ床面積（㎡）'] || p.building_area || p.面積) > 0)
+                          .filter(p => Math.abs((p['延べ床面積（㎡）'] || p.building_area || p.面積) - targetArea) <= areaTolerance)
+                          .map(p => {
+                            const price = p['取引価格（万円）'];
+                            return price !== undefined && price !== null ? price : (p.price || p.取引価格 || 0) / 10000;
+                          }),
                         mode: 'markers',
                         type: 'scatter',
                         name: `${targetArea}±${areaTolerance}㎡`,
