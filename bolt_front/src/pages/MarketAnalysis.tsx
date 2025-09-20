@@ -163,6 +163,7 @@ const MarketAnalysis: React.FC = () => {
       }
 
       const responses = await Promise.all(promises);
+      console.log('API Responses:', responses); // デバッグ用
       const allData: any[] = [];
       const yearlyResults: any[] = [];
 
@@ -174,6 +175,7 @@ const MarketAnalysis: React.FC = () => {
         // その年の4四半期分のデータを結合
         for (let q = 0; q < 4; q++) {
           const response = responses[i * 4 + q];
+          console.log(`Year ${year} Q${q + 1} response:`, response); // デバッグ用
           if (response.status === 'success' && response.data) {
             yearData.push(...response.data);
           }
@@ -181,8 +183,8 @@ const MarketAnalysis: React.FC = () => {
 
         if (yearData.length > 0) {
           // 価格と面積の統計を計算
-          const prices = yearData.map(item => item.取引価格 || 0);
-          const areas = yearData.map(item => item.面積 || 0);
+          const prices = yearData.map(item => item.price || item.取引価格 || 0);
+          const areas = yearData.map(item => item.building_area || item.面積 || 0);
 
           const totalPrice = prices.reduce((sum, price) => sum + price, 0);
           const avgPrice = totalPrice / prices.length;
@@ -257,7 +259,7 @@ const MarketAnalysis: React.FC = () => {
   const performSimpleClustering = (data: any[]) => {
     if (data.length < 10) return null;
 
-    const prices = data.map(item => item.取引価格 || 0).sort((a, b) => a - b);
+    const prices = data.map(item => item.price || item.取引価格 || 0).sort((a, b) => a - b);
     const q33 = getPercentile(prices, 0.33);
     const q66 = getPercentile(prices, 0.66);
 
