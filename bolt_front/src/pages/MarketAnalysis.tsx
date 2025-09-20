@@ -248,9 +248,14 @@ const MarketAnalysis: React.FC = () => {
         }
       }
 
-      console.log('==== データ分析結果 ====');
-      console.log('総データ数（フィルタ前）:', allData.length);
-      console.log('総データ数（フィルタ後）:', filteredData.length);
+      console.log('==== 📊 天沼町 データ分析結果 ====');
+      console.log('🏠 天沼町の全物件データ:', allData.length, '件');
+      console.log('🎯 フィルタ後データ:', filteredData.length, '件');
+      console.log('📋 検索条件:');
+      console.log('  - 物件種別:', selectedPropertyType === '02' ? '戸建て' : selectedPropertyType === '07' ? 'マンション' : '土地');
+      console.log('  - 延床面積:', `${targetArea}±${areaTolerance}㎡ (${targetArea-areaTolerance}〜${targetArea+areaTolerance}㎡)`);
+      console.log('  - 建築年:', `${targetYear}±${yearTolerance}年 (${targetYear-yearTolerance}〜${targetYear+yearTolerance}年)`);
+      console.log('  - 取得期間: 2021年〜2024年 (4年分)');
 
       // データの詳細分析
       if (allData.length > 0) {
@@ -278,6 +283,27 @@ const MarketAnalysis: React.FC = () => {
           const hasField = allData.filter(item => item[field] && item[field] > 0).length;
           console.log(`${field}フィールド有効データ:`, hasField);
         });
+
+        // 面積・築年分布の詳細分析
+        console.log('==== 📈 天沼町の詳細分析 ====');
+        const areas = allData.map(item => getArea(item)).filter(a => a > 0);
+        const years = allData.map(item => getBuildYear(item)).filter(y => y > 1950);
+
+        if (areas.length > 0) {
+          console.log(`📐 面積分布: 最小${Math.min(...areas)}㎡ 〜 最大${Math.max(...areas)}㎡`);
+          console.log(`📐 面積平均: ${(areas.reduce((a,b) => a+b, 0) / areas.length).toFixed(1)}㎡`);
+          console.log(`📐 条件(90-110㎡)該当: ${areas.filter(a => a >= 90 && a <= 110).length}件`);
+        }
+
+        if (years.length > 0) {
+          console.log(`🏗️ 築年分布: ${Math.min(...years)}年 〜 ${Math.max(...years)}年`);
+          console.log(`🏗️ 条件(2010-2020年)該当: ${years.filter(y => y >= 2010 && y <= 2020).length}件`);
+        }
+
+        console.log('==== 🔍 Streamlit比較情報 ====');
+        console.log('React版結果:', filteredData.length, '件');
+        console.log('Streamlit期待値: 68件');
+        console.log('差異:', Math.abs(filteredData.length - 68), '件');
       }
 
       // 表示用データ（グラフ用は全データ、統計用はフィルタ後データ）
