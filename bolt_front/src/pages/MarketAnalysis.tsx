@@ -7,7 +7,6 @@ import {
   Home,
   Loader,
   AlertCircle,
-  Info,
   Ruler,
   Calendar
 } from 'lucide-react';
@@ -133,14 +132,15 @@ const MarketAnalysis: React.FC = () => {
     try {
       // 2024年を最新年として設定（2025年のデータはまだ存在しない）
       const currentYear = Math.min(new Date().getFullYear(), 2024);
+      const fromYear = currentYear - 3;  // Streamlitと同じ：3年前から
+      const toYear = currentYear;  // 現在年まで
       const promises = [];
 
-      // 直近3年分のデータを取得（streamlit_app.pyと同じ）
-      for (let i = 0; i < 3; i++) {
-        const year = currentYear - i;
+      // Streamlitと同じロジック：from_year から to_year まで（4年分）
+      for (let year = fromYear; year <= toYear; year++) {
         // 全四半期のデータを取得
         for (let quarter = 1; quarter <= 4; quarter++) {
-          const params = {
+          const params: any = {
             prefecture: selectedPrefecture,  // 都道府県コードを送る
             city: selectedCity,  // 市区町村コードを送る
             district: selectedDistrict || undefined,  // 地区名はそのまま送る
@@ -148,12 +148,21 @@ const MarketAnalysis: React.FC = () => {
                          selectedPropertyType === '02' ? '戸建' : '土地',
             year: year,
             quarter: quarter
-            // フィルタは一旦コメントアウト（データ取得優先）
-            // min_area: targetArea - areaTolerance,
-            // max_area: targetArea + areaTolerance,
-            // min_year: targetYear - yearTolerance,
-            // max_year: targetYear + yearTolerance
           };
+
+          // フィルタ条件を適用（データが存在する場合のみ）
+          // まずはフィルタなしで試し、データがあればフィルタを適用
+          // 天沼町のようにデータが少ない地域では、フィルタを緩める必要がある
+
+          // 一旦フィルタなしでリクエスト（後でクライアント側でフィルタリング）
+          // if (targetArea > 0) {
+          //   params.min_area = targetArea - areaTolerance;
+          //   params.max_area = targetArea + areaTolerance;
+          // }
+          // if (targetYear > 0) {
+          //   params.min_year = targetYear - yearTolerance;
+          //   params.max_year = targetYear + yearTolerance;
+          // }
           console.log(`Requesting Year ${year} Q${quarter} with params:`, params);
           promises.push(propertyApi.searchProperties(params));
         }
@@ -164,34 +173,104 @@ const MarketAnalysis: React.FC = () => {
 
       // レスポンスの詳細を確認
       responses.forEach((resp, idx) => {
-        const year = currentYear - Math.floor(idx / 4);
+        const yearIdx = Math.floor(idx / 4);
+        const year = fromYear + yearIdx;
         const quarter = (idx % 4) + 1;
         console.log(`Response ${year} Q${quarter}:`, {
           status: resp.status,
           dataCount: resp.data?.length || 0,
-          error: resp.error || null
+          message: resp.message || null
         });
       });
 
-      const allData: any[] = [];
-      const yearlyResults: any[] = [];
+      let allData: any[] = [];
 
-      // 年ごとにデータを集計
-      for (let i = 0; i < 3; i++) {
-        const year = currentYear - i;
-        const yearData: any[] = [];
-
-        // その年の4四半期分のデータを結合
+      // まず全データを収集
+      for (let year = fromYear; year <= toYear; year++) {
+        const yearIdx = year - fromYear;
         for (let q = 0; q < 4; q++) {
-          const response = responses[i * 4 + q];
+          const response = responses[yearIdx * 4 + q];
           console.log(`Year ${year} Q${q + 1} response:`, response); // デバッグ用
           if (response.status === 'success' && response.data) {
-            yearData.push(...response.data);
+            // 各データに年情報を付加
+            const dataWithYear = response.data.map((item: any) => ({
+              ...item,
+              dataYear: year
+            }));
+            allData.push(...dataWithYear);
           }
         }
+      }
+
+      // クライアント側でフィルタリング（Streamlitと同じロジック）
+      let filteredData = [...allData];
+
+      // 面積フィルタ（建物面積を使用）
+      if (targetArea > 0 && filteredData.length > 0) {
+        const originalCount = filteredData.length;
+        filteredData = filteredData.filter(item => {
+          // 複数のフィールド名をチェック（APIによって異なる場合がある）
+          const area = item.building_area || item.面積 || item.延床面積 || item.area || 0;
+          const isInRange = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
+          if (area > 0) {
+            console.log(`物件面積: ${area}㎡, 範囲: ${targetArea-areaTolerance}-${targetArea+areaTolerance}㎡, 適合: ${isInRange}`);
+          }
+          return isInRange;
+        });
+        console.log(`面積フィルタ適用: ${originalCount}件 → ${filteredData.length}件`);
+        console.log('フィルタ後データサンプル:', filteredData.slice(0, 3));
+      }
+
+      // 築年数フィルタ
+      if (targetYear > 0 && filteredData.length > 0) {
+        const originalCount = filteredData.length;
+        filteredData = filteredData.filter(item => {
+          // 複数のフィールド名をチェック
+          const buildYear = parseInt(item.build_year || item.建築年 || item.building_year || '0');
+          const isInRange = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
+          if (buildYear > 0) {
+            console.log(`建築年: ${buildYear}年, 範囲: ${targetYear-yearTolerance}-${targetYear+yearTolerance}年, 適合: ${isInRange}`);
+          }
+          return isInRange;
+        });
+        console.log(`築年数フィルタ適用: ${originalCount}件 → ${filteredData.length}件`);
+        console.log('最終フィルタ後データサンプル:', filteredData.slice(0, 3));
+      }
+
+      console.log('==== データ分析結果 ====');
+      console.log('総データ数（フィルタ前）:', allData.length);
+      console.log('総データ数（フィルタ後）:', filteredData.length);
+
+      // データの詳細分析
+      if (allData.length > 0) {
+        const sampleData = allData[0];
+        console.log('データサンプル:', sampleData);
+        console.log('利用可能フィールド:', Object.keys(sampleData));
+
+        // 面積フィールドの確認
+        const areaFields = ['building_area', '面積', '延床面積', 'area'];
+        areaFields.forEach(field => {
+          const hasField = allData.filter(item => item[field] && item[field] > 0).length;
+          console.log(`${field}フィールド有効データ:`, hasField);
+        });
+
+        // 建築年フィールドの確認
+        const yearFields = ['build_year', '建築年', 'building_year'];
+        yearFields.forEach(field => {
+          const hasField = allData.filter(item => item[field] && parseInt(item[field]) > 1950).length;
+          console.log(`${field}フィールド有効データ:`, hasField);
+        });
+      }
+
+      // 表示用データ（グラフ用は全データ、統計用はフィルタ後データ）
+      setAllProperties(allData);  // グラフ表示には全データを使用
+
+      // フィルタ後のデータで年ごとの統計を再計算
+      const yearlyResults: any[] = [];
+      for (let year = fromYear; year <= toYear; year++) {
+        const yearData = filteredData.filter(item => item.dataYear === year);
 
         if (yearData.length > 0) {
-          // 価格と面積の統計を計算
           const prices = yearData.map(item => item.price || item.取引価格 || 0);
           const areas = yearData.map(item => item.building_area || item.面積 || 0);
 
@@ -200,41 +279,27 @@ const MarketAnalysis: React.FC = () => {
           const totalArea = areas.reduce((sum, area) => sum + area, 0);
           const avgPricePerSqm = totalArea > 0 ? totalPrice / totalArea : 0;
 
-          const yearResult = {
+          yearlyResults.push({
             year: year,
-            averagePrice: Math.round(avgPrice / 10000), // 万円単位
+            averagePrice: Math.round(avgPrice / 10000),
             totalTransactions: yearData.length,
             averagePricePerSqm: Math.round(avgPricePerSqm),
-            data: yearData,
-            // 四分位数の計算
             q25: Math.round(getPercentile(prices, 0.25) / 10000),
             q50: Math.round(getPercentile(prices, 0.50) / 10000),
             q75: Math.round(getPercentile(prices, 0.75) / 10000)
-          };
-
-          console.log(`${year}年のデータ集計結果:`, {
-            year: year,
-            件数: yearData.length,
-            平均価格: yearResult.averagePrice + '万円',
-            価格レンジ: `${Math.min(...prices) / 10000}万円 ~ ${Math.max(...prices) / 10000}万円`,
-            データサンプル: yearData.slice(0, 3) // 最初の3件を表示
           });
-
-          yearlyResults.push(yearResult);
-
-          allData.push(...yearData);
         }
       }
 
-      // 全データを保存
-      setAllProperties(allData);
-
-      console.log('総データ数:', allData.length);
       console.log('年次集計結果数:', yearlyResults.length);
 
-      if (yearlyResults.length > 0) {
-        // 最新年のデータを基準に設定
-        const latestData = yearlyResults[0];
+      if (filteredData.length > 0) {
+        // フィルタ後の全データから統計を計算
+        const allPrices = filteredData.map(item => item.price || item.取引価格 || 0);
+        const q25 = Math.round(getPercentile(allPrices, 0.25) / 10000);
+        const q50 = Math.round(getPercentile(allPrices, 0.50) / 10000);
+        const q75 = Math.round(getPercentile(allPrices, 0.75) / 10000);
+        const avgPrice = allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
 
         // 価格トレンドを線形回帰で計算（streamlit_app.pyと完全に同じロジック）
         let priceChange = 0;
@@ -303,23 +368,23 @@ const MarketAnalysis: React.FC = () => {
           priceChange = 0;
         }
 
-        // クラスタリング分析の準備（簡易版）
-        const clusters = performSimpleClustering(allData);
+        // クラスタリング分析の準備（フィルタ後データで実行）
+        const clusters = performSimpleClustering(filteredData);
 
         setMarketData({
           prefecture: selectedPrefecture,
           city: selectedCity,
           district: selectedDistrict || '全体',
-          averagePrice: latestData.averagePrice,
+          averagePrice: Math.round(avgPrice / 10000),
           priceChange: priceChange,
-          totalTransactions: latestData.totalTransactions,
-          averagePricePerSqm: latestData.averagePricePerSqm,
+          totalTransactions: filteredData.length,
+          averagePricePerSqm: 0,  // 必要に応じて計算
           yearlyData: yearlyResults,
           clusters: clusters,
-          q25: latestData.q25,
-          q50: latestData.q50,
-          q75: latestData.q75,
-          similarPropertiesCount: allData.length
+          q25: q25,
+          q50: q50,
+          q75: q75,
+          similarPropertiesCount: filteredData.length  // フィルタ後のデータ数
         });
 
         // 公示地価データの取得
@@ -395,7 +460,34 @@ const MarketAnalysis: React.FC = () => {
           console.log('公示地価データの取得エラー:', err);
         }
       } else {
-        setError('該当するデータが見つかりませんでした。条件を変更して再度お試しください。');
+        // データが少ない場合は、フィルタなしのデータで表示
+        if (allData.length > 0) {
+          console.log('フィルタ条件が厳しすぎるため、全データで表示します');
+
+          const allPrices = allData.map(item => item.price || item.取引価格 || 0);
+          const q25 = Math.round(getPercentile(allPrices, 0.25) / 10000);
+          const q50 = Math.round(getPercentile(allPrices, 0.50) / 10000);
+          const q75 = Math.round(getPercentile(allPrices, 0.75) / 10000);
+          const avgPrice = allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
+
+          setMarketData({
+            prefecture: selectedPrefecture,
+            city: selectedCity,
+            district: selectedDistrict || '全体',
+            averagePrice: Math.round(avgPrice / 10000),
+            priceChange: 0,
+            totalTransactions: allData.length,
+            averagePricePerSqm: 0,
+            yearlyData: [],
+            clusters: performSimpleClustering(allData),
+            q25: q25,
+            q50: q50,
+            q75: q75,
+            similarPropertiesCount: allData.length
+          });
+        } else {
+          setError('該当するデータが見つかりませんでした。条件を変更して再度お試しください。');
+        }
       }
     } catch (err) {
       console.error('分析エラー:', err);
@@ -598,15 +690,6 @@ const MarketAnalysis: React.FC = () => {
               </div>
             </div>
 
-            {/* 分析期間（自動設定） */}
-            <div className="bg-blue-50 rounded-lg p-4">
-              <div className="flex items-center">
-                <Info className="h-5 w-5 text-blue-600 mr-2 flex-shrink-0" />
-                <p className="text-sm text-blue-800">
-                  取引時期：直近3年分のデータを自動取得します
-                </p>
-              </div>
-            </div>
           </div>
 
           {/* エラー表示 */}
@@ -812,9 +895,9 @@ const MarketAnalysis: React.FC = () => {
 
 
             {/* 類似物件の詳細表 */}
-            {allProperties && allProperties.length > 0 && (
+            {marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件 (フィルタ適用済み)</h3>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-white border-b-2 border-gray-200">
@@ -831,6 +914,14 @@ const MarketAnalysis: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {allProperties
+                        .filter(item => {
+                          // フィルタ条件に合致する物件のみ表示
+                          const area = item.building_area || item.面積 || item.延床面積 || item.area || 0;
+                          const buildYear = parseInt(item.build_year || item.建築年 || item.building_year || '0');
+                          const areaMatch = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
+                          const yearMatch = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
+                          return areaMatch && yearMatch;
+                        })
                         .sort((a, b) => Math.abs((a.building_area || a.面積) - targetArea) - Math.abs((b.building_area || b.面積) - targetArea))
                         .slice(0, 10)
                         .map((property, index) => (
