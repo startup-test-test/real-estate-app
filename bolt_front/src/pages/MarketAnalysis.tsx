@@ -39,10 +39,8 @@ const MarketAnalysis: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('');
   const [selectedPropertyType, setSelectedPropertyType] = useState<string>('02'); // デフォルト: 戸建て
-  const [useTargetArea, setUseTargetArea] = useState<boolean>(false); // 延床面積フィルタのON/OFF
-  const [targetArea, setTargetArea] = useState<number>(100); // 希望延床面積（オプション）
-  const [useTargetYear, setUseTargetYear] = useState<boolean>(false); // 建築年フィルタのON/OFF
-  const [targetYear, setTargetYear] = useState<number>(2015); // 建築年（オプション）
+  const [targetArea, setTargetArea] = useState<number>(100); // 希望延床面積（必須）
+  const [targetYear, setTargetYear] = useState<number>(2015); // 建築年（必須）
 
   // 固定値（streamlit_app.pyと同じ）
   const areaTolerance = 10; // ±10㎡
@@ -50,6 +48,8 @@ const MarketAnalysis: React.FC = () => {
 
   // API関連の状態
   const [isLoading, setIsLoading] = useState(false);
+  const [isCitiesLoading, setIsCitiesLoading] = useState(false);  // 市区町村ローディング
+  const [isDistrictsLoading, setIsDistrictsLoading] = useState(false);  // 地区ローディング
   const [marketData, setMarketData] = useState<any>(null);
   const [allProperties, setAllProperties] = useState<any[]>([]);
   const [landPriceData, setLandPriceData] = useState<any[]>([]);
@@ -78,6 +78,8 @@ const MarketAnalysis: React.FC = () => {
   React.useEffect(() => {
     if (selectedPrefecture) {
       const loadCities = async () => {
+        setIsCitiesLoading(true);  // ローディング開始
+        setCities([]);  // 既存のリストをクリア
         try {
           const response = await propertyApi.getCities(selectedPrefecture);
           if (response.status === 'success' && response.data) {
@@ -87,6 +89,8 @@ const MarketAnalysis: React.FC = () => {
           }
         } catch (err) {
           console.error('市区町村リスト取得エラー:', err);
+        } finally {
+          setIsCitiesLoading(false);  // ローディング終了
         }
       };
       loadCities();
@@ -100,6 +104,8 @@ const MarketAnalysis: React.FC = () => {
   React.useEffect(() => {
     if (selectedPrefecture && selectedCity) {
       const loadDistricts = async () => {
+        setIsDistrictsLoading(true);  // ローディング開始
+        setDistricts([]);  // 既存のリストをクリア
         try {
           const response = await propertyApi.getDistricts(selectedPrefecture, selectedCity);
           if (response.status === 'success' && response.data) {
@@ -117,6 +123,8 @@ const MarketAnalysis: React.FC = () => {
         } catch (err) {
           console.error('地区リスト取得エラー:', err);
           setDistricts([]);
+        } finally {
+          setIsDistrictsLoading(false);  // ローディング終了
         }
       };
       loadDistricts();
@@ -213,40 +221,41 @@ const MarketAnalysis: React.FC = () => {
         }
       }
 
-      // フィルタリング（オプション）
+      // Streamlit風の適応的フィルタリング
       let filteredData = [...allData];
 
       console.log(`🔍 フィルタリング開始: 全データ ${allData.length}件`);
 
-      // 1. 面積フィルタ（オプション）
-      if (useTargetArea && targetArea > 0 && allData.length > 0) {
-        filteredData = filteredData.filter(item => {
+      // 1. 面積フィルタ（100±10㎡）
+      if (targetArea > 0 && allData.length > 0) {
+        const areaFiltered = allData.filter(item => {
           const area = getArea(item);
           return area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
         });
-        console.log(`📐 面積フィルタ (${targetArea}±${areaTolerance}㎡): ${filteredData.length}件`);
-      }
+        console.log(`📐 面積フィルタ (${targetArea}±${areaTolerance}㎡): ${areaFiltered.length}件`);
 
-      // 2. 築年数フィルタ（オプション）
-      if (useTargetYear && targetYear > 0) {
-        filteredData = filteredData.filter(item => {
-          const buildYear = getBuildYear(item);
-          return buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
-        });
-        console.log(`🏗️ 築年数フィルタ (${targetYear}±${yearTolerance}年): ${filteredData.length}件`);
-      }
+        // 2. 築年数フィルタ（2015±5年）
+        if (targetYear > 0) {
+          const fullFiltered = areaFiltered.filter(item => {
+            const buildYear = getBuildYear(item);
+            return buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
+          });
+          console.log(`🏗️ 築年数フィルタ (${targetYear}±${yearTolerance}年): ${fullFiltered.length}件`);
 
-      // フィルタリング結果の確認
-      if (useTargetArea || useTargetYear) {
-        if (filteredData.length === 0) {
-          // フィルタ結果が0件の場合は全データを表示
-          filteredData = allData;
-          console.log(`⚠️ フィルタ条件に該当なし、全データ表示: ${filteredData.length}件`);
+          // 完全フィルタで十分なデータがあるか確認
+          if (fullFiltered.length >= 10) {
+            filteredData = fullFiltered;
+            console.log(`✅ 完全フィルタ採用: ${filteredData.length}件`);
+          } else if (areaFiltered.length >= 10) {
+            filteredData = areaFiltered;
+            console.log(`⚠️ 面積のみフィルタ採用: ${filteredData.length}件`);
+          } else {
+            filteredData = allData;
+            console.log(`⚠️ フィルタなしで表示: ${filteredData.length}件`);
+          }
         } else {
-          console.log(`✅ フィルタ採用: ${filteredData.length}件`);
+          filteredData = areaFiltered.length >= 10 ? areaFiltered : allData;
         }
-      } else {
-        console.log(`📦 フィルタなし、全データ表示: ${filteredData.length}件`);
       }
 
       console.log('==== 📊 天沼町 データ分析結果 ====');
@@ -600,12 +609,38 @@ const MarketAnalysis: React.FC = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen relative">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Gray out overlay */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+          {/* Loading content */}
+          <div className="relative bg-white rounded-xl p-8 shadow-2xl max-w-md mx-4">
+            <div className="flex flex-col items-center space-y-4">
+              <Loader className="h-12 w-12 text-blue-600 animate-spin" />
+              <div className="text-center">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  AI市場分析を実行中
+                </h3>
+                <p className="text-gray-600">
+                  1分〜3分ぐらいかかる場合もあります
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  しばらくお待ちください...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
         {/* ヘッダー */}
         <div className="mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI類似分析</h1>
+            <h1 className="text-2xl font-bold text-gray-900">AI市場分析</h1>
             <p className="text-gray-600 mt-1">
               エリアの市場動向と価格分布をAIが詳細に分析します
             </p>
@@ -652,39 +687,57 @@ const MarketAnalysis: React.FC = () => {
                     <Building className="inline h-4 w-4 mr-1" />
                     市区町村 <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                    disabled={!selectedPrefecture}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
-                  >
-                    <option value="">選択してください</option>
-                    {cities.map((city) => (
-                      <option key={city.code} value={city.code}>
-                        {city.name}
+                  <div className="relative">
+                    <select
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                      disabled={!selectedPrefecture || isCitiesLoading}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+                    >
+                      <option value="">
+                        {isCitiesLoading ? '読み込み中...' : '選択してください'}
                       </option>
-                    ))}
-                  </select>
+                      {cities.map((city) => (
+                        <option key={city.code} value={city.code}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                    {isCitiesLoading && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <Loader className="h-4 w-4 animate-spin text-gray-400" />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* 地区名（任意） */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    地区名
+                    地区名 <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={selectedDistrict}
-                    onChange={(e) => setSelectedDistrict(e.target.value)}
-                    disabled={!selectedCity || districts.length === 0}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
-                  >
-                    <option value="">全体</option>
-                    {districts.map((district) => (
-                      <option key={district.name} value={district.name}>
-                        {district.name}
+                  <div className="relative">
+                    <select
+                      value={selectedDistrict}
+                      onChange={(e) => setSelectedDistrict(e.target.value)}
+                      disabled={!selectedCity || districts.length === 0 || isDistrictsLoading}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+                    >
+                      <option value="">
+                        {isDistrictsLoading ? '読み込み中...' : districts.length === 0 && selectedCity ? '地区なし' : '選択してください'}
                       </option>
-                    ))}
-                  </select>
+                      {districts.map((district) => (
+                        <option key={district.name} value={district.name}>
+                          {district.name}
+                        </option>
+                      ))}
+                    </select>
+                    {isDistrictsLoading && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <Loader className="h-4 w-4 animate-spin text-gray-400" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -712,72 +765,55 @@ const MarketAnalysis: React.FC = () => {
                   </select>
                 </div>
 
-                {/* 希望延床面積（任意） */}
+                {/* 希望延床面積 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Ruler className="inline h-4 w-4 mr-1" />
-                    希望延床面積（任意）
+                    希望延床面積 <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center mb-2">
-                    <input
-                      type="checkbox"
-                      checked={useTargetArea}
-                      onChange={(e) => setUseTargetArea(e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-gray-600">延床面積でフィルタリング</span>
-                  </div>
-                  {useTargetArea && (
-                    <>
-                      <div className="flex items-center">
-                        <input
-                          type="number"
-                          value={targetArea}
-                          onChange={(e) => setTargetArea(Number(e.target.value))}
-                          min={10}
-                          max={500}
-                          step={10}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        />
-                        <span className="ml-2 text-sm text-gray-600">㎡</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">±{areaTolerance}㎡の範囲で検索</p>
-                    </>
-                  )}
+                  <select
+                    value={targetArea}
+                    onChange={(e) => setTargetArea(Number(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    <option value="0">選択してください</option>
+                    <option value="50">50㎡</option>
+                    <option value="60">60㎡</option>
+                    <option value="70">70㎡</option>
+                    <option value="80">80㎡</option>
+                    <option value="90">90㎡</option>
+                    <option value="100">100㎡</option>
+                    <option value="110">110㎡</option>
+                    <option value="120">120㎡</option>
+                    <option value="130">130㎡</option>
+                    <option value="140">140㎡</option>
+                    <option value="150">150㎡</option>
+                    <option value="160">160㎡</option>
+                    <option value="170">170㎡</option>
+                    <option value="180">180㎡</option>
+                    <option value="190">190㎡</option>
+                    <option value="200">200㎡</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">±{areaTolerance}㎡の範囲で検索</p>
                 </div>
 
-                {/* 建築年（任意） */}
+                {/* 建築年 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Calendar className="inline h-4 w-4 mr-1" />
-                    建築年（任意）
+                    建築年 <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center mb-2">
-                    <input
-                      type="checkbox"
-                      checked={useTargetYear}
-                      onChange={(e) => setUseTargetYear(e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm text-gray-600">建築年でフィルタリング</span>
-                  </div>
-                  {useTargetYear && (
-                    <>
-                      <div className="flex items-center">
-                        <input
-                          type="number"
-                          value={targetYear}
-                          onChange={(e) => setTargetYear(Number(e.target.value))}
-                          min={1950}
-                          max={new Date().getFullYear()}
-                          step={1}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        />
-                        <span className="ml-2 text-sm text-gray-600">年</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">±{yearTolerance}年の範囲で検索</p>
-                    </>
-                  )}
+                  <select
+                    value={targetYear}
+                    onChange={(e) => setTargetYear(Number(e.target.value))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    <option value="0">選択してください</option>
+                    {Array.from({length: new Date().getFullYear() - 1980 + 1}, (_, i) => new Date().getFullYear() - i).map(year => (
+                      <option key={year} value={year}>{year}年</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">±{yearTolerance}年の範囲で検索</p>
                 </div>
               </div>
             </div>
@@ -806,12 +842,12 @@ const MarketAnalysis: React.FC = () => {
               {isLoading ? (
                 <>
                   <Loader className="h-5 w-5 mr-2 animate-spin" />
-                  分析中...
+                  AI市場分析を実行中
                 </>
               ) : (
                 <>
                   <Search className="h-5 w-5 mr-2" />
-                  🔍 検索実行
+                  AI市場分析を実行する
                 </>
               )}
             </button>
@@ -821,8 +857,8 @@ const MarketAnalysis: React.FC = () => {
         {/* 分析結果表示セクション */}
         {marketData && (
           <div className="space-y-6">
-            {/* AI類似分析セクション（streamlit_app.pyと同じ） */}
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI類似分析</h2>
+            {/* AI市場分析セクション（streamlit_app.pyと同じ） */}
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI市場分析</h2>
 
             {/* 類似物件の価格分布（streamlit_app.pyと同じ） */}
             <div className="bg-green-50 rounded-lg border border-green-200 p-6 mb-6">
@@ -838,35 +874,21 @@ const MarketAnalysis: React.FC = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}万円以下
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    類似物件の25%がこの価格以下
-                    <br />
-                    （{marketData.similarPropertiesCount || 0}件中）
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">類似物件の25%がこの価格以下</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">中央値レンジ</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}〜{marketData.q75?.toLocaleString() || 0}万円
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    類似物件の50%がこの範囲内
-                    <br />
-                    中央値: {marketData.q50?.toLocaleString() || 0}万円
-                    <br />
-                    （{marketData.similarPropertiesCount || 0}件中）
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">類似物件の50%がこの範囲内</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">上位25%</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q75?.toLocaleString() || 0}万円以上
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    類似物件の25%がこの価格以上
-                    <br />
-                    （{marketData.similarPropertiesCount || 0}件中）
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">類似物件の25%がこの価格以上</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">分析サンプル数</div>
@@ -878,8 +900,8 @@ const MarketAnalysis: React.FC = () => {
               </div>
             </div>
 
-            {/* エリア分析セクション */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4">📊 **{selectedDistrict || selectedCity}の分析**（分析サンプル数: {allProperties.length}件）</h3>
+            {/* マーケット分析セクション */}
+            <h3 className="text-xl font-bold text-gray-900 mb-4">📊 **マーケット分析**</h3>
 
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -917,13 +939,7 @@ const MarketAnalysis: React.FC = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}〜{marketData.q75?.toLocaleString() || 0}万円
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    市場の50%がこの範囲内
-                    <br />
-                    中央値: {marketData.q50?.toLocaleString() || 0}万円
-                    <br />
-                    （エリア全体: {allProperties.length}件）
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">市場の50%がこの範囲内<br/>中央値: {marketData.q50?.toLocaleString() || 0}万円</p>
                 </div>
 
                 {/* 上位25% */}
@@ -932,11 +948,7 @@ const MarketAnalysis: React.FC = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q75?.toLocaleString() || 0}万円以上
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    市場の25%がこの価格以上
-                    <br />
-                    （エリア全体: {allProperties.length}件）
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">市場の25%がこの価格以上<br/>分析対象: {marketData.similarPropertiesCount}件</p>
                 </div>
               </div>
             </div>
@@ -1025,7 +1037,7 @@ const MarketAnalysis: React.FC = () => {
             {/* 類似物件の詳細表 */}
             {marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件 {(useTargetArea || useTargetYear) ? '(フィルタ適用済み)' : '(全物件)'}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件 (フィルタ適用済み)</h3>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-white border-b-2 border-gray-200">
@@ -1044,23 +1056,11 @@ const MarketAnalysis: React.FC = () => {
                       {allProperties
                         .filter(item => {
                           // フィルタ条件に合致する物件のみ表示
-                          if (!useTargetArea && !useTargetYear) {
-                            return true; // フィルタなしの場合はすべて表示
-                          }
-
-                          let matches = true;
-
-                          if (useTargetArea && targetArea > 0) {
-                            const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
-                            matches = matches && (area >= targetArea - areaTolerance && area <= targetArea + areaTolerance);
-                          }
-
-                          if (useTargetYear && targetYear > 0) {
-                            const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
-                            matches = matches && (buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance);
-                          }
-
-                          return matches;
+                          const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
+                          const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
+                          const areaMatch = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
+                          const yearMatch = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
+                          return areaMatch && yearMatch;
                         })
                         .sort((a, b) => Math.abs((a.building_area || a.面積) - targetArea) - Math.abs((b.building_area || b.面積) - targetArea))
                         .slice(0, 10)
@@ -1302,17 +1302,13 @@ const MarketAnalysis: React.FC = () => {
                     data={[
                       {
                         x: allProperties
-                          .filter(p => {
-                            const year = getBuildYear(p);
-                            return year && year > 1950 && year <= 2025 && (!useTargetYear || Math.abs(year - targetYear) > yearTolerance);
-                          })
+                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
+                          .filter(p => Math.abs(getBuildYear(p) - targetYear) > yearTolerance)
                           .map(p => getBuildYear(p)),
                         y: allProperties
-                          .filter(p => {
-                            const year = getBuildYear(p);
-                            return year && year > 1950 && year <= 2025 && (!useTargetYear || Math.abs(year - targetYear) > yearTolerance);
-                          })
-                          .map(p => getPrice(p)),
+                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
+                          .filter(p => Math.abs(getBuildYear(p) - targetYear) > yearTolerance)
+                          .map(p => (p.price || p.取引価格) / 10000),
                         mode: 'markers',
                         type: 'scatter',
                         name: 'その他',
@@ -1326,17 +1322,13 @@ const MarketAnalysis: React.FC = () => {
                       },
                       {
                         x: allProperties
-                          .filter(p => {
-                            const year = getBuildYear(p);
-                            return year && year > 1950 && year <= 2025 && useTargetYear && Math.abs(year - targetYear) <= yearTolerance;
-                          })
+                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
+                          .filter(p => Math.abs(getBuildYear(p) - targetYear) <= yearTolerance)
                           .map(p => getBuildYear(p)),
                         y: allProperties
-                          .filter(p => {
-                            const year = getBuildYear(p);
-                            return year && year > 1950 && year <= 2025 && useTargetYear && Math.abs(year - targetYear) <= yearTolerance;
-                          })
-                          .map(p => getPrice(p)),
+                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
+                          .filter(p => Math.abs(getBuildYear(p) - targetYear) <= yearTolerance)
+                          .map(p => (p.price || p.取引価格) / 10000),
                         mode: 'markers',
                         type: 'scatter',
                         name: `${targetYear}±${yearTolerance}年`,
@@ -1419,7 +1411,7 @@ const MarketAnalysis: React.FC = () => {
                   {(() => {
                     const validYearData = allProperties.filter(p => {
                       const year = getBuildYear(p);
-                      return year && year > 1950 && year <= 2025;
+                      return year > 1950 && year <= 2025;
                     });
 
                     if (validYearData.length === 0) {
@@ -1446,7 +1438,7 @@ const MarketAnalysis: React.FC = () => {
                           yearLabels.push(`${yearBins[j]}`);
                         }
                         const count = validYearData.filter(p => {
-                          const price = getPrice(p);
+                          const price = (p.price || p.取引価格) / 10000;
                           const year = getBuildYear(p);
                           return price >= priceBins[i] && price < priceBins[i + 1] &&
                                  year >= yearBins[j] && year < yearBins[j + 1];
@@ -1464,7 +1456,14 @@ const MarketAnalysis: React.FC = () => {
                             x: yearLabels,
                             y: priceLabels.reverse(),
                             type: 'heatmap',
-                            colorscale: 'Oranges',
+                            colorscale: [
+                              [0, '#ffffff'],
+                              [0.2, '#ffe4cc'],
+                              [0.4, '#ffcc99'],
+                              [0.6, '#ffb366'],
+                              [0.8, '#ff9933'],
+                              [1, '#ff6600']
+                            ],
                             text: heatmapData.map(row => row.map(val => val.toString())),
                             texttemplate: '%{text}',
                             textfont: { size: 14 },
