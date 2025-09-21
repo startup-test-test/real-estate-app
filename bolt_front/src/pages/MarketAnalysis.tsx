@@ -48,6 +48,7 @@ const MarketAnalysis: React.FC = () => {
 
   // API関連の状態
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);  // ローディング進捗率
   const [isCitiesLoading, setIsCitiesLoading] = useState(false);  // 市区町村ローディング
   const [isDistrictsLoading, setIsDistrictsLoading] = useState(false);  // 地区ローディング
   const [marketData, setMarketData] = useState<any>(null);
@@ -156,7 +157,18 @@ const MarketAnalysis: React.FC = () => {
     }
 
     setIsLoading(true);
+    setLoadingProgress(0);
     setError(null);
+
+    // プログレスバーの更新を開始
+    const progressInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 90) {
+          return prev;  // 90%で一旦停止
+        }
+        return prev + Math.random() * 10;  // ランダムに進行
+      });
+    }, 500);
 
     try {
       // 2024年を最新年として設定（2025年のデータはまだ存在しない）
@@ -568,7 +580,15 @@ const MarketAnalysis: React.FC = () => {
       console.error('分析エラー:', err);
       setError('分析中にエラーが発生しました');
     } finally {
-      setIsLoading(false);
+      // プログレスを100%にしてから終了
+      clearInterval(progressInterval);
+      setLoadingProgress(100);
+
+      // 少し待ってからローディングを終了
+      setTimeout(() => {
+        setIsLoading(false);
+        setLoadingProgress(0);
+      }, 500);
     }
   };
 
@@ -577,6 +597,42 @@ const MarketAnalysis: React.FC = () => {
     const sorted = arr.sort((a, b) => a - b);
     const index = Math.floor(sorted.length * percentile);
     return sorted[index] || 0;
+  };
+
+  // 取引時期を月表示に変換
+  const formatTradePeriod = (property: any): string => {
+    // dataYearとdataQuarterがある場合
+    if (property.dataYear && property.dataQuarter) {
+      const year = property.dataYear;
+      const quarter = property.dataQuarter;
+      const monthRanges: { [key: number]: string } = {
+        1: '1〜3月',
+        2: '4〜6月',
+        3: '7〜9月',
+        4: '10〜12月'
+      };
+      return `${year}年${monthRanges[quarter] || ''}`;
+    }
+
+    // 取引時期が文字列で入っている場合
+    const tradePeriod = property.trade_period || property.取引時期 || '';
+
+    // 「2024年第1四半期」のパターンを変換
+    const quarterMatch = tradePeriod.match(/(\d{4})年第(\d)四半期/);
+    if (quarterMatch) {
+      const year = quarterMatch[1];
+      const quarter = parseInt(quarterMatch[2]);
+      const monthRanges: { [key: number]: string } = {
+        1: '1〜3月',
+        2: '4〜6月',
+        3: '7〜9月',
+        4: '10〜12月'
+      };
+      return `${year}年${monthRanges[quarter] || ''}`;
+    }
+
+    // その他の形式はそのまま返す
+    return tradePeriod;
   };
 
   // 簡易クラスタリング（価格帯でグループ分け）
@@ -620,18 +676,49 @@ const MarketAnalysis: React.FC = () => {
           <div className="relative bg-white rounded-xl p-8 shadow-2xl max-w-md mx-4">
             <div className="flex flex-col items-center space-y-4">
               <Loader className="h-12 w-12 text-blue-600 animate-spin" />
-              <div className="text-center">
+              <div className="text-center w-full">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   AI市場分析を実行中
                 </h3>
                 <p className="text-gray-600">
                   1分〜3分ぐらいかかる場合もあります
                 </p>
+
+                {/* プログレスバー */}
+                <div className="w-full mt-4 mb-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-2.5 rounded-full relative overflow-hidden transition-all duration-500 ease-out"
+                      style={{
+                        width: `${loadingProgress}%`
+                      }}
+                    >
+                      <div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400 to-transparent"
+                        style={{
+                          animation: 'shimmer 1.5s ease-in-out infinite'
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1 text-center">
+                    {Math.round(loadingProgress)}%
+                  </p>
+                </div>
+
                 <p className="text-sm text-gray-500 mt-2">
                   しばらくお待ちください...
                 </p>
               </div>
             </div>
+
+            {/* CSS アニメーション */}
+            <style>{`
+              @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+              }
+            `}</style>
           </div>
         </div>
       )}
@@ -1037,7 +1124,7 @@ const MarketAnalysis: React.FC = () => {
             {/* 類似物件の詳細表 */}
             {marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件 (フィルタ適用済み)</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件の取引事例</h3>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-white border-b-2 border-gray-200">
@@ -1062,13 +1149,26 @@ const MarketAnalysis: React.FC = () => {
                           const yearMatch = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
                           return areaMatch && yearMatch;
                         })
-                        .sort((a, b) => Math.abs((a.building_area || a.面積) - targetArea) - Math.abs((b.building_area || b.面積) - targetArea))
+                        .sort((a, b) => {
+                          // 取引時期で降順ソート（最新順）
+                          // dataYearとdataQuarterがある場合はそれを使用
+                          if (a.dataYear && b.dataYear) {
+                            if (a.dataYear !== b.dataYear) {
+                              return b.dataYear - a.dataYear;
+                            }
+                            return (b.dataQuarter || 0) - (a.dataQuarter || 0);
+                          }
+                          // 取引時期の文字列で比較
+                          const periodA = a.trade_period || a.取引時期 || '';
+                          const periodB = b.trade_period || b.取引時期 || '';
+                          return periodB.localeCompare(periodA);
+                        })
                         .slice(0, 10)
                         .map((property, index) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="px-4 py-3 text-sm text-gray-900">{index + 1}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{property.location || property.所在地 || '-'}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{property.trade_period || property.取引時期 || '-'}</td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{formatTradePeriod(property)}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">
                               {(() => {
                                 const price = property['取引価格（万円）'];
@@ -1121,7 +1221,16 @@ const MarketAnalysis: React.FC = () => {
                           opacity: 0.6,
                           line: { color: '#000080', width: 0.5 }
                         },
-                        hovertemplate: '面積: %{x}㎡<br>価格: %{y:,.0f}万円<extra></extra>'
+                        customdata: allProperties
+                          .filter(p => (p['延べ床面積（㎡）'] || p.building_area || p.面積) > 0)
+                          .filter(p => Math.abs((p['延べ床面積（㎡）'] || p.building_area || p.面積) - targetArea) > areaTolerance)
+                          .map(p => [
+                            formatTradePeriod(p),
+                            Math.floor(p.land_area || p.土地面積 || 0),
+                            p.floor_plan || p.間取り || '-',
+                            `${p.road_type || p.前面道路 || ''} ${p.breadth || p.道路幅員 || ''}m`.trim()
+                          ]),
+                        hovertemplate: '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
                       },
                       {
                         x: allProperties
@@ -1144,7 +1253,16 @@ const MarketAnalysis: React.FC = () => {
                           opacity: 0.8,
                           line: { color: '#8B0000', width: 1 }
                         },
-                        hovertemplate: '面積: %{x}㎡<br>価格: %{y:,.0f}万円<extra></extra>'
+                        customdata: allProperties
+                          .filter(p => (p['延べ床面積（㎡）'] || p.building_area || p.面積) > 0)
+                          .filter(p => Math.abs((p['延べ床面積（㎡）'] || p.building_area || p.面積) - targetArea) > areaTolerance)
+                          .map(p => [
+                            formatTradePeriod(p),
+                            Math.floor(p.land_area || p.土地面積 || 0),
+                            p.floor_plan || p.間取り || '-',
+                            `${p.road_type || p.前面道路 || ''} ${p.breadth || p.道路幅員 || ''}m`.trim()
+                          ]),
+                        hovertemplate: '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
                       }
                     ]}
                     layout={{
