@@ -1133,6 +1133,7 @@ const MarketAnalysis: React.FC = () => {
                         <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">所在地</th>
                         <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">取引時期</th>
                         <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">取引価格</th>
+                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">建築年</th>
                         <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">土地面積(㎡)</th>
                         <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">延床面積(㎡)</th>
                         <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">間取り</th>
@@ -1178,6 +1179,7 @@ const MarketAnalysis: React.FC = () => {
                                 return ((property.price || property.取引価格 || 0) / 10000).toLocaleString(); // 円を万円に変換
                               })()}万円
                             </td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{getBuildYear(property)}年</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(property.land_area || property.土地面積 || 0)}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(property['延べ床面積（㎡）'] || property.building_area || property.面積 || 0)}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{property.floor_plan || property.間取り || '-'}</td>
