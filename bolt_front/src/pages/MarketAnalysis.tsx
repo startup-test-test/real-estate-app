@@ -39,8 +39,10 @@ const MarketAnalysis: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('');
   const [selectedPropertyType, setSelectedPropertyType] = useState<string>('02'); // デフォルト: 戸建て
-  const [targetArea, setTargetArea] = useState<number>(100); // 希望延床面積（必須）
-  const [targetYear, setTargetYear] = useState<number>(2015); // 建築年（必須）
+  const [useTargetArea, setUseTargetArea] = useState<boolean>(false); // 延床面積フィルタのON/OFF
+  const [targetArea, setTargetArea] = useState<number>(100); // 希望延床面積（オプション）
+  const [useTargetYear, setUseTargetYear] = useState<boolean>(false); // 建築年フィルタのON/OFF
+  const [targetYear, setTargetYear] = useState<number>(2015); // 建築年（オプション）
 
   // 固定値（streamlit_app.pyと同じ）
   const areaTolerance = 10; // ±10㎡
@@ -211,41 +213,40 @@ const MarketAnalysis: React.FC = () => {
         }
       }
 
-      // Streamlit風の適応的フィルタリング
+      // フィルタリング（オプション）
       let filteredData = [...allData];
 
       console.log(`🔍 フィルタリング開始: 全データ ${allData.length}件`);
 
-      // 1. 面積フィルタ（100±10㎡）
-      if (targetArea > 0 && allData.length > 0) {
-        const areaFiltered = allData.filter(item => {
+      // 1. 面積フィルタ（オプション）
+      if (useTargetArea && targetArea > 0 && allData.length > 0) {
+        filteredData = filteredData.filter(item => {
           const area = getArea(item);
           return area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
         });
-        console.log(`📐 面積フィルタ (${targetArea}±${areaTolerance}㎡): ${areaFiltered.length}件`);
+        console.log(`📐 面積フィルタ (${targetArea}±${areaTolerance}㎡): ${filteredData.length}件`);
+      }
 
-        // 2. 築年数フィルタ（2015±5年）
-        if (targetYear > 0) {
-          const fullFiltered = areaFiltered.filter(item => {
-            const buildYear = getBuildYear(item);
-            return buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
-          });
-          console.log(`🏗️ 築年数フィルタ (${targetYear}±${yearTolerance}年): ${fullFiltered.length}件`);
+      // 2. 築年数フィルタ（オプション）
+      if (useTargetYear && targetYear > 0) {
+        filteredData = filteredData.filter(item => {
+          const buildYear = getBuildYear(item);
+          return buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
+        });
+        console.log(`🏗️ 築年数フィルタ (${targetYear}±${yearTolerance}年): ${filteredData.length}件`);
+      }
 
-          // 完全フィルタで十分なデータがあるか確認
-          if (fullFiltered.length >= 10) {
-            filteredData = fullFiltered;
-            console.log(`✅ 完全フィルタ採用: ${filteredData.length}件`);
-          } else if (areaFiltered.length >= 10) {
-            filteredData = areaFiltered;
-            console.log(`⚠️ 面積のみフィルタ採用: ${filteredData.length}件`);
-          } else {
-            filteredData = allData;
-            console.log(`⚠️ フィルタなしで表示: ${filteredData.length}件`);
-          }
+      // フィルタリング結果の確認
+      if (useTargetArea || useTargetYear) {
+        if (filteredData.length === 0) {
+          // フィルタ結果が0件の場合は全データを表示
+          filteredData = allData;
+          console.log(`⚠️ フィルタ条件に該当なし、全データ表示: ${filteredData.length}件`);
         } else {
-          filteredData = areaFiltered.length >= 10 ? areaFiltered : allData;
+          console.log(`✅ フィルタ採用: ${filteredData.length}件`);
         }
+      } else {
+        console.log(`📦 フィルタなし、全データ表示: ${filteredData.length}件`);
       }
 
       console.log('==== 📊 天沼町 データ分析結果 ====');
@@ -604,7 +605,7 @@ const MarketAnalysis: React.FC = () => {
         {/* ヘッダー */}
         <div className="mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI市場分析</h1>
+            <h1 className="text-2xl font-bold text-gray-900">AI類似分析</h1>
             <p className="text-gray-600 mt-1">
               エリアの市場動向と価格分布をAIが詳細に分析します
             </p>
@@ -711,46 +712,72 @@ const MarketAnalysis: React.FC = () => {
                   </select>
                 </div>
 
-                {/* 希望延床面積 */}
+                {/* 希望延床面積（任意） */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Ruler className="inline h-4 w-4 mr-1" />
-                    希望延床面積 <span className="text-red-500">*</span>
+                    希望延床面積（任意）
                   </label>
-                  <div className="flex items-center">
+                  <div className="flex items-center mb-2">
                     <input
-                      type="number"
-                      value={targetArea}
-                      onChange={(e) => setTargetArea(Number(e.target.value))}
-                      min={10}
-                      max={500}
-                      step={10}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      type="checkbox"
+                      checked={useTargetArea}
+                      onChange={(e) => setUseTargetArea(e.target.checked)}
+                      className="mr-2"
                     />
-                    <span className="ml-2 text-sm text-gray-600">㎡</span>
+                    <span className="text-sm text-gray-600">延床面積でフィルタリング</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">±{areaTolerance}㎡の範囲で検索</p>
+                  {useTargetArea && (
+                    <>
+                      <div className="flex items-center">
+                        <input
+                          type="number"
+                          value={targetArea}
+                          onChange={(e) => setTargetArea(Number(e.target.value))}
+                          min={10}
+                          max={500}
+                          step={10}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        />
+                        <span className="ml-2 text-sm text-gray-600">㎡</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">±{areaTolerance}㎡の範囲で検索</p>
+                    </>
+                  )}
                 </div>
 
-                {/* 建築年 */}
+                {/* 建築年（任意） */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Calendar className="inline h-4 w-4 mr-1" />
-                    建築年 <span className="text-red-500">*</span>
+                    建築年（任意）
                   </label>
-                  <div className="flex items-center">
+                  <div className="flex items-center mb-2">
                     <input
-                      type="number"
-                      value={targetYear}
-                      onChange={(e) => setTargetYear(Number(e.target.value))}
-                      min={1950}
-                      max={new Date().getFullYear()}
-                      step={1}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      type="checkbox"
+                      checked={useTargetYear}
+                      onChange={(e) => setUseTargetYear(e.target.checked)}
+                      className="mr-2"
                     />
-                    <span className="ml-2 text-sm text-gray-600">年</span>
+                    <span className="text-sm text-gray-600">建築年でフィルタリング</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">±{yearTolerance}年の範囲で検索</p>
+                  {useTargetYear && (
+                    <>
+                      <div className="flex items-center">
+                        <input
+                          type="number"
+                          value={targetYear}
+                          onChange={(e) => setTargetYear(Number(e.target.value))}
+                          min={1950}
+                          max={new Date().getFullYear()}
+                          step={1}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        />
+                        <span className="ml-2 text-sm text-gray-600">年</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">±{yearTolerance}年の範囲で検索</p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -794,8 +821,8 @@ const MarketAnalysis: React.FC = () => {
         {/* 分析結果表示セクション */}
         {marketData && (
           <div className="space-y-6">
-            {/* AI市場分析セクション（streamlit_app.pyと同じ） */}
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI市場分析</h2>
+            {/* AI類似分析セクション（streamlit_app.pyと同じ） */}
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI類似分析</h2>
 
             {/* 類似物件の価格分布（streamlit_app.pyと同じ） */}
             <div className="bg-green-50 rounded-lg border border-green-200 p-6 mb-6">
@@ -811,21 +838,35 @@ const MarketAnalysis: React.FC = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}万円以下
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">類似物件の25%がこの価格以下</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    類似物件の25%がこの価格以下
+                    <br />
+                    （{marketData.similarPropertiesCount || 0}件中）
+                  </p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">中央値レンジ</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}〜{marketData.q75?.toLocaleString() || 0}万円
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">類似物件の50%がこの範囲内</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    類似物件の50%がこの範囲内
+                    <br />
+                    中央値: {marketData.q50?.toLocaleString() || 0}万円
+                    <br />
+                    （{marketData.similarPropertiesCount || 0}件中）
+                  </p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">上位25%</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q75?.toLocaleString() || 0}万円以上
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">類似物件の25%がこの価格以上</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    類似物件の25%がこの価格以上
+                    <br />
+                    （{marketData.similarPropertiesCount || 0}件中）
+                  </p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">分析サンプル数</div>
@@ -837,8 +878,8 @@ const MarketAnalysis: React.FC = () => {
               </div>
             </div>
 
-            {/* マーケット分析セクション */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4">📊 **マーケット分析**</h3>
+            {/* エリア分析セクション */}
+            <h3 className="text-xl font-bold text-gray-900 mb-4">📊 **{selectedDistrict || selectedCity}の分析**（分析サンプル数: {allProperties.length}件）</h3>
 
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -876,7 +917,13 @@ const MarketAnalysis: React.FC = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}〜{marketData.q75?.toLocaleString() || 0}万円
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">市場の50%がこの範囲内<br/>中央値: {marketData.q50?.toLocaleString() || 0}万円</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    市場の50%がこの範囲内
+                    <br />
+                    中央値: {marketData.q50?.toLocaleString() || 0}万円
+                    <br />
+                    （エリア全体: {allProperties.length}件）
+                  </p>
                 </div>
 
                 {/* 上位25% */}
@@ -885,7 +932,11 @@ const MarketAnalysis: React.FC = () => {
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q75?.toLocaleString() || 0}万円以上
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">市場の25%がこの価格以上<br/>分析対象: {marketData.similarPropertiesCount}件</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    市場の25%がこの価格以上
+                    <br />
+                    （エリア全体: {allProperties.length}件）
+                  </p>
                 </div>
               </div>
             </div>
@@ -974,7 +1025,7 @@ const MarketAnalysis: React.FC = () => {
             {/* 類似物件の詳細表 */}
             {marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件 (フィルタ適用済み)</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件 {(useTargetArea || useTargetYear) ? '(フィルタ適用済み)' : '(全物件)'}</h3>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-white border-b-2 border-gray-200">
@@ -993,11 +1044,23 @@ const MarketAnalysis: React.FC = () => {
                       {allProperties
                         .filter(item => {
                           // フィルタ条件に合致する物件のみ表示
-                          const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
-                          const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
-                          const areaMatch = area >= targetArea - areaTolerance && area <= targetArea + areaTolerance;
-                          const yearMatch = buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance;
-                          return areaMatch && yearMatch;
+                          if (!useTargetArea && !useTargetYear) {
+                            return true; // フィルタなしの場合はすべて表示
+                          }
+
+                          let matches = true;
+
+                          if (useTargetArea && targetArea > 0) {
+                            const area = item['延べ床面積（㎡）'] || item.building_area || item.面積 || item.延床面積 || item.area || 0;
+                            matches = matches && (area >= targetArea - areaTolerance && area <= targetArea + areaTolerance);
+                          }
+
+                          if (useTargetYear && targetYear > 0) {
+                            const buildYear = parseInt(item['建築年'] || item.build_year || item.建築年 || item.building_year || '0');
+                            matches = matches && (buildYear >= targetYear - yearTolerance && buildYear <= targetYear + yearTolerance);
+                          }
+
+                          return matches;
                         })
                         .sort((a, b) => Math.abs((a.building_area || a.面積) - targetArea) - Math.abs((b.building_area || b.面積) - targetArea))
                         .slice(0, 10)
@@ -1239,13 +1302,17 @@ const MarketAnalysis: React.FC = () => {
                     data={[
                       {
                         x: allProperties
-                          .filter(p => p.building_year && p.building_year > 1950 && p.building_year <= 2025)
-                          .filter(p => Math.abs(p.building_year - targetYear) > yearTolerance)
-                          .map(p => p.building_year),
+                          .filter(p => {
+                            const year = getBuildYear(p);
+                            return year && year > 1950 && year <= 2025 && (!useTargetYear || Math.abs(year - targetYear) > yearTolerance);
+                          })
+                          .map(p => getBuildYear(p)),
                         y: allProperties
-                          .filter(p => p.building_year && p.building_year > 1950 && p.building_year <= 2025)
-                          .filter(p => Math.abs(p.building_year - targetYear) > yearTolerance)
-                          .map(p => (p.price || p.取引価格) / 10000),
+                          .filter(p => {
+                            const year = getBuildYear(p);
+                            return year && year > 1950 && year <= 2025 && (!useTargetYear || Math.abs(year - targetYear) > yearTolerance);
+                          })
+                          .map(p => getPrice(p)),
                         mode: 'markers',
                         type: 'scatter',
                         name: 'その他',
@@ -1259,13 +1326,17 @@ const MarketAnalysis: React.FC = () => {
                       },
                       {
                         x: allProperties
-                          .filter(p => p.building_year && p.building_year > 1950 && p.building_year <= 2025)
-                          .filter(p => Math.abs(p.building_year - targetYear) <= yearTolerance)
-                          .map(p => p.building_year),
+                          .filter(p => {
+                            const year = getBuildYear(p);
+                            return year && year > 1950 && year <= 2025 && useTargetYear && Math.abs(year - targetYear) <= yearTolerance;
+                          })
+                          .map(p => getBuildYear(p)),
                         y: allProperties
-                          .filter(p => p.building_year && p.building_year > 1950 && p.building_year <= 2025)
-                          .filter(p => Math.abs(p.building_year - targetYear) <= yearTolerance)
-                          .map(p => (p.price || p.取引価格) / 10000),
+                          .filter(p => {
+                            const year = getBuildYear(p);
+                            return year && year > 1950 && year <= 2025 && useTargetYear && Math.abs(year - targetYear) <= yearTolerance;
+                          })
+                          .map(p => getPrice(p)),
                         mode: 'markers',
                         type: 'scatter',
                         name: `${targetYear}±${yearTolerance}年`,
@@ -1346,16 +1417,17 @@ const MarketAnalysis: React.FC = () => {
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">4. 建築年別価格分布（ヒートマップ）</h3>
                   {(() => {
-                    const validYearData = allProperties.filter(p =>
-                      p.building_year && p.building_year > 1950 && p.building_year <= 2025
-                    );
+                    const validYearData = allProperties.filter(p => {
+                      const year = getBuildYear(p);
+                      return year && year > 1950 && year <= 2025;
+                    });
 
                     if (validYearData.length === 0) {
                       return <div className="text-center text-gray-500 py-8">建築年データがありません</div>;
                     }
 
-                    const minYear = Math.floor(Math.min(...validYearData.map(p => p.building_year)) / 5) * 5;
-                    const maxYear = Math.ceil(Math.max(...validYearData.map(p => p.building_year)) / 5) * 5;
+                    const minYear = Math.floor(Math.min(...validYearData.map(p => getBuildYear(p))) / 5) * 5;
+                    const maxYear = Math.ceil(Math.max(...validYearData.map(p => getBuildYear(p))) / 5) * 5;
                     const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
                     const yearBins: number[] = [];
                     for (let year = minYear; year <= maxYear; year += 5) {
@@ -1374,8 +1446,8 @@ const MarketAnalysis: React.FC = () => {
                           yearLabels.push(`${yearBins[j]}`);
                         }
                         const count = validYearData.filter(p => {
-                          const price = (p.price || p.取引価格) / 10000;
-                          const year = p.building_year;
+                          const price = getPrice(p);
+                          const year = getBuildYear(p);
                           return price >= priceBins[i] && price < priceBins[i + 1] &&
                                  year >= yearBins[j] && year < yearBins[j + 1];
                         }).length;

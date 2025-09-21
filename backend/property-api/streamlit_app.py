@@ -1,5 +1,5 @@
 """
-不動産取引価格検索 Streamlitアプリ
+類似不動産取引価格検索 Streamlitアプリ
 """
 import streamlit as st
 import pandas as pd
@@ -149,48 +149,62 @@ selected_type_name = st.sidebar.radio(
 selected_type_code = [code for code, name in trade_type_options.items() if name == selected_type_name][0]
 selected_types = [selected_type_code]
 
-# 希望延床面積入力（必須）
-st.sidebar.subheader("希望延床面積 *")
+# 希望延床面積入力（オプション）
+st.sidebar.subheader("希望延床面積（任意）")
 
-target_area = st.sidebar.number_input(
-    "延床面積(㎡) *",
-    min_value=10,
-    max_value=500,
-    value=100,
-    step=10,
-    help="探したい延床面積を入力してください（必須）"
+use_target_area = st.sidebar.checkbox(
+    "延床面積でフィルタリング",
+    value=False,
+    help="特定の延床面積範囲で絞り込む場合はチェック"
 )
 
-# 許容範囲は自動設定（±10㎡）
-area_tolerance = 10
+if use_target_area:
+    target_area = st.sidebar.number_input(
+        "延床面積(㎡)",
+        min_value=10,
+        max_value=500,
+        value=100,
+        step=10,
+        help="探したい延床面積を入力してください"
+    )
+    # 許容範囲は自動設定（±10㎡）
+    area_tolerance = 10
+else:
+    target_area = None
+    area_tolerance = 0
 
-use_target_area = True  # 常に有効
+# 建築年入力（オプション）
+st.sidebar.subheader("建築年（任意）")
 
-# 建築年入力（必須）
-st.sidebar.subheader("建築年 *")
+use_target_year = st.sidebar.checkbox(
+    "建築年でフィルタリング",
+    value=False,
+    help="特定の建築年範囲で絞り込む場合はチェック"
+)
 
 current_year = datetime.now().year
-target_year = st.sidebar.number_input(
-    "建築年 *",
-    min_value=1950,
-    max_value=current_year,
-    value=2015,
-    step=1,
-    help="探したい建築年を入力してください（必須）"
-)
+if use_target_year:
+    target_year = st.sidebar.number_input(
+        "建築年",
+        min_value=1950,
+        max_value=current_year,
+        value=2015,
+        step=1,
+        help="探したい建築年を入力してください"
+    )
+    # 許容範囲は自動設定（±5年）
+    year_tolerance = 5
+else:
+    target_year = None
+    year_tolerance = 0
 
-# 許容範囲は自動設定（±5年）
-year_tolerance = 5
-
-use_target_year = True  # 常に有効
-
-# 期間選択（直近3年分を自動設定）
+# 期間選択（直近4年分を自動設定）
 st.sidebar.subheader("取引時期")
 current_year = datetime.now().year
 
-# 直近3年分を自動的に設定
-from_year = current_year - 3
-to_year = current_year
+# 直近4年分を自動的に設定（current_year - 3 から current_year まで）
+from_year = current_year - 3  # 3年前から（例：2021年）
+to_year = current_year  # 現在年まで（例：2024年）
 
 # 検索ボタン
 search_button = st.sidebar.button("🔍 検索実行", type="primary", use_container_width=True)
@@ -235,7 +249,7 @@ if search_button:
                 df = pd.DataFrame(results['results'])
 
                 # AIトレンド分析セクション
-                st.markdown("### 📊 AI市場分析")
+                st.markdown("### 📊 AI類似分析")
 
                 # 類似物件の価格レンジ分析（ユーザーの検索条件に基づく）
                 if use_target_area or use_target_year:
@@ -244,25 +258,53 @@ if search_button:
                     similar_properties = df.copy()
                     conditions_text = []
 
+                    # デバッグ情報：利用可能なカラムを確認
+                    st.write(f"デバッグ: 利用可能なカラム: {similar_properties.columns.tolist()}")
+                    st.write(f"デバッグ: フィルタリング前の件数: {len(similar_properties)}件")
+
                     # 面積条件でフィルタリング
                     if use_target_area and target_area:
                         # 選択された取引種類がマンションかどうかを判定
                         is_mansion = '07' in selected_types  # 07はマンションのコード
-                        area_field = 'building_area' if is_mansion else 'area'
-                        if area_field in similar_properties.columns:
+
+                        # 実際のフィールド名を確認して使用
+                        possible_area_fields = ['building_area', '面積', 'area', '延床面積']
+                        area_field = None
+                        for field in possible_area_fields:
+                            if field in similar_properties.columns:
+                                area_field = field
+                                break
+
+                        st.write(f"デバッグ: 面積フィールド名: {area_field}")
+
+                        if area_field:
+                            before_count = len(similar_properties)
                             similar_properties = similar_properties[
                                 (similar_properties[area_field] >= target_area - area_tolerance) &
                                 (similar_properties[area_field] <= target_area + area_tolerance)
                             ]
+                            st.write(f"デバッグ: 面積フィルタ後: {len(similar_properties)}件 (前: {before_count}件)")
                             conditions_text.append(f"延床面積 {target_area}±{area_tolerance}㎡")
 
                     # 建築年条件でフィルタリング
                     if use_target_year and target_year:
-                        if 'building_year' in similar_properties.columns:
+                        # 実際のフィールド名を確認
+                        possible_year_fields = ['building_year', '建築年', 'year']
+                        year_field = None
+                        for field in possible_year_fields:
+                            if field in similar_properties.columns:
+                                year_field = field
+                                break
+
+                        st.write(f"デバッグ: 建築年フィールド名: {year_field}")
+
+                        if year_field:
+                            before_count = len(similar_properties)
                             similar_properties = similar_properties[
-                                (similar_properties['building_year'] >= target_year - year_tolerance) &
-                                (similar_properties['building_year'] <= target_year + year_tolerance)
+                                (similar_properties[year_field] >= target_year - year_tolerance) &
+                                (similar_properties[year_field] <= target_year + year_tolerance)
                             ]
+                            st.write(f"デバッグ: 建築年フィルタ後: {len(similar_properties)}件 (前: {before_count}件)")
                             conditions_text.append(f"建築年 {target_year}±{year_tolerance}年")
 
                     if len(similar_properties) > 0:
@@ -272,41 +314,45 @@ if search_button:
                         q50 = similar_prices.quantile(0.50)
                         q75 = similar_prices.quantile(0.75)
 
+                        # エリア全体の件数を取得
+                        total_area_count = len(df)
+                        filtered_count = len(similar_properties)
+
                         col_s1, col_s2, col_s3, col_s4 = st.columns(4)
 
                         with col_s1:
                             st.metric(
                                 "下位25%",
                                 f"{q25:,.0f}万円以下",
-                                help="類似物件の25%がこの価格以下"
+                                help=f"類似物件の25%がこの価格以下\n（{filtered_count}件/{total_area_count}件）"
                             )
 
                         with col_s2:
                             st.metric(
                                 "中央値レンジ",
                                 f"{q25:,.0f}〜{q75:,.0f}万円",
-                                help="類似物件の50%がこの範囲内"
+                                help=f"類似物件の50%がこの範囲内\n中央値: {q50:,.0f}万円\n（{filtered_count}件/{total_area_count}件）"
                             )
 
                         with col_s3:
                             st.metric(
                                 "上位25%",
                                 f"{q75:,.0f}万円以上",
-                                help="類似物件の25%がこの価格以上"
+                                help=f"類似物件の25%がこの価格以上\n（{filtered_count}件/{total_area_count}件）"
                             )
 
                         with col_s4:
                             st.metric(
                                 "分析サンプル数",
-                                f"{len(similar_properties)}件",
-                                help="指定条件に該当する物件数"
+                                f"{filtered_count}件/{total_area_count}件",
+                                help=f"フィルタ適用後: {filtered_count}件\nエリア全体: {total_area_count}件"
                             )
 
                     else:
                         st.info("指定条件に該当する取引事例が見つかりませんでした")
 
-                # 統計データの計算（外れ値を除外）
-                # IQR法で外れ値を検出
+                # エリア全体の統計データ計算（フィルタ条件を適用せずに計算）
+                # 外れ値の検出（表示用には外れ値除外データを使用）
                 Q1 = df['price'].quantile(0.25)
                 Q3 = df['price'].quantile(0.75)
                 IQR = Q3 - Q1
@@ -315,39 +361,49 @@ if search_button:
                 lower_bound = Q1 - 2.5 * IQR
                 upper_bound = Q3 + 2.5 * IQR
 
-                # 外れ値を除いたデータ
+                # 外れ値を除いたデータ（表示用）
                 df_filtered = df[(df['price'] >= lower_bound) & (df['price'] <= upper_bound)]
 
-                # 外れ値を除いた統計値を計算
+                # 統計値を計算（表示用）
                 avg_price = df_filtered['price'].mean() / 10000  # 万円単位
                 median_price = df_filtered['price'].median() / 10000
                 price_std = df_filtered['price'].std() / 10000
                 total_count = len(df)
                 outlier_count = len(df) - len(df_filtered)
 
-                # 四分位数を計算（外れ値除外後）
+                # 四分位数を計算（外れ値除外後、表示用）
                 q25_price = df_filtered['price'].quantile(0.25) / 10000
                 q75_price = df_filtered['price'].quantile(0.75) / 10000
 
-                # マーケット分析セクション
-                st.markdown("### 📊 **マーケット分析**")
+                # エリア分析セクション
+                # 選択されたエリア名を構築
+                area_name = f"{selected_prefecture}"
+                if selected_city:
+                    area_name += f" {selected_city}"
+                if selected_district:
+                    area_name += f" {selected_district}"
 
-                # 価格トレンドの計算（外れ値を除いたデータで計算）+ 統計的有意性
+                st.markdown(f"### 📊 **{area_name}の分析**（分析サンプル数: {total_count}件）")
+
+                # 価格トレンドの計算（エリア全体のデータで計算）
                 p_value = None
                 r_squared = None
                 trend_slope = 0
 
-                if 'trade_period' in df_filtered.columns:
+                # トレンド分析用に元のデータフレーム（df）を使用
+                df_trend = df.copy()  # エリア全体のデータを使用
+
+                if 'trade_period' in df_trend.columns:
                     # 取引時期から年を抽出
-                    df_filtered['year'] = df_filtered['trade_period'].str.extract(r'(\d{4})').astype(float)
+                    df_trend['year'] = df_trend['trade_period'].str.extract(r'(\d{4})').astype(float)
 
                     # デバッグ：取引時期の年を確認
-                    unique_years = df_filtered['year'].dropna().unique()
+                    unique_years = df_trend['year'].dropna().unique()
                     unique_years_sorted = sorted(unique_years) if len(unique_years) > 0 else []
 
                     if len(unique_years_sorted) >= 2:
-                        # 年ごとの平均価格を計算
-                        yearly_prices = df_filtered.groupby('year')['price'].mean() / 10000
+                        # 年ごとの平均価格を計算（エリア全体）
+                        yearly_prices = df_trend.groupby('year')['price'].mean() / 10000
 
                         # 線形回帰分析で統計的有意性を計算
                         x = np.array(yearly_prices.index.values)
@@ -374,7 +430,7 @@ if search_button:
                     growth_rate = 0
                     unique_years_sorted = []
 
-                # 面積あたりの平均単価（外れ値を除いたデータで計算）
+                # 面積あたりの平均単価（表示用、外れ値除外）
                 if 'area' in df_filtered.columns:
                     df_filtered['unit_price'] = df_filtered['price'] / df_filtered['area'] / 10000  # 万円/㎡
                     avg_unit_price = df_filtered['unit_price'].mean()
@@ -382,7 +438,7 @@ if search_button:
                     avg_unit_price = 0
 
                 # メトリクスを4列で表示
-                col1, col2, col3, col4 = st.columns(4)
+                col1, col2, col3, col4, col5 = st.columns(5)
 
                 with col1:
                     # データの期間を取得して価格トレンドを表示（統計的有意性付き）
@@ -394,8 +450,23 @@ if search_button:
                             oldest_period = periods_by_year.loc[unique_years_sorted[0]]
                             newest_period = periods_by_year.loc[unique_years_sorted[-1]]
 
-                            # 統計的有意性に基づく表示
-                            if p_value < 0.05:  # 統計的に有意
+                            # サンプル数による信頼性チェック（エリア全体のデータ数）
+                            sample_size = len(df_trend)
+
+                            # 統計的有意性とサンプル数の両方を考慮
+                            if sample_size < 30:  # サンプル数が少ない場合
+                                if p_value < 0.05 and abs(growth_rate) > 10:
+                                    if growth_rate > 0:
+                                        trend_value = f"📈 +{growth_rate:.1f}%/年"
+                                        significance = f"上昇傾向（サンプル数{sample_size}件のため参考値）"
+                                    else:
+                                        trend_value = f"📉 {growth_rate:.1f}%/年"
+                                        significance = f"下降傾向（サンプル数{sample_size}件のため参考値）"
+                                else:
+                                    trend_value = "→ 傾向不明"
+                                    significance = f"サンプル数不足（{sample_size}件）"
+                                delta_text = significance
+                            elif p_value < 0.05:  # サンプル数が十分で統計的に有意
                                 if growth_rate > 0:
                                     trend_value = f"📈 +{growth_rate:.1f}%/年"
                                     significance = "明確な上昇傾向"
@@ -411,7 +482,7 @@ if search_button:
                             help_text = f"""
                             📊 分析結果:
                             • データ期間: {years_list}
-                            • サンプル数: {len(df_filtered)}件
+                            • サンプル数: {len(df_trend)}件
                             • 年間変化率: {growth_rate:+.1f}%
                             """
 
@@ -441,7 +512,7 @@ if search_button:
 
                 with col2:
                     # 下位25%の価格
-                    help_text = "市場の25%がこの価格以下"
+                    help_text = f"市場の25%がこの価格以下\n（エリア全体: {total_count}件）"
                     if outlier_count > 0:
                         help_text += f"\n（外れ値{outlier_count}件除外済）"
                     st.metric(
@@ -457,7 +528,7 @@ if search_button:
                         label="中央値レンジ",
                         value=f"{q25_price:,.0f}〜{q75_price:,.0f}万円",
                         delta=None,
-                        help=f"市場の50%がこの範囲内\n中央値: {median_price:,.0f}万円"
+                        help=f"市場の50%がこの範囲内\n中央値: {median_price:,.0f}万円\n（エリア全体: {total_count}件）"
                     )
 
                 with col4:
@@ -466,7 +537,16 @@ if search_button:
                         label="上位25%",
                         value=f"{q75_price:,.0f}万円以上",
                         delta=None,
-                        help=f"市場の25%がこの価格以上\n分析対象: {len(df_filtered)}/{total_count}件"
+                        help=f"市場の25%がこの価格以上\n（エリア全体: {total_count}件）"
+                    )
+
+                with col5:
+                    # 物件サンプル数
+                    st.metric(
+                        label="物件サンプル数",
+                        value=f"{total_count}件",
+                        delta=None,
+                        help=f"エリア全体の物件数\n期間: {current_year - 3}年〜{current_year}年"
                     )
 
                 # 詳細分析（エキスパンダーで折り畳み可能）
@@ -1506,6 +1586,14 @@ if search_button:
                 if len(period_df) > 0:
                     # 期間別に集計
                     period_counts = period_df.groupby('period')['count'].sum().sort_index()
+
+                    # デバッグ: 取得したデータの年を確認
+                    unique_years = set()
+                    for period in period_counts.index:
+                        if "年" in period:
+                            year = period.split("年")[0]
+                            unique_years.add(year)
+                    st.write(f"データに含まれる年: {sorted(unique_years)}")
 
                     # 四半期を月表記に変換（改行付き）
                     def convert_quarter_to_month(period_str):
