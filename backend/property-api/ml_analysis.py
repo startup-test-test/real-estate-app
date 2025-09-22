@@ -154,10 +154,8 @@ class PropertyMLAnalyzer:
         n_samples = len(df)
         if n_samples < 10:
             n_clusters = min(2, n_samples)
-        elif n_samples < 30:
-            n_clusters = 3
         else:
-            n_clusters = min(4, n_samples // 10)
+            n_clusters = 3  # 10件以上は常に3クラスタ（低・中・高）
 
         # 正規化
         X_scaled = self.scaler.fit_transform(X)
