@@ -746,13 +746,16 @@ async def simple_ml_analysis_endpoint(request: MLAnalysisRequest):
         )
 
     except Exception as e:
-        logger.error(f"シンプルML分析エラー: {str(e)}", exc_info=True)
+        import traceback
+        error_detail = traceback.format_exc()
+        logger.error(f"シンプルML分析エラー: {str(e)}\n{error_detail}")
         return JSONResponse(
             status_code=500,
             content={
                 "status": "error",
                 "message": "分析処理中にエラーが発生しました",
-                "detail": str(e)
+                "detail": str(e),
+                "traceback": error_detail if os.getenv("DEBUG") else None
             }
         )
 
