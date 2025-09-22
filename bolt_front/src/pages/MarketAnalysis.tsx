@@ -72,6 +72,7 @@ const MarketAnalysis: React.FC = () => {
   const [mlAnalysisResult, setMlAnalysisResult] = useState<any>(null);
   const [isMLAnalyzing, setIsMLAnalyzing] = useState(false);
   const [filteredDataCount, setFilteredDataCount] = useState(0);  // フィルタ後のデータ件数
+  const [mlDataCount, setMlDataCount] = useState(0);  // ML分析用データ件数（地域フィルタのみ）
 
   // 都道府県リストを取得
   React.useEffect(() => {
@@ -668,15 +669,21 @@ const MarketAnalysis: React.FC = () => {
           keyPoints
         });
 
-        // ML分析の実行（5件以上のデータがある場合）
-        if (filteredData.length >= 5 && !isMLAnalyzing) {
+        // ML分析の実行（地域データが5件以上ある場合）
+        // AI市場分析には地域フィルタのみ適用（面積・築年数フィルタはスキップ）
+        const mlAnalysisData = allData;  // 地域・物件種別のみでフィルタされたデータ
+        setMlDataCount(mlAnalysisData.length);  // ML分析用データ件数を保存
+
+        if (mlAnalysisData.length >= 5 && !isMLAnalyzing) {
           setIsMLAnalyzing(true);
           try {
-            console.log('ML分析開始: データ件数=', filteredData.length);
-            console.log('送信データサンプル:', filteredData.slice(0, 2));
-            console.log('送信データ全体構造:', JSON.stringify(filteredData.slice(0, 1), null, 2));
+            console.log('ML分析開始:');
+            console.log(`  - ML分析用データ: ${mlAnalysisData.length}件（地域フィルタのみ）`);
+            console.log(`  - 表示用データ: ${filteredData.length}件（面積・築年数フィルタ適用）`);
+            console.log('送信データサンプル:', mlAnalysisData.slice(0, 2));
+            console.log('送信データ全体構造:', JSON.stringify(mlAnalysisData.slice(0, 1), null, 2));
 
-            const mlResponse = await propertyApi.simpleMLAnalysis(filteredData);
+            const mlResponse = await propertyApi.simpleMLAnalysis(mlAnalysisData);
             console.log('ML分析レスポンス:', mlResponse);
 
             if (mlResponse.status === 'success' && mlResponse.data) {
@@ -1182,8 +1189,8 @@ const MarketAnalysis: React.FC = () => {
           <div className="space-y-6">
 
             {/* ML分析結果の表示 */}
-            {console.log('ML分析表示判定: filteredDataCount=', filteredDataCount, 'mlAnalysisResult=', mlAnalysisResult)}
-            {filteredDataCount < 5 ? (
+            {console.log('ML分析表示判定: mlDataCount=', mlDataCount, 'mlAnalysisResult=', mlAnalysisResult)}
+            {mlDataCount < 5 ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI市場分析</h2>
                 <div className="bg-yellow-50 rounded-lg p-4">
@@ -1200,7 +1207,12 @@ const MarketAnalysis: React.FC = () => {
               </div>
             ) : mlAnalysisResult ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI市場分析</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  🤖 AI市場分析
+                  <span className="text-sm font-normal text-gray-600 ml-2">
+                    （分析対象: {mlDataCount}件）
+                  </span>
+                </h2>
 
                 {/* クラスタリング分析 */}
                 {mlAnalysisResult.clustering && (
@@ -1230,10 +1242,10 @@ const MarketAnalysis: React.FC = () => {
                     {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
                       <div>
                         <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 価格傾向分析</h3>
-                        {filteredDataCount < 20 && (
+                        {mlDataCount < 20 && (
                           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
                             <p className="text-sm text-yellow-800">
-                              ⚠️ 分析対象が{filteredDataCount}件と少ないため、傾向は参考程度としてご覧ください
+                              ⚠️ 分析対象が{mlDataCount}件と少ないため、傾向は参考程度としてご覧ください
                             </p>
                           </div>
                         )}
