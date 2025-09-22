@@ -306,39 +306,45 @@ class PropertyMLAnalyzer:
 
         # 異常物件の詳細
         anomalies = []
-        for idx in range(len(df_clean)):
-            if anomaly_labels[idx] == -1:  # 異常と判定
-                row = df_clean.iloc[idx]
+        anomaly_indices = df_clean.index[anomaly_labels == -1]
 
-                # 異常の理由を推定
-                price_z = (row['price_man'] - df['price_man'].mean()) / df['price_man'].std()
-                area_z = (row['area'] - df['area'].mean()) / df['area'].std()
-                price_per_sqm_z = (row['price_per_sqm'] - df['price_per_sqm'].mean()) / df['price_per_sqm'].std()
+        for idx in anomaly_indices:
+            row = df.loc[idx]  # 元のdfから取得
 
-                reasons = []
-                if abs(price_z) > 2:
-                    reasons.append(f"価格が{'高い' if price_z > 0 else '低い'}")
-                if abs(area_z) > 2:
-                    reasons.append(f"面積が{'広い' if area_z > 0 else '狭い'}")
-                if abs(price_per_sqm_z) > 2:
-                    reasons.append(f"㎡単価が{'高い' if price_per_sqm_z > 0 else '低い'}")
+            # 異常の理由を推定
+            price_z = (row['price_man'] - df['price_man'].mean()) / df['price_man'].std()
+            area_z = (row['area'] - df['area'].mean()) / df['area'].std()
+            price_per_sqm_z = (row['price_per_sqm'] - df['price_per_sqm'].mean()) / df['price_per_sqm'].std()
 
-                if not reasons:
-                    reasons.append("複合的な要因")
+            reasons = []
+            if abs(price_z) > 2:
+                reasons.append(f"価格が{'高い' if price_z > 0 else '低い'}")
+            if abs(area_z) > 2:
+                reasons.append(f"面積が{'広い' if area_z > 0 else '狭い'}")
+            if abs(price_per_sqm_z) > 2:
+                reasons.append(f"㎡単価が{'高い' if price_per_sqm_z > 0 else '低い'}")
 
-                anomalies.append({
-                    'index': int(idx),
-                    'score': round(float(anomaly_scores[idx]), 3),
-                    'price': round(float(row['price_man']), 0),
-                    'area': round(float(row['area']), 1),
-                    'reason': '、'.join(reasons)
-                })
+            if not reasons:
+                reasons.append("複合的な要因")
+
+            # anomaly_scoresのインデックスを調整
+            score_idx = list(df_clean.index).index(idx)
+            anomalies.append({
+                'index': int(idx),
+                'score': round(float(anomaly_scores[score_idx]), 3),
+                'price': round(float(row['price_man']), 0),
+                'area': round(float(row['area']), 1),
+                'reason': '、'.join(reasons)
+            })
 
         # 正常範囲の計算
+        # df_cleanのインデックスを使って元のdfから正常物件を取得
         normal_mask = anomaly_labels == 1
-        normal_df = df_clean[normal_mask]
+        normal_indices = df_clean.index[normal_mask]
+        normal_df = df.loc[normal_indices]
 
         if len(normal_df) > 0:
+            # 価格と㎡単価を再計算して整合性を保つ
             normal_range = {
                 'price': {
                     'min': round(float(normal_df['price_man'].min()), 0),
