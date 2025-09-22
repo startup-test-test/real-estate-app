@@ -232,7 +232,7 @@ class PropertyMLAnalyzer:
             }
 
         X = df[available_features].values
-        y = df['price_man'].values * 10000  # 円単位に変換
+        y = df['price_man'].values  # 万円単位のまま使用
 
         # モデルの訓練
         model = LinearRegression()
@@ -244,16 +244,19 @@ class PropertyMLAnalyzer:
         # 決定係数
         r2_score = model.score(X, y)
 
-        # 係数の解釈
+        # 係数の解釈（万円単位）
         coefficients = {}
         for i, feature in enumerate(available_features):
             coef = model.coef_[i]
             if feature == 'area':
-                coefficients['area'] = round(float(coef), -3)  # 1㎡あたりの影響（円）
+                # 1㎡あたりの価格影響（万円/㎡）
+                coefficients['area'] = round(float(coef), 2)
             elif feature == 'age':
-                coefficients['age'] = round(float(coef), -3)  # 築1年あたりの影響（円）
+                # 築1年あたりの価格影響（万円/年）
+                coefficients['age'] = round(float(coef), 2)
             elif feature == 'station_distance':
-                coefficients['station_distance'] = round(float(coef / 100), -2) * 100  # 100mあたりの影響
+                # 100mあたりの価格影響（万円/100m）
+                coefficients['station_distance'] = round(float(coef * 100), 2)
 
         # RMSE（平均二乗誤差）
         rmse = np.sqrt(np.mean((y - predictions) ** 2))
@@ -263,8 +266,8 @@ class PropertyMLAnalyzer:
             'features': available_features,
             'coefficients': coefficients,
             'r_squared': round(float(r2_score), 3),
-            'rmse': round(float(rmse), -4),  # 万円単位で丸める
-            'intercept': round(float(model.intercept_), -4)
+            'rmse': round(float(rmse), 2),  # 万円単位
+            'intercept': round(float(model.intercept_), 2)  # 万円単位
         }
 
     def _detect_anomalies(self, df):

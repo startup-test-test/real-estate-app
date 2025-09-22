@@ -1223,61 +1223,134 @@ const MarketAnalysis: React.FC = () => {
                   </div>
                 )}
 
-                {/* 回帰分析 */}
-                {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 価格予測モデル（線形回帰）</h3>
-                    <div className="bg-blue-50 rounded-lg p-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {mlAnalysisResult.regression.coefficients.area && (
-                          <div>
-                            <span className="text-sm text-gray-600">面積1㎡あたり</span>
-                            <p className="text-lg font-semibold text-gray-900">
-                              {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
-                              {(mlAnalysisResult.regression.coefficients.area / 10000).toFixed(1)}万円
+                {/* 価格傾向分析と市場価格の分布を横並び */}
+                {(mlAnalysisResult.regression || mlAnalysisResult.anomaly_detection) && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    {/* 価格傾向分析 */}
+                    {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 価格傾向分析</h3>
+                        {filteredDataCount < 20 && (
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                            <p className="text-sm text-yellow-800">
+                              ⚠️ 分析対象が{filteredDataCount}件と少ないため、傾向は参考程度としてご覧ください
                             </p>
                           </div>
                         )}
-                        {mlAnalysisResult.regression.coefficients.age && (
-                          <div>
-                            <span className="text-sm text-gray-600">築1年あたり</span>
-                            <p className="text-lg font-semibold text-gray-900">
-                              {mlAnalysisResult.regression.coefficients.age > 0 ? '+' : ''}
-                              {(mlAnalysisResult.regression.coefficients.age / 10000).toFixed(1)}万円
-                            </p>
+                        <div className="bg-blue-50 rounded-lg p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {mlAnalysisResult.regression.coefficients.area && (
+                              <div>
+                                <span className="text-sm text-gray-600">面積1㎡あたり</span>
+                                <p className="text-lg font-semibold text-gray-900">
+                                  {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
+                                  {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  (100㎡なら{(mlAnalysisResult.regression.coefficients.area * 100).toFixed(0)}万円の差)
+                                </p>
+                              </div>
+                            )}
+                            {mlAnalysisResult.regression.coefficients.age && (
+                              <div>
+                                <span className="text-sm text-gray-600">築1年あたり</span>
+                                <p className="text-lg font-semibold text-gray-900">
+                                  {mlAnalysisResult.regression.coefficients.age > 0 ? '+' : ''}
+                                  {mlAnalysisResult.regression.coefficients.age.toFixed(1)}万円
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  (築10年で{(mlAnalysisResult.regression.coefficients.age * 10).toFixed(0)}万円の差)
+                                </p>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="mt-3 text-sm text-gray-600">
-                        予測精度（R²）: {(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}%
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 異常検知 */}
-                {mlAnalysisResult.anomaly_detection && mlAnalysisResult.anomaly_detection.anomaly_count > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">⚠️ 異常検知（Isolation Forest）</h3>
-                    <div className="bg-yellow-50 rounded-lg p-4">
-                      <p className="text-gray-800 mb-2">
-                        {mlAnalysisResult.anomaly_detection.anomaly_count}件の統計的外れ値を検出
-                        （全体の{mlAnalysisResult.anomaly_detection.anomaly_rate}%）
-                      </p>
-                      {mlAnalysisResult.anomaly_detection.normal_range && (
-                        <div className="text-sm text-gray-600">
-                          <p>正常範囲：</p>
-                          <ul className="ml-4">
-                            <li>価格: {mlAnalysisResult.anomaly_detection.normal_range.price.min}〜{mlAnalysisResult.anomaly_detection.normal_range.price.max}万円</li>
-                            <li>㎡単価: {(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.min / 10000).toFixed(1)}〜{(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.max / 10000).toFixed(1)}万円/㎡</li>
-                          </ul>
+                          <div className="mt-3 text-sm">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-600">予測精度:</span>
+                              {mlAnalysisResult.regression.r_squared < 0.3 ? (
+                                <span className="text-orange-600 font-medium">
+                                  参考程度（データのばらつきが大きい）
+                                </span>
+                              ) : mlAnalysisResult.regression.r_squared < 0.7 ? (
+                                <span className="text-yellow-600 font-medium">
+                                  中程度（ある程度の傾向あり）
+                                </span>
+                              ) : (
+                                <span className="text-green-600 font-medium">
+                                  高い（明確な傾向あり）
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              ※R²={(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}% -
+                              {mlAnalysisResult.regression.r_squared < 0.3
+                                ? "価格は面積・築年数以外の要因が大きく影響"
+                                : mlAnalysisResult.regression.r_squared < 0.7
+                                ? "面積・築年数である程度価格を説明可能"
+                                : "面積・築年数で価格をよく説明できる"}
+                            </div>
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
+
+                    {/* 市場価格の分布 */}
+                    {mlAnalysisResult.anomaly_detection && mlAnalysisResult.anomaly_detection.normal_range && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-3">💰 市場価格の分布</h3>
+                        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4">
+                          <div className="mb-3">
+                            <p className="text-gray-800 font-medium mb-2">
+                              このエリアの価格分布：
+                            </p>
+                            <div className="flex items-center space-x-2 text-sm">
+                              <div className="flex items-center">
+                                <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                <span>{Math.round((1 - mlAnalysisResult.anomaly_detection.anomaly_rate/100) * 100)}%が主要価格帯</span>
+                              </div>
+                              {mlAnalysisResult.anomaly_detection.anomaly_count > 0 && (
+                                <div className="flex items-center">
+                                  <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                                  <span>{Math.round(mlAnalysisResult.anomaly_detection.anomaly_rate)}%が特別価格</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {mlAnalysisResult.anomaly_detection.normal_range && (
+                            <div className="bg-white rounded-lg p-3 mt-3">
+                              <p className="font-medium text-gray-700 mb-2">📊 主要な価格帯：</p>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-center">
+                                  <span className="text-gray-600 mr-2">価格帯:</span>
+                                  <span className="font-semibold text-gray-900">
+                                    {mlAnalysisResult.anomaly_detection.normal_range.price.min.toLocaleString()}〜
+                                    {mlAnalysisResult.anomaly_detection.normal_range.price.max.toLocaleString()}万円
+                                  </span>
+                                </div>
+                                <div className="flex items-center">
+                                  <span className="text-gray-600 mr-2">㎡単価:</span>
+                                  <span className="font-semibold text-gray-900">
+                                    {(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.min / 10000).toFixed(1)}〜
+                                    {(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.max / 10000).toFixed(1)}万円/㎡
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="bg-blue-50 rounded p-2 mt-3">
+                                <p className="text-xs text-blue-800">
+                                  💡 <strong>活用ポイント：</strong>
+                                  この価格帯が相場の目安となります。
+                                  これより大幅に安い物件は要確認、高い物件は付加価値がある可能性があります。
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                <div className="text-xs text-gray-500 border-t pt-3">
+                <div className="text-xs text-gray-500 border-t pt-3 mt-4">
                   <p>※機械学習アルゴリズム（K-means、線形回帰、Isolation Forest）による分析結果</p>
                   <p>※予測モデルは参考値であり、実際の取引価格を保証するものではありません</p>
                 </div>
