@@ -168,6 +168,18 @@ class PropertyMLAnalyzer:
 
         # クラスタごとの統計
         clusters = []
+        # まず各クラスターの平均価格を計算
+        cluster_prices = []
+        for i in range(n_clusters):
+            cluster_mask = labels == i
+            cluster_df = df[cluster_mask]
+            avg_price = cluster_df['price_man'].mean()
+            cluster_prices.append((i, avg_price))
+
+        # 価格でソートしてランク付け
+        cluster_prices.sort(key=lambda x: x[1])
+        price_rank = {cluster_id: rank for rank, (cluster_id, _) in enumerate(cluster_prices)}
+
         for i in range(n_clusters):
             cluster_mask = labels == i
             cluster_df = df[cluster_mask]
@@ -177,14 +189,20 @@ class PropertyMLAnalyzer:
             avg_area = cluster_df['area'].mean()
             avg_age = cluster_df['age'].mean()
 
-            # 名前の決定（価格ベース）
-            all_prices = df['price_man'].values
-            if avg_price <= np.percentile(all_prices, 33):
-                name = "低価格帯"
-            elif avg_price <= np.percentile(all_prices, 67):
-                name = "中価格帯"
+            # 名前の決定（相対的な価格順位ベース）
+            rank = price_rank[i]
+            if n_clusters == 2:
+                name = "低価格帯" if rank == 0 else "高価格帯"
+            elif n_clusters == 3:
+                name = ["低価格帯", "中価格帯", "高価格帯"][rank]
             else:
-                name = "高価格帯"
+                # 4つ以上の場合
+                if rank == 0:
+                    name = "低価格帯"
+                elif rank == n_clusters - 1:
+                    name = "高価格帯"
+                else:
+                    name = f"中価格帯{rank}"
 
             clusters.append({
                 'cluster_id': int(i),

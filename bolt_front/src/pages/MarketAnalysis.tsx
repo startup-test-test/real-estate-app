@@ -71,6 +71,7 @@ const MarketAnalysis: React.FC = () => {
   // ML分析結果の状態
   const [mlAnalysisResult, setMlAnalysisResult] = useState<any>(null);
   const [isMLAnalyzing, setIsMLAnalyzing] = useState(false);
+  const [filteredDataCount, setFilteredDataCount] = useState(0);  // フィルタ後のデータ件数
 
   // 都道府県リストを取得
   React.useEffect(() => {
@@ -348,6 +349,7 @@ const MarketAnalysis: React.FC = () => {
 
       // 表示用データ（グラフ用は全データ、統計用はフィルタ後データ）
       setAllProperties(allData);  // グラフ表示には全データを使用
+      setFilteredDataCount(filteredData.length);  // フィルタ後のデータ件数を保存
 
       // フィルタ後のデータで年ごとの統計を再計算
       const yearlyResults: any[] = [];
@@ -678,8 +680,13 @@ const MarketAnalysis: React.FC = () => {
             console.log('ML分析レスポンス:', mlResponse);
 
             if (mlResponse.status === 'success' && mlResponse.data) {
-              setMlAnalysisResult(mlResponse.data);
+              setMlAnalysisResult(mlResponse.data);  // mlResponse.dataを保存（statistics, clustering等が直接入っている）
               console.log('ML分析結果セット完了');
+              console.log('ML分析結果の内容:', mlResponse.data);
+              console.log('データ構造確認 - clustering:', mlResponse.data.clustering);
+              console.log('データ構造確認 - regression:', mlResponse.data.regression);
+              console.log('データ構造確認 - anomaly_detection:', mlResponse.data.anomaly_detection);
+              console.log('filteredDataCount:', filteredData.length);
             } else {
               console.error('ML分析エラー: レスポンスステータス異常', mlResponse);
             }
@@ -1173,81 +1180,34 @@ const MarketAnalysis: React.FC = () => {
         {/* 分析結果表示セクション */}
         {marketData && (
           <div className="space-y-6">
-            {/* AI統計分析レポート */}
-            {statisticalAnalysis && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI統計分析レポート</h2>
-
-                <div className="text-sm text-gray-600 mb-4">
-                  指定条件での取引データを分析しました
-                </div>
-
-                {/* 分析条件 */}
-                <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                  <h3 className="text-sm font-bold text-gray-700 mb-2">【分析条件】</h3>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p>場所：{prefectures.find(p => p.code === selectedPrefecture)?.name || selectedPrefecture}{cities.find(c => c.code === selectedCity)?.name || ''}{selectedDistrict || ''}</p>
-                    <p>種別：{selectedPropertyType === '02' ? '戸建て' : 'マンション'}</p>
-                    <p>面積：{targetArea}±{areaTolerance}㎡</p>
-                    <p>築年：{targetYear}±{yearTolerance}年</p>
-                  </div>
-                </div>
-
-                {/* AIが見つけたポイント */}
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h3 className="font-bold text-gray-800 mb-3">【統計分析から見つかったポイント】</h3>
-                  <div className="space-y-3">
-                    {statisticalAnalysis.keyPoints.map((point, index) => (
-                      <div key={index}>
-                        <span className="text-lg">
-                          {index === 0 && '1️⃣ '}
-                          {index === 1 && '2️⃣ '}
-                          {index === 2 && '3️⃣ '}
-                          {point}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-3">
-                    ※データから自動的に抽出した統計的特徴です
-                  </p>
-                </div>
-
-                <div className="text-xs text-gray-500 border-t pt-3 mt-4 space-y-1">
-                  <p>※過去の取引データの統計処理結果です</p>
-                  <p>※個別物件の査定や評価ではありません</p>
-                  <p>※投資判断の材料ではありません</p>
-                  <p>※実際の取引は宅地建物取引士にご相談ください</p>
-                </div>
-              </div>
-            )}
 
             {/* ML分析結果の表示 */}
-            {allProperties.length < 5 ? (
+            {console.log('ML分析表示判定: filteredDataCount=', filteredDataCount, 'mlAnalysisResult=', mlAnalysisResult)}
+            {filteredDataCount < 5 ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 機械学習による詳細分析</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI市場分析</h2>
                 <div className="bg-yellow-50 rounded-lg p-4">
                   <p className="text-gray-700">
                     機械学習分析を実行するには、最低5件以上のデータが必要です。
                   </p>
                   <p className="text-sm text-gray-600 mt-2">
-                    現在のデータ件数: {allProperties.length}件
+                    現在のデータ件数: {filteredDataCount}件
                   </p>
                   <p className="text-sm text-gray-600">
                     検索条件（エリア、面積、築年数の範囲）を広げてデータ件数を増やしてください。
                   </p>
                 </div>
               </div>
-            ) : mlAnalysisResult && mlAnalysisResult.data ? (
+            ) : mlAnalysisResult ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 機械学習による詳細分析</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI市場分析</h2>
 
                 {/* クラスタリング分析 */}
-                {mlAnalysisResult.data.clustering && (
+                {mlAnalysisResult.clustering && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 価格グループ分析（K-means）</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {mlAnalysisResult.data.clustering.clusters.map((cluster: any) => (
+                      {mlAnalysisResult.clustering.clusters.map((cluster: any) => (
                         <div key={cluster.cluster_id} className="bg-gray-50 rounded-lg p-4">
                           <div className="font-semibold text-gray-800">{cluster.name}</div>
                           <div className="text-2xl font-bold text-gray-900 mt-1">
@@ -1264,52 +1224,52 @@ const MarketAnalysis: React.FC = () => {
                 )}
 
                 {/* 回帰分析 */}
-                {mlAnalysisResult.data.regression && !mlAnalysisResult.data.regression.error && (
+                {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 価格予測モデル（線形回帰）</h3>
                     <div className="bg-blue-50 rounded-lg p-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {mlAnalysisResult.data.regression.coefficients.area && (
+                        {mlAnalysisResult.regression.coefficients.area && (
                           <div>
                             <span className="text-sm text-gray-600">面積1㎡あたり</span>
                             <p className="text-lg font-semibold text-gray-900">
-                              {mlAnalysisResult.data.regression.coefficients.area > 0 ? '+' : ''}
-                              {(mlAnalysisResult.data.regression.coefficients.area / 10000).toFixed(1)}万円
+                              {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
+                              {(mlAnalysisResult.regression.coefficients.area / 10000).toFixed(1)}万円
                             </p>
                           </div>
                         )}
-                        {mlAnalysisResult.data.regression.coefficients.age && (
+                        {mlAnalysisResult.regression.coefficients.age && (
                           <div>
                             <span className="text-sm text-gray-600">築1年あたり</span>
                             <p className="text-lg font-semibold text-gray-900">
-                              {mlAnalysisResult.data.regression.coefficients.age > 0 ? '+' : ''}
-                              {(mlAnalysisResult.data.regression.coefficients.age / 10000).toFixed(1)}万円
+                              {mlAnalysisResult.regression.coefficients.age > 0 ? '+' : ''}
+                              {(mlAnalysisResult.regression.coefficients.age / 10000).toFixed(1)}万円
                             </p>
                           </div>
                         )}
                       </div>
                       <div className="mt-3 text-sm text-gray-600">
-                        予測精度（R²）: {(mlAnalysisResult.data.regression.r_squared * 100).toFixed(1)}%
+                        予測精度（R²）: {(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}%
                       </div>
                     </div>
                   </div>
                 )}
 
                 {/* 異常検知 */}
-                {mlAnalysisResult.data.anomaly_detection && mlAnalysisResult.data.anomaly_detection.anomaly_count > 0 && (
+                {mlAnalysisResult.anomaly_detection && mlAnalysisResult.anomaly_detection.anomaly_count > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">⚠️ 異常検知（Isolation Forest）</h3>
                     <div className="bg-yellow-50 rounded-lg p-4">
                       <p className="text-gray-800 mb-2">
-                        {mlAnalysisResult.data.anomaly_detection.anomaly_count}件の統計的外れ値を検出
-                        （全体の{mlAnalysisResult.data.anomaly_detection.anomaly_rate}%）
+                        {mlAnalysisResult.anomaly_detection.anomaly_count}件の統計的外れ値を検出
+                        （全体の{mlAnalysisResult.anomaly_detection.anomaly_rate}%）
                       </p>
-                      {mlAnalysisResult.data.anomaly_detection.normal_range && (
+                      {mlAnalysisResult.anomaly_detection.normal_range && (
                         <div className="text-sm text-gray-600">
                           <p>正常範囲：</p>
                           <ul className="ml-4">
-                            <li>価格: {mlAnalysisResult.data.anomaly_detection.normal_range.price.min}〜{mlAnalysisResult.data.anomaly_detection.normal_range.price.max}万円</li>
-                            <li>㎡単価: {(mlAnalysisResult.data.anomaly_detection.normal_range.price_per_sqm.min / 10000).toFixed(1)}〜{(mlAnalysisResult.data.anomaly_detection.normal_range.price_per_sqm.max / 10000).toFixed(1)}万円/㎡</li>
+                            <li>価格: {mlAnalysisResult.anomaly_detection.normal_range.price.min}〜{mlAnalysisResult.anomaly_detection.normal_range.price.max}万円</li>
+                            <li>㎡単価: {(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.min / 10000).toFixed(1)}〜{(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.max / 10000).toFixed(1)}万円/㎡</li>
                           </ul>
                         </div>
                       )}
