@@ -72,13 +72,20 @@ class PropertyMLAnalyzer:
             '延床面積': 'area',
             'building_area': 'area',  # フロントエンドからの field 名
             '建築年': 'built_year',
-            'built_year': 'built_year',  # フロントエンドからの field 名
+            'build_year': 'built_year',  # フロントエンドからの field 名
             '築年数': 'age'
         }
 
         for old_col, new_col in column_mapping.items():
             if old_col in df.columns:
                 df[new_col] = df[old_col]
+
+        # build_year が文字列の場合、年数値を抽出
+        if 'built_year' in df.columns:
+            df['built_year'] = df['built_year'].apply(lambda x:
+                int(str(x).replace('年', '')) if isinstance(x, str) and '年' in str(x)
+                else (int(x) if pd.notna(x) and str(x).isdigit() else None)
+            )
 
         # 価格を万円単位に統一
         if 'price' in df.columns and 'price_man' not in df.columns:
@@ -91,8 +98,13 @@ class PropertyMLAnalyzer:
             current_year = pd.Timestamp.now().year
             df['age'] = current_year - df['built_year']
 
-        # 駅距離のデフォルト値
-        if 'station_distance' not in df.columns:
+        # 駅距離の処理（文字列「-」の場合も考慮）
+        if 'station_distance' in df.columns:
+            df['station_distance'] = df['station_distance'].apply(lambda x:
+                800 if x == '-' or x == '' or pd.isna(x)
+                else (int(x) if str(x).isdigit() else 800)
+            )
+        else:
             df['station_distance'] = 800  # デフォルト800m
 
         # 欠損値の補完

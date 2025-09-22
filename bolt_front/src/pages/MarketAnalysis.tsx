@@ -672,6 +672,7 @@ const MarketAnalysis: React.FC = () => {
           try {
             console.log('ML分析開始: データ件数=', filteredData.length);
             console.log('送信データサンプル:', filteredData.slice(0, 2));
+            console.log('送信データ全体構造:', JSON.stringify(filteredData.slice(0, 1), null, 2));
 
             const mlResponse = await propertyApi.simpleMLAnalysis(filteredData);
             console.log('ML分析レスポンス:', mlResponse);
@@ -682,8 +683,14 @@ const MarketAnalysis: React.FC = () => {
             } else {
               console.error('ML分析エラー: レスポンスステータス異常', mlResponse);
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error('ML分析エラー詳細:', error);
+            console.error('エラーメッセージ:', error.message);
+            console.error('エラースタック:', error.stack);
+            // エラー時にもレスポンスがあるか確認
+            if (error.response) {
+              console.error('エラーレスポンス:', error.response);
+            }
           } finally {
             setIsMLAnalyzing(false);
           }
@@ -1216,7 +1223,22 @@ const MarketAnalysis: React.FC = () => {
             )}
 
             {/* ML分析結果の表示 */}
-            {mlAnalysisResult && mlAnalysisResult.data && (
+            {allProperties.length < 5 ? (
+              <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 機械学習による詳細分析</h2>
+                <div className="bg-yellow-50 rounded-lg p-4">
+                  <p className="text-gray-700">
+                    機械学習分析を実行するには、最低5件以上のデータが必要です。
+                  </p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    現在のデータ件数: {allProperties.length}件
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    検索条件（エリア、面積、築年数の範囲）を広げてデータ件数を増やしてください。
+                  </p>
+                </div>
+              </div>
+            ) : mlAnalysisResult && mlAnalysisResult.data ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 機械学習による詳細分析</h2>
 
@@ -1300,7 +1322,7 @@ const MarketAnalysis: React.FC = () => {
                   <p>※予測モデルは参考値であり、実際の取引価格を保証するものではありません</p>
                 </div>
               </div>
-            )}
+            ) : null}
 
             {/* ML分析中の表示 */}
             {isMLAnalyzing && (
