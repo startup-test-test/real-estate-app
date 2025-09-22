@@ -1278,11 +1278,14 @@ const MarketAnalysis: React.FC = () => {
                       <div className="bg-blue-50 rounded-lg p-4 flex-shrink-0">
                         <div className="text-sm text-blue-700 font-medium">分析サンプル数</div>
                         <div className="text-3xl font-bold text-blue-900 mt-1">
-                          {mlDataCount}
+                          {mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0)}
                           <span className="text-lg font-normal">件</span>
                         </div>
                         <div className="text-xs text-blue-600 mt-2">
                           地域全体のデータ
+                          {mlDataCount > mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0) &&
+                            <><br/>（外れ値{mlDataCount - mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0)}件除外）</>
+                          }
                         </div>
                       </div>
 
@@ -1716,6 +1719,9 @@ const MarketAnalysis: React.FC = () => {
                 {/* 1. 延べ床と価格の散布図 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">1. {isLand ? '土地面積' : '延べ床'}と価格</h3>
+                  <div className="text-xs text-gray-500 mb-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                   <Plot
                     data={[
                       {
@@ -1855,6 +1861,9 @@ const MarketAnalysis: React.FC = () => {
                 {/* 2. 延床面積別価格分布ヒートマップ */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">2. {isLand ? '土地面積' : '延床面積'}別価格分布</h3>
+                  <div className="text-xs text-gray-500 mb-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                   {(() => {
                     // 価格帯と面積帯を定義
                     const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
@@ -1941,6 +1950,9 @@ const MarketAnalysis: React.FC = () => {
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">3. 建築年別価格分布</h3>
+                    <div className="text-xs text-gray-500 mb-2">
+                      ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    </div>
                   <Plot
                     data={[
                       {
@@ -2053,6 +2065,9 @@ const MarketAnalysis: React.FC = () => {
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">4. 建築年別価格分布（ヒートマップ）</h3>
+                    <div className="text-xs text-gray-500 mb-2">
+                      ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    </div>
                   {(() => {
                     const validYearData = allProperties.filter(p => {
                       const year = getBuildYear(p);
@@ -2149,6 +2164,9 @@ const MarketAnalysis: React.FC = () => {
                 {/* 成約件数推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '3' : '5'}. 成約件数推移</h3>
+                  <div className="text-xs text-gray-500 mb-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                   {(() => {
                     // 四半期ごとのデータ集計
                     const periodCounts: { [key: string]: number } = {};
