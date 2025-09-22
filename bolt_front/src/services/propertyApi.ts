@@ -196,6 +196,34 @@ export class PropertyApiClient {
       }),
     });
   }
+
+  // 機械学習分析API
+  async analyzeWithML(properties: any[], analysisType: string = 'full'): Promise<ApiResponse<any>> {
+    return this.fetchApi<ApiResponse<any>>('/api/ml/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        properties,
+        analysis_type: analysisType
+      }),
+    });
+  }
+
+  // シンプルML分析API（フロントエンド用）
+  async simpleMLAnalysis(properties: any[]): Promise<ApiResponse<any>> {
+    return this.fetchApi<ApiResponse<any>>('/api/ml/simple-analysis', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        properties,
+        analysis_type: 'full'
+      }),
+    });
+  }
 }
 
 // シングルトンインスタンスをエクスポート

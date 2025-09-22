@@ -70,7 +70,9 @@ class PropertyMLAnalyzer:
             '取引価格': 'price',
             '延床面積（㎡）': 'area',
             '延床面積': 'area',
+            'building_area': 'area',  # フロントエンドからの field 名
             '建築年': 'built_year',
+            'built_year': 'built_year',  # フロントエンドからの field 名
             '築年数': 'age'
         }
 
@@ -94,12 +96,23 @@ class PropertyMLAnalyzer:
             df['station_distance'] = 800  # デフォルト800m
 
         # 欠損値の補完
-        df['area'] = df['area'].fillna(df['area'].median() if not df['area'].empty else 60)
-        df['age'] = df['age'].fillna(df['age'].median() if not df['age'].empty else 10)
+        if 'area' in df.columns:
+            df['area'] = df['area'].fillna(df['area'].median() if not df['area'].empty else 60)
+        else:
+            df['area'] = 60  # デフォルト値
+
+        if 'age' in df.columns:
+            df['age'] = df['age'].fillna(df['age'].median() if not df['age'].empty else 10)
+        else:
+            df['age'] = 10  # デフォルト値
+
         df['station_distance'] = df['station_distance'].fillna(800)
 
         # 価格/㎡を計算
-        df['price_per_sqm'] = df['price_man'] * 10000 / df['area']
+        if df['area'].notna().any() and (df['area'] > 0).any():
+            df['price_per_sqm'] = df['price_man'] * 10000 / df['area']
+        else:
+            df['price_per_sqm'] = df['price_man'] * 10000 / 60  # デフォルト面積で計算
 
         return df
 
