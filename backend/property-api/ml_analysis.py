@@ -281,8 +281,8 @@ class PropertyMLAnalyzer:
             # 名前の決定（相対的な価格順位ベース）
             rank = price_rank[i]
             if n_clusters == 2:
-                # 2クラスタの場合の名前（価格差が大きいことを示す）
-                name = "エコノミー価格帯" if rank == 0 else "プレミアム価格帯"
+                # 2クラスタの場合はシンプルに低/高
+                name = "低価格帯" if rank == 0 else "高価格帯"
             elif n_clusters == 3:
                 name = ["低価格帯", "中価格帯", "高価格帯"][rank]
             else:
