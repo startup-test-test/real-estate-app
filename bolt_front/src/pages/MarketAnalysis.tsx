@@ -15,14 +15,6 @@ import Plot from 'react-plotly.js';
 
 const MarketAnalysis: React.FC = () => {
 
-  // ヘルパー関数：価格を取得（万円単位で返す）
-  const getPrice = (item: any): number => {
-    const price = item['取引価格（万円）'];
-    if (price !== undefined && price !== null) {
-      return price; // 既に万円単位
-    }
-    return (item.price || item.取引価格 || 0) / 10000; // 円を万円に変換
-  };
 
 
   // フォーム状態（streamlit_app.pyと同じロジック）
@@ -69,13 +61,6 @@ const MarketAnalysis: React.FC = () => {
   const [districts, setDistricts] = useState<Array<{code: string, name: string}>>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // 統計分析の状態
-  const [statisticalAnalysis, setStatisticalAnalysis] = useState<{
-    priceRange: { min: number; max: number; count: number; percentage: number };
-    areaImpact: number;
-    yearImpact: number;
-    keyPoints: string[];
-  } | null>(null);
 
   // ML分析結果の状態
   const [mlAnalysisResult, setMlAnalysisResult] = useState<any>(null);
@@ -680,13 +665,6 @@ const MarketAnalysis: React.FC = () => {
           }
         }
 
-        setStatisticalAnalysis({
-          priceRange,
-          areaImpact,
-          yearImpact,
-          keyPoints
-        });
-
         // ML分析の実行（地域データが5件以上ある場合）
         // AI市場分析には地域フィルタのみ適用（面積・築年数フィルタはスキップ）
         const mlAnalysisData = allData;  // 地域・物件種別のみでフィルタされたデータ
@@ -707,7 +685,10 @@ const MarketAnalysis: React.FC = () => {
 
             // フィルタ条件でのML分析（Viteプロキシ問題解決済み）
             let filteredMLResult = null;
-            if (filteredData.length >= 5) {
+            // フィルタデータが全データと異なる場合のみ分析
+            const isFilteredDifferent = filteredData.length !== mlAnalysisData.length;
+
+            if (isFilteredDifferent && filteredData.length >= 5) {
               try {
                 console.log('フィルタ条件ML分析開始:', filteredData.length, '件');
                 const filteredMLResponse = await propertyApi.simpleMLAnalysis(filteredData);
@@ -718,6 +699,8 @@ const MarketAnalysis: React.FC = () => {
               } catch (err) {
                 console.error('フィルタ条件ML分析エラー:', err);
               }
+            } else if (!isFilteredDifferent) {
+              console.log('フィルタ条件ML分析スキップ: 全データと同じ');
             } else {
               console.log('フィルタ条件ML分析スキップ: データ件数', filteredData.length, '件（5件未満）');
             }
