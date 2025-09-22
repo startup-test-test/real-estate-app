@@ -225,24 +225,41 @@ export class PropertyApiClient {
       ? 'https://property-develop.onrender.com/api/ml/simple-analysis'
       : `${this.baseUrl}/api/ml/simple-analysis`;
 
-    console.log('ML分析URL決定:', { hostname: window.location.hostname, isCodespaces, mlUrl });
-
-    const response = await fetch(mlUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        properties,
-        analysis_type: 'full'
-      }),
+    console.log('ML分析URL決定:', {
+      hostname: window.location.hostname,
+      isCodespaces,
+      mlUrl,
+      propertiesCount: properties.length,
+      sampleProperty: properties[0]
     });
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
-    }
+    try {
+      const response = await fetch(mlUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          properties,
+          analysis_type: 'full'
+        }),
+      });
 
-    return await response.json();
+      const responseText = await response.text();
+      console.log('ML分析レスポンス status:', response.status);
+
+      if (!response.ok) {
+        console.error('ML分析エラーレスポンス:', responseText);
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = JSON.parse(responseText);
+      console.log('ML分析成功レスポンス:', result);
+      return result;
+    } catch (error) {
+      console.error('ML分析API呼び出しエラー:', error);
+      throw error;
+    }
   }
 }
 

@@ -19,6 +19,22 @@ class PropertyMLAnalyzer:
     def __init__(self):
         self.scaler = StandardScaler()
 
+    def _clean_json_values(self, obj):
+        """JSON互換性のためにInfinityやNaNを置換"""
+        if isinstance(obj, dict):
+            return {k: self._clean_json_values(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._clean_json_values(v) for v in obj]
+        elif isinstance(obj, (np.integer, np.int64)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, float)):
+            if np.isnan(obj):
+                return 0.0
+            elif np.isinf(obj):
+                return 999999.0 if obj > 0 else -999999.0
+            return float(obj)
+        return obj
+
     def analyze(self, properties_data, analysis_type='full'):
         """
         包括的な機械学習分析を実行
@@ -57,6 +73,9 @@ class PropertyMLAnalyzer:
 
         if analysis_type in ['full', 'anomaly']:
             results['data']['anomaly_detection'] = self._detect_anomalies(df)
+
+        # JSON互換性のためにInfinityやNaNを処理
+        results = self._clean_json_values(results)
 
         return results
 
@@ -107,8 +126,10 @@ class PropertyMLAnalyzer:
         else:
             df['station_distance'] = 800  # デフォルト800m
 
-        # 欠損値の補完
+        # 異常値の処理（特に戸建ての土地面積）
         if 'area' in df.columns:
+            # 面積が異常に大きい場合（1000㎡以上）は上限を設定
+            df['area'] = df['area'].apply(lambda x: min(x, 1000) if pd.notna(x) else x)
             df['area'] = df['area'].fillna(df['area'].median() if not df['area'].empty else 60)
         else:
             df['area'] = 60  # デフォルト値
@@ -120,9 +141,13 @@ class PropertyMLAnalyzer:
 
         df['station_distance'] = df['station_distance'].fillna(800)
 
-        # 価格/㎡を計算
+        # 価格/㎡を計算（ゼロ除算を回避）
         if df['area'].notna().any() and (df['area'] > 0).any():
-            df['price_per_sqm'] = df['price_man'] * 10000 / df['area']
+            df['price_per_sqm'] = np.where(
+                df['area'] > 0,
+                df['price_man'] * 10000 / df['area'],
+                df['price_man'] * 10000 / 60  # ゼロの場合はデフォルト値
+            )
         else:
             df['price_per_sqm'] = df['price_man'] * 10000 / 60  # デフォルト面積で計算
 
