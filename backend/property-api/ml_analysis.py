@@ -90,6 +90,9 @@ class PropertyMLAnalyzer:
             '延床面積（㎡）': 'area',
             '延床面積': 'area',
             'building_area': 'area',  # フロントエンドからの field 名
+            '土地面積（㎡）': 'area',  # 土地の場合
+            '土地面積': 'area',  # 土地の場合
+            'land_area': 'area',  # 土地の場合
             '建築年': 'built_year',
             'build_year': 'built_year',  # フロントエンドからの field 名
             '築年数': 'age'

@@ -275,7 +275,13 @@ async def search_properties(
                 # Check area range
                 if min_area or max_area:
                     try:
-                        area = float(item.get('面積', 0) or item.get('Area', 0) or 0)
+                        # For land properties, use land area fields
+                        if property_type == '土地':
+                            area = float(item.get('土地面積（㎡）', 0) or item.get('土地面積', 0) or item.get('land_area', 0) or item.get('面積', 0) or item.get('Area', 0) or 0)
+                        else:
+                            # For buildings, use building area fields
+                            area = float(item.get('延べ床面積（㎡）', 0) or item.get('延床面積', 0) or item.get('building_area', 0) or item.get('面積', 0) or item.get('Area', 0) or 0)
+
                         if min_area and area < min_area:
                             continue
                         if max_area and area > max_area:
@@ -283,8 +289,8 @@ async def search_properties(
                     except:
                         pass
 
-                # Check building year range
-                if min_year or max_year:
+                # Check building year range (skip for land properties)
+                if property_type != '土地' and (min_year or max_year):
                     try:
                         build_year_str = item.get('建築年', '') or item.get('BuildingYear', '')
                         if build_year_str:

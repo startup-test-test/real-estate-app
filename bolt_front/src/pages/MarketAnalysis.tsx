@@ -1361,17 +1361,20 @@ const MarketAnalysis: React.FC = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {mlAnalysisResult.regression.coefficients.area && (
                               <div>
-                                <span className="text-sm text-gray-600">面積による価格影響</span>
+                                <span className="text-sm text-gray-600">{isLand ? '土地面積による価格影響' : '面積による価格影響'}</span>
                                 <p className="text-lg font-semibold text-gray-900">
                                   {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
                                   {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円/㎡
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  (80㎡と100㎡では約{Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)
+                                  {isLand
+                                    ? `(100㎡と150㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 50).toFixed(0)}万円の差)`
+                                    : `(80㎡と100㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)`
+                                  }
                                 </p>
                               </div>
                             )}
-                            {mlAnalysisResult.regression.coefficients.age && (
+                            {!isLand && mlAnalysisResult.regression.coefficients.age && (
                               <div>
                                 <span className="text-sm text-gray-600">築年数による価格影響</span>
                                 <p className="text-lg font-semibold text-gray-900">
@@ -1404,10 +1407,10 @@ const MarketAnalysis: React.FC = () => {
                             <div className="text-xs text-gray-500 mt-1">
                               ※R²={(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}% -
                               {mlAnalysisResult.regression.r_squared < 0.3
-                                ? "価格は面積・築年数以外の要因が大きく影響"
+                                ? isLand ? "価格は土地面積以外の要因が大きく影響" : "価格は面積・築年数以外の要因が大きく影響"
                                 : mlAnalysisResult.regression.r_squared < 0.7
-                                ? "面積・築年数である程度価格を説明可能"
-                                : "面積・築年数で価格をよく説明できる"}
+                                ? isLand ? "土地面積である程度価格を説明可能" : "面積・築年数である程度価格を説明可能"
+                                : isLand ? "土地面積で価格をよく説明できる" : "面積・築年数で価格をよく説明できる"}
                             </div>
                           </div>
                         </div>
