@@ -297,7 +297,8 @@ const MarketAnalysis: React.FC = () => {
           }
         } else {
           // 土地の場合または築年数なしの場合
-          filteredData = areaFiltered.length >= 10 ? areaFiltered : allData;
+          // 土地の場合はフィルタ結果をそのまま使用（件数が少なくても）
+          filteredData = areaFiltered;
           if (isLand) {
             console.log(`🏞️ 土地のため築年数フィルタなし: ${filteredData.length}件`);
           }
@@ -2145,9 +2146,9 @@ const MarketAnalysis: React.FC = () => {
                   </div>
                 )}
 
-                {/* 5. 成約件数推移 */}
+                {/* 成約件数推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">5. 成約件数推移</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '3' : '5'}. 成約件数推移</h3>
                   {(() => {
                     // 四半期ごとのデータ集計
                     const periodCounts: { [key: string]: number } = {};
@@ -2222,7 +2223,7 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 6. 📍 周辺の公示地価 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">6. 📍 周辺の公示地価</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '4' : '6'}. 📍 周辺の公示地価</h3>
                   {landPriceData && landPriceData.length > 0 ? (
                     <>
                       <div className="overflow-x-auto">
@@ -2273,7 +2274,7 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 7. 📈 公示地価の推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">7. 📈 公示地価の推移</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '5' : '7'}. 📈 公示地価の推移</h3>
                   {landPriceHistory && Object.keys(landPriceHistory).length > 0 ? (
                     <Plot
                       data={Object.entries(landPriceHistory).slice(0, 10).map(([ address, data ]: [string, any]) => ({
