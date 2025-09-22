@@ -1394,6 +1394,7 @@ const MarketAnalysis: React.FC = () => {
 
                 <div className="text-xs text-gray-500 border-t pt-3 mt-4">
                   <p>※機械学習アルゴリズム（K-means、線形回帰）による分析結果</p>
+                  <p>※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています</p>
                   <p>※予測モデルは参考値であり、実際の取引価格を保証するものではありません</p>
                 </div>
               </div>

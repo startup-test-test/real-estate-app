@@ -151,6 +151,27 @@ class PropertyMLAnalyzer:
         else:
             df['price_per_sqm'] = df['price_man'] * 10000 / 60  # デフォルト面積で計算
 
+        # 価格の外れ値除外（IQR法）
+        Q1 = df['price_man'].quantile(0.25)
+        Q3 = df['price_man'].quantile(0.75)
+        IQR = Q3 - Q1
+
+        # 通常は1.5*IQRだが、不動産では3*IQRでより寛容に
+        lower_bound = Q1 - 3 * IQR
+        upper_bound = Q3 + 3 * IQR
+
+        # 外れ値をログ出力
+        outliers = df[(df['price_man'] < lower_bound) | (df['price_man'] > upper_bound)]
+        if len(outliers) > 0:
+            print(f"価格外れ値を検出: {len(outliers)}件")
+            print(f"価格範囲: {lower_bound:.0f}万円 〜 {upper_bound:.0f}万円")
+            for idx, row in outliers.iterrows():
+                print(f"  - {row['price_man']:.0f}万円 (面積: {row.get('area', 'N/A')}㎡)")
+
+        # 外れ値を除外
+        df = df[(df['price_man'] >= lower_bound) & (df['price_man'] <= upper_bound)]
+        print(f"外れ値除外後のデータ件数: {len(df)}件")
+
         return df
 
     def _calculate_statistics(self, df):
