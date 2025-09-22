@@ -487,8 +487,14 @@ const MarketAnalysis: React.FC = () => {
             targetYear: targetYear
           });
 
-          if (aiResponse.status === 'success' && aiResponse.data) {
-            setAiSummary(aiResponse.data);
+          if (aiResponse.status === 'success') {
+            // APIレスポンスを直接使用（dataフィールドなし）
+            const response = aiResponse as any;
+            setAiSummary({
+              summary: response.summary || '',
+              key_insights: response.key_insights || [],
+              recommendations: response.recommendations || []
+            });
           }
         } catch (aiErr) {
           console.error('AI分析エラー:', aiErr);

@@ -547,9 +547,40 @@ def _build_safe_analysis_prompt(
 def _generate_safe_report(market_data: Dict[str, Any], ai_data: Dict[str, Any]) -> str:
     """固定テンプレートを使用した安全なレポート生成"""
 
+    # 都道府県コードから名前への変換
+    prefecture_map = {
+        "01": "北海道", "02": "青森県", "03": "岩手県", "04": "宮城県",
+        "05": "秋田県", "06": "山形県", "07": "福島県", "08": "茨城県",
+        "09": "栃木県", "10": "群馬県", "11": "埼玉県", "12": "千葉県",
+        "13": "東京都", "14": "神奈川県", "15": "新潟県", "16": "富山県",
+        "17": "石川県", "18": "福井県", "19": "山梨県", "20": "長野県",
+        "21": "岐阜県", "22": "静岡県", "23": "愛知県", "24": "三重県",
+        "25": "滋賀県", "26": "京都府", "27": "大阪府", "28": "兵庫県",
+        "29": "奈良県", "30": "和歌山県", "31": "鳥取県", "32": "島根県",
+        "33": "岡山県", "34": "広島県", "35": "山口県", "36": "徳島県",
+        "37": "香川県", "38": "愛媛県", "39": "高知県", "40": "福岡県",
+        "41": "佐賀県", "42": "長崎県", "43": "熊本県", "44": "大分県",
+        "45": "宮崎県", "46": "鹿児島県", "47": "沖縄県"
+    }
+
+    # 都道府県名を取得
+    prefecture_raw = market_data.get('prefecture', '')
+    prefecture_name = prefecture_map.get(prefecture_raw, prefecture_raw) if prefecture_raw else ''
+
+    # 市区町村名を取得（コードの場合は空に）
+    city_raw = market_data.get('city', '')
+    if city_raw and city_raw.isdigit():
+        city_name = ''  # コードの場合は表示しない
+    else:
+        city_name = city_raw
+
+    # 地区名を取得
+    district_raw = market_data.get('district', '')
+    district_name = '' if district_raw == '全体' else district_raw
+
     # 固定テンプレート
     template = """
-{prefecture} {city} {district}エリアの不動産市場について、データに基づく分析結果をご報告いたします。
+{prefecture}{city}{district}エリアの不動産市場について、データに基づく分析結果をご報告いたします。
 
 現在の市場動向として、統計上「{price_trend}」傾向が見られます。
 平均取引価格は{average_price:,}万円で、中央値は{median_price:,}万円となっています。
@@ -564,9 +595,9 @@ def _generate_safe_report(market_data: Dict[str, Any], ai_data: Dict[str, Any]) 
     """.strip()
 
     return template.format(
-        prefecture=market_data.get('prefecture', ''),
-        city=market_data.get('city', ''),
-        district=market_data.get('district', ''),
+        prefecture=prefecture_name,
+        city=city_name,
+        district=district_name,
         price_trend=ai_data.get('price_trend', '不明'),
         average_price=market_data.get('averagePrice', 0),
         median_price=market_data.get('q50', 0),
