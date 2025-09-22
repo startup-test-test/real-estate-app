@@ -687,10 +687,11 @@ const MarketAnalysis: React.FC = () => {
             const mlResponse = await propertyApi.simpleMLAnalysis(mlAnalysisData);
             console.log('ML分析レスポンス:', mlResponse);
 
-            // フィルタ条件でのML分析（5件以上の場合のみ）
+            // フィルタ条件でのML分析（Viteプロキシ問題解決済み）
             let filteredMLResult = null;
             if (filteredData.length >= 5) {
               try {
+                console.log('フィルタ条件ML分析開始:', filteredData.length, '件');
                 const filteredMLResponse = await propertyApi.simpleMLAnalysis(filteredData);
                 if (filteredMLResponse.status === 'success' && filteredMLResponse.data) {
                   filteredMLResult = filteredMLResponse.data;
@@ -699,6 +700,8 @@ const MarketAnalysis: React.FC = () => {
               } catch (err) {
                 console.error('フィルタ条件ML分析エラー:', err);
               }
+            } else {
+              console.log('フィルタ条件ML分析スキップ: データ件数', filteredData.length, '件（5件未満）');
             }
 
             if (mlResponse.status === 'success' && mlResponse.data) {

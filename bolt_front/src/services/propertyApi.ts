@@ -213,7 +213,21 @@ export class PropertyApiClient {
 
   // シンプルML分析API（フロントエンド用）
   async simpleMLAnalysis(properties: any[]): Promise<ApiResponse<any>> {
-    return this.fetchApi<ApiResponse<any>>('/api/ml/simple-analysis', {
+    // 開発環境では本番APIを直接使用（Viteプロキシの制限回避）
+    // CodespacesやGitHub Codespaces環境での判定を改善
+    const isCodespaces = window.location.hostname.includes('github.dev') ||
+                        window.location.hostname.includes('app.github.dev') ||
+                        window.location.hostname.includes('codespace') ||
+                        window.location.hostname.includes('preview.app.github.dev') ||
+                        window.location.hostname.includes('turbo-space-halibut');
+
+    const mlUrl = isCodespaces
+      ? 'https://property-develop.onrender.com/api/ml/simple-analysis'
+      : `${this.baseUrl}/api/ml/simple-analysis`;
+
+    console.log('ML分析URL決定:', { hostname: window.location.hostname, isCodespaces, mlUrl });
+
+    const response = await fetch(mlUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -223,6 +237,12 @@ export class PropertyApiClient {
         analysis_type: 'full'
       }),
     });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
   }
 }
 
