@@ -137,10 +137,15 @@ class PropertyMLAnalyzer:
         else:
             df['area'] = 60  # デフォルト値
 
+        # age列が存在し、かつ有効な値がある場合のみNaNを埋める
         if 'age' in df.columns:
-            df['age'] = df['age'].fillna(df['age'].median() if not df['age'].empty else 10)
+            # 有効な値が1つでもある場合のみ中央値で埋める
+            if df['age'].notna().any():
+                df['age'] = df['age'].fillna(df['age'].median())
+            # すべてNaNの場合（土地の場合）はNaNのままにしておく
         else:
-            df['age'] = 10  # デフォルト値
+            # age列がない場合は作成しない
+            pass
 
         df['station_distance'] = df['station_distance'].fillna(800)
 
@@ -222,9 +227,17 @@ class PropertyMLAnalyzer:
 
     def _perform_clustering(self, df):
         """K-meansクラスタリング"""
-        # 特徴量の選択
+        # 特徴量の選択（NaNを含まない列のみ）
         feature_cols = ['price_man', 'area', 'age']
-        X = df[feature_cols].values
+        available_features = [col for col in feature_cols
+                            if col in df.columns and df[col].notna().all()]
+
+        if len(available_features) < 2:
+            return {
+                'error': 'クラスタリングに必要なデータが不足しています'
+            }
+
+        X = df[available_features].values
 
         # データが少ない場合のクラスタ数調整
         n_samples = len(df)
@@ -262,7 +275,8 @@ class PropertyMLAnalyzer:
             # クラスタの特徴を決定
             avg_price = cluster_df['price_man'].mean()
             avg_area = cluster_df['area'].mean()
-            avg_age = cluster_df['age'].mean()
+            # ageがすべてNaNの場合（土地の場合）を考慮
+            avg_age = cluster_df['age'].mean() if 'age' in cluster_df.columns and cluster_df['age'].notna().any() else None
 
             # 名前の決定（相対的な価格順位ベース）
             rank = price_rank[i]
@@ -280,16 +294,24 @@ class PropertyMLAnalyzer:
                 else:
                     name = f"中価格帯{rank}"
 
-            clusters.append({
+            cluster_data = {
                 'cluster_id': int(i),
                 'name': name,
                 'size': int(cluster_mask.sum()),
                 'percentage': round(100 * cluster_mask.sum() / len(df), 1),
                 'avg_price': round(float(avg_price), 0),
-                'avg_area': round(float(avg_area), 1),
-                'avg_age': round(float(avg_age), 1),
-                'characteristics': f"平均{round(avg_area)}㎡、築{round(avg_age)}年"
-            })
+                'avg_area': round(float(avg_area), 1)
+            }
+
+            # ageが有効な場合のみ追加
+            if avg_age is not None:
+                cluster_data['avg_age'] = round(float(avg_age), 1)
+                cluster_data['characteristics'] = f"平均{round(avg_area)}㎡、築{round(avg_age)}年"
+            else:
+                # 土地の場合は面積のみ表示
+                cluster_data['characteristics'] = f"平均{round(avg_area)}㎡"
+
+            clusters.append(cluster_data)
 
         return {
             'n_clusters': n_clusters,
@@ -300,9 +322,11 @@ class PropertyMLAnalyzer:
         """線形回帰分析"""
         # 特徴量とターゲット
         feature_cols = ['area', 'age', 'station_distance']
-        available_features = [col for col in feature_cols if col in df.columns]
+        # NaN値を含まない列のみを選択
+        available_features = [col for col in feature_cols
+                            if col in df.columns and df[col].notna().all()]
 
-        if len(available_features) < 2:
+        if len(available_features) < 1:
             return {
                 'error': 'データが不足しています'
             }
