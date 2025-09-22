@@ -705,9 +705,17 @@ const MarketAnalysis: React.FC = () => {
             if (error.response) {
               console.error('エラーレスポンス:', error.response);
             }
+            // エラー時にエラーメッセージを設定
+            setMlAnalysisResult({
+              error: true,
+              message: 'ML分析でエラーが発生しました。しばらくしてから再度お試しください。'
+            });
           } finally {
             setIsMLAnalyzing(false);
           }
+        } else {
+          // データが5件未満の場合
+          console.log(`ML分析スキップ: データ件数が${mlAnalysisData.length}件で5件未満`);
         }
 
         // 公示地価データの取得

@@ -7,7 +7,7 @@ export const getApiUrl = () => {
   // 開発環境でViteプロキシを使用
   if (isDevelopment) {
     // Codespacesの場合はプロキシ経由
-    if (window.location.hostname.includes('github.dev')) {
+    if (window.location.hostname.includes('github.dev') || window.location.hostname.includes('app.github.dev')) {
       return '';  // Viteプロキシ経由で/apiにアクセス
     }
     // ローカル環境の場合

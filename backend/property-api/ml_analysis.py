@@ -274,7 +274,16 @@ class PropertyMLAnalyzer:
         """異常検知（Isolation Forest）"""
         # 特徴量の選択
         feature_cols = ['price_man', 'area', 'price_per_sqm']
-        X = df[feature_cols].values
+
+        # 無限大や異常値を除外
+        df_clean = df[feature_cols].replace([np.inf, -np.inf], np.nan).dropna()
+
+        if len(df_clean) < 5:
+            return {
+                'error': 'データが不足しています（異常値除外後）'
+            }
+
+        X = df_clean.values
 
         # サンプル数に応じてcontaminationを調整
         n_samples = len(df)
@@ -297,9 +306,9 @@ class PropertyMLAnalyzer:
 
         # 異常物件の詳細
         anomalies = []
-        for idx in range(len(df)):
+        for idx in range(len(df_clean)):
             if anomaly_labels[idx] == -1:  # 異常と判定
-                row = df.iloc[idx]
+                row = df_clean.iloc[idx]
 
                 # 異常の理由を推定
                 price_z = (row['price_man'] - df['price_man'].mean()) / df['price_man'].std()
@@ -327,7 +336,7 @@ class PropertyMLAnalyzer:
 
         # 正常範囲の計算
         normal_mask = anomaly_labels == 1
-        normal_df = df[normal_mask]
+        normal_df = df_clean[normal_mask]
 
         if len(normal_df) > 0:
             normal_range = {
