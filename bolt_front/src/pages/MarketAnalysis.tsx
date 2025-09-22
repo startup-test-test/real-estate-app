@@ -1337,25 +1337,25 @@ const MarketAnalysis: React.FC = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {mlAnalysisResult.regression.coefficients.area && (
                               <div>
-                                <span className="text-sm text-gray-600">面積1㎡あたり</span>
+                                <span className="text-sm text-gray-600">面積による価格影響</span>
                                 <p className="text-lg font-semibold text-gray-900">
                                   {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
-                                  {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円
+                                  {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円/㎡
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  (100㎡なら{(mlAnalysisResult.regression.coefficients.area * 100).toFixed(0)}万円の差)
+                                  (80㎡と100㎡では約{Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)
                                 </p>
                               </div>
                             )}
                             {mlAnalysisResult.regression.coefficients.age && (
                               <div>
-                                <span className="text-sm text-gray-600">築1年あたり</span>
+                                <span className="text-sm text-gray-600">築年数による価格影響</span>
                                 <p className="text-lg font-semibold text-gray-900">
                                   {mlAnalysisResult.regression.coefficients.age > 0 ? '+' : ''}
-                                  {mlAnalysisResult.regression.coefficients.age.toFixed(1)}万円
+                                  {mlAnalysisResult.regression.coefficients.age.toFixed(1)}万円/年
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  (築10年で{(mlAnalysisResult.regression.coefficients.age * 10).toFixed(0)}万円の差)
+                                  (築5年と築15年では約{Math.abs(mlAnalysisResult.regression.coefficients.age * 10).toFixed(0)}万円の差)
                                 </p>
                               </div>
                             )}
