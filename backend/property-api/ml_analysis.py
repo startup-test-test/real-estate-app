@@ -144,6 +144,33 @@ class PropertyMLAnalyzer:
             'price_per_sqm_avg': float(df['price_per_sqm'].mean())
         }
 
+    def _determine_optimal_clusters(self, df):
+        """価格分布から最適なクラスタ数を決定"""
+        prices = df['price_man'].values
+
+        # 価格の統計量を計算
+        q25 = np.percentile(prices, 25)
+        q50 = np.percentile(prices, 50)
+        q75 = np.percentile(prices, 75)
+        iqr = q75 - q25
+
+        # 価格の変動係数（標準偏差/平均）を計算
+        cv = np.std(prices) / np.mean(prices)
+
+        # 二峰性（bimodality）の検出
+        # 第1四分位と第3四分位の差が中央値の何倍か
+        gap_ratio = iqr / q50 if q50 > 0 else 1
+
+        # クラスタ数の決定ロジック
+        if cv > 0.6 and gap_ratio > 0.8:
+            # 価格のばらつきが大きく、二極化している場合
+            # → 2クラスタ（エコノミー/プレミアム）
+            return 2
+        else:
+            # 通常の分布
+            # → 3クラスタ（低/中/高）
+            return 3
+
     def _perform_clustering(self, df):
         """K-meansクラスタリング"""
         # 特徴量の選択
@@ -155,7 +182,8 @@ class PropertyMLAnalyzer:
         if n_samples < 10:
             n_clusters = min(2, n_samples)
         else:
-            n_clusters = 3  # 10件以上は常に3クラスタ（低・中・高）
+            # 価格の分布を確認して最適なクラスタ数を決定
+            n_clusters = self._determine_optimal_clusters(df)
 
         # 正規化
         X_scaled = self.scaler.fit_transform(X)
@@ -190,7 +218,8 @@ class PropertyMLAnalyzer:
             # 名前の決定（相対的な価格順位ベース）
             rank = price_rank[i]
             if n_clusters == 2:
-                name = "低価格帯" if rank == 0 else "高価格帯"
+                # 2クラスタの場合の名前（価格差が大きいことを示す）
+                name = "エコノミー価格帯" if rank == 0 else "プレミアム価格帯"
             elif n_clusters == 3:
                 name = ["低価格帯", "中価格帯", "高価格帯"][rank]
             else:

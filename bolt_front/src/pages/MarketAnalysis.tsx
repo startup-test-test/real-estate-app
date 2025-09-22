@@ -683,13 +683,33 @@ const MarketAnalysis: React.FC = () => {
             console.log('送信データサンプル:', mlAnalysisData.slice(0, 2));
             console.log('送信データ全体構造:', JSON.stringify(mlAnalysisData.slice(0, 1), null, 2));
 
+            // 地域全体のML分析
             const mlResponse = await propertyApi.simpleMLAnalysis(mlAnalysisData);
             console.log('ML分析レスポンス:', mlResponse);
 
+            // フィルタ条件でのML分析（5件以上の場合のみ）
+            let filteredMLResult = null;
+            if (filteredData.length >= 5) {
+              try {
+                const filteredMLResponse = await propertyApi.simpleMLAnalysis(filteredData);
+                if (filteredMLResponse.status === 'success' && filteredMLResponse.data) {
+                  filteredMLResult = filteredMLResponse.data;
+                  console.log('フィルタ条件ML分析結果:', filteredMLResult);
+                }
+              } catch (err) {
+                console.error('フィルタ条件ML分析エラー:', err);
+              }
+            }
+
             if (mlResponse.status === 'success' && mlResponse.data) {
-              setMlAnalysisResult(mlResponse.data);  // mlResponse.dataを保存（statistics, clustering等が直接入っている）
+              // 両方の結果を保存
+              setMlAnalysisResult({
+                ...mlResponse.data,
+                filtered: filteredMLResult  // フィルタ条件の結果を追加
+              });
               console.log('ML分析結果セット完了');
               console.log('ML分析結果の内容:', mlResponse.data);
+              console.log('フィルタ条件ML分析結果:', filteredMLResult);
               console.log('データ構造確認 - clustering:', mlResponse.data.clustering);
               console.log('データ構造確認 - regression:', mlResponse.data.regression);
               console.log('データ構造確認 - anomaly_detection:', mlResponse.data.anomaly_detection);
@@ -1225,27 +1245,80 @@ const MarketAnalysis: React.FC = () => {
                 {/* クラスタリング分析 */}
                 {mlAnalysisResult.clustering && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 価格グループ分析（K-means）</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {mlAnalysisResult.clustering.clusters.map((cluster: any) => (
-                        <div key={cluster.cluster_id} className="bg-gray-50 rounded-lg p-4">
-                          <div className="font-semibold text-gray-800">{cluster.name}</div>
-                          <div className="text-2xl font-bold text-gray-900 mt-1">
-                            {cluster.avg_price.toLocaleString()}万円
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                      📊 価格グループ分析（K-means）
+                    </h3>
+
+                    {/* 地域全体の分析 */}
+                    <div className="flex gap-4 mb-4">
+                      {/* サンプル数ボックス */}
+                      <div className="bg-blue-50 rounded-lg p-4 flex-shrink-0">
+                        <div className="text-sm text-blue-700 font-medium">分析サンプル数</div>
+                        <div className="text-3xl font-bold text-blue-900 mt-1">
+                          {mlDataCount}
+                          <span className="text-lg font-normal">件</span>
+                        </div>
+                        <div className="text-xs text-blue-600 mt-2">
+                          地域全体のデータ
+                        </div>
+                      </div>
+
+                      {/* クラスタグリッド */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                        {mlAnalysisResult.clustering.clusters.map((cluster: any) => (
+                          <div key={cluster.cluster_id} className="bg-gray-50 rounded-lg p-4">
+                            <div className="font-semibold text-gray-800">{cluster.name}</div>
+                            <div className="text-2xl font-bold text-gray-900 mt-1">
+                              {cluster.avg_price.toLocaleString()}万円
+                            </div>
+                            <div className="text-sm text-gray-600 mt-2">
+                              <p>物件数: {cluster.size}件 ({cluster.percentage}%)</p>
+                              <p>{cluster.characteristics}</p>
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-600 mt-2">
-                            <p>物件数: {cluster.size}件 ({cluster.percentage}%)</p>
-                            <p>{cluster.characteristics}</p>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* フィルタ条件での分析 */}
+                    {mlAnalysisResult.filtered && mlAnalysisResult.filtered.clustering && (
+                      <div className="flex gap-4 pt-4 border-t border-gray-200">
+                        {/* サンプル数ボックス */}
+                        <div className="bg-green-50 rounded-lg p-4 flex-shrink-0">
+                          <div className="text-sm text-green-700 font-medium">フィルタ条件</div>
+                          <div className="text-3xl font-bold text-green-900 mt-1">
+                            {filteredDataCount}
+                            <span className="text-lg font-normal">件</span>
+                          </div>
+                          <div className="text-xs text-green-600 mt-2">
+                            延床面積{targetArea}±{areaTolerance}㎡<br/>
+                            築年数{targetYear}±{yearTolerance}年
                           </div>
                         </div>
-                      ))}
-                    </div>
+
+                        {/* フィルタ条件のクラスタグリッド */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                          {mlAnalysisResult.filtered.clustering.clusters.map((cluster: any) => (
+                            <div key={cluster.cluster_id} className="bg-green-50 rounded-lg p-4">
+                              <div className="font-semibold text-green-800">{cluster.name}</div>
+                              <div className="text-2xl font-bold text-green-900 mt-1">
+                                {cluster.avg_price.toLocaleString()}万円
+                              </div>
+                              <div className="text-sm text-green-600 mt-2">
+                                <p>物件数: {cluster.size}件 ({cluster.percentage}%)</p>
+                                <p>{cluster.characteristics}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {/* 価格傾向分析と市場価格の分布を横並び */}
-                {(mlAnalysisResult.regression || mlAnalysisResult.anomaly_detection) && (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                {/* 価格傾向分析 */}
+                {mlAnalysisResult.regression && (
+                  <div className="mb-6">
                     {/* 価格傾向分析 */}
                     {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
                       <div>
@@ -1313,65 +1386,11 @@ const MarketAnalysis: React.FC = () => {
                         </div>
                       </div>
                     )}
-
-                    {/* 市場価格の分布 */}
-                    {mlAnalysisResult.anomaly_detection && mlAnalysisResult.anomaly_detection.normal_range && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">💰 市場価格の分布</h3>
-                        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4">
-                          <div className="mb-3">
-                            <p className="text-gray-800 font-medium mb-2">
-                              このエリアの価格分布：
-                            </p>
-                            <div className="flex items-center space-x-2 text-sm">
-                              <div className="flex items-center">
-                                <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                                <span>{Math.round((1 - mlAnalysisResult.anomaly_detection.anomaly_rate/100) * 100)}%が主要価格帯</span>
-                              </div>
-                              {mlAnalysisResult.anomaly_detection.anomaly_count > 0 && (
-                                <div className="flex items-center">
-                                  <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-                                  <span>{Math.round(mlAnalysisResult.anomaly_detection.anomaly_rate)}%が特別価格</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          {mlAnalysisResult.anomaly_detection.normal_range && (
-                            <div className="bg-white rounded-lg p-3 mt-3">
-                              <p className="font-medium text-gray-700 mb-2">📊 主要な価格帯：</p>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex items-center">
-                                  <span className="text-gray-600 mr-2">価格帯:</span>
-                                  <span className="font-semibold text-gray-900">
-                                    {mlAnalysisResult.anomaly_detection.normal_range.price.min.toLocaleString()}〜
-                                    {mlAnalysisResult.anomaly_detection.normal_range.price.max.toLocaleString()}万円
-                                  </span>
-                                </div>
-                                <div className="flex items-center">
-                                  <span className="text-gray-600 mr-2">㎡単価:</span>
-                                  <span className="font-semibold text-gray-900">
-                                    {(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.min / 10000).toFixed(1)}〜
-                                    {(mlAnalysisResult.anomaly_detection.normal_range.price_per_sqm.max / 10000).toFixed(1)}万円/㎡
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="bg-blue-50 rounded p-2 mt-3">
-                                <p className="text-xs text-blue-800">
-                                  💡 <strong>活用ポイント：</strong>
-                                  この価格帯が相場の目安となります。
-                                  これより大幅に安い物件は要確認、高い物件は付加価値がある可能性があります。
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
                 <div className="text-xs text-gray-500 border-t pt-3 mt-4">
-                  <p>※機械学習アルゴリズム（K-means、線形回帰、Isolation Forest）による分析結果</p>
+                  <p>※機械学習アルゴリズム（K-means、線形回帰）による分析結果</p>
                   <p>※予測モデルは参考値であり、実際の取引価格を保証するものではありません</p>
                 </div>
               </div>
@@ -1565,15 +1584,6 @@ const MarketAnalysis: React.FC = () => {
                   </div>
                 )}
 
-                {/* AI異常値検出 */}
-                <div className="text-sm text-gray-700">
-                  <h4 className="font-bold mb-2">⚠️ AI異常値検出</h4>
-                  {allProperties.length >= 5 ? (
-                    <p>✅ 統計的に異常な物件は検出されませんでした</p>
-                  ) : (
-                    <p>異常検出分析には5件以上のデータが必要です</p>
-                  )}
-                </div>
 
                 <div className="bg-blue-50 rounded-lg p-4 mt-4">
                   <h4 className="font-bold text-blue-900 mb-2">📌 重要事項</h4>
