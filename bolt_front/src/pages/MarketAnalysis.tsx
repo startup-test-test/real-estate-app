@@ -374,32 +374,78 @@ const MarketAnalysis: React.FC = () => {
 
       console.log('年次集計結果数:', yearlyResults.length);
 
+      // 類似物件分析用の統計（フィルタ済みデータ）
+      let similarStats = null;
       if (filteredData.length > 0) {
-        // フィルタ後の全データから統計を計算
-        const allPrices = filteredData.map(item => {
-          // 取引価格（万円）フィールドがある場合はそのまま使用、ない場合は円から万円に変換
+        const filteredPrices = filteredData.map(item => {
           const price = item['取引価格（万円）'];
           if (price !== undefined && price !== null) {
-            return price; // 既に万円単位
+            return price;
           }
-          return (item.price || item.取引価格 || 0) / 10000; // 円を万円に変換
+          return (item.price || item.取引価格 || 0) / 10000;
         });
-        const q25 = Math.round(getPercentile(allPrices, 0.25));
-        const q50 = Math.round(getPercentile(allPrices, 0.50));
-        const q75 = Math.round(getPercentile(allPrices, 0.75));
-        const avgPrice = allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
+        similarStats = {
+          q25: Math.round(getPercentile(filteredPrices, 0.25)),
+          q50: Math.round(getPercentile(filteredPrices, 0.50)),
+          q75: Math.round(getPercentile(filteredPrices, 0.75)),
+          avgPrice: filteredPrices.reduce((sum, price) => sum + price, 0) / filteredPrices.length,
+          count: filteredData.length,
+          data: filteredData
+        };
+      }
 
-        // 価格トレンドを線形回帰で計算（streamlit_app.pyと完全に同じロジック）
-        let priceChange = 0;
-        let trendSlope = 0;
-        let pValue = 1.0; // 統計的有意性のp値（デフォルトは有意でない）
+      // マーケット全体分析用の統計（全データ）
+      let marketStats = null;
+      if (allData.length > 0) {
+        const allPrices = allData.map(item => {
+          const price = item['取引価格（万円）'];
+          if (price !== undefined && price !== null) {
+            return price;
+          }
+          return (item.price || item.取引価格 || 0) / 10000;
+        });
+        marketStats = {
+          q25: Math.round(getPercentile(allPrices, 0.25)),
+          q50: Math.round(getPercentile(allPrices, 0.50)),
+          q75: Math.round(getPercentile(allPrices, 0.75)),
+          avgPrice: allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length,
+          count: allData.length,
+          data: allData
+        };
+      }
 
-        if (yearlyResults.length >= 2) {
+      if (similarStats && marketStats) {
+
+        // マーケット全体の価格トレンドを線形回帰で計算（全データベース）
+        let marketPriceChange = 0;
+        let marketTrendSlope = 0;
+        let marketPValue = 1.0;
+
+        // 全データから年次集計を再計算
+        const marketYearlyResults: any[] = [];
+        for (let year = fromYear; year <= toYear; year++) {
+          const yearData = allData.filter(item => item.dataYear === year);
+          if (yearData.length > 0) {
+            const prices = yearData.map(item => {
+              const price = item['取引価格（万円）'];
+              if (price !== undefined && price !== null) {
+                return price;
+              }
+              return (item.price || item.取引価格 || 0) / 10000;
+            });
+            marketYearlyResults.push({
+              year: year,
+              averagePrice: prices.reduce((sum, price) => sum + price, 0) / prices.length,
+              count: yearData.length
+            });
+          }
+        }
+
+        if (marketYearlyResults.length >= 2) {
           // 年ごとの平均価格から線形回帰を計算
-          // yearlyResultsを年度順にソート（古い順）
-          const sortedResults = [...yearlyResults].sort((a, b) => a.year - b.year);
-          const years = sortedResults.map(y => y.year);
-          const prices = sortedResults.map(y => y.averagePrice);
+          const sortedMarketResults = [...marketYearlyResults].sort((a, b) => a.year - b.year);
+          const years = sortedMarketResults.map(y => y.year);
+          const prices = sortedMarketResults.map(y => y.averagePrice);
 
           // 簡易的な線形回帰
           const n = years.length;
@@ -408,13 +454,35 @@ const MarketAnalysis: React.FC = () => {
           const sumXY = years.reduce((a, b, i) => a + b * prices[i], 0);
           const sumX2 = years.reduce((a, b) => a + b * b, 0);
 
-          trendSlope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+          marketTrendSlope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
 
-          // 年次成長率を傾きから計算（基準年＝最も古い年の価格に対する割合）
-          const basePrice = prices[0]; // 最も古い年の価格
-          if (basePrice > 0) {
-            priceChange = (trendSlope / basePrice) * 100;
+          // 年次成長率を計算 - 前年比較方式（より直感的）
+          // 直近2年のデータがあれば前年比を計算
+          if (sortedMarketResults.length >= 2) {
+            const currentYearData = sortedMarketResults[sortedMarketResults.length - 1];
+            const prevYearData = sortedMarketResults[sortedMarketResults.length - 2];
+
+            if (prevYearData.averagePrice > 0) {
+              // 前年比の変化率
+              const yearOverYearChange = ((currentYearData.averagePrice - prevYearData.averagePrice) / prevYearData.averagePrice) * 100;
+              marketPriceChange = yearOverYearChange;
+
+              console.log('価格トレンド（前年比）:', {
+                prevYear: prevYearData.year,
+                prevYearPrice: prevYearData.averagePrice.toFixed(0) + '万円',
+                currentYear: currentYearData.year,
+                currentYearPrice: currentYearData.averagePrice.toFixed(0) + '万円',
+                yearOverYearChange: yearOverYearChange.toFixed(1) + '%'
+              });
+            }
           }
+
+          // 代替案：全期間の単純平均成長率
+          // if (sortedMarketResults.length >= 2) {
+          //   const totalGrowth = ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100;
+          //   const yearSpan = years[years.length - 1] - years[0];
+          //   marketPriceChange = totalGrowth / yearSpan;  // 単純平均
+          // }
 
           // 簡易的なp値の計算（相関係数ベース）
           // 実際のp値計算は複雑なため、ここでは相関係数から推定
@@ -431,48 +499,76 @@ const MarketAnalysis: React.FC = () => {
 
           // 簡易的なp値推定（t分布の近似）
           // t値が2.0以上なら有意（p < 0.05の近似）
-          pValue = tStat >= 2.0 ? 0.01 : 0.5;
+          marketPValue = tStat >= 2.0 ? 0.01 : 0.5;
+
+          // avgPriceを計算
+          const avgPrice = sumY / n;
 
           // デバッグ用出力（詳細版）
-          console.log('価格トレンド分析詳細:', {
+          console.log('マーケット価格トレンド分析:', {
             years,
             prices,
-            rawPriceChange: priceChange,
-            trendSlope,
-            basePrice,
+            rawPriceChange: marketPriceChange,
+            trendSlope: marketTrendSlope,
+            avgPrice: avgPrice,
             r,
             r2,
             tStat,
-            pValue,
-            isSignificant: pValue < 0.05,
-            finalPriceChange: pValue >= 0.05 ? 0 : priceChange,
-            yearlyResults: sortedResults
+            pValue: marketPValue,
+            isSignificant: marketPValue < 0.05,
+            finalPriceChange: marketPValue >= 0.05 ? 0 : marketPriceChange,
+            yearlyResults: sortedMarketResults
           });
         }
 
         // 統計的有意性に基づいて価格変動を調整（Streamlitと同じロジック）
-        if (pValue >= 0.05) {
+        if (marketPValue >= 0.05) {
           // 統計的に有意でない場合は0%とする
-          priceChange = 0;
+          marketPriceChange = 0;
         }
 
-        // クラスタリング分析の準備（フィルタ後データで実行）
-        const clusters = performSimpleClustering(filteredData);
+        // クラスタリング分析の準備（類似物件用とマーケット全体用）
+        const similarClusters = performSimpleClustering(filteredData);
+        const marketClusters = performSimpleClustering(allData);
 
         const newMarketData = {
           prefecture: selectedPrefecture,
           city: selectedCity,
           district: selectedDistrict || '全体',
-          averagePrice: Math.round(avgPrice),
-          priceChange: priceChange,
+
+          // 類似物件分析（フィルタ済み）
+          similar: {
+            averagePrice: Math.round(similarStats.avgPrice),
+            q25: similarStats.q25,
+            q50: similarStats.q50,
+            q75: similarStats.q75,
+            count: similarStats.count,
+            clusters: similarClusters
+          },
+
+          // マーケット全体分析（全データ）
+          market: {
+            averagePrice: Math.round(marketStats.avgPrice),
+            priceChange: marketPriceChange,
+            q25: marketStats.q25,
+            q50: marketStats.q50,
+            q75: marketStats.q75,
+            count: marketStats.count,
+            clusters: marketClusters,
+            yearlyData: marketYearlyResults
+          },
+
+          // 互換性のため残す（後で削除予定）
+          averagePrice: Math.round(similarStats.avgPrice),
+          priceChange: marketPriceChange,
           totalTransactions: filteredData.length,
-          averagePricePerSqm: 0,  // 必要に応じて計算
+          averagePricePerSqm: 0,
           yearlyData: yearlyResults,
-          clusters: clusters,
-          q25: q25,
-          q50: q50,
-          q75: q75,
-          similarPropertiesCount: filteredData.length  // フィルタ後のデータ数
+          clusters: similarClusters,
+          q25: similarStats.q25,
+          q50: similarStats.q50,
+          q75: similarStats.q75,
+          similarPropertiesCount: filteredData.length
         };
         setMarketData(newMarketData);
 
@@ -1033,98 +1129,122 @@ const MarketAnalysis: React.FC = () => {
               </div>
             )}
 
-            {/* AI市場分析セクション（streamlit_app.pyと同じ） */}
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI市場分析</h2>
+            {/* AI類似物件分析セクション - ユーザー条件に合う物件のみ */}
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              📊 AI類似物件分析
+              <span className="text-sm font-normal text-gray-600 ml-2">
+                （あなたの条件に合う物件）
+              </span>
+            </h2>
 
-            {/* 類似物件の価格分布（streamlit_app.pyと同じ） */}
+            {/* 類似物件の価格分布 */}
             <div className="bg-green-50 rounded-lg border border-green-200 p-6 mb-6">
               <h3 className="text-lg font-semibold text-green-700 mb-4">
-                🎯 **あなたの条件に近い物件の価格分布**
+                🎯 **{(() => {
+                  const prefName = prefectures.find(p => p.code === selectedPrefecture)?.name || selectedPrefecture;
+                  const cityName = cities.find(c => c.code === selectedCity)?.name || '';
+                  const districtName = selectedDistrict || '';
+                  return `${prefName}${cityName}${districtName}`;
+                })()}の{selectedPropertyType === '02' ? '戸建て' : 'マンション'}価格分布 | 延床面積{targetArea}±{areaTolerance}㎡・築年数{targetYear}±{yearTolerance}年**
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                延床面積 {targetArea}±{areaTolerance}㎡、建築年 {targetYear}±{yearTolerance}年
-              </p>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm font-medium text-gray-700 mb-1">取引件数</div>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {marketData.similarPropertiesCount || 0}件
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">指定条件に該当する物件数</p>
+                </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">下位25%</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}万円以下
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">類似物件の25%がこの価格以下</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    類似物件の25%がこの価格以下<br/>
+                    {marketData.similarPropertiesCount ? `${marketData.similarPropertiesCount}件中${Math.round(marketData.similarPropertiesCount * 0.25)}件` : ''}
+                  </p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">中央値レンジ</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q25?.toLocaleString() || 0}〜{marketData.q75?.toLocaleString() || 0}万円
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">類似物件の50%がこの範囲内</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    類似物件の50%がこの範囲内<br/>
+                    {marketData.similarPropertiesCount ? `${marketData.similarPropertiesCount}件中${Math.round(marketData.similarPropertiesCount * 0.5)}件` : ''}
+                  </p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <div className="text-sm font-medium text-gray-700 mb-1">上位25%</div>
                   <p className="text-2xl font-bold text-gray-900">
                     {marketData.q75?.toLocaleString() || 0}万円以上
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">類似物件の25%がこの価格以上</p>
-                </div>
-                <div className="bg-white rounded-lg p-4">
-                  <div className="text-sm font-medium text-gray-700 mb-1">分析サンプル数</div>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {marketData.similarPropertiesCount || 0}件
+                  <p className="text-xs text-gray-500 mt-1">
+                    類似物件の25%がこの価格以上<br/>
+                    {marketData.similarPropertiesCount ? `${marketData.similarPropertiesCount}件中${Math.round(marketData.similarPropertiesCount * 0.25)}件` : ''}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">指定条件に該当する物件数</p>
                 </div>
               </div>
             </div>
 
-            {/* マーケット分析セクション */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4">📊 **マーケット分析**</h3>
+            {/* マーケット分析セクション - 地域全体の分析 */}
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              📊 **{(() => {
+                const prefName = prefectures.find(p => p.code === selectedPrefecture)?.name || selectedPrefecture;
+                const cityName = cities.find(c => c.code === selectedCity)?.name || '';
+                const districtName = selectedDistrict || '';
+                const propertyType = selectedPropertyType === '02' ? '戸建' : 'マンション';
+                return `${prefName}${cityName}${districtName}の${propertyType}全体の分析`;
+              })()}**
+            </h3>
 
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* AI価格トレンド分析 */}
+                {/* 取引件数 */}
                 <div className="bg-white rounded-lg p-4 border border-gray-200">
-                  <div className="text-sm font-medium text-gray-700 mb-1">AI価格トレンド分析</div>
+                  <div className="text-sm font-medium text-gray-700 mb-1">取引件数</div>
                   <p className="text-2xl font-bold text-gray-900">
-                    {marketData.priceChange === 0 ?
-                      '→ ±0%/年' :
-                      (marketData.priceChange > 0 ?
-                        `📈 +${marketData.priceChange.toFixed(1)}%/年` :
-                        `📉 ${marketData.priceChange.toFixed(1)}%/年`)
-                    }
+                    {marketData.market.count}件
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {marketData.priceChange === 0 ?
-                      '価格変動なし' :
-                      (marketData.priceChange > 0 ? '明確な上昇傾向' : '明確な下降傾向')
-                    }
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">地域全体の物件数</p>
                 </div>
 
                 {/* 下位25% */}
                 <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="text-sm font-medium text-gray-700 mb-1">下位25%</div>
                   <p className="text-2xl font-bold text-gray-900">
-                    {marketData.q25?.toLocaleString() || 0}万円以下
+                    {marketData.market.q25?.toLocaleString() || 0}万円以下
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">市場の25%がこの価格以下</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    地域全体の25%がこの価格以下<br/>
+                    {marketData.market.count ? `${marketData.market.count}件中${Math.round(marketData.market.count * 0.25)}件` : ''}
+                  </p>
                 </div>
 
                 {/* 中央値レンジ */}
                 <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="text-sm font-medium text-gray-700 mb-1">中央値レンジ</div>
                   <p className="text-2xl font-bold text-gray-900">
-                    {marketData.q25?.toLocaleString() || 0}〜{marketData.q75?.toLocaleString() || 0}万円
+                    {marketData.market.q25?.toLocaleString() || 0}〜{marketData.market.q75?.toLocaleString() || 0}万円
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">市場の50%がこの範囲内<br/>中央値: {marketData.q50?.toLocaleString() || 0}万円</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    地域全体の50%がこの範囲内<br/>
+                    {marketData.market.count ? `${marketData.market.count}件中${Math.round(marketData.market.count * 0.5)}件` : ''}<br/>
+                    中央値: {marketData.market.q50?.toLocaleString() || 0}万円
+                  </p>
                 </div>
 
                 {/* 上位25% */}
                 <div className="bg-white rounded-lg p-4 border border-gray-200">
                   <div className="text-sm font-medium text-gray-700 mb-1">上位25%</div>
                   <p className="text-2xl font-bold text-gray-900">
-                    {marketData.q75?.toLocaleString() || 0}万円以上
+                    {marketData.market.q75?.toLocaleString() || 0}万円以上
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">市場の25%がこの価格以上<br/>分析対象: {marketData.similarPropertiesCount}件</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    地域全体の25%がこの価格以上<br/>
+                    {marketData.market.count ? `${marketData.market.count}件中${Math.round(marketData.market.count * 0.25)}件` : ''}
+                  </p>
                 </div>
               </div>
             </div>
