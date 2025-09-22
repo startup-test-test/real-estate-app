@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 import json as json_module
+import openai
 
 # ローカルモジュールのインポート
 from real_estate_client import RealEstateAPIClient
@@ -406,8 +407,7 @@ async def generate_market_analysis_summary(request: MarketAnalysisSummaryRequest
 
         # OpenAI APIを呼び出し
         try:
-            from openai import OpenAI
-            client = OpenAI(api_key=openai_api_key)
+            # OpenAI APIクライアントは既に設定済み
 
             # テンプレート型の安全なシステムプロンプト
             system_prompt = (
@@ -417,20 +417,19 @@ async def generate_market_analysis_summary(request: MarketAnalysisSummaryRequest
                 "投資判断や購入推奨は行わないでください。"
             )
 
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.3,  # 低温度で保守的な出力
-                max_tokens=500,  # JSONのみなので少なめ
-                response_format={"type": "json_object"}  # JSONモードを指定
+                max_tokens=500  # JSONのみなので少なめ
             )
 
             # JSONレスポンスの解析
             try:
-                ai_data = json_module.loads(response.choices[0].message.content)
+                ai_data = json_module.loads(response['choices'][0]['message']['content'])
             except json_module.JSONDecodeError:
                 # JSONパースエラーの場合はデフォルト値
                 ai_data = {

@@ -163,6 +163,39 @@ export class PropertyApiClient {
 
     return this.fetchApi<ApiResponse<any[]>>(`/api/land-prices?${queryParams.toString()}`);
   }
+
+  /**
+   * AI市場分析サマリーを生成
+   */
+  async generateMarketAnalysisSummary(params: {
+    marketData: any;
+    similarProperties: any[];
+    landPriceData?: any[];
+    targetArea?: number;
+    targetYear?: number;
+  }): Promise<ApiResponse<{
+    summary: string;
+    key_insights: string[];
+    recommendations: string[];
+  }>> {
+    return this.fetchApi<ApiResponse<{
+      summary: string;
+      key_insights: string[];
+      recommendations: string[];
+    }>>('/api/market-analysis-summary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        market_data: params.marketData,
+        similar_properties: params.similarProperties,
+        land_price_data: params.landPriceData || [],
+        target_area: params.targetArea,
+        target_year: params.targetYear
+      }),
+    });
+  }
 }
 
 // シングルトンインスタンスをエクスポート

@@ -60,6 +60,14 @@ const MarketAnalysis: React.FC = () => {
   const [districts, setDistricts] = useState<Array<{code: string, name: string}>>([]);
   const [error, setError] = useState<string | null>(null);
 
+  // AI分析サマリーの状態
+  const [aiSummary, setAiSummary] = useState<{
+    summary: string;
+    key_insights: string[];
+    recommendations: string[];
+  } | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
   // 都道府県リストを取得
   React.useEffect(() => {
     const loadPrefectures = async () => {
@@ -451,7 +459,7 @@ const MarketAnalysis: React.FC = () => {
         // クラスタリング分析の準備（フィルタ後データで実行）
         const clusters = performSimpleClustering(filteredData);
 
-        setMarketData({
+        const newMarketData = {
           prefecture: selectedPrefecture,
           city: selectedCity,
           district: selectedDistrict || '全体',
@@ -465,7 +473,29 @@ const MarketAnalysis: React.FC = () => {
           q50: q50,
           q75: q75,
           similarPropertiesCount: filteredData.length  // フィルタ後のデータ数
-        });
+        };
+        setMarketData(newMarketData);
+
+        // AI分析サマリーを生成
+        try {
+          setIsAiLoading(true);
+          const aiResponse = await propertyApi.generateMarketAnalysisSummary({
+            marketData: newMarketData,
+            similarProperties: filteredData.slice(0, 20), // 最大20件の類似物件
+            landPriceData: landPriceData,
+            targetArea: targetArea,
+            targetYear: targetYear
+          });
+
+          if (aiResponse.status === 'success' && aiResponse.data) {
+            setAiSummary(aiResponse.data);
+          }
+        } catch (aiErr) {
+          console.error('AI分析エラー:', aiErr);
+          // AI分析が失敗してもメイン分析は表示
+        } finally {
+          setIsAiLoading(false);
+        }
 
         // 公示地価データの取得
         try {
@@ -944,6 +974,59 @@ const MarketAnalysis: React.FC = () => {
         {/* 分析結果表示セクション */}
         {marketData && (
           <div className="space-y-6">
+            {/* AI市場分析サマリー */}
+            {aiSummary && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI市場分析サマリー</h2>
+
+                {/* サマリー */}
+                <div className="bg-white rounded-lg p-4 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">📝 分析サマリー</h3>
+                  <p className="text-gray-700 whitespace-pre-line">{aiSummary.summary}</p>
+                </div>
+
+                {/* 主要な洞察 */}
+                {aiSummary.key_insights && aiSummary.key_insights.length > 0 && (
+                  <div className="bg-white rounded-lg p-4 mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">💡 主要な洞察</h3>
+                    <ul className="space-y-2">
+                      {aiSummary.key_insights.map((insight, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-blue-500 mr-2">•</span>
+                          <span className="text-gray-700">{insight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* 推奨事項 */}
+                {aiSummary.recommendations && aiSummary.recommendations.length > 0 && (
+                  <div className="bg-white rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">📋 推奨事項</h3>
+                    <ul className="space-y-2">
+                      {aiSummary.recommendations.map((recommendation, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-green-500 mr-2">✓</span>
+                          <span className="text-gray-700">{recommendation}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* AIローディング表示 */}
+            {isAiLoading && (
+              <div className="bg-blue-50 rounded-lg border border-blue-200 p-6 mb-6">
+                <div className="flex items-center">
+                  <Loader className="h-5 w-5 text-blue-600 animate-spin mr-3" />
+                  <span className="text-gray-700">AI分析サマリーを生成中...</span>
+                </div>
+              </div>
+            )}
+
             {/* AI市場分析セクション（streamlit_app.pyと同じ） */}
             <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI市場分析</h2>
 
