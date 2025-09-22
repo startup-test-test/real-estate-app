@@ -19,6 +19,7 @@ import openai
 
 # ローカルモジュールのインポート
 from real_estate_client import RealEstateAPIClient
+from ml_analysis import PropertyMLAnalyzer, simple_ml_analysis
 
 # 環境変数の読み込み
 load_dotenv()
@@ -684,6 +685,76 @@ async def general_exception_handler(request, exc):
             "timestamp": datetime.now().isoformat()
         }
     )
+
+# ========================================
+# 機械学習分析エンドポイント
+# ========================================
+
+class MLAnalysisRequest(BaseModel):
+    """機械学習分析リクエスト"""
+    properties: List[Dict[str, Any]] = Field(..., description="分析対象の物件データリスト")
+    analysis_type: str = Field('full', description="分析タイプ: full, clustering, regression, anomaly")
+
+@app.post("/api/ml/analyze")
+async def analyze_properties_ml(request: MLAnalysisRequest):
+    """
+    機械学習を使用した物件データの分析
+
+    - K-meansクラスタリング: 価格帯の自動グループ化
+    - 線形回帰: 価格予測モデルの構築
+    - 異常検知: Isolation Forestによる異常物件の検出
+    """
+    try:
+        logger.info(f"ML分析リクエスト: {len(request.properties)}件, タイプ: {request.analysis_type}")
+
+        # ML分析の実行
+        analyzer = PropertyMLAnalyzer()
+        result = analyzer.analyze(request.properties, request.analysis_type)
+
+        logger.info(f"ML分析完了: ステータス={result.get('status')}")
+
+        return JSONResponse(
+            status_code=200,
+            content=result
+        )
+
+    except Exception as e:
+        logger.error(f"ML分析エラー: {str(e)}", exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "error",
+                "message": "機械学習分析中にエラーが発生しました",
+                "detail": str(e)
+            }
+        )
+
+@app.post("/api/ml/simple-analysis")
+async def simple_ml_analysis_endpoint(request: MLAnalysisRequest):
+    """
+    シンプルなML分析API（フロントエンド連携用）
+    """
+    try:
+        logger.info(f"シンプルML分析リクエスト: {len(request.properties)}件")
+
+        # シンプルな分析の実行
+        result = simple_ml_analysis(request.properties)
+
+        return JSONResponse(
+            status_code=200,
+            content=result
+        )
+
+    except Exception as e:
+        logger.error(f"シンプルML分析エラー: {str(e)}", exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "error",
+                "message": "分析処理中にエラーが発生しました",
+                "detail": str(e)
+            }
+        )
 
 # Renderデプロイ用の設定
 if __name__ == "__main__":

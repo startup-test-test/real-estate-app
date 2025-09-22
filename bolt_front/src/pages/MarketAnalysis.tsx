@@ -60,13 +60,13 @@ const MarketAnalysis: React.FC = () => {
   const [districts, setDistricts] = useState<Array<{code: string, name: string}>>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // AI分析サマリーの状態
-  const [aiSummary, setAiSummary] = useState<{
-    summary: string;
-    key_insights: string[];
-    recommendations: string[];
+  // 統計分析の状態
+  const [statisticalAnalysis, setStatisticalAnalysis] = useState<{
+    priceRange: { min: number; max: number; count: number; percentage: number };
+    areaImpact: number;
+    yearImpact: number;
+    keyPoints: string[];
   } | null>(null);
-  const [isAiLoading, setIsAiLoading] = useState(false);
 
   // 都道府県リストを取得
   React.useEffect(() => {
@@ -149,6 +149,12 @@ const MarketAnalysis: React.FC = () => {
     { code: '02', name: '戸建て' },
     { code: '07', name: 'マンション' }
   ];
+
+  // 平均値を計算するヘルパー関数
+  const calculateAverage = (numbers: number[]): number => {
+    if (numbers.length === 0) return 0;
+    return numbers.reduce((a, b) => a + b, 0) / numbers.length;
+  };
 
   // 市場分析実行（streamlit_app.pyと同じロジック）
   const handleAnalyze = async () => {
@@ -572,32 +578,89 @@ const MarketAnalysis: React.FC = () => {
         };
         setMarketData(newMarketData);
 
-        // AI分析サマリーを生成
-        try {
-          setIsAiLoading(true);
-          const aiResponse = await propertyApi.generateMarketAnalysisSummary({
-            marketData: newMarketData,
-            similarProperties: filteredData.slice(0, 20), // 最大20件の類似物件
-            landPriceData: landPriceData,
-            targetArea: targetArea,
-            targetYear: targetYear
-          });
+        // 統計分析を実行（フロントエンドで計算）
+        // filteredDataの価格を万円単位に統一
+        const filteredPricesInMan = filteredData.map(d => {
+          // 既に万円単位の場合はそのまま、円単位の場合は変換
+          const price = d['取引価格（万円）'] || (d.price ? d.price / 10000 : 0) || (d.取引価格 ? d.取引価格 / 10000 : 0);
+          return price;
+        });
 
-          if (aiResponse.status === 'success') {
-            // APIレスポンスを直接使用（dataフィールドなし）
-            const response = aiResponse as any;
-            setAiSummary({
-              summary: response.summary || '',
-              key_insights: response.key_insights || [],
-              recommendations: response.recommendations || []
-            });
-          }
-        } catch (aiErr) {
-          console.error('AI分析エラー:', aiErr);
-          // AI分析が失敗してもメイン分析は表示
-        } finally {
-          setIsAiLoading(false);
+        // 価格範囲内の物件数を計算
+        const priceRangeCount = filteredPricesInMan.filter(price => price >= similarStats.q25 && price <= similarStats.q75).length;
+        const priceRange = {
+          min: similarStats.q25,
+          max: similarStats.q75,
+          count: priceRangeCount,
+          percentage: filteredData.length > 0 ? Math.round((priceRangeCount / filteredData.length) * 100) : 0
+        };
+
+        // 面積と築年数の影響を計算（価格も万円単位に統一）
+        const getPriceInMan = (d: any) => {
+          return d['取引価格（万円）'] || (d.price ? d.price / 10000 : 0) || (d.取引価格 ? d.取引価格 / 10000 : 0);
+        };
+
+        const area100 = filteredData.filter(d => {
+          const area = d.area || d.延床面積 || d['延床面積（㎡）'] || 0;
+          return area >= 95 && area <= 105;
+        });
+        const area120 = filteredData.filter(d => {
+          const area = d.area || d.延床面積 || d['延床面積（㎡）'] || 0;
+          return area >= 115 && area <= 125;
+        });
+        const areaImpact = area120.length > 0 && area100.length > 0 ?
+          Math.round((calculateAverage(area120.map(getPriceInMan)) - calculateAverage(area100.map(getPriceInMan))) / 10) * 10 : 0;
+
+        const year5 = filteredData.filter(d => {
+          const builtYear = d.built_year || d.建築年 || d['建築年'] || 0;
+          return builtYear > 0 && currentYear - builtYear <= 5;
+        });
+        const year10 = filteredData.filter(d => {
+          const builtYear = d.built_year || d.建築年 || d['建築年'] || 0;
+          return builtYear > 0 && currentYear - builtYear >= 8 && currentYear - builtYear <= 12;
+        });
+        const yearImpact = year5.length > 0 && year10.length > 0 ?
+          Math.round((calculateAverage(year5.map(getPriceInMan)) - calculateAverage(year10.map(getPriceInMan))) / 10) * 10 : 0;
+
+        // キーポイントの生成（データがある場合のみ）
+        const keyPoints = [];
+
+        // 価格分布のポイント
+        if (priceRange.count > 0) {
+          keyPoints.push(`価格帯の中心は${priceRange.min}〜${priceRange.max}万円（全体の${priceRange.percentage}%）`);
+        } else if (filteredData.length > 0) {
+          const avgPrice = Math.round(calculateAverage(filteredPricesInMan));
+          keyPoints.push(`平均価格は約${avgPrice}万円`);
         }
+
+        // 面積による影響
+        if (areaImpact !== 0 && area100.length > 0 && area120.length > 0) {
+          keyPoints.push(`面積20㎡の差で約${Math.abs(areaImpact)}万円${areaImpact > 0 ? '上昇' : '下落'}`);
+        } else if (filteredData.length > 10) {
+          keyPoints.push(`面積による価格差は限定的`);
+        }
+
+        // 築年数による影響
+        if (yearImpact !== 0 && year5.length > 0 && year10.length > 0) {
+          keyPoints.push(`築5年と築10年で約${Math.abs(yearImpact)}万円${yearImpact < 0 ? '下落' : 'の差'}`);
+        } else if (filteredData.length > 10) {
+          keyPoints.push(`築年数による価格差は限定的`);
+        }
+
+        // キーポイントが不足している場合の追加情報
+        if (keyPoints.length === 0) {
+          keyPoints.push(`分析対象物件数: ${filteredData.length}件`);
+          if (similarStats) {
+            keyPoints.push(`中央値: ${similarStats.q50}万円`);
+          }
+        }
+
+        setStatisticalAnalysis({
+          priceRange,
+          areaImpact,
+          yearImpact,
+          keyPoints
+        });
 
         // 公示地価データの取得
         try {
@@ -1076,55 +1139,51 @@ const MarketAnalysis: React.FC = () => {
         {/* 分析結果表示セクション */}
         {marketData && (
           <div className="space-y-6">
-            {/* AI市場分析サマリー */}
-            {aiSummary && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI市場分析サマリー</h2>
+            {/* AI統計分析レポート */}
+            {statisticalAnalysis && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">📊 AI統計分析レポート</h2>
 
-                {/* サマリー */}
-                <div className="bg-white rounded-lg p-4 mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">📝 分析サマリー</h3>
-                  <p className="text-gray-700 whitespace-pre-line">{aiSummary.summary}</p>
+                <div className="text-sm text-gray-600 mb-4">
+                  指定条件での取引データを分析しました
                 </div>
 
-                {/* 主要な洞察 */}
-                {aiSummary.key_insights && aiSummary.key_insights.length > 0 && (
-                  <div className="bg-white rounded-lg p-4 mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">💡 主要な洞察</h3>
-                    <ul className="space-y-2">
-                      {aiSummary.key_insights.map((insight, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="text-blue-500 mr-2">•</span>
-                          <span className="text-gray-700">{insight}</span>
-                        </li>
-                      ))}
-                    </ul>
+                {/* 分析条件 */}
+                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                  <h3 className="text-sm font-bold text-gray-700 mb-2">【分析条件】</h3>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>場所：{prefectures.find(p => p.code === selectedPrefecture)?.name || selectedPrefecture}{cities.find(c => c.code === selectedCity)?.name || ''}{selectedDistrict || ''}</p>
+                    <p>種別：{selectedPropertyType === '02' ? '戸建て' : 'マンション'}</p>
+                    <p>面積：{targetArea}±{areaTolerance}㎡</p>
+                    <p>築年：{targetYear}±{yearTolerance}年</p>
                   </div>
-                )}
+                </div>
 
-                {/* 推奨事項 */}
-                {aiSummary.recommendations && aiSummary.recommendations.length > 0 && (
-                  <div className="bg-white rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">📋 推奨事項</h3>
-                    <ul className="space-y-2">
-                      {aiSummary.recommendations.map((recommendation, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="text-green-500 mr-2">✓</span>
-                          <span className="text-gray-700">{recommendation}</span>
-                        </li>
-                      ))}
-                    </ul>
+                {/* AIが見つけたポイント */}
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <h3 className="font-bold text-gray-800 mb-3">【統計分析から見つかったポイント】</h3>
+                  <div className="space-y-3">
+                    {statisticalAnalysis.keyPoints.map((point, index) => (
+                      <div key={index}>
+                        <span className="text-lg">
+                          {index === 0 && '1️⃣ '}
+                          {index === 1 && '2️⃣ '}
+                          {index === 2 && '3️⃣ '}
+                          {point}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
-            )}
+                  <p className="text-xs text-gray-500 mt-3">
+                    ※データから自動的に抽出した統計的特徴です
+                  </p>
+                </div>
 
-            {/* AIローディング表示 */}
-            {isAiLoading && (
-              <div className="bg-blue-50 rounded-lg border border-blue-200 p-6 mb-6">
-                <div className="flex items-center">
-                  <Loader className="h-5 w-5 text-blue-600 animate-spin mr-3" />
-                  <span className="text-gray-700">AI分析サマリーを生成中...</span>
+                <div className="text-xs text-gray-500 border-t pt-3 mt-4 space-y-1">
+                  <p>※過去の取引データの統計処理結果です</p>
+                  <p>※個別物件の査定や評価ではありません</p>
+                  <p>※投資判断の材料ではありません</p>
+                  <p>※実際の取引は宅地建物取引士にご相談ください</p>
                 </div>
               </div>
             )}
