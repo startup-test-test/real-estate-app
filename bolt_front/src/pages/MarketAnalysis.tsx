@@ -1258,7 +1258,7 @@ const MarketAnalysis: React.FC = () => {
             })()}
             {mlDataCount < 5 ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI機械学習による市場分析</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI機械学習による市場分析（統計モデル）</h2>
                 <div className="bg-yellow-50 rounded-lg p-4">
                   <p className="text-gray-700">
                     機械学習分析を実行するには、最低5件以上のデータが必要です。
@@ -1274,28 +1274,30 @@ const MarketAnalysis: React.FC = () => {
             ) : mlAnalysisResult ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  🤖 AI機械学習による市場分析
+                  🤖 AI機械学習による市場分析（統計モデル）
                 </h2>
 
                 {/* クラスタリング分析 */}
                 {mlAnalysisResult.clustering && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0px' }}>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
                       📊 価格グループ分析
                     </h3>
 
-                    {/* 地域全体の分析タイトル */}
-                    <h2 className="text-lg font-semibold text-gray-700 mb-2">
-                      {generateAnalysisTitle(false)}
-                      {mlDataCount > mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0) && (
-                        <span className="text-sm font-normal text-gray-600 ml-2">
-                          （価格が大きく外れた物件{mlDataCount - mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0)}件をIQR法により除外）
-                        </span>
-                      )}
-                    </h2>
+                    {/* ボーダーで囲むコンテナ - 白背景に変更 */}
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      {/* 地域全体の分析タイトル */}
+                      <h2 className="text-lg font-semibold text-gray-700 mb-2">
+                        {generateAnalysisTitle(false)}
+                        {mlDataCount > mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0) && (
+                          <span className="text-sm font-normal text-gray-600 ml-2">
+                            （価格が大きく外れた物件{mlDataCount - mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0)}件をIQR法により除外）
+                          </span>
+                        )}
+                      </h2>
 
-                    {/* 地域全体の分析 */}
-                    <div className="flex gap-4 mb-4">
+                      {/* 地域全体の分析 */}
+                      <div className="flex gap-4 mb-4">
                       {/* サンプル数ボックス */}
                       <div className="bg-blue-50 rounded-lg p-4 flex-shrink-0">
                         <div className="text-sm text-blue-700 font-medium">分析サンプル数</div>
@@ -1327,7 +1329,7 @@ const MarketAnalysis: React.FC = () => {
                     {mlAnalysisResult.filtered && mlAnalysisResult.filtered.clustering && (
                       <>
                         {/* フィルタ条件付きの分析タイトル */}
-                        <h2 className="text-lg font-semibold text-gray-700 mb-2 pt-4 border-t border-gray-200 mt-4">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-2 mt-4">
                           {generateAnalysisTitle(true)}
                         </h2>
 
@@ -1358,6 +1360,7 @@ const MarketAnalysis: React.FC = () => {
                       </div>
                     </>
                   )}
+                    </div>
                   </div>
                 )}
 
@@ -1367,15 +1370,18 @@ const MarketAnalysis: React.FC = () => {
                     {/* 価格傾向分析 */}
                     {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0px' }}>📈 {isLand ? '土地面積' : '面積・築年数'}による価格影響</h3>
-                        {mlDataCount < 20 && (
-                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
-                            <p className="text-sm text-yellow-800">
-                              ⚠️ 分析対象が{mlDataCount}件と少ないため、傾向は参考程度としてご覧ください
-                            </p>
-                          </div>
-                        )}
-                        <div className="bg-blue-50 rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 {isLand ? '土地面積' : '面積・築年数'}による価格影響</h3>
+
+                        {/* ボーダーで囲むコンテナ - 価格グループ分析と同じデザイン */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                          {mlDataCount < 20 && (
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                              <p className="text-sm text-yellow-800">
+                                ⚠️ 分析対象が{mlDataCount}件と少ないため、傾向は参考程度としてご覧ください
+                              </p>
+                            </div>
+                          )}
+                          <div className="bg-blue-50 rounded-lg p-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                             {mlAnalysisResult.regression.coefficients.area && (
                               <div>
@@ -1424,6 +1430,7 @@ const MarketAnalysis: React.FC = () => {
                               <span className="font-medium">R²={(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}%</span> — 価格の約{(mlAnalysisResult.regression.r_squared * 100).toFixed(0)}%が{isLand ? '土地面積' : '面積・築年数'}と関連、残りは立地等の他要因
                             </div>
                           </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1434,6 +1441,11 @@ const MarketAnalysis: React.FC = () => {
                   <p>※機械学習アルゴリズム（K-means、線形回帰）による分析結果</p>
                   <p>※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています</p>
                   <p>※予測モデルは参考値であり、実際の取引価格を保証するものではありません</p>
+                  <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded">
+                    <p className="text-xs text-gray-600 font-semibold">
+                      免責事項：公開データの機械学習・統計処理結果です。個別の査定・助言ではありません。実際の取引は専門家へご相談ください。
+                    </p>
+                  </div>
                 </div>
               </div>
             ) : null}
