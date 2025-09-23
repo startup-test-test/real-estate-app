@@ -1465,7 +1465,9 @@ const MarketAnalysis: React.FC = () => {
               </div>
             )}
 
-            {/* AI類似物件分析セクション - ユーザー条件に合う物件のみ */}
+            {/* AI類似物件分析セクション - 一時的に非表示 */}
+            {false && (
+              <>
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               📊 AI類似物件分析
               <span className="text-sm font-normal text-gray-600 ml-2">
@@ -1587,8 +1589,11 @@ const MarketAnalysis: React.FC = () => {
 
 
 
+              </>
+            )}
+
             {/* 類似物件の詳細表 */}
-            {marketData && marketData.similarPropertiesCount > 0 && (
+            {false && marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件の取引事例</h3>
                 <div className="overflow-x-auto">
