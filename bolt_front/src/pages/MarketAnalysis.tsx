@@ -1252,7 +1252,10 @@ const MarketAnalysis: React.FC = () => {
           <div className="space-y-6">
 
             {/* ML分析結果の表示 */}
-            {console.log('ML分析表示判定: mlDataCount=', mlDataCount, 'mlAnalysisResult=', mlAnalysisResult)}
+            {(() => {
+              console.log('ML分析表示判定: mlDataCount=', mlDataCount, 'mlAnalysisResult=', mlAnalysisResult);
+              return null;
+            })()}
             {mlDataCount < 5 ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">🤖 AI機械学習による市場分析</h2>
@@ -1277,7 +1280,7 @@ const MarketAnalysis: React.FC = () => {
                 {/* クラスタリング分析 */}
                 {mlAnalysisResult.clustering && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0px' }}>
                       📊 価格グループ分析
                     </h3>
 
@@ -1364,7 +1367,7 @@ const MarketAnalysis: React.FC = () => {
                     {/* 価格傾向分析 */}
                     {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 {isLand ? '土地面積' : '面積・築年数'}による価格影響</h3>
+                        <h3 className="text-lg font-semibold text-gray-800" style={{ marginBottom: '0px' }}>📈 {isLand ? '土地面積' : '面積・築年数'}による価格影響</h3>
                         {mlDataCount < 20 && (
                           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
                             <p className="text-sm text-yellow-800">
@@ -1575,7 +1578,7 @@ const MarketAnalysis: React.FC = () => {
             {/* 類似物件の詳細表 */}
             {false && marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 類似物件の取引事例</h3>
+                <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>📋 類似物件の取引事例</h3>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-white border-b-2 border-gray-200">
@@ -1657,7 +1660,7 @@ const MarketAnalysis: React.FC = () => {
               <>
                 {/* 1. 延べ床と価格の散布図 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">1. {isLand ? '土地面積' : '延べ床'}と価格</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>1. {isLand ? '土地面積' : '延べ床'}と価格</h3>
                   <Plot
                     data={[
                       {
@@ -1799,7 +1802,7 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 2. 延床面積別価格分布ヒートマップ */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">2. {isLand ? '土地面積' : '延床面積'}別価格分布</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>2. {isLand ? '土地面積' : '延床面積'}別価格分布</h3>
                   {(() => {
                     // 価格帯と面積帯を定義（価格帯を低い順に）
                     const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
@@ -1898,7 +1901,7 @@ const MarketAnalysis: React.FC = () => {
                 {/* 3. 建築年別価格分布（土地の場合は非表示） */}
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">3. 建築年別価格分布</h3>
+                    <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>3. 建築年別価格分布</h3>
                   <Plot
                     data={[
                       {
@@ -2013,7 +2016,7 @@ const MarketAnalysis: React.FC = () => {
                 {/* 4. 建築年別価格分布（ヒートマップ）（土地の場合は非表示） */}
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">4. 建築年別価格分布（ヒートマップ）</h3>
+                    <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>4. 建築年別価格分布（ヒートマップ）</h3>
                   {(() => {
                     const validYearData = allProperties.filter(p => {
                       const year = getBuildYear(p);
@@ -2112,7 +2115,7 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 成約件数推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '3' : '5'}. 成約件数推移</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>{isLand ? '3' : '5'}. 成約件数推移</h3>
                   {(() => {
                     // 四半期ごとのデータ集計
                     const periodCounts: { [key: string]: number } = {};
@@ -2191,7 +2194,7 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 6. 📍 周辺の公示地価 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '4' : '6'}. 📍 周辺の公示地価</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>{isLand ? '4' : '6'}. 📍 周辺の公示地価</h3>
                   {landPriceData && landPriceData.length > 0 ? (
                     <>
                       <div className="overflow-x-auto">
@@ -2232,7 +2235,7 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 7. 📈 公示地価の推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '5' : '7'}. 📈 公示地価の推移</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>{isLand ? '5' : '7'}. 📈 公示地価の推移</h3>
                   {landPriceHistory && Object.keys(landPriceHistory).length > 0 ? (
                     <Plot
                       data={Object.entries(landPriceHistory).slice(0, 10).map(([ address, data ]: [string, any]) => ({
