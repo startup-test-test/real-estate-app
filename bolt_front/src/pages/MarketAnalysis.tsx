@@ -892,6 +892,11 @@ const MarketAnalysis: React.FC = () => {
     // 取引時期が文字列で入っている場合
     const tradePeriod = property.trade_period || property.取引時期 || '';
 
+    // 空の場合は「-」を返す
+    if (!tradePeriod) {
+      return '-';
+    }
+
     // 「2024年第1四半期」のパターンを変換
     const quarterMatch = tradePeriod.match(/(\d{4})年第(\d)四半期/);
     if (quarterMatch) {
@@ -942,6 +947,13 @@ const MarketAnalysis: React.FC = () => {
   // 分析タイトルを生成する関数
   const generateAnalysisTitle = (isFiltered: boolean = false) => {
     // 都道府県名、市区町村名、町名を取得
+    console.log('generateAnalysisTitle - Debug:', {
+      citiesLength: cities.length,
+      selectedCity,
+      districtsLength: districts.length,
+      selectedDistrict,
+      cities: cities.slice(0, 3) // 最初の3件だけ表示
+    });
     const prefName = prefectures.find(p => p.code === selectedPrefecture)?.name || '';
     const cityName = cities.find(c => c.code === selectedCity)?.name || '';
     const districtName = districts.find(d => d.code === selectedDistrict)?.name || selectedDistrict || '';
@@ -1160,7 +1172,7 @@ const MarketAnalysis: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Ruler className="inline h-4 w-4 mr-1" />
-                    {isLand ? '希望土地面積' : '希望延床面積'} <span className="text-red-500">*</span>
+                    {isLand ? '土地面積' : '延床面積'} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={targetArea}
@@ -1273,9 +1285,28 @@ const MarketAnalysis: React.FC = () => {
               </div>
             ) : mlAnalysisResult ? (
               <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">
                   🤖 AI機械学習による市場分析（統計モデル）
                 </h2>
+
+                {/* 分析期間の表示 */}
+                {(() => {
+                  const years = allProperties.map(p => p.dataYear || new Date().getFullYear()).filter(y => y);
+                  const quarters = allProperties.map(p => p.dataQuarter || 1);
+                  const minYear = Math.min(...years);
+                  const maxYear = Math.max(...years);
+                  const maxQuarter = quarters[years.indexOf(maxYear)] || 4;
+
+                  const periodText = minYear === maxYear
+                    ? `${maxYear}年`
+                    : `${minYear}年〜${maxYear}年第${maxQuarter}四半期`;
+
+                  return (
+                    <p className="text-sm text-gray-600 mb-4">
+                      分析期間: {periodText}の取引データ（{mlDataCount}件）
+                    </p>
+                  );
+                })()}
 
                 {/* クラスタリング分析 */}
                 {mlAnalysisResult.clustering && (
@@ -1289,11 +1320,9 @@ const MarketAnalysis: React.FC = () => {
                       {/* 地域全体の分析タイトル */}
                       <h2 className="text-lg font-semibold text-gray-700 mb-2">
                         {generateAnalysisTitle(false)}
-                        {mlDataCount > mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0) && (
-                          <span className="text-sm font-normal text-gray-600 ml-2">
-                            （価格が大きく外れた物件{mlDataCount - mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0)}件をIQR法により除外）
-                          </span>
-                        )}
+                        <span className="text-sm font-normal text-gray-600 ml-2">
+                          （価格が大きく外れた物件{mlDataCount - mlAnalysisResult.clustering.clusters.reduce((sum: number, cluster: any) => sum + cluster.size, 0)}件をIQR法により除外）
+                        </span>
                       </h2>
 
                       {/* 地域全体の分析 */}
@@ -1383,22 +1412,44 @@ const MarketAnalysis: React.FC = () => {
                           )}
                           <div className="bg-blue-50 rounded-lg p-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                            {mlAnalysisResult.regression.coefficients.area && (
+                            {mlAnalysisResult.regression.coefficients.area !== undefined && mlAnalysisResult.regression.coefficients.area !== null && (
                               <div>
-                                <p className="text-2xl font-bold text-gray-900">
-                                  {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
-                                  {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円/㎡
-                                  <span className="text-sm text-gray-900 font-normal ml-2">
-                                    {isLand
-                                      ? `(100㎡と150㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 50).toFixed(0)}万円の差)`
-                                      : `(80㎡と100㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)`
-                                    }
-                                  </span>
-                                </p>
+                                {Math.abs(mlAnalysisResult.regression.coefficients.area) < 0.5 ? (
+                                  <div>
+                                    <p className="text-lg font-semibold text-gray-700">
+                                      {isLand ? '【土地面積】' : '【延床面積】'}の価格への影響
+                                    </p>
+                                    <p className="text-base text-gray-600 mt-1">
+                                      係数: {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円/㎡（ほぼ影響なし）
+                                    </p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                      この地域では{isLand ? '土地面積' : '延床面積'}による価格差はほとんど見られません
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <p className="text-lg font-semibold text-gray-700 mb-1">
+                                      {isLand ? '【土地面積】' : '【延床面積】'}の価格への影響
+                                    </p>
+                                    <p className="text-2xl font-bold text-gray-900">
+                                      {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
+                                      {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円/㎡
+                                      <span className="text-sm text-gray-900 font-normal ml-2">
+                                        {isLand
+                                          ? `(100㎡と150㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 50).toFixed(0)}万円の差)`
+                                          : `(80㎡と100㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)`
+                                        }
+                                      </span>
+                                    </p>
+                                  </div>
+                                )}
                               </div>
                             )}
-                            {!isLand && mlAnalysisResult.regression.coefficients.age && (
+                            {!isLand && mlAnalysisResult.regression.coefficients.age !== undefined && mlAnalysisResult.regression.coefficients.age !== null && (
                               <div>
+                                <p className="text-lg font-semibold text-gray-700 mb-1">
+                                  【築年数】の価格への影響
+                                </p>
                                 <p className="text-2xl font-bold text-gray-900">
                                   {mlAnalysisResult.regression.coefficients.age > 0 ? '+' : ''}
                                   {mlAnalysisResult.regression.coefficients.age.toFixed(1)}万円/年
@@ -1652,12 +1703,25 @@ const MarketAnalysis: React.FC = () => {
                                 return ((property.price || property.取引価格 || 0) / 10000).toLocaleString(); // 円を万円に変換
                               })()}万円
                             </td>
-                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">{getBuildYear(property)}年</td>}
-                            <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(isLand ? getArea(property) : (property.land_area || property.土地面積 || 0))}</td>
-                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">{Math.floor(property['延べ床面積（㎡）'] || property.building_area || property.面積 || 0)}</td>}
+                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">{getBuildYear(property) || '-'}年</td>}
+                            <td className="px-4 py-3 text-sm text-gray-900">
+                              {isLand ? (getArea(property) || '-') :
+                               ((property.land_area || property.土地面積) ? Math.floor(property.land_area || property.土地面積) : '-')}
+                            </td>
+                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">
+                              {(property['延べ床面積（㎡）'] || property.building_area || property.面積) ?
+                               Math.floor(property['延べ床面積（㎡）'] || property.building_area || property.面積) : '-'}
+                            </td>}
                             {!isLand && <td className="px-4 py-3 text-sm text-gray-900">{property.floor_plan || property.間取り || '-'}</td>}
                             <td className="px-4 py-3 text-sm text-gray-900">
-                              {property.road_type || property.前面道路 || ''} {property.breadth || property.道路幅員 || ''}m
+                              {(() => {
+                                const road = property.road_type || property.前面道路 || '';
+                                const width = property.breadth || property.道路幅員 || '';
+                                if (!road && !width) return '-';
+                                if (road && width) return `${road} ${width}m`;
+                                if (road) return road;
+                                return `幅員${width}m`;
+                              })()}
                             </td>
                           </tr>
                         ))}
@@ -1701,9 +1765,16 @@ const MarketAnalysis: React.FC = () => {
                           .filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)
                           .map(p => [
                             formatTradePeriod(p),
-                            Math.floor(p.land_area || p.土地面積 || 0),
+                            p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-',
                             p.floor_plan || p.間取り || '-',
-                            `${p.road_type || p.前面道路 || ''} ${p.breadth || p.道路幅員 || ''}m`.trim()
+                            (() => {
+                              const road = p.road_type || p.前面道路 || '';
+                              const width = p.breadth || p.道路幅員 || '';
+                              if (!road && !width) return '-';
+                              if (road && width) return `${road} ${width}m`;
+                              if (road) return road;
+                              return `幅員${width}m`;
+                            })()
                           ]),
                         hovertemplate: isLand ?
                           '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
@@ -1732,12 +1803,19 @@ const MarketAnalysis: React.FC = () => {
                         },
                         customdata: allProperties
                           .filter(p => getArea(p) > 0)
-                          .filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)
+                          .filter(p => Math.abs(getArea(p) - targetArea) <= areaTolerance)
                           .map(p => [
                             formatTradePeriod(p),
-                            Math.floor(p.land_area || p.土地面積 || 0),
+                            p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-',
                             p.floor_plan || p.間取り || '-',
-                            `${p.road_type || p.前面道路 || ''} ${p.breadth || p.道路幅員 || ''}m`.trim()
+                            (() => {
+                              const road = p.road_type || p.前面道路 || '';
+                              const width = p.breadth || p.道路幅員 || '';
+                              if (!road && !width) return '-';
+                              if (road && width) return `${road} ${width}m`;
+                              if (road) return road;
+                              return `幅員${width}m`;
+                            })()
                           ]),
                         hovertemplate: isLand ?
                           '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
@@ -1826,11 +1904,7 @@ const MarketAnalysis: React.FC = () => {
                     const areaLabels: string[] = [];
 
                     for (let i = 0; i < priceBins.length - 1; i++) {
-                      if (i === priceBins.length - 2) {
-                        priceLabels.push(`${priceBins[i].toLocaleString()}万円~`);
-                      } else {
-                        priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
-                      }
+                      priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
 
                       const row: number[] = [];
                       for (let j = 0; j < areaBins.length - 1; j++) {
@@ -2052,7 +2126,7 @@ const MarketAnalysis: React.FC = () => {
                     const yearLabels: string[] = [];
 
                     for (let i = 0; i < priceBins.length - 1; i++) {
-                      priceLabels.push(i === priceBins.length - 2 ? `${priceBins[i].toLocaleString()}万円~` : `${priceBins[i].toLocaleString()}万円`);
+                      priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
                       const row: number[] = [];
                       for (let j = 0; j < yearBins.length - 1; j++) {
                         if (i === 0) {
@@ -2107,7 +2181,8 @@ const MarketAnalysis: React.FC = () => {
                             tickfont: { size: 14, color: 'black' },
                             showgrid: false,
                             showline: true,
-                            linecolor: 'black'
+                            linecolor: 'black',
+                            autorange: 'reversed'
                           },
                           height: 400,
                           margin: { t: 40, b: 60, l: 100, r: 40 },
