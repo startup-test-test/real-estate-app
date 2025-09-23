@@ -905,7 +905,7 @@ const MyPage: React.FC = () => {
                   <div className="flex items-center">
                     <Calculator className="h-6 w-6 text-purple-500 mr-2" />
                     <h3 className="text-lg font-semibold text-gray-900">
-                      登録済み物件一覧
+                      保存済み収益シミュレーション
                     </h3>
                   </div>
                   <div className="flex gap-2">

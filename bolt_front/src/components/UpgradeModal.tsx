@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { X, CreditCard, Check, Shield, AlertCircle, Loader2, Crown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from './AuthProvider';
+import { useUsageStatus } from '../hooks/useUsageStatus';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface UpgradeModalProps {
 
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuthContext();
+  const { usage } = useUsageStatus();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,7 +124,9 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
             <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
             <div>
               <p className="text-sm font-medium text-amber-800">
-                無料利用枠（月5回）を使い切りました
+                {usage && usage.currentCount >= usage.limit
+                  ? `無料利用枠（月${usage.limit}回）を使い切りました`
+                  : `今月の利用状況: ${usage?.currentCount || 0}/${usage?.limit || 5}回`}
               </p>
               <p className="text-xs text-amber-600 mt-1">
                 <span className="font-semibold">ベーシックプラン</span>で全機能を無制限にご利用いただけます
