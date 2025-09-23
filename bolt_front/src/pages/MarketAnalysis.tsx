@@ -88,7 +88,7 @@ const MarketAnalysis: React.FC = () => {
     if (selectedPrefecture) {
       const loadCities = async () => {
         setIsCitiesLoading(true);  // ローディング開始
-        setCities([]);  // 既存のリストをクリア
+        // setCities([]);  // API呼び出し前にクリアしない（表示が消える問題を防ぐ）
         try {
           const response = await propertyApi.getCities(selectedPrefecture);
           if (response.status === 'success' && response.data) {
@@ -114,7 +114,7 @@ const MarketAnalysis: React.FC = () => {
     if (selectedPrefecture && selectedCity) {
       const loadDistricts = async () => {
         setIsDistrictsLoading(true);  // ローディング開始
-        setDistricts([]);  // 既存のリストをクリア
+        // setDistricts([]);  // API呼び出し前にクリアしない（表示が消える問題を防ぐ）
         try {
           const response = await propertyApi.getDistricts(selectedPrefecture, selectedCity);
           if (response.status === 'success' && response.data) {
