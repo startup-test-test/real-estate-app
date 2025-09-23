@@ -255,32 +255,41 @@ const PremiumPlan: React.FC = () => {
                   <div>
                     {subscriptionStatus.isPremium ? (
                       <div className="space-y-3">
-                        {/* 解約予定の場合 */}
-                        {subscriptionStatus.isCanceling ? (
+                        {/* 期限切れまたは解約予定の場合 */}
+                        {subscriptionStatus.isCanceling || subscriptionStatus.remainingDays === 0 ? (
                           <>
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
                               <div className="flex items-start">
                                 <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
                                 <div className="flex-1">
-                                  <p className="font-semibold text-amber-800 text-base mb-2">解約予定</p>
+                                  <p className="font-semibold text-amber-800 text-base mb-2">{subscriptionStatus.remainingDays === 0 ? 'プラン終了' : '解約予定'}</p>
                                   <div className="space-y-1 text-sm">
                                     <p className="text-amber-700">
                                       <span className="font-medium">利用期限：</span>
                                       {formatCancelDate(subscription?.cancel_at)}
                                     </p>
-                                    <p className="text-amber-600 font-medium">
-                                      {formatRemainingTime(subscriptionStatus.remainingDays || 0)}利用可能
-                                    </p>
+                                    {subscriptionStatus.remainingDays !== null && subscriptionStatus.remainingDays > 0 && (
+                                      <p className="text-amber-600 font-medium">
+                                        {formatRemainingTime(subscriptionStatus.remainingDays)}利用可能
+                                      </p>
+                                    )}
+                                    {subscriptionStatus.remainingDays === 0 && (
+                                      <p className="text-amber-600 font-medium">
+                                        フリープランに変更されました
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <button 
-                              onClick={handleResumeSubscription}
-                              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
-                            >
-                              解約を取り消す
-                            </button>
+                            {subscriptionStatus.remainingDays !== null && subscriptionStatus.remainingDays > 0 && (
+                              <button
+                                onClick={handleResumeSubscription}
+                                className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                              >
+                                解約を取り消す
+                              </button>
+                            )}
                           </>
                         ) : (
                           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -294,8 +303,8 @@ const PremiumPlan: React.FC = () => {
                           </div>
                         )}
                         
-                        {/* 解約ボタン（解約予定でない場合のみ表示） */}
-                        {!subscriptionStatus.isCanceling && (
+                        {/* 解約ボタン（解約予定でなく、期限が切れていない場合のみ表示） */}
+                        {!subscriptionStatus.isCanceling && subscriptionStatus.remainingDays !== 0 && (
                           <button 
                             onClick={() => setIsModalOpen(true)}
                             className="w-full px-6 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg font-medium transition-colors"

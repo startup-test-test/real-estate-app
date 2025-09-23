@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from './AuthProvider';
 import Footer from './Footer';
-import { checkUsageLimit } from '../utils/usageLimit';
-import { calculateRemainingDays, formatRemainingTime } from '../utils/subscriptionHelpers';
+import { calculateRemainingDays, formatRemainingTime, getSubscriptionStatus } from '../utils/subscriptionHelpers';
 import { supabase } from '../lib/supabase';
 import {
   Calculator,
@@ -30,26 +29,28 @@ const Layout: React.FC = () => {
   useEffect(() => {
     const checkPremiumStatus = async () => {
       if (user?.id) {
-        // 利用制限ステータスを確認
-        const status = await checkUsageLimit(user.id);
-        setIsPremium(status.isSubscribed);
-        
         // サブスクリプション詳細を取得
         const { data, error } = await supabase
           .from('subscriptions')
           .select('*')
           .eq('user_id', user.id)
           .eq('status', 'active');
-        
+
         // エラーチェック（PGRST116は0件の結果なので無視）
         if (error && error.code !== 'PGRST116') {
           console.error('Subscription fetch error:', error);
         }
-        
+
         // 配列の最初の要素を取得
+        let subscriptionData = null;
         if (data && data.length > 0) {
-          setSubscription(data[0]);
+          subscriptionData = data[0];
+          setSubscription(subscriptionData);
         }
+
+        // getSubscriptionStatusを使用して正確なステータスを判定
+        const subscriptionStatus = getSubscriptionStatus(subscriptionData);
+        setIsPremium(subscriptionStatus.isPremium);
       }
     };
     checkPremiumStatus();
