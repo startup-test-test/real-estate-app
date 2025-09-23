@@ -707,11 +707,11 @@ const MyPage: React.FC = () => {
     },
     {
       category: "AI事業計画書",
-      icon: FileText,
+      icon: Sparkles,
       color: "bg-gradient-to-r from-amber-500 to-orange-600",
       badge: "COMING SOON",
       description:
-        "収益シミュレーション・市場分析・金融機関提出資料を統合。AIが事業計画書を自動作成し、1つのPDFで出力",
+        "AIエージェントが収益シミュレーション・市場分析・金融機関提出資料を統合。プロ品質の事業計画書を自動作成し、1つのPDFで出力",
       actions: [
         {
           name: "2025年10月上旬リリース予定",
