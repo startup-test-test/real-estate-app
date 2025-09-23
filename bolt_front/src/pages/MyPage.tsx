@@ -16,6 +16,7 @@ import {
   ChevronRight,
   BarChart3,
   HelpCircle,
+  TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
@@ -660,7 +661,18 @@ const MyPage: React.FC = () => {
   
   const formattedSimulations = formatSimulationData(allSimulations);
 
-  const quickActions = [
+  const quickActions: Array<{
+    category: string;
+    icon: any;
+    color: string;
+    badge?: string;
+    description: string;
+    actions: Array<{
+      name: string;
+      primary: boolean;
+      path: string;
+    }>;
+  }> = [
     {
       category: "収益シミュレーター",
       icon: Calculator,
@@ -672,6 +684,21 @@ const MyPage: React.FC = () => {
           name: "シミュレーションを開始する",
           primary: true,
           path: "/simulator",
+        },
+      ],
+    },
+    {
+      category: "AI市場分析",
+      icon: TrendingUp,
+      color: "bg-gradient-to-r from-purple-600 to-indigo-600",
+      badge: "NEW",
+      description:
+        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
+      actions: [
+        {
+          name: "AI市場分析を開始する",
+          primary: true,
+          path: "/market-analysis",
         },
       ],
     },
@@ -787,8 +814,15 @@ const MyPage: React.FC = () => {
                   return (
                     <div
                       key={index}
-                      className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                      className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative"
                     >
+                      {section.badge && (
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                            {section.badge}
+                          </span>
+                        </div>
+                      )}
                       <div className={`${section.color} px-6 py-4`}>
                         <div className="flex items-center text-white">
                           <Icon className="h-5 w-5 mr-2" />
