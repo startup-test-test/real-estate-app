@@ -939,6 +939,35 @@ const MarketAnalysis: React.FC = () => {
     return clusters;
   };
 
+  // 分析タイトルを生成する関数
+  const generateAnalysisTitle = (isFiltered: boolean = false) => {
+    // 都道府県名、市区町村名、町名を取得
+    const prefName = prefectures.find(p => p.code === selectedPrefecture)?.name || '';
+    const cityName = cities.find(c => c.code === selectedCity)?.name || '';
+    const districtName = districts.find(d => d.code === selectedDistrict)?.name || selectedDistrict || '';
+
+    // 物件種別を取得
+    const propertyTypeName = selectedPropertyType === '01' ? '土地' :
+                            selectedPropertyType === '02' ? '戸建' :
+                            selectedPropertyType === '07' ? 'マンション' : '物件';
+
+    // フィルタ条件付きの場合
+    if (isFiltered) {
+      const areaLabel = isLand ? '土地面積' : '延床面積';
+      // 基本のタイトル
+      let title = `${prefName}${cityName}${districtName}の${propertyTypeName}価格分布 | ${areaLabel}${targetArea}±${areaTolerance}㎡`;
+
+      // 土地以外の場合は築年数も追加
+      if (!isLand) {
+        title += ` | 築年数${targetYear}±${yearTolerance}年`;
+      }
+      return title;
+    } else {
+      // 地域全体の分析
+      return `${prefName}${cityName}${districtName}${propertyTypeName}全体の分析`;
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen relative">
       {/* Loading Overlay */}
@@ -1255,6 +1284,11 @@ const MarketAnalysis: React.FC = () => {
                       📊 価格グループ分析（K-means）
                     </h3>
 
+                    {/* 地域全体の分析タイトル */}
+                    <h2 className="text-lg font-semibold text-gray-700 mb-2">
+                      {generateAnalysisTitle(false)}
+                    </h2>
+
                     {/* 地域全体の分析 */}
                     <div className="flex gap-4 mb-4">
                       {/* サンプル数ボックス */}
@@ -1291,27 +1325,33 @@ const MarketAnalysis: React.FC = () => {
 
                     {/* フィルタ条件での分析 */}
                     {mlAnalysisResult.filtered && mlAnalysisResult.filtered.clustering && (
-                      <div className="flex gap-4 pt-4 border-t border-gray-200">
-                        {/* サンプル数ボックス */}
-                        <div className="bg-green-50 rounded-lg p-4 flex-shrink-0">
-                          <div className="text-sm text-green-700 font-medium">フィルタ条件</div>
-                          <div className="text-3xl font-bold text-green-900 mt-1">
-                            {filteredDataCount}
-                            <span className="text-lg font-normal">件</span>
-                          </div>
-                          <div className="text-xs text-green-600 mt-2">
-                            {isLand ? '土地面積' : '延床面積'}{targetArea}±{areaTolerance}㎡
-                            {!isLand && (
-                              <>
-                                <br/>
-                                築年数{targetYear}±{yearTolerance}年
-                              </>
-                            )}
-                          </div>
-                        </div>
+                      <>
+                        {/* フィルタ条件付きの分析タイトル */}
+                        <h2 className="text-lg font-semibold text-gray-700 mb-2 pt-4 border-t border-gray-200 mt-4">
+                          {generateAnalysisTitle(true)}
+                        </h2>
 
-                        {/* フィルタ条件のクラスタグリッド */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+                        <div className="flex gap-4">
+                          {/* サンプル数ボックス */}
+                          <div className="bg-green-50 rounded-lg p-4 flex-shrink-0">
+                            <div className="text-sm text-green-700 font-medium">フィルタ条件</div>
+                            <div className="text-3xl font-bold text-green-900 mt-1">
+                              {filteredDataCount}
+                              <span className="text-lg font-normal">件</span>
+                            </div>
+                            <div className="text-xs text-green-600 mt-2">
+                              {isLand ? '土地面積' : '延床面積'}{targetArea}±{areaTolerance}㎡
+                              {!isLand && (
+                                <>
+                                  <br/>
+                                  築年数{targetYear}±{yearTolerance}年
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* フィルタ条件のクラスタグリッド */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
                           {mlAnalysisResult.filtered.clustering.clusters.map((cluster: any) => (
                             <div key={cluster.cluster_id} className="bg-green-50 rounded-lg p-4">
                               <div className="font-semibold text-green-800">{cluster.name}</div>
@@ -1326,7 +1366,8 @@ const MarketAnalysis: React.FC = () => {
                           ))}
                         </div>
                       </div>
-                    )}
+                    </>
+                  )}
                   </div>
                 )}
 
@@ -1544,76 +1585,6 @@ const MarketAnalysis: React.FC = () => {
               </div>
             </div>
 
-            {/* AI詳細分析レポート */}
-            <details className="bg-white rounded-lg border border-gray-200 p-6">
-              <summary className="cursor-pointer text-lg font-semibold text-gray-900 mb-4">
-                🤖 AI詳細分析レポートを見る
-              </summary>
-
-              <div className="mt-4 space-y-4">
-                <div className="text-sm text-gray-700">
-                  <h4 className="font-bold mb-2">📊 統計サマリー</h4>
-                  <ul className="space-y-1 ml-4">
-                    <li>- 分析対象物件数: {marketData.similarPropertiesCount}件</li>
-                    <li>- 平均価格: {marketData.averagePrice?.toLocaleString()}万円</li>
-                    <li>- 中央値: {marketData.q50?.toLocaleString() || 0}万円</li>
-                    <li>- 価格帯: {Math.min(...allProperties.map(p => {
-                      const price = p['取引価格（万円）'];
-                      if (price !== undefined && price !== null) return price;
-                      return (p.price || p.取引価格 || 0) / 10000;
-                    })).toLocaleString()}万円 〜 {Math.max(...allProperties.map(p => {
-                      const price = p['取引価格（万円）'];
-                      if (price !== undefined && price !== null) return price;
-                      return (p.price || p.取引価格 || 0) / 10000;
-                    })).toLocaleString()}万円</li>
-                  </ul>
-                </div>
-
-                <div className="text-sm text-gray-700">
-                  <h4 className="font-bold mb-2">📈 価格動向分析</h4>
-                  <ul className="space-y-1 ml-4">
-                    <li>- 年間成長率: {marketData.priceChange?.toFixed(1)}%</li>
-                    <li>- 価格のばらつき（標準偏差）: ±{(Math.sqrt(allProperties.map(p => {
-                      const price = p['取引価格（万円）'];
-                      const priceInManYen = price !== undefined && price !== null ? price : (p.price || p.取引価格 || 0) / 10000;
-                      return Math.pow(priceInManYen - marketData.averagePrice, 2);
-                    }).reduce((a, b) => a + b, 0) / allProperties.length)).toFixed(0)}万円</li>
-                  </ul>
-                </div>
-
-                {/* AIクラスタリング分析 */}
-                {marketData.clusters && (
-                  <div className="text-sm text-gray-700">
-                    <h4 className="font-bold mb-2">🎯 AI自動クラスタリング分析</h4>
-                    {allProperties.length >= 10 ? (
-                      <>
-                        <p className="mb-2">📊 3つの物件グループを自動検出:</p>
-                        <ul className="space-y-1 ml-4">
-                          {marketData.clusters.map((cluster: any) => (
-                            <li key={cluster.name}>
-                              • **{cluster.name}** ({Math.round((cluster.count / marketData.similarPropertiesCount) * 100)}%): 平均{cluster.avgPrice.toLocaleString()}万円 ({cluster.count}件)
-                            </li>
-                          ))}
-                        </ul>
-                      </>
-                    ) : (
-                      <p>クラスタリング分析には10件以上のデータが必要です</p>
-                    )}
-                  </div>
-                )}
-
-
-                <div className="bg-blue-50 rounded-lg p-4 mt-4">
-                  <h4 className="font-bold text-blue-900 mb-2">📌 重要事項</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• 本分析は公開データの統計処理による参考情報です</li>
-                    <li>• 不動産の投資判断や購入の推奨ではありません</li>
-                    <li>• 個別物件の適正価格を示すものではありません</li>
-                    <li>• 実際の取引には宅地建物取引士にご相談ください</li>
-                  </ul>
-                </div>
-              </div>
-            </details>
 
 
             {/* 類似物件の詳細表 */}
