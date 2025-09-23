@@ -1819,7 +1819,7 @@ const MarketAnalysis: React.FC = () => {
                     ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
                   {(() => {
-                    // 価格帯と面積帯を定義
+                    // 価格帯と面積帯を定義（価格帯を低い順に）
                     const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
                     const areaBins = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200];
 
@@ -1829,7 +1829,12 @@ const MarketAnalysis: React.FC = () => {
                     const areaLabels: string[] = [];
 
                     for (let i = 0; i < priceBins.length - 1; i++) {
-                      priceLabels.push(i === priceBins.length - 2 ? `${priceBins[i].toLocaleString()}万円~` : `${priceBins[i].toLocaleString()}万円`);
+                      if (i === priceBins.length - 2) {
+                        priceLabels.push(`${priceBins[i].toLocaleString()}万円~`);
+                      } else {
+                        priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
+                      }
+
                       const row: number[] = [];
                       for (let j = 0; j < areaBins.length - 1; j++) {
                         if (i === 0) {
@@ -1848,13 +1853,17 @@ const MarketAnalysis: React.FC = () => {
                       heatmapData.push(row);
                     }
 
+                    // データとラベルを逆順にして、下が0、上が高い価格になるようにする
+                    heatmapData.reverse();
+                    priceLabels.reverse();
+
                     return (
                       <Plot
                         data={[
                           {
-                            z: heatmapData.reverse(),
+                            z: heatmapData,
                             x: areaLabels,
-                            y: priceLabels.reverse(),
+                            y: priceLabels,
                             type: 'heatmap',
                             colorscale: [
                               [0, '#ffffff'],
@@ -1886,7 +1895,8 @@ const MarketAnalysis: React.FC = () => {
                             tickfont: { size: 14, color: 'black' },
                             showgrid: false,
                             showline: true,
-                            linecolor: 'black'
+                            linecolor: 'black',
+                            autorange: 'reversed'  // Y軸を反転して下が0、上が高い値になるようにする
                           },
                           height: 400,
                           margin: { t: 40, b: 60, l: 100, r: 40 },
