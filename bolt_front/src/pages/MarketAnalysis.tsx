@@ -1353,12 +1353,12 @@ const MarketAnalysis: React.FC = () => {
                           {/* フィルタ条件のクラスタグリッド */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
                           {mlAnalysisResult.filtered.clustering.clusters.map((cluster: any) => (
-                            <div key={cluster.cluster_id} className="bg-green-50 rounded-lg p-4">
-                              <div className="font-semibold text-green-800">{cluster.name}</div>
-                              <div className="text-2xl font-bold text-green-900 mt-1">
+                            <div key={cluster.cluster_id} className="bg-gray-50 rounded-lg p-4">
+                              <div className="font-semibold text-gray-800">{cluster.name}</div>
+                              <div className="text-2xl font-bold text-gray-900 mt-1">
                                 {cluster.avg_price.toLocaleString()}万円
                               </div>
-                              <div className="text-sm text-green-600 mt-2">
+                              <div className="text-sm text-gray-600 mt-2">
                                 <p>物件数: {cluster.size}件 ({cluster.percentage}%)</p>
                                 <p>{cluster.characteristics}</p>
                               </div>
@@ -1377,7 +1377,28 @@ const MarketAnalysis: React.FC = () => {
                     {/* 価格傾向分析 */}
                     {mlAnalysisResult.regression && !mlAnalysisResult.regression.error && (
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">📈 価格傾向分析</h3>
+                        <div className="flex items-start gap-4 mb-3">
+                          <h3 className="text-lg font-semibold text-gray-800">📈 {isLand ? '土地面積' : '面積・築年数'}による価格影響</h3>
+                          <div className="flex items-center space-x-2 pt-1">
+                            <span className="text-sm text-gray-600">AI機械学習の予測精度:</span>
+                            {mlAnalysisResult.regression.r_squared < 0.3 ? (
+                              <span className="text-sm text-orange-600 font-medium">
+                                参考程度（データのばらつきが大きい）
+                              </span>
+                            ) : mlAnalysisResult.regression.r_squared < 0.7 ? (
+                              <span className="text-sm text-yellow-600 font-medium">
+                                中程度（ある程度の傾向あり）
+                              </span>
+                            ) : (
+                              <span className="text-sm text-green-600 font-medium">
+                                高い（明確な傾向あり）
+                              </span>
+                            )}
+                            <span className="text-xs text-gray-500">
+                              ※R²={(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}%（価格の約{(mlAnalysisResult.regression.r_squared * 100).toFixed(0)}%が{isLand ? '土地面積' : '面積・築年数'}と関連、残りは立地等の他要因）
+                            </span>
+                          </div>
+                        </div>
                         {mlDataCount < 20 && (
                           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
                             <p className="text-sm text-yellow-800">
@@ -1389,57 +1410,29 @@ const MarketAnalysis: React.FC = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {mlAnalysisResult.regression.coefficients.area && (
                               <div>
-                                <span className="text-sm text-gray-600">{isLand ? '土地面積による価格影響' : '面積による価格影響'}</span>
-                                <p className="text-lg font-semibold text-gray-900">
+                                <p className="text-2xl font-bold text-gray-900">
                                   {mlAnalysisResult.regression.coefficients.area > 0 ? '+' : ''}
                                   {mlAnalysisResult.regression.coefficients.area.toFixed(1)}万円/㎡
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  {isLand
-                                    ? `(100㎡と150㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 50).toFixed(0)}万円の差)`
-                                    : `(80㎡と100㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)`
-                                  }
+                                  <span className="text-sm text-gray-900 font-normal ml-2">
+                                    {isLand
+                                      ? `(100㎡と150㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 50).toFixed(0)}万円の差)`
+                                      : `(80㎡と100㎡では約${Math.abs(mlAnalysisResult.regression.coefficients.area * 20).toFixed(0)}万円の差)`
+                                    }
+                                  </span>
                                 </p>
                               </div>
                             )}
                             {!isLand && mlAnalysisResult.regression.coefficients.age && (
                               <div>
-                                <span className="text-sm text-gray-600">築年数による価格影響</span>
-                                <p className="text-lg font-semibold text-gray-900">
+                                <p className="text-2xl font-bold text-gray-900">
                                   {mlAnalysisResult.regression.coefficients.age > 0 ? '+' : ''}
                                   {mlAnalysisResult.regression.coefficients.age.toFixed(1)}万円/年
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  (築5年と築15年では約{Math.abs(mlAnalysisResult.regression.coefficients.age * 10).toFixed(0)}万円の差)
+                                  <span className="text-sm text-gray-900 font-normal ml-2">
+                                    (築5年と築15年では約{Math.abs(mlAnalysisResult.regression.coefficients.age * 10).toFixed(0)}万円の差)
+                                  </span>
                                 </p>
                               </div>
                             )}
-                          </div>
-                          <div className="mt-3 text-sm">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-600">予測精度:</span>
-                              {mlAnalysisResult.regression.r_squared < 0.3 ? (
-                                <span className="text-orange-600 font-medium">
-                                  参考程度（データのばらつきが大きい）
-                                </span>
-                              ) : mlAnalysisResult.regression.r_squared < 0.7 ? (
-                                <span className="text-yellow-600 font-medium">
-                                  中程度（ある程度の傾向あり）
-                                </span>
-                              ) : (
-                                <span className="text-green-600 font-medium">
-                                  高い（明確な傾向あり）
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              ※R²={(mlAnalysisResult.regression.r_squared * 100).toFixed(1)}% -
-                              {mlAnalysisResult.regression.r_squared < 0.3
-                                ? isLand ? "価格は土地面積以外の要因が大きく影響" : "価格は面積・築年数以外の要因が大きく影響"
-                                : mlAnalysisResult.regression.r_squared < 0.7
-                                ? isLand ? "土地面積である程度価格を説明可能" : "面積・築年数である程度価格を説明可能"
-                                : isLand ? "土地面積で価格をよく説明できる" : "面積・築年数で価格をよく説明できる"}
-                            </div>
                           </div>
                         </div>
                       </div>
