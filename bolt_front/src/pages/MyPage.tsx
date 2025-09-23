@@ -17,6 +17,8 @@ import {
   BarChart3,
   HelpCircle,
   TrendingUp,
+  FileText,
+  Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
@@ -671,6 +673,7 @@ const MyPage: React.FC = () => {
       name: string;
       primary: boolean;
       path: string;
+      disabled?: boolean;
     }>;
   }> = [
     {
@@ -699,6 +702,22 @@ const MyPage: React.FC = () => {
           name: "AI市場分析を開始する",
           primary: true,
           path: "/market-analysis",
+        },
+      ],
+    },
+    {
+      category: "AI事業計画書",
+      icon: FileText,
+      color: "bg-gradient-to-r from-amber-500 to-orange-600",
+      badge: "COMING SOON",
+      description:
+        "収益シミュレーション・市場分析・金融機関提出資料を統合。AIが事業計画書を自動作成し、1つのPDFで出力（2025年10月上旬リリース予定）",
+      actions: [
+        {
+          name: "Coming Soon",
+          primary: false,
+          path: "#",
+          disabled: true,
         },
       ],
     },
@@ -839,6 +858,9 @@ const MyPage: React.FC = () => {
                           <button
                             key={actionIndex}
                             onClick={async () => {
+                              if (action.disabled) {
+                                return;
+                              }
                               // シミュレーターパスの場合は使用制限をチェック
                               if (action.path === "/simulator") {
                                 if (
@@ -850,19 +872,22 @@ const MyPage: React.FC = () => {
                                 } else {
                                   navigate(action.path);
                                 }
-                              } else {
+                              } else if (action.path !== "#") {
                                 navigate(action.path);
                               }
                             }}
+                            disabled={action.disabled}
                             className={`w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 ${
-                              action.primary
+                              action.disabled
+                                ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : action.primary
                                 ? "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300"
                                 : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
                             }`}
                           >
                             <div className="flex items-center justify-center">
                               <span>{action.name}</span>
-                              <ChevronRight className="h-4 w-4 ml-2" />
+                              {!action.disabled && <ChevronRight className="h-4 w-4 ml-2" />}
                             </div>
                           </button>
                         ))}
