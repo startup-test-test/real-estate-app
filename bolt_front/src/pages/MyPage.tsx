@@ -860,8 +860,8 @@ const MyPage: React.FC = () => {
                               if (action.disabled) {
                                 return;
                               }
-                              // シミュレーターパスの場合は使用制限をチェック
-                              if (action.path === "/simulator") {
+                              // シミュレーターとAI市場分析は統合カウント（月5回制限）
+                              if (action.path === "/simulator" || action.path === "/market-analysis") {
                                 if (
                                   usage &&
                                   !usage.isSubscribed &&

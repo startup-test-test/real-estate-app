@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Check, 
+import {
+  Check,
   X,
   Sparkles,
   AlertCircle
@@ -9,12 +9,18 @@ import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import CancelSubscriptionModal from '../components/CancelSubscriptionModal';
 import { calculateRemainingDays, formatRemainingTime, formatCancelDate, getSubscriptionStatus } from '../utils/subscriptionHelpers';
+import { useUsageStatus } from '../hooks/useUsageStatus';
+import UsageStatusBar from '../components/UsageStatusBar';
+import UpgradeModal from '../components/UpgradeModal';
+import Breadcrumb from '../components/Breadcrumb';
 
 const PremiumPlan: React.FC = () => {
   const { user } = useAuthContext();
   const [subscription, setSubscription] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
+  const { usage } = useUsageStatus();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     document.title = '料金プラン | 大家DX';
@@ -195,24 +201,23 @@ const PremiumPlan: React.FC = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen">
+      {/* 使用状況バー（マイページと同様に最上部に配置） */}
+      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+
+      <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="bg-gradient-to-r from-yellow-100 via-yellow-50 to-orange-50 rounded-2xl p-8 max-w-4xl mx-auto shadow-lg border border-yellow-200">
-            <div className="flex items-center justify-center mb-4">
-              <Sparkles className="h-12 w-12 text-yellow-500 mr-3" />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                ベーシックプラン
-              </h1>
-            </div>
-            <p className="text-xl text-gray-700 font-medium mb-2">
-              全機能が無制限でご利用いただけます
-            </p>
-            <p className="text-gray-600">
-              本格的な不動産投資シミュレーションで、より良い投資判断を実現しましょう
-            </p>
-          </div>
+        {/* Breadcrumb - PC版のみ表示 */}
+        <div className="hidden md:block mb-4">
+          <Breadcrumb />
+        </div>
+
+        {/* ページタイトル - 他のページと統一 */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">有料プランについて</h1>
+          <p className="text-gray-600 mt-1">
+            月額2,980円で収益シミュレーターとAI市場分析を無制限でご利用いただけます
+          </p>
         </div>
 
         {/* Pricing Plans */}
@@ -419,6 +424,8 @@ const PremiumPlan: React.FC = () => {
         {/* CTA Section - 削除 */}
       </div>
 
+      </div>
+
       {/* 解約確認モーダル */}
       <CancelSubscriptionModal
         isOpen={isModalOpen}
@@ -428,6 +435,9 @@ const PremiumPlan: React.FC = () => {
         remainingDays={calculateRemainingDays(subscription?.cancel_at || subscription?.current_period_end)}
         isLoading={isCanceling}
       />
+
+      {/* アップグレードモーダル */}
+      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 };

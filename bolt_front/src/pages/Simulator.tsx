@@ -10,6 +10,7 @@ import { useAuthContext } from '../components/AuthProvider';
 import { useLocation } from 'react-router-dom';
 import { useUsageStatus } from '../hooks/useUsageStatus';
 import UpgradeModal from '../components/UpgradeModal';
+import UsageStatusBar from '../components/UsageStatusBar';
 import CashFlowChart from '../components/CashFlowChart';
 import Tooltip from '../components/Tooltip';
 import BackButton from '../components/BackButton';
@@ -1750,7 +1751,11 @@ const Simulator: React.FC = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen print:p-4 print:bg-white">
+    <div className="bg-gray-50 min-h-screen print:bg-white">
+      {/* 使用状況バー（マイページと同様に最上部に配置） */}
+      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+
+      <div className="p-4 sm:p-6 lg:p-8 print:p-4">
       <div className="max-w-6xl mx-auto print:max-w-full pt-1 md:pt-0">
         {/* Breadcrumb - PC版のみ表示 */}
         <div className="print:hidden hidden md:block">
@@ -3997,6 +4002,7 @@ const Simulator: React.FC = () => {
           },
         }}
       />
+    </div>
     </div>
   );
 };

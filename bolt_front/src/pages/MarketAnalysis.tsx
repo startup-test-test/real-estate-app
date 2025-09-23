@@ -12,8 +12,15 @@ import {
 } from 'lucide-react';
 import { propertyApi } from '../services/propertyApi';
 import Plot from 'react-plotly.js';
+import { useUsageStatus } from '../hooks/useUsageStatus';
+import UsageStatusBar from '../components/UsageStatusBar';
+import UpgradeModal from '../components/UpgradeModal';
+import Breadcrumb from '../components/Breadcrumb';
 
 const MarketAnalysis: React.FC = () => {
+  // 使用制限管理
+  const { usage, executeWithLimit } = useUsageStatus();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
 
 
@@ -170,6 +177,24 @@ const MarketAnalysis: React.FC = () => {
       return;
     }
 
+    // 使用制限チェック
+    if (usage && !usage.isSubscribed && usage.currentCount >= usage.limit) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    // executeWithLimitで統合カウント処理を実行
+    const success = await executeWithLimit(async () => {
+      await performAnalysis();
+    }, 'market_analysis'); // feature_typeを'market_analysis'として記録
+
+    if (!success) {
+      setShowUpgradeModal(true);
+    }
+  };
+
+  // 実際の分析処理を別関数に分離
+  const performAnalysis = async () => {
     setIsLoading(true);
     setLoadingProgress(0);
     setError(null);
@@ -981,7 +1006,11 @@ const MarketAnalysis: React.FC = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen relative">
+    <div className="bg-gray-50 min-h-screen relative">
+      {/* 使用状況バー（マイページと同様に最上部に配置） */}
+      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+
+      <div className="p-4 sm:p-6 lg:p-8">
       {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -1040,6 +1069,11 @@ const MarketAnalysis: React.FC = () => {
       )}
 
       <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
+        {/* Breadcrumb - PC版のみ表示 */}
+        <div className="hidden md:block mb-4">
+          <Breadcrumb />
+        </div>
+
         {/* ヘッダー */}
         <div className="mb-6">
           <div>
@@ -2402,6 +2436,10 @@ const MarketAnalysis: React.FC = () => {
           </div>
         )}
       </div>
+      </div>
+
+      {/* アップグレードモーダル */}
+      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 };
