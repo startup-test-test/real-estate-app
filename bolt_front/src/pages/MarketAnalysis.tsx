@@ -1673,9 +1673,6 @@ const MarketAnalysis: React.FC = () => {
                 {/* 1. 延べ床と価格の散布図 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">1. {isLand ? '土地面積' : '延べ床'}と価格</h3>
-                  <div className="text-xs text-gray-500 mb-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                  </div>
                   <Plot
                     data={[
                       {
@@ -1810,14 +1807,14 @@ const MarketAnalysis: React.FC = () => {
                     config={{ displayModeBar: false }}
                     className="w-full"
                   />
+                  <div className="text-xs text-gray-500 mt-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                 </div>
 
                 {/* 2. 延床面積別価格分布ヒートマップ */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">2. {isLand ? '土地面積' : '延床面積'}別価格分布</h3>
-                  <div className="text-xs text-gray-500 mb-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                  </div>
                   {(() => {
                     // 価格帯と面積帯を定義（価格帯を低い順に）
                     const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
@@ -1908,15 +1905,15 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
+                  <div className="text-xs text-gray-500 mt-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                 </div>
 
                 {/* 3. 建築年別価格分布（土地の場合は非表示） */}
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">3. 建築年別価格分布</h3>
-                    <div className="text-xs text-gray-500 mb-2">
-                      ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                    </div>
                   <Plot
                     data={[
                       {
@@ -2022,6 +2019,9 @@ const MarketAnalysis: React.FC = () => {
                     config={{ displayModeBar: false }}
                     className="w-full"
                   />
+                  <div className="text-xs text-gray-500 mt-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                   </div>
                 )}
 
@@ -2029,9 +2029,6 @@ const MarketAnalysis: React.FC = () => {
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">4. 建築年別価格分布（ヒートマップ）</h3>
-                    <div className="text-xs text-gray-500 mb-2">
-                      ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                    </div>
                   {(() => {
                     const validYearData = allProperties.filter(p => {
                       const year = getBuildYear(p);
@@ -2122,15 +2119,15 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
+                  <div className="text-xs text-gray-500 mt-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                   </div>
                 )}
 
                 {/* 成約件数推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">{isLand ? '3' : '5'}. 成約件数推移</h3>
-                  <div className="text-xs text-gray-500 mb-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                  </div>
                   {(() => {
                     // 四半期ごとのデータ集計
                     const periodCounts: { [key: string]: number } = {};
@@ -2145,10 +2142,10 @@ const MarketAnalysis: React.FC = () => {
                     const xLabels = sortedPeriods.map(period => {
                       const yearMatch = period.match(/(\d{4})年/);
                       const year = yearMatch ? yearMatch[1] + '年' : period;
-                      if (period.includes('第1四半期')) return year + '<br>1月〜3月';
-                      if (period.includes('第2四半期')) return year + '<br>4月〜6月';
-                      if (period.includes('第3四半期')) return year + '<br>7月〜9月';
-                      if (period.includes('第4四半期')) return year + '<br>10月〜12月';
+                      if (period.includes('第1四半期')) return year + '<br><span style="font-size:12px">1月〜3月</span>';
+                      if (period.includes('第2四半期')) return year + '<br><span style="font-size:12px">4月〜6月</span>';
+                      if (period.includes('第3四半期')) return year + '<br><span style="font-size:12px">7月〜9月</span>';
+                      if (period.includes('第4四半期')) return year + '<br><span style="font-size:12px">10月〜12月</span>';
                       return period;
                     });
 
@@ -2160,8 +2157,7 @@ const MarketAnalysis: React.FC = () => {
                             y: sortedPeriods.map(p => periodCounts[p]),
                             type: 'bar',
                             marker: {
-                              color: '#87CEEB',
-                              line: { color: '#000080', width: 1.5 }
+                              color: '#87CEEB'
                             },
                             text: sortedPeriods.map(p => `${periodCounts[p]}件`),
                             textposition: 'outside',
@@ -2201,6 +2197,9 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
+                  <div className="text-xs text-gray-500 mt-2">
+                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                  </div>
                 </div>
 
                 {/* 6. 📍 周辺の公示地価 */}
@@ -2236,16 +2235,6 @@ const MarketAnalysis: React.FC = () => {
                           </tbody>
                         </table>
                       </div>
-                      {landPriceData.length > 0 && (
-                        <div className="mt-4 text-sm text-gray-600">
-                          <p>📊 公示地価統計（{landPriceData.length}地点）</p>
-                          <ul className="ml-4 mt-2">
-                            <li>• 平均価格: {Math.round(landPriceData.reduce((sum, item) => sum + item.price_per_sqm, 0) / landPriceData.length).toLocaleString()}円/㎡</li>
-                            <li>• 最高価格: {Math.max(...landPriceData.map(item => item.price_per_sqm)).toLocaleString()}円/㎡</li>
-                            <li>• 最低価格: {Math.min(...landPriceData.map(item => item.price_per_sqm)).toLocaleString()}円/㎡</li>
-                          </ul>
-                        </div>
-                      )}
                     </>
                   ) : (
                     <div className="text-center text-gray-500 py-8">
@@ -2260,7 +2249,7 @@ const MarketAnalysis: React.FC = () => {
                   {landPriceHistory && Object.keys(landPriceHistory).length > 0 ? (
                     <Plot
                       data={Object.entries(landPriceHistory).slice(0, 10).map(([ address, data ]: [string, any]) => ({
-                        x: data.yearly_prices.map((p: any) => p.year),
+                        x: data.yearly_prices.map((p: any) => `${p.year}年`),
                         y: data.yearly_prices.map((p: any) => p.price_per_sqm),
                         mode: 'lines+markers+text',
                         name: address.length > 20 ? address.substring(0, 20) + '...' : address,
@@ -2272,11 +2261,11 @@ const MarketAnalysis: React.FC = () => {
                       }))}
                       layout={{
                         height: 400,
-                        margin: { t: 20, b: 40, l: 60, r: 20 },
+                        margin: { t: 20, b: 40, l: 100, r: 20 },
                         plot_bgcolor: 'white',
                         paper_bgcolor: 'white',
                         xaxis: {
-                          title: { text: '年', font: { size: 14, color: 'black' } },
+                          title: { text: '価格時点', font: { size: 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
@@ -2285,13 +2274,14 @@ const MarketAnalysis: React.FC = () => {
                           dtick: 1
                         },
                         yaxis: {
-                          title: { text: '価格 (円/㎡)', font: { size: 14, color: 'black' } },
+                          title: { text: '', font: { size: 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
                           linecolor: 'black',
                           tickfont: { size: 14, color: 'black' },
-                          tickformat: ',.0f'
+                          tickformat: ',.0f',
+                          ticksuffix: '円'
                         },
                         legend: {
                           orientation: 'v',
