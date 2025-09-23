@@ -2172,7 +2172,7 @@ const MarketAnalysis: React.FC = () => {
                         ]}
                         layout={{
                           xaxis: {
-                            title: { text: '取引時期', font: { size: 14, color: 'black' } },
+                            title: { text: '取引時期（年月）', font: { size: 14, color: 'black' }, standoff: 30 },
                             tickfont: { size: 14, color: 'black' },
                             tickangle: 0,
                             showgrid: false,
@@ -2188,10 +2188,12 @@ const MarketAnalysis: React.FC = () => {
                             showline: true,
                             linecolor: 'black',
                             linewidth: 1,
-                            ticksuffix: '件'
+                            ticksuffix: '件',
+                            dtick: 1,  // 1件刻みで表示（整数のみ）
+                            tickformat: 'd'  // 整数フォーマット
                           },
                           height: 500,
-                          margin: { t: 40, b: 100, l: 60, r: 40 },
+                          margin: { t: 40, b: 70, l: 60, r: 40 },
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
                           showlegend: false,
@@ -2270,7 +2272,7 @@ const MarketAnalysis: React.FC = () => {
                         plot_bgcolor: 'white',
                         paper_bgcolor: 'white',
                         xaxis: {
-                          title: { text: '価格時点', font: { size: 14, color: 'black' } },
+                          title: { text: '価格時点（年）', font: { size: 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
