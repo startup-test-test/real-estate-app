@@ -39,6 +39,25 @@ const MarketAnalysis: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // SP版用のスタイルヘルパー
+  const getMobileScrollStyle = () => {
+    if (!isMobile) return {};
+    return {
+      WebkitOverflowScrolling: 'touch' as const,
+      scrollbarWidth: 'thin' as const
+    };
+  };
+
+  const getMobileContainerStyle = () => {
+    if (!isMobile) return {};
+    return { minWidth: '600px' };
+  };
+
+  const getMobileTableStyle = () => {
+    if (!isMobile) return {};
+    return { minWidth: '800px' };
+  };
+
 
 
   // フォーム状態（streamlit_app.pyと同じロジック）
@@ -1692,20 +1711,23 @@ const MarketAnalysis: React.FC = () => {
             {/* 類似物件の詳細表 */}
             {marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>📋 類似物件の取引事例</h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full">
+                <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                  📋 類似物件の取引事例
+                  {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                </h3>
+                <div className="overflow-x-auto" style={getMobileScrollStyle()}>
+                  <table className="min-w-full" style={getMobileTableStyle()}>
                     <thead className="bg-white border-b-2 border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">No.</th>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">所在地</th>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">取引時期</th>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">取引価格</th>
-                        {!isLand && <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">建築年</th>}
-                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">{isLand ? '土地面積(㎡)' : '土地面積(㎡)'}</th>
-                        {!isLand && <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">延床面積(㎡)</th>}
-                        {!isLand && <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">間取り</th>}
-                        <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">前面道路</th>
+                        <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>No.</th>
+                        <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>所在地</th>
+                        <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>取引時期</th>
+                        <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>取引価格</th>
+                        {!isLand && <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>建築年</th>}
+                        <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{isLand ? '土地面積(㎡)' : '土地面積(㎡)'}</th>
+                        {!isLand && <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>延床面積(㎡)</th>}
+                        {!isLand && <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>間取り</th>}
+                        <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>前面道路</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -1742,10 +1764,10 @@ const MarketAnalysis: React.FC = () => {
                         .slice(0, 10)
                         .map((property, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900">{index + 1}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{property.location || property.所在地 || '-'}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{formatTradePeriod(property)}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{index + 1}</td>
+                            <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{property.location || property.所在地 || '-'}</td>
+                            <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{formatTradePeriod(property)}</td>
+                            <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
                               {(() => {
                                 const price = property['取引価格（万円）'];
                                 if (price !== undefined && price !== null) {
@@ -1754,17 +1776,17 @@ const MarketAnalysis: React.FC = () => {
                                 return ((property.price || property.取引価格 || 0) / 10000).toLocaleString(); // 円を万円に変換
                               })()}万円
                             </td>
-                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">{getBuildYear(property) || '-'}年</td>}
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            {!isLand && <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{getBuildYear(property) || '-'}年</td>}
+                            <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
                               {isLand ? (getArea(property) || '-') :
                                ((property.land_area || property.土地面積) ? Math.floor(property.land_area || property.土地面積) : '-')}
                             </td>
-                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">
+                            {!isLand && <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
                               {(property['延べ床面積（㎡）'] || property.building_area || property.面積) ?
                                Math.floor(property['延べ床面積（㎡）'] || property.building_area || property.面積) : '-'}
                             </td>}
-                            {!isLand && <td className="px-4 py-3 text-sm text-gray-900">{property.floor_plan || property.間取り || '-'}</td>}
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            {!isLand && <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{property.floor_plan || property.間取り || '-'}</td>}
+                            <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
                               {(() => {
                                 const road = property.road_type || property.前面道路 || '';
                                 const width = property.breadth || property.道路幅員 || '';
@@ -1787,8 +1809,14 @@ const MarketAnalysis: React.FC = () => {
               <>
                 {/* 1. 延べ床と価格の散布図 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>1. {isLand ? '土地面積' : '延べ床'}と価格</h3>
-                  <Plot
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                    1. {isLand ? '土地面積' : '延べ床'}と価格
+                    {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                  </h3>
+                  {isMobile ? (
+                    <div className="overflow-x-auto" style={getMobileScrollStyle()}>
+                      <div style={getMobileContainerStyle()}>
+                        <Plot
                     data={[
                       {
                         x: allProperties
@@ -2016,6 +2044,190 @@ const MarketAnalysis: React.FC = () => {
                     config={{ displayModeBar: false }}
                     className="w-full"
                   />
+                      </div>
+                    </div>
+                  ) : (
+                    <Plot
+                      data={[
+                        {
+                          x: allProperties
+                            .filter(p => getArea(p) > 0)
+                            .filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)
+                            .map(p => getArea(p)),
+                          y: allProperties
+                            .filter(p => getArea(p) > 0)
+                            .filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)
+                            .map(p => {
+                              const price = p['取引価格（万円）'];
+                              return price !== undefined && price !== null ? price : (p.price || p.取引価格 || 0) / 10000;
+                            }),
+                          mode: 'markers',
+                          type: 'scatter',
+                          name: 'その他',
+                          marker: {
+                            color: '#4169E1',
+                            size: 8,
+                            opacity: 0.6,
+                            line: { color: '#000080', width: 0.5 }
+                          },
+                          hovertemplate: isLand ?
+                            '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
+                            '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
+                        },
+                        {
+                          x: allProperties
+                            .filter(p => getArea(p) > 0)
+                            .filter(p => Math.abs(getArea(p) - targetArea) <= areaTolerance)
+                            .map(p => getArea(p)),
+                          y: allProperties
+                            .filter(p => getArea(p) > 0)
+                            .filter(p => Math.abs(getArea(p) - targetArea) <= areaTolerance)
+                            .map(p => {
+                              const price = p['取引価格（万円）'];
+                              return price !== undefined && price !== null ? price : (p.price || p.取引価格 || 0) / 10000;
+                            }),
+                          mode: 'markers',
+                          type: 'scatter',
+                          name: '類似物件',
+                          marker: {
+                            color: '#FF4500',
+                            size: 10,
+                            opacity: 0.8,
+                            line: { color: '#8B0000', width: 1 }
+                          },
+                          hovertemplate: isLand ?
+                            '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
+                            '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
+                        }
+                      ]}
+                      layout={(() => {
+                        const priceData = allProperties
+                          .filter(p => getArea(p) > 0)
+                          .map(p => {
+                            let price;
+                            if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                              price = p['取引価格（万円）'];
+                              if (price > 10000000) {
+                                price = price / 10000;
+                              }
+                            } else if (p.price !== undefined && p.price !== null) {
+                              price = p.price / 10000;
+                            } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                              price = p.取引価格 / 10000;
+                            } else {
+                              price = 0;
+                            }
+                            return price;
+                          });
+
+                        const calculateIQRBounds = (data: number[]) => {
+                          const sorted = [...data].sort((a, b) => a - b);
+                          const q1Index = Math.floor(sorted.length * 0.25);
+                          const q3Index = Math.floor(sorted.length * 0.75);
+                          const q1 = sorted[q1Index];
+                          const q3 = sorted[q3Index];
+                          const iqr = q3 - q1;
+                          const lowerBound = q1 - 1.5 * iqr;
+                          const upperBound = q3 + 1.5 * iqr;
+                          return { lowerBound, upperBound };
+                        };
+
+                        const positivePriceData = priceData.filter(price => price > 0);
+
+                        let validPriceData;
+                        if (positivePriceData.length > 4) {
+                          const { lowerBound, upperBound } = calculateIQRBounds(positivePriceData);
+                          validPriceData = positivePriceData.filter(price => price >= lowerBound && price <= upperBound);
+                          validPriceData = validPriceData.filter(price => price <= 30000);
+                        } else {
+                          validPriceData = positivePriceData.filter(price => price <= 30000);
+                        }
+
+                        const maxPrice = Math.max(...validPriceData, 0);
+
+                        let yRange, yDtick;
+                        if (maxPrice <= 10000) {
+                          yRange = [0, 10000];
+                          yDtick = 1000;
+                        } else if (maxPrice <= 20000) {
+                          yRange = [0, 20000];
+                          yDtick = 2000;
+                        } else {
+                          yRange = [0, 30000];
+                          yDtick = 3000;
+                        }
+
+                        return {
+                          xaxis: {
+                            title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: isMobile ? 10 : 14, color: 'black' } },
+                            gridcolor: '#E0E0E0',
+                            showline: true,
+                            linewidth: 1,
+                            linecolor: 'black',
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
+                            dtick: 10,
+                            range: [50, 200],
+                            tickangle: isMobile ? -45 : 0
+                          },
+                          yaxis: {
+                            title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
+                            gridcolor: '#E0E0E0',
+                            showline: true,
+                            linewidth: 1,
+                            linecolor: 'black',
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
+                            dtick: yDtick,
+                            range: yRange,
+                            tickformat: ',d',
+                            ticksuffix: '万円'
+                          },
+                          height: isMobile ? 400 : 500,
+                          margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 60 : 80, r: isMobile ? 20 : 40 },
+                          plot_bgcolor: 'white',
+                          paper_bgcolor: 'white',
+                          showlegend: true,
+                          hovermode: 'closest',
+                          hoverlabel: {
+                            bgcolor: 'rgba(0, 0, 0, 0.8)',
+                            bordercolor: '#fff',
+                            font: { size: 14, color: 'white' }
+                          },
+                          shapes: [
+                            {
+                              type: 'line',
+                              x0: targetArea,
+                              x1: targetArea,
+                              y0: 0,
+                              y1: yRange[1],
+                              line: { color: 'red', width: 1, dash: 'dash' }
+                            },
+                            {
+                              type: 'rect',
+                              x0: targetArea - areaTolerance,
+                              x1: targetArea + areaTolerance,
+                              y0: 0,
+                              y1: yRange[1],
+                              fillcolor: 'red',
+                              opacity: 0.1,
+                              line: { width: 0 }
+                            }
+                          ],
+                          annotations: [
+                            {
+                              x: targetArea,
+                              y: yRange[1],
+                              text: `広さ ${targetArea}㎡`,
+                              showarrow: false,
+                              yanchor: 'bottom',
+                              font: { size: 12, color: 'red' }
+                            }
+                          ]
+                        };
+                      })()}
+                      config={{ displayModeBar: false }}
+                      className="w-full"
+                    />
+                  )}
                   <div className="text-xs text-gray-500 mt-2">
                     ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
