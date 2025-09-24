@@ -1152,6 +1152,13 @@ const MarketAnalysis: React.FC = () => {
           </div>
         </div>
 
+        {/* 免責事項 */}
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+          <div className="text-sm text-yellow-800">
+            <strong>【免責事項】</strong> 本資料は参考情報であり、勧誘・推奨を目的とするものではありません。将来の結果を保証するものではなく、最終判断はご自身で行い、必要に応じて専門家にご相談ください。
+          </div>
+        </div>
+
         {/* 分析条件入力セクション */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
           <div className="flex items-center mb-6">
@@ -2333,7 +2340,8 @@ const MarketAnalysis: React.FC = () => {
                     />
                   )}
                   <div className="text-xs text-gray-500 mt-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
+                    <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
                 </div>
 
@@ -2727,7 +2735,8 @@ const MarketAnalysis: React.FC = () => {
                     })()
                   )}
                   <div className="text-xs text-gray-500 mt-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
+                    <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
                 </div>
 
@@ -3901,7 +3910,8 @@ const MarketAnalysis: React.FC = () => {
                     })()
                   )}
                   <div className="text-xs text-gray-500 mt-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
+                    <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
                 </div>
 
@@ -4103,6 +4113,15 @@ const MarketAnalysis: React.FC = () => {
             </p>
           </div>
         )}
+
+        {/* フッター表記（利用規約準拠） */}
+        <div className="bg-gray-50 border-t p-4 mt-8">
+          <div className="text-xs text-gray-600 space-y-2">
+            <p>このサービスは、国土交通省 不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性・正確性・完全性は保証されていません。</p>
+            <p>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a>／「不動産取引価格情報」（国土交通省）をもとに当サービス運営者が加工・集計。</p>
+            <p>本アプリケーションは当サービス運営者が開発・運営しており、国土交通省が運営するものではありません。</p>
+          </div>
+        </div>
       </div>
       </div>
 
