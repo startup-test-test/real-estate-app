@@ -53,6 +53,7 @@ const MarketAnalysis: React.FC = () => {
     return { minWidth: '600px' };
   };
 
+
   const getMobileTableStyle = () => {
     if (!isMobile) return {};
     return { minWidth: '800px' };
@@ -2239,9 +2240,10 @@ const MarketAnalysis: React.FC = () => {
                     2. {isLand ? '土地面積' : '延床面積'}別価格分布
                     {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
                   </h3>
-                  <div className={isMobile ? "overflow-x-auto" : ""} style={isMobile ? getMobileScrollStyle() : {}}>
-                    <div style={isMobile ? getMobileContainerStyle() : {}}>
-                      {(() => {
+                  {isMobile ? (
+                    <div className="overflow-x-auto" style={getMobileScrollStyle()}>
+                      <div style={getMobileContainerStyle()}>
+                        {(() => {
                         // IQR計算用の関数
                         const calculateIQRBounds = (data: number[]) => {
                       const sorted = [...data].sort((a, b) => a - b);
@@ -2435,8 +2437,192 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    (() => {
+                      // PC版用の元のロジック（モバイル版と同じだが、スクロールなし）
+                      const calculateIQRBounds = (data: number[]) => {
+                        const sorted = [...data].sort((a, b) => a - b);
+                        const q1Index = Math.floor(sorted.length * 0.25);
+                        const q3Index = Math.floor(sorted.length * 0.75);
+                        const q1 = sorted[q1Index];
+                        const q3 = sorted[q3Index];
+                        const iqr = q3 - q1;
+                        const lowerBound = q1 - 1.5 * iqr;
+                        const upperBound = q3 + 1.5 * iqr;
+                        return { lowerBound, upperBound, q1, q3, iqr };
+                      };
+
+                      // 価格データを収集して外れ値除去
+                      const priceData = allProperties.map(p => {
+                        let price;
+                        if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                          price = p['取引価格（万円）'];
+                          if (price > 10000000) {
+                            price = price / 10000;
+                          }
+                        } else if (p.price !== undefined && p.price !== null) {
+                          price = p.price / 10000;
+                        } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                          price = p.取引価格 / 10000;
+                        } else {
+                          price = 0;
+                        }
+                        return price;
+                      });
+
+                      const hardLimitData = priceData.filter(price => price > 0 && price <= 30000);
+                      let filteredPriceData = hardLimitData;
+                      if (hardLimitData.length >= 4) {
+                        const iqrBounds = calculateIQRBounds(hardLimitData);
+                        filteredPriceData = hardLimitData.filter(
+                          price => price >= iqrBounds.lowerBound && price <= iqrBounds.upperBound
+                        );
+                      }
+
+                      const maxPrice = filteredPriceData.length > 0 ? Math.max(...filteredPriceData) : 10000;
+                      let priceBins: number[];
+                      let binSize: number;
+                      let maxBinValue: number;
+
+                      if (maxPrice <= 10000) {
+                        binSize = 1000;
+                        maxBinValue = 10000;
+                        priceBins = [];
+                        for (let i = 0; i <= maxBinValue; i += binSize) {
+                          priceBins.push(i);
+                        }
+                        priceBins.push(maxBinValue + 1);
+                      } else if (maxPrice <= 20000) {
+                        binSize = 2000;
+                        maxBinValue = 20000;
+                        priceBins = [];
+                        for (let i = 0; i <= maxBinValue; i += binSize) {
+                          priceBins.push(i);
+                        }
+                        priceBins.push(maxBinValue + 1);
+                      } else {
+                        binSize = 3000;
+                        maxBinValue = 30000;
+                        priceBins = [];
+                        for (let i = 0; i <= maxBinValue; i += binSize) {
+                          priceBins.push(i);
+                        }
+                        priceBins.push(maxBinValue + 1);
+                      }
+
+                      const areaBins = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200];
+                      const heatmapData: number[][] = [];
+                      const priceLabels: string[] = [];
+                      const areaLabels: string[] = [];
+
+                      for (let i = 0; i < priceBins.length - 1; i++) {
+                        if (i === priceBins.length - 2) {
+                          priceLabels.push(`${maxBinValue.toLocaleString()}万円`);
+                        } else {
+                          priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
+                        }
+
+                        const row: number[] = [];
+                        for (let j = 0; j < areaBins.length - 1; j++) {
+                          if (i === 0) {
+                            areaLabels.push(`${areaBins[j]}`);
+                          }
+                          const count = allProperties.filter(p => {
+                            let price;
+                            if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                              price = p['取引価格（万円）'];
+                              if (price > 10000000) {
+                                price = price / 10000;
+                              }
+                            } else if (p.price !== undefined && p.price !== null) {
+                              price = p.price / 10000;
+                            } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                              price = p.取引価格 / 10000;
+                            } else {
+                              price = 0;
+                            }
+
+                            if (price <= 0 || price > 30000) return false;
+                            if (hardLimitData.length >= 4 && filteredPriceData.length > 0) {
+                              const iqrBounds = calculateIQRBounds(hardLimitData);
+                              if (price < iqrBounds.lowerBound || price > iqrBounds.upperBound) {
+                                return false;
+                              }
+                            }
+
+                            const area = getArea(p);
+                            return price >= priceBins[i] && price < priceBins[i + 1] &&
+                                   area >= areaBins[j] && area < areaBins[j + 1];
+                          }).length;
+                          row.push(count);
+                        }
+                        heatmapData.push(row);
+                      }
+
+                      heatmapData.reverse();
+                      priceLabels.reverse();
+
+                      return (
+                        <Plot
+                          data={[
+                            {
+                              z: heatmapData,
+                              x: areaLabels,
+                              y: priceLabels,
+                              type: 'heatmap',
+                              colorscale: [
+                                [0, '#ffffff'],
+                                [0.2, '#c6dbef'],
+                                [0.4, '#9ecae1'],
+                                [0.6, '#6baed6'],
+                                [0.8, '#3182bd'],
+                                [1, '#08519c']
+                              ],
+                              text: heatmapData.map(row => row.map(val => val.toString())),
+                              texttemplate: '%{text}',
+                              textfont: { size: 14 },
+                              hovertemplate: '価格: %{y}<br>面積: %{x}㎡<br>件数: %{z}件<extra></extra>',
+                              colorbar: { title: '件数' }
+                            }
+                          ]}
+                          layout={{
+                            xaxis: {
+                              title: { text: isLand ? '土地面積(㎡)' : '延床面積(㎡)', font: { size: 14, color: 'black' } },
+                              side: 'bottom',
+                              tickfont: { size: 14, color: 'black' },
+                              showgrid: false,
+                              showline: true,
+                              linecolor: 'black',
+                              tickangle: 0
+                            },
+                            yaxis: {
+                              title: { text: '', font: { size: 14, color: 'black' } },
+                              side: 'left',
+                              tickfont: { size: 14, color: 'black' },
+                              showgrid: false,
+                              showline: true,
+                              linecolor: 'black',
+                              autorange: 'reversed'
+                            },
+                            height: 500,
+                            margin: { t: 40, b: 60, l: 100, r: 40 },
+                            plot_bgcolor: 'white',
+                            paper_bgcolor: 'white',
+                            hovermode: 'closest',
+                            hoverlabel: {
+                              bgcolor: 'rgba(0, 0, 0, 0.8)',
+                              bordercolor: '#fff',
+                              font: { size: 14, color: 'white' }
+                            }
+                          }}
+                          config={{ displayModeBar: false }}
+                          className="w-full"
+                        />
+                      );
+                    })()
+                  )}
                   <div className="text-xs text-gray-500 mt-2">
                     ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
