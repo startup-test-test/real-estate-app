@@ -22,6 +22,23 @@ const MarketAnalysis: React.FC = () => {
   const { usage, executeWithLimit } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
+  // モバイル判定用のステート
+  const [isMobile, setIsMobile] = useState(false);
+
+  // ウィンドウサイズ監視
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // 初回チェック
+    checkMobile();
+
+    // リサイズイベントリスナー
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
 
 
   // フォーム状態（streamlit_app.pyと同じロジック）
@@ -1931,29 +1948,30 @@ const MarketAnalysis: React.FC = () => {
 
                       return {
                         xaxis: {
-                          title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: 14, color: 'black' } },
+                          title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: isMobile ? 10 : 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
                           linecolor: 'black',
-                          tickfont: { size: 14, color: 'black' },
+                          tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                           dtick: 10,
-                          range: [50, 200]
+                          range: [50, 200],
+                          tickangle: isMobile ? -45 : 0
                         },
                         yaxis: {
-                          title: { text: '', font: { size: 14, color: 'black' } },
+                          title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
                           linecolor: 'black',
-                          tickfont: { size: 14, color: 'black' },
+                          tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                           dtick: yDtick,
                           range: yRange,
                           tickformat: ',d',
                           ticksuffix: '万円'
                         },
-                        height: 500,
-                        margin: { t: 40, b: 60, l: 80, r: 40 },
+                        height: isMobile ? 400 : 500,
+                        margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 60 : 80, r: isMobile ? 20 : 40 },
                         plot_bgcolor: 'white',
                         paper_bgcolor: 'white',
                         showlegend: true,
@@ -2167,24 +2185,25 @@ const MarketAnalysis: React.FC = () => {
                         ]}
                         layout={{
                           xaxis: {
-                            title: { text: isLand ? '土地面積(㎡)' : '延床面積(㎡)', font: { size: 14, color: 'black' } },
+                            title: { text: isLand ? '土地面積(㎡)' : '延床面積(㎡)', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             side: 'bottom',
-                            tickfont: { size: 14, color: 'black' },
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                             showgrid: false,
                             showline: true,
-                            linecolor: 'black'
+                            linecolor: 'black',
+                            tickangle: isMobile ? -45 : 0
                           },
                           yaxis: {
-                            title: { text: '', font: { size: 14, color: 'black' } },
+                            title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             side: 'left',
-                            tickfont: { size: 14, color: 'black' },
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
                             autorange: 'reversed'  // Y軸を反転して下が0、上が高い値になるようにする
                           },
-                          height: 500,
-                          margin: { t: 40, b: 60, l: 100, r: 40 },
+                          height: isMobile ? 400 : 500,
+                          margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 80 : 100, r: isMobile ? 20 : 40 },
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
                           hovermode: 'closest',
@@ -2393,28 +2412,29 @@ const MarketAnalysis: React.FC = () => {
 
                       return {
                         xaxis: {
-                          title: { text: '建築年', font: { size: 14, color: 'black' } },
+                          title: { text: '建築年', font: { size: isMobile ? 10 : 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
                           linecolor: 'black',
-                          tickfont: { size: 14, color: 'black' },
-                          dtick: 5
+                          tickfont: { size: isMobile ? 10 : 14, color: 'black' },
+                          dtick: 5,
+                          tickangle: isMobile ? -45 : 0
                         },
                         yaxis: {
-                          title: { text: '', font: { size: 14, color: 'black' } },
+                          title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
                           showline: true,
                           linewidth: 1,
                           linecolor: 'black',
-                          tickfont: { size: 14, color: 'black' },
+                          tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                           dtick: yDtick,
                           range: yRange,
                           tickformat: ',d',
                           ticksuffix: '万円'
                         },
-                        height: 500,
-                        margin: { t: 40, b: 60, l: 80, r: 40 },
+                        height: isMobile ? 400 : 500,
+                        margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 60 : 80, r: isMobile ? 20 : 40 },
                         plot_bgcolor: 'white',
                         paper_bgcolor: 'white',
                         showlegend: true,
@@ -2638,24 +2658,25 @@ const MarketAnalysis: React.FC = () => {
                         ]}
                         layout={{
                           xaxis: {
-                            title: { text: '建築年', font: { size: 14, color: 'black' } },
+                            title: { text: '建築年', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             side: 'bottom',
-                            tickfont: { size: 14, color: 'black' },
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                             showgrid: false,
                             showline: true,
-                            linecolor: 'black'
+                            linecolor: 'black',
+                            tickangle: isMobile ? -45 : 0
                           },
                           yaxis: {
-                            title: { text: '', font: { size: 14, color: 'black' } },
+                            title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             side: 'left',
-                            tickfont: { size: 14, color: 'black' },
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
                             autorange: 'reversed'
                           },
-                          height: 500,
-                          margin: { t: 40, b: 60, l: 100, r: 40 },
+                          height: isMobile ? 400 : 500,
+                          margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 80 : 100, r: isMobile ? 20 : 40 },
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
                           hovermode: 'closest',
@@ -2738,23 +2759,23 @@ const MarketAnalysis: React.FC = () => {
                             },
                             text: sortedPeriods.map(p => `${periodCounts[p]}件`),
                             textposition: 'outside',
-                            textfont: { size: 14, color: 'black' },
+                            textfont: { size: isMobile ? 10 : 14, color: 'black' },
                             hovertemplate: '取引時期: %{x}<br>成約件数: %{y}件<extra></extra>'
                           }
                         ]}
                         layout={{
                           xaxis: {
-                            title: { text: '取引時期（年月）', font: { size: 14, color: 'black' }, standoff: 30 },
-                            tickfont: { size: 14, color: 'black' },
-                            tickangle: 0,
+                            title: { text: '取引時期（年月）', font: { size: isMobile ? 10 : 14, color: 'black' }, standoff: isMobile ? 20 : 30 },
+                            tickfont: { size: isMobile ? 8 : 14, color: 'black' },
+                            tickangle: isMobile ? -45 : 0,
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
                             linewidth: 1
                           },
                           yaxis: {
-                            title: { text: '', font: { size: 14, color: 'black' } },
-                            tickfont: { size: 14, color: 'black' },
+                            title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
+                            tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                             showgrid: true,
                             gridcolor: '#E0E0E0',
                             showline: true,
@@ -2764,8 +2785,8 @@ const MarketAnalysis: React.FC = () => {
                             dtick: yAxisDtick,  // 動的な目盛り間隔
                             tickformat: 'd'  // 整数フォーマット
                           },
-                          height: 500,
-                          margin: { t: 40, b: 70, l: 60, r: 40 },
+                          height: isMobile ? 400 : 500,
+                          margin: { t: 40, b: isMobile ? 100 : 70, l: isMobile ? 50 : 60, r: isMobile ? 20 : 40 },
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
                           showlegend: false,
