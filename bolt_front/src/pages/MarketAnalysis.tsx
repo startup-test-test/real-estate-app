@@ -1673,7 +1673,7 @@ const MarketAnalysis: React.FC = () => {
             )}
 
             {/* 類似物件の詳細表 */}
-            {false && marketData && marketData.similarPropertiesCount > 0 && (
+            {marketData && marketData.similarPropertiesCount > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>📋 類似物件の取引事例</h3>
                 <div className="overflow-x-auto">
