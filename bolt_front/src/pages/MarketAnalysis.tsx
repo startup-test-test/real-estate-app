@@ -2706,16 +2706,24 @@ const MarketAnalysis: React.FC = () => {
 
                     // 最大値に応じてY軸の目盛り間隔を動的に設定
                     let yAxisDtick: number;
-                    if (maxCount <= 20) {
+                    if (maxCount <= 10) {
+                      yAxisDtick = 1;  // 1件刻み
+                    } else if (maxCount <= 20) {
                       yAxisDtick = 2;  // 2件刻み
+                    } else if (maxCount <= 30) {
+                      yAxisDtick = 3;  // 3件刻み
                     } else if (maxCount <= 50) {
                       yAxisDtick = 5;  // 5件刻み
-                    } else if (maxCount <= 100) {
+                    } else if (maxCount <= 80) {
                       yAxisDtick = 10;  // 10件刻み
+                    } else if (maxCount <= 150) {
+                      yAxisDtick = 15;  // 15件刻み
                     } else if (maxCount <= 200) {
                       yAxisDtick = 20;  // 20件刻み
-                    } else {
+                    } else if (maxCount <= 500) {
                       yAxisDtick = 50;  // 50件刻み
+                    } else {
+                      yAxisDtick = 100;  // 100件刻み
                     }
 
                     return (
