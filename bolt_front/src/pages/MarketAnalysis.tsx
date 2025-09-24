@@ -2932,8 +2932,13 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 成約件数推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>{isLand ? '3' : '5'}. 成約件数推移</h3>
-                  {(() => {
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                    {isLand ? '3' : '5'}. 成約件数推移
+                    {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                  </h3>
+                  <div className={isMobile ? "overflow-x-auto" : ""} style={isMobile ? getMobileScrollStyle() : {}}>
+                    <div style={isMobile ? getMobileContainerStyle() : {}}>
+                      {(() => {
                     // 四半期ごとのデータ集計
                     const periodCounts: { [key: string]: number } = {};
                     allProperties.forEach(p => {
