@@ -2235,10 +2235,15 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 2. 延床面積別価格分布ヒートマップ */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>2. {isLand ? '土地面積' : '延床面積'}別価格分布</h3>
-                  {(() => {
-                    // IQR計算用の関数
-                    const calculateIQRBounds = (data: number[]) => {
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                    2. {isLand ? '土地面積' : '延床面積'}別価格分布
+                    {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                  </h3>
+                  <div className={isMobile ? "overflow-x-auto" : ""} style={isMobile ? getMobileScrollStyle() : {}}>
+                    <div style={isMobile ? getMobileContainerStyle() : {}}>
+                      {(() => {
+                        // IQR計算用の関数
+                        const calculateIQRBounds = (data: number[]) => {
                       const sorted = [...data].sort((a, b) => a - b);
                       const q1Index = Math.floor(sorted.length * 0.25);
                       const q3Index = Math.floor(sorted.length * 0.75);
@@ -2430,6 +2435,8 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
+                    </div>
+                  </div>
                   <div className="text-xs text-gray-500 mt-2">
                     ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
