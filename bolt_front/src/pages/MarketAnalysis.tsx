@@ -247,13 +247,44 @@ const MarketAnalysis: React.FC = () => {
     }, 500);
 
     try {
-      // 2024年を最新年として設定（2025年のデータはまだ存在しない）
-      const currentYear = Math.min(new Date().getFullYear(), 2024);
-      const fromYear = currentYear - 3;  // Streamlitと同じ：3年前から
-      const toYear = currentYear;  // 現在年まで
+      // 現在年を取得（2025年のデータがあるかテストのため一時的に制限を解除）
+      const currentYear = new Date().getFullYear();
+      console.log('現在年:', currentYear);
+
+      // まず2025年のデータが存在するかテスト
+      const testYear = 2025;
+      console.log(`🧪 ${testYear}年のデータ存在テストを実行中...`);
+
+      // テスト用に2025年第1四半期のデータを試しに取得
+      try {
+        const testParams = {
+          prefecture_code: selectedPrefecture,
+          city_code: selectedCity,
+          district: selectedDistrict || undefined,
+          property_type: selectedPropertyType,
+          year: testYear,
+          quarter: 1
+        };
+
+        const testResponse = await propertyApi.getPropertyTransactions(testParams);
+        console.log(`📊 ${testYear}年Q1テスト結果:`, testResponse);
+
+        if (testResponse.status === 'success' && testResponse.data && testResponse.data.length > 0) {
+          console.log(`✅ ${testYear}年のデータが存在します (${testResponse.data.length}件)`);
+        } else {
+          console.log(`❌ ${testYear}年のデータは存在しないか、空です`);
+        }
+      } catch (testError) {
+        console.log(`❌ ${testYear}年データテストエラー:`, testError);
+      }
+
+      // 2025年のデータが存在するなら2025年まで取得
+      const actualCurrentYear = currentYear; // 2025年まで取得
+      const fromYear = actualCurrentYear - 2;  // 3年分: 2023-2025年
+      const toYear = actualCurrentYear;  // 現在年（2025年）まで
       const promises = [];
 
-      // Streamlitと同じロジック：from_year から to_year まで（4年分）
+      // データ取得ロジック：from_year から to_year まで（3年分: 2023-2025年）
       for (let year = fromYear; year <= toYear; year++) {
         // 全四半期のデータを取得
         for (let quarter = 1; quarter <= 4; quarter++) {
@@ -362,7 +393,7 @@ const MarketAnalysis: React.FC = () => {
       if (!isLand) {
         console.log('  - 建築年:', `${targetYear}±${yearTolerance}年 (${targetYear-yearTolerance}〜${targetYear+yearTolerance}年)`);
       }
-      console.log('  - 取得期間: 2021年〜2024年 (4年分)');
+      console.log(`  - 取得期間: ${fromYear}年〜${toYear}年 (3年分)`);
 
       // データの詳細分析
       if (allData.length > 0) {
@@ -814,13 +845,13 @@ const MarketAnalysis: React.FC = () => {
             prefecture: selectedPrefName,  // 都道府県名を使用
             city: selectedCityName,  // 市区町村名を使用
             district: selectedDistrict || undefined,
-            year: '2024'
+            year: '2025'
           });
           if (landPriceResponse.status === 'success' && landPriceResponse.data) {
             // データ形式を調整（APIの返す形式に合わせる）
             const formattedData = landPriceResponse.data.map((item: any) => ({
               address: item.address || item.所在地 || '',
-              price_time: item.price_time || item.価格時点 || '2024',
+              price_time: item.price_time || item.価格時点 || '2025',
               price_per_sqm: item.price_per_sqm || item.価格 || 0,
               price_per_tsubo: item.price_per_tsubo || (item.価格 * 3.306) || 0,
               change_rate: item.change_rate || item.前年比 || 0,
@@ -830,8 +861,8 @@ const MarketAnalysis: React.FC = () => {
             setLandPriceData(formattedData);
           }
 
-          // 公示地価の推移データを取得（複数年分）
-          const years = ['2021', '2022', '2023', '2024'];
+          // 公示地価の推移データを取得（3年分）
+          const years = ['2023', '2024', '2025'];
           const historyData: any = {};
 
           for (const year of years) {
@@ -959,7 +990,7 @@ const MarketAnalysis: React.FC = () => {
       return '-';
     }
 
-    // 「2024年第1四半期」のパターンを変換
+    // 「2025年第1四半期」のパターンを変換
     const quarterMatch = tradePeriod.match(/(\d{4})年第(\d)四半期/);
     if (quarterMatch) {
       const year = quarterMatch[1];
@@ -1843,19 +1874,38 @@ const MarketAnalysis: React.FC = () => {
                         customdata: allProperties
                           .filter(p => getArea(p) > 0)
                           .filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)
-                          .map(p => [
-                            formatTradePeriod(p),
-                            p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-',
-                            p.floor_plan || p.間取り || '-',
-                            (() => {
-                              const road = p.road_type || p.前面道路 || '';
+                          .map(p => {
+                            const tradePeriod = formatTradePeriod(p);
+                            const landArea = p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-';
+                            const floorPlan = p.floor_plan || p.間取り || '-';
+                            const road = (() => {
+                              const roadType = p.road_type || p.前面道路 || '';
                               const width = p.breadth || p.道路幅員 || '';
-                              if (!road && !width) return '-';
-                              if (road && width) return `${road} ${width}m`;
-                              if (road) return road;
+                              if (!roadType && !width) return '-';
+                              if (roadType && width) return `${roadType} ${width}m`;
+                              if (roadType) return roadType;
                               return `幅員${width}m`;
-                            })()
-                          ]),
+                            })();
+
+                            // デバッグ用ログ（最初の1件のみ）
+                            if (p === allProperties.filter(p => getArea(p) > 0).filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)[0]) {
+                              console.log('🔍 Customdata debug (その他):', [tradePeriod, landArea, floorPlan, road]);
+                              console.log('🔍 Property sample (その他):', {
+                                trade_period: p.trade_period,
+                                取引時期: p.取引時期,
+                                dataYear: p.dataYear,
+                                dataQuarter: p.dataQuarter,
+                                land_area: p.land_area,
+                                土地面積: p.土地面積,
+                                floor_plan: p.floor_plan,
+                                間取り: p.間取り,
+                                road_type: p.road_type,
+                                前面道路: p.前面道路
+                              });
+                            }
+
+                            return [tradePeriod, landArea, floorPlan, road];
+                          }),
                         hovertemplate: isLand ?
                           '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
                           '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
@@ -1884,19 +1934,38 @@ const MarketAnalysis: React.FC = () => {
                         customdata: allProperties
                           .filter(p => getArea(p) > 0)
                           .filter(p => Math.abs(getArea(p) - targetArea) <= areaTolerance)
-                          .map(p => [
-                            formatTradePeriod(p),
-                            p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-',
-                            p.floor_plan || p.間取り || '-',
-                            (() => {
-                              const road = p.road_type || p.前面道路 || '';
+                          .map(p => {
+                            const tradePeriod = formatTradePeriod(p);
+                            const landArea = p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-';
+                            const floorPlan = p.floor_plan || p.間取り || '-';
+                            const road = (() => {
+                              const roadType = p.road_type || p.前面道路 || '';
                               const width = p.breadth || p.道路幅員 || '';
-                              if (!road && !width) return '-';
-                              if (road && width) return `${road} ${width}m`;
-                              if (road) return road;
+                              if (!roadType && !width) return '-';
+                              if (roadType && width) return `${roadType} ${width}m`;
+                              if (roadType) return roadType;
                               return `幅員${width}m`;
-                            })()
-                          ]),
+                            })();
+
+                            // デバッグ用ログ（最初の1件のみ）
+                            if (p === allProperties.filter(p => getArea(p) > 0).filter(p => Math.abs(getArea(p) - targetArea) <= areaTolerance)[0]) {
+                              console.log('🎯 Customdata debug (条件一致):', [tradePeriod, landArea, floorPlan, road]);
+                              console.log('🎯 Property sample (条件一致):', {
+                                trade_period: p.trade_period,
+                                取引時期: p.取引時期,
+                                dataYear: p.dataYear,
+                                dataQuarter: p.dataQuarter,
+                                land_area: p.land_area,
+                                土地面積: p.土地面積,
+                                floor_plan: p.floor_plan,
+                                間取り: p.間取り,
+                                road_type: p.road_type,
+                                前面道路: p.前面道路
+                              });
+                            }
+
+                            return [tradePeriod, landArea, floorPlan, road];
+                          }),
                         hovertemplate: isLand ?
                           '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
                           '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
@@ -2071,6 +2140,23 @@ const MarketAnalysis: React.FC = () => {
                             opacity: 0.6,
                             line: { color: '#000080', width: 0.5 }
                           },
+                          customdata: allProperties
+                            .filter(p => getArea(p) > 0)
+                            .filter(p => Math.abs(getArea(p) - targetArea) > areaTolerance)
+                            .map(p => {
+                              const tradePeriod = formatTradePeriod(p);
+                              const landArea = p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-';
+                              const floorPlan = p.floor_plan || p.間取り || '-';
+                              const road = (() => {
+                                const roadType = p.road_type || p.前面道路 || '';
+                                const width = p.breadth || p.道路幅員 || '';
+                                if (!roadType && !width) return '-';
+                                if (roadType && width) return `${roadType} ${width}m`;
+                                if (roadType) return roadType;
+                                return `幅員${width}m`;
+                              })();
+                              return [tradePeriod, landArea, floorPlan, road];
+                            }),
                           hovertemplate: isLand ?
                             '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
                             '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
@@ -2096,6 +2182,23 @@ const MarketAnalysis: React.FC = () => {
                             opacity: 0.8,
                             line: { color: '#8B0000', width: 1 }
                           },
+                          customdata: allProperties
+                            .filter(p => getArea(p) > 0)
+                            .filter(p => Math.abs(getArea(p) - targetArea) <= areaTolerance)
+                            .map(p => {
+                              const tradePeriod = formatTradePeriod(p);
+                              const landArea = p.land_area || p.土地面積 ? Math.floor(p.land_area || p.土地面積) : '-';
+                              const floorPlan = p.floor_plan || p.間取り || '-';
+                              const road = (() => {
+                                const roadType = p.road_type || p.前面道路 || '';
+                                const width = p.breadth || p.道路幅員 || '';
+                                if (!roadType && !width) return '-';
+                                if (roadType && width) return `${roadType} ${width}m`;
+                                if (roadType) return roadType;
+                                return `幅員${width}m`;
+                              })();
+                              return [tradePeriod, landArea, floorPlan, road];
+                            }),
                           hovertemplate: isLand ?
                             '取引時期: %{customdata[0]}<br>土地面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>' :
                             '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
