@@ -2007,8 +2007,84 @@ const MarketAnalysis: React.FC = () => {
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>2. {isLand ? '土地面積' : '延床面積'}別価格分布</h3>
                   {(() => {
-                    // 価格帯と面積帯を定義（価格帯を低い順に）
-                    const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
+                    // IQR計算用の関数
+                    const calculateIQRBounds = (data: number[]) => {
+                      const sorted = [...data].sort((a, b) => a - b);
+                      const q1Index = Math.floor(sorted.length * 0.25);
+                      const q3Index = Math.floor(sorted.length * 0.75);
+                      const q1 = sorted[q1Index];
+                      const q3 = sorted[q3Index];
+                      const iqr = q3 - q1;
+                      const lowerBound = q1 - 1.5 * iqr;
+                      const upperBound = q3 + 1.5 * iqr;
+                      return { lowerBound, upperBound, q1, q3, iqr };
+                    };
+
+                    // 価格データを収集して外れ値除去
+                    const priceData = allProperties.map(p => {
+                      let price;
+                      if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                        price = p['取引価格（万円）'];
+                        if (price > 10000000) {
+                          price = price / 10000;
+                        }
+                      } else if (p.price !== undefined && p.price !== null) {
+                        price = p.price / 10000;
+                      } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                        price = p.取引価格 / 10000;
+                      } else {
+                        price = 0;
+                      }
+                      return price;
+                    });
+
+                    // ハードリミット（3億円）を適用
+                    const hardLimitData = priceData.filter(price => price > 0 && price <= 30000);
+
+                    // IQR法で外れ値除去
+                    let filteredPriceData = hardLimitData;
+                    if (hardLimitData.length >= 4) {
+                      const iqrBounds = calculateIQRBounds(hardLimitData);
+                      filteredPriceData = hardLimitData.filter(
+                        price => price >= iqrBounds.lowerBound && price <= iqrBounds.upperBound
+                      );
+                    }
+
+                    // 最大価格に基づいて動的にビンを生成
+                    const maxPrice = filteredPriceData.length > 0 ? Math.max(...filteredPriceData) : 10000;
+                    let priceBins: number[];
+                    let binSize: number;
+                    let maxBinValue: number;
+
+                    if (maxPrice <= 10000) {
+                      // パターン1: 標準（〜1億円）
+                      binSize = 1000;
+                      maxBinValue = 10000;
+                      priceBins = [];
+                      for (let i = 0; i <= maxBinValue; i += binSize) {
+                        priceBins.push(i);
+                      }
+                      priceBins.push(maxBinValue + 1); // 最後の値を捕捉するため
+                    } else if (maxPrice <= 20000) {
+                      // パターン2: 高額（〜2億円）
+                      binSize = 2000;
+                      maxBinValue = 20000;
+                      priceBins = [];
+                      for (let i = 0; i <= maxBinValue; i += binSize) {
+                        priceBins.push(i);
+                      }
+                      priceBins.push(maxBinValue + 1);
+                    } else {
+                      // パターン3: 超高額（〜3億円）
+                      binSize = 3000;
+                      maxBinValue = 30000;
+                      priceBins = [];
+                      for (let i = 0; i <= maxBinValue; i += binSize) {
+                        priceBins.push(i);
+                      }
+                      priceBins.push(maxBinValue + 1);
+                    }
+
                     const areaBins = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200];
 
                     // データをビンに分類してカウント
@@ -2017,7 +2093,12 @@ const MarketAnalysis: React.FC = () => {
                     const areaLabels: string[] = [];
 
                     for (let i = 0; i < priceBins.length - 1; i++) {
-                      priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
+                      if (i === priceBins.length - 2) {
+                        // 最後のビンは最大値として表示
+                        priceLabels.push(`${maxBinValue.toLocaleString()}万円`);
+                      } else {
+                        priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
+                      }
 
                       const row: number[] = [];
                       for (let j = 0; j < areaBins.length - 1; j++) {
@@ -2025,9 +2106,29 @@ const MarketAnalysis: React.FC = () => {
                           areaLabels.push(`${areaBins[j]}`);
                         }
                         const count = allProperties.filter(p => {
-                          const price = p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null
-                            ? p['取引価格（万円）']
-                            : (p.price || p.取引価格 || 0) / 10000;
+                          let price;
+                          if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                            price = p['取引価格（万円）'];
+                            if (price > 10000000) {
+                              price = price / 10000;
+                            }
+                          } else if (p.price !== undefined && p.price !== null) {
+                            price = p.price / 10000;
+                          } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                            price = p.取引価格 / 10000;
+                          } else {
+                            price = 0;
+                          }
+
+                          // 外れ値フィルタを適用
+                          if (price <= 0 || price > 30000) return false; // ハードリミット
+                          if (hardLimitData.length >= 4 && filteredPriceData.length > 0) {
+                            const iqrBounds = calculateIQRBounds(hardLimitData);
+                            if (price < iqrBounds.lowerBound || price > iqrBounds.upperBound) {
+                              return false;
+                            }
+                          }
+
                           const area = getArea(p);
                           return price >= priceBins[i] && price < priceBins[i + 1] &&
                                  area >= areaBins[j] && area < areaBins[j + 1];
@@ -2082,7 +2183,7 @@ const MarketAnalysis: React.FC = () => {
                             linecolor: 'black',
                             autorange: 'reversed'  // Y軸を反転して下が0、上が高い値になるようにする
                           },
-                          height: 400,
+                          height: 500,
                           margin: { t: 40, b: 60, l: 100, r: 40 },
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
@@ -2369,6 +2470,19 @@ const MarketAnalysis: React.FC = () => {
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>4. 建築年別価格分布（ヒートマップ）</h3>
                   {(() => {
+                    // IQR計算用の関数
+                    const calculateIQRBounds = (data: number[]) => {
+                      const sorted = [...data].sort((a, b) => a - b);
+                      const q1Index = Math.floor(sorted.length * 0.25);
+                      const q3Index = Math.floor(sorted.length * 0.75);
+                      const q1 = sorted[q1Index];
+                      const q3 = sorted[q3Index];
+                      const iqr = q3 - q1;
+                      const lowerBound = q1 - 1.5 * iqr;
+                      const upperBound = q3 + 1.5 * iqr;
+                      return { lowerBound, upperBound, q1, q3, iqr };
+                    };
+
                     const validYearData = allProperties.filter(p => {
                       const year = getBuildYear(p);
                       return year > 1950 && year <= 2025;
@@ -2378,9 +2492,73 @@ const MarketAnalysis: React.FC = () => {
                       return <div className="text-center text-gray-500 py-8">建築年データがありません</div>;
                     }
 
+                    // 価格データを収集して外れ値除去
+                    const priceData = validYearData.map(p => {
+                      let price;
+                      if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                        price = p['取引価格（万円）'];
+                        if (price > 10000000) {
+                          price = price / 10000;
+                        }
+                      } else if (p.price !== undefined && p.price !== null) {
+                        price = p.price / 10000;
+                      } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                        price = p.取引価格 / 10000;
+                      } else {
+                        price = 0;
+                      }
+                      return price;
+                    });
+
+                    // ハードリミット（3億円）を適用
+                    const hardLimitData = priceData.filter(price => price > 0 && price <= 30000);
+
+                    // IQR法で外れ値除去
+                    let filteredPriceData = hardLimitData;
+                    if (hardLimitData.length >= 4) {
+                      const iqrBounds = calculateIQRBounds(hardLimitData);
+                      filteredPriceData = hardLimitData.filter(
+                        price => price >= iqrBounds.lowerBound && price <= iqrBounds.upperBound
+                      );
+                    }
+
+                    // 最大価格に基づいて動的にビンを生成
+                    const maxPrice = filteredPriceData.length > 0 ? Math.max(...filteredPriceData) : 10000;
+                    let priceBins: number[];
+                    let binSize: number;
+                    let maxBinValue: number;
+
+                    if (maxPrice <= 10000) {
+                      // パターン1: 標準（〜1億円）
+                      binSize = 1000;
+                      maxBinValue = 10000;
+                      priceBins = [];
+                      for (let i = 0; i <= maxBinValue; i += binSize) {
+                        priceBins.push(i);
+                      }
+                      priceBins.push(maxBinValue + 1);
+                    } else if (maxPrice <= 20000) {
+                      // パターン2: 高額（〜2億円）
+                      binSize = 2000;
+                      maxBinValue = 20000;
+                      priceBins = [];
+                      for (let i = 0; i <= maxBinValue; i += binSize) {
+                        priceBins.push(i);
+                      }
+                      priceBins.push(maxBinValue + 1);
+                    } else {
+                      // パターン3: 超高額（〜3億円）
+                      binSize = 3000;
+                      maxBinValue = 30000;
+                      priceBins = [];
+                      for (let i = 0; i <= maxBinValue; i += binSize) {
+                        priceBins.push(i);
+                      }
+                      priceBins.push(maxBinValue + 1);
+                    }
+
                     const minYear = Math.floor(Math.min(...validYearData.map(p => getBuildYear(p))) / 5) * 5;
                     const maxYear = Math.ceil(Math.max(...validYearData.map(p => getBuildYear(p))) / 5) * 5;
-                    const priceBins = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
                     const yearBins: number[] = [];
                     for (let year = minYear; year <= maxYear; year += 5) {
                       yearBins.push(year);
@@ -2391,14 +2569,41 @@ const MarketAnalysis: React.FC = () => {
                     const yearLabels: string[] = [];
 
                     for (let i = 0; i < priceBins.length - 1; i++) {
-                      priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
+                      if (i === priceBins.length - 2) {
+                        // 最後のビンは最大値として表示
+                        priceLabels.push(`${maxBinValue.toLocaleString()}万円`);
+                      } else {
+                        priceLabels.push(`${priceBins[i].toLocaleString()}万円`);
+                      }
                       const row: number[] = [];
                       for (let j = 0; j < yearBins.length - 1; j++) {
                         if (i === 0) {
                           yearLabels.push(`${yearBins[j]}`);
                         }
                         const count = validYearData.filter(p => {
-                          const price = (p.price || p.取引価格) / 10000;
+                          let price;
+                          if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                            price = p['取引価格（万円）'];
+                            if (price > 10000000) {
+                              price = price / 10000;
+                            }
+                          } else if (p.price !== undefined && p.price !== null) {
+                            price = p.price / 10000;
+                          } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                            price = p.取引価格 / 10000;
+                          } else {
+                            price = 0;
+                          }
+
+                          // 外れ値フィルタを適用
+                          if (price <= 0 || price > 30000) return false;
+                          if (hardLimitData.length >= 4 && filteredPriceData.length > 0) {
+                            const iqrBounds = calculateIQRBounds(hardLimitData);
+                            if (price < iqrBounds.lowerBound || price > iqrBounds.upperBound) {
+                              return false;
+                            }
+                          }
+
                           const year = getBuildYear(p);
                           return price >= priceBins[i] && price < priceBins[i + 1] &&
                                  year >= yearBins[j] && year < yearBins[j + 1];
@@ -2449,7 +2654,7 @@ const MarketAnalysis: React.FC = () => {
                             linecolor: 'black',
                             autorange: 'reversed'
                           },
-                          height: 400,
+                          height: 500,
                           margin: { t: 40, b: 60, l: 100, r: 40 },
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
