@@ -2700,12 +2700,30 @@ const MarketAnalysis: React.FC = () => {
                       return period;
                     });
 
+                    // 成約件数の最大値を取得
+                    const counts = sortedPeriods.map(p => periodCounts[p]);
+                    const maxCount = counts.length > 0 ? Math.max(...counts) : 0;
+
+                    // 最大値に応じてY軸の目盛り間隔を動的に設定
+                    let yAxisDtick: number;
+                    if (maxCount <= 20) {
+                      yAxisDtick = 2;  // 2件刻み
+                    } else if (maxCount <= 50) {
+                      yAxisDtick = 5;  // 5件刻み
+                    } else if (maxCount <= 100) {
+                      yAxisDtick = 10;  // 10件刻み
+                    } else if (maxCount <= 200) {
+                      yAxisDtick = 20;  // 20件刻み
+                    } else {
+                      yAxisDtick = 50;  // 50件刻み
+                    }
+
                     return (
                       <Plot
                         data={[
                           {
                             x: xLabels,
-                            y: sortedPeriods.map(p => periodCounts[p]),
+                            y: counts,
                             type: 'bar',
                             marker: {
                               color: '#87CEEB'
@@ -2735,7 +2753,7 @@ const MarketAnalysis: React.FC = () => {
                             linecolor: 'black',
                             linewidth: 1,
                             ticksuffix: '件',
-                            dtick: 1,  // 1件刻みで表示（整数のみ）
+                            dtick: yAxisDtick,  // 動的な目盛り間隔
                             tickformat: 'd'  // 整数フォーマット
                           },
                           height: 500,
