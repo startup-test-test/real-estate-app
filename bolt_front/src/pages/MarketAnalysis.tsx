@@ -738,7 +738,7 @@ const MarketAnalysis: React.FC = () => {
 
         // 面積による影響
         if (areaImpact !== 0 && area100.length > 0 && area120.length > 0) {
-          keyPoints.push(`面積20㎡の差で約${Math.abs(areaImpact)}万円${areaImpact > 0 ? '上昇' : '下落'}`);
+          keyPoints.push(`面積20㎡の差で約${Math.abs(areaImpact)}万円の統計上の傾向（${areaImpact > 0 ? '上昇トレンド' : '下落トレンド'}の可能性）`);
         } else if (filteredData.length > 10) {
           keyPoints.push(`面積による価格差は限定的`);
         }
@@ -1368,6 +1368,19 @@ const MarketAnalysis: React.FC = () => {
           </div>
         </div>
 
+        {/* レポート使い方ガイド */}
+        {marketData && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">📋 このレポートの使い方</h3>
+            <div className="text-xs text-blue-800 space-y-1">
+              <p>• <strong>統計の読み方:</strong> 過去データの傾向分析です。将来を保証するものではありません</p>
+              <p>• <strong>使う場面:</strong> 市場動向の参考情報として活用してください</p>
+              <p>• <strong>使いすぎ注意:</strong> 投資判断は必ず専門家（宅建士・税理士等）にご相談ください</p>
+              <p>• <strong>データ限界:</strong> サンプル数が少ない場合は参考程度にとどめてください</p>
+            </div>
+          </div>
+        )}
+
         {/* 分析結果表示セクション */}
         {marketData && (
           <div className="space-y-6">
@@ -1571,7 +1584,7 @@ const MarketAnalysis: React.FC = () => {
                           </div>
                           <div className="mt-3 border-t pt-3">
                             <div className="flex items-center space-x-2">
-                              <span className="text-base font-medium text-gray-700">AI機械学習の予測精度:</span>
+                              <span className="text-base font-medium text-gray-700">AI統計分析の参考値:</span>
                               {mlAnalysisResult.regression.r_squared < 0.3 ? (
                                 <span className="text-base text-orange-600 font-bold">
                                   参考程度（データのばらつきが大きい）
@@ -2342,6 +2355,15 @@ const MarketAnalysis: React.FC = () => {
                   <div className="text-xs text-gray-500 mt-2">
                     過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
                     <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    <details className="mt-2">
+                      <summary className="cursor-pointer hover:text-gray-700 text-xs">📊 分析手法の詳細</summary>
+                      <div className="mt-2 pl-4 border-l-2 border-gray-200 text-xs text-gray-600">
+                        <p><strong>使用手法:</strong> K-meansクラスタリング、線形回帰、IQR外れ値除外</p>
+                        <p><strong>特徴量:</strong> 延床面積・築年数・駅距離・所在地</p>
+                        <p><strong>除外条件:</strong> IQR±1.5倍の範囲外データ</p>
+                        <p><strong>更新頻度:</strong> 月1回（四半期データ追加時）</p>
+                      </div>
+                    </details>
                   </div>
                 </div>
 
@@ -2737,6 +2759,15 @@ const MarketAnalysis: React.FC = () => {
                   <div className="text-xs text-gray-500 mt-2">
                     過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
                     <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    <details className="mt-2">
+                      <summary className="cursor-pointer hover:text-gray-700 text-xs">📊 分析手法の詳細</summary>
+                      <div className="mt-2 pl-4 border-l-2 border-gray-200 text-xs text-gray-600">
+                        <p><strong>使用手法:</strong> K-meansクラスタリング、線形回帰、IQR外れ値除外</p>
+                        <p><strong>特徴量:</strong> 延床面積・築年数・駅距離・所在地</p>
+                        <p><strong>除外条件:</strong> IQR±1.5倍の範囲外データ</p>
+                        <p><strong>更新頻度:</strong> 月1回（四半期データ追加時）</p>
+                      </div>
+                    </details>
                   </div>
                 </div>
 
@@ -3912,6 +3943,15 @@ const MarketAnalysis: React.FC = () => {
                   <div className="text-xs text-gray-500 mt-2">
                     過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
                     <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    <details className="mt-2">
+                      <summary className="cursor-pointer hover:text-gray-700 text-xs">📊 分析手法の詳細</summary>
+                      <div className="mt-2 pl-4 border-l-2 border-gray-200 text-xs text-gray-600">
+                        <p><strong>使用手法:</strong> K-meansクラスタリング、線形回帰、IQR外れ値除外</p>
+                        <p><strong>特徴量:</strong> 延床面積・築年数・駅距離・所在地</p>
+                        <p><strong>除外条件:</strong> IQR±1.5倍の範囲外データ</p>
+                        <p><strong>更新頻度:</strong> 月1回（四半期データ追加時）</p>
+                      </div>
+                    </details>
                   </div>
                 </div>
 
@@ -4114,12 +4154,20 @@ const MarketAnalysis: React.FC = () => {
           </div>
         )}
 
+        {/* リスク告知 */}
+        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+          <div className="text-sm text-red-800">
+            <strong>【リスクに関するご注意】</strong> 不動産取引には価格変動・流動性・信用等のリスクがあり、元本割れの可能性があります。取引時は契約締結前交付書面等をご確認ください。
+          </div>
+        </div>
+
         {/* フッター表記（利用規約準拠） */}
         <div className="bg-gray-50 border-t p-4 mt-8">
           <div className="text-xs text-gray-600 space-y-2">
             <p>このサービスは、国土交通省 不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性・正確性・完全性は保証されていません。</p>
             <p>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a>／「不動産取引価格情報」（国土交通省）をもとに当サービス運営者が加工・集計。</p>
             <p>本アプリケーションは当サービス運営者が開発・運営しており、国土交通省が運営するものではありません。</p>
+            <p>本サービスは宅地建物取引業務の代替ではありません。実務は宅地建物取引士・税理士等にご相談ください。</p>
           </div>
         </div>
       </div>
