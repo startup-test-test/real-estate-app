@@ -89,12 +89,16 @@ class PropertyMLAnalyzer:
             '取引価格': 'price',
             '延床面積（㎡）': 'area',
             '延床面積': 'area',
+            '延べ床面積（㎡）': 'area',  # 「延べ床」の場合
+            '面積': 'area',  # シンプルな「面積」
+            'area': 'area',  # 既にareaフィールドの場合
             'building_area': 'area',  # フロントエンドからの field 名
             '土地面積（㎡）': 'area',  # 土地の場合
             '土地面積': 'area',  # 土地の場合
             'land_area': 'area',  # 土地の場合
             '建築年': 'built_year',
             'build_year': 'built_year',  # フロントエンドからの field 名
+            'building_year': 'built_year',  # building_yearの場合
             '築年数': 'age'
         }
 
