@@ -2445,8 +2445,13 @@ const MarketAnalysis: React.FC = () => {
                 {/* 3. 建築年別価格分布（土地の場合は非表示） */}
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>3. 建築年別価格分布</h3>
-                  <Plot
+                    <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                      3. 建築年別価格分布
+                      {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                    </h3>
+                    <div className={isMobile ? "overflow-x-auto" : ""} style={isMobile ? getMobileScrollStyle() : {}}>
+                      <div style={isMobile ? getMobileContainerStyle() : {}}>
+                        <Plot
                     data={(() => {
                       // 建築年でフィルタリングされたデータ
                       const filteredByYear = allProperties.filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025);
@@ -2695,20 +2700,27 @@ const MarketAnalysis: React.FC = () => {
                         ]
                       };
                     })()}
-                    config={{ displayModeBar: false }}
-                    className="w-full"
-                  />
-                  <div className="text-xs text-gray-500 mt-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                  </div>
+                        config={{ displayModeBar: false }}
+                        className="w-full"
+                      />
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-2">
+                      ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    </div>
                   </div>
                 )}
 
                 {/* 4. 建築年別価格分布（ヒートマップ）（土地の場合は非表示） */}
                 {!isLand && (
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>4. 建築年別価格分布（ヒートマップ）</h3>
-                  {(() => {
+                    <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                      4. 建築年別価格分布（ヒートマップ）
+                      {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                    </h3>
+                    <div className={isMobile ? "overflow-x-auto" : ""} style={isMobile ? getMobileScrollStyle() : {}}>
+                      <div style={isMobile ? getMobileContainerStyle() : {}}>
+                        {(() => {
                     // IQR計算用の関数
                     const calculateIQRBounds = (data: number[]) => {
                       const sorted = [...data].sort((a, b) => a - b);
@@ -2910,9 +2922,11 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
-                  <div className="text-xs text-gray-500 mt-2">
-                    ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
-                  </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-2">
+                      ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
+                    </div>
                   </div>
                 )}
 
@@ -3022,6 +3036,8 @@ const MarketAnalysis: React.FC = () => {
                       />
                     );
                   })()}
+                    </div>
+                  </div>
                   <div className="text-xs text-gray-500 mt-2">
                     ※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                   </div>
@@ -3029,32 +3045,35 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 6. 📍 周辺の公示地価 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>{isLand ? '4' : '6'}. 📍 周辺の公示地価</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                    {isLand ? '4' : '6'}. 📍 周辺の公示地価
+                    {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                  </h3>
                   {landPriceData && landPriceData.length > 0 ? (
                     <>
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full">
+                      <div className="overflow-x-auto" style={isMobile ? getMobileScrollStyle() : {}}>
+                        <table className="min-w-full" style={isMobile ? getMobileTableStyle() : {}}>
                           <thead className="bg-white border-b-2 border-gray-200">
                             <tr>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">No</th>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">住所</th>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">価格時点</th>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">価格(円/㎡)</th>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">坪単価</th>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">前年比</th>
-                              <th className="px-4 py-3 text-left text-sm font-bold text-gray-900">最寄駅からの距離</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>No</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>住所</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>価格時点</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>価格(円/㎡)</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>坪単価</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>前年比</th>
+                              <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>最寄駅からの距離</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-gray-100">
                             {landPriceData.slice(0, 10).map((item, index) => (
                               <tr key={index} className="hover:bg-gray-50">
-                                <td className="px-4 py-3 text-sm text-gray-900">{index + 1}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{item.address}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{item.price_time}年</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{item.price_per_sqm.toLocaleString()}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{item.price_per_tsubo.toLocaleString()}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{item.change_rate}%</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{item.station}駅から{item.station_distance}m</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{index + 1}</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{item.address}</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{item.price_time}年</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{item.price_per_sqm.toLocaleString()}</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{item.price_per_tsubo.toLocaleString()}</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{item.change_rate}%</td>
+                                <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>{item.station}駅から{item.station_distance}m</td>
                               </tr>
                             ))}
                           </tbody>
@@ -3070,9 +3089,14 @@ const MarketAnalysis: React.FC = () => {
 
                 {/* 7. 📈 公示地価の推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>{isLand ? '5' : '7'}. 📈 公示地価の推移</h3>
+                  <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+                    {isLand ? '5' : '7'}. 📈 公示地価の推移
+                    {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
+                  </h3>
                   {landPriceHistory && Object.keys(landPriceHistory).length > 0 ? (
-                    <Plot
+                    <div className={isMobile ? "overflow-x-auto" : ""} style={isMobile ? getMobileScrollStyle() : {}}>
+                      <div style={isMobile ? getMobileContainerStyle() : {}}>
+                        <Plot
                       data={Object.entries(landPriceHistory).slice(0, 10).map(([ address, data ]: [string, any]) => ({
                         x: data.yearly_prices.map((p: any) => `${p.year}年`),
                         y: data.yearly_prices.map((p: any) => p.price_per_sqm),
@@ -3129,6 +3153,8 @@ const MarketAnalysis: React.FC = () => {
                       config={{ displayModeBar: false }}
                       className="w-full"
                     />
+                      </div>
+                    </div>
                   ) : (
                     <div className="text-center text-gray-500 py-8">
                       <p>価格推移データを取得できませんでした</p>
