@@ -1856,66 +1856,145 @@ const MarketAnalysis: React.FC = () => {
                           '取引時期: %{customdata[0]}<br>土地面積: %{customdata[1]}㎡<br>延べ床面積: %{x}㎡<br>間取り: %{customdata[2]}<br>前面道路: %{customdata[3]}<br>価格: %{y:,.0f}万円<extra></extra>'
                       }
                     ]}
-                    layout={{
-                      xaxis: {
-                        title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: 14, color: 'black' } },
-                        gridcolor: '#E0E0E0',
-                        showline: true,
-                        linewidth: 1,
-                        linecolor: 'black',
-                        tickfont: { size: 14, color: 'black' },
-                        dtick: 10,
-                        range: [50, 200]
-                      },
-                      yaxis: {
-                        title: { text: '', font: { size: 14, color: 'black' } },
-                        gridcolor: '#E0E0E0',
-                        showline: true,
-                        linewidth: 1,
-                        linecolor: 'black',
-                        tickfont: { size: 14, color: 'black' },
-                        dtick: 1000,
-                        range: [0, 10000],
-                        tickformat: ',d',
-                        ticksuffix: '万円'
-                      },
-                      height: 500,
-                      margin: { t: 40, b: 60, l: 80, r: 40 },
-                      plot_bgcolor: 'white',
-                      paper_bgcolor: 'white',
-                      showlegend: true,
-                      hovermode: 'closest',
-                      shapes: [
-                        {
-                          type: 'line',
-                          x0: targetArea,
-                          x1: targetArea,
-                          y0: 0,
-                          y1: 10000,
-                          line: { color: 'red', width: 1, dash: 'dash' }
+                    layout={(() => {
+                      // 価格データから最大値を計算
+                      const priceData = allProperties
+                        .filter(p => getArea(p) > 0)
+                        .map(p => {
+                          // 価格フィールドの値を取得（APIから円単位で来る場合を考慮）
+                          let price;
+                          if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                            // 既に万円単位の場合
+                            price = p['取引価格（万円）'];
+                            // 異常に大きい値（1000億以上）の場合は円として扱い10000で割る
+                            if (price > 10000000) {
+                              price = price / 10000;
+                            }
+                          } else if (p.price !== undefined && p.price !== null) {
+                            // priceフィールドは基本的に円単位
+                            price = p.price / 10000;
+                          } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                            // 取引価格も円単位として扱う
+                            price = p.取引価格 / 10000;
+                          } else {
+                            price = 0;
+                          }
+                          return price;
+                        });
+
+                      // IQR法による外れ値除去
+                      const calculateIQRBounds = (data: number[]) => {
+                        const sorted = [...data].sort((a, b) => a - b);
+                        const q1Index = Math.floor(sorted.length * 0.25);
+                        const q3Index = Math.floor(sorted.length * 0.75);
+                        const q1 = sorted[q1Index];
+                        const q3 = sorted[q3Index];
+                        const iqr = q3 - q1;
+                        const lowerBound = q1 - 1.5 * iqr;
+                        const upperBound = q3 + 1.5 * iqr;
+                        return { lowerBound, upperBound };
+                      };
+
+                      // 価格データのフィルタリング（0より大きい値のみ）
+                      const positivePriceData = priceData.filter(price => price > 0);
+
+                      // IQR法で外れ値を除外
+                      let validPriceData;
+                      if (positivePriceData.length > 4) { // データが少なすぎる場合はIQR法を使わない
+                        const { lowerBound, upperBound } = calculateIQRBounds(positivePriceData);
+                        validPriceData = positivePriceData.filter(price => price >= lowerBound && price <= upperBound);
+
+                        // さらに3億円上限も適用
+                        validPriceData = validPriceData.filter(price => price <= 30000);
+                      } else {
+                        // データが少ない場合は3億円以下のみでフィルタ
+                        validPriceData = positivePriceData.filter(price => price <= 30000);
+                      }
+
+                      const maxPrice = Math.max(...validPriceData, 0);
+
+                      // 3パターンのY軸スケーリング
+                      let yRange, yDtick;
+                      if (maxPrice <= 10000) {
+                        // パターン1: 標準（〜1億円）
+                        yRange = [0, 10000];
+                        yDtick = 1000;  // 0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000
+                      } else if (maxPrice <= 20000) {
+                        // パターン2: 高額（〜2億円）
+                        yRange = [0, 20000];
+                        yDtick = 2000;  // 0, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000
+                      } else {
+                        // パターン3: 超高額（3億円以上）
+                        yRange = [0, 30000];
+                        yDtick = 3000;  // 0, 3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000, 30000
+                      }
+
+                      return {
+                        xaxis: {
+                          title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: 14, color: 'black' } },
+                          gridcolor: '#E0E0E0',
+                          showline: true,
+                          linewidth: 1,
+                          linecolor: 'black',
+                          tickfont: { size: 14, color: 'black' },
+                          dtick: 10,
+                          range: [50, 200]
                         },
-                        {
-                          type: 'rect',
-                          x0: targetArea - areaTolerance,
-                          x1: targetArea + areaTolerance,
-                          y0: 0,
-                          y1: 10000,
-                          fillcolor: 'blue',
-                          opacity: 0.1,
-                          line: { width: 0 }
-                        }
-                      ],
-                      annotations: [
-                        {
-                          x: targetArea,
-                          y: 10000,
-                          text: `広さ ${targetArea}㎡`,
-                          showarrow: false,
-                          yanchor: 'bottom',
-                          font: { size: 12, color: 'red' }
-                        }
-                      ]
-                    }}
+                        yaxis: {
+                          title: { text: '', font: { size: 14, color: 'black' } },
+                          gridcolor: '#E0E0E0',
+                          showline: true,
+                          linewidth: 1,
+                          linecolor: 'black',
+                          tickfont: { size: 14, color: 'black' },
+                          dtick: yDtick,
+                          range: yRange,
+                          tickformat: ',d',
+                          ticksuffix: '万円'
+                        },
+                        height: 500,
+                        margin: { t: 40, b: 60, l: 80, r: 40 },
+                        plot_bgcolor: 'white',
+                        paper_bgcolor: 'white',
+                        showlegend: true,
+                        hovermode: 'closest',
+                        hoverlabel: {
+                          bgcolor: 'rgba(0, 0, 0, 0.8)',
+                          bordercolor: '#fff',
+                          font: { size: 14, color: 'white' }
+                        },
+                        shapes: [
+                          {
+                            type: 'line',
+                            x0: targetArea,
+                            x1: targetArea,
+                            y0: 0,
+                            y1: yRange[1],
+                            line: { color: 'red', width: 1, dash: 'dash' }
+                          },
+                          {
+                            type: 'rect',
+                            x0: targetArea - areaTolerance,
+                            x1: targetArea + areaTolerance,
+                            y0: 0,
+                            y1: yRange[1],
+                            fillcolor: 'blue',
+                            opacity: 0.1,
+                            line: { width: 0 }
+                          }
+                        ],
+                        annotations: [
+                          {
+                            x: targetArea,
+                            y: yRange[1],
+                            text: `広さ ${targetArea}㎡`,
+                            showarrow: false,
+                            yanchor: 'bottom',
+                            font: { size: 12, color: 'red' }
+                          }
+                        ]
+                      };
+                    })()}
                     config={{ displayModeBar: false }}
                     className="w-full"
                   />
@@ -2006,7 +2085,13 @@ const MarketAnalysis: React.FC = () => {
                           height: 400,
                           margin: { t: 40, b: 60, l: 100, r: 40 },
                           plot_bgcolor: 'white',
-                          paper_bgcolor: 'white'
+                          paper_bgcolor: 'white',
+                          hovermode: 'closest',
+                          hoverlabel: {
+                            bgcolor: 'rgba(0, 0, 0, 0.8)',
+                            bordercolor: '#fff',
+                            font: { size: 14, color: 'white' }
+                          }
                         }}
                         config={{ displayModeBar: false }}
                         className="w-full"
@@ -2023,107 +2108,253 @@ const MarketAnalysis: React.FC = () => {
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>3. 建築年別価格分布</h3>
                   <Plot
-                    data={[
-                      {
-                        x: allProperties
-                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
-                          .filter(p => Math.abs(getBuildYear(p) - targetYear) > yearTolerance)
-                          .map(p => getBuildYear(p)),
-                        y: allProperties
-                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
-                          .filter(p => Math.abs(getBuildYear(p) - targetYear) > yearTolerance)
-                          .map(p => (p.price || p.取引価格) / 10000),
-                        mode: 'markers',
-                        type: 'scatter',
-                        name: 'その他',
-                        marker: {
-                          color: '#4169E1',
-                          size: 8,
-                          opacity: 0.6,
-                          line: { color: '#000080', width: 0.5 }
-                        },
-                        hovertemplate: '建築年: %{x}年<br>価格: %{y:,.0f}万円<extra></extra>'
-                      },
-                      {
-                        x: allProperties
-                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
-                          .filter(p => Math.abs(getBuildYear(p) - targetYear) <= yearTolerance)
-                          .map(p => getBuildYear(p)),
-                        y: allProperties
-                          .filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025)
-                          .filter(p => Math.abs(getBuildYear(p) - targetYear) <= yearTolerance)
-                          .map(p => (p.price || p.取引価格) / 10000),
-                        mode: 'markers',
-                        type: 'scatter',
-                        name: `${targetYear}±${yearTolerance}年`,
-                        marker: {
-                          color: '#FF4500',
-                          size: 12,
-                          opacity: 0.8,
-                          line: { color: '#8B0000', width: 1 }
-                        },
-                        hovertemplate: '建築年: %{x}年<br>価格: %{y:,.0f}万円<extra></extra>'
+                    data={(() => {
+                      // 建築年でフィルタリングされたデータ
+                      const filteredByYear = allProperties.filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025);
+
+                      // 価格データの正規化とIQR外れ値除去
+                      const priceData = filteredByYear.map(p => {
+                        let price;
+                        if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                          price = p['取引価格（万円）'];
+                          if (price > 10000000) {
+                            price = price / 10000;
+                          }
+                        } else if (p.price !== undefined && p.price !== null) {
+                          price = p.price / 10000;
+                        } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                          price = p.取引価格 / 10000;
+                        } else {
+                          price = 0;
+                        }
+                        return price;
+                      });
+
+                      // IQR法による外れ値除去
+                      const calculateIQRBounds = (data: number[]) => {
+                        const sorted = [...data].sort((a, b) => a - b);
+                        const q1Index = Math.floor(sorted.length * 0.25);
+                        const q3Index = Math.floor(sorted.length * 0.75);
+                        const q1 = sorted[q1Index];
+                        const q3 = sorted[q3Index];
+                        const iqr = q3 - q1;
+                        const lowerBound = q1 - 1.5 * iqr;
+                        const upperBound = q3 + 1.5 * iqr;
+                        return { lowerBound, upperBound };
+                      };
+
+                      const positivePriceData = priceData.filter(price => price > 0);
+
+                      let validIndices: number[] = [];
+                      if (positivePriceData.length > 4) {
+                        const { lowerBound, upperBound } = calculateIQRBounds(positivePriceData);
+                        validIndices = priceData.map((price, i) =>
+                          price >= lowerBound && price <= upperBound && price <= 30000 ? i : -1
+                        ).filter(i => i >= 0);
+                      } else {
+                        validIndices = priceData.map((price, i) =>
+                          price > 0 && price <= 30000 ? i : -1
+                        ).filter(i => i >= 0);
                       }
-                    ]}
-                    layout={{
-                      xaxis: {
-                        title: { text: '建築年', font: { size: 14, color: 'black' } },
-                        gridcolor: '#E0E0E0',
-                        showline: true,
-                        linewidth: 1,
-                        linecolor: 'black',
-                        tickfont: { size: 14, color: 'black' },
-                        dtick: 5
-                      },
-                      yaxis: {
-                        title: { text: '', font: { size: 14, color: 'black' } },
-                        gridcolor: '#E0E0E0',
-                        showline: true,
-                        linewidth: 1,
-                        linecolor: 'black',
-                        tickfont: { size: 14, color: 'black' },
-                        dtick: 1000,
-                        range: [0, 10000],
-                        tickformat: ',d',
-                        ticksuffix: '万円'
-                      },
-                      height: 500,
-                      margin: { t: 40, b: 60, l: 80, r: 40 },
-                      plot_bgcolor: 'white',
-                      paper_bgcolor: 'white',
-                      showlegend: true,
-                      hovermode: 'closest',
-                      shapes: [
+
+                      const validProperties = validIndices.map(i => filteredByYear[i]);
+
+                      return [
                         {
-                          type: 'line',
-                          x0: targetYear,
-                          x1: targetYear,
-                          y0: 0,
-                          y1: 10000,
-                          line: { color: 'red', width: 1, dash: 'dash' }
+                          x: validProperties
+                            .filter(p => Math.abs(getBuildYear(p) - targetYear) > yearTolerance)
+                            .map(p => getBuildYear(p)),
+                          y: validProperties
+                            .filter(p => Math.abs(getBuildYear(p) - targetYear) > yearTolerance)
+                            .map(p => {
+                              let price;
+                              if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                                price = p['取引価格（万円）'];
+                                if (price > 10000000) {
+                                  price = price / 10000;
+                                }
+                              } else if (p.price !== undefined && p.price !== null) {
+                                price = p.price / 10000;
+                              } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                                price = p.取引価格 / 10000;
+                              } else {
+                                price = 0;
+                              }
+                              return price;
+                            }),
+                          mode: 'markers',
+                          type: 'scatter',
+                          name: 'その他',
+                          marker: {
+                            color: '#4169E1',
+                            size: 8,
+                            opacity: 0.6,
+                            line: { color: '#000080', width: 0.5 }
+                          },
+                          hovertemplate: '建築年: %{x}年<br>価格: %{y:,.0f}万円<extra></extra>'
                         },
                         {
-                          type: 'rect',
-                          x0: targetYear - yearTolerance,
-                          x1: targetYear + yearTolerance,
-                          y0: 0,
-                          y1: 10000,
-                          fillcolor: 'red',
-                          opacity: 0.1,
-                          line: { width: 0 }
+                          x: validProperties
+                            .filter(p => Math.abs(getBuildYear(p) - targetYear) <= yearTolerance)
+                            .map(p => getBuildYear(p)),
+                          y: validProperties
+                            .filter(p => Math.abs(getBuildYear(p) - targetYear) <= yearTolerance)
+                            .map(p => {
+                              let price;
+                              if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                                price = p['取引価格（万円）'];
+                                if (price > 10000000) {
+                                  price = price / 10000;
+                                }
+                              } else if (p.price !== undefined && p.price !== null) {
+                                price = p.price / 10000;
+                              } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                                price = p.取引価格 / 10000;
+                              } else {
+                                price = 0;
+                              }
+                              return price;
+                            }),
+                          mode: 'markers',
+                          type: 'scatter',
+                          name: `${targetYear}±${yearTolerance}年`,
+                          marker: {
+                            color: '#FF4500',
+                            size: 12,
+                            opacity: 0.8,
+                            line: { color: '#8B0000', width: 1 }
+                          },
+                          hovertemplate: '建築年: %{x}年<br>価格: %{y:,.0f}万円<extra></extra>'
                         }
-                      ],
-                      annotations: [
-                        {
-                          x: targetYear,
-                          y: 10000,
-                          text: `建築年 ${targetYear}年`,
-                          showarrow: false,
-                          yanchor: 'bottom',
-                          font: { size: 12, color: 'red' }
+                      ];
+                    })()}
+                    layout={(() => {
+                      // 価格データから最大値を計算（外れ値除去後）
+                      const filteredByYear = allProperties.filter(p => getBuildYear(p) > 1950 && getBuildYear(p) <= 2025);
+
+                      const priceData = filteredByYear.map(p => {
+                        let price;
+                        if (p['取引価格（万円）'] !== undefined && p['取引価格（万円）'] !== null) {
+                          price = p['取引価格（万円）'];
+                          if (price > 10000000) {
+                            price = price / 10000;
+                          }
+                        } else if (p.price !== undefined && p.price !== null) {
+                          price = p.price / 10000;
+                        } else if (p.取引価格 !== undefined && p.取引価格 !== null) {
+                          price = p.取引価格 / 10000;
+                        } else {
+                          price = 0;
                         }
-                      ]
-                    }}
+                        return price;
+                      });
+
+                      // IQR法による外れ値除去
+                      const calculateIQRBounds = (data: number[]) => {
+                        const sorted = [...data].sort((a, b) => a - b);
+                        const q1Index = Math.floor(sorted.length * 0.25);
+                        const q3Index = Math.floor(sorted.length * 0.75);
+                        const q1 = sorted[q1Index];
+                        const q3 = sorted[q3Index];
+                        const iqr = q3 - q1;
+                        const lowerBound = q1 - 1.5 * iqr;
+                        const upperBound = q3 + 1.5 * iqr;
+                        return { lowerBound, upperBound };
+                      };
+
+                      const positivePriceData = priceData.filter(price => price > 0);
+
+                      let validPriceData;
+                      if (positivePriceData.length > 4) {
+                        const { lowerBound, upperBound } = calculateIQRBounds(positivePriceData);
+                        validPriceData = positivePriceData.filter(price => price >= lowerBound && price <= upperBound && price <= 30000);
+                      } else {
+                        validPriceData = positivePriceData.filter(price => price <= 30000);
+                      }
+
+                      const maxPrice = validPriceData.length > 0 ? Math.max(...validPriceData) : 10000;
+
+                      // 3パターンのY軸スケーリング
+                      let yRange, yDtick;
+                      if (maxPrice <= 10000) {
+                        // パターン1: 標準（〜1億円）
+                        yRange = [0, 10000];
+                        yDtick = 1000;
+                      } else if (maxPrice <= 20000) {
+                        // パターン2: 高額（〜2億円）
+                        yRange = [0, 20000];
+                        yDtick = 2000;
+                      } else {
+                        // パターン3: 超高額（3億円以上）
+                        yRange = [0, 30000];
+                        yDtick = 3000;
+                      }
+
+                      return {
+                        xaxis: {
+                          title: { text: '建築年', font: { size: 14, color: 'black' } },
+                          gridcolor: '#E0E0E0',
+                          showline: true,
+                          linewidth: 1,
+                          linecolor: 'black',
+                          tickfont: { size: 14, color: 'black' },
+                          dtick: 5
+                        },
+                        yaxis: {
+                          title: { text: '', font: { size: 14, color: 'black' } },
+                          gridcolor: '#E0E0E0',
+                          showline: true,
+                          linewidth: 1,
+                          linecolor: 'black',
+                          tickfont: { size: 14, color: 'black' },
+                          dtick: yDtick,
+                          range: yRange,
+                          tickformat: ',d',
+                          ticksuffix: '万円'
+                        },
+                        height: 500,
+                        margin: { t: 40, b: 60, l: 80, r: 40 },
+                        plot_bgcolor: 'white',
+                        paper_bgcolor: 'white',
+                        showlegend: true,
+                        hovermode: 'closest',
+                        hoverlabel: {
+                          bgcolor: 'rgba(0, 0, 0, 0.8)',
+                          bordercolor: '#fff',
+                          font: { size: 14, color: 'white' }
+                        },
+                        shapes: [
+                          {
+                            type: 'line',
+                            x0: targetYear,
+                            x1: targetYear,
+                            y0: 0,
+                            y1: yRange[1],
+                            line: { color: 'red', width: 1, dash: 'dash' }
+                          },
+                          {
+                            type: 'rect',
+                            x0: targetYear - yearTolerance,
+                            x1: targetYear + yearTolerance,
+                            y0: 0,
+                            y1: yRange[1],
+                            fillcolor: 'red',
+                            opacity: 0.1,
+                            line: { width: 0 }
+                          }
+                        ],
+                        annotations: [
+                          {
+                            x: targetYear,
+                            y: yRange[1],
+                            text: `建築年 ${targetYear}年`,
+                            showarrow: false,
+                            yanchor: 'bottom',
+                            font: { size: 12, color: 'red' }
+                          }
+                        ]
+                      };
+                    })()}
                     config={{ displayModeBar: false }}
                     className="w-full"
                   />
@@ -2221,7 +2452,13 @@ const MarketAnalysis: React.FC = () => {
                           height: 400,
                           margin: { t: 40, b: 60, l: 100, r: 40 },
                           plot_bgcolor: 'white',
-                          paper_bgcolor: 'white'
+                          paper_bgcolor: 'white',
+                          hovermode: 'closest',
+                          hoverlabel: {
+                            bgcolor: 'rgba(0, 0, 0, 0.8)',
+                            bordercolor: '#fff',
+                            font: { size: 14, color: 'white' }
+                          }
                         }}
                         config={{ displayModeBar: false }}
                         className="w-full"
@@ -2301,7 +2538,13 @@ const MarketAnalysis: React.FC = () => {
                           plot_bgcolor: 'white',
                           paper_bgcolor: 'white',
                           showlegend: false,
-                          bargap: 0.2
+                          bargap: 0.2,
+                          hovermode: 'closest',
+                          hoverlabel: {
+                            bgcolor: 'rgba(0, 0, 0, 0.8)',
+                            bordercolor: '#fff',
+                            font: { size: 14, color: 'white' }
+                          }
                         }}
                         config={{ displayModeBar: false }}
                         className="w-full"
@@ -2405,7 +2648,12 @@ const MarketAnalysis: React.FC = () => {
                           bordercolor: 'black',
                           borderwidth: 1
                         },
-                        hovermode: 'x unified'
+                        hovermode: 'x unified',
+                        hoverlabel: {
+                          bgcolor: 'rgba(0, 0, 0, 0.8)',
+                          bordercolor: '#fff',
+                          font: { size: 14, color: 'white' }
+                        }
                       }}
                       config={{ displayModeBar: false }}
                       className="w-full"
