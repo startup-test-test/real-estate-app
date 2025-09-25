@@ -74,8 +74,9 @@ Deno.serve(async (req) => {
               status: 'active',
               current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
               current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-              cancel_at_period_end: sub.cancel_at_period_end || false,
-              cancel_at: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
+              // 新規アップグレード時は解約フラグを必ずクリア
+              cancel_at_period_end: false,
+              cancel_at: null,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             };
@@ -94,6 +95,26 @@ Deno.serve(async (req) => {
               console.error('Error saving subscription:', error);
             } else {
               console.log('Subscription created/updated for user:', userId, 'Subscription ID:', sub.id);
+
+              // サブスクリプション成功時は使用回数もリセット
+              const { error: usageError } = await supabase
+                .from('user_usage')
+                .upsert(
+                  {
+                    user_id: userId,
+                    usage_count: 0,
+                    period_start_date: new Date().toISOString(),
+                    period_end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    updated_at: new Date().toISOString(),
+                  },
+                  { onConflict: 'user_id' }
+                );
+
+              if (usageError) {
+                console.error('Error resetting usage count:', usageError);
+              } else {
+                console.log('Usage count reset for user:', userId);
+              }
             }
           } catch (subError) {
             console.error('Error retrieving subscription details:', subError);
@@ -122,6 +143,13 @@ Deno.serve(async (req) => {
           cancel_at: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
           updated_at: new Date().toISOString(),
         };
+
+        // 特別処理: アクティブになった時、過去に解約予定だった場合の処理
+        if (status === 'active' && !sub.cancel_at_period_end && !sub.cancel_at) {
+          console.log(`Reactivating subscription for ${sub.id} - clearing any previous cancellation`);
+          updateData.cancel_at_period_end = false;
+          updateData.cancel_at = null;
+        }
 
         // Add stripe_price_id if available
         if (sub.items?.data?.[0]?.price?.id) {

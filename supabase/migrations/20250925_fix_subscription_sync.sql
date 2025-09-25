@@ -129,5 +129,46 @@ SELECT cron.schedule(
   'SELECT auto_sync_all_subscriptions();'
 );
 
+-- Function to handle subscription reactivation (解約予定から再アクティベーション)
+CREATE OR REPLACE FUNCTION reactivate_subscription(
+  p_user_id UUID,
+  p_stripe_subscription_id TEXT
+) RETURNS BOOLEAN AS $$
+DECLARE
+  v_updated_rows INTEGER;
+BEGIN
+  -- 解約フラグをクリアして再アクティベート
+  UPDATE subscriptions
+  SET
+    status = 'active',
+    cancel_at_period_end = false,
+    cancel_at = NULL,
+    updated_at = NOW()
+  WHERE user_id = p_user_id
+    AND stripe_subscription_id = p_stripe_subscription_id;
+
+  GET DIAGNOSTICS v_updated_rows = ROW_COUNT;
+
+  -- 使用回数もリセット
+  IF v_updated_rows > 0 THEN
+    UPDATE user_usage
+    SET
+      usage_count = 0,
+      period_start_date = NOW(),
+      period_end_date = NOW() + INTERVAL '30 days',
+      updated_at = NOW()
+    WHERE user_id = p_user_id;
+
+    RAISE NOTICE 'Subscription reactivated for user: % subscription: %', p_user_id, p_stripe_subscription_id;
+    RETURN TRUE;
+  ELSE
+    RAISE NOTICE 'No subscription found for reactivation: % subscription: %', p_user_id, p_stripe_subscription_id;
+    RETURN FALSE;
+  END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+COMMENT ON FUNCTION reactivate_subscription IS 'Reactivate cancelled subscription when user upgrades again';
+
 -- Execute initial cleanup for existing data
 SELECT cleanup_expired_subscriptions();
