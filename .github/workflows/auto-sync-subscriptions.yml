@@ -1,0 +1,53 @@
+name: Auto Sync Subscriptions
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set environment variables based on main branch
+        id: set-env
+        run: |
+          echo "SUPABASE_PROJECT_ID=ulkuxysdohpgvgikqpoq" >> $GITHUB_OUTPUT
+          echo "FUNCTION_URL=https://ulkuxysdohpgvgikqpoq.supabase.co/functions/v1/auto-sync-subscriptions" >> $GITHUB_OUTPUT
+          echo "ENV_NAME=production" >> $GITHUB_OUTPUT
+
+      - name: Trigger Auto Sync Function
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          FUNCTION_URL: ${{ steps.set-env.outputs.FUNCTION_URL }}
+        run: |
+          echo "Triggering auto-sync for ${{ steps.set-env.outputs.ENV_NAME }} environment"
+
+          response=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            "$FUNCTION_URL")
+
+          # Extract HTTP code and body
+          http_code=$(echo "$response" | tail -n1 | cut -d: -f2)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response body: $body"
+          echo "HTTP Code: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "Auto-sync failed with HTTP code: $http_code"
+            exit 1
+          else
+            echo "Auto-sync completed successfully"
+          fi
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Auto-sync failed. Please check Supabase logs and Stripe dashboard."
+          echo "Manual sync may be required."

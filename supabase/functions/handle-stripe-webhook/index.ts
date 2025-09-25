@@ -29,13 +29,23 @@ Deno.serve(async (req) => {
 
     // 署名検証は raw body 必須
     const body = await req.text();
-    const event = await stripe.webhooks.constructEventAsync(
-      body,
-      signature,
-      Deno.env.get('STRIPE_WEBHOOK_SECRET')!,
-      undefined,
-      cryptoProvider,
-    );
+    let event: Stripe.Event;
+
+    try {
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        Deno.env.get('STRIPE_WEBHOOK_SECRET')!,
+        undefined,
+        cryptoProvider,
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err);
+      return new Response('Webhook signature verification failed', {
+        status: 400,
+        headers: { ...headers, 'Content-Type': 'application/json' }
+      });
+    }
 
     console.log(`Processing webhook event: ${event.type}`);
 
@@ -43,70 +53,96 @@ Deno.serve(async (req) => {
       case 'checkout.session.completed': {
         const session: any = event.data.object;
         const userId = session.metadata?.user_id;
-        if (!userId) break;
+        if (!userId) {
+          console.log('No user_id found in checkout session metadata');
+          break;
+        }
 
         console.log(`Checkout completed for user: ${userId}`);
 
         // 購読詳細を取得
         if (session.subscription) {
-          const sub = await stripe.subscriptions.retrieve(
-            String(session.subscription),
-          );
-          const { error } = await supabase.from('subscriptions').upsert(
-            {
+          try {
+            const sub = await stripe.subscriptions.retrieve(
+              String(session.subscription),
+            );
+
+            const subscriptionData: any = {
               user_id: userId,
               stripe_subscription_id: sub.id,
               stripe_customer_id: sub.customer as string,
               status: 'active',
-              current_period_start: new Date(
-                sub.current_period_start * 1000,
-              ).toISOString(),
-              current_period_end: new Date(
-                sub.current_period_end * 1000,
-              ).toISOString(),
+              current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
+              current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+              cancel_at_period_end: sub.cancel_at_period_end || false,
+              cancel_at: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-            },
-            { onConflict: 'user_id' },
-          );
-          if (error) console.error('Error saving subscription:', error);
-          else console.log('Subscription created/updated for user:', userId);
+            };
+
+            // Add stripe_price_id if available
+            if (sub.items?.data?.[0]?.price?.id) {
+              subscriptionData.stripe_price_id = sub.items.data[0].price.id;
+            }
+
+            const { error } = await supabase.from('subscriptions').upsert(
+              subscriptionData,
+              { onConflict: 'user_id' },
+            );
+
+            if (error) {
+              console.error('Error saving subscription:', error);
+            } else {
+              console.log('Subscription created/updated for user:', userId, 'Subscription ID:', sub.id);
+            }
+          } catch (subError) {
+            console.error('Error retrieving subscription details:', subError);
+          }
         }
         break;
       }
 
       case 'customer.subscription.updated': {
         const sub: any = event.data.object;
-        const status =
-          sub.status === 'active'
-            ? 'active'
-            : sub.status === 'trialing'
-              ? 'trialing'
-              : sub.status === 'past_due'
-                ? 'past_due'
-                : 'inactive';
+
+        // Map Stripe status to our system status
+        let status = 'inactive';
+        if (sub.status === 'active') status = 'active';
+        else if (sub.status === 'trialing') status = 'trialing';
+        else if (sub.status === 'past_due') status = 'past_due';
+        else if (sub.status === 'canceled' || sub.status === 'cancelled') status = 'cancelled';
+
+        console.log(`Updating subscription ${sub.id} with status: ${status}, cancel_at: ${sub.cancel_at}, cancel_at_period_end: ${sub.cancel_at_period_end}`);
+
+        const updateData: any = {
+          status,
+          current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+          cancel_at_period_end: sub.cancel_at_period_end || false,
+          cancel_at: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
+          updated_at: new Date().toISOString(),
+        };
+
+        // Add stripe_price_id if available
+        if (sub.items?.data?.[0]?.price?.id) {
+          updateData.stripe_price_id = sub.items.data[0].price.id;
+        }
+
+        // If subscription is cancelled, set cancelled_at
+        if (status === 'cancelled' && !updateData.cancelled_at) {
+          updateData.cancelled_at = new Date().toISOString();
+        }
 
         const { error } = await supabase
           .from('subscriptions')
-          .update({
-            status,
-            current_period_start: new Date(
-              sub.current_period_start * 1000,
-            ).toISOString(),
-            current_period_end: new Date(
-              sub.current_period_end * 1000,
-            ).toISOString(),
-            // 解約予定情報を追加
-            cancel_at_period_end: sub.cancel_at_period_end || false,
-            cancel_at: sub.cancel_at
-              ? new Date(sub.cancel_at * 1000).toISOString()
-              : null,
-            updated_at: new Date().toISOString(),
-          })
+          .update(updateData)
           .eq('stripe_subscription_id', sub.id);
 
-        if (error) console.error('Error updating subscription:', error);
-        else console.log('Subscription updated for:', sub.id);
+        if (error) {
+          console.error('Error updating subscription:', error);
+        } else {
+          console.log('Subscription successfully updated:', sub.id, 'Status:', status);
+        }
         break;
       }
 

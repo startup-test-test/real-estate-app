@@ -46,6 +46,8 @@ jobs:
           supabase functions deploy handle-stripe-webhook --project-ref $SUPABASE_PROJECT_ID --no-verify-jwt
           supabase functions deploy cancel-subscription --project-ref $SUPABASE_PROJECT_ID --no-verify-jwt
           supabase functions deploy resume-subscription --project-ref $SUPABASE_PROJECT_ID --no-verify-jwt
+          supabase functions deploy sync-subscription --project-ref $SUPABASE_PROJECT_ID --no-verify-jwt
+          supabase functions deploy auto-sync-subscriptions --project-ref $SUPABASE_PROJECT_ID --no-verify-jwt
       
       - name: Set Secrets for ${{ steps.set-env.outputs.ENV_NAME }}
         env:
