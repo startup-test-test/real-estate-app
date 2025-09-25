@@ -70,7 +70,7 @@ const Layout: React.FC = () => {
   const navigation = [
     { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
-    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
+    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp, badge: 'Beta版' },
     // 2次リリース用: AI取引事例検索
     // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
   ];
@@ -198,6 +198,11 @@ const Layout: React.FC = () => {
                   >
                     <Icon className="mr-4 h-6 w-6" />
                     {item.name}
+                    {item.badge && (
+                      <span className="ml-2 text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-0.5 rounded-full font-semibold">
+                        {item.badge}
+                      </span>
+                    )}
                     {/* Active indicator dot */}
                     <div className="ml-auto">
                       <div className="w-2 h-2 bg-white rounded-full opacity-0 group-[.bg-white\/10]:opacity-100 transition-opacity" />

@@ -1150,6 +1150,22 @@ const MarketAnalysis: React.FC = () => {
               エリアの市場動向と価格分布をAIが詳細に分析します
             </p>
           </div>
+
+          {/* Beta版の注意書き */}
+          <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-400 rounded-r-lg">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                  Beta版
+                </span>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-purple-700">
+                  Beta版（2025年9月25日リリース）として提供中です。機能改善のため検証を行っておりますので、結果の精度向上に努めています。
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
 
