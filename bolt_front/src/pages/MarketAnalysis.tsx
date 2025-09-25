@@ -4175,8 +4175,9 @@ const MarketAnalysis: React.FC = () => {
         {/* フッター表記（利用規約準拠） */}
         <div className="bg-gray-50 border-t p-4 mt-8">
           <div className="text-xs text-gray-600 space-y-2">
-            <p>このサービスは、国土交通省 不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性・正確性・完全性は保証されていません。</p>
-            <p>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a>／「不動産取引価格情報」（国土交通省）をもとに当サービス運営者が加工・集計。</p>
+            <p>このサービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。</p>
+            <p>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ（https://www.reinfolib.mlit.go.jp/）</a></p>
+            <p>「不動産取引価格情報」（国土交通省）をもとに当サービス運営者が加工・集計。</p>
             <p>本アプリケーションは当サービス運営者が開発・運営しており、国土交通省が運営するものではありません。</p>
             <p>本サービスは宅地建物取引業務の代替ではありません。実務は宅地建物取引士・税理士等にご相談ください。</p>
           </div>
