@@ -44,6 +44,19 @@ export default defineConfig({
     port: 5173,
     hmr: {
       overlay: false
+    },
+    // APIプロキシ設定
+    proxy: {
+      '/api/ml': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/api': {
+        target: 'https://property-develop.onrender.com',
+        changeOrigin: true,
+        secure: true
+      }
     }
   }
 });

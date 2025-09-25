@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from './AuthProvider';
 import Footer from './Footer';
-import { checkUsageLimit } from '../utils/usageLimit';
-import { calculateRemainingDays, formatRemainingTime } from '../utils/subscriptionHelpers';
+import { calculateRemainingDays, formatRemainingTime, getSubscriptionStatus } from '../utils/subscriptionHelpers';
 import { supabase } from '../lib/supabase';
-import { 
-  Calculator, 
+import {
+  Calculator,
   User,
   Home,
   Menu,
@@ -15,7 +14,8 @@ import {
   BookOpen,
   Crown,
   LogOut,
-  Sparkles
+  Sparkles,
+  TrendingUp
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
@@ -29,26 +29,28 @@ const Layout: React.FC = () => {
   useEffect(() => {
     const checkPremiumStatus = async () => {
       if (user?.id) {
-        // 利用制限ステータスを確認
-        const status = await checkUsageLimit(user.id);
-        setIsPremium(status.isSubscribed);
-        
         // サブスクリプション詳細を取得
         const { data, error } = await supabase
           .from('subscriptions')
           .select('*')
           .eq('user_id', user.id)
           .eq('status', 'active');
-        
+
         // エラーチェック（PGRST116は0件の結果なので無視）
         if (error && error.code !== 'PGRST116') {
           console.error('Subscription fetch error:', error);
         }
-        
+
         // 配列の最初の要素を取得
+        let subscriptionData = null;
         if (data && data.length > 0) {
-          setSubscription(data[0]);
+          subscriptionData = data[0];
+          setSubscription(subscriptionData);
         }
+
+        // getSubscriptionStatusを使用して正確なステータスを判定
+        const subscriptionStatus = getSubscriptionStatus(subscriptionData);
+        setIsPremium(subscriptionStatus.isPremium);
       }
     };
     checkPremiumStatus();
@@ -68,9 +70,9 @@ const Layout: React.FC = () => {
   const navigation = [
     { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
-    // 2次リリース用: AI取引事例検索・AI市場分析
+    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
+    // 2次リリース用: AI取引事例検索
     // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
-    // { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
   ];
 
   const supportNavigation = [

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Check, 
+import {
+  Check,
   X,
   Sparkles,
   AlertCircle
@@ -9,12 +9,18 @@ import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import CancelSubscriptionModal from '../components/CancelSubscriptionModal';
 import { calculateRemainingDays, formatRemainingTime, formatCancelDate, getSubscriptionStatus } from '../utils/subscriptionHelpers';
+import { useUsageStatus } from '../hooks/useUsageStatus';
+import UsageStatusBar from '../components/UsageStatusBar';
+import UpgradeModal from '../components/UpgradeModal';
+import Breadcrumb from '../components/Breadcrumb';
 
 const PremiumPlan: React.FC = () => {
   const { user } = useAuthContext();
   const [subscription, setSubscription] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
+  const { usage } = useUsageStatus();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     document.title = '料金プラン | 大家DX';
@@ -195,24 +201,23 @@ const PremiumPlan: React.FC = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen">
+      {/* 使用状況バー（マイページと同様に最上部に配置） */}
+      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+
+      <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="bg-gradient-to-r from-yellow-100 via-yellow-50 to-orange-50 rounded-2xl p-8 max-w-4xl mx-auto shadow-lg border border-yellow-200">
-            <div className="flex items-center justify-center mb-4">
-              <Sparkles className="h-12 w-12 text-yellow-500 mr-3" />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                ベーシックプラン
-              </h1>
-            </div>
-            <p className="text-xl text-gray-700 font-medium mb-2">
-              全機能が無制限でご利用いただけます
-            </p>
-            <p className="text-gray-600">
-              本格的な不動産投資シミュレーションで、より良い投資判断を実現しましょう
-            </p>
-          </div>
+        {/* Breadcrumb - PC版のみ表示 */}
+        <div className="hidden md:block mb-4">
+          <Breadcrumb />
+        </div>
+
+        {/* ページタイトル - 他のページと統一 */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">有料プランについて</h1>
+          <p className="text-gray-600 mt-1">
+            月額2,980円で収益シミュレーターとAI市場分析を無制限でご利用いただけます
+          </p>
         </div>
 
         {/* Pricing Plans */}
@@ -255,32 +260,41 @@ const PremiumPlan: React.FC = () => {
                   <div>
                     {subscriptionStatus.isPremium ? (
                       <div className="space-y-3">
-                        {/* 解約予定の場合 */}
-                        {subscriptionStatus.isCanceling ? (
+                        {/* 期限切れまたは解約予定の場合 */}
+                        {subscriptionStatus.isCanceling || subscriptionStatus.remainingDays === 0 ? (
                           <>
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
                               <div className="flex items-start">
                                 <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
                                 <div className="flex-1">
-                                  <p className="font-semibold text-amber-800 text-base mb-2">解約予定</p>
+                                  <p className="font-semibold text-amber-800 text-base mb-2">{subscriptionStatus.remainingDays === 0 ? 'プラン終了' : '解約予定'}</p>
                                   <div className="space-y-1 text-sm">
                                     <p className="text-amber-700">
                                       <span className="font-medium">利用期限：</span>
                                       {formatCancelDate(subscription?.cancel_at)}
                                     </p>
-                                    <p className="text-amber-600 font-medium">
-                                      {formatRemainingTime(subscriptionStatus.remainingDays || 0)}利用可能
-                                    </p>
+                                    {subscriptionStatus.remainingDays !== null && subscriptionStatus.remainingDays > 0 && (
+                                      <p className="text-amber-600 font-medium">
+                                        {formatRemainingTime(subscriptionStatus.remainingDays)}利用可能
+                                      </p>
+                                    )}
+                                    {subscriptionStatus.remainingDays === 0 && (
+                                      <p className="text-amber-600 font-medium">
+                                        フリープランに変更されました
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <button 
-                              onClick={handleResumeSubscription}
-                              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
-                            >
-                              解約を取り消す
-                            </button>
+                            {subscriptionStatus.remainingDays !== null && subscriptionStatus.remainingDays > 0 && (
+                              <button
+                                onClick={handleResumeSubscription}
+                                className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                              >
+                                解約を取り消す
+                              </button>
+                            )}
                           </>
                         ) : (
                           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
@@ -294,8 +308,8 @@ const PremiumPlan: React.FC = () => {
                           </div>
                         )}
                         
-                        {/* 解約ボタン（解約予定でない場合のみ表示） */}
-                        {!subscriptionStatus.isCanceling && (
+                        {/* 解約ボタン（解約予定でなく、期限が切れていない場合のみ表示） */}
+                        {!subscriptionStatus.isCanceling && subscriptionStatus.remainingDays !== 0 && (
                           <button 
                             onClick={() => setIsModalOpen(true)}
                             className="w-full px-6 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg font-medium transition-colors"
@@ -410,6 +424,8 @@ const PremiumPlan: React.FC = () => {
         {/* CTA Section - 削除 */}
       </div>
 
+      </div>
+
       {/* 解約確認モーダル */}
       <CancelSubscriptionModal
         isOpen={isModalOpen}
@@ -419,6 +435,9 @@ const PremiumPlan: React.FC = () => {
         remainingDays={calculateRemainingDays(subscription?.cancel_at || subscription?.current_period_end)}
         isLoading={isCanceling}
       />
+
+      {/* アップグレードモーダル */}
+      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 };

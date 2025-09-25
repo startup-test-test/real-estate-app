@@ -15,19 +15,17 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
-  Info,
-  Sparkles,
   HelpCircle,
+  TrendingUp,
+  Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
 import UpgradeModal from "../components/UpgradeModal";
 import { useUsageStatus } from "../hooks/useUsageStatus";
-import { 
-  sampleProperty, 
-  shouldShowSampleProperty, 
-  hasTutorialBeenCompleted,
-  isSampleProperty 
+import {
+  sampleProperty,
+  hasTutorialBeenCompleted
 } from "../data/sampleProperty";
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 // Removed useSupabaseData hook dependency
@@ -638,6 +636,7 @@ const MyPage: React.FC = () => {
       setRunTutorial(true);
     }, 100);
   };
+
   
   // 初回サンプル物件表示時に自動でチュートリアルを開始
   React.useEffect(() => {
@@ -663,7 +662,19 @@ const MyPage: React.FC = () => {
   
   const formattedSimulations = formatSimulationData(allSimulations);
 
-  const quickActions = [
+  const quickActions: Array<{
+    category: string;
+    icon: any;
+    color: string;
+    badge?: string;
+    description: string;
+    actions: Array<{
+      name: string;
+      primary: boolean;
+      path: string;
+      disabled?: boolean;
+    }>;
+  }> = [
     {
       category: "収益シミュレーター",
       icon: Calculator,
@@ -675,6 +686,37 @@ const MyPage: React.FC = () => {
           name: "シミュレーションを開始する",
           primary: true,
           path: "/simulator",
+        },
+      ],
+    },
+    {
+      category: "AI市場分析",
+      icon: TrendingUp,
+      color: "bg-gradient-to-r from-purple-600 to-indigo-600",
+      badge: "NEW",
+      description:
+        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
+      actions: [
+        {
+          name: "AI市場分析を開始する",
+          primary: true,
+          path: "/market-analysis",
+        },
+      ],
+    },
+    {
+      category: "AI事業計画書",
+      icon: Sparkles,
+      color: "bg-gradient-to-r from-amber-500 to-orange-600",
+      badge: "COMING SOON",
+      description:
+        "AIエージェントが収益シミュレーション・市場分析・金融機関提出資料を統合。プロ品質の事業計画書を自動作成し、1つのPDFで出力",
+      actions: [
+        {
+          name: "2025年10月上旬リリース予定",
+          primary: false,
+          path: "#",
+          disabled: true,
         },
       ],
     },
@@ -771,11 +813,14 @@ const MyPage: React.FC = () => {
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">
             {/* Header */}
             <div className="mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
-                <p className="text-gray-600 mt-1">
-                  投資の成果を一目で確認できます
-                </p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
+                  <p className="text-gray-600 mt-1">
+                    投資の成果を一目で確認できます
+                  </p>
+                </div>
+
               </div>
             </div>
 
@@ -787,8 +832,15 @@ const MyPage: React.FC = () => {
                   return (
                     <div
                       key={index}
-                      className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                      className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative"
                     >
+                      {section.badge && (
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                            {section.badge}
+                          </span>
+                        </div>
+                      )}
                       <div className={`${section.color} px-6 py-4`}>
                         <div className="flex items-center text-white">
                           <Icon className="h-5 w-5 mr-2" />
@@ -805,8 +857,11 @@ const MyPage: React.FC = () => {
                           <button
                             key={actionIndex}
                             onClick={async () => {
-                              // シミュレーターパスの場合は使用制限をチェック
-                              if (action.path === "/simulator") {
+                              if (action.disabled) {
+                                return;
+                              }
+                              // シミュレーターとAI市場分析は統合カウント（月5回制限）
+                              if (action.path === "/simulator" || action.path === "/market-analysis") {
                                 if (
                                   usage &&
                                   !usage.isSubscribed &&
@@ -816,19 +871,22 @@ const MyPage: React.FC = () => {
                                 } else {
                                   navigate(action.path);
                                 }
-                              } else {
+                              } else if (action.path !== "#") {
                                 navigate(action.path);
                               }
                             }}
+                            disabled={action.disabled}
                             className={`w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 ${
-                              action.primary
+                              action.disabled
+                                ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : action.primary
                                 ? "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300"
                                 : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
                             }`}
                           >
                             <div className="flex items-center justify-center">
                               <span>{action.name}</span>
-                              <ChevronRight className="h-4 w-4 ml-2" />
+                              {!action.disabled && <ChevronRight className="h-4 w-4 ml-2" />}
                             </div>
                           </button>
                         ))}
@@ -847,7 +905,7 @@ const MyPage: React.FC = () => {
                   <div className="flex items-center">
                     <Calculator className="h-6 w-6 text-purple-500 mr-2" />
                     <h3 className="text-lg font-semibold text-gray-900">
-                      登録済み物件一覧
+                      保存済み収益シミュレーション
                     </h3>
                   </div>
                   <div className="flex gap-2">

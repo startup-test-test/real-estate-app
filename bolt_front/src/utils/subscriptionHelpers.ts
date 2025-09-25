@@ -39,7 +39,8 @@ export const calculateRemainingDays = (cancelAt: string | null | undefined): num
  * @returns フォーマットされた文字列
  */
 export const formatRemainingTime = (days: number): string => {
-  if (days <= 0) return '本日で終了'
+  if (days < 0) return '終了済み'
+  if (days === 0) return '本日で終了'
   if (days === 1) return 'あと1日'
   // シンプルに日数で表示
   return `あと${days}日`
@@ -90,8 +91,20 @@ export const getSubscriptionStatus = (subscription: any) => {
       statusColor: 'gray'
     }
   }
-  
-  // 解約予定がある場合
+
+  // 解約予定日を過ぎている場合は無料プランとして扱う
+  if (subscription.cancel_at && new Date(subscription.cancel_at) < new Date()) {
+    return {
+      isActive: false,
+      isPremium: false,
+      isCanceling: false,
+      remainingDays: 0,
+      displayText: '無料プラン',
+      statusColor: 'gray'
+    }
+  }
+
+  // 解約予定がある場合（まだ期限内）
   if (subscription.cancel_at_period_end && subscription.cancel_at) {
     const remainingDays = calculateRemainingDays(subscription.cancel_at)
     return {

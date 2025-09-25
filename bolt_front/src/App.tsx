@@ -14,7 +14,7 @@ import UserGuide from './pages/UserGuide';
 import LandingPage from './pages/LandingPage';
 import PaymentResult from './pages/PaymentResult';
 // 2次リリース用: AI機能のインポート
-// import MarketAnalysis from './pages/MarketAnalysis';
+import MarketAnalysis from './pages/MarketAnalysis';
 // import TransactionSearch from './pages/TransactionSearch';
 import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
@@ -84,9 +84,9 @@ function App() {
             <Route path="/tokushoho" element={<Tokushoho />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            {/* 2次リリース用: AI機能のルート */}
+            {/* AI機能のルート */}
+            <Route path="/market-analysis" element={<MarketAnalysis />} />
             {/* <Route path="/transaction-search" element={<TransactionSearch />} /> */}
-            {/* <Route path="/market-analysis" element={<MarketAnalysis />} /> */}
             <Route path="/property-detail/:id" element={<PropertyDetail />} />
           </Route>
           {/* 404ページ - すべてのルートの最後に配置 */}

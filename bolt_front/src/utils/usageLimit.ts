@@ -24,15 +24,18 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
     // 1. サブスクリプション状態を確認
     const { data: subscriptions } = await supabase
       .from('subscriptions')
-      .select('status, cancel_at_period_end, current_period_end')
+      .select('status, cancel_at_period_end, current_period_end, cancel_at')
       .eq('user_id', userId)
       .eq('status', 'active')
       .limit(1);
-    
+
     const subscription = subscriptions?.[0] || null;
 
-    // ベーシック会員の場合は無制限
-    if (subscription?.status === 'active') {
+    // 解約予定日を過ぎている場合は無料プランとして扱う
+    if (subscription?.cancel_at && new Date(subscription.cancel_at) < new Date()) {
+      // 無料プランとして処理を継続
+    } else if (subscription?.status === 'active') {
+      // ベーシック会員の場合は無制限
       return {
         canUse: true,
         currentCount: 0,

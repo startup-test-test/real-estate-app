@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  BookOpen, 
-  CheckCircle, 
+import {
+  BookOpen,
+  CheckCircle,
   Calculator,
   Building,
   TrendingUp,
@@ -15,9 +15,15 @@ import {
   MessageCircle,
   Mail
 } from 'lucide-react';
+import { useUsageStatus } from '../hooks/useUsageStatus';
+import UsageStatusBar from '../components/UsageStatusBar';
+import UpgradeModal from '../components/UpgradeModal';
+import Breadcrumb from '../components/Breadcrumb';
 
 const UserGuide: React.FC = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
+  const { usage } = useUsageStatus();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     document.title = '使い方ガイド | 大家DX';
@@ -105,8 +111,17 @@ const UserGuide: React.FC = () => {
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen">
+      {/* 使用状況バー（マイページと同様に最上部に配置） */}
+      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+
+      <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
+        {/* Breadcrumb - PC版のみ表示 */}
+        <div className="hidden md:block mb-4">
+          <Breadcrumb />
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center mb-4">
@@ -420,6 +435,10 @@ const UserGuide: React.FC = () => {
           </div>
         </div>
       </div>
+      </div>
+
+      {/* アップグレードモーダル */}
+      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 };
