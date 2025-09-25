@@ -5,13 +5,16 @@ services:
     region: oregon # 米国西海岸リージョン
     plan: free # 無料プランから開始
 
+    # ルートディレクトリ設定
+    rootDir: backend/property-api
+
     # ビルドコマンド
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
 
     # 起動コマンド
-    startCommand: python app.py
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
 
     # 環境変数
     envVars:
