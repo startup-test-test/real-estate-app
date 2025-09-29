@@ -1,10 +1,12 @@
 name: Auto Sync Subscriptions
 
 on:
-  schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
-  workflow_dispatch: # Allow manual trigger
+  # DISABLED: 重複課金防止のため一時停止 (2025-09-29)
+  # 複数の同期システムが競合し、重複課金の原因となるため無効化
+  # schedule:
+  #   # Run every 6 hours
+  #   - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger only
 
 jobs:
   sync:

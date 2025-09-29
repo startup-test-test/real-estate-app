@@ -13,6 +13,19 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// 簡易的な重複防止（メモリベース）- ホットフィックス
+const processedEvents = new Map<string, number>();
+
+// 古いイベントをクリーンアップ（1時間後に削除）
+const cleanupEvents = () => {
+  const oneHourAgo = Date.now() - 3600000;
+  for (const [eventId, timestamp] of processedEvents.entries()) {
+    if (timestamp < oneHourAgo) {
+      processedEvents.delete(eventId);
+    }
+  }
+};
+
 Deno.serve(async (req) => {
   // CORS（ブラウザから直叩きしないWebhookでも残してOK）
   const headers = {
@@ -47,7 +60,64 @@ Deno.serve(async (req) => {
       });
     }
 
-    console.log(`Processing webhook event: ${event.type}`);
+    console.log(`Processing webhook event: ${event.type} with ID: ${event.id}`);
+
+    // ===== 根本対策: データベースベースの重複防止 =====
+    // まず、stripe_eventsテーブルでイベントIDの重複をチェック
+    const { data: existingEvent } = await supabase
+      .from('stripe_events')
+      .select('id')
+      .eq('id', event.id)
+      .single();
+
+    if (existingEvent) {
+      console.log('Event already processed (database check), skipping:', event.id);
+      return new Response(JSON.stringify({ received: true }), {
+        status: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // イベントをデータベースに記録（ユーザーIDは後で更新可能）
+    const { error: insertError } = await supabase
+      .from('stripe_events')
+      .insert({
+        id: event.id,
+        event_type: event.type,
+        metadata: {
+          stripe_object_id: (event.data.object as any).id,
+          timestamp: new Date().toISOString(),
+          raw_event: event.data.object
+        }
+      });
+
+    // Unique constraint violationの場合は、既に処理済み
+    if (insertError && insertError.code === '23505') {
+      console.log('Event already being processed (race condition), skipping:', event.id);
+      return new Response(JSON.stringify({ received: true }), {
+        status: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // エラーがあった場合はログを出力して続行（イベントの処理は止めない）
+    if (insertError) {
+      console.error('Error recording event:', insertError);
+    }
+
+    // ===== ホットフィックス: メモリベースの重複防止（フォールバック）=====
+    // データベースが利用できない場合のバックアップ
+    if (processedEvents.has(event.id)) {
+      console.log('Duplicate event detected (memory cache fallback), skipping:', event.id);
+      return new Response(JSON.stringify({ received: true }), {
+        status: 200,
+        headers: { ...headers, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // イベントIDを記録
+    processedEvents.set(event.id, Date.now());
+    cleanupEvents(); // 定期的にクリーンアップ
 
     switch (event.type) {
       case 'checkout.session.completed': {
