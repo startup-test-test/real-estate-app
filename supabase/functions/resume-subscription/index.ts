@@ -88,10 +88,12 @@ serve(async (req) => {
     
     if (!isTestMode) {
       // Production mode: Update subscription in Stripe to resume
+      // IMPORTANT: proration_behavior: 'none' prevents immediate charging
       const stripeSubscription = await stripe.subscriptions.update(
         subscription.stripe_subscription_id,
-        { 
+        {
           cancel_at_period_end: false,
+          proration_behavior: 'none', // 即座の課金を防ぐ
           metadata: {
             resumed_by: user.email || user.id,
             resumed_at: new Date().toISOString()
