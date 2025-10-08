@@ -50,7 +50,7 @@ const Tokushoho: React.FC = () => {
               </div>
               <div>
                 <p className="font-medium">ベーシックプラン</p>
-                <p>月額 2,980円（非課税）</p>
+                <p>月額 4,980円（非課税）</p>
                 <p className="text-sm text-gray-600 mt-1">※当社は免税事業者のため、消費税は発生いたしません</p>
               </div>
             </div>

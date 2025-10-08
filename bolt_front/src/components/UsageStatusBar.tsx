@@ -259,7 +259,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             <div className="hidden md:flex items-center gap-2">
               <Crown className="h-5 w-5 text-purple-600" />
               <span className="text-base font-semibold text-gray-800">
-                月額2,980円で無制限
+                月額4,980円で無制限
               </span>
             </div>
             <button
