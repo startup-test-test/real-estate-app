@@ -702,7 +702,7 @@ const MyPage: React.FC = () => {
         "60秒で投資判断の全てが分かる。売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
       actions: [
         {
-          name: "シミュレーションを開始する",
+          name: "収益シミュレーターを開始する",
           primary: true,
           path: "/simulator",
         },
@@ -965,7 +965,7 @@ const MyPage: React.FC = () => {
                       className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      シミュレーションを開始する
+                      収益シミュレーターを開始する
                     </button>
                   </div>
                 </div>
