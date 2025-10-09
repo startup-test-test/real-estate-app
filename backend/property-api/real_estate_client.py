@@ -464,10 +464,6 @@ class RealEstateAPIClient:
                         region_name = item.get("標準地番号 地域名", "")
                         address = item.get("標準地 所在地 所在地番", "")
 
-                        # 市区町村でフィルタリング
-                        if city and city not in address:
-                            continue
-
                         # 地区名でフィルタリング
                         if district and district not in address:
                             continue
