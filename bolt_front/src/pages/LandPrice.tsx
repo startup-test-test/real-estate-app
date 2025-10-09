@@ -18,6 +18,11 @@ interface City {
   name: string;
 }
 
+interface District {
+  code: string;
+  name: string;
+}
+
 interface LandPriceData {
   region: string;
   address: string;
@@ -38,7 +43,7 @@ interface LandPriceData {
 export const LandPrice: React.FC = () => {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
   const [cities, setCities] = useState<City[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
 
   const [selectedPrefecture, setSelectedPrefecture] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -282,8 +287,8 @@ export const LandPrice: React.FC = () => {
               >
                 <option value="">すべて</option>
                 {districts.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
+                  <option key={district.code} value={district.name}>
+                    {district.name}
                   </option>
                 ))}
               </select>
