@@ -27,7 +27,7 @@ const LandingPage: React.FC = () => {
       image: '/img/people_1.png',
       color: 'from-blue-500 to-blue-700',
       title: '課題1.\n周辺状況の調査をしたい',
-      problem: 'テキストテキスト',
+      problem: '類似物件の取引事例を調べたいが、不動産ポータルサイトで1件1件検索するのは時間がかかる。周辺の価格相場が適正かどうか判断する材料が欲しい。',
       solution: '物件情報入力で即分析',
       story: 'テキストテキスト',
       features: [] as { icon: any; title: string; desc: string }[]
@@ -181,7 +181,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* 機能紹介セクション */}
-      <section id="features" className="py-2 sm:py-8 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
+      <section id="features" className="pt-2 sm:pt-8 lg:pt-16 pb-1 sm:pb-2 lg:pb-4 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-3 sm:mb-8">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
@@ -189,73 +189,11 @@ const LandingPage: React.FC = () => {
               大家DXの3つの特徴
             </h2>
           </div>
-          
-          {/* 3つの特徴を横並び */}
-          <div className="hidden sm:grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-12">
-            {/* 特徴1 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">01</span><br />
-                AI市場分析
-              </h3>
-              <div className="flex justify-center">
-                <img
-                  src="/img/tokuchou_ai.jpg"
-                  alt="AI市場分析"
-                  className="w-full h-48 sm:h-56 lg:h-64 object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* 特徴2 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">02</span><br />
-                35年のキャッシュフローを<br />
-                グラフと表で可視化
-              </h3>
-              <div className="flex justify-center">
-                <img
-                  src="/img/tokuchou01.jpg"
-                  alt="35年のキャッシュフローを可視化"
-                  className="w-full h-48 sm:h-56 lg:h-64 object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* 特徴3 */}
-            <div className="text-center px-3 sm:px-6 py-2 sm:py-3 lg:pt-8 border-2 border-gray-200 rounded-2xl">
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                <span className="text-2xl sm:text-3xl lg:text-4xl">03</span><br />
-                公示地価検索
-              </h3>
-              <div className="flex justify-center">
-                <img
-                  src="/img/tokuchou_landprice.jpg"
-                  alt="公示地価検索"
-                  className="w-full h-48 sm:h-56 lg:h-64 object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          
         </div>
       </section>
 
       {/* 機能詳細セクション */}
-      <section className="py-2 sm:py-8 lg:py-16 bg-white">
+      <section className="pt-1 sm:pt-2 lg:pt-4 pb-2 sm:pb-8 lg:pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 機能1 */}
           <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
@@ -266,30 +204,30 @@ const LandingPage: React.FC = () => {
                   <div className="flex items-start gap-4">
                     <div className="text-5xl font-bold text-gray-900">01</div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">
                         AI市場分析
                       </h3>
                     </div>
                   </div>
-                  <p className="text-base text-gray-700 leading-relaxed mb-3 mt-4">
-                    テキストテキスト
+                  <p className="text-xl text-gray-700 leading-relaxed mb-3 mt-4 font-semibold">
+                    物件住所を入力するだけで、AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm text-gray-600">
-                    テキストテキスト
+                    地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
                   </p>
                 </div>
 
                 {/* PC版: 従来のレイアウト */}
                 <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                     AI市場分析
                   </h3>
-                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-3">
-                    テキストテキスト
+                  <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-3 font-semibold">
+                    物件住所を入力するだけで、AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600">
-                    テキストテキスト
+                    地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
                   </p>
                 </div>
               </div>
@@ -326,32 +264,30 @@ const LandingPage: React.FC = () => {
                   <div className="flex items-start gap-4">
                     <div className="text-5xl font-bold text-gray-900">02</div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                        35年のキャッシュフローを<br />
-                        グラフと表で可視化
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                        収益シミュレーション
                       </h3>
                     </div>
                   </div>
-                  <p className="text-base text-gray-700 leading-relaxed mb-3 mt-4">
-                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。
+                  <p className="text-xl text-gray-700 leading-relaxed mb-3 mt-4 font-semibold">
+                    35年のキャッシュフローをグラフと表で可視化
                   </p>
                   <p className="text-sm text-gray-600">
-                    各年度の重要指標を年次で可視化。投資判断を強力にサポート。
+                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。各年度の重要指標を年次で可視化。投資判断を強力にサポート。
                   </p>
                 </div>
 
                 {/* PC版: 従来のレイアウト */}
                 <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">02</div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    35年のキャッシュフローを<br />
-                    グラフと表で可視化
+                  <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                    収益シミュレーション
                   </h3>
-                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-3">
-                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。
+                  <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-3 font-semibold">
+                    35年のキャッシュフローをグラフと表で可視化
                   </p>
                   <p className="text-sm lg:text-base text-gray-600">
-                    各年度の重要指標を年次で可視化。投資判断を強力にサポート。
+                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。各年度の重要指標を年次で可視化。投資判断を強力にサポート。
                   </p>
                 </div>
               </div>
@@ -388,13 +324,13 @@ const LandingPage: React.FC = () => {
                   <div className="flex items-start gap-4">
                     <div className="text-5xl font-bold text-gray-900">03</div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">
                         公示地価検索
                       </h3>
                     </div>
                   </div>
-                  <p className="text-base text-gray-700 leading-relaxed mb-3 mt-4">
-                    物件周辺の公示地価を検索・可視化。過去10年のトレンドをグラフで確認。
+                  <p className="text-xl text-gray-700 leading-relaxed mb-3 mt-4 font-semibold">
+                    物件周辺の公示地価を検索・可視化。直近4年分のトレンドをグラフで確認。
                   </p>
                   <p className="text-sm text-gray-600">
                     エリアの資産価値推移を把握し、投資判断の精度を向上。
@@ -404,11 +340,11 @@ const LandingPage: React.FC = () => {
                 {/* PC版: 従来のレイアウト */}
                 <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">03</div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                     公示地価検索
                   </h3>
-                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed mb-3">
-                    物件周辺の公示地価を検索・可視化。過去10年のトレンドをグラフで確認。
+                  <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-3 font-semibold">
+                    物件周辺の公示地価を検索・可視化。直近4年分のトレンドをグラフで確認。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600">
                     エリアの資産価値推移を把握し、投資判断の精度を向上。
@@ -760,10 +696,10 @@ const LandingPage: React.FC = () => {
           <div className="text-center mb-8 sm:mb-12">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">How to Use</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 leading-tight">
-              3ステップで今すぐ始める
+              3ステップでAI市場分析を始める
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              面倒な設定は不要。今すぐ不動産投資シミュレーションを始められます
+              面倒な設定は不要。今すぐAI市場分析を始められます
             </p>
           </div>
 
@@ -809,21 +745,21 @@ const LandingPage: React.FC = () => {
                   <Home className="w-8 h-8 text-green-600" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-                  物件情報を入力
+                  物件住所を入力
                   <span className="block text-sm text-gray-500 mt-2 font-normal">30秒で入力</span>
                 </h3>
                 <ul className="space-y-3 text-gray-700 text-left inline-block">
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>物件価格・月額家賃を入力</span>
+                    <span>物件住所を入力するだけ</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>融資条件（金利・期間）を設定</span>
+                    <span>AIが周辺の取引事例を自動収集</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>必須項目は最小限でOK</span>
+                    <span>類似物件のデータを即座に分析開始</span>
                   </li>
                 </ul>
               </div>
@@ -839,21 +775,21 @@ const LandingPage: React.FC = () => {
                   <FileText className="w-8 h-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-                  結果を即座に確認
+                  AI市場分析の結果を確認
                   <span className="block text-sm text-gray-500 mt-2 font-normal">20秒で分析完了</span>
                 </h3>
                 <ul className="space-y-3 text-gray-700 text-left inline-block">
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>35年間のキャッシュフロー表示</span>
+                    <span>周辺の取引事例を一覧表示</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>IRR/DSCR/NOIなど投資指標算出</span>
+                    <span>価格帯分布をグラフで可視化</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>PDFレポート出力で銀行提出も簡単</span>
+                    <span>地域の中央値・取引件数を確認</span>
                   </li>
                 </ul>
               </div>
@@ -892,8 +828,9 @@ const LandingPage: React.FC = () => {
                 Q1. どんな分析ができるサービスですか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                物件の収益性を約1分で分析。
-                IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算。
+                物件住所を入力するだけで、AIが類似物件の取引事例を自動収集・分析。
+                周辺の価格相場を瞬時に把握できます。
+                さらに、IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算。
                 金利上昇や空室増加などのリスクシナリオもワンクリックで検証でき、
                 銀行提出用PDF出力にも対応しています。
               </p>
@@ -904,8 +841,8 @@ const LandingPage: React.FC = () => {
                 Q2. 無料プランではどこまで利用できますか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                無料プランでは月5件まで物件シミュレーションが可能です。
-                基本的な収益指標の確認とPDFレポート出力（ウォーターマーク付）をご利用いただけます。
+                無料プランでは月5回まで、AI市場分析・収益シミュレーション・公示地価検索の全機能をご利用いただけます。
+                基本的な収益指標の確認とPDFレポート出力（ウォーターマーク付）も可能です。
                 物件の保存・共有機能や詳細な分析機能は有料プランでご提供しています。
               </p>
             </div>
@@ -981,6 +918,19 @@ const LandingPage: React.FC = () => {
           <div className="bg-white">
             {/* ニュース項目 */}
             <div className="space-y-0">
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    リリース
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2025.10.01</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    AI市場分析と公示地価検索をリリースしました。
+                  </h3>
+                </div>
+              </div>
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
