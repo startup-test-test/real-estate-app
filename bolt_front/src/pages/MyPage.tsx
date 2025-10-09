@@ -18,6 +18,7 @@ import {
   HelpCircle,
   TrendingUp,
   Sparkles,
+  MapPin,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
@@ -36,10 +37,26 @@ const MyPage: React.FC = () => {
   const { getSimulations, deleteSimulation } = useSupabaseData();
   const { usage, refetch: refetchUsage } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
-  
+
   // チュートリアル用のステート
   const [runTutorial, setRunTutorial] = React.useState(false);
-  
+  const [pauseTutorial, setPauseTutorial] = React.useState(false);  // チュートリアル一時停止用
+
+  // アップグレードモーダル開閉ハンドラー（チュートリアル一時停止対応）
+  const handleUpgradeClick = () => {
+    if (runTutorial) {
+      setPauseTutorial(true);  // チュートリアル一時停止
+    }
+    setShowUpgradeModal(true);
+  };
+
+  const handleUpgradeClose = () => {
+    setShowUpgradeModal(false);
+    if (pauseTutorial) {
+      setPauseTutorial(false);  // チュートリアル再開
+    }
+  };
+
   // サンプル物件があるかどうかを動的に判定してステップを生成
   const tutorialSteps = React.useMemo<Step[]>(() => {
     const steps: Step[] = [];
@@ -649,6 +666,8 @@ const MyPage: React.FC = () => {
       if (onlyHasSample) {
         // 少し遅延させてからチュートリアルを開始
         setTimeout(() => {
+          // sessionStorageにフラグをセット（ページ遷移時のチュートリアル継続用）
+          sessionStorage.setItem('tutorial_in_progress', 'true');
           setRunTutorial(true);
         }, 1500);
       }
@@ -683,7 +702,7 @@ const MyPage: React.FC = () => {
         "60秒で投資判断の全てが分かる。売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
       actions: [
         {
-          name: "シミュレーションを開始する",
+          name: "収益シミュレーター",
           primary: true,
           path: "/simulator",
         },
@@ -693,14 +712,29 @@ const MyPage: React.FC = () => {
       category: "AI市場分析",
       icon: TrendingUp,
       color: "bg-gradient-to-r from-purple-600 to-indigo-600",
-      badge: "Beta版で20250925にリリース",
+      badge: "NEW",
       description:
         "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
       actions: [
         {
-          name: "AI市場分析を開始する",
+          name: "AI市場分析",
           primary: true,
           path: "/market-analysis",
+        },
+      ],
+    },
+    {
+      category: "公示地価検索",
+      icon: MapPin,
+      color: "bg-gradient-to-r from-green-600 to-teal-600",
+      badge: "NEW",
+      description:
+        "国土交通省の公示地価データを高速検索。エリアごとの地価推移・過去4年分のデータを瞬時に分析・可視化",
+      actions: [
+        {
+          name: "公示地価検索",
+          primary: true,
+          path: "/land-prices",
         },
       ],
     },
@@ -713,7 +747,7 @@ const MyPage: React.FC = () => {
         "AIエージェントが収益シミュレーション・市場分析・金融機関提出資料を統合。プロ品質の事業計画書を自動作成し、1つのPDFで出力",
       actions: [
         {
-          name: "2025年10月上旬リリース予定",
+          name: "2025年リリース予定",
           primary: false,
           path: "#",
           disabled: true,
@@ -807,7 +841,7 @@ const MyPage: React.FC = () => {
     <>
       <div className="bg-gray-50 min-h-screen">
         {/* 使用状況表示バー（無料ユーザーはアップグレード促進付き） */}
-        <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+        <UsageStatusBar onUpgradeClick={handleUpgradeClick} />
 
         <div className="p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">
@@ -826,7 +860,7 @@ const MyPage: React.FC = () => {
 
             <div className="space-y-6">
               {/* Quick Actions Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
                 {quickActions.map((section, index) => {
                   const Icon = section.icon;
                   return (
@@ -836,7 +870,7 @@ const MyPage: React.FC = () => {
                     >
                       {section.badge && (
                         <div className="absolute top-4 right-4 z-10">
-                          <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                          <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
                             {section.badge}
                           </span>
                         </div>
@@ -867,7 +901,7 @@ const MyPage: React.FC = () => {
                                   !usage.isSubscribed &&
                                   usage.currentCount >= usage.limit
                                 ) {
-                                  setShowUpgradeModal(true);
+                                  handleUpgradeClick();
                                 } else {
                                   navigate(action.path);
                                 }
@@ -925,7 +959,7 @@ const MyPage: React.FC = () => {
                           !usage.isSubscribed &&
                           usage.currentCount >= usage.limit
                         ) {
-                          setShowUpgradeModal(true);
+                          handleUpgradeClick();
                         } else {
                           navigate("/simulator");
                         }
@@ -933,7 +967,7 @@ const MyPage: React.FC = () => {
                       className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      シミュレーションを開始する
+                      収益シミュレーターを開始する
                     </button>
                   </div>
                 </div>
@@ -1035,7 +1069,7 @@ const MyPage: React.FC = () => {
                           !usage.isSubscribed &&
                           usage.currentCount >= usage.limit
                         ) {
-                          setShowUpgradeModal(true);
+                          handleUpgradeClick();
                         } else {
                           navigate("/simulator");
                         }
@@ -1378,13 +1412,13 @@ const MyPage: React.FC = () => {
       {/* アップグレードモーダル */}
       <UpgradeModal
         isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
+        onClose={handleUpgradeClose}
       />
       
       {/* チュートリアル */}
       <Joyride
         steps={tutorialSteps}
-        run={runTutorial}
+        run={runTutorial && !pauseTutorial}  // 一時停止フラグを追加
         continuous={false}  // 自動的に次のステップへ進まない
         showProgress={true}  // プログレス表示を有効化
         showSkipButton={true}
