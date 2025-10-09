@@ -4,9 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Search, TrendingUp, MapPin, Calendar } from 'lucide-react';
+import { TrendingUp, MapPin, Building, Search, Loader } from 'lucide-react';
 import Plot from 'react-plotly.js';
 import { propertyApi } from '../services/propertyApi';
+import UsageStatusBar from '../components/UsageStatusBar';
+import UpgradeModal from '../components/UpgradeModal';
+import Breadcrumb from '../components/Breadcrumb';
 
 interface Prefecture {
   code: string;
@@ -54,6 +57,10 @@ export const LandPrice: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [isCitiesLoading, setIsCitiesLoading] = useState(false);
+  const [isDistrictsLoading, setIsDistrictsLoading] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
   // 都道府県リスト取得
   useEffect(() => {
     const fetchPrefectures = async () => {
@@ -73,6 +80,7 @@ export const LandPrice: React.FC = () => {
   useEffect(() => {
     if (selectedPrefecture) {
       const fetchCities = async () => {
+        setIsCitiesLoading(true);
         try {
           const response = await propertyApi.getCities(selectedPrefecture);
           if (response.data) {
@@ -80,6 +88,8 @@ export const LandPrice: React.FC = () => {
           }
         } catch (err) {
           console.error('市区町村リスト取得エラー:', err);
+        } finally {
+          setIsCitiesLoading(false);
         }
       };
       fetchCities();
@@ -92,6 +102,7 @@ export const LandPrice: React.FC = () => {
   useEffect(() => {
     if (selectedPrefecture && selectedCity) {
       const fetchDistricts = async () => {
+        setIsDistrictsLoading(true);
         try {
           const response = await propertyApi.getDistricts(selectedPrefecture, selectedCity);
           if (response.data) {
@@ -99,6 +110,8 @@ export const LandPrice: React.FC = () => {
           }
         } catch (err) {
           console.error('地区リスト取得エラー:', err);
+        } finally {
+          setIsDistrictsLoading(false);
         }
       };
       fetchDistricts();
@@ -150,7 +163,7 @@ export const LandPrice: React.FC = () => {
       if (latestYearData.data && latestYearData.data.length > 0) {
         setLandPriceData(latestYearData.data);
 
-        // 住所ごとにグループ化
+        // 住所ごとにグループ化（AI市場分析と同じ形式）
         const historyByAddress: any = {};
         historyResults.forEach((result, index) => {
           const year = years[index];
@@ -161,10 +174,10 @@ export const LandPrice: React.FC = () => {
                   address: item.address,
                   full_address: item.full_address,
                   station: item.station,
-                  data: []
+                  yearly_prices: []
                 };
               }
-              historyByAddress[item.address].data.push({
+              historyByAddress[item.address].yearly_prices.push({
                 year: parseInt(year),
                 price_per_sqm: item.price_per_sqm,
                 price_per_tsubo: item.price_per_tsubo
@@ -187,37 +200,68 @@ export const LandPrice: React.FC = () => {
     }
   };
 
-  // 推移グラフの生成
+  // 推移グラフの生成（AI市場分析と同じスタイル）
   const renderTrendChart = () => {
     if (!landPriceHistory) return null;
 
-    const addresses = Object.values(landPriceHistory).slice(0, 10); // 最大10地点
-
-    const traces = addresses.map((addrData: any) => ({
-      x: addrData.data.map((d: any) => d.year),
-      y: addrData.data.map((d: any) => d.price_per_sqm),
-      type: 'scatter',
-      mode: 'lines+markers',
-      name: addrData.address.substring(0, 20),
-      hovertemplate: `<b>${addrData.address}</b><br>` +
-        `年: %{x}<br>` +
-        `価格: %{y:,.0f}円/㎡<br>` +
-        `<extra></extra>`
-    }));
-
     return (
       <Plot
-        data={traces as any}
+        data={Object.entries(landPriceHistory).slice(0, 10).map(([address, data]: [string, any]) => ({
+          x: data.yearly_prices.map((p: any) => `${p.year}年`),
+          y: data.yearly_prices.map((p: any) => p.price_per_sqm),
+          mode: 'lines+markers+text',
+          name: address.length > 20 ? address.substring(0, 20) + '...' : address,
+          text: data.yearly_prices.map((p: any) => `${p.price_per_sqm.toLocaleString()}`),
+          textposition: 'top center',
+          textfont: { size: 14 },
+          line: { width: 2 },
+          marker: { size: 6 }
+        }))}
         layout={{
-          title: '公示地価の推移',
-          xaxis: { title: '年' },
-          yaxis: { title: '価格（円/㎡）' },
-          hovermode: 'closest',
+          height: 500,
+          margin: { t: 40, b: 60, l: 100, r: 40 },
           showlegend: true,
-          height: 500
+          plot_bgcolor: 'white',
+          paper_bgcolor: 'white',
+          xaxis: {
+            title: { text: '価格時点（年）', font: { size: 14, color: 'black' } },
+            gridcolor: '#E0E0E0',
+            showline: true,
+            linewidth: 1,
+            linecolor: 'black',
+            tickfont: { size: 14, color: 'black' },
+            dtick: 1
+          },
+          yaxis: {
+            title: { text: '', font: { size: 14, color: 'black' } },
+            gridcolor: '#E0E0E0',
+            showline: true,
+            linewidth: 1,
+            linecolor: 'black',
+            tickfont: { size: 14, color: 'black' },
+            tickformat: ',.0f',
+            ticksuffix: '円'
+          },
+          legend: {
+            orientation: 'v',
+            yanchor: 'top',
+            y: 1,
+            xanchor: 'left',
+            x: 1.02,
+            font: { size: 12, color: 'black' },
+            bgcolor: 'white',
+            bordercolor: 'black',
+            borderwidth: 1
+          },
+          hovermode: 'x unified',
+          hoverlabel: {
+            bgcolor: 'rgba(0, 0, 0, 0.8)',
+            bordercolor: '#fff',
+            font: { size: 14, color: 'white' }
+          }
         }}
-        config={{ responsive: true }}
-        style={{ width: '100%' }}
+        config={{ displayModeBar: false }}
+        className="w-full"
       />
     );
   };
@@ -266,10 +310,12 @@ export const LandPrice: React.FC = () => {
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                disabled={!selectedPrefecture}
+                disabled={!selectedPrefecture || isCitiesLoading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               >
-                <option value="">選択してください</option>
+                <option value="">
+                  {isCitiesLoading ? '読み込み中...' : '選択してください'}
+                </option>
                 {cities.map((city) => (
                   <option key={city.code} value={city.code}>
                     {city.name}
@@ -286,10 +332,12 @@ export const LandPrice: React.FC = () => {
               <select
                 value={selectedDistrict}
                 onChange={(e) => setSelectedDistrict(e.target.value)}
-                disabled={!selectedCity}
+                disabled={!selectedCity || isDistrictsLoading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               >
-                <option value="">選択してください</option>
+                <option value="">
+                  {isDistrictsLoading ? '読み込み中...' : '選択してください'}
+                </option>
                 {districts.map((district) => (
                   <option key={district.code} value={district.name}>
                     {district.name}
@@ -318,11 +366,13 @@ export const LandPrice: React.FC = () => {
 
         {/* 公示地価テーブル */}
         {landPriceData.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <MapPin className="h-6 w-6 text-blue-600" />
-              📍 周辺の公示地価（{landPriceData.length}件）
-            </h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
+              📍 周辺の公示地価
+              <span className="text-sm text-gray-500 ml-2">
+                （地点数: {landPriceData.length}件）
+              </span>
+            </h3>
 
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
