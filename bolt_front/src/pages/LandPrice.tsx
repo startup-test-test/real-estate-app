@@ -259,6 +259,7 @@ export const LandPrice: React.FC = () => {
           showlegend: true,
           plot_bgcolor: 'white',
           paper_bgcolor: 'white',
+          dragmode: false,
           xaxis: {
             title: { text: '価格時点（年）', font: { size: 14, color: 'black' } },
             gridcolor: '#E0E0E0',
@@ -266,7 +267,8 @@ export const LandPrice: React.FC = () => {
             linewidth: 1,
             linecolor: 'black',
             tickfont: { size: 14, color: 'black' },
-            dtick: 1
+            dtick: 1,
+            fixedrange: true
           },
           yaxis: {
             title: { text: '', font: { size: 14, color: 'black' } },
@@ -276,7 +278,8 @@ export const LandPrice: React.FC = () => {
             linecolor: 'black',
             tickfont: { size: 14, color: 'black' },
             tickformat: ',.0f',
-            ticksuffix: '円'
+            ticksuffix: '円',
+            fixedrange: true
           },
           legend: {
             orientation: 'v',
@@ -296,7 +299,11 @@ export const LandPrice: React.FC = () => {
             font: { size: 14, color: 'white' }
           }
         }}
-        config={{ displayModeBar: false }}
+        config={{
+          displayModeBar: false,
+          scrollZoom: false,
+          doubleClick: false
+        }}
         className="w-full"
       />
     );

@@ -2081,6 +2081,7 @@ const MarketAnalysis: React.FC = () => {
                       }
 
                       return {
+                        dragmode: false,
                         xaxis: {
                           title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: isMobile ? 10 : 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
@@ -2090,7 +2091,8 @@ const MarketAnalysis: React.FC = () => {
                           tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                           dtick: 10,
                           range: [50, 200],
-                          tickangle: isMobile ? -45 : 0
+                          tickangle: isMobile ? -45 : 0,
+                          fixedrange: true
                         },
                         yaxis: {
                           title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
@@ -2102,7 +2104,8 @@ const MarketAnalysis: React.FC = () => {
                           dtick: yDtick,
                           range: yRange,
                           tickformat: ',d',
-                          ticksuffix: '万円'
+                          ticksuffix: '万円',
+                          fixedrange: true
                         },
                         height: isMobile ? 400 : 500,
                         margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 60 : 80, r: isMobile ? 20 : 40 },
@@ -2147,7 +2150,7 @@ const MarketAnalysis: React.FC = () => {
                         ]
                       };
                     })()}
-                    config={{ displayModeBar: false }}
+                    config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                     className="w-full"
                   />
                       </div>
@@ -2298,6 +2301,7 @@ const MarketAnalysis: React.FC = () => {
                         }
 
                         return {
+                          dragmode: false,
                           xaxis: {
                             title: { text: isLand ? '土地面積（㎡）' : '延床面積（㎡）', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             gridcolor: '#E0E0E0',
@@ -2307,7 +2311,8 @@ const MarketAnalysis: React.FC = () => {
                             tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                             dtick: 10,
                             range: [50, 200],
-                            tickangle: isMobile ? -45 : 0
+                            tickangle: isMobile ? -45 : 0,
+                            fixedrange: true
                           },
                           yaxis: {
                             title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
@@ -2319,7 +2324,8 @@ const MarketAnalysis: React.FC = () => {
                             dtick: yDtick,
                             range: yRange,
                             tickformat: ',d',
-                            ticksuffix: '万円'
+                            ticksuffix: '万円',
+                            fixedrange: true
                           },
                           height: isMobile ? 400 : 500,
                           margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 60 : 80, r: isMobile ? 20 : 40 },
@@ -2364,7 +2370,7 @@ const MarketAnalysis: React.FC = () => {
                           ]
                         };
                       })()}
-                      config={{ displayModeBar: false }}
+                      config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                       className="w-full"
                     />
                   )}
@@ -2549,6 +2555,7 @@ const MarketAnalysis: React.FC = () => {
                           }
                         ]}
                         layout={{
+                          dragmode: false,
                           xaxis: {
                             title: { text: isLand ? '土地面積(㎡)' : '延床面積(㎡)', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             side: 'bottom',
@@ -2556,7 +2563,8 @@ const MarketAnalysis: React.FC = () => {
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
-                            tickangle: isMobile ? -45 : 0
+                            tickangle: isMobile ? -45 : 0,
+                            fixedrange: true
                           },
                           yaxis: {
                             title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
@@ -2565,7 +2573,8 @@ const MarketAnalysis: React.FC = () => {
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
-                            autorange: 'reversed'  // Y軸を反転して下が0、上が高い値になるようにする
+                            autorange: 'reversed',  // Y軸を反転して下が0、上が高い値になるようにする
+                            fixedrange: true
                           },
                           height: isMobile ? 400 : 500,
                           margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 80 : 100, r: isMobile ? 20 : 40 },
@@ -2578,7 +2587,7 @@ const MarketAnalysis: React.FC = () => {
                             font: { size: 14, color: 'white' }
                           }
                         }}
-                        config={{ displayModeBar: false }}
+                        config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                         className="w-full"
                       />
                     );
@@ -2734,6 +2743,7 @@ const MarketAnalysis: React.FC = () => {
                             }
                           ]}
                           layout={{
+                            dragmode: false,
                             xaxis: {
                               title: { text: isLand ? '土地面積(㎡)' : '延床面積(㎡)', font: { size: 14, color: 'black' } },
                               side: 'bottom',
@@ -2741,7 +2751,8 @@ const MarketAnalysis: React.FC = () => {
                               showgrid: false,
                               showline: true,
                               linecolor: 'black',
-                              tickangle: 0
+                              tickangle: 0,
+                              fixedrange: true
                             },
                             yaxis: {
                               title: { text: '', font: { size: 14, color: 'black' } },
@@ -2750,7 +2761,8 @@ const MarketAnalysis: React.FC = () => {
                               showgrid: false,
                               showline: true,
                               linecolor: 'black',
-                              autorange: 'reversed'
+                              autorange: 'reversed',
+                              fixedrange: true
                             },
                             height: 500,
                             margin: { t: 40, b: 60, l: 100, r: 40 },
@@ -2763,7 +2775,7 @@ const MarketAnalysis: React.FC = () => {
                               font: { size: 14, color: 'white' }
                             }
                           }}
-                          config={{ displayModeBar: false }}
+                          config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                           className="w-full"
                         />
                       );
@@ -2975,6 +2987,7 @@ const MarketAnalysis: React.FC = () => {
                       }
 
                       return {
+                        dragmode: false,
                         xaxis: {
                           title: { text: '建築年', font: { size: isMobile ? 10 : 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
@@ -2983,7 +2996,8 @@ const MarketAnalysis: React.FC = () => {
                           linecolor: 'black',
                           tickfont: { size: isMobile ? 10 : 14, color: 'black' },
                           dtick: 5,
-                          tickangle: isMobile ? -45 : 0
+                          tickangle: isMobile ? -45 : 0,
+                          fixedrange: true
                         },
                         yaxis: {
                           title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
@@ -2995,7 +3009,8 @@ const MarketAnalysis: React.FC = () => {
                           dtick: yDtick,
                           range: yRange,
                           tickformat: ',d',
-                          ticksuffix: '万円'
+                          ticksuffix: '万円',
+                          fixedrange: true
                         },
                         height: isMobile ? 400 : 500,
                         margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 60 : 80, r: isMobile ? 20 : 40 },
@@ -3040,7 +3055,7 @@ const MarketAnalysis: React.FC = () => {
                         ]
                       };
                     })()}
-                            config={{ displayModeBar: false }}
+                            config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                             className="w-full"
                           />
                         </div>
@@ -3231,6 +3246,7 @@ const MarketAnalysis: React.FC = () => {
                       }
 
                       return {
+                        dragmode: false,
                         xaxis: {
                           title: { text: '建築年', font: { size: 14, color: 'black' } },
                           gridcolor: '#E0E0E0',
@@ -3239,7 +3255,8 @@ const MarketAnalysis: React.FC = () => {
                           linecolor: 'black',
                           tickfont: { size: 14, color: 'black' },
                           dtick: 5,
-                          tickangle: 0
+                          tickangle: 0,
+                          fixedrange: true
                         },
                         yaxis: {
                           title: { text: '', font: { size: 14, color: 'black' } },
@@ -3251,7 +3268,8 @@ const MarketAnalysis: React.FC = () => {
                           dtick: yDtick,
                           range: yRange,
                           tickformat: ',d',
-                          ticksuffix: '万円'
+                          ticksuffix: '万円',
+                          fixedrange: true
                         },
                         height: 500,
                         margin: { t: 40, b: 60, l: 80, r: 40 },
@@ -3296,7 +3314,7 @@ const MarketAnalysis: React.FC = () => {
                         ]
                       };
                     })()}
-                            config={{ displayModeBar: false }}
+                            config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                             className="w-full"
                           />
                     )}
@@ -3491,6 +3509,7 @@ const MarketAnalysis: React.FC = () => {
                           }
                         ]}
                         layout={{
+                          dragmode: false,
                           xaxis: {
                             title: { text: '建築年', font: { size: isMobile ? 10 : 14, color: 'black' } },
                             side: 'bottom',
@@ -3498,7 +3517,8 @@ const MarketAnalysis: React.FC = () => {
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
-                            tickangle: isMobile ? -45 : 0
+                            tickangle: isMobile ? -45 : 0,
+                            fixedrange: true
                           },
                           yaxis: {
                             title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
@@ -3507,7 +3527,8 @@ const MarketAnalysis: React.FC = () => {
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
-                            autorange: 'reversed'
+                            autorange: 'reversed',
+                            fixedrange: true
                           },
                           height: isMobile ? 400 : 500,
                           margin: { t: 40, b: isMobile ? 80 : 60, l: isMobile ? 80 : 100, r: isMobile ? 20 : 40 },
@@ -3520,7 +3541,7 @@ const MarketAnalysis: React.FC = () => {
                             font: { size: 14, color: 'white' }
                           }
                         }}
-                        config={{ displayModeBar: false }}
+                        config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                         className="w-full"
                       />
                     );
@@ -3696,6 +3717,7 @@ const MarketAnalysis: React.FC = () => {
                               }
                             ]}
                             layout={{
+                              dragmode: false,
                               xaxis: {
                                 title: { text: '建築年', font: { size: 14, color: 'black' } },
                                 side: 'bottom',
@@ -3703,7 +3725,8 @@ const MarketAnalysis: React.FC = () => {
                                 showgrid: false,
                                 showline: true,
                                 linecolor: 'black',
-                                tickangle: 0
+                                tickangle: 0,
+                                fixedrange: true
                               },
                               yaxis: {
                                 title: { text: '', font: { size: 14, color: 'black' } },
@@ -3712,7 +3735,8 @@ const MarketAnalysis: React.FC = () => {
                                 showgrid: false,
                                 showline: true,
                                 linecolor: 'black',
-                                autorange: 'reversed'
+                                autorange: 'reversed',
+                                fixedrange: true
                               },
                               height: 500,
                               margin: { t: 40, b: 60, l: 100, r: 40 },
@@ -3725,7 +3749,7 @@ const MarketAnalysis: React.FC = () => {
                                 font: { size: 14, color: 'white' }
                               }
                             }}
-                            config={{ displayModeBar: false }}
+                            config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                             className="w-full"
                           />
                         );
@@ -3817,6 +3841,7 @@ const MarketAnalysis: React.FC = () => {
                           }
                         ]}
                         layout={{
+                          dragmode: false,
                           xaxis: {
                             title: { text: '取引時期（年月）', font: { size: isMobile ? 10 : 14, color: 'black' }, standoff: isMobile ? 20 : 30 },
                             tickfont: { size: isMobile ? 8 : 14, color: 'black' },
@@ -3824,7 +3849,8 @@ const MarketAnalysis: React.FC = () => {
                             showgrid: false,
                             showline: true,
                             linecolor: 'black',
-                            linewidth: 1
+                            linewidth: 1,
+                            fixedrange: true
                           },
                           yaxis: {
                             title: { text: '', font: { size: isMobile ? 10 : 14, color: 'black' } },
@@ -3836,7 +3862,8 @@ const MarketAnalysis: React.FC = () => {
                             linewidth: 1,
                             ticksuffix: '件',
                             dtick: yAxisDtick,  // 動的な目盛り間隔
-                            tickformat: 'd'  // 整数フォーマット
+                            tickformat: 'd',  // 整数フォーマット
+                            fixedrange: true
                           },
                           height: isMobile ? 400 : 500,
                           margin: { t: 40, b: isMobile ? 100 : 70, l: isMobile ? 50 : 60, r: isMobile ? 20 : 40 },
@@ -3851,7 +3878,7 @@ const MarketAnalysis: React.FC = () => {
                             font: { size: 14, color: 'white' }
                           }
                         }}
-                        config={{ displayModeBar: false }}
+                        config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                         className="w-full"
                       />
                     );
@@ -3924,6 +3951,7 @@ const MarketAnalysis: React.FC = () => {
                             }
                           ]}
                           layout={{
+                            dragmode: false,
                             xaxis: {
                               title: { text: '取引時期（年月）', font: { size: 14, color: 'black' }, standoff: 30 },
                               tickfont: { size: 14, color: 'black' },
@@ -3931,7 +3959,8 @@ const MarketAnalysis: React.FC = () => {
                               showgrid: false,
                               showline: true,
                               linecolor: 'black',
-                              linewidth: 1
+                              linewidth: 1,
+                              fixedrange: true
                             },
                             yaxis: {
                               title: { text: '', font: { size: 14, color: 'black' } },
@@ -3943,7 +3972,8 @@ const MarketAnalysis: React.FC = () => {
                               linewidth: 1,
                               ticksuffix: '件',
                               dtick: yAxisDtick,  // 動的な目盛り間隔
-                              tickformat: 'd'  // 整数フォーマット
+                              tickformat: 'd',  // 整数フォーマット
+                              fixedrange: true
                             },
                             height: 500,
                             margin: { t: 40, b: 70, l: 60, r: 40 },
@@ -3958,7 +3988,7 @@ const MarketAnalysis: React.FC = () => {
                               font: { size: 14, color: 'white' }
                             }
                           }}
-                          config={{ displayModeBar: false }}
+                          config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                           className="w-full"
                         />
                       );
@@ -4049,6 +4079,7 @@ const MarketAnalysis: React.FC = () => {
                         marker: { size: 6 }
                       }))}
                       layout={{
+                        dragmode: false,
                         height: 400,
                         margin: { t: 20, b: 40, l: 100, r: 20 },
                         plot_bgcolor: 'white',
@@ -4060,7 +4091,8 @@ const MarketAnalysis: React.FC = () => {
                           linewidth: 1,
                           linecolor: 'black',
                           tickfont: { size: 14, color: 'black' },
-                          dtick: 1
+                          dtick: 1,
+                          fixedrange: true
                         },
                         yaxis: {
                           title: { text: '', font: { size: 14, color: 'black' } },
@@ -4070,7 +4102,8 @@ const MarketAnalysis: React.FC = () => {
                           linecolor: 'black',
                           tickfont: { size: 14, color: 'black' },
                           tickformat: ',.0f',
-                          ticksuffix: '円'
+                          ticksuffix: '円',
+                          fixedrange: true
                         },
                         legend: {
                           orientation: 'v',
@@ -4090,7 +4123,7 @@ const MarketAnalysis: React.FC = () => {
                           font: { size: 14, color: 'white' }
                         }
                       }}
-                      config={{ displayModeBar: false }}
+                      config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                       className="w-full"
                     />
                         </div>
@@ -4110,6 +4143,7 @@ const MarketAnalysis: React.FC = () => {
                         marker: { size: 6 }
                       }))}
                       layout={{
+                        dragmode: false,
                         height: 500,
                         margin: { t: 40, b: 60, l: 100, r: 40 },
                         showlegend: true,
@@ -4122,7 +4156,8 @@ const MarketAnalysis: React.FC = () => {
                           linewidth: 1,
                           linecolor: 'black',
                           tickfont: { size: 14, color: 'black' },
-                          dtick: 1
+                          dtick: 1,
+                          fixedrange: true
                         },
                         yaxis: {
                           title: { text: '', font: { size: 14, color: 'black' } },
@@ -4132,7 +4167,8 @@ const MarketAnalysis: React.FC = () => {
                           linecolor: 'black',
                           tickfont: { size: 14, color: 'black' },
                           tickformat: ',.0f',
-                          ticksuffix: '円'
+                          ticksuffix: '円',
+                          fixedrange: true
                         },
                         legend: {
                           orientation: 'v',
@@ -4152,7 +4188,7 @@ const MarketAnalysis: React.FC = () => {
                           font: { size: 14, color: 'white' }
                         }
                       }}
-                      config={{ displayModeBar: false }}
+                      config={{ displayModeBar: false, scrollZoom: false, doubleClick: false }}
                       className="w-full"
                     />
                     )
