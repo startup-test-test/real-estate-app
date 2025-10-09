@@ -44,6 +44,9 @@ interface LandPriceData {
 }
 
 export const LandPrice: React.FC = () => {
+  // モバイル判定用のステート
+  const [isMobile, setIsMobile] = useState(false);
+
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
@@ -60,6 +63,39 @@ export const LandPrice: React.FC = () => {
   const [isCitiesLoading, setIsCitiesLoading] = useState(false);
   const [isDistrictsLoading, setIsDistrictsLoading] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // ウィンドウサイズ監視
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // 初回チェック
+    checkMobile();
+
+    // リサイズイベントリスナー
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // SP版用のスタイルヘルパー
+  const getMobileScrollStyle = () => {
+    if (!isMobile) return {};
+    return {
+      WebkitOverflowScrolling: 'touch' as const,
+      scrollbarWidth: 'thin' as const
+    };
+  };
+
+  const getMobileContainerStyle = () => {
+    if (!isMobile) return {};
+    return { minWidth: '600px' };
+  };
+
+  const getMobileTableStyle = () => {
+    if (!isMobile) return {};
+    return { minWidth: '800px' };
+  };
 
   // 都道府県リスト取得
   useEffect(() => {
@@ -435,53 +471,59 @@ export const LandPrice: React.FC = () => {
               <span className="text-sm text-gray-500 ml-2">
                 （地点数: {landPriceData.length}件）
               </span>
+              {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
             </h3>
 
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="overflow-x-auto" style={isMobile ? getMobileScrollStyle() : {}}>
+              <table className="min-w-full" style={isMobile ? getMobileTableStyle() : {}}>
+                <thead className="bg-white border-b-2 border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      所在地
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      No
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      価格/㎡
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      住所
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      価格/坪
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      価格時点
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      変動率
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      価格(円/㎡)
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      最寄駅
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      坪単価
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      用途地域
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      前年比
+                    </th>
+                    <th className={`${isMobile ? 'px-2' : 'px-4'} py-3 text-left ${isMobile ? 'text-xs' : 'text-sm'} font-bold text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                      最寄駅からの距離
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {landPriceData.map((item, index) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                        {index + 1}
+                      </td>
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
                         {item.address}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {item.price_per_sqm.toLocaleString()}円
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                        {item.price_time}年
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.price_per_tsubo.toLocaleString()}円
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                        {item.price_per_sqm.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.change_rate || '-'}
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                        {item.price_per_tsubo.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {item.station || '-'}
-                        {item.station_distance && ` (${item.station_distance}m)`}
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                        {item.change_rate}%
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {item.use_district || '-'}
+                      <td className={`${isMobile ? 'px-2' : 'px-4'} py-3 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900 ${isMobile ? 'whitespace-nowrap' : ''}`}>
+                        {item.station}駅から{item.station_distance}m
                       </td>
                     </tr>
                   ))}
@@ -505,8 +547,17 @@ export const LandPrice: React.FC = () => {
               <span className="text-sm text-gray-500 ml-2">
                 （地点数: {Object.keys(landPriceHistory).length}件）
               </span>
+              {isMobile && <span className="text-xs text-gray-500 ml-2">（横スクロールできます）</span>}
             </h3>
-            {renderTrendChart()}
+            {isMobile ? (
+              <div className="overflow-x-auto" style={getMobileScrollStyle()}>
+                <div style={getMobileContainerStyle()}>
+                  {renderTrendChart()}
+                </div>
+              </div>
+            ) : (
+              renderTrendChart()
+            )}
             <div className="text-xs text-gray-500 mt-2">
               過去データに基づく統計で将来の結果を保証しません。出典：国土交通省 不動産情報ライブラリ。
               <div className="mt-2 text-xs text-gray-600">
