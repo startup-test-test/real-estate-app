@@ -4112,6 +4112,7 @@ const MarketAnalysis: React.FC = () => {
                       layout={{
                         height: 500,
                         margin: { t: 40, b: 60, l: 100, r: 40 },
+                        showlegend: true,
                         plot_bgcolor: 'white',
                         paper_bgcolor: 'white',
                         xaxis: {
