@@ -328,7 +328,7 @@ const PremiumPlan: React.FC = () => {
                           }
                           // Stripe Checkoutへリダイレクト
                           try {
-                            const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1SG7bSJ5L72FsLLNr9NNpO9Z';
+                            const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1SG3ioR8rkVVzR7nNRHLEzoD';
                             const { data, error } = await supabase.functions.invoke('create-checkout-session', {
                               body: { 
                                 priceId: priceId,
