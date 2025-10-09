@@ -870,7 +870,7 @@ const MyPage: React.FC = () => {
                     >
                       {section.badge && (
                         <div className="absolute top-4 right-4 z-10">
-                          <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                          <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
                             {section.badge}
                           </span>
                         </div>
