@@ -116,9 +116,6 @@ serve(async (req) => {
           user_id: userId,
         },
       },
-      invoice_creation: {
-        enabled: true,
-      },
       locale: 'ja',
       billing_address_collection: 'required',
       customer_update: {
