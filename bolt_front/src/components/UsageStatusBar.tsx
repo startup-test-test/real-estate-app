@@ -211,7 +211,74 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
   return (
     <div className={`w-full px-4 py-4 ${colors.bg} border-b ${colors.border}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+        {/* SP版: 縦積みレイアウト */}
+        <div className="sm:hidden">
+          <div className="flex items-center gap-3 mb-2">
+            <AlertCircle className={`h-6 w-6 ${colors.icon} flex-shrink-0`} />
+            <span className={`text-base font-semibold ${colors.text}`}>
+              {statusMessage}
+            </span>
+          </div>
+
+          {/* プログレスバー（制限到達時以外） */}
+          {!isError && (
+            <div className="flex items-center gap-3 mb-2 ml-9">
+              <div className="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    isWarning ? 'bg-yellow-500' :
+                    isError ? 'bg-red-500' :
+                    'bg-blue-500'
+                  }`}
+                  style={{ width: `${(usage.currentCount / usage.limit) * 100}%` }}
+                />
+              </div>
+              <span className="text-sm font-medium text-gray-700 flex-shrink-0">
+                {usage.currentCount}/{usage.limit}
+              </span>
+            </div>
+          )}
+
+          {/* リセット日表示 */}
+          {usage.periodEndDate && (
+            <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3 ml-9">
+              <Calendar className="h-4 w-4" />
+              <span>毎月1日にリセット</span>
+            </div>
+          )}
+
+          {/* アップグレードボタン */}
+          <button
+            onClick={onUpgradeClick}
+            className={`w-full px-5 py-2.5 text-base font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm ${
+              isError
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : isWarning
+                ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                : 'bg-purple-600 text-white hover:bg-purple-700'
+            }`}
+          >
+            <Crown className="h-5 w-5" />
+            <span>今すぐアップグレード</span>
+            <ChevronRight className="h-5 w-5" />
+          </button>
+
+          {/* 追加メッセージ（エラー時） */}
+          {isError && (
+            <div className="mt-2 text-sm font-medium text-red-600 text-center">
+              <button
+                onClick={onUpgradeClick}
+                className="underline hover:no-underline cursor-pointer"
+              >
+                ベーシックプランにアップグレード
+              </button>
+              して、引き続きご利用ください
+            </div>
+          )}
+        </div>
+
+        {/* PC版: 横並びレイアウト */}
+        <div className="hidden sm:flex flex-col md:flex-row items-center justify-between gap-3">
           {/* 左側：使用状況表示 */}
           <div className="flex items-center gap-4">
             {/* アイコンと利用状況 */}
@@ -221,15 +288,15 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
                 <span className={`text-base font-semibold ${colors.text}`}>
                   {statusMessage}
                 </span>
-                
+
                 {/* プログレスバー（制限到達時以外） */}
                 {!isError && (
                   <div className="flex items-center gap-3">
                     <div className="w-32 h-2.5 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${
-                          isWarning ? 'bg-yellow-500' : 
-                          isError ? 'bg-red-500' : 
+                          isWarning ? 'bg-yellow-500' :
+                          isError ? 'bg-red-500' :
                           'bg-blue-500'
                         }`}
                         style={{ width: `${(usage.currentCount / usage.limit) * 100}%` }}
@@ -265,8 +332,8 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             <button
               onClick={onUpgradeClick}
               className={`px-5 py-2 text-base font-medium rounded-lg transition-all flex items-center gap-2 shadow-sm ${
-                isError 
-                  ? 'bg-red-600 text-white hover:bg-red-700' 
+                isError
+                  ? 'bg-red-600 text-white hover:bg-red-700'
                   : isWarning
                   ? 'bg-yellow-600 text-white hover:bg-yellow-700'
                   : 'bg-purple-600 text-white hover:bg-purple-700'
@@ -277,20 +344,20 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>
-        </div>
 
-        {/* 追加メッセージ（エラー時） */}
-        {isError && (
-          <div className="mt-2 text-sm font-medium text-red-600">
-            <button 
-              onClick={onUpgradeClick}
-              className="underline hover:no-underline cursor-pointer"
-            >
-              ベーシックプランにアップグレード
-            </button>
-            して、引き続きご利用ください
-          </div>
-        )}
+          {/* 追加メッセージ（エラー時） */}
+          {isError && (
+            <div className="mt-2 text-sm font-medium text-red-600">
+              <button
+                onClick={onUpgradeClick}
+                className="underline hover:no-underline cursor-pointer"
+              >
+                ベーシックプランにアップグレード
+              </button>
+              して、<br />引き続きご利用ください
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

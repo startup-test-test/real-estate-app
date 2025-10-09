@@ -72,7 +72,7 @@ const Simulator: React.FC = () => {
     
     // ステップ2: シミュレーター画面到着（入力フォーム説明）
     steps.push({
-      target: '[data-field="propertyName"]',  // 物件名フィールドをターゲットに
+      target: '[data-field="propertyName"]',
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 2/7</div>
@@ -85,7 +85,7 @@ const Simulator: React.FC = () => {
       disableBeacon: true,
       placement: 'bottom',  // 下側に配置
       spotlightClicks: true,  // スポットライトで強調
-      disableScrolling: false,  // スクロールを有効化
+      disableScrolling: false,  // スクロールを有効化（ターゲット要素まで自動スクロール）
       floaterProps: {
         styles: {
           floater: {
@@ -331,6 +331,7 @@ const Simulator: React.FC = () => {
       '.cashflow-chart-container',
       '.property-info-section',  // 物件情報セクションも追加
       '.property-form-container',  // フォームコンテナも追加
+      '[data-field="propertyName"]',  // 物件名入力フィールド
       '.simulate-button'  // シミュレーションボタンも追加
     ];
     
@@ -354,7 +355,7 @@ const Simulator: React.FC = () => {
         // ステップインデックスに基づいてターゲットを決定
         switch(tutorialStep) {
           case 0: // ステップ2: 物件情報入力
-            targetSelector = '.property-form-container';
+            targetSelector = '[data-field="propertyName"]';
             break;
           case 1: // ステップ3: シミュレーション実行ボタン
             targetSelector = '.simulate-button';
@@ -555,23 +556,34 @@ const Simulator: React.FC = () => {
         if (window.location.hash === '#results') {
           window.history.replaceState(null, '', window.location.pathname + window.location.search);
         }
+        // サンプル物件は常に結果が含まれているため、少し遅延してから結果の有無を判定
         setTimeout(() => {
-          // フォーム部分にスクロール
-          const formElement = document.querySelector('.property-form-container');
-          console.log('📌 Attempting to scroll to FORM:', !!formElement);
-          if (formElement) {
-            console.log('📌 SCROLLING TO FORM NOW!');
-            formElement.scrollIntoView({ 
-              behavior: 'smooth',
-              block: 'center'
-            });
+          // 結果が表示されているかチェック
+          const hasResults = simulationResults !== null;
+
+          if (hasResults) {
+            // 結果がある場合はステップ4（評価額と投資指標）から開始
+            console.log('📌 Tutorial: Starting from step 4 (results section)');
+            setTutorialStep(2); // インデックス2 = ステップ4
+          } else {
+            // 結果がない場合はステップ2（入力フォーム）から開始
+            console.log('📌 Tutorial: Starting from step 2 (form section)');
+            // フォーム部分にスクロール
+            const formElement = document.querySelector('[data-field="propertyName"]');
+            if (formElement) {
+              formElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              });
+            }
+            setTutorialStep(0); // インデックス0 = ステップ2
           }
+
           // チュートリアル開始
           setTimeout(() => {
             setRunTutorial(true);
-            setTutorialStep(0); // ステップ2（インデックス0）から開始
-          }, 500);
-        }, 1000);
+          }, 300);
+        }, 1200); // データロード後に判定するため少し長めの遅延
       }
     } else if (editId) {
       setEditingId(editId);
@@ -591,15 +603,29 @@ const Simulator: React.FC = () => {
               if (window.location.hash === '#results') {
                 window.history.replaceState(null, '', window.location.pathname + window.location.search);
               }
-              // チュートリアル中はスクロールしない - すぐにチュートリアルを開始
-              console.log('📌 Tutorial in progress - NOT scrolling, starting tutorial directly');
-              
-              // チュートリアル開始（スクロール無し）
+              // データロード後、結果の有無を判定してチュートリアル開始
+              console.log('📌 Tutorial in progress - checking for results');
+
               setTimeout(() => {
-                setRunTutorial(true);
-                setTutorialStep(0);
-                console.log('🎯 Tutorial started without scrolling');
-              }, 500);
+                // 結果が表示されているかチェック
+                const hasResults = sim.results !== null && sim.results !== undefined;
+
+                if (hasResults) {
+                  // 結果がある場合はステップ4（評価額と投資指標）から開始
+                  console.log('📌 Tutorial: Starting from step 4 (results section)');
+                  setTutorialStep(2); // インデックス2 = ステップ4
+                } else {
+                  // 結果がない場合はステップ2（入力フォーム）から開始
+                  console.log('📌 Tutorial: Starting from step 2 (form section)');
+                  setTutorialStep(0); // インデックス0 = ステップ2
+                }
+
+                // チュートリアル開始
+                setTimeout(() => {
+                  setRunTutorial(true);
+                  console.log('🎯 Tutorial started');
+                }, 300);
+              }, 1200);
             }
           }
         }

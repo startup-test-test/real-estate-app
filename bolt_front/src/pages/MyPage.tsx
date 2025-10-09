@@ -36,10 +36,26 @@ const MyPage: React.FC = () => {
   const { getSimulations, deleteSimulation } = useSupabaseData();
   const { usage, refetch: refetchUsage } = useUsageStatus();
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
-  
+
   // チュートリアル用のステート
   const [runTutorial, setRunTutorial] = React.useState(false);
-  
+  const [pauseTutorial, setPauseTutorial] = React.useState(false);  // チュートリアル一時停止用
+
+  // アップグレードモーダル開閉ハンドラー（チュートリアル一時停止対応）
+  const handleUpgradeClick = () => {
+    if (runTutorial) {
+      setPauseTutorial(true);  // チュートリアル一時停止
+    }
+    setShowUpgradeModal(true);
+  };
+
+  const handleUpgradeClose = () => {
+    setShowUpgradeModal(false);
+    if (pauseTutorial) {
+      setPauseTutorial(false);  // チュートリアル再開
+    }
+  };
+
   // サンプル物件があるかどうかを動的に判定してステップを生成
   const tutorialSteps = React.useMemo<Step[]>(() => {
     const steps: Step[] = [];
@@ -649,6 +665,8 @@ const MyPage: React.FC = () => {
       if (onlyHasSample) {
         // 少し遅延させてからチュートリアルを開始
         setTimeout(() => {
+          // sessionStorageにフラグをセット（ページ遷移時のチュートリアル継続用）
+          sessionStorage.setItem('tutorial_in_progress', 'true');
           setRunTutorial(true);
         }, 1500);
       }
@@ -807,7 +825,7 @@ const MyPage: React.FC = () => {
     <>
       <div className="bg-gray-50 min-h-screen">
         {/* 使用状況表示バー（無料ユーザーはアップグレード促進付き） */}
-        <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+        <UsageStatusBar onUpgradeClick={handleUpgradeClick} />
 
         <div className="p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">
@@ -867,7 +885,7 @@ const MyPage: React.FC = () => {
                                   !usage.isSubscribed &&
                                   usage.currentCount >= usage.limit
                                 ) {
-                                  setShowUpgradeModal(true);
+                                  handleUpgradeClick();
                                 } else {
                                   navigate(action.path);
                                 }
@@ -925,7 +943,7 @@ const MyPage: React.FC = () => {
                           !usage.isSubscribed &&
                           usage.currentCount >= usage.limit
                         ) {
-                          setShowUpgradeModal(true);
+                          handleUpgradeClick();
                         } else {
                           navigate("/simulator");
                         }
@@ -1035,7 +1053,7 @@ const MyPage: React.FC = () => {
                           !usage.isSubscribed &&
                           usage.currentCount >= usage.limit
                         ) {
-                          setShowUpgradeModal(true);
+                          handleUpgradeClick();
                         } else {
                           navigate("/simulator");
                         }
@@ -1378,13 +1396,13 @@ const MyPage: React.FC = () => {
       {/* アップグレードモーダル */}
       <UpgradeModal
         isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
+        onClose={handleUpgradeClose}
       />
       
       {/* チュートリアル */}
       <Joyride
         steps={tutorialSteps}
-        run={runTutorial}
+        run={runTutorial && !pauseTutorial}  // 一時停止フラグを追加
         continuous={false}  // 自動的に次のステップへ進まない
         showProgress={true}  // プログレス表示を有効化
         showSkipButton={true}
