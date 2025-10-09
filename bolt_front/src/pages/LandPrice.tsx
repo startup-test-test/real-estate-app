@@ -267,101 +267,158 @@ export const LandPrice: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="bg-gray-50 min-h-screen relative">
+      {/* 使用状況バー */}
+      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+
+      <div className="p-4 sm:p-6 lg:p-8">
+        {/* Loading Overlay */}
+        {loading && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Gray out overlay */}
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+            {/* Loading content */}
+            <div className="relative bg-white rounded-xl p-8 shadow-2xl max-w-md mx-4">
+              <div className="flex flex-col items-center space-y-4">
+                <Loader className="h-12 w-12 text-blue-600 animate-spin" />
+                <div className="text-center w-full">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    公示地価を検索中
+                  </h3>
+                  <p className="text-gray-600">
+                    過去4年分のデータを取得しています...
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    しばらくお待ちください
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ヘッダー */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <MapPin className="h-8 w-8 text-blue-600" />
-            公示地価検索
-          </h1>
-          <p className="mt-2 text-gray-600">
-            国土交通省の公示地価データを高速検索・分析
-          </p>
+        <div className="mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">公示地価検索</h1>
+            <p className="text-gray-600 mt-1">
+              国土交通省の公示地価データを高速検索・分析
+            </p>
+          </div>
         </div>
 
         {/* 検索フォーム */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            {/* 都道府県 */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+          <div className="flex items-center mb-6">
+            <MapPin className="h-6 w-6 text-indigo-600 mr-2" />
+            <h2 className="text-lg font-semibold text-gray-900">検索条件を設定</h2>
+          </div>
+          <div className="space-y-6">
+            {/* エリア選択 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                都道府県 <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={selectedPrefecture}
-                onChange={(e) => setSelectedPrefecture(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">選択してください</option>
-                {prefectures.map((pref) => (
-                  <option key={pref.code} value={pref.code}>
-                    {pref.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">エリア選択</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* 都道府県 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <MapPin className="inline h-4 w-4 mr-1" />
+                    都道府県 <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={selectedPrefecture}
+                    onChange={(e) => setSelectedPrefecture(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    <option value="">選択してください</option>
+                    {prefectures.map((pref) => (
+                      <option key={pref.code} value={pref.code}>
+                        {pref.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* 市区町村 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                市区町村 <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                disabled={!selectedPrefecture || isCitiesLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-              >
-                <option value="">
-                  {isCitiesLoading ? '読み込み中...' : '選択してください'}
-                </option>
-                {cities.map((city) => (
-                  <option key={city.code} value={city.code}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                {/* 市区町村 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Building className="inline h-4 w-4 mr-1" />
+                    市区町村 <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    disabled={!selectedPrefecture || isCitiesLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+                  >
+                    <option value="">
+                      {isCitiesLoading ? '読み込み中...' : '選択してください'}
+                    </option>
+                    {cities.map((city) => (
+                      <option key={city.code} value={city.code}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* 地区 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                地区 <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={selectedDistrict}
-                onChange={(e) => setSelectedDistrict(e.target.value)}
-                disabled={!selectedCity || isDistrictsLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-              >
-                <option value="">
-                  {isDistrictsLoading ? '読み込み中...' : '選択してください'}
-                </option>
-                {districts.map((district) => (
-                  <option key={district.code} value={district.name}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
+                {/* 地区 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Building className="inline h-4 w-4 mr-1" />
+                    地区 <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={selectedDistrict}
+                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    disabled={!selectedCity || isDistrictsLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100"
+                  >
+                    <option value="">
+                      {isDistrictsLoading ? '読み込み中...' : '選択してください'}
+                    </option>
+                    {districts.map((district) => (
+                      <option key={district.code} value={district.name}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* 検索ボタン */}
-          <button
-            onClick={handleSearch}
-            disabled={loading || !selectedPrefecture || !selectedCity || !selectedDistrict}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium transition-colors"
-          >
-            <Search className="h-5 w-5" />
-            {loading ? '検索中...' : '公示地価を検索（過去4年分のデータ）'}
-          </button>
-
+          {/* エラー表示 */}
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-800">{error}</p>
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-800">
+              <span className="font-medium">{error}</span>
             </div>
           )}
+
+          {/* 検索実行ボタン */}
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handleSearch}
+              disabled={loading}
+              className={`flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] ${
+                loading
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <Loader className="h-5 w-5 mr-2 animate-spin" />
+                  検索中...
+                </>
+              ) : (
+                <>
+                  <Search className="h-5 w-5 mr-2" />
+                  公示地価を検索する
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* 公示地価テーブル */}
@@ -425,24 +482,40 @@ export const LandPrice: React.FC = () => {
                 </tbody>
               </table>
             </div>
+            <div className="text-xs text-gray-500 mt-2">
+              過去データに基づく統計で将来の結果を保証しません。出典：国土交通省 不動産情報ライブラリ。
+              <div className="mt-2 text-xs text-gray-600">
+                <p>📊 <strong>分析手法の詳細</strong> / データソース: 国土交通省公示地価・都道府県地価調査 / 地点種別: 住宅地・商業地・工業地等 / 更新頻度: 年1回（公示地価3月、地価調査9月） / 表示範囲: 選択地域内の主要地点</p>
+              </div>
+            </div>
           </div>
         )}
 
         {/* 公示地価の推移グラフ */}
         {landPriceHistory && Object.keys(landPriceHistory).length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="h-6 w-6 text-blue-600" />
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
               📈 公示地価の推移
-            </h2>
+              <span className="text-sm text-gray-500 ml-2">
+                （地点数: {Object.keys(landPriceHistory).length}件）
+              </span>
+            </h3>
             {renderTrendChart()}
-            <p className="mt-4 text-sm text-gray-600">
-              📊 <strong>データソース</strong>: 国土交通省公示地価・都道府県地価調査 /
-              推移期間: 直近4年分 / 価格単位: 円/㎡ / 最大10地点まで表示
-            </p>
+            <div className="text-xs text-gray-500 mt-2">
+              過去データに基づく統計で将来の結果を保証しません。出典：国土交通省 不動産情報ライブラリ。
+              <div className="mt-2 text-xs text-gray-600">
+                <p>📊 <strong>分析手法の詳細</strong> / データソース: 国土交通省公示地価・都道府県地価調査 / 推移期間: 直近4年分の年次データ / 価格単位: 円/㎡（平米単価） / グラフ表示: 最大10地点まで</p>
+              </div>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   );
 };
