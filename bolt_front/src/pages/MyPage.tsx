@@ -712,6 +712,7 @@ const MyPage: React.FC = () => {
       category: "AI市場分析",
       icon: TrendingUp,
       color: "bg-gradient-to-r from-purple-600 to-indigo-600",
+      badge: "NEW",
       description:
         "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
       actions: [
@@ -726,6 +727,7 @@ const MyPage: React.FC = () => {
       category: "公示地価検索",
       icon: MapPin,
       color: "bg-gradient-to-r from-green-600 to-teal-600",
+      badge: "NEW",
       description:
         "国土交通省の公示地価データを高速検索。エリアごとの地価推移・過去4年分のデータを瞬時に分析・可視化",
       actions: [
