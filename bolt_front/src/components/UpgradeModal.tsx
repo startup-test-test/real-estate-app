@@ -63,9 +63,9 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) =
       }
       
       // Supabase Edge Functionを呼び出してCheckout Session作成
-      // 本番環境の価格IDを使用（開発日報に記載されていない場合は要確認）
+      // 本番環境の価格IDを使用（2025/10/09作成）
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID ||
-                      'price_1SG3ioR8rkVVzR7nNRHLEzoD'; // 4,980円の価格ID
+                      'price_1SG7bSJ5L72FsLLNr9NNpO9Z'; // 本番環境 4,980円/月
       
       // 現在のURLを取得（Codespace対応）
       const currentUrl = window.location.origin;
