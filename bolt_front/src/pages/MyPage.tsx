@@ -18,6 +18,7 @@ import {
   HelpCircle,
   TrendingUp,
   Sparkles,
+  MapPin,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
@@ -722,6 +723,20 @@ const MyPage: React.FC = () => {
       ],
     },
     {
+      category: "公示地価検索",
+      icon: MapPin,
+      color: "bg-gradient-to-r from-green-600 to-teal-600",
+      description:
+        "国土交通省の公示地価データを高速検索。エリアごとの地価推移・過去4年分のデータを瞬時に分析・可視化",
+      actions: [
+        {
+          name: "公示地価検索を開始する",
+          primary: true,
+          path: "/land-prices",
+        },
+      ],
+    },
+    {
       category: "AI事業計画書",
       icon: Sparkles,
       color: "bg-gradient-to-r from-amber-500 to-orange-600",
@@ -843,7 +858,7 @@ const MyPage: React.FC = () => {
 
             <div className="space-y-6">
               {/* Quick Actions Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
                 {quickActions.map((section, index) => {
                   const Icon = section.icon;
                   return (
