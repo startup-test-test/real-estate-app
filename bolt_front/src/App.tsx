@@ -15,6 +15,7 @@ import LandingPage from './pages/LandingPage';
 import PaymentResult from './pages/PaymentResult';
 // 2次リリース用: AI機能のインポート
 import MarketAnalysis from './pages/MarketAnalysis';
+import LandPrice from './pages/LandPrice';
 // import TransactionSearch from './pages/TransactionSearch';
 import FAQ from './pages/FAQ';
 import PremiumPlan from './pages/PremiumPlan';
@@ -86,6 +87,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             {/* AI機能のルート */}
             <Route path="/market-analysis" element={<MarketAnalysis />} />
+            <Route path="/land-prices" element={<LandPrice />} />
             {/* <Route path="/transaction-search" element={<TransactionSearch />} /> */}
             <Route path="/property-detail/:id" element={<PropertyDetail />} />
           </Route>

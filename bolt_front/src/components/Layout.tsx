@@ -15,7 +15,8 @@ import {
   Crown,
   LogOut,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  MapPin
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
@@ -71,6 +72,7 @@ const Layout: React.FC = () => {
     { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
     { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp, badge: 'Beta版' },
+    { name: '公示地価検索', href: '/land-prices', icon: MapPin },
     // 2次リリース用: AI取引事例検索
     // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
   ];
