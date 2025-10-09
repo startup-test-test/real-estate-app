@@ -116,6 +116,10 @@ export const LandPrice: React.FC = () => {
       setError('市区町村を選択してください');
       return;
     }
+    if (!selectedDistrict) {
+      setError('地区を選択してください');
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -133,7 +137,7 @@ export const LandPrice: React.FC = () => {
         propertyApi.getLandPrices({
           prefecture: selectedPrefName,
           city: selectedCityName,
-          district: selectedDistrict || undefined,
+          district: selectedDistrict,
           year
         })
       );
@@ -277,7 +281,7 @@ export const LandPrice: React.FC = () => {
             {/* 地区 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                地区
+                地区 <span className="text-red-500">*</span>
               </label>
               <select
                 value={selectedDistrict}
@@ -285,7 +289,7 @@ export const LandPrice: React.FC = () => {
                 disabled={!selectedCity}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               >
-                <option value="">すべて</option>
+                <option value="">選択してください</option>
                 {districts.map((district) => (
                   <option key={district.code} value={district.name}>
                     {district.name}
@@ -298,7 +302,7 @@ export const LandPrice: React.FC = () => {
           {/* 検索ボタン */}
           <button
             onClick={handleSearch}
-            disabled={loading || !selectedPrefecture || !selectedCity}
+            disabled={loading || !selectedPrefecture || !selectedCity || !selectedDistrict}
             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium transition-colors"
           >
             <Search className="h-5 w-5" />
