@@ -711,7 +711,6 @@ const MyPage: React.FC = () => {
       category: "AI市場分析",
       icon: TrendingUp,
       color: "bg-gradient-to-r from-purple-600 to-indigo-600",
-      badge: "Beta版で20250925にリリース",
       description:
         "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
       actions: [

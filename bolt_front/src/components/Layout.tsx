@@ -68,10 +68,10 @@ const Layout: React.FC = () => {
     }
   };
 
-  const navigation = [
+  const navigation: Array<{ name: string; href: string; icon: any; badge?: string }> = [
     { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
-    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp, badge: 'Beta版' },
+    { name: 'AI市場分析', href: '/market-analysis', icon: TrendingUp },
     { name: '公示地価検索', href: '/land-prices', icon: MapPin },
     // 2次リリース用: AI取引事例検索
     // { name: 'AI取引事例検索', href: '/transaction-search', icon: Search },
