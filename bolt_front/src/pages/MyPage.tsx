@@ -702,7 +702,7 @@ const MyPage: React.FC = () => {
         "60秒で投資判断の全てが分かる。売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
       actions: [
         {
-          name: "収益シミュレーターを開始する",
+          name: "収益シミュレーター",
           primary: true,
           path: "/simulator",
         },
@@ -716,7 +716,7 @@ const MyPage: React.FC = () => {
         "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
       actions: [
         {
-          name: "AI市場分析を開始する",
+          name: "AI市場分析",
           primary: true,
           path: "/market-analysis",
         },
@@ -730,7 +730,7 @@ const MyPage: React.FC = () => {
         "国土交通省の公示地価データを高速検索。エリアごとの地価推移・過去4年分のデータを瞬時に分析・可視化",
       actions: [
         {
-          name: "公示地価検索を開始する",
+          name: "公示地価検索",
           primary: true,
           path: "/land-prices",
         },
