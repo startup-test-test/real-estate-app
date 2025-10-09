@@ -298,6 +298,12 @@ export const LandPrice: React.FC = () => {
           </div>
         )}
 
+        <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
+          {/* Breadcrumb - PC版のみ表示 */}
+          <div className="hidden md:block mb-4">
+            <Breadcrumb />
+          </div>
+
         {/* ヘッダー */}
         <div className="mb-6">
           <div>
@@ -509,6 +515,7 @@ export const LandPrice: React.FC = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* Upgrade Modal */}
