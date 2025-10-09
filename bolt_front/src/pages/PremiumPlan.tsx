@@ -178,7 +178,7 @@ const PremiumPlan: React.FC = () => {
     },
     {
       name: 'ベーシックプラン',
-      price: 2980,
+      price: 4980,
       description: '本格的な不動産投資分析に',
       color: 'border-blue-500 ring-2 ring-blue-500',
       buttonColor: 'bg-blue-600 text-white hover:bg-blue-700',
@@ -216,7 +216,7 @@ const PremiumPlan: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">有料プランについて</h1>
           <p className="text-gray-600 mt-1">
-            月額2,980円で収益シミュレーターとAI市場分析を無制限でご利用いただけます
+            月額4,980円で収益シミュレーターとAI市場分析を無制限でご利用いただけます
           </p>
         </div>
 
@@ -328,7 +328,7 @@ const PremiumPlan: React.FC = () => {
                           }
                           // Stripe Checkoutへリダイレクト
                           try {
-                            const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1RvChRR8rkVVzR7nAeDvfiur';
+                            const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1SG7bSJ5L72FsLLNr9NNpO9Z';
                             const { data, error } = await supabase.functions.invoke('create-checkout-session', {
                               body: { 
                                 priceId: priceId,

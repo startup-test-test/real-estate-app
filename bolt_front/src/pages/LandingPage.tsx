@@ -580,7 +580,7 @@ const LandingPage: React.FC = () => {
                       </div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-2">ベーシックプラン</h3>
                       <div className="flex items-baseline justify-center mb-2">
-                        <span className="text-4xl font-bold text-gray-900">¥2,980</span>
+                        <span className="text-4xl font-bold text-gray-900">¥4,980</span>
                         <span className="text-lg text-gray-600 ml-1">/月</span>
                       </div>
                       <p className="text-sm text-gray-600">個人・小規模法人向け</p>
@@ -697,7 +697,7 @@ const LandingPage: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2 mt-2">ベーシックプラン</h3>
               <div className="flex items-baseline mb-2">
-                <span className="text-3xl font-bold text-gray-900">¥2,980</span>
+                <span className="text-3xl font-bold text-gray-900">¥4,980</span>
                 <span className="text-sm text-gray-600 ml-1">/月</span>
               </div>
               <p className="text-xs text-gray-600 mb-4">個人・小規模法人向け</p>
