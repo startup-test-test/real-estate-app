@@ -745,7 +745,7 @@ const MyPage: React.FC = () => {
         "AIエージェントが収益シミュレーション・市場分析・金融機関提出資料を統合。プロ品質の事業計画書を自動作成し、1つのPDFで出力",
       actions: [
         {
-          name: "2025年10月上旬リリース予定",
+          name: "2025年リリース予定",
           primary: false,
           path: "#",
           disabled: true,
