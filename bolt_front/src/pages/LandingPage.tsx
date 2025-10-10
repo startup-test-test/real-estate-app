@@ -210,7 +210,7 @@ const LandingPage: React.FC = () => {
                     </div>
                   </div>
                   <p className="text-xl text-gray-700 leading-relaxed mb-3 mt-4 font-semibold">
-                    物件住所を入力するだけで、AIが類似物件の取引事例を自動収集・分析。
+                    物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm text-gray-600">
                     地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
@@ -224,7 +224,7 @@ const LandingPage: React.FC = () => {
                     AI市場分析
                   </h3>
                   <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-3 font-semibold">
-                    物件住所を入力するだけで、AIが類似物件の取引事例を自動収集・分析。
+                    物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600">
                     地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
@@ -243,7 +243,7 @@ const LandingPage: React.FC = () => {
                   const target = e.target as HTMLVideoElement;
                   // エラー時は静止画にフォールバック
                   const img = document.createElement('img');
-                  img.src = '/img/tokuchou_ai.jpg';
+                  img.src = '/img/tokuchou01.jpg';
                   img.alt = '特徴1: AI市場分析';
                   img.className = target.className;
                   target.parentNode?.replaceChild(img, target);
@@ -828,7 +828,7 @@ const LandingPage: React.FC = () => {
                 Q1. どんな分析ができるサービスですか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                物件住所を入力するだけで、AIが類似物件の取引事例を自動収集・分析。
+                物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                 周辺の価格相場を瞬時に把握できます。
                 さらに、IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算。
                 金利上昇や空室増加などのリスクシナリオもワンクリックで検証でき、
