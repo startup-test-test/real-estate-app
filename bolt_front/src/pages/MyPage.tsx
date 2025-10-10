@@ -300,10 +300,11 @@ const MyPage: React.FC = () => {
     loadSimulations(true); // 強制リフレッシュ
   };
 
-  const handleDelete = async (id: string, propertyName?: string) => {
-    // サンプル物件は削除不可（IDまたは物件名でチェック）
-    if (id === 'sample-property-001' || propertyName?.startsWith('【サンプル】')) {
-      alert("サンプル物件は削除できません。\n\nサンプル物件は体験用のため、削除することはできません。");
+  const handleDelete = async (id: string, _propertyName?: string) => {
+    // フロントエンド固定のサンプル物件のみ削除不可
+    // DBに保存されたサンプル物件は削除可能
+    if (id === 'sample-property-001') {
+      alert("このサンプル物件は削除できません。\n\nフロントエンド固定のサンプル物件は体験用のため、削除することはできません。");
       return;
     }
     
