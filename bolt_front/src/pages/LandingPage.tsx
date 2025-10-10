@@ -212,8 +212,11 @@ const LandingPage: React.FC = () => {
                   <p className="text-xl text-gray-700 leading-relaxed mb-3 mt-4 font-semibold">
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 mb-2">
                     地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    ※国土交通省 不動産情報ライブラリのデータを使用
                   </p>
                 </div>
 
@@ -226,8 +229,11 @@ const LandingPage: React.FC = () => {
                   <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-3 font-semibold">
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
-                  <p className="text-sm lg:text-base text-gray-600">
+                  <p className="text-sm lg:text-base text-gray-600 mb-2">
                     地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
+                  </p>
+                  <p className="text-xs lg:text-sm text-gray-500">
+                    ※国土交通省 不動産情報ライブラリのデータを使用
                   </p>
                 </div>
               </div>
@@ -332,8 +338,11 @@ const LandingPage: React.FC = () => {
                   <p className="text-xl text-gray-700 leading-relaxed mb-3 mt-4 font-semibold">
                     物件周辺の公示地価を検索・可視化。直近4年分のトレンドをグラフで確認。
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 mb-2">
                     エリアの資産価値推移を把握し、投資判断の精度を向上。
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    ※国土交通省 不動産情報ライブラリのデータを使用
                   </p>
                 </div>
 
@@ -346,8 +355,11 @@ const LandingPage: React.FC = () => {
                   <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-3 font-semibold">
                     物件周辺の公示地価を検索・可視化。直近4年分のトレンドをグラフで確認。
                   </p>
-                  <p className="text-sm lg:text-base text-gray-600">
+                  <p className="text-sm lg:text-base text-gray-600 mb-2">
                     エリアの資産価値推移を把握し、投資判断の精度を向上。
+                  </p>
+                  <p className="text-xs lg:text-sm text-gray-500">
+                    ※国土交通省 不動産情報ライブラリのデータを使用
                   </p>
                 </div>
               </div>

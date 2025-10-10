@@ -45,6 +45,11 @@ const Privacy: React.FC = () => {
                 また、利用者と提携先などとの間でなされた利用者の個人情報を含む取引記録や決済に関する情報を、
                 当社の提携先（情報提供元、広告主、広告配信先などを含みます。以下「提携先」といいます）などから収集することがあります。
               </p>
+              <p className="text-gray-700 mb-4">
+                当社は、有料プランの決済処理にStripe, Inc.（以下「Stripe」といいます）の決済サービスを利用しています。
+                決済に必要な情報（クレジットカード情報等）は、Stripeのシステムを通じて直接処理され、当社のサーバーには保存されません。
+                Stripeが取得する情報の取り扱いについては、Stripeのプライバシーポリシー（https://stripe.com/jp/privacy）をご確認ください。
+              </p>
             </section>
 
             <section className="mb-8">
@@ -142,7 +147,21 @@ const Privacy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第10条（プライバシーポリシーの変更）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第10条（個人情報の保存期間）</h2>
+              <p className="text-gray-700 mb-4">
+                当社は、個人情報を、利用目的の達成に必要な期間に限り保存します。
+                具体的には、以下のとおりとします。
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+                <li>アカウント情報：退会後90日間保持した後、削除いたします。</li>
+                <li>利用履歴・シミュレーションデータ：退会後90日間保持した後、削除いたします。</li>
+                <li>決済情報：Stripeにより管理され、当社のサーバーには保存されません。</li>
+                <li>法令により保存が義務付けられている情報については、当該法令に定める期間保存します。</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第11条（プライバシーポリシーの変更）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                 <li>本ポリシーの内容は、法令その他本ポリシーに別段の定めのある事項を除いて、利用者に通知することなく、変更することができるものとします。</li>
                 <li>当社が別途定める場合を除いて、変更後のプライバシーポリシーは、本ウェブサイトに掲載したときから効力を生じるものとします。</li>
@@ -150,7 +169,7 @@ const Privacy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第11条（お問い合わせ窓口）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第12条（お問い合わせ窓口）</h2>
               <p className="text-gray-700 mb-4">本ポリシーに関するお問い合わせは、下記の窓口までお願いいたします。</p>
               <div className="bg-gray-50 p-4 rounded-lg ml-4">
                 <p className="text-gray-700">社名：StartupMarketing Inc.</p>
