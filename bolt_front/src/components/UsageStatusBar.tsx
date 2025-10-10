@@ -250,13 +250,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
           {/* アップグレードボタン */}
           <button
             onClick={onUpgradeClick}
-            className={`w-full px-5 py-2.5 text-base font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm ${
-              isError
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : isWarning
-                ? 'bg-yellow-600 text-white hover:bg-yellow-700'
-                : 'bg-purple-600 text-white hover:bg-purple-700'
-            }`}
+            className="w-full px-5 py-2.5 text-base font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm bg-blue-600 text-white hover:bg-blue-700"
           >
             <Crown className="h-5 w-5" />
             <span>今すぐアップグレード</span>
@@ -324,20 +318,14 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
           {/* 右側：アップグレード促進 */}
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-2">
-              <Crown className="h-5 w-5 text-purple-600" />
+              <Crown className="h-5 w-5 text-blue-600" />
               <span className="text-base font-semibold text-gray-800">
                 月額4,980円で無制限
               </span>
             </div>
             <button
               onClick={onUpgradeClick}
-              className={`px-5 py-2 text-base font-medium rounded-lg transition-all flex items-center gap-2 shadow-sm ${
-                isError
-                  ? 'bg-red-600 text-white hover:bg-red-700'
-                  : isWarning
-                  ? 'bg-yellow-600 text-white hover:bg-yellow-700'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
-              }`}
+              className="px-5 py-2 text-base font-medium rounded-lg transition-all flex items-center gap-2 shadow-sm bg-blue-600 text-white hover:bg-blue-700"
             >
               <Crown className="h-5 w-5" />
               <span>今すぐアップグレード</span>

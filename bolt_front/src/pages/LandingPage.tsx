@@ -501,12 +501,14 @@ const LandingPage: React.FC = () => {
                   <th className="text-left p-4 border-b-2 border-gray-200"></th>
                   <th className="p-4 border-b-2 border-gray-200 bg-white">
                     <div className="text-center">
+                      {/* バッジエリア - 高さ揃え用 */}
+                      <div className="h-7 mb-2"></div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-2">無料プラン</h3>
                       <div className="flex items-baseline justify-center mb-2">
                         <span className="text-4xl font-bold text-gray-900">¥0</span>
                         <span className="text-lg text-gray-600 ml-1">/月</span>
                       </div>
-                      <p className="text-sm text-gray-600">個人利用に最適</p>
+                      <p className="text-sm text-gray-600">月に合計5回まで利用可能</p>
                     </div>
                   </th>
                   <th className="p-4 border-b-2 border-blue-500 bg-blue-50 relative">
@@ -557,9 +559,9 @@ const LandingPage: React.FC = () => {
                 <tr className="border-b border-gray-200 bg-white">
                   <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">収益シミュレーション</td>
                   <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/5回</td>
-                  <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">
-                    <div>回数/無制限</div>
-                    <div className="text-xs font-normal">物件登録数50件</div>
+                  <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
+                    <div className="font-bold text-blue-600">回数/無制限</div>
+                    <div className="text-xs text-gray-600">物件登録数50件</div>
                   </td>
                   <td className="p-4 text-center bg-purple-50 font-bold text-purple-600">無制限</td>
                 </tr>
@@ -587,8 +589,7 @@ const LandingPage: React.FC = () => {
                     <div className="text-gray-400 text-sm">−</div>
                   </td>
                   <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
-                    <div className="text-xs text-gray-500">Coming Soon</div>
-                    <div className="text-xs text-gray-500 mt-1">※ 現在開発中です。</div>
+                    <CheckCircle className="h-5 w-5 text-blue-600 mx-auto" />
                   </td>
                   <td className="p-4 text-center bg-purple-50">
                     <CheckCircle className="h-5 w-5 text-purple-500 mx-auto" />
@@ -607,7 +608,7 @@ const LandingPage: React.FC = () => {
                 <span className="text-3xl font-bold text-gray-900">¥0</span>
                 <span className="text-sm text-gray-600 ml-1">/月</span>
               </div>
-              <p className="text-xs text-gray-600 mb-4">個人利用に最適</p>
+              <p className="text-xs text-gray-600 mb-4">月に合計5回まで利用可能</p>
               <div className="space-y-2 text-lg">
                 <div className="flex justify-between">
                   <span className="text-gray-700">AI市場分析</span>
