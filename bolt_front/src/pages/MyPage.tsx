@@ -60,13 +60,31 @@ const MyPage: React.FC = () => {
   // サンプル物件があるかどうかを動的に判定してステップを生成
   const tutorialSteps = React.useMemo<Step[]>(() => {
     const steps: Step[] = [];
-    
+
     // デバイス判定（768px未満をモバイルとする）
     const isMobile = window.innerWidth < 768;
-    
+
     // サンプル物件カードが存在する場合
     const hasSampleCard = document.querySelector('.sample-property-card');
-    
+
+    // 「次へ」ボタンクリック時の処理
+    const handleNextClick = () => {
+      // サンプル物件のIDでシミュレーション結果ページに遷移
+      // チュートリアルフラグは残したまま遷移（Simulatorページでチュートリアル継続）
+      const url = `/simulator?view=sample-property-001`;
+      navigate(url);
+      // チュートリアルは終了しない（Simulatorページに引き継ぐ）
+    };
+
+    // 「スキップ」ボタンクリック時の処理
+    const handleSkipClick = () => {
+      setRunTutorial(false);
+      sessionStorage.removeItem('tutorial_in_progress');
+      if (user) {
+        localStorage.setItem(`tutorial_completed_${user.id}`, 'true');
+      }
+    };
+
     if (hasSampleCard) {
       steps.push({
         target: '.sample-property-card',
@@ -74,7 +92,23 @@ const MyPage: React.FC = () => {
           <div className="py-2">
             <div className="text-sm text-gray-500 mb-2">ステップ 1/7</div>
             <h3 className="font-bold text-lg mb-1 text-gray-800">🎯 サンプル物件で体験</h3>
-            <p className="text-gray-700">下の「シミュレーション結果を見る」ボタンをクリック！</p>
+            <p className="text-gray-700 mb-3">下の「シミュレーション結果を見る」ボタンをクリック！</p>
+
+            {/* ボタンエリア */}
+            <div className="flex items-center justify-between mt-4">
+              <button
+                onClick={handleSkipClick}
+                className="text-gray-600 text-sm hover:underline transition-colors"
+              >
+                スキップ
+              </button>
+              <button
+                onClick={handleNextClick}
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                次へ
+              </button>
+            </div>
           </div>
         ),
         disableBeacon: true,  // ビーコンを非表示
@@ -98,37 +132,10 @@ const MyPage: React.FC = () => {
           }
         }
       });
-    } else {
-      // サンプル物件が見つからない場合の代替ステップ
-      steps.push({
-        target: 'body',
-        content: (
-          <div>
-            <h3 className="font-bold text-lg mb-2">🎯 シミュレーション機能の使い方</h3>
-            <p>物件情報を登録してシミュレーションを実行できます。</p>
-            <p className="mt-2">「シミュレーションを開始する」ボタンから新規物件を登録してみましょう。</p>
-          </div>
-        ),
-        disableBeacon: true,
-        placement: 'center',
-        styles: {
-          options: {
-            primaryColor: '#3B82F6',
-            zIndex: 10000,
-            arrowColor: '#FFFBEB',
-          },
-          tooltip: {
-            padding: '15px 20px',
-            border: '2px solid #000000',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          }
-        }
-      });
     }
-    
+
     return steps;
-  }, [runTutorial]);
+  }, [runTutorial, user, navigate]);
 
   useEffect(() => {
     document.title = 'マイページ | 大家DX';
@@ -631,12 +638,12 @@ const MyPage: React.FC = () => {
 
   // サンプル物件の表示判定
   const hasSeenTutorial = user ? hasTutorialBeenCompleted(user.id) : false;
-  
+
   // DBに既にサンプル物件が存在するかチェック
-  const hasSampleInDB = simulations.some(sim => 
+  const hasSampleInDB = simulations.some(sim =>
     sim.simulation_data?.propertyName?.startsWith('【サンプル】')
   );
-  
+
   // DBにサンプル物件がない全ユーザーに、フロントエンドのサンプル物件を表示
   const showSample = !hasSampleInDB;
   
@@ -1082,18 +1089,28 @@ const MyPage: React.FC = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-                    {paginatedResults.map((sim) => (
-                      <div
-                        key={sim.id}
-                        className={`relative rounded-lg overflow-hidden transition-all duration-300 cursor-pointer ${
-                          sim.id === 'sample-property-001' || sim.propertyName?.startsWith('【サンプル】') ? 'sample-property-card' : ''
-                        } ${
-                          sim.status === "取得済み"
-                            ? "border-2 border-green-400 bg-green-50 hover:shadow-lg hover:border-green-500"
-                            : sim.status === "契約手続中"
-                              ? "border-2 border-blue-400 bg-blue-50 hover:shadow-lg hover:border-blue-500"
-                              : "border border-gray-200 bg-white hover:shadow-lg"
-                        }`}
+                    {paginatedResults.map((sim, index) => {
+                      // サンプル物件の最初のインデックスを取得
+                      const firstSampleIndex = paginatedResults.findIndex(s =>
+                        s.id === 'sample-property-001' || s.propertyName?.startsWith('【サンプル】')
+                      );
+
+                      // このカードが最初のサンプル物件かどうか
+                      const isFirstSample = (sim.id === 'sample-property-001' || sim.propertyName?.startsWith('【サンプル】'))
+                        && index === firstSampleIndex;
+
+                      return (
+                        <div
+                          key={sim.id}
+                          className={`relative rounded-lg overflow-hidden transition-all duration-300 cursor-pointer ${
+                            isFirstSample ? 'sample-property-card' : ''
+                          } ${
+                            sim.status === "取得済み"
+                              ? "border-2 border-green-400 bg-green-50 hover:shadow-lg hover:border-green-500"
+                              : sim.status === "契約手続中"
+                                ? "border-2 border-blue-400 bg-blue-50 hover:shadow-lg hover:border-blue-500"
+                                : "border border-gray-200 bg-white hover:shadow-lg"
+                          }`}
                         onClick={(e) => {
                           // ボタンがクリックされていない場合のみ遷移
                           const target = e.target as HTMLElement;
@@ -1356,7 +1373,8 @@ const MyPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 
