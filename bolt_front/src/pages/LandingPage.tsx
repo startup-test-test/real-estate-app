@@ -213,7 +213,7 @@ const LandingPage: React.FC = () => {
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm text-gray-600 mb-2">
-                    地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
+                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を3分で取得。
                   </p>
                   <p className="text-xs text-gray-500">
                     ※国土交通省 不動産情報ライブラリのデータを使用
@@ -230,7 +230,7 @@ const LandingPage: React.FC = () => {
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600 mb-2">
-                    地域の価格分布、取引件数、中央値レンジを瞬時に可視化。投資判断の材料を即座に取得。
+                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を3分で取得。
                   </p>
                   <p className="text-xs lg:text-sm text-gray-500">
                     ※国土交通省 不動産情報ライブラリのデータを使用
@@ -547,7 +547,7 @@ const LandingPage: React.FC = () => {
                 <tr className="border-b border-gray-200 bg-white">
                   <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">AI市場分析</td>
                   <td className="p-4 text-center text-gray-600 font-semibold bg-white">
-                    月/5回
+                    月/合計5回
                   </td>
                   <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">
                     月/100回
@@ -558,7 +558,7 @@ const LandingPage: React.FC = () => {
                 </tr>
                 <tr className="border-b border-gray-200 bg-white">
                   <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">収益シミュレーション</td>
-                  <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/5回</td>
+                  <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
                   <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
                     <div className="font-bold text-blue-600">回数/無制限</div>
                     <div className="text-xs text-gray-600">物件登録数50件</div>
@@ -568,7 +568,7 @@ const LandingPage: React.FC = () => {
                 <tr className="border-b border-gray-200 bg-white">
                   <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">公示地価検索</td>
                   <td className="p-4 text-center text-gray-600 font-semibold bg-white">
-                    月/5回
+                    月/合計5回
                   </td>
                   <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">
                     月/100回
@@ -612,15 +612,15 @@ const LandingPage: React.FC = () => {
               <div className="space-y-2 text-lg">
                 <div className="flex justify-between">
                   <span className="text-gray-700">AI市場分析</span>
-                  <span className="font-semibold">月/5回</span>
+                  <span className="font-semibold">月/合計5回</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-700">収益シミュレーション</span>
-                  <span className="font-semibold">月/5回</span>
+                  <span className="font-semibold">月/合計5回</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-700">公示地価検索</span>
-                  <span className="font-semibold">月/5回</span>
+                  <span className="font-semibold">月/合計5回</span>
                 </div>
               </div>
             </div>

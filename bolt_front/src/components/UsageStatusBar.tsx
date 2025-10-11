@@ -122,7 +122,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
               </span>
             </div>
             <p className="text-sm text-gray-700 font-medium mb-2">
-              全機能が無制限でご利用いただけます
+              収益シミュレーション無制限・AI分析月100回まで
             </p>
             
             {/* 解約予定の場合の表示 */}
@@ -166,7 +166,7 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
                 </span>
               </div>
               <span className="text-sm text-gray-700 font-medium">
-                全機能が無制限でご利用いただけます
+                収益シミュレーション無制限・AI分析月100回まで
               </span>
               
               {/* 解約予定の場合の表示 */}
