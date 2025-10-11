@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Check,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Crown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
@@ -313,7 +314,8 @@ const PremiumPlan: React.FC = () => {
                           }
                         }}
                       >
-                        プランを選択
+                        <Crown className="h-5 w-5 inline-block mr-2" />
+                        今すぐアップグレード
                       </button>
                     )}
                   </div>
@@ -344,7 +346,7 @@ const PremiumPlan: React.FC = () => {
             <tbody>
               <tr className="border-b border-gray-200 bg-white">
                 <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">AI市場分析</td>
-                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/5回</td>
+                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
                 <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">月/100回</td>
                 <td className="p-4 text-center bg-purple-50">
                   <CheckCircle className="h-5 w-5 text-purple-500 mx-auto" />
@@ -352,7 +354,7 @@ const PremiumPlan: React.FC = () => {
               </tr>
               <tr className="border-b border-gray-200 bg-white">
                 <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">収益シミュレーション</td>
-                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/5回</td>
+                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
                 <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
                   <div className="font-bold text-blue-600">回数/無制限</div>
                   <div className="text-xs text-gray-600">物件登録数50件</div>
@@ -361,7 +363,7 @@ const PremiumPlan: React.FC = () => {
               </tr>
               <tr className="border-b border-gray-200 bg-white">
                 <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">公示地価検索</td>
-                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/5回</td>
+                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
                 <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">月/100回</td>
                 <td className="p-4 text-center bg-purple-50">
                   <CheckCircle className="h-5 w-5 text-purple-500 mx-auto" />
@@ -405,7 +407,7 @@ const PremiumPlan: React.FC = () => {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">無料トライアルはありますか？</h3>
               <p className="text-gray-600 text-sm mb-4">
-                フリープランで基本機能をお試しいただけます。ベーシックプランの全機能を体験したい場合は、ご契約が必要です。
+                無料プランで基本機能をお試しいただけます。ベーシックプランの全機能を体験したい場合は、ご契約が必要です。
               </p>
             </div>
             <div>
