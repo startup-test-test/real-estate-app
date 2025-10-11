@@ -10,6 +10,7 @@ import { propertyApi } from '../services/propertyApi';
 import UsageStatusBar from '../components/UsageStatusBar';
 import UpgradeModal from '../components/UpgradeModal';
 import Breadcrumb from '../components/Breadcrumb';
+import { useUsageStatus } from '../hooks/useUsageStatus';
 
 interface Prefecture {
   code: string;
@@ -44,6 +45,9 @@ interface LandPriceData {
 }
 
 export const LandPrice: React.FC = () => {
+  // 使用回数制限フック
+  const { usage, executeWithLimit } = useUsageStatus();
+
   // モバイル判定用のステート
   const [isMobile, setIsMobile] = useState(false);
 
@@ -58,6 +62,7 @@ export const LandPrice: React.FC = () => {
   const [landPriceData, setLandPriceData] = useState<LandPriceData[]>([]);
   const [landPriceHistory, setLandPriceHistory] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const [isCitiesLoading, setIsCitiesLoading] = useState(false);
@@ -155,7 +160,7 @@ export const LandPrice: React.FC = () => {
     }
   }, [selectedPrefecture, selectedCity]);
 
-  // 公示地価検索
+  // 公示地価検索（使用回数制限チェック）
   const handleSearch = async () => {
     if (!selectedPrefecture) {
       setError('都道府県を選択してください');
@@ -170,8 +175,31 @@ export const LandPrice: React.FC = () => {
       return;
     }
 
+    // executeWithLimitで統合カウント処理を実行
+    const success = await executeWithLimit(async () => {
+      await performSearch();
+    }, 'land_price'); // feature_typeを'land_price'として記録
+
+    if (!success) {
+      setShowUpgradeModal(true);
+    }
+  };
+
+  // 実際の検索処理を別関数に分離
+  const performSearch = async () => {
     setLoading(true);
+    setLoadingProgress(0);
     setError(null);
+
+    // プログレスバーの更新を開始
+    const progressInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 90) {
+          return prev;  // 90%で一旦停止
+        }
+        return prev + Math.random() * 10;  // ランダムに進行
+      });
+    }, 500);
 
     try {
       // 都道府県名と市区町村名を取得
@@ -232,6 +260,8 @@ export const LandPrice: React.FC = () => {
       console.error('公示地価データの取得エラー:', err);
       setError(err.message || 'データの取得に失敗しました');
     } finally {
+      clearInterval(progressInterval);
+      setLoadingProgress(100);
       setLoading(false);
     }
   };
@@ -259,6 +289,7 @@ export const LandPrice: React.FC = () => {
           showlegend: true,
           plot_bgcolor: 'white',
           paper_bgcolor: 'white',
+          dragmode: false,
           xaxis: {
             title: { text: '価格時点（年）', font: { size: 14, color: 'black' } },
             gridcolor: '#E0E0E0',
@@ -266,7 +297,8 @@ export const LandPrice: React.FC = () => {
             linewidth: 1,
             linecolor: 'black',
             tickfont: { size: 14, color: 'black' },
-            dtick: 1
+            dtick: 1,
+            fixedrange: true
           },
           yaxis: {
             title: { text: '', font: { size: 14, color: 'black' } },
@@ -276,7 +308,8 @@ export const LandPrice: React.FC = () => {
             linecolor: 'black',
             tickfont: { size: 14, color: 'black' },
             tickformat: ',.0f',
-            ticksuffix: '円'
+            ticksuffix: '円',
+            fixedrange: true
           },
           legend: {
             orientation: 'v',
@@ -296,7 +329,11 @@ export const LandPrice: React.FC = () => {
             font: { size: 14, color: 'white' }
           }
         }}
-        config={{ displayModeBar: false }}
+        config={{
+          displayModeBar: false,
+          scrollZoom: false,
+          doubleClick: false
+        }}
         className="w-full"
       />
     );
@@ -325,11 +362,42 @@ export const LandPrice: React.FC = () => {
                   <p className="text-gray-600">
                     過去4年分のデータを取得しています...
                   </p>
+
+                  {/* プログレスバー */}
+                  <div className="w-full mt-4 mb-2">
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                      <div
+                        className="bg-blue-600 h-2.5 rounded-full relative overflow-hidden transition-all duration-500 ease-out"
+                        style={{
+                          width: `${loadingProgress}%`
+                        }}
+                      >
+                        <div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400 to-transparent"
+                          style={{
+                            animation: 'shimmer 1.5s ease-in-out infinite'
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1 text-center">
+                      {Math.round(loadingProgress)}%
+                    </p>
+                  </div>
+
                   <p className="text-sm text-gray-500 mt-2">
-                    しばらくお待ちください
+                    しばらくお待ちください...
                   </p>
                 </div>
               </div>
+
+              {/* CSS アニメーション */}
+              <style>{`
+                @keyframes shimmer {
+                  0% { transform: translateX(-100%); }
+                  100% { transform: translateX(100%); }
+                }
+              `}</style>
             </div>
           </div>
         )}

@@ -69,6 +69,8 @@ const Terms: React.FC = () => {
                 <li>プレミアム機能の利用料金は、当社が別途定める料金表に従うものとします。</li>
                 <li>利用者は、有料プランの利用料金を当社が指定する方法により支払うものとします。</li>
                 <li>一度支払われた利用料金は、法令に基づく場合を除き、返金しないものとします。</li>
+                <li>有料プランは月額制のサブスクリプションサービスであり、毎月の更新日に自動的に課金されます。</li>
+                <li>有料プランの解約を希望する場合は、マイページから解約手続きを行うか、当社指定のメールアドレス（ooya.tech2025@gmail.com）にご連絡ください。解約手続き完了後も、現在の請求期間終了日まではサービスをご利用いただけます。日割り計算による返金は行いません。</li>
               </ol>
             </section>
 
@@ -113,7 +115,17 @@ const Terms: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第9条（免責事項）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第9条（第三者提供データの利用）</h2>
+              <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                <li>本サービスは、国土交通省が提供する不動産情報ライブラリ（不動産取引価格情報、地価公示データ等）をはじめとする、公的機関が公開するデータを利用しています。</li>
+                <li>これらの第三者提供データの著作権は、それぞれのデータ提供者に帰属します。</li>
+                <li>当社は、第三者提供データの正確性、完全性、最新性、有用性等について、いかなる保証も行いません。</li>
+                <li>利用者は、第三者提供データを本サービスの利用目的の範囲内でのみ利用するものとし、データ提供者が定める利用条件がある場合には、これに従うものとします。</li>
+              </ol>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第10条（免責事項）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                 <li>本サービスは教育・参考目的のシミュレーションツールであり、投資の成功を保証するものではありません。実際の投資判断は利用者自身の責任で行ってください。</li>
                 <li>当社は、本サービスに関して、利用者と他の利用者または第三者との間において生じた取引、連絡または紛争等について一切責任を負いません。</li>
@@ -122,14 +134,14 @@ const Terms: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第10条（個人情報の取扱い）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第11条（個人情報の取扱い）</h2>
               <p className="text-gray-700 mb-4">
                 当社は、本サービスの利用によって取得する個人情報については、当社「プライバシーポリシー」に従い適切に取り扱うものとします。
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第11条（規約の変更）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第12条（規約の変更）</h2>
               <p className="text-gray-700 mb-4">
                 当社は、必要と判断した場合には、利用者に通知することなくいつでも本規約を変更することができるものとします。
                 変更後の本規約は、当社ウェブサイトに掲示された時点から効力を生じるものとします。
@@ -137,7 +149,7 @@ const Terms: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第12条（準拠法・裁判管轄）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第13条（準拠法・裁判管轄）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                 <li>本規約の解釈にあたっては、日本法を準拠法とします。</li>
                 <li>本サービスに関して紛争が生じた場合には、当社の本店所在地を管轄する裁判所を専属的合意管轄とします。</li>
@@ -145,7 +157,7 @@ const Terms: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">第13条（お問い合わせ）</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第14条（お問い合わせ）</h2>
               <p className="text-gray-700 mb-4">
                 本規約に関するお問い合わせは、下記の窓口までお願いいたします。
               </p>
