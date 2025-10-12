@@ -1447,8 +1447,29 @@ const Simulator: React.FC = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        
-        // エラーコードがある場合はモーダルを表示
+
+        // バリデーションエラー（E40xx）の場合はフィールドエラーのみ表示
+        if (errorData.error_code && errorData.error_code.startsWith('E40') && errorData.error_details) {
+          const fieldErrorsMap: Record<string, string> = {};
+          errorData.error_details.forEach((detail: any) => {
+            fieldErrorsMap[detail.field] = detail.message;
+          });
+          setFieldErrors(fieldErrorsMap);
+          setValidationErrors(errorData.details || []);
+          setIsSimulating(false);
+
+          // 最初のエラーフィールドにスクロール
+          setTimeout(() => {
+            const firstErrorField = Object.keys(fieldErrorsMap)[0];
+            if (firstErrorField) {
+              const element = document.querySelector(`[name="${firstErrorField}"]`);
+              element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 100);
+          return;
+        }
+
+        // その他のエラーコードの場合はモーダルを表示
         if (errorData.error_code) {
           setErrorModalData({
             isOpen: true,
@@ -1460,8 +1481,8 @@ const Simulator: React.FC = () => {
           setIsSimulating(false);
           return;
         }
-        
-        // バリデーションエラーの場合
+
+        // エラーコードなしでerror_detailsがある場合（旧形式の互換性）
         if (errorData.error_details) {
           const fieldErrorsMap: Record<string, string> = {};
           errorData.error_details.forEach((detail: any) => {
@@ -1469,17 +1490,6 @@ const Simulator: React.FC = () => {
           });
           setFieldErrors(fieldErrorsMap);
           setValidationErrors(errorData.details || []);
-          
-          // エラーコードも表示
-          if (errorData.error_code) {
-            setErrorModalData({
-              isOpen: true,
-              errorCode: errorData.error_code,
-              message: '入力内容にエラーがあります',
-              solution: '赤色で表示されている項目を修正してください',
-              details: errorData.details
-            });
-          }
           setIsSimulating(false);
           return;
         }
