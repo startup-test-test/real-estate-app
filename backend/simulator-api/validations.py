@@ -193,7 +193,7 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     number_fields = {
         # 必須フィールド
         'purchase_price': {'min': 1, 'max': 100000, 'unit': '万円', 'required': True},
-        'monthly_rent': {'min': 0, 'max': 100000000, 'unit': '円', 'required': True},
+        'monthly_rent': {'min': 0, 'max': 10000, 'unit': '万円', 'required': True},
         'loan_amount': {'min': 0, 'max': 100000, 'unit': '万円', 'required': True},
         'loan_years': {'min': 1, 'max': 50, 'unit': '年', 'required': True},
         'interest_rate': {'min': 0, 'max': 20, 'unit': '%', 'required': True},
