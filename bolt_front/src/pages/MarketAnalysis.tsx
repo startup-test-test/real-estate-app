@@ -208,6 +208,8 @@ const MarketAnalysis: React.FC = () => {
     if (!selectedCity) errors.push('市区町村を選択してください');
     // 地区名は現在任意
     if (!selectedPropertyType) errors.push('物件種別を選択してください');
+    if (!targetArea || targetArea === 0) errors.push(isLand ? '土地面積を選択してください' : '延床面積を選択してください');
+    if (!isLand && (!targetYear || targetYear === 0)) errors.push('建築年を選択してください');
 
     if (errors.length > 0) {
       setError(errors.join('、'));
@@ -1236,7 +1238,7 @@ const MarketAnalysis: React.FC = () => {
                 {/* 地区名（任意） */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    地区名 <span className="text-red-500">*</span>
+                    地区名 <span className="text-gray-500 text-xs">（任意）</span>
                   </label>
                   <div className="relative">
                     <select
