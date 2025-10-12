@@ -135,26 +135,49 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     
     # 数値フィールドの検証
     number_fields = {
-        'purchase_price': {'min': 1, 'max': 100000, 'unit': '万円'},
-        'monthly_rent': {'min': 0, 'max': 100000000, 'unit': '円'},  # 最大1億円/月
-        'management_fee': {'min': 0, 'max': 10000000, 'unit': '円'},  # 最大1000万円/月
-        'property_tax': {'min': 0, 'max': 50000000, 'unit': '円'},  # 最大5000万円/年
-        'other_costs': {'min': 0, 'max': 50000, 'unit': '万円'},  # 諸経費
-        'renovation_cost': {'min': 0, 'max': 50000, 'unit': '万円'},  # 改装費
-        'down_payment_ratio': {'min': 0, 'max': 100, 'unit': '%'},
-        'loan_years': {'min': 1, 'max': 50, 'unit': '年'},
-        'interest_rate': {'min': 0, 'max': 20, 'unit': '%'},
-        'building_area': {'min': 1, 'max': 100000, 'unit': '㎡'},
-        'land_area': {'min': 0, 'max': 100000, 'unit': '㎡'},
-        'year_built': {'min': 1900, 'max': datetime.now().year + 10, 'unit': '年'},
-        'holding_years': {'min': 1, 'max': 50, 'unit': '年'},
-        'major_repair_cost': {'min': 0, 'max': 50000, 'unit': '万円'},
-        'building_price': {'min': 0, 'max': 100000, 'unit': '万円'},
-        'depreciation_years': {'min': 1, 'max': 50, 'unit': '年'}
+        # 必須フィールド
+        'purchase_price': {'min': 1, 'max': 100000, 'unit': '万円', 'required': True},
+        'monthly_rent': {'min': 0, 'max': 100000000, 'unit': '円', 'required': True},
+        'loan_amount': {'min': 0, 'max': 100000, 'unit': '万円', 'required': True},
+        'loan_years': {'min': 1, 'max': 50, 'unit': '年', 'required': True},
+        'interest_rate': {'min': 0, 'max': 20, 'unit': '%', 'required': True},
+        'holding_years': {'min': 1, 'max': 50, 'unit': '年', 'required': True},
+        'building_area': {'min': 1, 'max': 100000, 'unit': '㎡', 'required': True},
+        # 任意フィールド
+        'management_fee': {'min': 0, 'max': 10000000, 'unit': '円', 'required': False},
+        'fixed_cost': {'min': 0, 'max': 10000000, 'unit': '円', 'required': False},
+        'property_tax': {'min': 0, 'max': 50000000, 'unit': '円', 'required': False},
+        'other_costs': {'min': 0, 'max': 50000, 'unit': '万円', 'required': False},
+        'renovation_cost': {'min': 0, 'max': 50000, 'unit': '万円', 'required': False},
+        'down_payment_ratio': {'min': 0, 'max': 100, 'unit': '%', 'required': False},
+        'vacancy_rate': {'min': 0, 'max': 100, 'unit': '%', 'required': False},
+        'effective_tax_rate': {'min': 0, 'max': 100, 'unit': '%', 'required': False},
+        'land_area': {'min': 0, 'max': 100000, 'unit': '㎡', 'required': False},
+        'road_price': {'min': 0, 'max': 100000000, 'unit': '円/㎡', 'required': False},
+        'year_built': {'min': 1900, 'max': datetime.now().year + 10, 'unit': '年', 'required': False},
+        'expected_sale_price': {'min': 0, 'max': 100000, 'unit': '万円', 'required': False},
+        'market_value': {'min': 0, 'max': 100000, 'unit': '万円', 'required': False},
+        'exit_cap_rate': {'min': 0, 'max': 100, 'unit': '%', 'required': False},
+        'price_decline_rate': {'min': 0, 'max': 100, 'unit': '%', 'required': False},
+        'rent_decline': {'min': 0, 'max': 100, 'unit': '%/年', 'required': False},
+        'major_repair_cycle': {'min': 0, 'max': 50, 'unit': '年', 'required': False},
+        'major_repair_cost': {'min': 0, 'max': 50000, 'unit': '万円', 'required': False},
+        'building_price': {'min': 0, 'max': 100000, 'unit': '万円', 'required': False},
+        'depreciation_years': {'min': 1, 'max': 50, 'unit': '年', 'required': False}
     }
-    
+
     for field, rules in number_fields.items():
         value = data.get(field)
+
+        # 必須チェック
+        if rules.get('required', False):
+            if value is None or value == "":
+                if field not in errors:
+                    errors[field] = []
+                errors[field].append(f"{field}（{rules['unit']}）は必須項目です")
+                continue
+
+        # 値が入力されている場合のみ範囲チェック
         if value is not None and value != "":
             error = validate_number_range(
                 value,
@@ -167,12 +190,31 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
                     errors[field] = []
                 errors[field].append(error)
     
+    # 選択式フィールドの検証
+    # 借入形式
+    if 'loan_type' in data and data['loan_type']:
+        allowed_loan_types = ['元利均等', '元金均等']
+        if data['loan_type'] not in allowed_loan_types:
+            errors['loan_type'] = [f"借入形式は{allowed_loan_types}のいずれかを選択してください"]
+
+    # 建物構造
+    if 'property_type' in data and data['property_type']:
+        allowed_property_types = ['木造', '軽量鉄骨造', '重量鉄骨造', 'RC造', 'SRC造']
+        if data['property_type'] not in allowed_property_types:
+            errors['property_type'] = [f"建物構造は{allowed_property_types}のいずれかを選択してください"]
+
+    # 所有形態
+    if 'ownership_type' in data and data['ownership_type']:
+        allowed_ownership_types = ['個人', '法人']
+        if data['ownership_type'] not in allowed_ownership_types:
+            errors['ownership_type'] = [f"所有形態は{allowed_ownership_types}のいずれかを選択してください"]
+
     # 画像の検証
     if 'property_image_base64' in data and data['property_image_base64']:
         image_error = validate_image_base64(data['property_image_base64'])
         if image_error:
             errors['property_image_base64'] = [image_error]
-    
+
     return errors
 
 
