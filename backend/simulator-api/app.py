@@ -92,6 +92,31 @@ def convert_camel_to_snake(data: dict) -> dict:
 
     return data
 
+
+def normalize_empty_values(data: dict) -> dict:
+    """空文字列やNoneを数値フィールドの場合は0に変換"""
+    # 数値フィールドのリスト
+    numeric_fields = [
+        'purchase_price', 'monthly_rent', 'loan_amount', 'loan_years',
+        'interest_rate', 'holding_years', 'building_area',
+        'management_fee', 'fixed_cost', 'property_tax',
+        'other_costs', 'renovation_cost', 'down_payment_ratio',
+        'vacancy_rate', 'effective_tax_rate', 'land_area',
+        'road_price', 'year_built', 'expected_sale_price',
+        'market_value', 'exit_cap_rate', 'price_decline_rate',
+        'rent_decline', 'major_repair_cycle', 'major_repair_cost',
+        'building_price', 'depreciation_years'
+    ]
+
+    for field in numeric_fields:
+        if field in data:
+            value = data[field]
+            # 空文字列、None、または空白のみの場合は0に変換
+            if value == "" or value is None or (isinstance(value, str) and value.strip() == ""):
+                data[field] = 0
+
+    return data
+
 # シミュレーションエンドポイント
 @app.post("/api/simulate")
 def run_simulation(property_data: dict):
@@ -109,6 +134,9 @@ def run_simulation(property_data: dict):
             status_code=400,
             content=error_response
         )
+
+    # バリデーション通過後、空文字列を0に変換
+    property_data = normalize_empty_values(property_data)
 
     try:
         # 共通計算ロジックを使用してシミュレーション実行

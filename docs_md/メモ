@@ -1,0 +1,101 @@
+
+client:495 [vite] connecting...
+client:618 [vite] connected.
+chunk-WRD5HZVH.js?v=ce7967b5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+api.ts:29 🔧 API URL resolved: https://real-estate-app-rwf1.onrender.com (Environment: codespaces)
+propertyApi.ts:10 PropertyApi using URL: 
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:38 ProtectedRoute: 認証ローディング中
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:38 ProtectedRoute: 認証ローディング中
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+2
+Simulator.tsx:433 📚 Tutorial steps created: 7
+Simulator.tsx:437 📚 Tutorial state changed: 
+Object
+Simulator.tsx:683 🔍 Scroll useEffect triggered:
+Simulator.tsx:684   - isTutorialActive: false
+Simulator.tsx:685   - location.hash: 
+Simulator.tsx:686   - hasResults: false
+Simulator.tsx:687   - hasRef: false
+Simulator.tsx:688   - runTutorial state: false
+Simulator.tsx:689   - tutorialStep: 0
+Simulator.tsx:437 📚 Tutorial state changed: 
+Object
+Simulator.tsx:683 🔍 Scroll useEffect triggered:
+Simulator.tsx:684   - isTutorialActive: false
+Simulator.tsx:685   - location.hash: 
+Simulator.tsx:686   - hasResults: false
+Simulator.tsx:687   - hasRef: false
+Simulator.tsx:688   - runTutorial state: false
+Simulator.tsx:689   - tutorialStep: 0
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+App.tsx:31 ProtectedRoute状態: 
+Object
+App.tsx:47 ProtectedRoute: 認証済み、ページを表示
+Simulator.tsx:1001 🔧 減価償却自動計算: 
+Object
+Simulator.tsx:1035 📊 計算結果: 
+Object
+Simulator.tsx:1001 🔧 減価償却自動計算: 
+Object
+Simulator.tsx:1035 📊 計算結果: 
+Object
+dataTransform.ts:14 月額家賃変換: 
+Object
+Simulator.tsx:1273 FAST API送信データ: 
+Object
+Simulator.tsx:1274 新機能フィールド確認: 
+Object
+4
+api.ts:29 🔧 API URL resolved: https://real-estate-app-rwf1.onrender.com (Environment: codespaces)
+api.ts:91 🔧 API Configuration Debug
+api.ts:92 
+Object
+api.ts:101 📍 Endpoints: 
+Object
+api.ts:102 🕐 Timestamp: 2025-10-12T06:46:24.889Z
+Simulator.tsx:1285 入力値（inputs）: 
+Object
+Simulator.tsx:1290 API送信データ: 
+Object
+Simulator.tsx:1291 property_tax: 10
+Simulator.tsx:1292 management_fee: 1000
+2
+api.ts:29 🔧 API URL resolved: https://real-estate-app-rwf1.onrender.com (Environment: codespaces)
+Simulator.tsx:1379 FAST APIレスポンス: 
+Object
+Simulator.tsx:1380 キャッシュフローテーブルの件数: 35
+Simulator.tsx:1382 1年目のデータ: 
+Object
+Simulator.tsx:1383 売却時累計CFフィールド存在チェック: true
+Simulator.tsx:1384 10年目のデータ（売却費用確認）: 
+Object
+Simulator.tsx:1385 売却費用の内訳 - broker_fee: 402.4680000000001 transfer_tax: 0
+Simulator.tsx:1387 CCR（初年度）: -0.08
+Simulator.tsx:1388 CCR（全期間）: 0.44
+Simulator.tsx:1393 🎯 Simulation completed:
+Simulator.tsx:1394   - isTutorialActive: false
+Simulator.tsx:1395   - tutorialStep: 0
+﻿
