@@ -480,7 +480,8 @@ def calculate_cash_flow_table(property_data: Dict[str, Any]) -> List[Dict[str, A
                     # 全額使用の場合、削除対象としてマーク
                     used_losses.append(idx)
             
-            # 使用済みの欠損金を削除（インデックスの大きい順から削除）for idx in sorted(used_losses, reverse=True):
+            # 使用済みの欠損金を削除（インデックスの大きい順から削除）
+            for idx in sorted(used_losses, reverse=True):
                 del loss_carryforward_list[idx]
             # 課税所得に対して税金計算
             tax = (remaining_income * (effective_tax_rate / 100)

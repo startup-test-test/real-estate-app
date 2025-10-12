@@ -23,12 +23,12 @@ const API_URLS = {
 export const getSimulatorApiUrl = (): string => {
   const environment = getCurrentEnvironment();
   const url = API_URLS[environment];
-  
+
   // デバッグ情報（開発時のみ）
   if (process.env.NODE_ENV === 'development') {
     console.log(`🔧 API URL resolved: ${url} (Environment: ${environment})`);
   }
-  
+
   return url;
 };
 

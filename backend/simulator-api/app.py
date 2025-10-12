@@ -51,13 +51,82 @@ def read_root():
 
 # 古い計算関数は削除し、shared.calculations.pyの関数を使用
 
+def convert_camel_to_snake(data: dict) -> dict:
+    """キャメルケースからスネークケースへの変換"""
+    # フロントエンドから送信されるキャメルケースをスネークケースに変換
+    camel_to_snake_mapping = {
+        'propertyTax': 'property_tax',
+        'fixedCost': 'fixed_cost',
+        'managementFee': 'management_fee',
+        'renovationCost': 'renovation_cost',
+        'monthlyRent': 'monthly_rent',
+        'purchasePrice': 'purchase_price',
+        'loanAmount': 'loan_amount',
+        'interestRate': 'interest_rate',
+        'loanYears': 'loan_years',
+        'loanType': 'loan_type',
+        'otherCosts': 'other_costs',
+        'vacancyRate': 'vacancy_rate',
+        'buildingPrice': 'building_price',
+        'depreciationYears': 'depreciation_years',
+        'effectiveTaxRate': 'effective_tax_rate',
+        'holdingYears': 'holding_years',
+        'expectedSalePrice': 'expected_sale_price',
+        'buildingPriceForDepreciation': 'building_price',
+        'exitCapRate': 'exit_cap_rate',
+        'priceDeclineRate': 'price_decline_rate',
+        'rentDecline': 'rent_decline',
+        'majorRepairCycle': 'major_repair_cycle',
+        'majorRepairCost': 'major_repair_cost',
+        'landArea': 'land_area',
+        'roadPrice': 'road_price',
+        'buildingArea': 'building_area',
+        'yearBuilt': 'year_built',
+        'propertyType': 'property_type',
+        'marketValue': 'market_value'
+    }
+
+    for camel_key, snake_key in camel_to_snake_mapping.items():
+        if camel_key in data:
+            data[snake_key] = data.get(camel_key)
+
+    return data
+
+
+def normalize_empty_values(data: dict) -> dict:
+    """空文字列やNoneを数値フィールドの場合は0に変換"""
+    # 数値フィールドのリスト
+    numeric_fields = [
+        'purchase_price', 'monthly_rent', 'loan_amount', 'loan_years',
+        'interest_rate', 'holding_years', 'building_area',
+        'management_fee', 'fixed_cost', 'property_tax',
+        'other_costs', 'renovation_cost', 'down_payment_ratio',
+        'vacancy_rate', 'effective_tax_rate', 'land_area',
+        'road_price', 'year_built', 'expected_sale_price',
+        'market_value', 'exit_cap_rate', 'price_decline_rate',
+        'rent_decline', 'major_repair_cycle', 'major_repair_cost',
+        'building_price', 'depreciation_years'
+    ]
+
+    for field in numeric_fields:
+        if field in data:
+            value = data[field]
+            # 空文字列、None、または空白のみの場合は0に変換
+            if value == "" or value is None or (isinstance(value, str) and value.strip() == ""):
+                data[field] = 0
+
+    return data
+
 # シミュレーションエンドポイント
 @app.post("/api/simulate")
 def run_simulation(property_data: dict):
     """収益シミュレーションを実行 - 新機能対応版"""
+    # キャメルケースからスネークケースへの変換（バリデーション前）
+    property_data = convert_camel_to_snake(property_data)
+
     # 入力値のバリデーション
     validation_errors = validate_simulator_input(property_data)
-    
+
     if validation_errors:
         # バリデーションエラーの場合、統一フォーマットでレスポンス
         error_response = create_validation_error_response(validation_errors)
@@ -65,71 +134,11 @@ def run_simulation(property_data: dict):
             status_code=400,
             content=error_response
         )
-    
+
+    # バリデーション通過後、空文字列を0に変換
+    property_data = normalize_empty_values(property_data)
+
     try:
-        # キャメルケースからスネークケースへの変換
-        # フロントエンドから送信される propertyTax を property_tax に変換
-        if 'propertyTax' in property_data:
-            property_data['property_tax'] = property_data.get('propertyTax', 0)
-        if 'fixedCost' in property_data:
-            property_data['fixed_cost'] = property_data.get('fixedCost', 0)
-        if 'managementFee' in property_data:
-            property_data['management_fee'] = property_data.get('managementFee', 0)
-        if 'renovationCost' in property_data:
-            property_data['renovation_cost'] = property_data.get('renovationCost', 0)
-        if 'monthlyRent' in property_data:
-            property_data['monthly_rent'] = property_data.get('monthlyRent', 0)
-        if 'purchasePrice' in property_data:
-            property_data['purchase_price'] = property_data.get('purchasePrice', 0)
-        if 'loanAmount' in property_data:
-            property_data['loan_amount'] = property_data.get('loanAmount', 0)
-        if 'interestRate' in property_data:
-            property_data['interest_rate'] = property_data.get('interestRate', 0)
-        if 'loanYears' in property_data:
-            property_data['loan_years'] = property_data.get('loanYears', 0)
-        if 'loanType' in property_data:
-            property_data['loan_type'] = property_data.get('loanType', '元利均等')
-        if 'otherCosts' in property_data:
-            property_data['other_costs'] = property_data.get('otherCosts', 0)
-        if 'vacancyRate' in property_data:
-            property_data['vacancy_rate'] = property_data.get('vacancyRate', 0)
-        if 'buildingPrice' in property_data:
-            property_data['building_price'] = property_data.get('buildingPrice', 0)
-        if 'depreciationYears' in property_data:
-            property_data['depreciation_years'] = property_data.get('depreciationYears', 0)
-        if 'effectiveTaxRate' in property_data:
-            property_data['effective_tax_rate'] = property_data.get('effectiveTaxRate', 0)
-        if 'holdingYears' in property_data:
-            property_data['holding_years'] = property_data.get('holdingYears', 0)
-        if 'expectedSalePrice' in property_data:
-            property_data['expected_sale_price'] = property_data.get('expectedSalePrice', 0)
-        if 'buildingPriceForDepreciation' in property_data:
-            property_data['building_price'] = property_data.get('buildingPriceForDepreciation', 0)
-        if 'exitCapRate' in property_data:
-            property_data['exit_cap_rate'] = property_data.get('exitCapRate', 0)
-        if 'priceDeclineRate' in property_data:
-            property_data['price_decline_rate'] = property_data.get('priceDeclineRate', 0)
-        if 'rentDecline' in property_data:
-            property_data['rent_decline'] = property_data.get('rentDecline', 0)
-        if 'majorRepairCycle' in property_data:
-            property_data['major_repair_cycle'] = property_data.get('majorRepairCycle', 0)
-        if 'majorRepairCost' in property_data:
-            property_data['major_repair_cost'] = property_data.get('majorRepairCost', 0)
-        
-        # 重要：積算評価額計算に必要なパラメータの変換
-        if 'landArea' in property_data:
-            property_data['land_area'] = property_data.get('landArea', 0)
-        if 'roadPrice' in property_data:
-            property_data['road_price'] = property_data.get('roadPrice', 0)
-        if 'buildingArea' in property_data:
-            property_data['building_area'] = property_data.get('buildingArea', 0)
-        if 'yearBuilt' in property_data:
-            property_data['year_built'] = property_data.get('yearBuilt', 2000)
-        if 'propertyType' in property_data:
-            property_data['property_type'] = property_data.get('propertyType', '木造')
-        if 'marketValue' in property_data:
-            property_data['market_value'] = property_data.get('marketValue', 0)
-        
         # 共通計算ロジックを使用してシミュレーション実行
         return run_full_simulation(property_data)
         
