@@ -9,6 +9,61 @@ from datetime import datetime
 from error_codes import ErrorCode
 
 
+# フィールド名の日本語マッピング（フロントエンドのラベルと一致させる）
+FIELD_NAME_MAPPING = {
+    # 文字列フィールド
+    'property_name': '物件名',
+    'location': '所在地',
+    'property_url': '物件URL',
+    'property_memo': '物件メモ',
+
+    # 数値フィールド
+    'purchase_price': '購入価格',
+    'monthly_rent': '月間賃料収入',
+    'loan_amount': '借入金額',
+    'loan_years': '借入期間',
+    'interest_rate': '借入金利',
+    'holding_years': '保有期間',
+    'building_area': '建物面積',
+    'management_fee': '管理費',
+    'fixed_cost': '修繕積立金',
+    'property_tax': '固定資産税',
+    'other_costs': '諸経費',
+    'renovation_cost': '改装費',
+    'down_payment_ratio': '頭金比率',
+    'vacancy_rate': '空室率',
+    'effective_tax_rate': '実効税率',
+    'land_area': '土地面積',
+    'road_price': '路線価',
+    'year_built': '築年',
+    'expected_sale_price': '想定売却価格',
+    'market_value': '市場価格',
+    'exit_cap_rate': '出口還元利回り',
+    'price_decline_rate': '価格下落率',
+    'rent_decline': '賃料下落率',
+    'major_repair_cycle': '大規模修繕周期',
+    'major_repair_cost': '大規模修繕費用',
+    'building_price': '建物価格',
+    'depreciation_years': '減価償却年数',
+
+    # 選択式フィールド
+    'loan_type': '借入形式',
+    'property_type': '建物構造',
+    'ownership_type': '所有形態',
+
+    # 画像フィールド
+    'property_image_base64': '物件画像'
+}
+
+
+def get_field_display_name(field_name: str, unit: str = None) -> str:
+    """フィールド名を日本語表示名に変換"""
+    display_name = FIELD_NAME_MAPPING.get(field_name, field_name)
+    if unit:
+        return f"{display_name}（{unit}）"
+    return display_name
+
+
 def validate_number_range(
     value: Any,
     min_val: float,
@@ -105,12 +160,13 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     
     for field, rules in string_fields.items():
         value = data.get(field)
-        
+        field_display_name = get_field_display_name(field)
+
         # 文字列長チェック
         error = validate_string_length(
-            value, 
-            rules['max_length'], 
-            field,
+            value,
+            rules['max_length'],
+            field_display_name,
             rules['required']
         )
         if error:
@@ -118,13 +174,13 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
                 errors[field] = []
             errors[field].append(error)
             continue
-        
+
         # HTMLタグチェック
         if value and detect_html_tags(str(value)):
             if field not in errors:
                 errors[field] = []
-            errors[field].append(f"{field}にHTMLタグは使用できません")
-        
+            errors[field].append(f"{field_display_name}にHTMLタグは使用できません")
+
         # URL検証
         if field == 'property_url' and value:
             url_error = validate_url(str(value))
@@ -168,13 +224,14 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
 
     for field, rules in number_fields.items():
         value = data.get(field)
+        field_display_name = get_field_display_name(field, rules['unit'])
 
         # 必須チェック
         if rules.get('required', False):
             if value is None or value == "":
                 if field not in errors:
                     errors[field] = []
-                errors[field].append(f"{field}（{rules['unit']}）は必須項目です")
+                errors[field].append(f"{get_field_display_name(field)}は必須項目です")
                 continue
 
         # 値が入力されている場合のみ範囲チェック
@@ -183,7 +240,7 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
                 value,
                 rules['min'],
                 rules['max'],
-                f"{field}（{rules['unit']}）"
+                field_display_name
             )
             if error:
                 if field not in errors:
@@ -195,19 +252,19 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     if 'loan_type' in data and data['loan_type']:
         allowed_loan_types = ['元利均等', '元金均等']
         if data['loan_type'] not in allowed_loan_types:
-            errors['loan_type'] = [f"借入形式は{allowed_loan_types}のいずれかを選択してください"]
+            errors['loan_type'] = [f"{get_field_display_name('loan_type')}は{allowed_loan_types}のいずれかを選択してください"]
 
     # 建物構造
     if 'property_type' in data and data['property_type']:
         allowed_property_types = ['木造', '軽量鉄骨造', '重量鉄骨造', 'RC造', 'SRC造']
         if data['property_type'] not in allowed_property_types:
-            errors['property_type'] = [f"建物構造は{allowed_property_types}のいずれかを選択してください"]
+            errors['property_type'] = [f"{get_field_display_name('property_type')}は{allowed_property_types}のいずれかを選択してください"]
 
     # 所有形態
     if 'ownership_type' in data and data['ownership_type']:
         allowed_ownership_types = ['個人', '法人']
         if data['ownership_type'] not in allowed_ownership_types:
-            errors['ownership_type'] = [f"所有形態は{allowed_ownership_types}のいずれかを選択してください"]
+            errors['ownership_type'] = [f"{get_field_display_name('ownership_type')}は{allowed_ownership_types}のいずれかを選択してください"]
 
     # 画像の検証
     if 'property_image_base64' in data and data['property_image_base64']:
@@ -221,37 +278,37 @@ def validate_simulator_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
 def validate_market_analysis_input(data: Dict[str, Any]) -> Dict[str, List[str]]:
     """市場分析入力値の検証"""
     errors = {}
-    
+
     # 必須フィールドのチェック
     required_fields = ['location', 'land_area', 'year_built', 'purchase_price']
     for field in required_fields:
         if field not in data or data[field] is None or data[field] == "":
-            errors[field] = [f"{field}は必須項目です"]
-    
+            errors[field] = [f"{get_field_display_name(field)}は必須項目です"]
+
     # locationの検証
     if 'location' in data and data['location']:
-        error = validate_string_length(data['location'], 200, 'location', True)
+        error = validate_string_length(data['location'], 200, get_field_display_name('location'), True)
         if error:
             errors['location'] = [error]
         elif detect_html_tags(str(data['location'])):
-            errors['location'] = ["所在地にHTMLタグは使用できません"]
-    
+            errors['location'] = [f"{get_field_display_name('location')}にHTMLタグは使用できません"]
+
     # 数値フィールドの検証
     if 'land_area' in data and data['land_area'] is not None:
-        error = validate_number_range(data['land_area'], 0, 100000, '土地面積（㎡）')
+        error = validate_number_range(data['land_area'], 0, 100000, get_field_display_name('land_area', '㎡'))
         if error:
             errors['land_area'] = [error]
-    
+
     if 'year_built' in data and data['year_built'] is not None:
-        error = validate_number_range(data['year_built'], 1900, datetime.now().year + 10, '築年')
+        error = validate_number_range(data['year_built'], 1900, datetime.now().year + 10, get_field_display_name('year_built', '年'))
         if error:
             errors['year_built'] = [error]
-    
+
     if 'purchase_price' in data and data['purchase_price'] is not None:
-        error = validate_number_range(data['purchase_price'], 1, 100000, '購入価格（万円）')
+        error = validate_number_range(data['purchase_price'], 1, 100000, get_field_display_name('purchase_price', '万円'))
         if error:
             errors['purchase_price'] = [error]
-    
+
     return errors
 
 
