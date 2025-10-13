@@ -78,7 +78,6 @@ class WordPressClient:
         Returns:
             APIレスポンス
         """
-        # ?rest_route= 形式のURLを構築
         # エンドポイントの先頭のスラッシュを削除
         clean_endpoint = endpoint.lstrip('/')
 
@@ -86,11 +85,15 @@ class WordPressClient:
         if params is None:
             params = {}
 
-        # rest_route パラメータを追加
-        params['rest_route'] = f'/wp/v2/{clean_endpoint}'
-
-        # ベースURL
-        url = self.site_url
+        # POST/PUT/DELETEの場合は /wp-json/wp/v2/ 形式を使用
+        # GETの場合は ?rest_route= 形式を使用
+        if method.upper() in ['POST', 'PUT', 'DELETE', 'PATCH']:
+            # 書き込み系操作: /wp-json/wp/v2/posts 形式
+            url = f"{self.site_url}/wp-json/wp/v2/{clean_endpoint}"
+        else:
+            # 読み取り系操作: ?rest_route=/wp/v2/posts 形式
+            params['rest_route'] = f'/wp/v2/{clean_endpoint}'
+            url = self.site_url
 
         try:
             response = requests.request(
