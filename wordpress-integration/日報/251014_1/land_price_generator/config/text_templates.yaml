@@ -1,0 +1,216 @@
+# 地価情報ページのテキストテンプレート
+# すべてのテキストコンテンツをここで一元管理
+
+# 都道府県ページテンプレート
+prefecture:
+  # ページタイトル
+  title: "{pref_name}の地価情報【{year}年最新版】| 公示地価・基準地価の推移と相場"
+
+  # メタディスクリプション
+  meta_description: "{pref_name}の{year}年最新地価情報。平均地価{avg_price_sqm}/㎡、前年比{change_rate}。公示地価・基準地価データから市区町村別ランキング、最高額エリアまで詳しく解説。不動産投資・住宅購入の参考に。"
+
+  # セクション: サマリー
+  sections:
+    summary:
+      title: "📍 {pref_name}の地価サマリー（{year}年）"
+      items:
+        avg_price: "平均地価（1㎡あたり）"
+        avg_price_tsubo: "平均地価（1坪あたり）"
+        median_price: "中央値（1㎡あたり）"
+        total_points: "調査地点数"
+        change_rate: "前年比変動率"
+        highest_price: "最高額"
+        lowest_price: "最低額"
+
+    # セクション: 地価動向
+    trend:
+      title: "📊 地価動向（{year}年）"
+      description: |
+        {pref_name}の地価は{year}年、前年比{change_rate}の変動を示しています。全国的な不動産市場の動向と連動しながら、{pref_name}独自の市場特性も見られます。
+
+      analysis_title: "市場分析"
+      analysis_text: |
+        {year}年の{pref_name}の平均地価は{avg_price_sqm}/㎡で、前年比{change_rate}となりました。主要都市部を中心に地価の上昇傾向が見られ、投資需要の高まりが背景にあります。
+
+    # セクション: 市区町村別ランキング
+    ranking:
+      title: "🏆 {pref_name}の市区町村別地価ランキング TOP10"
+      description: "{pref_name}内で地価が高い市区町村のランキングです。（{year}年データ）"
+      columns:
+        rank: "順位"
+        city: "市区町村"
+        avg_price: "平均地価"
+        points: "地点数"
+      note: "※ 平均地価は各市区町村内の調査地点の平均値です"
+
+    # セクション: 最高額地点
+    highest:
+      title: "💎 {pref_name}で最も地価が高い地点"
+      description: "{pref_name}内で最も地価が高い地点の情報です。"
+      items:
+        address: "所在地"
+        price_sqm: "価格（1㎡あたり）"
+        price_tsubo: "価格（1坪あたり）"
+        station: "最寄駅"
+        change_rate: "前年比"
+
+    # セクション: 市区町村一覧
+    municipalities:
+      title: "📋 {pref_name}の市区町村一覧"
+      description: "{pref_name}内の各市区町村の地価情報へのリンクです。"
+      link_text: "{city_name}の地価情報"
+
+    # セクション: データソース
+    data_source:
+      title: "📊 データソースについて"
+      description: |
+        本ページで使用している地価データは、国土交通省が提供する「不動産情報ライブラリ」の公示地価・基準地価データを元にしています。
+
+        <strong>データの特徴：</strong>
+      features:
+        - "公示地価: 毎年1月1日時点の価格（3月下旬公表）"
+        - "基準地価: 毎年7月1日時点の価格（9月下旬公表）"
+        - "国土交通省の公式データを使用"
+        - "全国約3万地点の標準地・基準地を調査"
+
+      note: |
+        地価は不動産市場の動向を示す重要な指標であり、土地取引や資産評価の参考となります。
+
+    # セクション: 関連リンク
+    related:
+      title: "🔗 関連情報"
+      links:
+        national: "全国の地価情報"
+        regional: "地域別地価情報"
+
+# 市区町村ページテンプレート
+municipality:
+  # ページタイトル
+  title: "{pref_name}{city_name}の地価情報【{year}年最新版】| 公示地価・基準地価の推移と相場"
+
+  # メタディスクリプション
+  meta_description: "{pref_name}{city_name}の{year}年最新地価情報。平均地価{avg_price_sqm}/㎡、前年比{change_rate}。{total_points}地点の公示地価・基準地価データから最高額エリア、価格分布まで詳しく解説。"
+
+  # セクション: サマリー
+  sections:
+    summary:
+      title: "📍 {city_name}の地価サマリー（{year}年）"
+      items:
+        avg_price: "平均地価（1㎡あたり）"
+        avg_price_tsubo: "平均地価（1坪あたり）"
+        median_price: "中央値（1㎡あたり）"
+        total_points: "調査地点数"
+        change_rate: "前年比変動率"
+        highest_price: "最高額"
+        lowest_price: "最低額"
+
+    # セクション: 地価動向
+    trend:
+      title: "📊 地価動向（{year}年）"
+      description: |
+        {city_name}の地価は{year}年、前年比{change_rate}の変動を示しています。{pref_name}全体の動向と比較しながら、{city_name}の地価特性を分析します。
+
+      analysis_title: "市場分析"
+      analysis_text: |
+        {year}年の{city_name}の平均地価は{avg_price_sqm}/㎡で、前年比{change_rate}となりました。{pref_name}の平均と比較して{comparison}傾向にあり、{city_name}独自の市場環境が影響しています。
+
+    # セクション: 最高額地点
+    highest:
+      title: "💎 {city_name}で最も地価が高い地点"
+      description: "{city_name}内で最も地価が高い地点の情報です。"
+      items:
+        address: "所在地"
+        price_sqm: "価格（1㎡あたり）"
+        price_tsubo: "価格（1坪あたり）"
+        station: "最寄駅"
+        change_rate: "前年比"
+
+    # セクション: 最低額地点
+    lowest:
+      title: "📌 {city_name}で最も地価が低い地点"
+      description: "{city_name}内で最も地価が低い地点の情報です。"
+      items:
+        address: "所在地"
+        price_sqm: "価格（1㎡あたり）"
+        price_tsubo: "価格（1坪あたり）"
+        station: "最寄駅"
+        change_rate: "前年比"
+
+    # セクション: 価格帯分布
+    distribution:
+      title: "📊 価格帯別の地点数分布"
+      description: "{city_name}の地価を価格帯別に集計した分布です。"
+      note: "※ 1㎡あたりの価格で分類しています"
+
+    # セクション: 調査地点一覧
+    points:
+      title: "📍 調査地点一覧（{year}年）"
+      description: "{city_name}内の公示地価・基準地価の調査地点です。"
+      columns:
+        address: "所在地"
+        price_sqm: "価格/㎡"
+        price_tsubo: "価格/坪"
+        station: "最寄駅"
+        change_rate: "前年比"
+      show_all_link: "すべての地点を表示"
+
+    # セクション: データソース
+    data_source:
+      title: "📊 データソースについて"
+      description: |
+        本ページで使用している地価データは、国土交通省が提供する「不動産情報ライブラリ」の公示地価・基準地価データを元にしています。
+
+        <strong>データの特徴：</strong>
+      features:
+        - "公示地価: 毎年1月1日時点の価格（3月下旬公表）"
+        - "基準地価: 毎年7月1日時点の価格（9月下旬公表）"
+        - "国土交通省の公式データを使用"
+        - "{city_name}内の{total_points}地点を調査"
+
+      note: |
+        地価は不動産市場の動向を示す重要な指標であり、土地取引や資産評価の参考となります。
+
+    # セクション: 関連リンク
+    related:
+      title: "🔗 関連情報"
+      links:
+        prefecture: "{pref_name}全体の地価情報"
+        national: "全国の地価情報"
+
+# 共通テキスト
+common:
+  # 単位表示
+  units:
+    yen_per_sqm: "円/㎡"
+    yen_per_tsubo: "円/坪"
+    man_yen: "万円"
+    points: "地点"
+    municipalities: "市区町村"
+
+  # 変動率の表現
+  change_rate:
+    positive: "上昇"
+    negative: "下落"
+    neutral: "横ばい"
+
+  # 比較表現
+  comparison:
+    higher: "高い"
+    lower: "低い"
+    similar: "同程度の"
+
+  # ボタン・リンクテキスト
+  buttons:
+    view_details: "詳細を見る"
+    back_to_list: "一覧に戻る"
+    download_data: "データをダウンロード"
+
+  # エラーメッセージ
+  errors:
+    no_data: "データが見つかりませんでした"
+    loading_failed: "データの読み込みに失敗しました"
+
+  # フッター
+  footer:
+    copyright: "© {year} 地価情報サイト"
+    last_updated: "最終更新: {update_date}"

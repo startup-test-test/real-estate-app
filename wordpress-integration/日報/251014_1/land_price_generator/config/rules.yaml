@@ -1,0 +1,340 @@
+# 地価情報ページの表示ルール・フォーマット設定
+# すべての表示ルールをここで一元管理
+
+# 数値フォーマット
+number_format:
+  # 価格表示
+  price:
+    # 円/㎡表示
+    yen_per_sqm:
+      format: "{:,}円/㎡"
+      decimal: 0
+      thousand_separator: ","
+
+    # 万円/㎡表示（要約用）
+    man_yen_per_sqm:
+      format: "{:.1f}万円/㎡"
+      decimal: 1
+      divisor: 10000
+
+    # 円/坪表示
+    yen_per_tsubo:
+      format: "{:,}円/坪"
+      decimal: 0
+      thousand_separator: ","
+      conversion_factor: 3.30578  # 1坪 = 3.30578㎡
+
+  # 変動率表示
+  change_rate:
+    format: "{:+.2f}%"
+    positive_sign: "+"
+    decimal: 2
+    threshold_positive: 0.1  # この値以上で「上昇」
+    threshold_negative: -0.1  # この値以下で「下落」
+
+  # 件数表示
+  count:
+    format: "{:,}件"
+    thousand_separator: ","
+
+  # パーセンテージ表示
+  percentage:
+    format: "{:.1f}%"
+    decimal: 1
+
+# ランキング表示ルール
+ranking:
+  # 表示件数
+  display_count:
+    top: 10  # TOP表示件数
+    bottom: 5  # BOTTOM表示件数
+
+  # ランキングバッジ
+  badges:
+    first: "🥇"
+    second: "🥈"
+    third: "🥉"
+
+  # 表示形式
+  format:
+    rank: "{rank}位"
+    with_badge: "{badge} {rank}位"
+
+# 価格帯分布ルール
+price_distribution:
+  # 価格帯の区切り（円/㎡）
+  brackets:
+    - label: "10万円未満"
+      min: 0
+      max: 100000
+    - label: "10-30万円"
+      min: 100000
+      max: 300000
+    - label: "30-50万円"
+      min: 300000
+      max: 500000
+    - label: "50-100万円"
+      min: 500000
+      max: 1000000
+    - label: "100-200万円"
+      min: 1000000
+      max: 2000000
+    - label: "200-500万円"
+      min: 2000000
+      max: 5000000
+    - label: "500万円以上"
+      min: 5000000
+      max: 999999999
+
+# テーブル表示ルール
+table:
+  # 都道府県ページ - 市区町村ランキング
+  prefecture_ranking:
+    columns:
+      - id: "rank"
+        label: "順位"
+        width: "10%"
+        align: "center"
+      - id: "city"
+        label: "市区町村"
+        width: "30%"
+        align: "left"
+      - id: "avg_price"
+        label: "平均地価"
+        width: "35%"
+        align: "right"
+      - id: "points"
+        label: "地点数"
+        width: "15%"
+        align: "center"
+      - id: "change_rate"
+        label: "前年比"
+        width: "10%"
+        align: "right"
+
+  # 市区町村ページ - 調査地点一覧
+  municipality_points:
+    columns:
+      - id: "address"
+        label: "所在地"
+        width: "35%"
+        align: "left"
+      - id: "price_sqm"
+        label: "価格/㎡"
+        width: "20%"
+        align: "right"
+      - id: "price_tsubo"
+        label: "価格/坪"
+        width: "20%"
+        align: "right"
+      - id: "station"
+        label: "最寄駅"
+        width: "15%"
+        align: "left"
+      - id: "change_rate"
+        label: "前年比"
+        width: "10%"
+        align: "right"
+
+    # ページネーション
+    pagination:
+      items_per_page: 20
+      show_all_threshold: 50  # この件数以下なら全件表示
+
+# カラースキーム
+colors:
+  # プライマリーカラー
+  primary: "#3182ce"
+  primary_dark: "#2c5282"
+  primary_light: "#63b3ed"
+
+  # セカンダリーカラー
+  secondary: "#718096"
+  secondary_dark: "#4a5568"
+  secondary_light: "#a0aec0"
+
+  # 背景色
+  background:
+    main: "#ffffff"
+    section: "#f7fafc"
+    card: "#edf2f7"
+
+  # テキストカラー
+  text:
+    primary: "#1a202c"
+    secondary: "#2d3748"
+    muted: "#718096"
+
+  # ステータスカラー
+  status:
+    positive: "#48bb78"  # 上昇（緑）
+    negative: "#f56565"  # 下落（赤）
+    neutral: "#718096"   # 横ばい（グレー）
+
+  # ボーダーカラー
+  border:
+    light: "#e2e8f0"
+    medium: "#cbd5e0"
+    dark: "#a0aec0"
+
+# スタイル設定
+styles:
+  # セクション
+  section:
+    margin_top: "3rem"
+    margin_bottom: "2rem"
+
+  # 見出し
+  heading:
+    h2:
+      font_size: "1.5rem"
+      font_weight: "bold"
+      margin_top: "2rem"
+      margin_bottom: "1rem"
+      padding_bottom: "0.5rem"
+      border_bottom: "2px solid"
+      border_color: "{colors.primary}"
+
+    h3:
+      font_size: "1.2rem"
+      font_weight: "bold"
+      margin_top: "1.5rem"
+      margin_bottom: "1rem"
+
+  # カード
+  card:
+    background: "{colors.background.card}"
+    padding: "1.5rem"
+    border_radius: "8px"
+    margin_bottom: "2rem"
+
+  # テーブル
+  table:
+    border_collapse: "collapse"
+    width: "100%"
+    margin: "1rem 0"
+
+    header:
+      background: "{colors.background.section}"
+      font_weight: "bold"
+      padding: "1rem"
+      border_bottom: "2px solid {colors.border.medium}"
+
+    cell:
+      padding: "0.75rem 1rem"
+      border_bottom: "1px solid {colors.border.light}"
+
+    row_hover:
+      background: "{colors.background.section}"
+
+  # リンク
+  link:
+    color: "{colors.primary}"
+    text_decoration: "none"
+    hover_color: "{colors.primary_dark}"
+
+# SEO設定
+seo:
+  # タイトル
+  title:
+    max_length: 60
+    separator: "|"
+    suffix: "地価情報サイト"
+
+  # ディスクリプション
+  description:
+    max_length: 160
+    include_year: true
+    include_stats: true
+
+  # JSON-LD構造化データ
+  structured_data:
+    enabled: true
+    types:
+      - "Article"
+      - "BreadcrumbList"
+
+# データ表示設定
+data_display:
+  # 小数点以下の桁数
+  decimal_places:
+    price: 0
+    change_rate: 2
+    percentage: 1
+
+  # しきい値
+  thresholds:
+    # 変動率の色分け
+    change_rate:
+      high_increase: 5.0  # 大幅上昇（5%以上）
+      moderate_increase: 0.1  # 上昇（0.1%以上）
+      moderate_decrease: -0.1  # 下落（-0.1%以下）
+      high_decrease: -5.0  # 大幅下落（-5%以下）
+
+    # 価格の色分け
+    price:
+      very_high: 2000000  # 超高額（200万円/㎡以上）
+      high: 1000000  # 高額（100万円/㎡以上）
+      medium: 300000  # 中価格（30万円/㎡以上）
+      low: 100000  # 低価格（10万円/㎡以上）
+
+  # データ欠損時の表示
+  missing_data:
+    text: "-"
+    price: "データなし"
+    change_rate: "-"
+
+# 地点情報表示ルール
+point_info:
+  # 住所表示
+  address:
+    show_full: true
+    show_prefecture: false  # 市区町村ページでは都道府県名を省略
+
+  # 最寄駅表示
+  station:
+    show_distance: true  # 距離を表示するか（将来対応）
+    format: "{station_name}"
+
+  # 用途地域表示
+  land_use:
+    show: false  # 現在未対応
+
+# 比較・分析設定
+analysis:
+  # 都道府県内比較
+  prefecture_comparison:
+    show_rank: true  # 都道府県内順位を表示
+    show_deviation: true  # 平均からの乖離を表示
+
+  # 全国比較
+  national_comparison:
+    show_rank: false  # 全国順位を表示（将来対応）
+    show_percentile: false  # パーセンタイルを表示（将来対応）
+
+# キャッシュ設定
+cache:
+  enabled: true
+  max_age_days: 30
+  auto_refresh: false
+
+# エクスポート設定
+export:
+  formats:
+    - "csv"
+    - "json"
+  enabled: false  # 現在未対応
+
+# 多言語対応（将来対応）
+i18n:
+  enabled: false
+  default_locale: "ja"
+  supported_locales:
+    - "ja"
+    - "en"
+
+# デバッグモード
+debug:
+  enabled: false
+  show_data_source: true
+  show_calculation_details: false
