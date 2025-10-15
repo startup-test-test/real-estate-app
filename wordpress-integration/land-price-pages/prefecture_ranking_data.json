@@ -1,0 +1,472 @@
+[
+  {
+    "name": "東京都",
+    "code": "13",
+    "slug": "tokyo",
+    "price_per_sqm": 514916,
+    "price_per_tsubo": 170.2,
+    "change_rate": 5.6,
+    "data_count": 1661,
+    "rank": 1
+  },
+  {
+    "name": "神奈川県",
+    "code": "14",
+    "slug": "kanagawa",
+    "price_per_sqm": 212407,
+    "price_per_tsubo": 70.2,
+    "change_rate": 3.3,
+    "data_count": 1310,
+    "rank": 2
+  },
+  {
+    "name": "大阪府",
+    "code": "27",
+    "slug": "osaka",
+    "price_per_sqm": 159441,
+    "price_per_tsubo": 52.7,
+    "change_rate": 2.3,
+    "data_count": 1215,
+    "rank": 3
+  },
+  {
+    "name": "京都府",
+    "code": "26",
+    "slug": "kyoto",
+    "price_per_sqm": 158712,
+    "price_per_tsubo": 52.5,
+    "change_rate": 2.0,
+    "data_count": 442,
+    "rank": 4
+  },
+  {
+    "name": "埼玉県",
+    "code": "11",
+    "slug": "saitama",
+    "price_per_sqm": 145048,
+    "price_per_tsubo": 47.9,
+    "change_rate": 1.9,
+    "data_count": 1011,
+    "rank": 5
+  },
+  {
+    "name": "兵庫県",
+    "code": "28",
+    "slug": "hyogo",
+    "price_per_sqm": 141295,
+    "price_per_tsubo": 46.7,
+    "change_rate": 1.8,
+    "data_count": 884,
+    "rank": 6
+  },
+  {
+    "name": "愛知県",
+    "code": "23",
+    "slug": "aichi",
+    "price_per_sqm": 128701,
+    "price_per_tsubo": 42.5,
+    "change_rate": 2.2,
+    "data_count": 1282,
+    "rank": 7
+  },
+  {
+    "name": "千葉県",
+    "code": "12",
+    "slug": "chiba",
+    "price_per_sqm": 122777,
+    "price_per_tsubo": 40.6,
+    "change_rate": 4.4,
+    "data_count": 953,
+    "rank": 8
+  },
+  {
+    "name": "沖縄県",
+    "code": "47",
+    "slug": "okinawa",
+    "price_per_sqm": 121513,
+    "price_per_tsubo": 40.2,
+    "change_rate": 7.0,
+    "data_count": 122,
+    "rank": 9
+  },
+  {
+    "name": "福岡県",
+    "code": "40",
+    "slug": "fukuoka",
+    "price_per_sqm": 114949,
+    "price_per_tsubo": 38.0,
+    "change_rate": 4.9,
+    "data_count": 627,
+    "rank": 10
+  },
+  {
+    "name": "広島県",
+    "code": "34",
+    "slug": "hiroshima",
+    "price_per_sqm": 94015,
+    "price_per_tsubo": 31.1,
+    "change_rate": 1.3,
+    "data_count": 438,
+    "rank": 11
+  },
+  {
+    "name": "宮城県",
+    "code": "04",
+    "slug": "miyagi",
+    "price_per_sqm": 87341,
+    "price_per_tsubo": 28.9,
+    "change_rate": 4.2,
+    "data_count": 401,
+    "rank": 12
+  },
+  {
+    "name": "静岡県",
+    "code": "22",
+    "slug": "shizuoka",
+    "price_per_sqm": 72011,
+    "price_per_tsubo": 23.8,
+    "change_rate": -0.0,
+    "data_count": 457,
+    "rank": 13
+  },
+  {
+    "name": "奈良県",
+    "code": "29",
+    "slug": "nara",
+    "price_per_sqm": 68367,
+    "price_per_tsubo": 22.6,
+    "change_rate": -0.2,
+    "data_count": 311,
+    "rank": 14
+  },
+  {
+    "name": "熊本県",
+    "code": "43",
+    "slug": "kumamoto",
+    "price_per_sqm": 60153,
+    "price_per_tsubo": 19.9,
+    "change_rate": 3.1,
+    "data_count": 160,
+    "rank": 15
+  },
+  {
+    "name": "石川県",
+    "code": "17",
+    "slug": "ishikawa",
+    "price_per_sqm": 59050,
+    "price_per_tsubo": 19.5,
+    "change_rate": 0.7,
+    "data_count": 149,
+    "rank": 16
+  },
+  {
+    "name": "滋賀県",
+    "code": "25",
+    "slug": "shiga",
+    "price_per_sqm": 54552,
+    "price_per_tsubo": 18.0,
+    "change_rate": 0.3,
+    "data_count": 235,
+    "rank": 17
+  },
+  {
+    "name": "愛媛県",
+    "code": "38",
+    "slug": "ehime",
+    "price_per_sqm": 52619,
+    "price_per_tsubo": 17.4,
+    "change_rate": -0.6,
+    "data_count": 156,
+    "rank": 18
+  },
+  {
+    "name": "北海道",
+    "code": "01",
+    "slug": "hokkaido",
+    "price_per_sqm": 52342,
+    "price_per_tsubo": 17.3,
+    "change_rate": 1.3,
+    "data_count": 927,
+    "rank": 19
+  },
+  {
+    "name": "高知県",
+    "code": "39",
+    "slug": "kochi",
+    "price_per_sqm": 52021,
+    "price_per_tsubo": 17.2,
+    "change_rate": -0.2,
+    "data_count": 96,
+    "rank": 20
+  },
+  {
+    "name": "大分県",
+    "code": "44",
+    "slug": "oita",
+    "price_per_sqm": 49246,
+    "price_per_tsubo": 16.3,
+    "change_rate": 2.3,
+    "data_count": 146,
+    "rank": 21
+  },
+  {
+    "name": "徳島県",
+    "code": "36",
+    "slug": "tokushima",
+    "price_per_sqm": 47945,
+    "price_per_tsubo": 15.8,
+    "change_rate": -0.5,
+    "data_count": 101,
+    "rank": 22
+  },
+  {
+    "name": "岡山県",
+    "code": "33",
+    "slug": "okayama",
+    "price_per_sqm": 46618,
+    "price_per_tsubo": 15.4,
+    "change_rate": 0.8,
+    "data_count": 271,
+    "rank": 23
+  },
+  {
+    "name": "岐阜県",
+    "code": "21",
+    "slug": "gifu",
+    "price_per_sqm": 46412,
+    "price_per_tsubo": 15.3,
+    "change_rate": -0.3,
+    "data_count": 251,
+    "rank": 24
+  },
+  {
+    "name": "香川県",
+    "code": "37",
+    "slug": "kagawa",
+    "price_per_sqm": 45822,
+    "price_per_tsubo": 15.1,
+    "change_rate": -0.1,
+    "data_count": 107,
+    "rank": 25
+  },
+  {
+    "name": "長崎県",
+    "code": "42",
+    "slug": "nagasaki",
+    "price_per_sqm": 45511,
+    "price_per_tsubo": 15.0,
+    "change_rate": 1.1,
+    "data_count": 165,
+    "rank": 26
+  },
+  {
+    "name": "鹿児島県",
+    "code": "46",
+    "slug": "kagoshima",
+    "price_per_sqm": 44664,
+    "price_per_tsubo": 14.8,
+    "change_rate": -0.6,
+    "data_count": 189,
+    "rank": 27
+  },
+  {
+    "name": "和歌山県",
+    "code": "30",
+    "slug": "wakayama",
+    "price_per_sqm": 42127,
+    "price_per_tsubo": 13.9,
+    "change_rate": -0.7,
+    "data_count": 111,
+    "rank": 28
+  },
+  {
+    "name": "福井県",
+    "code": "18",
+    "slug": "fukui",
+    "price_per_sqm": 39204,
+    "price_per_tsubo": 13.0,
+    "change_rate": -0.2,
+    "data_count": 85,
+    "rank": 29
+  },
+  {
+    "name": "三重県",
+    "code": "24",
+    "slug": "mie",
+    "price_per_sqm": 38859,
+    "price_per_tsubo": 12.8,
+    "change_rate": 0.4,
+    "data_count": 287,
+    "rank": 30
+  },
+  {
+    "name": "福島県",
+    "code": "07",
+    "slug": "fukushima",
+    "price_per_sqm": 37793,
+    "price_per_tsubo": 12.5,
+    "change_rate": 0.7,
+    "data_count": 315,
+    "rank": 31
+  },
+  {
+    "name": "新潟県",
+    "code": "15",
+    "slug": "niigata",
+    "price_per_sqm": 37555,
+    "price_per_tsubo": 12.4,
+    "change_rate": -0.6,
+    "data_count": 299,
+    "rank": 32
+  },
+  {
+    "name": "長野県",
+    "code": "20",
+    "slug": "nagano",
+    "price_per_sqm": 37262,
+    "price_per_tsubo": 12.3,
+    "change_rate": 0.7,
+    "data_count": 208,
+    "rank": 33
+  },
+  {
+    "name": "群馬県",
+    "code": "10",
+    "slug": "gunma",
+    "price_per_sqm": 37232,
+    "price_per_tsubo": 12.3,
+    "change_rate": -0.3,
+    "data_count": 260,
+    "rank": 34
+  },
+  {
+    "name": "富山県",
+    "code": "16",
+    "slug": "toyama",
+    "price_per_sqm": 36560,
+    "price_per_tsubo": 12.1,
+    "change_rate": 0.0,
+    "data_count": 148,
+    "rank": 35
+  },
+  {
+    "name": "山口県",
+    "code": "35",
+    "slug": "yamaguchi",
+    "price_per_sqm": 35681,
+    "price_per_tsubo": 11.8,
+    "change_rate": 0.6,
+    "data_count": 185,
+    "rank": 36
+  },
+  {
+    "name": "栃木県",
+    "code": "09",
+    "slug": "tochigi",
+    "price_per_sqm": 35225,
+    "price_per_tsubo": 11.6,
+    "change_rate": -0.3,
+    "data_count": 341,
+    "rank": 37
+  },
+  {
+    "name": "岩手県",
+    "code": "03",
+    "slug": "iwate",
+    "price_per_sqm": 35028,
+    "price_per_tsubo": 11.6,
+    "change_rate": 0.5,
+    "data_count": 125,
+    "rank": 38
+  },
+  {
+    "name": "佐賀県",
+    "code": "41",
+    "slug": "saga",
+    "price_per_sqm": 35014,
+    "price_per_tsubo": 11.6,
+    "change_rate": 2.1,
+    "data_count": 88,
+    "rank": 39
+  },
+  {
+    "name": "山梨県",
+    "code": "19",
+    "slug": "yamanashi",
+    "price_per_sqm": 34308,
+    "price_per_tsubo": 11.3,
+    "change_rate": -0.4,
+    "data_count": 105,
+    "rank": 40
+  },
+  {
+    "name": "島根県",
+    "code": "32",
+    "slug": "shimane",
+    "price_per_sqm": 34213,
+    "price_per_tsubo": 11.3,
+    "change_rate": -0.4,
+    "data_count": 89,
+    "rank": 41
+  },
+  {
+    "name": "茨城県",
+    "code": "08",
+    "slug": "ibaraki",
+    "price_per_sqm": 33613,
+    "price_per_tsubo": 11.1,
+    "change_rate": 0.7,
+    "data_count": 521,
+    "rank": 42
+  },
+  {
+    "name": "宮崎県",
+    "code": "45",
+    "slug": "miyazaki",
+    "price_per_sqm": 32993,
+    "price_per_tsubo": 10.9,
+    "change_rate": 0.3,
+    "data_count": 148,
+    "rank": 43
+  },
+  {
+    "name": "鳥取県",
+    "code": "31",
+    "slug": "tottori",
+    "price_per_sqm": 29331,
+    "price_per_tsubo": 9.7,
+    "change_rate": -0.1,
+    "data_count": 86,
+    "rank": 44
+  },
+  {
+    "name": "山形県",
+    "code": "06",
+    "slug": "yamagata",
+    "price_per_sqm": 27802,
+    "price_per_tsubo": 9.2,
+    "change_rate": 0.2,
+    "data_count": 124,
+    "rank": 45
+  },
+  {
+    "name": "青森県",
+    "code": "02",
+    "slug": "aomori",
+    "price_per_sqm": 24499,
+    "price_per_tsubo": 8.1,
+    "change_rate": 0.2,
+    "data_count": 177,
+    "rank": 46
+  },
+  {
+    "name": "秋田県",
+    "code": "05",
+    "slug": "akita",
+    "price_per_sqm": 22535,
+    "price_per_tsubo": 7.4,
+    "change_rate": 0.5,
+    "data_count": 130,
+    "rank": 47
+  }
+]
