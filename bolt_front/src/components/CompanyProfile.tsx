@@ -69,7 +69,15 @@ const CompanyProfile: React.FC = () => {
                 </ul>
               </div>
             </div>
-            
+
+            {/* 顧問税理士 */}
+            <div className="pb-2">
+              <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-2 sm:gap-4">
+                <h3 className="text-sm font-semibold text-gray-600">顧問税理士</h3>
+                <p className="text-base text-gray-900">青山税理士法人</p>
+              </div>
+            </div>
+
             {/* 所属加盟団体 */}
             <div className="pb-2">
               <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-2 sm:gap-4">
