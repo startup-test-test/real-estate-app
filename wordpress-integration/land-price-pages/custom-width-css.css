@@ -1,0 +1,169 @@
+/*
+=================================================================
+地価情報ページ - ヘッダー横幅に合わせたカスタムCSS
+=================================================================
+
+使用方法:
+1. WordPress管理画面 → 外観 → カスタマイズ
+2. 追加CSS セクションを開く
+3. このCSSをコピー&ペースト
+4. 公開ボタンをクリック
+
+または:
+
+固定ページの編集画面で、コードエディターに切り替えて
+ページの一番下に <style>タグで囲んで追加
+*/
+
+/* ===================================================
+   ヘッダー横幅に合わせたコンテナ調整
+   =================================================== */
+
+/* ページID 1726（地価情報トップページ）のみに適用 */
+.page-id-1726 .container,
+.page-id-1726 main.container {
+    max-width: var(--swl-container, 1200px) !important;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--swl-container-padding, 40px);
+    padding-right: var(--swl-container-padding, 40px);
+}
+
+/* SWELLのデフォルトコンテナに合わせる */
+.page-id-1726 .l-container,
+.page-id-1726 .l-article,
+.page-id-1726 .l-article__body {
+    max-width: var(--swl-container, 1200px) !important;
+}
+
+/* ヘッダーと同じ横幅にする（SWELLのヘッダー横幅変数を使用） */
+.page-id-1726 .header {
+    max-width: 100% !important;
+    width: 100%;
+}
+
+.page-id-1726 .header .container {
+    max-width: var(--swl-container, 1200px) !important;
+    padding-left: var(--swl-container-padding, 40px);
+    padding-right: var(--swl-container-padding, 40px);
+}
+
+/* サマリーカードもヘッダー横幅に合わせる */
+.page-id-1726 .summary-section {
+    max-width: 100%;
+}
+
+.page-id-1726 .summary-grid {
+    max-width: var(--swl-container, 1200px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--swl-container-padding, 40px);
+    padding-right: var(--swl-container-padding, 40px);
+}
+
+/* ランキング表・グラフ・地図もヘッダー横幅に統一 */
+.page-id-1726 .ranking-section,
+.page-id-1726 .chart-section,
+.page-id-1726 .map-section,
+.page-id-1726 .prefecture-section {
+    max-width: 100%;
+}
+
+/* 各セクションの内部コンテンツ */
+.page-id-1726 .ranking-table,
+.page-id-1726 .chart-container,
+.page-id-1726 #map,
+.page-id-1726 .prefecture-grid {
+    max-width: var(--swl-container, 1200px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===================================================
+   レスポンシブ対応
+   =================================================== */
+
+/* タブレット（1200px以下） */
+@media (max-width: 1200px) {
+    .page-id-1726 .container,
+    .page-id-1726 main.container {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .page-id-1726 .summary-grid {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}
+
+/* スマホ（768px以下） */
+@media (max-width: 768px) {
+    .page-id-1726 .container,
+    .page-id-1726 main.container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .page-id-1726 .summary-grid {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .page-id-1726 .header .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+/* ===================================================
+   追加調整（オプション）
+   =================================================== */
+
+/* ヘッダーとコンテンツの余白を統一 */
+.page-id-1726 section {
+    padding-left: var(--swl-container-padding, 40px);
+    padding-right: var(--swl-container-padding, 40px);
+}
+
+/* フッターもヘッダー横幅に合わせる */
+.page-id-1726 .footer .container {
+    max-width: var(--swl-container, 1200px) !important;
+    padding-left: var(--swl-container-padding, 40px);
+    padding-right: var(--swl-container-padding, 40px);
+}
+
+/* ===================================================
+   SWELLテーマ固有のクラスに対応
+   =================================================== */
+
+/* SWELLの1カラムレイアウト調整 */
+.page-id-1726.l-oneCol .l-container {
+    max-width: var(--swl-container, 1200px) !important;
+}
+
+/* SWELLのコンテンツ幅設定を上書き */
+.page-id-1726 .post__body,
+.page-id-1726 .l-article__body {
+    max-width: 100% !important;
+}
+
+/* SWELLのブロック幅設定 */
+.page-id-1726 .wp-block {
+    max-width: 100% !important;
+}
+
+/* ===================================================
+   ヘッダー横幅を広げたい場合（オプション）
+   =================================================== */
+
+/*
+もしヘッダー横幅を広げたい場合は、以下をコメント解除して調整してください
+
+.page-id-1726 .container,
+.page-id-1726 main.container,
+.page-id-1726 .header .container {
+    max-width: 1400px !important;
+}
+*/

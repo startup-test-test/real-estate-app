@@ -933,6 +933,59 @@ const LandingPage: React.FC = () => {
             <div className="space-y-0">
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
+                    プレス<br />リリース
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2024.10.14</p>
+                  <div>
+                    <span className="text-gray-900 text-base">
+                      不動産投資家のためのAI市場分析×シミュレーションの『大家DX』を
+                      <a
+                        href="https://prtimes.jp/main/html/rd/p/000000002.000169778.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        PR TIMES
+                      </a>
+                      にプレスリリースしました。
+                    </span>
+                    <span className="text-gray-900 text-base">
+                      <a
+                        href="https://www.nikkei.com/compass/content/PRTKDB000000002_000169778/preview"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        日本経済新聞
+                      </a>
+                      ・
+                      <a
+                        href="https://omiya.keizai.biz/release/477943/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        大宮経済新聞
+                      </a>
+                      ・
+                      <a
+                        href="https://saitama.publishing.3rd-in.co.jp/article/2aa1cd40-a89a-11f0-88f0-9ca3ba0a67df#gsc.tab=0"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        saitamaDays
+                      </a>
+                      に掲載されました。
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
                     リリース
                   </span>
