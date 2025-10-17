@@ -18,7 +18,7 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = '不動産投資家のためのAI市場分析×シミュレーション｜大家DX';
+    document.title = '賃貸経営のためのAI市場分析×シミュレーション｜大家DX';
   }, []);
 
   const personas = [
@@ -134,7 +134,7 @@ const LandingPage: React.FC = () => {
             {/* 左側：メインコピー */}
             <div className="text-left">
               <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6" style={{ lineHeight: '1.5' }}>
-                <span className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl block mb-2" style={{ fontSize: '90%' }}>不動産投資家のための</span>
+                <span className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl block mb-2" style={{ fontSize: '90%' }}>賃貸経営のための</span>
                 <span className="block text-4xl sm:text-4xl md:text-5xl lg:text-6xl" style={{ lineHeight: '1.1' }}>AI市場分析×<br />シミュレーション</span>
               </h1>
               <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-4 sm:mb-6" style={{paddingLeft: '0', paddingRight: '0'}}>
@@ -954,7 +954,7 @@ const LandingPage: React.FC = () => {
                   <p className="text-sm text-gray-500 mb-1">2024.10.14</p>
                   <div>
                     <span className="text-gray-900 text-base">
-                      不動産投資家のためのAI市場分析×シミュレーションの『大家DX』を
+                      賃貸経営のためのAI市場分析×シミュレーションの『大家DX』を
                       <a
                         href="https://prtimes.jp/main/html/rd/p/000000002.000169778.html"
                         target="_blank"
