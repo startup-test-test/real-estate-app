@@ -1096,7 +1096,7 @@ const MarketAnalysis: React.FC = () => {
                   AI市場分析を実行中
                 </h3>
                 <p className="text-gray-600">
-                  1分〜3分ぐらいかかる場合もあります
+                  数分〜10分ぐらいかかる場合もあります
                 </p>
 
                 {/* プログレスバー */}
