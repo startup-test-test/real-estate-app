@@ -34,9 +34,23 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* 右側：コピーライト */}
-          <div className="text-xs text-white/50">
-            <p>© {currentYear} 大家DX. All rights reserved.</p>
+          {/* 右側：法的文書リンクとコピーライト */}
+          <div className="text-xs space-y-2">
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              <Link to="/terms" className="text-white/70 hover:text-white transition-colors">
+                利用規約
+              </Link>
+              <Link to="/privacy" className="text-white/70 hover:text-white transition-colors">
+                プライバシーポリシー
+              </Link>
+              <Link to="/tokushoho" className="text-white/70 hover:text-white transition-colors">
+                特定商取引法
+              </Link>
+              <Link to="/disclaimer" className="text-white/70 hover:text-white transition-colors">
+                免責事項
+              </Link>
+            </div>
+            <p className="text-white/50">© {currentYear} 大家DX. All rights reserved.</p>
           </div>
         </div>
       </div>

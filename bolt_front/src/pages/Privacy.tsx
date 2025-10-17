@@ -77,6 +77,24 @@ const Privacy: React.FC = () => {
             </section>
 
             <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">第3条の2（第三者提供データの利用）</h2>
+              <p className="text-gray-700 mb-4">
+                本サービスは、国土交通省が提供する不動産情報ライブラリのAPI機能を使用して、不動産取引価格情報、地価公示、都道府県地価調査等のデータを利用しています。
+                これらのデータの取り扱いについては、以下の点にご注意ください。
+              </p>
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
+                <h3 className="font-bold text-blue-900 mb-2">【データ出典の詳細】</h3>
+                <ul className="list-disc list-inside space-y-2 text-sm text-blue-900">
+                  <li>本サービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。</li>
+                  <li>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a></li>
+                  <li>「不動産取引価格情報」「地価公示」「都道府県地価調査」（国土交通省 不動産情報ライブラリ）をもとに株式会社StartupMarketingが編集・加工。</li>
+                  <li>本アプリケーションは株式会社StartupMarketingが開発・運営しており、国土交通省が運営するものではありません。</li>
+                  <li>これらのデータは統計的な分析・参考情報の提供に利用され、個人を特定する目的では使用されません。</li>
+                </ul>
+              </div>
+            </section>
+
+            <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">第4条（利用目的の変更）</h2>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
                 <li>当社は、利用目的が変更前と関連性を有すると合理的に認められる場合に限り、個人情報の利用目的を変更するものとします。</li>

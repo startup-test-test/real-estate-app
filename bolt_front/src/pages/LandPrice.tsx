@@ -599,7 +599,7 @@ export const LandPrice: React.FC = () => {
               </table>
             </div>
             <div className="text-xs text-gray-500 mt-2">
-              過去データに基づく統計で将来の結果を保証しません。出典：国土交通省 不動産情報ライブラリ。
+              過去データに基づく統計で将来の結果を保証しません。
               <div className="mt-2 text-xs text-gray-600">
                 <p>📊 <strong>分析手法の詳細</strong> / データソース: 国土交通省公示地価・都道府県地価調査 / 地点種別: 住宅地・商業地・工業地等 / 更新頻度: 年1回（公示地価3月、地価調査9月） / 表示範囲: 選択地域内の主要地点</p>
               </div>
@@ -627,13 +627,24 @@ export const LandPrice: React.FC = () => {
               renderTrendChart()
             )}
             <div className="text-xs text-gray-500 mt-2">
-              過去データに基づく統計で将来の結果を保証しません。出典：国土交通省 不動産情報ライブラリ。
+              過去データに基づく統計で将来の結果を保証しません。
               <div className="mt-2 text-xs text-gray-600">
                 <p>📊 <strong>分析手法の詳細</strong> / データソース: 国土交通省公示地価・都道府県地価調査 / 推移期間: 直近4年分の年次データ / 価格単位: 円/㎡（平米単価） / グラフ表示: 最大10地点まで</p>
               </div>
             </div>
           </div>
         )}
+
+        {/* フッター表記（利用規約準拠） */}
+        <div className="bg-gray-50 border-t p-4 mt-8">
+          <div className="text-xs text-gray-600 space-y-2">
+            <p>このサービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。</p>
+            <p>出典:<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ（https://www.reinfolib.mlit.go.jp/）</a></p>
+            <p>「地価公示」「都道府県地価調査」（国土交通省 不動産情報ライブラリ）をもとに株式会社StartupMarketingが編集・加工。</p>
+            <p>本アプリケーションは株式会社StartupMarketingが開発・運営しており、国土交通省が運営するものではありません。</p>
+            <p>本サービスは宅地建物取引業務の代替ではありません。実務は宅地建物取引士・税理士等にご相談ください。</p>
+          </div>
+        </div>
         </div>
       </div>
 
