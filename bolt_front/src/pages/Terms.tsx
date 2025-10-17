@@ -132,6 +132,16 @@ const Terms: React.FC = () => {
                 <li>当社は、第三者提供データの正確性、完全性、最新性、有用性等について、いかなる保証も行いません。</li>
                 <li>利用者は、第三者提供データを本サービスの利用目的の範囲内でのみ利用するものとし、データ提供者が定める利用条件がある場合には、これに従うものとします。</li>
               </ol>
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
+                <h3 className="font-bold text-blue-900 mb-2">【データ出典の詳細】</h3>
+                <ul className="list-disc list-inside space-y-2 text-sm text-blue-900">
+                  <li>本サービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。</li>
+                  <li>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a></li>
+                  <li>「不動産取引価格情報」「地価公示」「都道府県地価調査」（国土交通省 不動産情報ライブラリ）をもとに株式会社StartupMarketingが編集・加工。</li>
+                  <li>本アプリケーションは株式会社StartupMarketingが開発・運営しており、国土交通省が運営するものではありません。</li>
+                  <li>本サービスは宅地建物取引業務の代替ではありません。実務は宅地建物取引士・税理士等にご相談ください。</li>
+                </ul>
+              </div>
             </section>
 
             <section className="mb-8">

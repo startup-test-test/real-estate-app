@@ -229,7 +229,7 @@ const LandingPage: React.FC = () => {
                     取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を3分で取得。
                   </p>
                   <p className="text-xs text-gray-500">
-                    ※国土交通省 不動産情報ライブラリのデータを使用
+                    ※「不動産取引価格情報」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
                   </p>
                 </div>
 
@@ -246,7 +246,7 @@ const LandingPage: React.FC = () => {
                     取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を3分で取得。
                   </p>
                   <p className="text-xs lg:text-sm text-gray-500">
-                    ※国土交通省 不動産情報ライブラリのデータを使用
+                    ※「不動産取引価格情報」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
                   </p>
                 </div>
               </div>
@@ -355,7 +355,7 @@ const LandingPage: React.FC = () => {
                     エリアの資産価値推移を把握し、投資判断の精度を向上。
                   </p>
                   <p className="text-xs text-gray-500">
-                    ※国土交通省 不動産情報ライブラリのデータを使用
+                    ※「地価公示」「都道府県地価調査」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
                   </p>
                 </div>
 
@@ -372,7 +372,7 @@ const LandingPage: React.FC = () => {
                     エリアの資産価値推移を把握し、投資判断の精度を向上。
                   </p>
                   <p className="text-xs lg:text-sm text-gray-500">
-                    ※国土交通省 不動産情報ライブラリのデータを使用
+                    ※「地価公示」「都道府県地価調査」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
                   </p>
                 </div>
               </div>
@@ -1028,6 +1028,17 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* データ出典セクション */}
+      <section className="py-4 sm:py-6 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-xs text-gray-600">
+            <p>
+              【データ出典】「不動産取引価格情報」「地価公示」「都道府県地価調査」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* フッター */}
       <footer id="contact" className="bg-gray-100 text-gray-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1125,6 +1136,9 @@ const LandingPage: React.FC = () => {
                   <a href="/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     特定商取引法
                   </a>
+                  <a href="/disclaimer" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    免責事項
+                  </a>
                 </div>
                 <div className="text-xs text-gray-500">
                   © 2025 大家DX. All rights reserved.
@@ -1146,6 +1160,9 @@ const LandingPage: React.FC = () => {
                     </a>
                     <a href="/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                       特定商取引法
+                    </a>
+                    <a href="/disclaimer" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                      免責事項
                     </a>
                   </div>
                 </div>

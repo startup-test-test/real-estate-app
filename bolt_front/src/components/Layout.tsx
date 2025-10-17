@@ -284,6 +284,14 @@ const Layout: React.FC = () => {
                 特定商取引法に基づく表記
               </a>
               <a
+                href="/disclaimer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                免責事項
+              </a>
+              <a
                 href="https://startup-marketing.co.jp/"
                 target="_blank"
                 rel="noopener noreferrer"

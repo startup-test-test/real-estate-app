@@ -22,6 +22,7 @@ import PremiumPlan from './pages/PremiumPlan';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Tokushoho from './pages/Tokushoho';
+import Disclaimer from './pages/Disclaimer';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -70,6 +71,7 @@ function App() {
           <Route path="/tokushoho" element={<Tokushoho />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
           {/* 保護されたページ（Layoutを共有） */}
           <Route element={
             <ProtectedRoute>

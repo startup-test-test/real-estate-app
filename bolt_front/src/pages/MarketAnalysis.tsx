@@ -1392,6 +1392,7 @@ const MarketAnalysis: React.FC = () => {
                 <p>• <strong>使いすぎ注意:</strong> 投資判断は必ず専門家（宅建士・税理士等）にご相談ください</p>
                 <p>• <strong>データ限界:</strong> サンプル数が少ない場合は参考程度にとどめてください</p>
               </div>
+              <p className="mt-2 text-blue-700">【データ出典】このサービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a> / 「不動産取引価格情報」（国土交通省 不動産情報ライブラリ）をもとに株式会社StartupMarketingが編集・加工。本アプリケーションは株式会社StartupMarketingが開発・運営しており、国土交通省が運営するものではありません。</p>
             </div>
           </div>
         )}
@@ -2377,7 +2378,7 @@ const MarketAnalysis: React.FC = () => {
                     />
                   )}
                   <div className="text-xs text-gray-500 mt-2">
-                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
+                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。
                     <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                     <div className="mt-2 text-xs text-gray-600">
                       <p>📊 <strong>分析手法の詳細</strong> / 使用手法: K-meansクラスタリング、線形回帰、IQR外れ値除外 / 特徴量: 延床面積・築年数・駅距離・所在地 / 除外条件: IQR±1.5倍の範囲外データ / 更新頻度: 四半期ごと（3ヶ月に1回）</p>
@@ -2784,7 +2785,7 @@ const MarketAnalysis: React.FC = () => {
                     })()
                   )}
                   <div className="text-xs text-gray-500 mt-2">
-                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
+                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。
                     <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                     <div className="mt-2 text-xs text-gray-600">
                       <p>📊 <strong>分析手法の詳細</strong> / 使用手法: K-meansクラスタリング、線形回帰、IQR外れ値除外 / 特徴量: 延床面積・築年数・駅距離・所在地 / 除外条件: IQR±1.5倍の範囲外データ / 更新頻度: 四半期ごと（3ヶ月に1回）</p>
@@ -3997,7 +3998,7 @@ const MarketAnalysis: React.FC = () => {
                     })()
                   )}
                   <div className="text-xs text-gray-500 mt-2">
-                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。出典：国土交通省 不動産情報ライブラリ。
+                    過去データに基づく統計で将来の結果を保証しません。対象期間：2023/01〜2025/12。
                     <br />※統計的な外れ値（極端に高額・低額な物件）は自動的に除外して分析しています
                     <div className="mt-2 text-xs text-gray-600">
                       <p>📊 <strong>分析手法の詳細</strong> / 使用手法: K-meansクラスタリング、線形回帰、IQR外れ値除外 / 特徴量: 延床面積・築年数・駅距離・所在地 / 除外条件: IQR±1.5倍の範囲外データ / 更新頻度: 四半期ごと（3ヶ月に1回）</p>
@@ -4232,8 +4233,8 @@ const MarketAnalysis: React.FC = () => {
           <div className="text-xs text-gray-600 space-y-2">
             <p>このサービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。</p>
             <p>出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ（https://www.reinfolib.mlit.go.jp/）</a></p>
-            <p>「不動産取引価格情報」（国土交通省）をもとに当サービス運営者が加工・集計。</p>
-            <p>本アプリケーションは当サービス運営者が開発・運営しており、国土交通省が運営するものではありません。</p>
+            <p>「不動産取引価格情報」（国土交通省 不動産情報ライブラリ）をもとに株式会社StartupMarketingが編集・加工。</p>
+            <p>本アプリケーションは株式会社StartupMarketingが開発・運営しており、国土交通省が運営するものではありません。</p>
             <p>本サービスは宅地建物取引業務の代替ではありません。実務は宅地建物取引士・税理士等にご相談ください。</p>
           </div>
         </div>
