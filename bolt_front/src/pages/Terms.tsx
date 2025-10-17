@@ -46,6 +46,16 @@ const Terms: React.FC = () => {
                 本サービスは教育・参考目的のツールであり、投資推奨を行うものではありません。
                 サービスの詳細は、当社ウェブサイトに掲載するものとします。
               </p>
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mt-4">
+                <h3 className="font-bold text-amber-900 mb-2">【重要な免責事項】</h3>
+                <ul className="list-disc list-inside space-y-2 text-sm text-amber-900">
+                  <li>本サービスは不動産投資の教育・参考目的のシミュレーションツールです。</li>
+                  <li>提供する情報・分析結果は投資判断の参考情報であり、投資の成功を保証するものではありません。</li>
+                  <li>実際の投資判断は、必ずご自身の責任において行ってください。</li>
+                  <li>当社は金融商品取引業者ではなく、金融商品取引法に基づく投資助言・代理業の登録を受けておりません。個別の投資助言は行っておりません。</li>
+                  <li>不動産投資には元本割れのリスクがあり、想定通りの収益が得られない可能性があります。</li>
+                </ul>
+              </div>
             </section>
 
             <section className="mb-8">
