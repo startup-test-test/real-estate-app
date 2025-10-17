@@ -502,7 +502,7 @@ const LandingPage: React.FC = () => {
               成長に合わせた料金プラン
             </h2>
             <p className="text-lg sm:text-2xl text-gray-600 leading-relaxed">
-              初心者から大規模投資家まで。投資規模に応じて最適なプランを選択できます。
+              初心者から大規模経営者まで。経営規模に応じて最適なプランを選択できます。
             </p>
           </div>
           
@@ -551,7 +551,7 @@ const LandingPage: React.FC = () => {
                         <span className="text-4xl font-bold text-gray-400">¥9,800</span>
                         <span className="text-lg text-gray-400 ml-1">/月</span>
                       </div>
-                      <p className="text-sm text-gray-500">法人・プロ投資家向け</p>
+                      <p className="text-sm text-gray-500">法人・プロ経営者向け</p>
                     </div>
                   </th>
                 </tr>
@@ -682,7 +682,7 @@ const LandingPage: React.FC = () => {
                 <span className="text-3xl font-bold text-gray-400">¥9,800</span>
                 <span className="text-sm text-gray-400 ml-1">/月</span>
               </div>
-              <p className="text-xs text-gray-500 mb-4">法人・プロ投資家向け</p>
+              <p className="text-xs text-gray-500 mb-4">法人・プロ経営者向け</p>
               <div className="space-y-2 text-lg">
                 <div className="flex justify-between">
                   <span className="text-gray-500">AI市場分析</span>
