@@ -742,7 +742,6 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                   無料アカウント作成
-                  <span className="block text-sm text-gray-500 mt-2 font-normal">10秒で完了</span>
                 </h3>
                 <ul className="space-y-3 text-gray-700 text-left inline-block">
                   <li className="flex items-start">
@@ -772,7 +771,6 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                   物件住所を入力
-                  <span className="block text-sm text-gray-500 mt-2 font-normal">30秒で入力</span>
                 </h3>
                 <ul className="space-y-3 text-gray-700 text-left inline-block">
                   <li className="flex items-start">
@@ -802,7 +800,6 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                   AI市場分析の結果を確認
-                  <span className="block text-sm text-gray-500 mt-2 font-normal">20秒で分析完了</span>
                 </h3>
                 <ul className="space-y-3 text-gray-700 text-left inline-block">
                   <li className="flex items-start">
