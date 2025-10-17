@@ -66,6 +66,10 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/auth/reset-password" element={<ResetPasswordConfirm />} />
+          {/* 利用規約関連ページ（ログイン不要） */}
+          <Route path="/tokushoho" element={<Tokushoho />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           {/* 保護されたページ（Layoutを共有） */}
           <Route element={
             <ProtectedRoute>
@@ -82,9 +86,6 @@ function App() {
             } />
             <Route path="/simulator" element={<Simulator />} />
             <Route path="/payment-result" element={<PaymentResult />} />
-            <Route path="/tokushoho" element={<Tokushoho />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
             {/* AI機能のルート */}
             <Route path="/market-analysis" element={<MarketAnalysis />} />
             <Route path="/land-prices" element={<LandPrice />} />

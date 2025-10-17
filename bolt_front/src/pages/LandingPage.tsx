@@ -1103,11 +1103,14 @@ const LandingPage: React.FC = () => {
                   <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     運営会社
                   </a>
-                  <a href="/terms" className="text-gray-500 hover:text-gray-700">
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     利用規約
                   </a>
-                  <a href="/privacy" className="text-gray-500 hover:text-gray-700">
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     個人情報保護方針
+                  </a>
+                  <a href="/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    特定商取引法
                   </a>
                 </div>
                 <div className="text-xs text-gray-500">
@@ -1115,18 +1118,23 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
               
-              {/* SP版: 左寄せ */}
-              <div className="md:hidden flex flex-col items-start">
-                <div className="flex items-center space-x-4 text-xs mb-1">
-                  <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
-                    運営会社
-                  </a>
-                  <a href="/terms" className="text-gray-500 hover:text-gray-700">
-                    利用規約
-                  </a>
-                  <a href="/privacy" className="text-gray-500 hover:text-gray-700">
-                    個人情報保護方針
-                  </a>
+              {/* SP版: 左寄せ - 横スクロール対応 */}
+              <div className="md:hidden flex flex-col items-start w-full">
+                <div className="overflow-x-auto w-full mb-1">
+                  <div className="flex items-center space-x-4 text-xs whitespace-nowrap pb-1">
+                    <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                      運営会社
+                    </a>
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                      利用規約
+                    </a>
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                      個人情報保護方針
+                    </a>
+                    <a href="/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                      特定商取引法
+                    </a>
+                  </div>
                 </div>
                 <div className="text-xs text-gray-500">
                   © 2025 大家DX. All rights reserved.
