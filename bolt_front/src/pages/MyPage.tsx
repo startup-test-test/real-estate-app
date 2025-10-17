@@ -707,7 +707,7 @@ const MyPage: React.FC = () => {
       icon: Calculator,
       color: "bg-slate-700",
       description:
-        "60秒で投資判断の全てが分かる。売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
+        "売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
       actions: [
         {
           name: "収益シミュレーター",
