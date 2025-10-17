@@ -332,7 +332,7 @@ const PremiumPlan: React.FC = () => {
                       <span className="text-4xl font-bold text-gray-400">¥9,800</span>
                       <span className="text-lg text-gray-400 ml-1">/月</span>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">法人・プロ投資家向け</p>
+                    <p className="text-sm text-gray-500 mb-4">法人・プロ経営者向け</p>
                     <button
                       className="w-full px-6 py-3 bg-gray-200 text-gray-500 rounded-lg font-medium cursor-not-allowed"
                       disabled
