@@ -65,6 +65,15 @@ const Privacy: React.FC = () => {
                 <li>有料サービスにおいて、利用者に利用料金を請求するため</li>
                 <li>上記の利用目的に付随する目的</li>
               </ol>
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mt-4">
+                <h3 className="font-bold text-amber-900 mb-2">【本サービスの性質について】</h3>
+                <p className="text-sm text-amber-900">
+                  本サービスは、不動産投資の教育・参考目的のシミュレーションツールです。
+                  当社は金融商品取引法に基づく投資助言・代理業の登録を受けておらず、個別の投資助言は行っておりません。
+                  本サービスで提供する情報は投資判断の参考情報であり、投資の成功を保証するものではありません。
+                  実際の投資判断は、必ず利用者ご自身の責任において行っていただくようお願いいたします。
+                </p>
+              </div>
             </section>
 
             <section className="mb-8">
