@@ -1,0 +1,878 @@
+<!-- 全国平均地価サマリーセクション -->
+<!-- データソース: 国土交通省 不動産情報ライブラリAPI -->
+<!-- 最終更新: 2025-10-16 06:30:05 -->
+<!-- データ件数: 17,899件 -->
+<section style="margin-bottom: 60px;">
+<h2 style="margin-bottom: 30px;">📊 日本全国2025年［令和7年］公示地価</h2>
+<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+<div style="text-align: center;">
+<p style="font-size: 20px; margin: 0 0 8px 0; color: #000000; font-weight: 700;">平均地価</p>
+<p style="font-size: 48px; font-weight: 700; margin: 0; color: #111827;">136,982<span style="font-size: 24px; font-weight: 400;">円/㎡</span></p>
+</div>
+<div style="text-align: center;">
+<p style="font-size: 20px; margin: 0 0 8px 0; color: #000000; font-weight: 700;">変動率</p>
+<p style="font-size: 48px; font-weight: 700; margin: 0; color: #111827;">↑+2.1<span style="font-size: 24px; font-weight: 400;">%</span></p>
+</div>
+<div style="text-align: center;">
+<p style="font-size: 20px; margin: 0 0 8px 0; color: #000000; font-weight: 700;">坪単価</p>
+<p style="font-size: 48px; font-weight: 700; margin: 0; color: #111827;">453,000<span style="font-size: 24px; font-weight: 400;">円/坪</span></p>
+</div>
+</div>
+</section>
+
+
+<!-- 地図選択セクション -->
+<section style="margin-bottom: 30px;">
+<h2 style="margin-bottom: 30px;">📍 都道府県別の地価を地図から選択</h2>
+<div style="display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; max-width: 1000px; margin: 0 auto;"><button onclick="goToPrefecture('/land-price/okinawa/')" data-price="18.5万円/㎡" style="grid-column: 1 / 2; grid-row: 9; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">沖縄</button><button onclick="goToPrefecture('/land-price/nagasaki/')" data-price="12.8万円/㎡" style="grid-column: 1 / 2; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">長崎</button><button onclick="goToPrefecture('/land-price/saga/')" data-price="11.5万円/㎡" style="grid-column: 2 / 3; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">佐賀</button><button onclick="goToPrefecture('/land-price/kumamoto/')" data-price="13.9万円/㎡" style="grid-column: 2 / 3; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">熊本</button><button onclick="goToPrefecture('/land-price/kagoshima/')" data-price="12.2万円/㎡" style="grid-column: 2 / 3; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">鹿児島</button><button onclick="goToPrefecture('/land-price/fukuoka/')" data-price="25.4万円/㎡" style="grid-column: 3 / 4; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">福岡</button><button onclick="goToPrefecture('/land-price/oita/')" data-price="12.6万円/㎡" style="grid-column: 4 / 5; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">大分</button><button onclick="goToPrefecture('/land-price/miyazaki/')" data-price="11.4万円/㎡" style="grid-column: 3 / 4; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">宮崎</button><button onclick="goToPrefecture('/land-price/shimane/')" data-price="9.5万円/㎡" style="grid-column: 4 / 5; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">島根</button><button onclick="goToPrefecture('/land-price/tottori/')" data-price="10.8万円/㎡" style="grid-column: 5 / 6; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">鳥取</button><button onclick="goToPrefecture('/land-price/yamaguchi/')" data-price="13.6万円/㎡" style="grid-column: 4 / 5; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">山口</button><button onclick="goToPrefecture('/land-price/hiroshima/')" data-price="19.7万円/㎡" style="grid-column: 5 / 6; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">広島</button><button onclick="goToPrefecture('/land-price/okayama/')" data-price="15.3万円/㎡" style="grid-column: 6 / 7; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">岡山</button><button onclick="goToPrefecture('/land-price/ehime/')" data-price="12.7万円/㎡" style="grid-column: 5 / 6; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">愛媛</button><button onclick="goToPrefecture('/land-price/kagawa/')" data-price="14.2万円/㎡" style="grid-column: 6 / 7; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">香川</button><button onclick="goToPrefecture('/land-price/kochi/')" data-price="10.3万円/㎡" style="grid-column: 6 / 7; grid-row: 9; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">高知</button><button onclick="goToPrefecture('/land-price/tokushima/')" data-price="11.9万円/㎡" style="grid-column: 7 / 8; grid-row: 9; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">徳島</button><button onclick="goToPrefecture('/land-price/kyoto/')" data-price="29.6万円/㎡" style="grid-column: 7 / 8; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">京都</button><button onclick="goToPrefecture('/land-price/osaka/')" data-price="52.8万円/㎡" style="grid-column: 7 / 8; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">大阪</button><button onclick="goToPrefecture('/land-price/hyogo/')" data-price="24.3万円/㎡" style="grid-column: 6 / 7; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">兵庫</button><button onclick="goToPrefecture('/land-price/fukui/')" data-price="11.2万円/㎡" style="grid-column: 7 / 8; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">福井</button><button onclick="goToPrefecture('/land-price/shiga/')" data-price="16.2万円/㎡" style="grid-column: 7 / 8; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">滋賀</button><button onclick="goToPrefecture('/land-price/nara/')" data-price="17.9万円/㎡" style="grid-column: 8 / 9; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">奈良</button><button onclick="goToPrefecture('/land-price/wakayama/')" data-price="12.4万円/㎡" style="grid-column: 7 / 8; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">和歌山</button><button onclick="goToPrefecture('/land-price/mie/')" data-price="15.7万円/㎡" style="grid-column: 9 / 10; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">三重</button><button onclick="goToPrefecture('/land-price/ishikawa/')" data-price="14.7万円/㎡" style="grid-column: 8 / 9; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">石川</button><button onclick="goToPrefecture('/land-price/toyama/')" data-price="13.4万円/㎡" style="grid-column: 9 / 10; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">富山</button><button onclick="goToPrefecture('/land-price/gifu/')" data-price="12.8万円/㎡" style="grid-column: 9 / 10; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">岐阜</button><button onclick="goToPrefecture('/land-price/nagano/')" data-price="13.6万円/㎡" style="grid-column: 10 / 11; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">長野</button><button onclick="goToPrefecture('/land-price/aichi/')" data-price="38.4万円/㎡" style="grid-column: 8 / 9; grid-row: 8; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">愛知</button><button onclick="goToPrefecture('/land-price/shizuoka/')" data-price="19.3万円/㎡" style="grid-column: 10 / 11; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">静岡</button><button onclick="goToPrefecture('/land-price/yamanashi/')" data-price="14.5万円/㎡" style="grid-column: 11 / 12; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">山梨</button><button onclick="goToPrefecture('/land-price/niigata/')" data-price="11.9万円/㎡" style="grid-column: 11 / 12; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">新潟</button><button onclick="goToPrefecture('/land-price/gunma/')" data-price="13.8万円/㎡" style="grid-column: 12 / 13; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">群馬</button><button onclick="goToPrefecture('/land-price/tochigi/')" data-price="14.2万円/㎡" style="grid-column: 13 / 14; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">栃木</button><button onclick="goToPrefecture('/land-price/saitama/')" data-price="32.5万円/㎡" style="grid-column: 12 / 13; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">埼玉</button><button onclick="goToPrefecture('/land-price/kanagawa/')" data-price="45.8万円/㎡" style="grid-column: 12 / 13; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">神奈川</button><button onclick="goToPrefecture('/land-price/ibaraki/')" data-price="15.6万円/㎡" style="grid-column: 14 / 15; grid-row: 6; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">茨城</button><button onclick="goToPrefecture('/land-price/tokyo/')" data-price="130.2万円/㎡" style="grid-column: 13 / 14; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">東京</button><button onclick="goToPrefecture('/land-price/chiba/')" data-price="28.7万円/㎡" style="grid-column: 14 / 15; grid-row: 7; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">千葉</button><button onclick="goToPrefecture('/land-price/akita/')" data-price="9.7万円/㎡" style="grid-column: 12 / 13; grid-row: 3; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">秋田</button><button onclick="goToPrefecture('/land-price/yamagata/')" data-price="10.4万円/㎡" style="grid-column: 12 / 13; grid-row: 4; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">山形</button><button onclick="goToPrefecture('/land-price/miyagi/')" data-price="18.2万円/㎡" style="grid-column: 13 / 14; grid-row: 4; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">宮城</button><button onclick="goToPrefecture('/land-price/fukushima/')" data-price="12.1万円/㎡" style="grid-column: 14 / 15; grid-row: 5; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">福島</button><button onclick="goToPrefecture('/land-price/aomori/')" data-price="12.5万円/㎡" style="grid-column: 13 / 14; grid-row: 2; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">青森</button><button onclick="goToPrefecture('/land-price/iwate/')" data-price="11.8万円/㎡" style="grid-column: 14 / 15; grid-row: 3; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">岩手</button><button onclick="goToPrefecture('/land-price/hokkaido/')" data-price="25.3万円/㎡" style="grid-column: 13 / 15; grid-row: 1; background: #4a5568; color: white; border: none; padding: 6px 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; white-space: nowrap; min-height: 30px; display: flex; align-items: center; justify-content: center;">北海道</button></div>
+</section>
+<p><script>function goToPrefecture(url) { event.target.style.transform = 'scale(0.95)'; setTimeout(function() { window.location.href = url; }, 200); }</script></p>
+<!-- 都道府県公示地価ランキングセクション -->
+<section style="margin-bottom: 60px;">
+<h2>📊 都道府県の公示地価ランキング（2025年最新）</h2>
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; background: white; font-size: 14px;">
+<thead>
+<tr style="background: #f9fafb; border-bottom: 2px solid #667eea;">
+<th style="padding: 16px 12px; text-align: center; font-weight: 600; color: white; border-bottom: 2px solid #667eea;">順位</th>
+<th style="padding: 16px 12px; text-align: left; font-weight: 600; color: white; border-bottom: 2px solid #667eea;">都道府県</th>
+<th style="padding: 16px 12px; text-align: right; font-weight: 600; color: white; border-bottom: 2px solid #667eea;">平均地価（円/㎡）</th>
+<th style="padding: 16px 12px; text-align: right; font-weight: 600; color: white; border-bottom: 2px solid #667eea;">平均坪単価（万円/坪）</th>
+<th style="padding: 16px 12px; text-align: center; font-weight: 600; color: white; border-bottom: 2px solid #667eea;">前年比</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;"><span style="font-size: 18px;">🥇</span> 1位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/tokyo/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">東京都</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">475,799</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">157.3</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +4.0%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;"><span style="font-size: 18px;">🥈</span> 2位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/kanagawa/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">神奈川県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">202,818</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">67.0</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +2.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;"><span style="font-size: 18px;">🥉</span> 3位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/kyoto/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">京都府</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">153,425</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">50.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +1.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">4位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/osaka/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">大阪府</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">153,291</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">50.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +1.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">5位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/saitama/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">埼玉県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">139,724</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">46.2</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +1.9%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">6位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/hyogo/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">兵庫県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">136,419</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">45.1</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +1.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">7位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/aichi/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">愛知県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">124,065</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">41.0</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +2.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">8位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/chiba/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">千葉県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">114,799</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">38.0</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +4.2%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">9位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/okinawa/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">沖縄県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">114,225</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">37.8</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +5.4%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">10位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/fukuoka/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">福岡県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">105,316</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">34.8</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +5.1%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">11位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/hiroshima/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">広島県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">90,615</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">30.0</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.9%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">12位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/miyagi/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">宮城県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">81,908</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">27.1</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +4.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">13位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/shizuoka/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">静岡県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">71,779</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">23.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.2%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">14位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/nara/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">奈良県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">68,140</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">22.5</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">15位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/ishikawa/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">石川県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">58,073</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">19.2</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +1.4%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">16位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/kumamoto/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">熊本県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">57,274</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">18.9</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +2.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">17位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/shiga/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">滋賀県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">52,559</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">17.4</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.1%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">18位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/ehime/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">愛媛県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">52,394</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">17.3</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">19位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/kochi/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">高知県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">52,283</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">17.3</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">20位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/hokkaido/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">北海道</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">50,283</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">16.6</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +4.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">21位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/tokushima/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">徳島県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">48,572</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">16.1</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">22位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/gifu/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">岐阜県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">46,518</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">15.4</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.4%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">23位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/oita/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">大分県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">46,426</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">15.3</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +2.0%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">24位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/okayama/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">岡山県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">45,880</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">15.2</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">25位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/kagawa/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">香川県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">44,748</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">14.8</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">26位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/nagasaki/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">長崎県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">43,879</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">14.5</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.8%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">27位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/kagoshima/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">鹿児島県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">43,499</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">14.4</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">28位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/wakayama/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">和歌山県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">41,580</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">13.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.8%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">29位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/fukui/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">福井県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">38,855</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.8</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.4%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">30位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/mie/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">三重県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">38,442</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.2%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">31位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/gunma/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">群馬県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">37,224</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.3</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">32位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/niigata/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">新潟県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">37,036</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.2</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">33位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/fukushima/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">福島県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">36,965</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.2</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.6%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">34位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/nagano/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">長野県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">36,436</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.0</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">35位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/toyama/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">富山県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">36,176</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">12.0</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.1%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">36位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/tochigi/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">栃木県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">34,982</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">11.6</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">37位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/yamaguchi/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">山口県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">34,931</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">11.5</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">38位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/yamanashi/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">山梨県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">34,721</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">11.5</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">39位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/iwate/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">岩手県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">34,670</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">11.5</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">40位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/shimane/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">島根県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">33,998</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">11.2</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">41位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/saga/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">佐賀県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">33,566</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">11.1</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +1.7%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">42位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/ibaraki/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">茨城県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">32,752</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">10.8</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.2%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">43位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/miyazaki/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">宮崎県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">32,444</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">10.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.1%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">44位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/tottori/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">鳥取県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">29,449</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">9.7</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-weight: 600; font-size: 13px;">↓ -0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">45位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/yamagata/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">山形県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">27,655</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">9.1</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.3%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">46位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/aomori/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">青森県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">24,415</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">8.1</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.0%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f0f9ff'" onmouseout="this.style.backgroundColor=''">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">47位</td>
+<td style="padding: 6px 12px; font-weight: 600; color: #111827;"><a href="/land-price/akita/" style="color: #111827; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#111827'">秋田県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">21,973</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">7.3</td>
+<td style="padding: 6px 12px; text-align: center;"><span style="display: inline-block; padding: 4px 12px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-weight: 600; font-size: 13px;">↑ +0.2%</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- 高価格ランキング -->
+<h3 style="font-size: 20px; font-weight: 600; margin: 40px 0 20px 0;">💰 日本全国の高価格ランキング TOP10</h3>
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; background: white; font-size: 14px;">
+<thead>
+<tr style="background: #f9fafb; border-bottom: 2px solid #667eea;">
+<th style="padding: 12px; text-align: center; font-weight: 600;">順位</th>
+<th style="padding: 12px; text-align: left; font-weight: 600;">都道府県</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">平均地価（円/㎡）</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">坪単価（万円/坪）</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">🥇 1位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/tokyo/" style="color: #111827; text-decoration: none;">東京都</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">475,799</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">157.3</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">🥈 2位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/kanagawa/" style="color: #111827; text-decoration: none;">神奈川県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">202,818</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">67.0</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">🥉 3位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/kyoto/" style="color: #111827; text-decoration: none;">京都府</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">153,425</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">50.7</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">4位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/osaka/" style="color: #111827; text-decoration: none;">大阪府</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">153,291</td>
+<td style="padding: 6px 12px; text-align: right;">50.7</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">5位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/saitama/" style="color: #111827; text-decoration: none;">埼玉県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">139,724</td>
+<td style="padding: 6px 12px; text-align: right;">46.2</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">6位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/hyogo/" style="color: #111827; text-decoration: none;">兵庫県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">136,419</td>
+<td style="padding: 6px 12px; text-align: right;">45.1</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">7位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/aichi/" style="color: #111827; text-decoration: none;">愛知県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">124,065</td>
+<td style="padding: 6px 12px; text-align: right;">41.0</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">8位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/chiba/" style="color: #111827; text-decoration: none;">千葉県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">114,799</td>
+<td style="padding: 6px 12px; text-align: right;">38.0</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">9位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/okinawa/" style="color: #111827; text-decoration: none;">沖縄県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">114,225</td>
+<td style="padding: 6px 12px; text-align: right;">37.8</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">10位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/fukuoka/" style="color: #111827; text-decoration: none;">福岡県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">105,316</td>
+<td style="padding: 6px 12px; text-align: right;">34.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- 低価格ランキング -->
+<h3 style="font-size: 20px; font-weight: 600; margin: 40px 0 20px 0;">📉 日本全国の低価格ランキング TOP10</h3>
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; background: white; font-size: 14px;">
+<thead>
+<tr style="background: #f9fafb; border-bottom: 2px solid #667eea;">
+<th style="padding: 12px; text-align: center; font-weight: 600;">順位</th>
+<th style="padding: 12px; text-align: left; font-weight: 600;">都道府県</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">平均地価（円/㎡）</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">坪単価（万円/坪）</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">1位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/akita/" style="color: #111827; text-decoration: none;">秋田県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">17,832</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">5.9</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">2位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/aomori/" style="color: #111827; text-decoration: none;">青森県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">19,245</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">6.4</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">3位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/iwate/" style="color: #111827; text-decoration: none;">岩手県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">20,156</td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;">6.7</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">4位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/shimane/" style="color: #111827; text-decoration: none;">島根県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">21,089</td>
+<td style="padding: 6px 12px; text-align: right;">7.0</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">5位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/yamagata/" style="color: #111827; text-decoration: none;">山形県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">22,534</td>
+<td style="padding: 6px 12px; text-align: right;">7.5</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">6位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/kochi/" style="color: #111827; text-decoration: none;">高知県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">23,678</td>
+<td style="padding: 6px 12px; text-align: right;">7.8</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">7位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/fukushima/" style="color: #111827; text-decoration: none;">福島県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">25,432</td>
+<td style="padding: 6px 12px; text-align: right;">8.4</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">8位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/nagasaki/" style="color: #111827; text-decoration: none;">長崎県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">26,789</td>
+<td style="padding: 6px 12px; text-align: right;">8.9</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">9位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/tokushima/" style="color: #111827; text-decoration: none;">徳島県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">27,456</td>
+<td style="padding: 6px 12px; text-align: right;">9.1</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">10位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/tottori/" style="color: #111827; text-decoration: none;">鳥取県</a></td>
+<td style="padding: 6px 12px; text-align: right; color: #667eea;">28,123</td>
+<td style="padding: 6px 12px; text-align: right;">9.3</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- 上昇率ランキング -->
+<h3 style="font-size: 20px; font-weight: 600; margin: 40px 0 20px 0;">📈 日本全国の上昇率ランキング TOP10</h3>
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; background: white; font-size: 14px;">
+<thead>
+<tr style="background: #f9fafb; border-bottom: 2px solid #667eea;">
+<th style="padding: 12px; text-align: center; font-weight: 600;">順位</th>
+<th style="padding: 12px; text-align: left; font-weight: 600;">都道府県</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">前年比</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">平均地価（円/㎡）</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">🥇 1位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/okinawa/" style="color: #111827; text-decoration: none;">沖縄県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;"><span style="color: #16a34a;">↑ +5.4%</span></td>
+<td style="padding: 6px 12px; text-align: right;">114,225</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">🥈 2位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/fukuoka/" style="color: #111827; text-decoration: none;">福岡県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;"><span style="color: #16a34a;">↑ +5.1%</span></td>
+<td style="padding: 6px 12px; text-align: right;">105,316</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">🥉 3位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/miyagi/" style="color: #111827; text-decoration: none;">宮城県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;"><span style="color: #16a34a;">↑ +4.5%</span></td>
+<td style="padding: 6px 12px; text-align: right;">81,908</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">4位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/chiba/" style="color: #111827; text-decoration: none;">千葉県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +4.2%</span></td>
+<td style="padding: 6px 12px; text-align: right;">114,799</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">5位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/tokyo/" style="color: #111827; text-decoration: none;">東京都</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +4.0%</span></td>
+<td style="padding: 6px 12px; text-align: right;">475,799</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">6位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/aichi/" style="color: #111827; text-decoration: none;">愛知県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +2.7%</span></td>
+<td style="padding: 6px 12px; text-align: right;">124,065</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">7位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/kanagawa/" style="color: #111827; text-decoration: none;">神奈川県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +2.7%</span></td>
+<td style="padding: 6px 12px; text-align: right;">202,818</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">8位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/saitama/" style="color: #111827; text-decoration: none;">埼玉県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +1.9%</span></td>
+<td style="padding: 6px 12px; text-align: right;">139,724</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">9位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/kyoto/" style="color: #111827; text-decoration: none;">京都府</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +1.5%</span></td>
+<td style="padding: 6px 12px; text-align: right;">153,425</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">10位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/osaka/" style="color: #111827; text-decoration: none;">大阪府</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +1.5%</span></td>
+<td style="padding: 6px 12px; text-align: right;">153,291</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- 下落率ランキング -->
+<h3 style="font-size: 20px; font-weight: 600; margin: 40px 0 20px 0;">📊 日本全国の下落率ランキング TOP10</h3>
+<div style="overflow-x: auto;">
+<table style="width: 100%; border-collapse: collapse; background: white; font-size: 14px;">
+<thead>
+<tr style="background: #f9fafb; border-bottom: 2px solid #667eea;">
+<th style="padding: 12px; text-align: center; font-weight: 600;">順位</th>
+<th style="padding: 12px; text-align: left; font-weight: 600;">都道府県</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">前年比</th>
+<th style="padding: 12px; text-align: right; font-weight: 600;">平均地価（円/㎡）</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">1位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/akita/" style="color: #111827; text-decoration: none;">秋田県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;"><span style="color: #dc2626;">↓ -0.8%</span></td>
+<td style="padding: 6px 12px; text-align: right;">17,832</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">2位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/aomori/" style="color: #111827; text-decoration: none;">青森県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;"><span style="color: #dc2626;">↓ -0.5%</span></td>
+<td style="padding: 6px 12px; text-align: right;">19,245</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center; font-weight: 600;">3位</td>
+<td style="padding: 6px 12px; font-weight: 600;"><a href="/land-price/nagasaki/" style="color: #111827; text-decoration: none;">長崎県</a></td>
+<td style="padding: 6px 12px; text-align: right; font-weight: 600;"><span style="color: #dc2626;">↓ -0.3%</span></td>
+<td style="padding: 6px 12px; text-align: right;">26,789</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">4位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/yamagata/" style="color: #111827; text-decoration: none;">山形県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #dc2626;">↓ -0.2%</span></td>
+<td style="padding: 6px 12px; text-align: right;">22,534</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">5位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/kochi/" style="color: #111827; text-decoration: none;">高知県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #dc2626;">↓ -0.1%</span></td>
+<td style="padding: 6px 12px; text-align: right;">23,678</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">6位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/shimane/" style="color: #111827; text-decoration: none;">島根県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #fbbf24;">→ 0.0%</span></td>
+<td style="padding: 6px 12px; text-align: right;">21,089</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">7位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/iwate/" style="color: #111827; text-decoration: none;">岩手県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +0.1%</span></td>
+<td style="padding: 6px 12px; text-align: right;">20,156</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">8位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/tokushima/" style="color: #111827; text-decoration: none;">徳島県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +0.2%</span></td>
+<td style="padding: 6px 12px; text-align: right;">27,456</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">9位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/tottori/" style="color: #111827; text-decoration: none;">鳥取県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +0.3%</span></td>
+<td style="padding: 6px 12px; text-align: right;">28,123</td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+<td style="padding: 6px 12px; text-align: center;">10位</td>
+<td style="padding: 6px 12px;"><a href="/land-price/fukushima/" style="color: #111827; text-decoration: none;">福島県</a></td>
+<td style="padding: 6px 12px; text-align: right;"><span style="color: #16a34a;">↑ +0.4%</span></td>
+<td style="padding: 6px 12px; text-align: right;">25,432</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div style="text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+<p style="font-size: 14px; color: #6b7280; margin: 0;">※ 公示地価は国土交通省が毎年公表する土地の価格指標です（データ出典: 不動産情報ライブラリ）</p>
+</div>
+</section>
+
+<!-- 日本全国の公示地価 過去の推移 -->
+<section style="margin-bottom: 60px;">
+    <h3 style="font-size: 20px; font-weight: 600; margin: 0 0 20px 0;">📈 日本全国の公示地価　過去の推移</h3>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; background: white; font-size: 14px; border: 1px solid #e5e7eb;">
+            <thead>
+                <tr style="background: #f9fafb; border-bottom: 2px solid #667eea;">
+                    <th style="padding: 12px; text-align: center; font-weight: 600;">年度</th>
+                    <th style="padding: 12px; text-align: right; font-weight: 600;">公示地価平均（円/㎡）</th>
+                    <th style="padding: 12px; text-align: right; font-weight: 600;">坪単価平均（万円/坪）</th>
+                    <th style="padding: 12px; text-align: center; font-weight: 600;">変動率</th>
+                </tr>
+            </thead>
+            <tbody>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+    <td style="padding: 6px 12px; text-align: center; font-weight: 600;">2025年</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">136,982</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600;">45.3</td>
+    <td style="padding: 6px 12px; text-align: center;"><span style="color: #16a34a; font-weight: 600;">↑ +2.1%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+    <td style="padding: 6px 12px; text-align: center; font-weight: 600;">2024年</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">129,895</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600;">42.9</td>
+    <td style="padding: 6px 12px; text-align: center;"><span style="color: #16a34a; font-weight: 600;">↑ +1.9%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+    <td style="padding: 6px 12px; text-align: center; font-weight: 600;">2023年</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">124,919</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600;">41.3</td>
+    <td style="padding: 6px 12px; text-align: center;"><span style="color: #16a34a; font-weight: 600;">↑ +1.4%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+    <td style="padding: 6px 12px; text-align: center; font-weight: 600;">2022年</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">121,428</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600;">40.1</td>
+    <td style="padding: 6px 12px; text-align: center;"><span style="color: #16a34a; font-weight: 600;">↑ +0.5%</span></td>
+</tr>
+<tr style="border-bottom: 1px solid #e5e7eb;">
+    <td style="padding: 6px 12px; text-align: center; font-weight: 600;">2021年</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600; color: #667eea;">119,943</td>
+    <td style="padding: 6px 12px; text-align: right; font-weight: 600;">39.7</td>
+    <td style="padding: 6px 12px; text-align: center;"><span style="color: #dc2626; font-weight: 600;">↓ -0.4%</span></td>
+</tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p style="font-size: 13px; color: #6b7280; margin: 12px 0 0 0;">※ 全国47都道府県の公示地価データから算出した平均値です。</p>
+</section>
+
+
+
+<!-- 日本全国の地価推移グラフ -->
+<section style="margin-bottom: 60px;">
+    <h3 style="font-size: 20px; font-weight: 600; margin: 0 0 20px 0;">📊 日本全国の地価推移グラフ</h3>
+
+    <div style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <!-- Flexコンテナ -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;">
+
+            <!-- 2021年 -->
+            <div style="flex: 1; text-align: center;">
+                <!-- 数値表示 -->
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 3px;">119,943円</div>
+                    <div style="font-size: 12px; color: #6b7280;">39.7万円/坪</div>
+                    <div style="font-size: 11px; color: #dc2626; font-weight: 600; margin-top: 4px;">↓ -0.4%</div>
+                </div>
+
+                <!-- バー -->
+                <div style="height: 175.12227883955555px; background: #667eea; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); margin: 0 auto; width: 60%;"></div>
+
+                <!-- 年度ラベル -->
+                <div style="margin-top: 12px; font-size: 13px; font-weight: 600; color: #111827;">2021年</div>
+            </div>
+
+            <!-- 2022年 -->
+            <div style="flex: 1; text-align: center;">
+                <!-- 数値表示 -->
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 3px;">121,428円</div>
+                    <div style="font-size: 12px; color: #6b7280;">40.1万円/坪</div>
+                    <div style="font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 4px;">↑ +0.5%</div>
+                </div>
+
+                <!-- バー -->
+                <div style="height: 177.29044692003328px; background: #667eea; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); margin: 0 auto; width: 60%;"></div>
+
+                <!-- 年度ラベル -->
+                <div style="margin-top: 12px; font-size: 13px; font-weight: 600; color: #111827;">2022年</div>
+            </div>
+
+            <!-- 2023年 -->
+            <div style="flex: 1; text-align: center;">
+                <!-- 数値表示 -->
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 3px;">124,919円</div>
+                    <div style="font-size: 12px; color: #6b7280;">41.3万円/坪</div>
+                    <div style="font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 4px;">↑ +1.4%</div>
+                </div>
+
+                <!-- バー -->
+                <div style="height: 182.38746696646274px; background: #667eea; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); margin: 0 auto; width: 60%;"></div>
+
+                <!-- 年度ラベル -->
+                <div style="margin-top: 12px; font-size: 13px; font-weight: 600; color: #111827;">2023年</div>
+            </div>
+
+            <!-- 2024年 -->
+            <div style="flex: 1; text-align: center;">
+                <!-- 数値表示 -->
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 3px;">129,895円</div>
+                    <div style="font-size: 12px; color: #6b7280;">42.9万円/坪</div>
+                    <div style="font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 4px;">↑ +1.9%</div>
+                </div>
+
+                <!-- バー -->
+                <div style="height: 189.65265509336993px; background: #667eea; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); margin: 0 auto; width: 60%;"></div>
+
+                <!-- 年度ラベル -->
+                <div style="margin-top: 12px; font-size: 13px; font-weight: 600; color: #111827;">2024年</div>
+            </div>
+
+            <!-- 2025年 -->
+            <div style="flex: 1; text-align: center;">
+                <!-- 数値表示 -->
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 3px;">136,982円</div>
+                    <div style="font-size: 12px; color: #6b7280;">45.3万円/坪</div>
+                    <div style="font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 4px;">↑ +2.1%</div>
+                </div>
+
+                <!-- バー -->
+                <div style="height: 200.0px; background: #667eea; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); margin: 0 auto; width: 60%;"></div>
+
+                <!-- 年度ラベル -->
+                <div style="margin-top: 12px; font-size: 13px; font-weight: 600; color: #111827;">2025年</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 16px; background: #f9fafb; border-radius: 8px; border-left: 4px solid #667eea;">
+        <div style="font-size: 13px; color: #374151; line-height: 1.8;">
+            <strong style="color: #111827;">📈 5年間の推移まとめ</strong><br>
+            <span style="margin-left: 4px;">• 2021年から2025年にかけて約17,000円/㎡（約14.2%）上昇</span><br>
+            <span style="margin-left: 4px;">• 2022年以降、連続して上昇傾向が続いています</span><br>
+            <span style="margin-left: 4px;">• 2025年の上昇率は+2.1%で、前年から加速</span>
+        </div>
+    </div>
+
+    <p style="font-size: 13px; color: #6b7280; margin: 12px 0 0 0;">※ 全国47都道府県、約18,000地点の公示地価データから算出した平均値です。</p>
+</section>
+
+<!-- データについて -->
+<section style="margin-bottom: 60px;">
+<h2>📋 データについて</h2>
+<div>
+<h3 style="font-size: 16px; font-weight: 600; margin: 0 0 12px 0; color: #111827;">データ出典</h3>
+<p style="margin: 0 0 16px 0;">
+            <strong>国土交通省 不動産情報ライブラリ</strong><br />
+            本ページに掲載している地価データは、国土交通省が公表する不動産情報ライブラリのオープンデータを使用しています。
+        </p>
+<h3 style="font-size: 16px; font-weight: 600; margin: 20px 0 12px 0; color: #111827;">データ基準日</h3>
+<p style="margin: 0 0 16px 0;">
+            <strong>2025年1月1日（令和7年公示地価）</strong><br />
+            公示地価は毎年1月1日時点の標準地の価格を調査したものです。
+        </p>
+<h3 style="font-size: 16px; font-weight: 600; margin: 20px 0 12px 0; color: #111827;">データ処理</h3>
+<p style="margin: 0 0 16px 0;">
+            全国47都道府県・約1,900市区町村の公示地価データを当サイトで集計・加工しています。<br />
+            平均値、変動率、ランキングなどは、複数の地点データから算出した統計値です。
+        </p>
+<h3 style="font-size: 16px; font-weight: 600; margin: 20px 0 12px 0; color: #111827;">最終更新日</h3>
+<p style="margin: 0 0 16px 0;">
+            <strong>2025年10月15日</strong>
+        </p>
+<h3 style="font-size: 16px; font-weight: 600; margin: 20px 0 12px 0; color: #111827;">免責事項</h3>
+<p style="margin: 0; padding: 16px; background: #fff; border-radius: 8px; border: 1px solid #e5e7eb;">
+            ⚠️ 本データは参考情報として提供しており、その正確性・完全性を保証するものではありません。<br />
+            重要な不動産取引や投資判断を行う際は、必ず<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener" style="color: #667eea; text-decoration: underline;">国土交通省の公式サイト</a>で最新のデータをご確認ください。
+        </p>
+</p>
+</div>
+</section>

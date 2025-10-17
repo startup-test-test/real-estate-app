@@ -1,330 +1,165 @@
-# 地価情報トップページ - WordPressサンプル実装
+# 地価ページ管理システム
 
-**作成日**: 2025-10-15
-**テーマ**: SWELL (https://swell-theme.com/)
-
----
-
-## 📁 ファイル構成
+## 📁 フォルダ構成
 
 ```
 land-price-pages/
-├── 00_top_page_dashboard.html    # トップページのHTML（完全版）
-├── publish_top_page.py            # WordPress自動投稿スクリプト
-└── README.md                      # このファイル
+├── 📂 scripts/              # Pythonプログラム
+├── 📂 html-sections/        # HTMLの部品（セクション）
+├── 📂 data/                 # JSONデータ
+├── 📂 docs/                 # ドキュメント
+├── 📂 assets/               # CSS、SVG等
+├── 📂 templates/            # テンプレート
+└── 📄 national_page.html    # 全国平均ページ（完全版）
 ```
 
 ---
 
-## 🎨 作成したトップページの特徴
+## 🎯 メインファイル
 
-### ✅ 実装済みの機能
-
-1. **インタラクティブなサマリーカード（4枚）**
-   - ホバーで浮き上がる
-   - 数値のカウントアップアニメーション
-
-2. **都道府県ランキング TOP10**
-   - ホバーでハイライト
-   - クリックでソート可能
-   - 「詳細」ボタンで各都道府県ページへリンク
-
-3. **市区町村ランキング TOP10**
-   - 同上
-
-4. **地価推移グラフ（Chart.js）**
-   - 過去10年のデータ
-   - インタラクティブ（ホバーで詳細表示）
-
-5. **全国地価マップ（Leaflet.js）**
-   - OpenStreetMap使用
-   - 主要都市のマーカー
-   - クリックでポップアップ表示
-
-6. **都道府県一覧グリッド**
-   - カードホバーで拡大
-   - 全47都道府県へのリンク（サンプルは6件のみ）
-
-7. **完全レスポンシブ対応**
-   - デスクトップ、タブレット、スマホで最適表示
-
-8. **フェードインアニメーション**
-   - ページ読み込み時にセクションごとにアニメーション
-
-### 📊 使用しているライブラリ
-
-- **Chart.js**: グラフ描画（CDN経由）
-- **Leaflet.js**: 地図表示（CDN経由）
-- **OpenStreetMap**: 地図タイル（無料）
+### national_page.html
+- **役割**: 全国平均地価のページ（完全版）
+- **WordPress**: ページID 1726
+- **URL**: https://ooya.tech/media/?page_id=1726
+- **サイズ**: 96KB
 
 ---
 
-## 🚀 WordPressへの投稿方法
+## 📂 各フォルダの説明
 
-### 方法1: 自動投稿スクリプト使用（推奨）
+### scripts/
+Pythonプログラム置き場
 
-#### 前提条件
+| ファイル | 役割 |
+|---------|------|
+| `generate_page_1726.py` | 全国平均ページのサマリーデータを生成 |
+| `fetch_historical_data.py` | 過去5年分の推移データ取得 |
+| `fetch_national_ranking.py` | 全国ランキングデータ取得 |
+| `fetch_prefecture_ranking_data.py` | 都道府県ランキングデータ取得 |
+| `quick_edit.py` | WordPressに簡単アップロード |
+| `update_title_style.py` | WordPressページ更新 |
 
-- Python 3.x
-- `requests`, `python-dotenv` パッケージ
-- `.env` ファイルの設定（wordpress-integration/.env）
+### html-sections/
+HTMLの部品（セクション単位）
 
-#### 実行手順
+| ファイル | 内容 |
+|---------|------|
+| `history_section.html` | 過去5年分の推移テーブル |
+| `national-ranking-section.html` | 全国ランキング（高価格・低価格等） |
+| `prefecture-ranking-section.html` | 都道府県別ランキング |
 
-1. **ディレクトリ移動**
-   ```bash
-   cd wordpress-integration/land-price-pages
-   ```
+### data/
+JSON形式のデータ
 
-2. **スクリプト実行**
-   ```bash
-   python publish_top_page.py
-   ```
+| ファイル | 内容 |
+|---------|------|
+| `national_ranking_data.json` | 全国ランキングの生データ |
+| `prefecture_ranking_data.json` | 都道府県ランキングの生データ |
 
-3. **結果確認**
-   ```
-   ✅ 固定ページの作成に成功しました！
+### docs/
+ドキュメント
 
-   作成されたページ情報
-   ページID: 123
-   タイトル: 全国の地価・公示地価【2025年最新】...
-   URL: https://ooya.tech/media/land-price/
-   ステータス: draft
-   ```
+| ファイル | 内容 |
+|---------|------|
+| `DATA_SOURCE_POLICY.md` | データソース管理ポリシー |
+| `FILE_MANAGEMENT_GUIDE.md` | ファイル管理ガイド |
+| `SIMPLIFIED_FILE_STRUCTURE.md` | わかりやすいファイル構造の提案 |
 
-4. **WordPress管理画面で確認**
-   - 固定ページ → 固定ページ一覧
-   - 作成されたページを開く
-   - テンプレート「1カラム（幅広）」を選択
-   - プレビューで確認
-   - 問題なければ「公開」
+### assets/
+CSS、SVG等のアセット
 
----
-
-### 方法2: 手動でコピー＆ペースト
-
-#### 手順
-
-1. **00_top_page_dashboard.html を開く**
-   - ブラウザで開いて動作確認
-
-2. **WordPress管理画面へログイン**
-   - https://ooya.tech/media/wp-admin/
-
-3. **新規固定ページ作成**
-   - 固定ページ → 新規追加
-   - タイトル: 「全国の地価・公示地価【2025年最新】都道府県・市区町村別ランキング」
-
-4. **テンプレート選択**
-   - 右サイドバー → テンプレート → 「1カラム（幅広）」
-
-5. **HTMLをコピー**
-   - 00_top_page_dashboard.html の `<body>` タグ内のHTMLをコピー
-   - ただし `<header>` と `<footer>` は除外（WordPress側で表示されるため）
-
-6. **カスタムHTMLブロック追加**
-   - ブロックエディター → 「+」ボタン
-   - 「カスタムHTML」ブロックを選択
-   - コピーしたHTMLをペースト
-
-7. **プレビュー＆公開**
-   - プレビューボタンで確認
-   - 問題なければ公開
+| ファイル | 内容 |
+|---------|------|
+| `geolonia-map.svg` | 日本地図SVG |
+| `custom-width-css.css` | カスタムCSS |
 
 ---
 
-## 🎨 SWELLでのカスタマイズ方法
+## 🚀 使い方
 
-### CSS追加（デザイン調整）
+### 1. 全国平均ページのデータを更新
 
-1. **WordPress管理画面 → 外観 → カスタマイズ**
-2. **追加CSS** セクションを開く
-3. 必要に応じてCSSを追加
+```bash
+cd scripts/
+python3 generate_page_1726.py
+```
 
-#### 例: カラーテーマの変更
+→ `html-sections/` に最新データのHTMLが生成されます
 
-```css
-/* プライマリーカラーを変更 */
-.summary-card {
-    border-top-color: #0066cc; /* 青色に変更 */
-}
+### 2. WordPressに反映
 
-.ranking-table thead {
-    background: #0066cc;
-}
+```bash
+python3 update_title_style.py
+```
 
-.detail-btn {
-    background: #0066cc;
-}
+→ https://ooya.tech/media/?page_id=1726 が更新されます
+
+### 3. 簡単更新（quick_edit）
+
+```bash
+python3 quick_edit.py 1726 ../national_page.html
 ```
 
 ---
 
-## 📱 レスポンシブ対応
+## 📊 データの流れ
 
-すでに実装済み：
-
-- **デスクトップ（1024px以上）**: 4カラムのサマリーカード、6カラムの都道府県グリッド
-- **タブレット（768px-1024px）**: 2カラムのサマリーカード、4カラムのグリッド
-- **スマホ（768px以下）**: 1カラムのサマリーカード、2-3カラムのグリッド
-
----
-
-## 🔧 カスタマイズ可能な箇所
-
-### 1. サマリーカードの数値
-
-HTMLの以下の部分を編集：
-
-```html
-<div class="card-value">85.3万円/㎡</div>
-<div class="card-change up">前年比 +5.2% ↑</div>
 ```
-
-### 2. ランキングデータ
-
-テーブルの `<tr>` 行を追加・編集：
-
-```html
-<tr class="ranking-row">
-    <td>順位</td>
-    <td>都道府県名</td>
-    <td>平均地価</td>
-    <td>平均坪単価</td>
-    <td class="change-up">前年比</td>
-    <td><a href="URL" class="detail-btn">詳細 ▶</a></td>
-</tr>
-```
-
-### 3. グラフデータ
-
-JavaScriptの以下の部分を編集：
-
-```javascript
-labels: ['2015', '2016', '2017', ...],
-data: [68.5, 70.2, 72.1, ...]
-```
-
-### 4. 地図のマーカー
-
-JavaScriptの `cities` 配列を編集：
-
-```javascript
-const cities = [
-    { name: '東京都', lat: 35.6762, lng: 139.6503, price: '130.2万円/㎡', url: '/land-price/tokyo/' },
-    // ...
-];
-```
-
-### 5. 都道府県グリッド
-
-HTMLの `<a>` タグを追加：
-
-```html
-<a href="/land-price/prefecture-slug/" class="prefecture-card">
-    <span class="prefecture-icon">🏠</span>
-    <span class="prefecture-name">都道府県名</span>
-</a>
+国土交通省API
+    ↓ (Pythonで取得)
+scripts/generate_page_1726.py
+    ↓ (HTMLを生成)
+html-sections/*.html
+    ↓ (組み合わせ)
+national_page.html
+    ↓ (WordPressに反映)
+https://ooya.tech/media/?page_id=1726
 ```
 
 ---
 
-## ✅ 確認事項チェックリスト
+## 🔄 今後の拡張
 
-### WordPress投稿前
-
-- [ ] HTMLファイルがブラウザで正しく表示される
-- [ ] グラフが正しく描画される
-- [ ] 地図が正しく表示される
-- [ ] リンクが正しく設定されている
-- [ ] レスポンシブ表示が正しい
-
-### WordPress投稿後
-
-- [ ] 固定ページが作成された
-- [ ] テンプレート「1カラム（幅広）」が選択されている
-- [ ] グラフが表示される
-- [ ] 地図が表示される
-- [ ] インタラクティブ機能が動作する
-- [ ] スマホ表示が正しい
-
----
-
-## 🎯 次のステップ
-
-### 1. 実データへの置き換え
-
-現在はサンプルデータを使用しています。次のステップとして：
-
-1. 不動産情報ライブラリAPIから実データを取得
-2. データ集計・統計計算
-3. HTMLの数値を実データに置き換え
-
-### 2. 都道府県ページの作成
-
-トップページと同様の方法で：
-
-1. 都道府県ページテンプレート作成
-2. 47都道府県分のHTMLを生成
-3. WordPress に自動投稿
-
-### 3. 市区町村ページの作成
-
-1. 市区町村ページテンプレート作成
-2. 約1,900市区町村分のHTMLを生成
-3. バッチ処理でWordPressに投稿
-
----
-
-## ⚠️ トラブルシューティング
-
-### グラフが表示されない
-
-- Chart.jsのCDNが読み込まれているか確認
-- ブラウザのコンソールでエラーをチェック
-
-### 地図が表示されない
-
-- Leaflet.jsのCDNが読み込まれているか確認
-- インターネット接続を確認（OpenStreetMap）
-
-### WordPressへの投稿が失敗する
-
-- Application Passwordが正しいか確認
-- 海外IPからのアクセスの場合、ローカル環境で実行
-
-### レイアウトが崩れる
-
-- SWELLテーマのCSSと競合している可能性
-- カスタムCSSで調整
-
----
-
-## 📚 参考リソース
-
-- **Chart.js**: https://www.chartjs.org/
-- **Leaflet.js**: https://leafletjs.com/
-- **OpenStreetMap**: https://www.openstreetmap.org/
-- **SWELL**: https://swell-theme.com/
-
----
-
-## 📝 メモ
-
-### データ出典の表記
-
-フッターに以下を必ず含めること：
+### 都道府県別ページ（47ページ）
 
 ```
-出典: 国土交通省 不動産情報ライブラリ（当サイトで加工して作成）
-データ基準日: 2025年1月1日（令和7年公示地価）
-最終更新日: 2025年10月15日
+hokkaido_page.html
+tokyo_page.html
+osaka_page.html
+...
+```
 
-⚠️ データの正確性は保証されていません。
-    重要な不動産取引には、必ず公式データをご確認ください。
+### 市区町村別ページ（1,900ページ）
+
+```
+sapporo_page.html
+tokyo-chiyoda_page.html
+...
 ```
 
 ---
 
-**作成者**: Claude Code
-**プロジェクト**: WordPress Integration - Land Price Pages
+## 📝 ファイル命名規則
+
+- `national_page.html` - 全国平均ページ
+- `{都道府県名}_page.html` - 都道府県別ページ
+- `{市区町村名}_page.html` - 市区町村別ページ
+
+**1726などのID番号は使わない**（わかりにくいため）
+
+---
+
+## ✅ チェックリスト
+
+データ更新時：
+- [ ] scripts/generate_page_1726.py 実行
+- [ ] データソースコメント確認
+- [ ] ブラウザで表示確認
+- [ ] Gitコミット
+- [ ] WordPressに反映
+- [ ] 本番確認
+
+---
+
+**最終更新:** 2025年10月16日
+**管理者:** Claude Code

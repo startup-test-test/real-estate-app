@@ -259,24 +259,30 @@ const Layout: React.FC = () => {
           {/* Legal Links */}
           <div className="p-4 border-t border-gray-200">
             <div className="space-y-2 mb-4 px-2">
-              <NavLink
-                to="/terms"
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 利用規約
-              </NavLink>
-              <NavLink
-                to="/privacy"
+              </a>
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 個人情報取り扱いについて
-              </NavLink>
-              <NavLink
-                to="/tokushoho"
+              </a>
+              <a
+                href="/tokushoho"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 特定商取引法に基づく表記
-              </NavLink>
+              </a>
               <a
                 href="https://startup-marketing.co.jp/"
                 target="_blank"
