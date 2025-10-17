@@ -180,6 +180,21 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 免責事項 */}
+      <section className="py-4 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-left text-xs text-gray-500 leading-relaxed">
+            <p className="font-semibold mb-1">【重要な免責事項】</p>
+            <p>
+              本サービスは不動産投資の教育・参考目的のシミュレーションツールです。
+              提供する情報・分析結果は投資判断の参考情報であり、投資の成功を保証するものではありません。
+              実際の投資判断は、必ずご自身の責任において行ってください。
+              当社は金融商品取引業の登録を受けておらず、個別の投資助言は行っておりません。
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* 機能紹介セクション */}
       <section id="features" className="pt-2 sm:pt-8 lg:pt-16 pb-1 sm:pb-2 lg:pb-4 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
