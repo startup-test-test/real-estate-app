@@ -144,7 +144,7 @@ const LandingPage: React.FC = () => {
                 </p>
                 <br />
                 <p className="relative inline-block">
-                  「大家DX」なら3分で解決
+                  「大家DX」なら10分で解決
                   <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px', animationDelay: '0.5s'}}></span>
                 </p>
               </div>
@@ -226,7 +226,7 @@ const LandingPage: React.FC = () => {
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm text-gray-600 mb-2">
-                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を3分で取得。
+                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を10分で取得。
                   </p>
                   <p className="text-xs text-gray-500">
                     ※「不動産取引価格情報」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
@@ -243,7 +243,7 @@ const LandingPage: React.FC = () => {
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600 mb-2">
-                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を3分で取得。
+                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を10分で取得。
                   </p>
                   <p className="text-xs lg:text-sm text-gray-500">
                     ※「不動産取引価格情報」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
@@ -476,14 +476,14 @@ const LandingPage: React.FC = () => {
                 </span>
                 <br />
                 <span className="relative inline-block">
-                  <span className="font-bold text-blue-600">3分で解決</span>できます
+                  <span className="font-bold text-blue-600">10分で解決</span>できます
                   <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
                 </span>
               </span>
 
               {/* PC版: 改行なし */}
               <span className="hidden sm:inline-block relative">
-                どの課題も「大家DX」なら<span className="font-bold text-blue-600">3分で解決</span>できます
+                どの課題も「大家DX」なら<span className="font-bold text-blue-600">10分で解決</span>できます
                 <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
               </span>
             </p>
