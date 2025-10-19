@@ -46,8 +46,8 @@ const LandingPage: React.FC = () => {
       id: 'sato',
       image: '/img/people_3.png',
       color: 'from-green-500 to-green-700',
-      title: '課題3.\n立地の将来性が判断できない',
-      problem: '公示地価の過去推移を調べるのが大変。物件のあるエリアが上昇傾向か下落傾向か、将来性があるかを客観的データで判断したい。',
+      title: '課題3.\n立地の過去推移が把握できない',
+      problem: '公示地価の過去推移を調べるのが大変。物件のあるエリアが上昇傾向か下落傾向か、過去データで客観的に把握したい。',
       solution: '大規模対応、事業承継準備',
       story: '育児の合間での物件管理が大変。銀行訪問も娘連れで効率悪い。復職後の両立が不安。',
       features: [] as { icon: any; title: string; desc: string }[]
@@ -855,7 +855,7 @@ const LandingPage: React.FC = () => {
                 周辺の価格相場を瞬時に把握できます。
                 さらに、IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算。
                 金利上昇や空室増加などのリスクシナリオもワンクリックで検証でき、
-                銀行提出用PDF出力にも対応しています。
+                PDF出力にも対応しています。
               </p>
             </div>
             

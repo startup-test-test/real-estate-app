@@ -17,7 +17,6 @@ import {
   BarChart3,
   HelpCircle,
   TrendingUp,
-  Sparkles,
   MapPin,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -722,7 +721,7 @@ const MyPage: React.FC = () => {
       color: "bg-gradient-to-r from-purple-600 to-indigo-600",
       badge: "NEW",
       description:
-        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの将来性を可視化",
+        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの過去推移を可視化",
       actions: [
         {
           name: "AI市場分析",
@@ -746,22 +745,23 @@ const MyPage: React.FC = () => {
         },
       ],
     },
-    {
-      category: "AI事業計画書",
-      icon: Sparkles,
-      color: "bg-gradient-to-r from-amber-500 to-orange-600",
-      badge: "COMING SOON",
-      description:
-        "AIエージェントが収益シミュレーション・市場分析・金融機関提出資料を統合。プロ品質の事業計画書を自動作成し、1つのPDFで出力",
-      actions: [
-        {
-          name: "2025年リリース予定",
-          primary: false,
-          path: "#",
-          disabled: true,
-        },
-      ],
-    },
+    // 2次リリース用: AI事業計画書機能
+    // {
+    //   category: "AI事業計画書",
+    //   icon: Sparkles,
+    //   color: "bg-gradient-to-r from-amber-500 to-orange-600",
+    //   badge: "COMING SOON",
+    //   description:
+    //     "AIエージェントが収益シミュレーション・市場分析を統合。物件購入の事業計画書を自動作成し、PDFで出力",
+    //   actions: [
+    //     {
+    //       name: "2025年リリース予定",
+    //       primary: false,
+    //       path: "#",
+    //       disabled: true,
+    //     },
+    //   ],
+    // },
     // 2次リリース用: AI取引事例検索機能
     // {
     //   category: 'AI取引事例検索',
