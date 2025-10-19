@@ -114,7 +114,7 @@ const PropertyDetail: React.FC = () => {
     { year: 10, income: 900.3, expenses: 152, repairs: 400, cashFlow: -39.6, cumulative: 2336.3 }
   ];
 
-  // 将来予測データ
+  // 売却シミュレーションデータ
   const futureProjection = {
     exitPrice: 8000,
     totalReturn: 3690,
@@ -611,9 +611,9 @@ const PropertyDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* 6. 将来予測 */}
+          {/* 6. 売却シミュレーション */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">将来予測（AI算出）</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">売却シミュレーション（過去データに基づく試算）</h3>
             
             {/* 売却時期選択 */}
             <div className="mb-6">

@@ -3100,7 +3100,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">想定売却価格</div>
                     <div className="mb-2">出口戦略で設定した想定売却価格です。</div>
                     <div className="text-gray-300 text-xs">
-                      将来の売却時に期待される価格を表示しています。
+                      売却時の想定価格をシミュレーション用に表示しています。
                     </div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>

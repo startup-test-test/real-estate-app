@@ -171,7 +171,7 @@ const tutorialSteps = [
         <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
           <p className="text-sm text-indigo-800">
             <span className="font-medium">💾 PDFレポート機能：</span>
-            結果をPDF形式でダウンロードして、銀行提出や社内検討資料として活用できます。
+            結果をPDF形式でダウンロードして、社内検討資料や記録として活用できます。
           </p>
         </div>
       </div>
