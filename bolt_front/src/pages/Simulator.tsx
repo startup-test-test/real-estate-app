@@ -52,7 +52,7 @@ const Simulator: React.FC = () => {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = '不動産投資シミュレーション | 大家DX';
+    document.title = '不動産賃貸経営シミュレーション | 大家DX';
   }, []);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
@@ -1759,7 +1759,7 @@ const Simulator: React.FC = () => {
   const handleSaveToPDF = () => {
     // PDFの印刷時に表示するタイトル
     const originalTitle = document.title;
-    document.title = `${inputs.propertyName} - 不動産投資シミュレーション結果`;
+    document.title = `${inputs.propertyName} - 不動産賃貸経営シミュレーション結果`;
     
     // 印刷ダイアログを表示
     // 注意: ブラウザの印刷設定で「ヘッダーとフッター」のチェックを外すと、
@@ -1803,10 +1803,10 @@ const Simulator: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                不動産投資シミュレーション
+                不動産賃貸経営シミュレーション
               </h1>
               <p className="text-gray-600">
-                物件の収益性を詳細に計算し、投資分析の参考情報を提供します。
+                物件の収益性を詳細に計算し、経営分析の参考情報を提供します。
               </p>
             </div>
             <div className="flex items-center space-x-3">

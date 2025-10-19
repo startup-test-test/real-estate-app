@@ -11,7 +11,7 @@ const tutorialSteps = [
     title: '🎯 ようこそ！収益シミュレーターへ',
     content: (
       <div className="space-y-4">
-        <p>このツールでは、不動産投資の収益性を詳しく分析できます。</p>
+        <p>このツールでは、不動産賃貸経営の収益性を詳しく分析できます。</p>
         <div className="bg-blue-50 p-3 rounded-lg">
           <p className="font-medium text-blue-900 mb-2">できること：</p>
           <ul className="text-sm text-blue-800 space-y-1">
