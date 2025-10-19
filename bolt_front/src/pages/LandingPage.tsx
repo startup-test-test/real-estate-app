@@ -137,14 +137,15 @@ const LandingPage: React.FC = () => {
                 <span className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl block mb-2" style={{ fontSize: '90%' }}>賃貸経営のための</span>
                 <span className="block text-4xl sm:text-4xl md:text-5xl lg:text-6xl" style={{ lineHeight: '1.1' }}>AI市場分析×<br />シミュレーション</span>
               </h1>
-              <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-4 sm:mb-6" style={{paddingLeft: '0', paddingRight: '0'}}>
-                <p className="mb-3 sm:mb-4 relative inline-block">
-                  半日かかる市場分析と収支計算
+              <div className="text-base sm:text-xl md:text-2xl lg:text-3xl text-gray-900 mb-4 sm:mb-6">
+                <p className="mb-2 sm:mb-3 relative inline-block max-w-full">
+                  <span className="block sm:inline">市場分析と収支計算を</span>
+                  <span className="block sm:inline">大幅に効率化</span>
                   <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px'}}></span>
                 </p>
-                <br />
-                <p className="relative inline-block">
-                  「大家DX」なら10分で解決
+                <p className="relative inline-block max-w-full">
+                  <span className="block sm:inline">「大家DX」なら</span>
+                  <span className="block sm:inline">簡単・スピーディー</span>
                   <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px', animationDelay: '0.5s'}}></span>
                 </p>
               </div>
@@ -183,10 +184,10 @@ const LandingPage: React.FC = () => {
             <div className="text-left text-xs text-gray-600 leading-relaxed">
               <p className="font-semibold mb-1">【重要な免責事項】</p>
               <p>
-                本サービスは不動産投資の教育・参考目的のシミュレーションツールです。
-                提供する情報・分析結果は投資判断の参考情報であり、投資の成功を保証するものではありません。
-                実際の投資判断は、必ずご自身の責任において行ってください。
-                当社は金融商品取引業の登録を受けておらず、個別の投資助言は行っておりません。
+                本サービスは不動産賃貸経営の教育・参考目的のシミュレーションツールです。
+                提供する情報・分析結果は参考情報であり、将来の経営成果や事業の成功を保証するものではありません。
+                実際の経営判断・投資判断は、宅地建物取引士・税理士等の専門家にご相談の上、必ずご自身の責任において行ってください。
+                当社は金融商品取引業および宅地建物取引業の登録を受けておらず、個別の投資助言・取引仲介は行っておりません。
               </p>
             </div>
           </div>
@@ -226,7 +227,7 @@ const LandingPage: React.FC = () => {
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm text-gray-600 mb-2">
-                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を10分で取得。
+                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、経営判断の参考情報を短時間で取得。
                   </p>
                   <p className="text-xs text-gray-500">
                     ※「不動産取引価格情報」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
@@ -243,7 +244,7 @@ const LandingPage: React.FC = () => {
                     物件住所を入力するだけで、<br />AIが類似物件の取引事例を自動収集・分析。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600 mb-2">
-                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、投資判断の材料を10分で取得。
+                    取引価格、延べ床面積、建築年、間取りなど詳細データを一覧化。地域の価格分布・中央値レンジを可視化し、経営判断の参考情報を短時間で取得。
                   </p>
                   <p className="text-xs lg:text-sm text-gray-500">
                     ※「不動産取引価格情報」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
@@ -292,7 +293,7 @@ const LandingPage: React.FC = () => {
                     35年のキャッシュフローをグラフと表で可視化
                   </p>
                   <p className="text-sm text-gray-600">
-                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。各年度の重要指標を年次で可視化。投資判断を強力にサポート。
+                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。各年度の重要指標を年次で可視化。経営判断の参考情報を提供。
                   </p>
                 </div>
 
@@ -306,7 +307,7 @@ const LandingPage: React.FC = () => {
                     35年のキャッシュフローをグラフと表で可視化
                   </p>
                   <p className="text-sm lg:text-base text-gray-600">
-                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。各年度の重要指標を年次で可視化。投資判断を強力にサポート。
+                    収入・経費・税金・返済・残債・自己資金回収率を年ごとに表示。各年度の重要指標を年次で可視化。経営判断の参考情報を提供。
                   </p>
                 </div>
               </div>
@@ -352,7 +353,7 @@ const LandingPage: React.FC = () => {
                     物件周辺の公示地価を検索・可視化。直近4年分のトレンドをグラフで確認。
                   </p>
                   <p className="text-sm text-gray-600 mb-2">
-                    エリアの資産価値推移を把握し、投資判断の精度を向上。
+                    エリアの公示地価の推移を把握し、経営判断の参考情報として活用可能。
                   </p>
                   <p className="text-xs text-gray-500">
                     ※「地価公示」「都道府県地価調査」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
@@ -369,7 +370,7 @@ const LandingPage: React.FC = () => {
                     物件周辺の公示地価を検索・可視化。直近4年分のトレンドをグラフで確認。
                   </p>
                   <p className="text-sm lg:text-base text-gray-600 mb-2">
-                    エリアの資産価値推移を把握し、投資判断の精度を向上。
+                    エリアの資産価値推移を把握し、経営判断の参考情報として活用可能。
                   </p>
                   <p className="text-xs lg:text-sm text-gray-500">
                     ※「地価公示」「都道府県地価調査」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
@@ -476,14 +477,14 @@ const LandingPage: React.FC = () => {
                 </span>
                 <br />
                 <span className="relative inline-block">
-                  <span className="font-bold text-blue-600">10分で解決</span>できます
+                  <span className="font-bold text-blue-600">効率的に解決</span>できます
                   <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
                 </span>
               </span>
 
               {/* PC版: 改行なし */}
               <span className="hidden sm:inline-block relative">
-                どの課題も「大家DX」なら<span className="font-bold text-blue-600">10分で解決</span>できます
+                どの課題も「大家DX」なら<span className="font-bold text-blue-600">効率的に解決</span>できます
                 <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
               </span>
             </p>

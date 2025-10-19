@@ -183,10 +183,10 @@ const Signup: React.FC = () => {
             <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center mb-2">
                 <Building2 className="h-5 w-5 text-blue-500 mr-2" />
-                <span className="text-blue-800 font-semibold text-sm">不動産投資シミュレーションに招待されました</span>
+                <span className="text-blue-800 font-semibold text-sm">不動産賃貸経営シミュレーションに招待されました</span>
               </div>
               <p className="text-blue-700 text-sm">
-                <strong>{inviterName}</strong>さんから投資判断の検討にご招待いただきました。
+                <strong>{inviterName}</strong>さんから経営判断の検討にご招待いただきました。
               </p>
               {window.location.hash.includes('otp_expired') && (
                 <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded">
