@@ -945,6 +945,47 @@ const LandingPage: React.FC = () => {
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
                   <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
+                    メディア<br />掲載
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2025.10.21</p>
+                  <div>
+                    <span className="text-gray-900 text-base">
+                      <a
+                        href="https://www.jutaku-s.com/newsp/id/0000064588"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        住宅新報社様
+                      </a>
+                      に「賃貸経営者向けに市場・収益を分析するAI搭載SaaS『大家DX』」が掲載されました（
+                      <a
+                        href="/img/住宅新聞.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        新聞掲載PDF
+                      </a>
+                      ・
+                      <a
+                        href="https://www.jutaku-s.com/newsp/id/0000064588"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        Webメディア
+                      </a>
+                      ）
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
                     プレス<br />リリース
                   </span>
                 </div>

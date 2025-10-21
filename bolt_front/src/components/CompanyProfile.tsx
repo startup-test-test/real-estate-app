@@ -78,6 +78,20 @@ const CompanyProfile: React.FC = () => {
               </div>
             </div>
 
+            {/* 顧問弁護士 */}
+            <div className="pb-2">
+              <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-2 sm:gap-4">
+                <h3 className="text-sm font-semibold text-gray-600">顧問弁護士</h3>
+                <p className="text-base text-gray-900">
+                  <a href="https://it-lawyer.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
+                    スタートビズ法律事務所
+                  </a>
+                  <br />
+                  <span className="text-sm text-gray-600">代表弁護士: 宮岡 遼（第一東京弁護士会）</span>
+                </p>
+              </div>
+            </div>
+
             {/* 所属加盟団体 */}
             <div className="pb-2">
               <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-2 sm:gap-4">
@@ -94,6 +108,18 @@ const CompanyProfile: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-2 sm:gap-4">
                 <h3 className="text-sm font-semibold text-gray-600">メディア掲載</h3>
                 <ul className="text-base text-gray-900 space-y-2">
+                  <li>
+                    <span className="font-semibold">・2025年10月：</span>
+                    【住宅新報社様】賃貸経営者向けに市場・収益を分析するAI搭載SaaS『大家DX』が掲載されました（
+                    <a href="/img/住宅新聞.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
+                      新聞掲載PDF
+                    </a>
+                    ・
+                    <a href="https://www.jutaku-s.com/newsp/id/0000064588" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
+                      Webメディア
+                    </a>
+                    ）
+                  </li>
                   <li>
                     <span className="font-semibold">・2024年1月：</span>
                     <a href="https://startup-marketing.co.jp/wp-content/uploads/2024/05/akiya.png" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
