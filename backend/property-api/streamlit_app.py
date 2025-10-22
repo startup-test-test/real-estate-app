@@ -823,7 +823,7 @@ if search_button:
 
                 if is_land:
                     # 土地専用の分析グラフ
-                    st.subheader("📈 土地面積と成約価格の分布")
+                    st.subheader("📈 土地面積と取引価格の分布")
 
                     # 土地面積がある物件のみをフィルタリング
                     land_df = df[df['land_area'] > 0].copy()
@@ -904,7 +904,7 @@ if search_button:
                         # ラベル
                         ax.set_xlabel('土地面積（㎡）', fontsize=14)
                         ax.set_ylabel('価格（万円）', fontsize=14)
-                        ax.set_title(f'{results["search_conditions"]["location"]}の土地面積と成約価格の分布',
+                        ax.set_title(f'{results["search_conditions"]["location"]}の土地面積と取引価格の分布',
                                    fontsize=14, pad=20)
 
                         plt.tight_layout()
@@ -1571,7 +1571,7 @@ if search_button:
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
-                # 成約件数の推移グラフ
+                # 取引件数の推移グラフ
 
                 # 取引時期のデータを集計
                 period_df = pd.DataFrame()
@@ -1620,7 +1620,7 @@ if search_button:
                     # ホバーテキストを作成
                     hover_texts = []
                     for i, (period, count) in enumerate(zip(x_labels, period_counts.values)):
-                        hover_texts.append(f'取引時期: {period}<br>成約件数: {int(count)}件')
+                        hover_texts.append(f'取引時期: {period}<br>取引件数: {int(count)}件')
 
                     # 棒グラフを追加
                     fig.add_trace(go.Bar(
@@ -1680,7 +1680,7 @@ if search_button:
                     )
 
 
-                    st.markdown("<h4>5. 成約件数推移</h4>", unsafe_allow_html=True)
+                    st.markdown("<h4>5. 取引件数推移</h4>", unsafe_allow_html=True)
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
                     # 6. 公示地価データの表示

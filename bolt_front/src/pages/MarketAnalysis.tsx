@@ -3768,10 +3768,10 @@ const MarketAnalysis: React.FC = () => {
                   </div>
                 )}
 
-                {/* 成約件数推移 */}
+                {/* 取引件数推移 */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900" style={{ marginBottom: '0px' }}>
-                    {isLand ? '3' : '5'}. 成約件数推移
+                    {isLand ? '3' : '5'}. 取引件数推移
                     <span className="text-sm text-gray-500 ml-2">
                       （総サンプル数: {allProperties.length}件）
                     </span>
@@ -3801,7 +3801,7 @@ const MarketAnalysis: React.FC = () => {
                       return period;
                     });
 
-                    // 成約件数の最大値を取得
+                    // 取引件数の最大値を取得
                     const counts = sortedPeriods.map(p => periodCounts[p]);
                     const maxCount = counts.length > 0 ? Math.max(...counts) : 0;
 
@@ -3840,7 +3840,7 @@ const MarketAnalysis: React.FC = () => {
                             text: sortedPeriods.map(p => `${periodCounts[p]}件`),
                             textposition: 'outside',
                             textfont: { size: isMobile ? 10 : 14, color: 'black' },
-                            hovertemplate: '取引時期: %{x}<br>成約件数: %{y}件<extra></extra>'
+                            hovertemplate: '取引時期: %{x}<br>取引件数: %{y}件<extra></extra>'
                           }
                         ]}
                         layout={{
@@ -3911,7 +3911,7 @@ const MarketAnalysis: React.FC = () => {
                         return period;
                       });
 
-                      // 成約件数の最大値を取得
+                      // 取引件数の最大値を取得
                       const counts = sortedPeriods.map(p => periodCounts[p]);
                       const maxCount = counts.length > 0 ? Math.max(...counts) : 0;
 
@@ -3950,7 +3950,7 @@ const MarketAnalysis: React.FC = () => {
                               text: sortedPeriods.map(p => `${periodCounts[p]}件`),
                               textposition: 'outside',
                               textfont: { size: 14, color: 'black' },
-                              hovertemplate: '取引時期: %{x}<br>成約件数: %{y}件<extra></extra>'
+                              hovertemplate: '取引時期: %{x}<br>取引件数: %{y}件<extra></extra>'
                             }
                           ]}
                           layout={{
