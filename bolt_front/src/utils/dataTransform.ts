@@ -23,7 +23,7 @@ export const transformFormDataToApiData = (inputs: any) => {
   const propertyTaxValue = inputs.propertyTax ?? 0;
   
   const result = {
-    property_name: inputs.propertyName ?? '不動産投資シミュレーション',
+    property_name: inputs.propertyName ?? '不動産収益シミュレーション',
     location: inputs.location ?? '住所未設定',
     year_built: inputs.yearBuilt ?? 2020,
     property_type: inputs.propertyType ?? '一棟アパート/マンション',
@@ -113,7 +113,7 @@ export const transformApiResponseToSupabaseData = (inputs: any, result: any, sha
     'ROI（全期間）（%）': result['ROI（全期間）（%）'] ?? 0,
     'IRR': result['IRR'] ?? 0,
     'NPV': result['NPV'] ?? 0,
-    '投資効率': result['投資効率'] ?? 0,
+    '収益効率': result['収益効率'] ?? 0,
     'CCR': result['CCR'] ?? 0,
     'CCR（初年度）（%）': result['CCR（初年度）（%）'] ?? null,
     'CCR（全期間）（%）': result['CCR（全期間）（%）'] ?? null,
@@ -192,7 +192,7 @@ export const transformSupabaseResultsToDisplayData = (results: any) => {
     'ROI（全期間）（%）': results['ROI（全期間）（%）'] ?? 0,
     'IRR': results['IRR'] ?? 0,
     'NPV': results['NPV'] ?? 0,
-    '投資効率': results['投資効率'] ?? 0,
+    '収益効率': results['収益効率'] ?? 0,
     'CCR': results['CCR'] ?? 0,
     'CCR（初年度）（%）': results['CCR（初年度）（%）'] ?? 0,
     'CCR（全期間）（%）': results['CCR（全期間）（%）'] ?? 0,

@@ -9,7 +9,6 @@ import ResetPassword from './pages/ResetPassword';
 import ResetPasswordConfirm from './pages/ResetPasswordConfirm';
 import MyPage from './pages/MyPage';
 import Simulator from './pages/Simulator';
-import PropertyDetail from './pages/PropertyDetail';
 import UserGuide from './pages/UserGuide';
 import LandingPage from './pages/LandingPage';
 import PaymentResult from './pages/PaymentResult';
@@ -92,7 +91,6 @@ function App() {
             <Route path="/market-analysis" element={<MarketAnalysis />} />
             <Route path="/land-prices" element={<LandPrice />} />
             {/* <Route path="/transaction-search" element={<TransactionSearch />} /> */}
-            <Route path="/property-detail/:id" element={<PropertyDetail />} />
           </Route>
           {/* 404ページ - すべてのルートの最後に配置 */}
           <Route path="*" element={<NotFound />} />

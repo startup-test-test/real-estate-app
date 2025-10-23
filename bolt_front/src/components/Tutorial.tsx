@@ -22,7 +22,7 @@ const tutorialSteps = [
           </ul>
         </div>
         <p className="text-sm text-gray-600">
-          ※ このツールは教育目的のシミュレーションです。実際の投資判断は専門家にご相談ください。
+          ※ このツールは教育目的のシミュレーションです。実際の購入判断は専門家にご相談ください。
         </p>
       </div>
     )
@@ -121,9 +121,9 @@ const tutorialSteps = [
     title: '📊 Step 3: 結果の見方',
     content: (
       <div className="space-y-4">
-        <p>シミュレーション結果では重要な投資指標とグラフが表示されます。</p>
+        <p>シミュレーション結果では重要な収益指標とグラフが表示されます。</p>
         <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mb-3">
-          <h4 className="font-medium text-amber-900 mb-2">📊 主要投資指標</h4>
+          <h4 className="font-medium text-amber-900 mb-2">📊 主要収益指標</h4>
           <div className="grid grid-cols-2 gap-2 text-xs text-amber-800">
             <div>
               <p className="font-medium">収益性指標：</p>
@@ -134,7 +134,7 @@ const tutorialSteps = [
               </ul>
             </div>
             <div>
-              <p className="font-medium">投資効率指標：</p>
+              <p className="font-medium">収益効率指標：</p>
               <ul className="space-y-1 ml-2">
                 <li>• IRR（内部収益率）</li>
                 <li>• CCR（自己資金収益率）</li>

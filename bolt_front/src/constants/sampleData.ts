@@ -44,7 +44,7 @@ export const emptyPropertyData = {
 export const sampleProperties = {
   shibuya: {
     name: '🏙️ 渋谷区ワンルーム',
-    description: '都心一等地の投資用ワンルーム',
+    description: '都心一等地の賃貸用ワンルーム',
     data: {
       propertyName: '渋谷区道玄坂ワンルームマンション',
       location: '東京都渋谷区道玄坂',

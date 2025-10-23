@@ -68,7 +68,7 @@ export const sampleProperty = {
     dscr: 1.23,  // DSCR 1.23倍
     
     // 回収期間
-    paybackPeriod: 14.8,  // 投資回収期間 14.8年
+    paybackPeriod: 14.8,  // 資金回収期間 14.8年
   },
   
   // 表示用メタデータ

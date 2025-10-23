@@ -22,7 +22,7 @@ export interface SimulationResultData {
   '残債（万円）': number;
   '売却コスト（万円）': number;
   '売却益（万円）': number;
-  '総投資額（円）': number;
+  '初期費用総額（円）': number;
   '自己資金（円）': number;
   '自己資金（万円）': number;
   '借入額（円）': number;

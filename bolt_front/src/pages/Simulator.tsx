@@ -142,14 +142,14 @@ const Simulator: React.FC = () => {
       }
     });
     
-    // ステップ4: 評価額と投資指標説明
+    // ステップ4: 評価額と収益指標説明
     steps.push({
       target: '.investment-metrics-section',
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 4/7</div>
-          <h3 className="font-bold text-lg mb-1">📊 評価額と投資指標</h3>
-          <p className="mb-1">物件価値の推移や投資効率を確認できます。</p>
+          <h3 className="font-bold text-lg mb-1">📊 評価額と収益指標</h3>
+          <p className="mb-1">物件価値の推移や収益効率を確認できます。</p>
           <p className="text-sm text-gray-600">IRRや回収期間など重要な指標が表示されます。</p>
         </div>
       ),
@@ -184,7 +184,7 @@ const Simulator: React.FC = () => {
           <div className="text-sm text-gray-500 mb-2">ステップ 5/7</div>
           <h3 className="font-bold text-lg mb-1">📊 年次キャッシュフロー</h3>
           <p className="mb-1">35年間の収支推移をグラフで確認できます。</p>
-          <p className="text-sm text-gray-600">累積キャッシュフローで投資回収時期も分かります。</p>
+          <p className="text-sm text-gray-600">累積キャッシュフローで資金回収時期も分かります。</p>
         </div>
       ),
       disableBeacon: true,
@@ -360,7 +360,7 @@ const Simulator: React.FC = () => {
           case 1: // ステップ3: シミュレーション実行ボタン
             targetSelector = '.simulate-button';
             break;
-          case 2: // ステップ4: 評価額と投資指標
+          case 2: // ステップ4: 評価額と収益指標
             targetSelector = '.investment-metrics-section';
             break;
           case 3: // ステップ5: 年次キャッシュフロー
@@ -744,7 +744,7 @@ const Simulator: React.FC = () => {
         '残債（万円）': 1890,  // 10年後の残債
         '売却コスト（万円）': 85,  // 売却費用約3.5%
         '売却益（万円）': 545,  // 売却価格-残債-売却コスト
-        '総投資額（円）': 30300000,  // 購入価格+諸費用+リフォーム
+        '初期費用総額（円）': 30300000,  // 購入価格+諸費用+リフォーム
         '自己資金（円）': 5100000,  // 頭金+諸費用+リフォーム
         '自己資金（万円）': 510,
         '借入額（円）': 25200000,
@@ -779,7 +779,7 @@ const Simulator: React.FC = () => {
           fullData: simData
         });
         setInputs({
-          propertyName: simData.propertyName || '品川区投資物件',
+          propertyName: simData.propertyName || '品川区収益物件',
           location: simData.location || '東京都品川区',
           yearBuilt: simData.yearBuilt !== undefined ? simData.yearBuilt : 2020,
           propertyType: simData.propertyType || '',
@@ -848,7 +848,7 @@ const Simulator: React.FC = () => {
               '残債（万円）': simulation.results['残債（万円）'] || 0,
               '売却コスト（万円）': simulation.results['売却コスト（万円）'] || 0,
               '売却益（万円）': simulation.results['売却益（万円）'] || 0,
-              '総投資額（円）': simulation.results['総投資額（円）'] || 0,
+              '初期費用総額（円）': simulation.results['初期費用総額（円）'] || 0,
               '自己資金（円）': simulation.results['自己資金（円）'] || 0,
               '自己資金（万円）': simulation.results['自己資金（万円）'] || 0,
               '借入額（円）': simulation.results['借入額（円）'] || 0,
@@ -3082,7 +3082,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">収益還元評価額</div>
                     <div className="mb-2">物件の収益力から逆算した評価額です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間純収益（NOI） ÷ 還元利回り</div>
-                    <div className="text-gray-400 text-xs">※ 投資物件の収益性を重視した評価方法</div>
+                    <div className="text-gray-400 text-xs">※ 収益物件の収益性を重視した評価方法</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3178,8 +3178,8 @@ const Simulator: React.FC = () => {
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">IRR（内部収益率）</div>
-                    <div className="mb-2">投資した資金が年何％で増えているかを示します。</div>
-                    <div className="text-gray-300 text-xs mb-1">計算式：投資額と将来収益から複利計算で算出</div>
+                    <div className="mb-2">投下した資金が年何％で増えているかを示します。</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：投下資金と将来収益から複利計算で算出</div>
                     <div className="text-gray-400 text-xs">※ 定期預金の金利のようなもの</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
@@ -3304,7 +3304,7 @@ const Simulator: React.FC = () => {
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">ROI（初年度）</div>
                     <div className="mb-2">初年度の投資収益率を示します。</div>
-                    <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 総投資額 × 100</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 初期費用総額 × 100</div>
                     <div className="text-gray-400 text-xs">※ 改装費含む初年度実質収益</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
@@ -3328,7 +3328,7 @@ const Simulator: React.FC = () => {
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">ROI（投資収益率）</div>
                     <div className="mb-2">投資した総額に対する年間収益の割合です。</div>
-                    <div className="text-gray-300 text-xs mb-1">計算式：年間キャッシュフロー ÷ 総投資額 × 100</div>
+                    <div className="text-gray-300 text-xs mb-1">計算式：年間キャッシュフロー ÷ 初期費用総額 × 100</div>
                     <div className="text-gray-400 text-xs">※ 投資効率を測る基本指標</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
@@ -3371,7 +3371,7 @@ const Simulator: React.FC = () => {
                ((simulationResults.results['自己資金（万円）'] !== undefined && simulationResults.results['自己資金（万円）'] <= 0) ||
                 (simulationResults.results['自己資金（円）'] !== undefined && simulationResults.results['自己資金（円）'] <= 0)) && (
                 <div className="mt-3 text-xs text-gray-500">
-                  ※ 自己資金がマイナス（借入額が総投資額を上回る）のため算出できない項目はN/Aと表記しています
+                  ※ 自己資金がマイナス（借入額が初期費用総額を上回る）のため算出できない項目はN/Aと表記しています
                 </div>
               )}
             </div>

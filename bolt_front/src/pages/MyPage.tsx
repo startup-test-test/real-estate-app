@@ -706,7 +706,7 @@ const MyPage: React.FC = () => {
       icon: Calculator,
       color: "bg-slate-700",
       description:
-        "売却時ネットCF・キャッシュフロー推移・投資利回りをグラフと数値で診断",
+        "売却時ネットCF・キャッシュフロー推移・収益利回りをグラフと数値で診断",
       actions: [
         {
           name: "収益シミュレーター",
@@ -721,7 +721,7 @@ const MyPage: React.FC = () => {
       color: "bg-gradient-to-r from-purple-600 to-indigo-600",
       badge: "NEW",
       description:
-        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・投資エリアの過去推移を可視化",
+        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・対象エリアの過去推移を可視化",
       actions: [
         {
           name: "AI市場分析",
@@ -859,7 +859,7 @@ const MyPage: React.FC = () => {
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
                   <p className="text-gray-600 mt-1">
-                    投資の成果を一目で確認できます
+                    賃貸経営の成果を一目で確認できます
                   </p>
                 </div>
 

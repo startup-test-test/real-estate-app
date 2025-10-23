@@ -1389,7 +1389,7 @@ const MarketAnalysis: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
                 <p>• <strong>統計の読み方:</strong> 過去データの傾向分析です。将来を保証するものではありません</p>
                 <p>• <strong>使う場面:</strong> 市場動向の参考情報として活用してください</p>
-                <p>• <strong>使いすぎ注意:</strong> 投資判断は必ず専門家（宅建士・税理士等）にご相談ください</p>
+                <p>• <strong>使いすぎ注意:</strong> 購入判断は必ず専門家（宅建士・税理士等）にご相談ください</p>
                 <p>• <strong>データ限界:</strong> サンプル数が少ない場合は参考程度にとどめてください</p>
               </div>
               <p className="mt-2 text-blue-700">【データ出典】このサービスは、国土交通省の不動産情報ライブラリのAPI機能を使用していますが、提供情報の最新性、正確性、完全性等が保証されたものではありません。出典：<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国土交通省 不動産情報ライブラリ</a> / 「不動産取引価格情報」（国土交通省 不動産情報ライブラリ）をもとに株式会社StartupMarketingが編集・加工。本アプリケーションは株式会社StartupMarketingが開発・運営しており、国土交通省が運営するものではありません。</p>
