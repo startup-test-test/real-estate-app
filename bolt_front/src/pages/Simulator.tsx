@@ -562,7 +562,7 @@ const Simulator: React.FC = () => {
           const hasResults = simulationResults !== null;
 
           if (hasResults) {
-            // 結果がある場合はステップ4（評価額と投資指標）から開始
+            // 結果がある場合はステップ4（評価額と収益指標）から開始
             console.log('📌 Tutorial: Starting from step 4 (results section)');
             setTutorialStep(2); // インデックス2 = ステップ4
           } else {
@@ -611,7 +611,7 @@ const Simulator: React.FC = () => {
                 const hasResults = sim.results !== null && sim.results !== undefined;
 
                 if (hasResults) {
-                  // 結果がある場合はステップ4（評価額と投資指標）から開始
+                  // 結果がある場合はステップ4（評価額と収益指標）から開始
                   console.log('📌 Tutorial: Starting from step 4 (results section)');
                   setTutorialStep(2); // インデックス2 = ステップ4
                 } else {
@@ -1533,12 +1533,12 @@ const Simulator: React.FC = () => {
           // ステップ3（シミュレーション実行ボタン）クリック時の処理
           if (runTutorial && tutorialStep === 1) {
             // シミュレーション実行ボタンをクリックした場合
-            // 結果が表示されたら次のステップ（ステップ4: 評価額と投資指標）へ
+            // 結果が表示されたら次のステップ（ステップ4: 評価額と収益指標）へ
             console.log('🎯 Tutorial: Simulation button clicked at step 1');
-            console.log('📝 Will move to step 4 (評価額と投資指標) after results load');
+            console.log('📝 Will move to step 4 (評価額と収益指標) after results load');
             
             setTimeout(() => {
-              setTutorialStep(2); // ステップ4（インデックス2: 評価額と投資指標）へ
+              setTutorialStep(2); // ステップ4（インデックス2: 評価額と収益指標）へ
               setRunTutorial(true); // チュートリアルを確実に継続
               console.log('📝 Tutorial advanced to step:', 2);
               // Joyrideが自動的にスクロールするため、手動スクロールは不要
@@ -1828,7 +1828,7 @@ const Simulator: React.FC = () => {
                   // 結果が表示されている場合はステップ4から、そうでない場合はステップ2から開始
                   if (simulationResults) {
                     console.log('結果あり: ステップ4から開始');
-                    setTutorialStep(2); // ステップ4（評価額と投資指標）から開始
+                    setTutorialStep(2); // ステップ4（評価額と収益指標）から開始
                   } else {
                     console.log('結果なし: ステップ2から開始');
                     setTutorialStep(0); // ステップ2（物件情報入力）から開始
@@ -2975,9 +2975,9 @@ const Simulator: React.FC = () => {
               </div>
             </div>
             
-            {/* 物件価値評価と重要投資指標 */}
+            {/* 物件価値評価と重要収益指標 */}
             <div className="mb-6 print:mb-2 investment-metrics-section">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と投資指標</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と収益指標</h3>
               
               {/* SP版: 4つの重要指標のみ表示 */}
               <div className="md:hidden">
@@ -3161,7 +3161,7 @@ const Simulator: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* 2行目: 投資指標 - PC版のみ表示 */}
+              {/* 2行目: 収益指標 - PC版のみ表示 */}
               <div className="hidden md:flex flex-wrap gap-2 mt-3">
                 {/* IRR */}
                 <div className="group relative">
@@ -3231,7 +3231,7 @@ const Simulator: React.FC = () => {
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
                     <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
-                    <div className="mb-2">投資した自己資金が年何％戻ってくるかを示します。</div>
+                    <div className="mb-2">投下した自己資金が年何％戻ってくるかを示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間平均CF ÷ 自己資金 × 100</div>
                     <div className="text-gray-400 text-xs">※ 10%なら約10年で元本回収</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
@@ -3303,7 +3303,7 @@ const Simulator: React.FC = () => {
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">ROI（初年度）</div>
-                    <div className="mb-2">初年度の投資収益率を示します。</div>
+                    <div className="mb-2">初年度の収益率を示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 初期費用総額 × 100</div>
                     <div className="text-gray-400 text-xs">※ 改装費含む初年度実質収益</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
@@ -3326,10 +3326,10 @@ const Simulator: React.FC = () => {
                     </span>
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
-                    <div className="font-semibold mb-1">ROI（投資収益率）</div>
-                    <div className="mb-2">投資した総額に対する年間収益の割合です。</div>
+                    <div className="font-semibold mb-1">ROI（収益率）</div>
+                    <div className="mb-2">投下した総額に対する年間収益の割合です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間キャッシュフロー ÷ 初期費用総額 × 100</div>
-                    <div className="text-gray-400 text-xs">※ 投資効率を測る基本指標</div>
+                    <div className="text-gray-400 text-xs">※ 収益効率を測る基本指標</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3577,7 +3577,7 @@ const Simulator: React.FC = () => {
                           <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[300px]">
                             売却後の累計キャッシュフロー<br/>
                             = 累計CF + 売却時ネットCF<br/>
-                            投資期間全体での総キャッシュフローです
+                            運用期間全体での総キャッシュフローです
                           </div>
                         </th>
                       </tr>
@@ -3647,7 +3647,7 @@ const Simulator: React.FC = () => {
                   <span className="font-medium">・CCR（自己資金回収率）</span>：年間CF ÷ 自己資金 × 100
                 </div>
                 <div>
-                  <span className="font-medium">・IRR（内部収益率）</span>：投資期間全体の収益率
+                  <span className="font-medium">・IRR（内部収益率）</span>：運用期間全体の収益率
                 </div>
                 <div>
                   <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
@@ -3706,7 +3706,7 @@ const Simulator: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 md:hidden">
           <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">詳細投資指標</h3>
+              <h3 className="text-lg font-semibold">詳細収益指標</h3>
               <button
                 onClick={() => setShowDetailPopup(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
@@ -3742,7 +3742,7 @@ const Simulator: React.FC = () => {
                 <h4 className="font-semibold text-gray-800 mb-2">■ 収益性指標</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">ROI（投資収益率）</span>
+                    <span className="text-gray-600">ROI（収益率）</span>
                     <span className="font-semibold">{simulationResults?.results['ROI（%）']?.toFixed(0) || '0'}%</span>
                   </div>
                   <div className="flex justify-between">
@@ -3786,12 +3786,12 @@ const Simulator: React.FC = () => {
         </div>
       )}
       
-      {/* SP版評価額と投資指標ポップアップ */}
+      {/* SP版評価額と収益指標ポップアップ */}
       {showEvaluationPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 md:hidden">
           <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">評価額と投資指標の詳細</h3>
+              <h3 className="text-lg font-semibold">評価額と収益指標の詳細</h3>
               <button
                 onClick={() => setShowEvaluationPopup(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
@@ -3850,9 +3850,9 @@ const Simulator: React.FC = () => {
                 </div>
               </div>
               
-              {/* 投資効率指標 */}
+              {/* 収益効率指標 */}
               <div>
-                <h4 className="font-semibold text-gray-800 mb-2">■ 投資効率指標</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">■ 収益効率指標</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">IRR（内部収益率）</span>

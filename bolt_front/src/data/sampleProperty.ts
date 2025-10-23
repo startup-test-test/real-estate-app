@@ -62,7 +62,7 @@ export const sampleProperty = {
     cumulativeCashFlowAt10: 1896000,  // 10年累計CF 189.6万円
     cumulativeCashFlowWithSaleAt10: 3150000,  // 売却込み累計CF 315万円
     
-    // 投資効率指標
+    // 収益効率指標
     roi: 11.25,  // ROI 11.25%（売却込み10年）
     irr: 8.7,  // IRR 8.7%
     dscr: 1.23,  // DSCR 1.23倍
