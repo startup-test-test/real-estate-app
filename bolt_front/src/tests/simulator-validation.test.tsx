@@ -43,7 +43,7 @@ describe('シミュレーター入力バリデーションテスト', () => {
       }
     });
 
-    it('NORMAL_003: 一般的な投資物件', () => {
+    it('NORMAL_003: 一般的な収益物件', () => {
       const input = {
         propertyName: '新宿区ワンルーム',
         location: '東京都新宿区',
