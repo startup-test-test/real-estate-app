@@ -4,6 +4,7 @@ services:
     runtime: python
     region: oregon # 米国西海岸リージョン
     plan: free # 無料プランから開始
+    pythonVersion: 3.11.9 # Python 3.11を明示的に指定
 
     # ルートディレクトリ設定
     rootDir: backend/property-api
