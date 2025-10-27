@@ -19,7 +19,7 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = '賃貸経営のためのAI市場分析×シミュレーション｜大家DX';
+    document.title = '賃貸経営のためのシミュレーション｜大家DX';
   }, []);
 
   const personas = [
@@ -136,11 +136,11 @@ const LandingPage: React.FC = () => {
             <div className="text-left">
               <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6" style={{ lineHeight: '1.5' }}>
                 <span className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl block mb-2" style={{ fontSize: '90%' }}>賃貸経営のための</span>
-                <span className="block text-4xl sm:text-4xl md:text-5xl lg:text-6xl" style={{ lineHeight: '1.1' }}>AI市場分析×<br />シミュレーション</span>
+                <span className="block text-4xl sm:text-4xl md:text-5xl lg:text-6xl" style={{ lineHeight: '1.1' }}>シミュレーション</span>
               </h1>
               <div className="text-base sm:text-xl md:text-2xl lg:text-3xl text-gray-900 mb-4 sm:mb-6">
                 <p className="mb-2 sm:mb-3 relative inline-block max-w-full">
-                  <span className="block sm:inline">市場分析と収支計算を</span>
+                  <span className="block sm:inline">収支計算を</span>
                   <span className="block sm:inline">大幅に効率化</span>
                   <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px'}}></span>
                 </p>
@@ -156,7 +156,7 @@ const LandingPage: React.FC = () => {
               >
                 <div className="flex flex-col items-center mr-2 sm:mr-3">
                   <span className="text-lg sm:text-xl">10秒で無料登録する</span>
-                  <span className="text-sm mt-1 opacity-90">（無料で5回AI市場分析が試せます）</span>
+                  <span className="text-sm mt-1 opacity-90">（無料で5回シミュレーションが試せます）</span>
                 </div>
                 <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 ml-1 sm:ml-2" />
               </button>
@@ -717,7 +717,7 @@ const LandingPage: React.FC = () => {
             >
               <div className="flex flex-col items-center mr-3">
                 <span className="text-xl">10秒で無料登録する</span>
-                <span className="text-sm mt-1 opacity-90">（無料で5回AI市場分析が試せます）</span>
+                <span className="text-sm mt-1 opacity-90">（無料で5回シミュレーションが試せます）</span>
               </div>
               <ArrowRight className="h-6 w-6 ml-2" />
             </button>
@@ -731,10 +731,10 @@ const LandingPage: React.FC = () => {
           <div className="text-center mb-8 sm:mb-12">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">How to Use</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-8 leading-tight">
-              3ステップでAI市場分析を始める
+              3ステップでシミュレーションを始める
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              面倒な設定は不要。今すぐAI市場分析を始められます
+              面倒な設定は不要。今すぐシミュレーションを始められます
             </p>
           </div>
 
@@ -808,20 +808,20 @@ const LandingPage: React.FC = () => {
                   <FileText className="w-8 h-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-                  AI市場分析の結果を確認
+                  シミュレーション結果を確認
                 </h3>
                 <ul className="space-y-3 text-gray-700 text-left inline-block">
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>周辺の取引事例を一覧表示</span>
+                    <span>35年のキャッシュフローを可視化</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>価格帯分布をグラフで可視化</span>
+                    <span>IRR・CCR・DSCRなど主要指標を表示</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>地域の中央値・取引件数を確認</span>
+                    <span>PDFレポートで簡単に共有</span>
                   </li>
                 </ul>
               </div>
@@ -836,7 +836,7 @@ const LandingPage: React.FC = () => {
             >
               <div className="flex flex-col items-center mr-3">
                 <span className="text-xl">10秒で無料登録する</span>
-                <span className="text-sm mt-1 opacity-90">（無料で5回AI市場分析が試せます）</span>
+                <span className="text-sm mt-1 opacity-90">（無料で5回シミュレーションが試せます）</span>
               </div>
               <ArrowRight className="h-6 w-6 ml-2" />
             </button>
@@ -1001,7 +1001,7 @@ const LandingPage: React.FC = () => {
                   <p className="text-sm text-gray-500 mb-1">2024.10.14</p>
                   <div>
                     <span className="text-gray-900 text-base">
-                      賃貸経営のためのAI市場分析×シミュレーションの『大家DX』を
+                      賃貸経営のためのシミュレーションの『大家DX』を
                       <a
                         href="https://prtimes.jp/main/html/rd/p/000000002.000169778.html"
                         target="_blank"

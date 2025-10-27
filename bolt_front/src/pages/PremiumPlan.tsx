@@ -179,6 +179,28 @@ const PremiumPlan: React.FC = () => {
           </p>
         </div>
 
+        {/* 重要なお知らせ */}
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-6 rounded-r-lg shadow-sm">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <AlertCircle className="h-5 w-5 text-blue-500" />
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-semibold text-blue-800 mb-1">
+                【重要なお知らせ】有料プランの募集について
+              </h3>
+              <div className="text-sm text-blue-700">
+                <p>
+                  現在、有料プラン（ベーシックプラン）の新規募集を停止しております。
+                </p>
+                <p className="mt-2">
+                  <strong>無料プランのみ</strong>ご利用いただけます。収益シミュレーターは通常通りご利用可能です。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* 現在のプランステータス表示 */}
         {subscriptionStatus.isPremium && (
           <div className="mb-6 max-w-4xl mx-auto">
@@ -278,45 +300,18 @@ const PremiumPlan: React.FC = () => {
                     </div>
                     <p className="text-sm text-gray-600 mb-4">個人・小規模法人向け</p>
                     {!subscriptionStatus.isPremium && (
-                      <button
-                        className="w-full px-6 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-colors"
-                        onClick={async () => {
-                          if (!user) {
-                            alert('ログインが必要です');
-                            return;
-                          }
-                          try {
-                            const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1SG3ioR8rkVVzR7nNRHLEzoD';
-                            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-                              body: {
-                                priceId: priceId,
-                                userId: user.id,
-                                returnUrl: window.location.origin
-                              }
-                            });
-                            if (error) throw error;
-                            if (data?.url) {
-                              window.location.href = data.url;
-                            }
-                          } catch (err: any) {
-                            console.error('Upgrade error:', err);
-                            let errorMessage = 'アップグレード処理中にエラーが発生しました';
-
-                            if (err.message?.includes('already') || err.message?.includes('non-2xx')) {
-                              errorMessage = 'すでにベーシックプランをご利用中です。ページを更新してください。';
-                            } else if (err.message?.includes('network') || err.message?.includes('fetch')) {
-                              errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
-                            } else if (err.message?.includes('unauthorized') || err.message?.includes('401')) {
-                              errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
-                            }
-
-                            alert(errorMessage);
-                          }
-                        }}
-                      >
-                        <Crown className="h-5 w-5 inline-block mr-2" />
-                        今すぐアップグレード
-                      </button>
+                      <div className="space-y-2">
+                        <button
+                          className="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-lg font-medium cursor-not-allowed"
+                          disabled
+                        >
+                          <Crown className="h-5 w-5 inline-block mr-2" />
+                          アップグレード
+                        </button>
+                        <p className="text-xs text-gray-600 text-center">
+                          現在募集停止中です
+                        </p>
+                      </div>
                     )}
                   </div>
                 </th>
