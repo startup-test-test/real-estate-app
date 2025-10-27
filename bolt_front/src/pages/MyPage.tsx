@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import UsageStatusBar from "../components/UsageStatusBar";
 import UpgradeModal from "../components/UpgradeModal";
+import MaintenanceNotice from "../components/MaintenanceNotice";
 import { useUsageStatus } from "../hooks/useUsageStatus";
 import {
   sampleProperty,
@@ -42,11 +43,10 @@ const MyPage: React.FC = () => {
   const [pauseTutorial, setPauseTutorial] = React.useState(false);  // チュートリアル一時停止用
 
   // アップグレードモーダル開閉ハンドラー（チュートリアル一時停止対応）
+  // 現在無料会員のみのため、アップグレード機能は無効化
   const handleUpgradeClick = () => {
-    if (runTutorial) {
-      setPauseTutorial(true);  // チュートリアル一時停止
-    }
-    setShowUpgradeModal(true);
+    // モーダルを開かない（無効化）
+    console.log('アップグレード機能は現在提供していません');
   };
 
   const handleUpgradeClose = () => {
@@ -715,36 +715,37 @@ const MyPage: React.FC = () => {
         },
       ],
     },
-    {
-      category: "AI市場分析",
-      icon: TrendingUp,
-      color: "bg-gradient-to-r from-purple-600 to-indigo-600",
-      badge: "NEW",
-      description:
-        "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・対象エリアの過去推移を可視化",
-      actions: [
-        {
-          name: "AI市場分析",
-          primary: true,
-          path: "/market-analysis",
-        },
-      ],
-    },
-    {
-      category: "公示地価検索",
-      icon: MapPin,
-      color: "bg-gradient-to-r from-green-600 to-teal-600",
-      badge: "NEW",
-      description:
-        "国土交通省の公示地価データを高速検索。エリアごとの地価推移・過去4年分のデータを瞬時に分析・可視化",
-      actions: [
-        {
-          name: "公示地価検索",
-          primary: true,
-          path: "/land-prices",
-        },
-      ],
-    },
+    // メンテナンス中のため一時的に非表示
+    // {
+    //   category: "AI市場分析",
+    //   icon: TrendingUp,
+    //   color: "bg-gradient-to-r from-purple-600 to-indigo-600",
+    //   badge: "NEW",
+    //   description:
+    //     "機械学習で周辺相場を瞬時に分析。価格帯別の市場動向・類似物件との比較・対象エリアの過去推移を可視化",
+    //   actions: [
+    //     {
+    //       name: "AI市場分析",
+    //       primary: true,
+    //       path: "/market-analysis",
+    //     },
+    //   ],
+    // },
+    // {
+    //   category: "公示地価検索",
+    //   icon: MapPin,
+    //   color: "bg-gradient-to-r from-green-600 to-teal-600",
+    //   badge: "NEW",
+    //   description:
+    //     "国土交通省の公示地価データを高速検索。エリアごとの地価推移・過去4年分のデータを瞬時に分析・可視化",
+    //   actions: [
+    //     {
+    //       name: "公示地価検索",
+    //       primary: true,
+    //       path: "/land-prices",
+    //     },
+    //   ],
+    // },
     // 2次リリース用: AI事業計画書機能
     // {
     //   category: "AI事業計画書",
@@ -850,6 +851,11 @@ const MyPage: React.FC = () => {
       <div className="bg-gray-50 min-h-screen">
         {/* 使用状況表示バー（無料ユーザーはアップグレード促進付き） */}
         <UsageStatusBar onUpgradeClick={handleUpgradeClick} />
+
+        {/* お知らせバナー */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <MaintenanceNotice />
+        </div>
 
         <div className="p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">
