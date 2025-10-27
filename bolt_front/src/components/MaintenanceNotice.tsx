@@ -17,10 +17,10 @@ const MaintenanceNotice: React.FC<MaintenanceNoticeProps> = ({
           <AlertCircle className="h-5 w-5 text-blue-500" />
         </div>
         <div className="ml-3 flex-1">
-          <h3 className="text-sm font-semibold text-blue-800 mb-1">
+          <h3 className="text-base font-semibold text-blue-800 mb-1">
             【重要なお知らせ】機能の一時メンテナンスについて
           </h3>
-          <div className="text-sm text-blue-700 space-y-1">
+          <div className="text-base text-blue-700 space-y-1">
             <p>
               サービス品質向上のため、以下の機能を一時的にメンテナンス中とさせていただいております。
             </p>
