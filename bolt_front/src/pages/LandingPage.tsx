@@ -12,6 +12,7 @@ import {
 import BlogPosts from '../components/BlogPosts';
 import CompanyProfile from '../components/CompanyProfile';
 import DeveloperProfile from '../components/DeveloperProfile';
+import MaintenanceNotice from '../components/MaintenanceNotice';
 import '../styles/animations.css';
 
 const LandingPage: React.FC = () => {
@@ -191,6 +192,13 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* お知らせバナー */}
+      <section className="py-4 sm:py-6 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <MaintenanceNotice />
         </div>
       </section>
 

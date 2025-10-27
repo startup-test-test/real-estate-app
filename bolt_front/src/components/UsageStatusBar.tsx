@@ -247,28 +247,16 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             </div>
           )}
 
-          {/* アップグレードボタン */}
-          <button
-            onClick={onUpgradeClick}
-            className="w-full px-5 py-2.5 text-base font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm bg-blue-600 text-white hover:bg-blue-700"
-          >
-            <Crown className="h-5 w-5" />
-            <span>今すぐアップグレード</span>
-            <ChevronRight className="h-5 w-5" />
-          </button>
-
-          {/* 追加メッセージ（エラー時） */}
-          {isError && (
-            <div className="mt-2 text-sm font-medium text-red-600 text-center">
-              <button
-                onClick={onUpgradeClick}
-                className="underline hover:no-underline cursor-pointer"
-              >
-                ベーシックプランにアップグレード
-              </button>
-              して、引き続きご利用ください
+          {/* 現在無料会員のみの案内 */}
+          <div className="w-full px-4 py-3 rounded-lg bg-blue-50 text-center border border-blue-200">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-center gap-2">
+                <AlertCircle className="h-5 w-5 text-blue-600" />
+                <span className="text-base font-semibold text-blue-900">現在無料会員のみ利用可能です</span>
+              </div>
+              <p className="text-sm text-blue-700">有料プランはメンテナンス中です</p>
             </div>
-          )}
+          </div>
         </div>
 
         {/* PC版: 横並びレイアウト */}
@@ -315,36 +303,18 @@ export const UsageStatusBar: React.FC<UsageStatusBarProps> = ({ onUpgradeClick }
             )}
           </div>
 
-          {/* 右側：アップグレード促進 */}
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2">
-              <Crown className="h-5 w-5 text-blue-600" />
-              <span className="text-base font-semibold text-gray-800">
-                月額4,980円で無制限
+          {/* 右側：現在無料会員のみの案内 */}
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-blue-50 border border-blue-200">
+            <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0" />
+            <div className="flex flex-col">
+              <span className="text-base font-semibold text-blue-900">
+                現在無料会員のみ利用可能です
+              </span>
+              <span className="text-sm text-blue-700">
+                有料プランはメンテナンス中です
               </span>
             </div>
-            <button
-              onClick={onUpgradeClick}
-              className="px-5 py-2 text-base font-medium rounded-lg transition-all flex items-center gap-2 shadow-sm bg-blue-600 text-white hover:bg-blue-700"
-            >
-              <Crown className="h-5 w-5" />
-              <span>今すぐアップグレード</span>
-              <ChevronRight className="h-5 w-5" />
-            </button>
           </div>
-
-          {/* 追加メッセージ（エラー時） */}
-          {isError && (
-            <div className="mt-2 text-sm font-medium text-red-600">
-              <button
-                onClick={onUpgradeClick}
-                className="underline hover:no-underline cursor-pointer"
-              >
-                ベーシックプランにアップグレード
-              </button>
-              して、<br />引き続きご利用ください
-            </div>
-          )}
         </div>
       </div>
     </div>
