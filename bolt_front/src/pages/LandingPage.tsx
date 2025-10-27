@@ -208,7 +208,7 @@ const LandingPage: React.FC = () => {
           <div className="text-center mb-3 sm:mb-8">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2">What is 大家DX！</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-              大家DXの3つの特徴
+              大家DXの特徴
             </h2>
           </div>
         </div>
@@ -217,11 +217,10 @@ const LandingPage: React.FC = () => {
       {/* 機能詳細セクション */}
       <section className="pt-1 sm:pt-2 lg:pt-4 pb-2 sm:pb-8 lg:pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* 機能1 */}
-          <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
+          {/* 機能1 - メンテナンス中のため非表示 */}
+          {/* <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
-                {/* SP版: 横並びレイアウト */}
                 <div className="sm:hidden">
                   <div className="flex items-start gap-4">
                     <div className="text-5xl font-bold text-gray-900">01</div>
@@ -242,7 +241,6 @@ const LandingPage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* PC版: 従来のレイアウト */}
                 <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
                   <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
@@ -269,7 +267,6 @@ const LandingPage: React.FC = () => {
                 className="w-full h-auto rounded-xl shadow-lg"
                 onError={(e) => {
                   const target = e.target as HTMLVideoElement;
-                  // エラー時は静止画にフォールバック
                   const img = document.createElement('img');
                   img.src = '/img/tokuchou01.jpg';
                   img.alt = '特徴1: AI市場分析';
@@ -281,16 +278,16 @@ const LandingPage: React.FC = () => {
               </video>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          {/* 機能2 */}
+          {/* 機能1 */}
           <div className="flex flex-col mb-4 sm:mb-16 lg:mb-32">
             <div className="flex flex-col lg:flex-row-reverse items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
                 {/* SP版: 横並びレイアウト */}
                 <div className="sm:hidden">
                   <div className="flex items-start gap-4">
-                    <div className="text-5xl font-bold text-gray-900">02</div>
+                    <div className="text-5xl font-bold text-gray-900">01</div>
                     <div className="flex-1">
                       <h3 className="text-3xl font-bold text-gray-900 mb-4">
                         収益シミュレーション
@@ -307,7 +304,7 @@ const LandingPage: React.FC = () => {
 
                 {/* PC版: 従来のレイアウト */}
                 <div className="hidden sm:block">
-                  <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">02</div>
+                  <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">01</div>
                   <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                     収益シミュレーション
                   </h3>
@@ -343,11 +340,10 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 機能3 */}
-          <div className="flex flex-col">
+          {/* 機能3 - メンテナンス中のため非表示 */}
+          {/* <div className="flex flex-col">
             <div className="flex flex-col lg:flex-row items-start gap-8 mb-8">
               <div className="w-full lg:w-1/3">
-                {/* SP版: 横並びレイアウト */}
                 <div className="sm:hidden">
                   <div className="flex items-start gap-4">
                     <div className="text-5xl font-bold text-gray-900">03</div>
@@ -368,7 +364,6 @@ const LandingPage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* PC版: 従来のレイアウト */}
                 <div className="hidden sm:block">
                   <div className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">03</div>
                   <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
@@ -395,7 +390,6 @@ const LandingPage: React.FC = () => {
                 className="w-full h-auto rounded-xl shadow-lg"
                 onError={(e) => {
                   const target = e.target as HTMLVideoElement;
-                  // エラー時は静止画にフォールバック
                   const img = document.createElement('img');
                   img.src = '/img/tokuchou_landprice.jpg';
                   img.alt = '特徴3: 公示地価検索';
@@ -407,7 +401,7 @@ const LandingPage: React.FC = () => {
               </video>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
