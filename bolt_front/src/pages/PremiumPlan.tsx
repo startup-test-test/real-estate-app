@@ -175,7 +175,7 @@ const PremiumPlan: React.FC = () => {
         <div className="mb-4">
           <h1 className="text-2xl font-bold text-gray-900">有料プランについて</h1>
           <p className="text-gray-600 mt-1">
-            月額4,980円で収益シミュレーターとAI市場分析を無制限でご利用いただけます
+            月額4,980円で収益シミュレーターを無制限でご利用いただけます
           </p>
         </div>
 
@@ -340,14 +340,6 @@ const PremiumPlan: React.FC = () => {
             </thead>
             <tbody>
               <tr className="border-b border-gray-200 bg-white">
-                <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">AI市場分析</td>
-                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
-                <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">月/100回</td>
-                <td className="p-4 text-center bg-purple-50">
-                  <CheckCircle className="h-5 w-5 text-purple-500 mx-auto" />
-                </td>
-              </tr>
-              <tr className="border-b border-gray-200 bg-white">
                 <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">収益シミュレーション</td>
                 <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
                 <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
@@ -355,14 +347,6 @@ const PremiumPlan: React.FC = () => {
                   <div className="text-xs text-gray-600">物件登録数50件</div>
                 </td>
                 <td className="p-4 text-center bg-purple-50 font-bold text-purple-600">無制限</td>
-              </tr>
-              <tr className="border-b border-gray-200 bg-white">
-                <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">公示地価検索</td>
-                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
-                <td className="p-4 text-center bg-blue-50 font-bold text-blue-600 border-x border-gray-200">月/100回</td>
-                <td className="p-4 text-center bg-purple-50">
-                  <CheckCircle className="h-5 w-5 text-purple-500 mx-auto" />
-                </td>
               </tr>
               <tr className="bg-white">
                 <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">

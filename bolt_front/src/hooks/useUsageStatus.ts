@@ -1,5 +1,6 @@
 /**
  * 使用状況管理用カスタムフック
+ * 完全無料プラン（無制限）
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -36,21 +37,21 @@ export const useUsageStatus = (): UseUsageStatusReturn => {
     } catch (err) {
       console.error('使用状況取得エラー:', err);
       setError('使用状況の取得に失敗しました');
-      // エラー時でもデフォルト値を設定
+      // エラー時でもデフォルト値を設定（無制限）
       setUsage({
         canUse: true,
         currentCount: 0,
-        limit: 5,
+        limit: -1,
         isSubscribed: false,
         periodEndDate: null,
-        daysLeft: 30
+        daysLeft: -1
       });
     } finally {
       setLoading(false);
     }
   }, [user]);
 
-  // 制限チェック付き実行
+  // 制限チェック付き実行（完全無料プランでは常に実行可能）
   const executeWithLimit = useCallback(async (
     callback: () => Promise<void>,
     featureType: string = 'simulator'
@@ -60,28 +61,17 @@ export const useUsageStatus = (): UseUsageStatusReturn => {
       return false;
     }
 
-    // ベーシック会員は制限なし
-    if (usage.isSubscribed) {
-      await callback();
-      return true;
-    }
-
-    // 無料プランの制限チェック
-    if (!usage.canUse) {
-      console.log('使用制限に到達しています');
-      return false;
-    }
-
+    // 完全無料プラン: 常に実行可能
     try {
       // 機能を実行
       await callback();
-      
-      // 使用回数をインクリメント
+
+      // 使用回数をインクリメント（統計目的）
       await incrementUsage(user.id, featureType);
-      
+
       // 使用状況を再取得
       await fetchUsageStatus();
-      
+
       return true;
     } catch (err) {
       console.error('実行エラー:', err);
@@ -119,22 +109,9 @@ export const useUsageStatus = (): UseUsageStatusReturn => {
  */
 export const getUsageStatusMessage = (usage: UsageStatus | null): string => {
   if (!usage) return '';
-  
-  if (usage.isSubscribed) {
-    return 'ベーシック会員 - 無制限利用可能';
-  }
-  
-  const remaining = usage.limit - usage.currentCount;
-  
-  if (remaining <= 0) {
-    return '無料利用枠（月5回）を使い切りました';
-  }
-  
-  if (remaining === 1) {
-    return `⚠️ 残り${remaining}回（最後の1回）`;
-  }
-  
-  return `今月の利用状況: ${usage.currentCount}/${usage.limit}回`;
+
+  // 完全無料プラン
+  return '無料プラン - 無制限利用可能';
 };
 
 /**
@@ -142,20 +119,7 @@ export const getUsageStatusMessage = (usage: UsageStatus | null): string => {
  */
 export const getUsageStatusColor = (usage: UsageStatus | null): string => {
   if (!usage) return 'gray';
-  
-  if (usage.isSubscribed) {
-    return 'purple'; // プレミアム
-  }
-  
-  const remaining = usage.limit - usage.currentCount;
-  
-  if (remaining <= 0) {
-    return 'red'; // 制限到達
-  }
-  
-  if (remaining === 1) {
-    return 'yellow'; // 警告
-  }
-  
-  return 'blue'; // 通常
+
+  // 完全無料プラン
+  return 'blue'; // 常に通常状態
 };

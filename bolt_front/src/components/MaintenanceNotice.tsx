@@ -18,19 +18,22 @@ const MaintenanceNotice: React.FC<MaintenanceNoticeProps> = ({
         </div>
         <div className="ml-3 flex-1">
           <h3 className="text-sm font-semibold text-blue-800 mb-1">
-            【重要なお知らせ】機能の一時メンテナンスについて
+            【重要なお知らせ】サービス提供内容の変更について
           </h3>
           <div className="text-sm text-blue-700 space-y-1">
             <p>
-              サービス品質向上のため、以下の機能を一時的にメンテナンス中とさせていただいております。
+              2025年10月27日をもちまして、以下の機能のサービス提供を停止いたしました。
             </p>
             <ul className="list-disc list-inside ml-2 mt-2 space-y-1">
-              <li>AI市場分析</li>
-              <li>公示地価検索</li>
-              <li>有料プラン（ベーシックプラン）- 現在無料プランのみ提供しております</li>
+              <li>AI市場分析機能</li>
+              <li>公示地価検索機能</li>
+              <li>有料プラン（ベーシックプラン）の新規募集</li>
             </ul>
+            <p className="mt-2">
+              現在は、収益シミュレーター機能を完全無料でご提供しております。
+            </p>
             <p className="mt-2 text-xs text-blue-600">
-              ※ 収益シミュレーターは通常通りご利用いただけます
+              ※ 無制限で収益シミュレーター機能をご利用いただけます
             </p>
           </div>
         </div>

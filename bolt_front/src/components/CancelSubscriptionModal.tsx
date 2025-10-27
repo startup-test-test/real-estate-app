@@ -82,7 +82,7 @@ const CancelSubscriptionModal: React.FC<CancelSubscriptionModalProps> = ({
                 </li>
                 <li className="flex items-start">
                   <span className="mr-1">•</span>
-                  <span>解約後は月5回の利用制限に戻ります</span>
+                  <span>解約後は無料プラン（無制限）に戻ります</span>
                 </li>
                 <li className="flex items-start">
                   <span className="mr-1">•</span>

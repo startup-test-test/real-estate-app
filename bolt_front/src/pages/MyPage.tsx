@@ -908,17 +908,10 @@ const MyPage: React.FC = () => {
                               if (action.disabled) {
                                 return;
                               }
-                              // シミュレーターとAI市場分析は統合カウント（月5回制限）
+                              // シミュレーター（完全無料・無制限）
                               if (action.path === "/simulator" || action.path === "/market-analysis") {
-                                if (
-                                  usage &&
-                                  !usage.isSubscribed &&
-                                  usage.currentCount >= usage.limit
-                                ) {
-                                  handleUpgradeClick();
-                                } else {
-                                  navigate(action.path);
-                                }
+                                // 完全無料プランのため、制限チェックをスキップ
+                                navigate(action.path);
                               } else if (action.path !== "#") {
                                 navigate(action.path);
                               }
@@ -967,16 +960,8 @@ const MyPage: React.FC = () => {
                     </button>
                     <button
                       onClick={async () => {
-                        // 使用制限をチェック
-                        if (
-                          usage &&
-                          !usage.isSubscribed &&
-                          usage.currentCount >= usage.limit
-                        ) {
-                          handleUpgradeClick();
-                        } else {
-                          navigate("/simulator");
-                        }
+                        // 完全無料プランのため、制限チェックをスキップ
+                        navigate("/simulator");
                       }}
                       className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
@@ -1077,16 +1062,8 @@ const MyPage: React.FC = () => {
                     </p>
                     <button
                       onClick={async () => {
-                        // 使用制限をチェック
-                        if (
-                          usage &&
-                          !usage.isSubscribed &&
-                          usage.currentCount >= usage.limit
-                        ) {
-                          handleUpgradeClick();
-                        } else {
-                          navigate("/simulator");
-                        }
+                        // 完全無料プランのため、制限チェックをスキップ
+                        navigate("/simulator");
                       }}
                       className="inline-flex items-center px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
