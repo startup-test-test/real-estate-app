@@ -508,7 +508,17 @@ const LandingPage: React.FC = () => {
               初心者から大規模経営者まで。経営規模に応じて最適なプランを選択できます。
             </p>
           </div>
-          
+
+          {/* 重要なお知らせ */}
+          <div className="max-w-4xl mx-auto mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-gray-700 text-center">
+              <span className="font-semibold">※ 重要なお知らせ：</span>
+              現在、サービス品質向上のため有料プランの新規募集を一時停止しております。
+              AI市場分析・公示地価検索機能は現在メンテナンス中です。
+              収益シミュレーション機能は引き続き無料でご利用いただけます。
+            </p>
+          </div>
+
           {/* PC版: 比較表形式のプラン */}
           <div className="hidden md:block overflow-x-auto pt-4">
             <table className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-xl border border-gray-200">
