@@ -84,20 +84,26 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
 
 /**
  * 使用回数をインクリメント
+ * 完全無料プランでは統計目的のみ（エラーは無視）
  */
 export const incrementUsage = async (userId: string, featureType: string): Promise<number> => {
   try {
-    // 1. 利用履歴を記録
-    await supabase.from('usage_history').insert({
+    // 1. 利用履歴を記録（ベストエフォート）
+    const { error: historyError } = await supabase.from('usage_history').insert({
       user_id: userId,
       feature_type: featureType,
-      feature_data: { 
+      feature_data: {
         timestamp: new Date().toISOString(),
         feature: featureType
       }
     });
 
-    // 2. カウントをインクリメント
+    // 権限エラーは無視（完全無料プランでは統計は任意）
+    if (historyError) {
+      console.warn('使用履歴記録スキップ（権限なし）:', historyError.message);
+    }
+
+    // 2. カウントをインクリメント（ベストエフォート）
     const { data: currentUsage } = await supabase
       .from('user_usage')
       .select('usage_count')
@@ -106,7 +112,7 @@ export const incrementUsage = async (userId: string, featureType: string): Promi
 
     const newCount = (currentUsage?.usage_count || 0) + 1;
 
-    // 3. カウントを更新
+    // 3. カウントを更新（ベストエフォート）
     const { error } = await supabase
       .from('user_usage')
       .upsert({
@@ -118,13 +124,14 @@ export const incrementUsage = async (userId: string, featureType: string): Promi
       });
 
     if (error) {
-      console.error('使用回数更新エラー:', error);
+      console.warn('使用回数更新スキップ（権限なし）:', error.message);
       return currentUsage?.usage_count || 0;
     }
 
     return newCount;
   } catch (error) {
-    console.error('使用回数インクリメントエラー:', error);
+    // エラーは全て無視（完全無料プランでは制限なし）
+    console.warn('使用回数インクリメント処理スキップ:', error);
     return 0;
   }
 };

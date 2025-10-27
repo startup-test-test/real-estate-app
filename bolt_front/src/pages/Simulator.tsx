@@ -1126,14 +1126,22 @@ const Simulator: React.FC = () => {
   };
 
   const handleSimulation = async () => {
+    console.log('🚀 handleSimulation called');
+    console.log('📊 usage:', usage);
+    console.log('🔧 executeWithLimit:', executeWithLimit);
+
     // 使用制限チェック
     if (!usage || !executeWithLimit) {
+      console.error('❌ usage or executeWithLimit is missing');
       setSaveError('使用状況を確認中です。しばらくお待ちください。');
       return;
     }
 
-    // 無料プランの制限チェック
-    if (!usage.isSubscribed && usage.currentCount >= usage.limit) {
+    console.log('✅ Usage check passed, limit:', usage.limit, 'current:', usage.currentCount);
+
+    // 無料プランの制限チェック（完全無料プランではlimit=-1なのでスキップされる）
+    if (!usage.isSubscribed && usage.limit !== -1 && usage.currentCount >= usage.limit) {
+      console.log('⚠️ Usage limit reached');
       setShowUpgradeModal(true);
       return;
     }

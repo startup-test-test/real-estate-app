@@ -6,14 +6,29 @@
 import { getCurrentEnvironment, Environment, getEnvironmentInfo } from './environment';
 
 /**
+ * Codespaces環境でのバックエンドURL取得
+ */
+const getCodespacesBackendUrl = (): string => {
+  const hostname = window.location.hostname;
+  // フロントエンドのCodespaces URLからバックエンドのURLを生成
+  // 例: turbo-space-halibut-v6r99rr46gq6hpxw6-5173.app.github.dev
+  //  → turbo-space-halibut-v6r99rr46gq6hpxw6-3000.app.github.dev
+  if (hostname.includes('.app.github.dev')) {
+    const backendUrl = hostname.replace(/-\d+\.app\.github\.dev/, '-3000.app.github.dev');
+    return `https://${backendUrl}`;
+  }
+  return 'http://localhost:3000';
+};
+
+/**
  * 環境別のRender API URLs
  * 本番と開発でAPIを分離
  */
 const API_URLS = {
   [Environment.PRODUCTION]: 'https://real-estate-app-1-iii4.onrender.com',  // 本番API
-  [Environment.DEVELOPMENT]: 'https://real-estate-app-rwf1.onrender.com',   // 開発API
-  [Environment.CODESPACES]: 'https://real-estate-app-rwf1.onrender.com',    // 開発APIを使用
-  [Environment.LOCAL]: 'https://real-estate-app-rwf1.onrender.com'          // 開発APIを使用
+  [Environment.DEVELOPMENT]: 'https://real-estate-app-rwf1.onrender.com',   // 開発Render API
+  [Environment.CODESPACES]: getCodespacesBackendUrl(),                       // Codespacesポートフォワーディング
+  [Environment.LOCAL]: 'http://localhost:3000'                               // ローカル開発API
 } as const;
 
 /**
