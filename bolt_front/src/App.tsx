@@ -24,6 +24,10 @@ import Tokushoho from './pages/Tokushoho';
 import Disclaimer from './pages/Disclaimer';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
+import Maintenance from './pages/Maintenance';
+
+// メンテナンスモード: 環境変数で制御（true にするとメンテナンス画面を表示）
+const MAINTENANCE_MODE = true;
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();
@@ -51,6 +55,20 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 // APITestページを削除
 
 function App() {
+  // メンテナンスモードの場合は、すべてのページをメンテナンス画面にリダイレクト
+  if (MAINTENANCE_MODE) {
+    return (
+      <Router future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}>
+        <Routes>
+          <Route path="*" element={<Maintenance />} />
+        </Routes>
+      </Router>
+    );
+  }
+
   return (
     <AuthProvider>
       <Router future={{
