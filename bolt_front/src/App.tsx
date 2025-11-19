@@ -25,9 +25,11 @@ import Disclaimer from './pages/Disclaimer';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import Maintenance from './pages/Maintenance';
+import { isMaintenanceMode } from './config/maintenance';
 
-// メンテナンスモード: 環境変数で制御（true にするとメンテナンス画面を表示）
-const MAINTENANCE_MODE = true;
+// メンテナンスモード: src/config/maintenance.ts で制御
+// true にするとメンテナンス画面を表示
+const MAINTENANCE_MODE = isMaintenanceMode();
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuthContext();

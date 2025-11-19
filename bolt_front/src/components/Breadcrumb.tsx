@@ -25,12 +25,12 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
 
     if (path.includes('/simulator')) {
       breadcrumbs.push({ name: '物件収益シミュレーター', path: '/simulator', current: true });
-    } else if (path.includes('/transaction-search')) {
-      breadcrumbs.push({ name: 'AI取引事例検索', path: '/transaction-search', current: true });
-    } else if (path.includes('/market-analysis')) {
-      breadcrumbs.push({ name: 'AI市場分析', path: '/market-analysis', current: true });
-    } else if (path.includes('/land-prices')) {
-      breadcrumbs.push({ name: '公示地価検索', path: '/land-prices', current: true });
+    // } else if (path.includes('/transaction-search')) {
+    //   breadcrumbs.push({ name: 'AI取引事例検索', path: '/transaction-search', current: true });
+    // } else if (path.includes('/market-analysis')) {
+    //   breadcrumbs.push({ name: 'AI市場分析', path: '/market-analysis', current: true });
+    // } else if (path.includes('/land-prices')) {
+    //   breadcrumbs.push({ name: '公示地価検索', path: '/land-prices', current: true });
     } else if (path.includes('/user-guide')) {
       breadcrumbs.push({ name: 'ユーザーガイド', path: '/user-guide', current: true });
     } else if (path.includes('/faq')) {

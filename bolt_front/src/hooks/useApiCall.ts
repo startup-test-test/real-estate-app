@@ -39,8 +39,13 @@ export const useApiCall = () => {
       }
       
       // FAST API呼び出し（タイムアウト対応）
-      const API_BASE_URL = 'https://real-estate-app-1-iii4.onrender.com';
-      
+      // 開発環境ではローカルAPIを使用、本番環境では本番URLを使用
+      const API_BASE_URL = import.meta.env.DEV
+        ? 'http://localhost:3000'
+        : 'https://real-estate-app-1-iii4.onrender.com';
+
+      console.log('🔧 Simulator API URL:', API_BASE_URL);
+
       // 最初にAPIを起動させる（Health Check）
       try {
         await fetch(`${API_BASE_URL}/`, { method: 'GET' });

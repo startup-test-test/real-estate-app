@@ -1,14 +1,14 @@
 /**
  * 使用制限管理ユーティリティ
- * 月5回制限のフリーミアムモデル対応
+ * 完全無料プラン（無制限）
  */
 
 import { supabase } from '../lib/supabase';
 
 export interface UsageStatus {
-  canUse: boolean;           // 利用可能かどうか
+  canUse: boolean;           // 利用可能かどうか（常にtrue）
   currentCount: number;       // 現在の利用回数
-  limit: number;             // 制限回数（無料:5, ベーシック:-1）
+  limit: number;             // 制限回数（-1: 無制限）
   isSubscribed: boolean;      // ベーシック会員かどうか
   periodEndDate: Date | null; // リセット日
   daysLeft: number;          // 残り日数
@@ -48,65 +48,62 @@ export const checkUsageLimit = async (userId: string): Promise<UsageStatus> => {
       };
     }
 
-    // 2. 無料プランの使用状況を確認（自動リセット込み）
+    // 2. 完全無料プラン - 無制限で利用可能
+    // 使用状況は統計目的のみで記録するが、制限はかけない
     const { data, error } = await supabase
       .rpc('check_and_reset_usage', { p_user_id: userId });
 
     if (error) {
       console.error('使用状況確認エラー:', error);
-      // エラー時は制限なしとして扱う（サービス継続性優先）
-      return {
-        canUse: true,
-        currentCount: 0,
-        limit: 5,
-        isSubscribed: false,
-        periodEndDate: null,
-        daysLeft: 30
-      };
     }
 
     const usage = data?.[0] || { current_count: 0, period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) };
-    const periodEnd = new Date(usage.period_end);
-    const daysLeft = Math.ceil((periodEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
+    // 完全無料プラン: 常に利用可能
     return {
-      canUse: usage.current_count < 5,  // 月5回制限
+      canUse: true,  // 常に利用可能
       currentCount: usage.current_count,
-      limit: 5,
+      limit: -1,  // 無制限
       isSubscribed: false,
-      periodEndDate: periodEnd,
-      daysLeft: Math.max(0, daysLeft)
+      periodEndDate: null,
+      daysLeft: -1
     };
   } catch (error) {
     console.error('使用制限チェックエラー:', error);
-    // エラー時はサービス継続性を優先
+    // エラー時もサービス継続性を優先（無制限）
     return {
       canUse: true,
       currentCount: 0,
-      limit: 5,
+      limit: -1,
       isSubscribed: false,
       periodEndDate: null,
-      daysLeft: 30
+      daysLeft: -1
     };
   }
 };
 
 /**
  * 使用回数をインクリメント
+ * 完全無料プランでは統計目的のみ（エラーは無視）
  */
 export const incrementUsage = async (userId: string, featureType: string): Promise<number> => {
   try {
-    // 1. 利用履歴を記録
-    await supabase.from('usage_history').insert({
+    // 1. 利用履歴を記録（ベストエフォート）
+    const { error: historyError } = await supabase.from('usage_history').insert({
       user_id: userId,
       feature_type: featureType,
-      feature_data: { 
+      feature_data: {
         timestamp: new Date().toISOString(),
         feature: featureType
       }
     });
 
-    // 2. カウントをインクリメント
+    // 権限エラーは無視（完全無料プランでは統計は任意）
+    if (historyError) {
+      console.warn('使用履歴記録スキップ（権限なし）:', historyError.message);
+    }
+
+    // 2. カウントをインクリメント（ベストエフォート）
     const { data: currentUsage } = await supabase
       .from('user_usage')
       .select('usage_count')
@@ -115,7 +112,7 @@ export const incrementUsage = async (userId: string, featureType: string): Promi
 
     const newCount = (currentUsage?.usage_count || 0) + 1;
 
-    // 3. カウントを更新
+    // 3. カウントを更新（ベストエフォート）
     const { error } = await supabase
       .from('user_usage')
       .upsert({
@@ -127,13 +124,14 @@ export const incrementUsage = async (userId: string, featureType: string): Promi
       });
 
     if (error) {
-      console.error('使用回数更新エラー:', error);
+      console.warn('使用回数更新スキップ（権限なし）:', error.message);
       return currentUsage?.usage_count || 0;
     }
 
     return newCount;
   } catch (error) {
-    console.error('使用回数インクリメントエラー:', error);
+    // エラーは全て無視（完全無料プランでは制限なし）
+    console.warn('使用回数インクリメント処理スキップ:', error);
     return 0;
   }
 };
