@@ -1,426 +1,157 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Check,
-  AlertCircle,
-  CheckCircle,
-  Crown
-} from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuthContext } from '../components/AuthProvider';
-import CancelSubscriptionModal from '../components/CancelSubscriptionModal';
-import { calculateRemainingDays, formatRemainingTime, formatCancelDate, getSubscriptionStatus } from '../utils/subscriptionHelpers';
-import { useUsageStatus } from '../hooks/useUsageStatus';
-import UsageStatusBar from '../components/UsageStatusBar';
-import UpgradeModal from '../components/UpgradeModal';
+import React, { useEffect } from 'react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
 
+/**
+ * 有料プラン募集停止のお知らせページ
+ * 現在は完全無料プランのみ提供中
+ */
 const PremiumPlan: React.FC = () => {
-  const { user } = useAuthContext();
-  const [subscription, setSubscription] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCanceling, setIsCanceling] = useState(false);
-  const { usage } = useUsageStatus();
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-
   useEffect(() => {
-    document.title = '料金プラン | 大家DX';
+    document.title = '有料プランについて | 大家DX';
   }, []);
-
-  // サブスクリプション情報を取得
-  useEffect(() => {
-    const fetchSubscription = async () => {
-      if (!user?.id) {
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('subscriptions')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'active');
-
-        if (error && error.code !== 'PGRST116') {
-          console.error('Subscription fetch error:', error);
-        }
-
-        setSubscription(data && data.length > 0 ? data[0] : null);
-      } catch (err) {
-        console.error('Error fetching subscription:', err);
-      } finally {
-        // Loading state removed
-      }
-    };
-
-    fetchSubscription();
-  }, [user]);
-
-  // サブスクリプションステータスを取得
-  const subscriptionStatus = getSubscriptionStatus(subscription);
-
-  // 解約処理
-  const handleCancelSubscription = async () => {
-    if (!user?.id) {
-      alert('ログインが必要です');
-      return;
-    }
-
-    setIsCanceling(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('cancel-subscription', {
-        body: {},
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      // サブスクリプション情報を再取得
-      const { data: updatedSub } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
-
-      setSubscription(updatedSub);
-      setIsModalOpen(false);
-      alert(`解約が完了しました。${data.message}`);
-    } catch (error: any) {
-      console.error('Cancel subscription error:', error);
-      // エラーメッセージを日本語化
-      let errorMessage = '解約処理中にエラーが発生しました';
-      
-      if (error.message?.includes('already') || error.message?.includes('non-2xx')) {
-        errorMessage = 'この操作はすでに処理済みです。しばらくお待ちいただくか、ページを更新してください。';
-      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-        errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
-      } else if (error.message?.includes('unauthorized') || error.message?.includes('401')) {
-        errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
-      }
-      
-      alert(errorMessage);
-    } finally {
-      setIsCanceling(false);
-    }
-  };
-
-  // 解約取り消し処理
-  const handleResumeSubscription = async () => {
-    if (!user?.id) {
-      alert('ログインが必要です');
-      return;
-    }
-
-    if (!confirm('ベーシックプランを継続しますか？')) {
-      return;
-    }
-
-    setIsCanceling(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('resume-subscription', {
-        body: {},
-        headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      // サブスクリプション情報を再取得
-      const { data: updatedSub } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
-
-      setSubscription(updatedSub);
-      alert('解約が取り消されました。ベーシックプランを継続します。');
-    } catch (error: any) {
-      console.error('Resume subscription error:', error);
-      // エラーメッセージを日本語化
-      let errorMessage = '解約の取り消しに失敗しました';
-      
-      if (error.message?.includes('already') || error.message?.includes('non-2xx')) {
-        errorMessage = 'この操作はすでに処理済みです。しばらくお待ちいただくか、ページを更新してください。';
-      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-        errorMessage = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
-      } else if (error.message?.includes('unauthorized') || error.message?.includes('401')) {
-        errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
-      }
-      
-      alert(errorMessage);
-    } finally {
-      setIsCanceling(false);
-    }
-  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* 使用状況バー（マイページと同様に最上部に配置） */}
-      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
-
       <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Breadcrumb - PC版のみ表示 */}
-        <div className="hidden md:block mb-4">
-          <Breadcrumb />
-        </div>
-
-        {/* ページタイトル - 他のページと統一 */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">有料プランについて</h1>
-          <p className="text-gray-600 mt-1">
-            月額4,980円で収益シミュレーターを無制限でご利用いただけます
-          </p>
-        </div>
-
-        {/* 重要なお知らせ */}
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 mb-6 rounded-r-lg shadow-sm">
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <AlertCircle className="h-5 w-5 text-blue-500" />
-            </div>
-            <div className="ml-3 flex-1">
-              <h3 className="text-sm font-semibold text-blue-800 mb-1">
-                【重要なお知らせ】有料プランの募集について
-              </h3>
-              <div className="text-sm text-blue-700">
-                <p>
-                  現在、有料プラン（ベーシックプラン）の新規募集を停止しております。
-                </p>
-                <p className="mt-2">
-                  <strong>無料プランのみ</strong>ご利用いただけます。収益シミュレーターは通常通りご利用可能です。
-                </p>
-              </div>
-            </div>
+        <div className="max-w-4xl mx-auto">
+          {/* Breadcrumb - PC版のみ表示 */}
+          <div className="hidden md:block mb-4">
+            <Breadcrumb />
           </div>
-        </div>
 
-        {/* 現在のプランステータス表示 */}
-        {subscriptionStatus.isPremium && (
-          <div className="mb-6 max-w-4xl mx-auto">
-            {subscriptionStatus.isCanceling || subscriptionStatus.remainingDays === 0 ? (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex items-start">
-                  <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="font-semibold text-amber-800 text-base mb-2">
-                      {subscriptionStatus.remainingDays === 0 ? 'プラン終了' : '解約予定'}
+          {/* 戻るリンク - スマホ版のみ表示 */}
+          <div className="md:hidden mb-4">
+            <Link to="/mypage" className="inline-flex items-center text-blue-600 hover:text-blue-700">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              マイページに戻る
+            </Link>
+          </div>
+
+          {/* ページタイトル */}
+          <div className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">有料プランについて</h1>
+            <p className="text-gray-600 mt-2">
+              大家DXの有料プランに関するお知らせ
+            </p>
+          </div>
+
+          {/* メインお知らせカード */}
+          <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 mb-6">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-6 w-6 text-blue-500" />
+                </div>
+                <div className="ml-3 flex-1">
+                  <h2 className="text-lg font-semibold text-blue-800 mb-2">
+                    【重要なお知らせ】有料プラン（ベーシックプラン）の新規募集停止について
+                  </h2>
+                  <div className="text-blue-700 space-y-3">
+                    <p>
+                      2025年10月27日をもちまして、有料プラン（ベーシックプラン）の新規募集を停止いたしました。
                     </p>
-                    <div className="space-y-1 text-sm">
-                      <p className="text-amber-700">
-                        <span className="font-medium">利用期限：</span>
-                        {formatCancelDate(subscription?.cancel_at)}
+                    <p>
+                      現在、すべての機能を<strong className="text-blue-900">完全無料・無制限</strong>でご提供しております。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 現在のサービス内容 */}
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">現在のサービス内容</h3>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 mt-0.5">
+                      ✓
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">収益シミュレーター機能</h4>
+                      <p className="text-gray-600 text-sm">
+                        回数制限なく、無制限でご利用いただけます。IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算できます。
                       </p>
-                      {subscriptionStatus.remainingDays !== null && subscriptionStatus.remainingDays > 0 && (
-                        <p className="text-amber-600 font-medium">
-                          {formatRemainingTime(subscriptionStatus.remainingDays)}利用可能
-                        </p>
-                      )}
-                      {subscriptionStatus.remainingDays === 0 && (
-                        <p className="text-amber-600 font-medium">
-                          フリープランに変更されました
-                        </p>
-                      )}
                     </div>
                   </div>
-                  {subscriptionStatus.remainingDays !== null && subscriptionStatus.remainingDays > 0 && (
-                    <button
-                      onClick={handleResumeSubscription}
-                      className="ml-4 px-6 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
-                    >
-                      解約を取り消す
-                    </button>
-                  )}
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 mt-0.5">
+                      ✓
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">PDFレポート出力</h4>
+                      <p className="text-gray-600 text-sm">
+                        シミュレーション結果をPDF形式で出力できます。無制限にご利用可能です。
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3 mt-0.5">
+                      ✓
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">すべて完全無料</h4>
+                      <p className="text-gray-600 text-sm">
+                        月額料金は一切かかりません。登録するだけで、すべての機能をご利用いただけます。
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            ) : (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Check className="h-5 w-5 text-green-600 mr-2" />
-                    <span className="text-base font-semibold text-green-800">現在ベーシックプランをご利用中です</span>
-                  </div>
-                  {!subscriptionStatus.isCanceling && subscriptionStatus.remainingDays !== 0 && (
-                    <button
-                      onClick={() => setIsModalOpen(true)}
-                      className="px-6 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg font-medium transition-colors"
-                    >
-                      プランを解約
-                    </button>
-                  )}
-                </div>
+            </div>
+
+            {/* 停止した機能 */}
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">サービス提供を停止した機能</h3>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                <ul className="space-y-2 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>AI市場分析機能（一時メンテナンス中）</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>公示地価検索機能（一時メンテナンス中）</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>有料プラン（ベーシックプラン）の新規募集</span>
+                  </li>
+                </ul>
+                <p className="text-sm text-gray-600 mt-4">
+                  ※ 既にご契約中のお客様は引き続きベーシックプランをご利用いただけます。
+                </p>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Pricing Plans Table */}
-        <div className="overflow-x-auto mb-8">
-          <table className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-xl border border-gray-200">
-            <thead>
-              <tr>
-                <th className="text-left p-4 border-b-2 border-gray-200"></th>
-                <th className="p-4 border-b-2 border-gray-200 bg-white">
-                  <div className="text-center">
-                    {/* バッジエリア - 高さ揃え用 */}
-                    <div className="h-7 mb-2"></div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">無料プラン</h3>
-                    <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-4xl font-bold text-gray-900">¥0</span>
-                      <span className="text-lg text-gray-600 ml-1">/月</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-4">月に合計5回まで利用可能</p>
-                    {!subscriptionStatus.isPremium && (
-                      <button
-                        className="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium cursor-default"
-                        disabled
-                      >
-                        現在のプラン
-                      </button>
-                    )}
-                  </div>
-                </th>
-                <th className="p-4 border-b-2 border-blue-500 bg-blue-50 relative">
-                  <div className="text-center">
-                    <div className="inline-block mb-2">
-                      <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-lg">
-                        人気プラン
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">ベーシックプラン</h3>
-                    <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-4xl font-bold text-gray-900">¥4,980</span>
-                      <span className="text-lg text-gray-600 ml-1">/月</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-4">個人・小規模法人向け</p>
-                    {!subscriptionStatus.isPremium && (
-                      <div className="space-y-2">
-                        <button
-                          className="w-full px-6 py-3 bg-gray-300 text-gray-600 rounded-lg font-medium cursor-not-allowed"
-                          disabled
-                        >
-                          <Crown className="h-5 w-5 inline-block mr-2" />
-                          アップグレード
-                        </button>
-                        <p className="text-xs text-gray-600 text-center">
-                          現在募集停止中です
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </th>
-                <th className="p-4 border-b-2 border-purple-500 bg-purple-50 relative">
-                  <div className="text-center">
-                    <div className="inline-block mb-2">
-                      <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-lg">
-                        Coming Soon
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">プロプラン</h3>
-                    <div className="flex items-baseline justify-center mb-2">
-                      <span className="text-4xl font-bold text-gray-400">¥9,800</span>
-                      <span className="text-lg text-gray-400 ml-1">/月</span>
-                    </div>
-                    <p className="text-sm text-gray-500 mb-4">法人・プロ経営者向け</p>
-                    <button
-                      className="w-full px-6 py-3 bg-gray-200 text-gray-500 rounded-lg font-medium cursor-not-allowed"
-                      disabled
-                    >
-                      Coming Soon
-                    </button>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-gray-200 bg-white">
-                <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">収益シミュレーション</td>
-                <td className="p-4 text-center text-gray-600 font-semibold bg-white">月/合計5回</td>
-                <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
-                  <div className="font-bold text-blue-600">回数/無制限</div>
-                  <div className="text-xs text-gray-600">物件登録数50件</div>
-                </td>
-                <td className="p-4 text-center bg-purple-50 font-bold text-purple-600">無制限</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="p-4 text-gray-700 font-semibold text-lg border-r border-gray-200">
-                  <div>
-                    AI事業計画書
-                    <span className="ml-2 text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-0.5 rounded-full font-semibold">Coming Soon</span>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">※ 現在開発中です。</div>
-                </td>
-                <td className="p-4 text-center bg-white">
-                  <div className="text-gray-400 text-sm">−</div>
-                </td>
-                <td className="p-4 text-center bg-blue-50 border-x border-gray-200">
-                  <CheckCircle className="h-5 w-5 text-blue-600 mx-auto" />
-                </td>
-                <td className="p-4 text-center bg-purple-50">
-                  <CheckCircle className="h-5 w-5 text-purple-500 mx-auto" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-
-        {/* FAQ Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
-            よくある質問
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">プランの変更はいつでもできますか？</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                はい、いつでもプランの変更が可能です。アップグレードは即座に反映されます。
-              </p>
             </div>
+
+            {/* 今後の予定 */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">無料トライアルはありますか？</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                無料プランで基本機能をお試しいただけます。ベーシックプランの全機能を体験したい場合は、ご契約が必要です。
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">支払い方法は何がありますか？</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                クレジットカード（Visa、MasterCard、JCB、American Express）に対応しています。
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">解約はできますか？</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                いつでも解約可能です。解約後も当月末まではサービスをご利用いただけます。
-              </p>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">今後の予定</h3>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                <p className="text-gray-700 leading-relaxed">
+                  サービス改善後、有料プランの提供再開を予定しております。
+                  再開時期については、サイト上でお知らせいたします。
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* CTAボタン */}
+          <div className="text-center">
+            <Link
+              to="/simulator"
+              className="inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
+            >
+              収益シミュレーターを使う
+            </Link>
+            <p className="text-sm text-gray-600 mt-4">
+              完全無料・無制限でご利用いただけます
+            </p>
+          </div>
         </div>
-
-        {/* CTA Section - 削除 */}
       </div>
-
-      </div>
-
-      {/* 解約確認モーダル */}
-      <CancelSubscriptionModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={handleCancelSubscription}
-        cancelDate={formatCancelDate(subscription?.cancel_at || subscription?.current_period_end)}
-        remainingDays={calculateRemainingDays(subscription?.cancel_at || subscription?.current_period_end)}
-        isLoading={isCanceling}
-      />
-
-      {/* アップグレードモーダル */}
-      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 };

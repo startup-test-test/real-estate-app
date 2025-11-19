@@ -12,7 +12,6 @@ import {
   X,
   Settings,
   BookOpen,
-  Crown,
   LogOut,
   Sparkles,
   TrendingUp,
@@ -80,7 +79,6 @@ const Layout: React.FC = () => {
 
   const supportNavigation = [
     { name: 'ご利用ガイド・よくある質問', href: '/user-guide', icon: BookOpen },
-    { name: '有料プランについて', href: '/premium-plan', icon: Crown },
   ];
 
   // APIテストページを削除したのでdevNavigationも削除

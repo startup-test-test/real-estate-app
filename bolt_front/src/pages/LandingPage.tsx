@@ -559,13 +559,6 @@ const LandingPage: React.FC = () => {
                       <p className="text-sm text-gray-600">複数物件の比較・管理が可能</p>
                     </div>
                   </div>
-                  <div className="flex items-start">
-                    <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-lg font-semibold text-gray-900">クレジットカード登録不要</p>
-                      <p className="text-sm text-gray-600">メールアドレスだけで即利用開始</p>
-                    </div>
-                  </div>
                 </div>
 
                 {/* CTAボタン */}
@@ -627,10 +620,6 @@ const LandingPage: React.FC = () => {
                   <li className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                     <span>面倒な個人情報入力不要</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>クレジットカード登録不要</span>
                   </li>
                 </ul>
               </div>

@@ -28,9 +28,6 @@ const Footer: React.FC = () => {
               <Link to="/faq" className="text-sm text-white/70 hover:text-white transition-colors">
                 よくある質問
               </Link>
-              <Link to="/premium-plan" className="text-sm text-white/70 hover:text-white transition-colors">
-                有料プラン
-              </Link>
             </div>
           </div>
 
