@@ -11,39 +11,34 @@ const MaintenanceNotice: React.FC<MaintenanceNoticeProps> = ({
   showCloseButton = false
 }) => {
   return (
-    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg shadow-sm">
-      <div className="flex items-start">
-        <div className="flex-shrink-0">
-          <AlertCircle className="h-5 w-5 text-blue-500" />
+    <div className="bg-red-50 border-4 border-red-500 p-6 sm:p-8 mb-6 rounded-lg shadow-lg">
+      <div className="flex flex-col items-center text-center">
+        <div className="flex-shrink-0 mb-4">
+          <AlertCircle className="h-12 w-12 sm:h-16 sm:w-16 text-red-500" />
         </div>
-        <div className="ml-3 flex-1">
-          <h3 className="text-sm font-semibold text-blue-800 mb-1">
+        <div className="flex-1">
+          <h3 className="text-xl sm:text-2xl font-bold text-red-800 mb-2">
             【重要なお知らせ】サービス提供内容の変更について
           </h3>
-          <div className="text-sm text-blue-700 space-y-1">
-            <p>
-              2025年10月27日をもちまして、以下の機能のサービス提供を停止いたしました。
+          <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-800 mb-4">
+            サービス終了のお知らせ
+          </p>
+          <div className="text-lg sm:text-xl lg:text-2xl text-red-700 space-y-2">
+            <p className="font-semibold">
+              2025年12月8日をもちまして、本サービスは終了いたしました。
             </p>
-            <ul className="list-disc list-inside ml-2 mt-2 space-y-1">
-              <li>AI市場分析機能</li>
-              <li>公示地価検索機能</li>
-              <li>有料プラン（ベーシックプラン）の新規募集</li>
-            </ul>
-            <p className="mt-2">
-              現在は、収益シミュレーター機能を完全無料でご提供しております。
-            </p>
-            <p className="mt-2 text-xs text-blue-600">
-              ※ 無制限で収益シミュレーター機能をご利用いただけます
+            <p className="mt-4 text-base sm:text-lg text-red-600">
+              長らくのご愛顧、誠にありがとうございました。
             </p>
           </div>
         </div>
         {showCloseButton && onClose && (
           <button
             onClick={onClose}
-            className="flex-shrink-0 ml-3 text-blue-500 hover:text-blue-700 transition-colors"
+            className="flex-shrink-0 mt-4 text-red-500 hover:text-red-700 transition-colors"
             aria-label="閉じる"
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
           </button>
         )}
       </div>

@@ -119,6 +119,13 @@ const LandingPage: React.FC = () => {
       {/* ヘッダー固定時のスペーサー（PC版のみ） */}
       <div className="hidden md:block h-[88px]"></div>
 
+      {/* お知らせバナー - メインビジュアルより上に配置 */}
+      <section className="py-4 sm:py-6 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <MaintenanceNotice />
+        </div>
+      </section>
+
       {/* ヒーローセクション */}
       <section 
         id="about" 
@@ -192,13 +199,6 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* お知らせバナー */}
-      <section className="py-4 sm:py-6 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MaintenanceNotice />
         </div>
       </section>
 
