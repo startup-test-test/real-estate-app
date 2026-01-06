@@ -12,18 +12,18 @@ function testResponse(method: string, path: string[]) {
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ path: string[] }> }
+  context: { params: Promise<{ all: string[] }> }
 ) {
   const params = await context.params;
-  return testResponse("GET", params.path);
+  return testResponse("GET", params.all);
 }
 
 export async function POST(
   request: NextRequest,
-  context: { params: Promise<{ path: string[] }> }
+  context: { params: Promise<{ all: string[] }> }
 ) {
   const params = await context.params;
-  return testResponse("POST", params.path);
+  return testResponse("POST", params.all);
 }
 
 // 動的レンダリングを強制
