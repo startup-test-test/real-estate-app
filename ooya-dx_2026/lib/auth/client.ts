@@ -1,1 +1,1 @@
-export { useAuth } from "./impl-neon/client";
+export { useAuth } from './impl-neon/client'
