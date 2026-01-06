@@ -80,26 +80,42 @@ Vite + Supabase + Render 構成から、Next.js + Neon + Vercel 構成への移�
 - Basic認証: `preview` / `preview`
 - シミュレーター動作確認済み（Render API使用）
 
+#### 7. Python API移行（Render → Vercel）
+- Vercel Python Functions として実装完了
+- RenderのFastAPIコードをVercel形式に変換
+
+**作成ファイル:**
+```
+ooya-dx_2026/
+└── api/
+    ├── health.py           # ヘルスチェック
+    ├── simulate.py         # シミュレーションAPI
+    ├── market-analysis.py  # 市場分析API
+    ├── requirements.txt    # Python依存関係
+    └── shared/
+        ├── __init__.py
+        ├── calculations.py # 計算ロジック（900行以上）
+        ├── validations.py  # 入力バリデーション
+        └── error_codes.py  # エラーコード定義
+```
+
+**設定:**
+- `vercel.json` でPython 3.9ランタイムを設定
+- `lib/config/api.ts` でVercel/Render APIの切り替えを実装
+- Vercel環境では同一ドメインのAPI（`/api/*`）を使用
+
 ---
 
 ### ⏳ 未完了
 
-#### 1. Python API移行（Render → Vercel）
-**目的:** RenderのFastAPIをVercel Python Functionsに移行
+#### 1. Python API動作確認
+**目的:** Vercel Python Functionsの動作確認
 
-**対象ファイル:**
-- `backend/simulator-api/app.py`
-- `backend/simulator-api/shared/calculations.py`
-- `backend/simulator-api/validations.py`
-
-**移行先:**
-```
-ooya-dx_2026/
-└── api/
-    ├── simulate.py
-    ├── market-analysis.py
-    └── requirements.txt
-```
+**手順:**
+1. Vercelにデプロイ
+2. `/api/health` でヘルスチェック確認
+3. シミュレーターで `/api/simulate` の動作確認
+4. Render APIへのフォールバックが不要になったら削除
 
 #### 2. Neon Auth実装
 **目的:** Supabase AuthからNeon Authへ移行
@@ -161,6 +177,15 @@ ooya-dx_2026/
 
 ```
 ooya-dx_2026/
+├── api/                      # Vercel Python Functions
+│   ├── health.py             # ヘルスチェック
+│   ├── simulate.py           # シミュレーションAPI
+│   ├── market-analysis.py    # 市場分析API
+│   ├── requirements.txt      # Python依存関係
+│   └── shared/               # 共有モジュール
+│       ├── calculations.py   # 計算ロジック
+│       ├── validations.py    # バリデーション
+│       └── error_codes.py    # エラーコード
 ├── app/                      # Next.js App Router
 │   ├── page.tsx              # トップページ
 │   ├── simulator/            # シミュレーター
@@ -178,6 +203,7 @@ ooya-dx_2026/
 ├── prisma/                   # DBスキーマ
 ├── docs/                     # ドキュメント
 ├── middleware.ts             # Basic認証等
+├── vercel.json               # Vercel設定（Python API含む）
 └── .env                      # 環境変数（gitignore）
 ```
 
