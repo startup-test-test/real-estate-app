@@ -1,22 +1,7 @@
 {
   "functions": {
     "api/*.py": {
-      "runtime": "python3.9",
       "maxDuration": 30
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/health",
-      "destination": "/api/health"
-    },
-    {
-      "source": "/api/simulate",
-      "destination": "/api/simulate"
-    },
-    {
-      "source": "/api/market-analysis",
-      "destination": "/api/market-analysis"
-    }
-  ]
+  }
 }
