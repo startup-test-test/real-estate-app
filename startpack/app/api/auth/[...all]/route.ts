@@ -2,16 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 // 環境変数がない場合は503を返す
 function notConfiguredResponse() {
-  console.log("[AUTH] Neon Auth not configured. NEXT_PUBLIC_NEON_AUTH_URL:", process.env.NEXT_PUBLIC_NEON_AUTH_URL);
-  console.log("[AUTH] NEON_AUTH_BASE_URL:", process.env.NEON_AUTH_BASE_URL);
   return NextResponse.json(
     {
       error:
         "Neon Auth is not configured. Set NEXT_PUBLIC_NEON_AUTH_URL environment variable.",
-      debug: {
-        NEXT_PUBLIC_NEON_AUTH_URL: process.env.NEXT_PUBLIC_NEON_AUTH_URL ? "set" : "not set",
-        NEON_AUTH_BASE_URL: process.env.NEON_AUTH_BASE_URL ? "set" : "not set",
-      }
     },
     { status: 503 }
   );
@@ -20,27 +14,12 @@ function notConfiguredResponse() {
 // 動的インポートで環境変数チェック後にのみロード
 // NEXT_PUBLIC_NEON_AUTH_URLはnext.config.mjsでNEON_AUTH_BASE_URLに自動コピーされる
 async function getHandler() {
-  console.log("[AUTH] getHandler called");
-  console.log("[AUTH] NEXT_PUBLIC_NEON_AUTH_URL:", process.env.NEXT_PUBLIC_NEON_AUTH_URL);
-  console.log("[AUTH] NEON_AUTH_BASE_URL:", process.env.NEON_AUTH_BASE_URL);
-
   if (!process.env.NEXT_PUBLIC_NEON_AUTH_URL) {
-    console.log("[AUTH] Environment variable not set, returning null");
     return null;
   }
-
-  try {
-    console.log("[AUTH] Importing authApiHandler...");
-    const { authApiHandler } =
-      await import("@neondatabase/neon-js/auth/next/server");
-    console.log("[AUTH] authApiHandler imported successfully");
-    const handler = authApiHandler();
-    console.log("[AUTH] Handler created:", handler ? "success" : "null");
-    return handler;
-  } catch (error) {
-    console.error("[AUTH] Error importing authApiHandler:", error);
-    return null;
-  }
+  const { authApiHandler } =
+    await import("@neondatabase/neon-js/auth/next/server");
+  return authApiHandler();
 }
 
 export async function GET(
