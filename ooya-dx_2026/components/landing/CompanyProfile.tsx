@@ -132,12 +132,6 @@ const CompanyProfile: React.FC = () => {
                       【株式会社overflow様】フリーランスWebディレクターのキャリアと案件の進め方
                     </a>
                   </li>
-                  <li>
-                    <span className="font-semibold">・2019年4月：</span>
-                    <a href="https://www.shibuyamov.com/interviews/webyour-times.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
-                      【渋谷ヒカリエ Creative Lounge MOV様】フリーランスwebデザイナーがはじめた 写真に残せない想い出を絵本にするギフトサービス『YOUR TIMES』
-                    </a>
-                  </li>
                 </ul>
               </div>
             </div>

@@ -120,18 +120,10 @@ const LandingPage: React.FC = () => {
       {/* ヘッダー固定時のスペーサー（PC版のみ） */}
       <div className="hidden md:block h-[88px]"></div>
 
-      {/* お知らせバナー - 非表示（サービス終了通知は不要）
-      <section className="py-4 sm:py-6 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <MaintenanceNotice />
-        </div>
-      </section>
-      */}
-
       {/* ヒーローセクション */}
       <section 
         id="about" 
-        className="py-4 sm:py-8 md:py-16 bg-white bg-cover bg-no-repeat relative" 
+        className="pt-2 pb-4 sm:pt-4 sm:pb-8 md:pt-8 md:pb-16 bg-white bg-cover bg-no-repeat relative" 
         style={{
           backgroundImage: 'url(/img/background_001.jpg)',
           backgroundPosition: 'center 20%'
@@ -176,7 +168,7 @@ const LandingPage: React.FC = () => {
               <img
                 src="/img/kakushin_img01.png"
                 alt="大家DX メインビジュアル"
-                className="w-full h-auto max-w-2xl sm:max-w-3xl main-visual-image"
+                className="w-full h-auto max-w-3xl sm:max-w-4xl lg:max-w-5xl main-visual-image scale-125"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -189,9 +181,9 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 免責事項 - メインビジュアル内に配置 */}
-          <div className="mt-8 pt-4 border-t border-gray-300">
-            <div className="text-left text-xs text-gray-600 leading-relaxed">
+          {/* 免責事項 */}
+          <div className="mt-6 pt-4 border-t border-gray-300">
+            <div className="text-left text-sm text-gray-600 leading-relaxed">
               <p className="font-semibold mb-1">【重要免責事項】</p>
               <p>
                 本サービスは不動産賃貸経営の参考目的のシミュレーションツールです。
@@ -911,16 +903,6 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* データ出典セクション */}
-      <section className="py-4 sm:py-6 bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-xs text-gray-600">
-            <p>
-              【データ出典】「不動産取引価格情報」「地価公示」「都道府県地価調査」（<a href="https://www.reinfolib.mlit.go.jp/" target="_blank" rel="noopener" className="text-blue-600 hover:text-blue-800 underline">国土交通省 不動産情報ライブラリ</a>）をもとに株式会社StartupMarketingが編集・加工
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* フッター */}
       <footer id="contact" className="bg-gray-100 text-gray-800 py-8">
@@ -1024,7 +1006,7 @@ const LandingPage: React.FC = () => {
                   </a>
                 </div>
                 <div className="text-xs text-gray-500">
-                  © 2025 大家DX. All rights reserved.
+                  © 2026 大家DX. All rights reserved.
                 </div>
               </div>
               
@@ -1050,7 +1032,7 @@ const LandingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-xs text-gray-500">
-                  © 2025 大家DX. All rights reserved.
+                  © 2026 大家DX. All rights reserved.
                 </div>
               </div>
             </div>

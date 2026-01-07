@@ -2,11 +2,11 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Providers } from './providers'
 import { HeaderWrapper } from '@/components/header-wrapper'
-import { Footer } from '@/components/footer'
+// import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
-  title: 'Sample',
-  description: 'チームでの効率的なプロジェクト管理を実現するサブスクリプション型SaaSサービス'
+  title: '大家DX',
+  description: '賃貸経営のためのシミュレーションツール'
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-grow relative pt-16">
             {children}
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </Providers>
       </body>
     </html>
