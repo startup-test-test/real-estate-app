@@ -913,10 +913,10 @@ const MyPage: React.FC = () => {
                           </span>
                         </div>
                       )}
-                      <div className={`${section.color} px-6 py-4`}>
+                      <div className={`${section.color} px-6 py-3`}>
                         <div className="flex items-center text-white">
                           <Icon className="h-5 w-5 mr-2" />
-                          <h3 className="font-semibold">{section.category}</h3>
+                          <h3 className="text-base font-semibold">{section.category}</h3>
                         </div>
                       </div>
                       <div className="p-3 md:p-6">
@@ -941,7 +941,7 @@ const MyPage: React.FC = () => {
                               }
                             }}
                             disabled={action.disabled}
-                            className={`w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 ${
+                            className={`w-full px-4 py-2.5 rounded-lg border-2 transition-all duration-200 ${
                               action.disabled
                                 ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
                                 : action.primary
@@ -950,7 +950,7 @@ const MyPage: React.FC = () => {
                             }`}
                           >
                             <div className="flex items-center justify-center">
-                              <span>{action.name}</span>
+                              <span className="text-base">{action.name}</span>
                               {!action.disabled && <ChevronRight className="h-4 w-4 ml-2" />}
                             </div>
                           </button>

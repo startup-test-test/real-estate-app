@@ -1,12 +1,16 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/client'
 import { hasAuthEnv } from '@/lib/auth/env'
+
+// ダッシュボード系のルート（サイドバーレイアウトを使用）
+const DASHBOARD_ROUTES = ['/dashboard', '/simulator', '/billing', '/user-guide']
 
 function HeaderAuthed() {
   const auth = useAuth()
@@ -53,9 +57,6 @@ function HeaderAuthed() {
 
   return (
     <>
-      <Link href="/dashboard">
-        <Button variant="ghost" className="text-gray-700">ダッシュボード</Button>
-      </Link>
       <Link href="/billing">
         <Button variant="ghost" className="text-gray-700">プラン</Button>
       </Link>
@@ -91,15 +92,26 @@ function HeaderAuthed() {
 
 export function Header() {
   const stackReady = hasAuthEnv()
+  const pathname = usePathname()
+
+  // ダッシュボード系のルートではヘッダーを非表示（サイドバーを使用）
+  const isDashboardRoute = DASHBOARD_ROUTES.some(route => pathname?.startsWith(route))
+  if (isDashboardRoute) {
+    return null
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-soft group-hover:shadow-medium transition-all duration-200 group-hover:scale-105">
-              <Icons.zap className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors duration-200">Sample</span>
+          <Link href="/" className="flex items-center group">
+            <Image
+              src="/img/logo_250709_2.png"
+              alt="大家DX"
+              width={120}
+              height={40}
+              className="h-8 w-auto group-hover:opacity-80 transition-opacity duration-200"
+            />
           </Link>
           <nav className="flex items-center gap-2">
             {stackReady ? (
