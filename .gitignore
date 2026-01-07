@@ -64,6 +64,7 @@ htmlcov/
 # Claude Code
 .claude/
 .claude-mem/
+CLAUDE.md
 
 # Vercel
 .vercel
