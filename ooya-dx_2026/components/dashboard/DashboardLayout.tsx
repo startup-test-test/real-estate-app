@@ -60,8 +60,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const navigation = [
-    { name: 'マイページ', href: '/dashboard', icon: Home },
-    { name: '収益シミュレーター', href: '/simulator', icon: Calculator },
+    { name: 'マイページ', href: '/mypage', icon: Home },
+    { name: '収益シミュレーター', href: '/mypage/simulator', icon: Calculator },
   ]
 
   const supportNavigation = [
@@ -69,8 +69,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   ]
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === '/dashboard'
+    if (href === '/mypage') {
+      return pathname === '/mypage'
     }
     return pathname?.startsWith(href)
   }
@@ -80,7 +80,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Mobile Header - SP版のみ表示 */}
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-[99999]">
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-          <Link href="/dashboard" className="flex items-center">
+          <Link href="/mypage" className="flex items-center">
             <img
               src="/img/logo_250709_2.png"
               alt="大家DX"
@@ -119,7 +119,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Logo Section */}
           <div className="p-6 border-b border-gray-200">
             <div className="mb-6">
-              <Link href="/dashboard" className="block">
+              <Link href="/mypage" className="block">
                 <div className="flex justify-center mb-3 transition-transform hover:scale-105">
                   <img
                     src="/img/logo_250709_2.png"
@@ -216,10 +216,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
               <div className="space-y-2">
                 <Link
-                  href="/billing"
+                  href="/mypage/billing"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                    isActive('/billing')
+                    isActive('/mypage/billing')
                       ? 'bg-blue-50 text-blue-600'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
