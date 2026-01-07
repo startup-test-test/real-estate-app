@@ -26,6 +26,7 @@
     "@radix-ui/themes": "^3.2.1",
     "@stripe/stripe-js": "^8.6.0",
     "@tailwindcss/postcss": "^4.1.18",
+    "@vercel/blob": "^2.0.0",
     "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
