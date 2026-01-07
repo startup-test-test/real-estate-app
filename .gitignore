@@ -59,6 +59,12 @@ htmlcov/
 
 # Database
 *.db
-*.sqlite3.claude/
+*.sqlite3
+
+# Claude Code
+.claude/
+.claude-mem/
+
+# Vercel
 .vercel
 .env*.local
