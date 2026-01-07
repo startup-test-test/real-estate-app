@@ -60,3 +60,5 @@ htmlcov/
 # Database
 *.db
 *.sqlite3.claude/
+.vercel
+.env*.local
