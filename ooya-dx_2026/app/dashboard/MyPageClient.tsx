@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import UsageStatusBar from "@/components/simulator/UsageStatusBar";
 import UpgradeModal from "@/components/simulator/UpgradeModal";
-import MaintenanceNotice from "@/components/shared/MaintenanceNotice";
+// import MaintenanceNotice from "@/components/shared/MaintenanceNotice";
 // TODO: 認証移行後に有効化
 // import { useUsageStatus } from "@/hooks/useUsageStatus";
 import {
@@ -875,10 +875,11 @@ const MyPage: React.FC = () => {
         {/* 使用状況表示バー（無料ユーザーはアップグレード促進付き） */}
         <UsageStatusBar onUpgradeClick={handleUpgradeClick} />
 
-        {/* お知らせバナー */}
+        {/* お知らせバナー - 非表示（サービス終了通知は不要）
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <MaintenanceNotice />
         </div>
+        */}
 
         <div className="p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">

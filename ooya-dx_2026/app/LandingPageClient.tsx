@@ -14,7 +14,7 @@ import {
 import BlogPosts from '@/components/landing/BlogPosts';
 import CompanyProfile from '@/components/landing/CompanyProfile';
 import DeveloperProfile from '@/components/landing/DeveloperProfile';
-import MaintenanceNotice from '@/components/shared/MaintenanceNotice';
+// import MaintenanceNotice from '@/components/shared/MaintenanceNotice';
 
 const LandingPage: React.FC = () => {
   const router = useRouter();
@@ -120,12 +120,13 @@ const LandingPage: React.FC = () => {
       {/* ヘッダー固定時のスペーサー（PC版のみ） */}
       <div className="hidden md:block h-[88px]"></div>
 
-      {/* お知らせバナー - メインビジュアルより上に配置 */}
+      {/* お知らせバナー - 非表示（サービス終了通知は不要）
       <section className="py-4 sm:py-6 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <MaintenanceNotice />
         </div>
       </section>
+      */}
 
       {/* ヒーローセクション */}
       <section 
