@@ -40,20 +40,11 @@ export const useApiCall = () => {
         console.log('⚠️ 35年のキャッシュフローを要求中...');
       }
       
-      // FAST API呼び出し（タイムアウト対応）
-      // 開発環境ではローカルAPIを使用、本番環境では本番URLを使用
-      const API_BASE_URL = import.meta.env.DEV
-        ? 'http://localhost:3000'
-        : 'https://real-estate-app-1-iii4.onrender.com';
+      // Vercel Python Functions を使用（同一ドメイン）
+      // ローカル開発では vercel dev を使用すること
+      const API_BASE_URL = '';
 
-      console.log('🔧 Simulator API URL:', API_BASE_URL);
-
-      // 最初にAPIを起動させる（Health Check）
-      try {
-        await fetch(`${API_BASE_URL}/`, { method: 'GET' });
-      } catch (e) {
-        console.log('API起動中...');
-      }
+      console.log('🔧 Simulator API URL: Vercel Python Functions (same domain)');
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分でタイムアウト
