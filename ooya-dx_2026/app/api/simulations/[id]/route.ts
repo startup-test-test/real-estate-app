@@ -13,24 +13,34 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
+    console.log("GET /api/simulations/[id] - id:", id);
 
     // 認証チェック
     const user = await getServerUser();
     if (!user) {
+      console.log("GET /api/simulations/[id] - No user authenticated");
       return NextResponse.json(
         { error: "ログインが必要です" },
         { status: 401 }
       );
     }
+    console.log("GET /api/simulations/[id] - user.id:", user.id);
 
     // シミュレーション取得
     const simulation = await prisma.simulation.findUnique({
       where: { id },
     });
+    console.log("GET /api/simulations/[id] - simulation found:", !!simulation);
 
     if (!simulation) {
+      // デバッグ: ユーザーのシミュレーション一覧を確認
+      const userSimulations = await prisma.simulation.findMany({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      console.log("GET /api/simulations/[id] - user's simulation IDs:", userSimulations.map(s => s.id));
       return NextResponse.json(
-        { error: "シミュレーションが見つかりません" },
+        { error: "シミュレーションが見つかりません", requestedId: id, availableIds: userSimulations.map(s => s.id) },
         { status: 404 }
       );
     }
