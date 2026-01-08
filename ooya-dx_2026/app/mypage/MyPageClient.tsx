@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import UsageStatusBar from "@/components/simulator/UsageStatusBar";
 import UpgradeModal from "@/components/simulator/UpgradeModal";
+import HelpButton from "@/components/HelpButton";
 // import MaintenanceNotice from "@/components/shared/MaintenanceNotice";
 // TODO: 認証移行後に有効化
 // import { useUsageStatus } from "@/hooks/useUsageStatus";
@@ -954,15 +955,12 @@ const MyPage: React.FC = () => {
                       保存済み収益シミュレーション
                     </h3>
                   </div>
-                  <div className="flex gap-2">
-                    {/* 全ユーザーに表示（SP版・PC版両方） */}
-                    <button
-                      onClick={handleStartTutorial}
-                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      <HelpCircle className="h-4 w-4 mr-2" />
-                      使い方を確認
-                    </button>
+                  <div className="flex items-center gap-3">
+                    {/* ヘルプボタン（控えめなデザイン） */}
+                    <HelpButton
+                      onStartTutorial={handleStartTutorial}
+                      showPulse={!hasTutorialBeenCompleted(user?.id || '') && simulations.length === 0}
+                    />
                     <button
                       onClick={async () => {
                         // 完全無料プランのため、制限チェックをスキップ

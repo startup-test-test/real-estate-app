@@ -17,6 +17,7 @@ import UsageStatusBar from '@/components/simulator/UsageStatusBar';
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import Tooltip from '@/components/simulator/Tooltip';
 import BackButton from '@/components/simulator/BackButton';
+import HelpButton from '@/components/HelpButton';
 import Breadcrumb from '@/components/simulator/Breadcrumb';
 import ImageUpload from '@/components/simulator/ImageUpload';
 import ErrorAlert from '@/components/simulator/ErrorMessage';
@@ -1784,45 +1785,22 @@ const Simulator: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => {
-                  console.log('📖 使い方を見るボタンがクリックされました');
-                  
-                  // 要素の存在確認
-                  const propertySection = document.querySelector('.property-info-section');
-                  const simulateButton = document.querySelector('.simulate-button');
-                  console.log('要素の存在確認:', { 
-                    propertySection: !!propertySection,
-                    simulateButton: !!simulateButton 
-                  });
-                  
-                  // チュートリアルを開始
+              <HelpButton
+                onStartTutorial={() => {
+                  console.log('📖 チュートリアル開始');
                   sessionStorage.setItem('tutorial_in_progress', 'true');
-                  
-                  // 結果が表示されている場合はステップ4から、そうでない場合はステップ2から開始
+
                   if (simulationResults) {
-                    console.log('結果あり: ステップ4から開始');
-                    setTutorialStep(2); // ステップ4（評価額と収益指標）から開始
+                    setTutorialStep(2);
                   } else {
-                    console.log('結果なし: ステップ2から開始');
-                    setTutorialStep(0); // ステップ2（物件情報入力）から開始
+                    setTutorialStep(0);
                   }
-                  
-                  // チュートリアルを開始（少し遅延を入れて確実に開始）
+
                   setTimeout(() => {
                     setRunTutorial(true);
-                    console.log('チュートリアル開始実行:', { 
-                      runTutorial: true, 
-                      tutorialStep: simulationResults ? 3 : 0,
-                      stepsLength: 8
-                    });
                   }, 100);
                 }}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <span>使い方を見る</span>
-                <span className="text-sm">📖</span>
-              </button>
+              />
               <div className="hidden lg:block">
                 <BackButton />
               </div>
