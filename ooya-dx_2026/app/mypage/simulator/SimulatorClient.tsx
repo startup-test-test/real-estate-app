@@ -6,13 +6,7 @@ import {
   AlertCircle,
   Download
 } from 'lucide-react';
-// TODO: React 19対応版が出たら有効化
-// import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
-type CallBackProps = { status: string; index: number; type?: string; action?: string };
-type Step = { target: string; content: React.ReactNode; disableBeacon?: boolean; placement?: string; spotlightClicks?: boolean; disableScrolling?: boolean; floaterProps?: object; styles?: object; hideFooter?: boolean };
-const STATUS = { FINISHED: 'finished', SKIPPED: 'skipped' };
-// ダミーJoyrideコンポーネント（React 19対応まで）
-const Joyride = (_props: Record<string, unknown>) => null;
+import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { useSearchParams } from 'next/navigation';
 // TODO: 認証を Neon Auth に移行後に有効化
 // import { useSupabaseData } from '@/hooks/useSupabaseData';
