@@ -26,7 +26,7 @@ FIELD_NAME_MAPPING = {
     'holding_years': '保有期間',
     'building_area': '建物面積',
     'management_fee': '管理費',
-    'fixed_cost': '修繕積立金',
+    'fixed_cost': 'その他固定費',
     'property_tax': '固定資産税',
     'other_costs': '諸経費',
     'renovation_cost': '改装費',
