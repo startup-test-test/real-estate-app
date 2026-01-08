@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "next dev -p 3002",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "startpack:init": "node scripts/startpack-init.mjs",
     "lint": "next lint",
