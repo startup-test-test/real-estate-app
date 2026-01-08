@@ -1,5 +1,5 @@
 // Dynamic route: GET/PUT/DELETE /api/simulations/[simulationId]
-// Last updated: 2026-01-08 v3
+// Last updated: 2026-01-08 v4 - Force redeploy
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerUser } from "@/lib/auth/server";
