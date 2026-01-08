@@ -1,11 +1,11 @@
-// Catch-all route: GET/PUT/DELETE /api/simulations/[...id]
-// Last updated: 2026-01-08 v5 - Using catch-all route
+// Dynamic route: GET/PUT/DELETE /api/simulations/[id]
+// Last updated: 2026-01-08 v6 - Using regular dynamic segment
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerUser } from "@/lib/auth/server";
 
 interface RouteParams {
-  params: Promise<{ id: string[] }>;
+  params: Promise<{ id: string }>;
 }
 
 // GET /api/simulations/:id - 詳細取得
@@ -14,26 +14,25 @@ export async function GET(
   { params }: RouteParams
 ): Promise<NextResponse> {
   try {
-    const { id: idArray } = await params;
-    const simulationId = idArray[0]; // 最初の要素がID
-    console.log("GET /api/simulations/[...id] - simulationId:", simulationId);
+    const { id: simulationId } = await params;
+    console.log("GET /api/simulations/[id] - simulationId:", simulationId);
 
     // 認証チェック
     const user = await getServerUser();
     if (!user) {
-      console.log("GET /api/simulations/[...id] - No user authenticated");
+      console.log("GET /api/simulations/[id] - No user authenticated");
       return NextResponse.json(
         { error: "ログインが必要です" },
         { status: 401 }
       );
     }
-    console.log("GET /api/simulations/[...id] - user.id:", user.id);
+    console.log("GET /api/simulations/[id] - user.id:", user.id);
 
     // シミュレーション取得
     const simulation = await prisma.simulation.findUnique({
       where: { id: simulationId },
     });
-    console.log("GET /api/simulations/[...id] - simulation found:", !!simulation);
+    console.log("GET /api/simulations/[id] - simulation found:", !!simulation);
 
     if (!simulation) {
       // デバッグ: ユーザーのシミュレーション一覧を確認
@@ -41,7 +40,7 @@ export async function GET(
         where: { userId: user.id },
         select: { id: true },
       });
-      console.log("GET /api/simulations/[...id] - user's simulation IDs:", userSimulations.map(s => s.id));
+      console.log("GET /api/simulations/[id] - user's simulation IDs:", userSimulations.map(s => s.id));
       return NextResponse.json(
         { error: "シミュレーションが見つかりません", requestedId: simulationId, availableIds: userSimulations.map(s => s.id) },
         { status: 404 }
@@ -72,8 +71,7 @@ export async function PUT(
   { params }: RouteParams
 ): Promise<NextResponse> {
   try {
-    const { id: idArray } = await params;
-    const simulationId = idArray[0];
+    const { id: simulationId } = await params;
 
     // 認証チェック
     const user = await getServerUser();
@@ -139,8 +137,7 @@ export async function DELETE(
   { params }: RouteParams
 ): Promise<NextResponse> {
   try {
-    const { id: idArray } = await params;
-    const simulationId = idArray[0];
+    const { id: simulationId } = await params;
 
     // 認証チェック
     const user = await getServerUser();
