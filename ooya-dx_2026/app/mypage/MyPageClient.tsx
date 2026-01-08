@@ -2,9 +2,8 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-// TODO: 認証移行後に有効化
-// import { useSupabaseData } from "@/hooks/useSupabaseData";
-// import { useAuthContext } from "@/components/AuthProvider";
+import { useAuth } from "@/lib/auth/client";
+import { useSimulations, SimulationSummary } from "@/hooks/useSimulations";
 import { sanitizeUrl, sanitizeImageUrl } from "@/lib/utils/securityUtils";
 import { logError } from "@/lib/utils/errorHandler";
 import {
@@ -36,17 +35,15 @@ import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 
 const MyPage: React.FC = () => {
   const router = useRouter();
-  // TODO: 認証移行後に有効化
-  // const { user, isAuthenticated, loading: authLoading } = useAuthContext();
-  // const { getSimulations, deleteSimulation } = useSupabaseData();
-  // const { usage, refetch: refetchUsage } = useUsageStatus();
+  // Neon Auth
+  const auth = useAuth();
+  const user = auth.user;
+  const isAuthenticated = !!user;
+  const authLoading = auth.isLoading;
 
-  // 仮のモックデータ
-  const user = { id: 'temp-user', email: 'user@example.com' };
-  const isAuthenticated = true;
-  const authLoading = false;
-  const getSimulations = async () => ({ data: [], error: null });
-  const deleteSimulation = async (id: string) => ({ error: null });
+  // シミュレーション保存フック
+  const { getSimulations, deleteSimulation, loading: simLoading } = useSimulations();
+
   const refetchUsage = () => {};
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
 
@@ -260,13 +257,11 @@ const MyPage: React.FC = () => {
         setIsInitialLoad(false);
 
         // キャッシュ読み込み後、1秒後に最新データを取得（バックグラウンド）
-        // 無限ループを防ぐため、一度だけ実行
         if (!(window as any).mypageDataRefreshed) {
           (window as any).mypageDataRefreshed = true;
           setTimeout(() => {
             console.log("キャッシュ読み込み後、最新データを取得します");
             loadSimulations(true);
-            // 5秒後にフラグをリセット（次回のページ読み込み時に再実行可能）
             setTimeout(() => {
               (window as any).mypageDataRefreshed = false;
             }, 5000);
@@ -277,12 +272,11 @@ const MyPage: React.FC = () => {
     }
 
     console.log(
-      "loadSimulations: Supabaseからデータ読み込み開始, ユーザー:",
-      user.email,
+      "loadSimulations: Neon APIからデータ読み込み開始, ユーザー:",
+      user.id,
     );
 
     try {
-      // 強制リフレッシュでない場合は、既存データがあればローディングを表示しない
       if (!forceRefresh && simulations.length > 0) {
         // バックグラウンド更新
       } else {
@@ -290,18 +284,11 @@ const MyPage: React.FC = () => {
       }
 
       setError(null);
-      const { data, error: fetchError } = await getSimulations();
-
-      if (fetchError) {
-        console.error("データ取得エラー:", fetchError);
-        setError(fetchError);
-        setSimulations([]);
-      } else {
-        console.log("Supabaseから取得したデータ件数:", data?.length || 0);
-        setSimulations(data || []);
-        // キャッシュに保存
-        saveToCache(data || []);
-      }
+      // 新しいAPI: 直接配列を返す
+      const data = await getSimulations();
+      console.log("Neon APIから取得したデータ件数:", data?.length || 0);
+      setSimulations(data || []);
+      saveToCache(data || []);
     } catch (err: any) {
       console.error("データ読み込みエラー:", err);
       setError(err.message);
@@ -318,18 +305,18 @@ const MyPage: React.FC = () => {
 
   const handleDelete = async (id: string, _propertyName?: string) => {
     // フロントエンド固定のサンプル物件のみ削除不可
-    // DBに保存されたサンプル物件は削除可能
     if (id === 'sample-property-001') {
       alert("このサンプル物件は削除できません。\n\nフロントエンド固定のサンプル物件は体験用のため、削除することはできません。");
       return;
     }
-    
+
     try {
       setLoading(true);
-      const { error } = await deleteSimulation(id);
-      if (error) {
-        setError(error || "エラーが発生しました");
-        alert("削除に失敗しました: " + error);
+      // 新しいAPI: booleanを返す
+      const success = await deleteSimulation(id);
+      if (!success) {
+        setError("削除に失敗しました");
+        alert("削除に失敗しました");
       } else {
         // 削除成功後、データを再読み込み（強制リフレッシュ）
         loadSimulations(true);

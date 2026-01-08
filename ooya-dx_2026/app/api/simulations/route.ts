@@ -74,36 +74,28 @@ export async function GET(): Promise<NextResponse> {
       );
     }
 
-    // ユーザーのシミュレーション一覧を取得
+    // ユーザーのシミュレーション一覧を取得（マイページ表示に必要な全データ）
     const simulations = await prisma.simulation.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        imageUrl: true,
-        createdAt: true,
-        updatedAt: true,
-        results: true,
-      },
     });
 
-    // 一覧用に整形（resultsから概要のみ抽出）
+    // マイページ用に整形（旧Supabase形式と互換性を持たせる）
     const formattedSimulations = simulations.map((sim) => {
+      const inputData = sim.inputData as Record<string, unknown> | null;
       const results = sim.results as Record<string, unknown> | null;
+      const cashFlow = sim.cashFlow as unknown[] | null;
       return {
         id: sim.id,
-        name: sim.name,
-        imageUrl: sim.imageUrl,
-        createdAt: sim.createdAt,
-        updatedAt: sim.updatedAt,
-        summary: results
-          ? {
-              surfaceYield: results.surfaceYield,
-              realYield: results.realYield,
-              irr: results.irr,
-            }
-          : null,
+        // 旧Supabase形式との互換性のため simulation_data として返す
+        simulation_data: inputData ? {
+          ...inputData,
+          propertyImageUrl: sim.imageUrl,
+        } : null,
+        results: results,
+        cash_flow_table: cashFlow,
+        created_at: sim.createdAt.toISOString(),
+        updated_at: sim.updatedAt.toISOString(),
       };
     });
 

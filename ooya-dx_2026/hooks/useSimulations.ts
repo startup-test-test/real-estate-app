@@ -2,18 +2,14 @@
 
 import { useState, useCallback } from 'react';
 
-// 型定義
+// 型定義（マイページ用 - 旧Supabase形式と互換）
 export interface SimulationSummary {
   id: string;
-  name: string;
-  imageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-  summary: {
-    surfaceYield?: number;
-    realYield?: number;
-    irr?: number;
-  } | null;
+  simulation_data: Record<string, unknown> | null;
+  results: Record<string, unknown> | null;
+  cash_flow_table: Array<Record<string, unknown>> | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SimulationDetail {
