@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Icons } from '@/components/ui/icons'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -10,10 +9,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
           {/* ブランド */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-              <Icons.zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-lg text-white">Sample</span>
+            <span className="font-bold text-lg text-white">大家DX</span>
           </div>
           
           {/* リンク */}
@@ -34,7 +30,7 @@ export function Footer() {
           
           {/* コピーライト */}
           <div className="text-sm text-gray-400">
-            © {currentYear} 株式会社サンプル
+            © {currentYear} 大家DX
           </div>
         </div>
       </div>

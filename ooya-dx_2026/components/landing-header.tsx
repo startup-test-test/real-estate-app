@@ -11,7 +11,7 @@ export function LandingHeader() {
         <div className="flex justify-between items-center py-4 sm:py-6">
           <div className="flex items-center">
             <a href="/" className="block">
-              <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" />
+              <img src="/img/logo-media.png" alt="大家DX ロゴ" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" />
             </a>
           </div>
           <div className="flex items-center space-x-6">

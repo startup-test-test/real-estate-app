@@ -1,8 +1,11 @@
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
 import { getArticleBySlug, getAllArticlePaths } from '@/lib/mdx';
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { TableOfContents } from '@/components/table-of-contents';
 import Link from 'next/link';
 
 interface Props {
@@ -20,6 +23,8 @@ export async function generateStaticParams() {
   }));
 }
 
+const BASE_URL = 'https://ooya-dx2026.vercel.app';
+
 export async function generateMetadata({ params }: Props) {
   const { category, slug } = await params;
   const article = getArticleBySlug(category, slug);
@@ -30,14 +35,41 @@ export async function generateMetadata({ params }: Props) {
     };
   }
 
+  const url = `${BASE_URL}/media/${category}/${slug}`;
+
   return {
     title: `${article.title}｜大家DXジャーナル`,
     description: article.description,
+    alternates: {
+      canonical: url,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph: {
       title: article.title,
       description: article.description,
+      url: url,
+      siteName: '大家DXジャーナル',
       type: 'article',
       publishedTime: article.date,
+      authors: ['大家DX'],
+      images: article.thumbnail
+        ? [
+            {
+              url: article.thumbnail,
+              width: 1200,
+              height: 630,
+              alt: article.title,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.description,
       images: article.thumbnail ? [article.thumbnail] : [],
     },
   };
@@ -60,80 +92,156 @@ export default async function ArticlePage({ params }: Props) {
     notFound();
   }
 
+  const url = `${BASE_URL}/media/${category}/${slug}`;
+
+  // Article構造化データ
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.description,
+    image: article.thumbnail || undefined,
+    datePublished: article.date,
+    dateModified: article.date,
+    author: {
+      '@type': 'Organization',
+      name: '大家DX',
+      url: BASE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: '大家DX',
+      url: BASE_URL,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
+  };
+
+  // パンくずリスト構造化データ
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: '大家DXジャーナル',
+        item: `${BASE_URL}/media`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: article.category,
+        item: `${BASE_URL}/media/${category}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.title,
+        item: url,
+      },
+    ],
+  };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
+    <>
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
-      {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <div className="min-h-screen bg-white flex flex-col">
+        <LandingHeader />
 
-      <main className="flex-1">
-        <article className="max-w-2xl mx-auto px-5 py-12">
-          {/* パンくず */}
-          <nav className="text-sm text-gray-500 mb-6">
-            <Link href="/media" className="hover:text-primary-600">
-              大家DXジャーナル
-            </Link>
-            <span className="mx-2">/</span>
-            <span>{article.category}</span>
-          </nav>
+        {/* ヘッダー固定時のスペーサー */}
+        <div className="h-[72px] sm:h-[88px]"></div>
 
-          {/* カテゴリー & 日付 */}
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-              {article.category}
-            </span>
-            <time className="text-xs text-gray-400">
-              {formatDate(article.date)}
-            </time>
-          </div>
+        <main className="flex-1">
+          <article className="max-w-2xl mx-auto px-5 py-12">
+            {/* パンくず */}
+            <nav className="text-sm text-gray-500 mb-6">
+              <Link href="/media" className="hover:text-primary-600">
+                大家DXジャーナル
+              </Link>
+              <span className="mx-2">/</span>
+              <span>{article.category}</span>
+            </nav>
 
-          {/* タイトル */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
-            {article.title}
-          </h1>
+            {/* カテゴリー & 日付 */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+                {article.category}
+              </span>
+              <time className="text-xs text-gray-400">
+                {formatDate(article.date)}
+              </time>
+            </div>
 
-          {/* メインビジュアル */}
-          {article.thumbnail ? (
-            <div className="aspect-video bg-gray-100 rounded-xl mb-10 overflow-hidden">
-              <img
-                src={article.thumbnail}
-                alt={article.title}
-                className="w-full h-full object-cover"
+            {/* タイトル */}
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
+              {article.title}
+            </h1>
+
+            {/* メインビジュアル */}
+            {article.thumbnail ? (
+              <div className="aspect-video bg-gray-100 mb-10 overflow-hidden">
+                <img
+                  src={article.thumbnail}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 mb-10 flex items-center justify-center">
+                <span className="text-gray-400 text-sm">No Image</span>
+              </div>
+            )}
+
+            {/* 目次 */}
+            <TableOfContents content={article.content} />
+
+            {/* 本文 */}
+            <div className="prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50">
+              <MDXRemote
+                source={article.content}
+                options={{
+                  mdxOptions: {
+                    remarkPlugins: [remarkGfm],
+                    rehypePlugins: [rehypeSlug],
+                  },
+                }}
               />
             </div>
-          ) : (
-            <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-10 flex items-center justify-center">
-              <span className="text-gray-400 text-sm">No Image</span>
+
+            {/* CTA */}
+            <div className="mt-16 pt-8 border-t border-gray-100">
+              <p className="text-sm text-gray-500 mb-4 text-center">
+                物件の収益性をシミュレーションしてみませんか？
+              </p>
+              <div className="text-center">
+                <Link
+                  href="/simulator"
+                  className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
+                >
+                  シミュレーターを試す
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </Link>
+              </div>
             </div>
-          )}
+          </article>
+        </main>
 
-          {/* 本文 */}
-          <div className="prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base prose-table:text-sm prose-th:bg-gray-50 prose-th:p-3 prose-td:p-3">
-            <MDXRemote source={article.content} />
-          </div>
-
-          {/* CTA */}
-          <div className="mt-16 pt-8 border-t border-gray-100">
-            <p className="text-sm text-gray-500 mb-4 text-center">
-              物件の収益性をシミュレーションしてみませんか？
-            </p>
-            <div className="text-center">
-              <Link
-                href="/simulator"
-                className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-              >
-                シミュレーターを試す
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </article>
-      </main>
-
-      <LandingFooter />
-    </div>
+        <LandingFooter />
+      </div>
+    </>
   );
 }
