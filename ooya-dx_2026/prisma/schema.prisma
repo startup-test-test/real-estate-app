@@ -28,3 +28,18 @@ model Subscription {
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
 }
+
+model Simulation {
+  id          String   @id @default(cuid())
+  userId      String                          // Neon Auth の User ID（個人と紐づく）
+  name        String                          // シミュレーション名（物件名など）
+  propertyUrl String?                         // 物件URL（任意）
+  imageUrl    String?                         // 物件画像URL（Vercel Blob）
+  inputData   Json                            // 入力データ（フォーム内容）
+  results     Json?                           // 計算結果（IRR, CCR等）
+  cashFlow    Json?                           // キャッシュフローテーブル
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])                           // ユーザーIDでの検索を高速化
+}

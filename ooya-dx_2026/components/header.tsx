@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/auth/client'
 import { hasAuthEnv } from '@/lib/auth/env'
 
 // ダッシュボード系のルート（サイドバーレイアウトを使用）
-const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/simulator', '/billing', '/user-guide']
+const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/simulator', '/billing', '/mypage/guide']
 
 function HeaderAuthed() {
   const auth = useAuth()

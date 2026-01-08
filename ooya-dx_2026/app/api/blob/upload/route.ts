@@ -1,8 +1,18 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { getServerUser } from "@/lib/auth/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    // 認証チェック
+    const user = await getServerUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: "ログインが必要です" },
+        { status: 401 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
@@ -28,11 +38,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    // ファイル名を生成
+    // ファイル名を生成（ユーザーIDを含める）
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
     const extension = file.name.split(".").pop() || "jpg";
-    const filename = `property-images/${timestamp}-${randomString}.${extension}`;
+    const filename = `property-images/${user.id}/${timestamp}-${randomString}.${extension}`;
 
     // Vercel Blobにアップロード
     const blob = await put(filename, file, {

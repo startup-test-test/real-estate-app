@@ -65,7 +65,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   ]
 
   const supportNavigation = [
-    { name: 'ご利用ガイド・よくある質問', href: '/user-guide', icon: BookOpen },
+    { name: 'ご利用ガイド・よくある質問', href: '/mypage/guide', icon: BookOpen },
   ]
 
   const isActive = (href: string) => {

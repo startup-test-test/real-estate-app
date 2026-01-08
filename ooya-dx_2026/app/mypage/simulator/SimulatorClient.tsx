@@ -39,6 +39,8 @@ import { propertyStatusOptions, loanTypeOptions, ownershipTypeOptions, buildingS
 import { formatCurrencyNoSymbol } from '@/lib/utils/formatHelpers';
 import { handleApiError, logError, getUserFriendlyErrorMessage } from '@/lib/utils/errorHandler';
 import { API_ENDPOINTS, debugApiConfig } from '@/lib/config/api';
+import { useAuth } from '@/lib/auth/client';
+import { useSimulations } from '@/hooks/useSimulations';
 
 // FAST API のベースURL
 // 環境に応じて自動的に切り替わるようになりました（config/api.tsで管理）
@@ -52,10 +54,11 @@ interface SimulationResult {
 
 
 const Simulator: React.FC = () => {
-  // TODO: Neon Auth 移行後に有効化
-  const user: { id: string } | null = null; // useAuthContext();
-  const saveSimulation = async (..._args: any[]): Promise<{ data: any; error: null }> => ({ data: { id: 'temp-id' }, error: null }); // useSupabaseData();
-  const getSimulations = async (): Promise<{ data: any[]; error: null }> => ({ data: [], error: null });
+  // Neon Auth
+  const auth = useAuth();
+  const user = auth.user;
+  // シミュレーション保存フック
+  const { saveSimulation: saveSimulationApi, getSimulations: getSimulationsApi, getSimulation } = useSimulations();
   const searchParams = useSearchParams();
   const usage = { count: 0, limit: -1, isLoading: false, currentCount: 0, isSubscribed: false }; // useUsageStatus();
   const executeWithLimit = async (fn: () => Promise<void>, _type?: string) => { await fn(); return true; };
@@ -610,10 +613,10 @@ const Simulator: React.FC = () => {
       loadExistingData(viewId);
       // DBに保存されたサンプル物件の場合もチェック
       const checkIfSampleAndStartTutorial = async () => {
-        const result = await getSimulations();
-        if (result.data) {
-          const sim = result.data.find((s: any) => s.id === viewId);
-          if (sim?.simulation_data?.propertyName?.startsWith('【サンプル】')) {
+        const sim = await getSimulation(viewId);
+        if (sim) {
+          const inputData = sim.inputData as Record<string, any>;
+          if (inputData?.propertyName?.startsWith('【サンプル】')) {
             const fromTutorial = sessionStorage.getItem('tutorial_in_progress');
             if (fromTutorial === 'true') {
               // チュートリアル中はハッシュをクリア
@@ -775,19 +778,20 @@ const Simulator: React.FC = () => {
   // 既存データを読み込む
   const loadExistingData = async (simulationId: string) => {
     if (!user) return;
-    
+
     try {
       setIsLoading(true);
-      const { data, error } = await getSimulations();
-      
-      if (error) {
-        setSaveError(`データ読み込みエラー: ${error}`);
+      // 新APIで詳細を取得
+      const simulation = await getSimulation(simulationId);
+
+      if (!simulation) {
+        setSaveError('シミュレーションが見つかりません');
         return;
       }
-      
-      const simulation = data?.find(sim => sim.id === simulationId);
-      if (simulation && simulation.simulation_data) {
-        const simData = simulation.simulation_data;
+
+      // inputDataから入力値を復元
+      const simData = simulation.inputData as Record<string, any>;
+      if (simData) {
         console.log('📖 読み込みデータ詳細:', {
           renovationCost: simData.renovationCost,
           managementFee: simData.managementFee,
@@ -836,43 +840,45 @@ const Simulator: React.FC = () => {
         
         // 既存の結果も表示（チュートリアル中は除く）
         const isTutorialActive = sessionStorage.getItem('tutorial_in_progress') === 'true';
+        const resultsData = simulation.results as Record<string, any> | null;
+        const cashFlowData = simulation.cashFlow as any[] | null;
+
         console.log('🔍 loadExistingData: Setting simulation results');
         console.log('  - isTutorialActive:', isTutorialActive);
-        console.log('  - has simulation.results:', !!simulation.results);
-        console.log('  - current location.hash:', location.hash);
-        
-        if (simulation.results && !isTutorialActive) {
+        console.log('  - has simulation.results:', !!resultsData);
+
+        if (resultsData && !isTutorialActive) {
           console.log('⚠️ SETTING SIMULATION RESULTS FROM EXISTING DATA');
           setSimulationResults({
             results: {
-              '表面利回り（%）': simulation.results.surfaceYield || simulation.results['表面利回り（%）'],
-              '実質利回り（%）': simulation.results.netYield || simulation.results['実質利回り'] || simulation.results['実質利回り（%）'],
-              'IRR（%）': simulation.results.irr || simulation.results['IRR'] || simulation.results['IRR（%）'],
-              'CCR（%）': simulation.results.ccr || simulation.results['CCR'] || simulation.results['CCR（%）'],
-              'CCR（初年度）（%）': simulation.results['CCR（初年度）（%）'] ?? null,
-              'CCR（全期間）（%）': simulation.results['CCR（全期間）（%）'] ?? null,
-              'ROI（%）': simulation.results.roi || simulation.results['ROI'] || simulation.results['ROI（%）'],
-              'ROI（初年度）（%）': simulation.results['ROI（初年度）（%）'] || 0,
-              'ROI（全期間）（%）': simulation.results['ROI（全期間）（%）'] || 0,
-              'DSCR（返済余裕率）': simulation.results.dscr || simulation.results['DSCR'],
-              'NOI（円）': simulation.results.noi || simulation.results['NOI'] || simulation.results['NOI（円）'],
-              'LTV（%）': simulation.results.ltv || simulation.results['LTV'] || simulation.results['LTV（%）'],
-              '月間キャッシュフロー（円）': simulation.results.monthlyCashFlow,
-              '年間キャッシュフロー（円）': simulation.results.annualCashFlow,
-              '積算評価合計（万円）': simulation.results.assessedTotal || simulation.results['積算評価合計（万円）'],
-              '収益還元評価額（万円）': simulation.results.capRateEval || simulation.results['収益還元評価額（万円）'],
-              '想定売却価格（万円）': simulation.results.expectedSalePrice || simulation.results['想定売却価格（万円）'] || simulation.results['売却時想定価格'],
-              '残債（万円）': simulation.results['残債（万円）'] || 0,
-              '売却コスト（万円）': simulation.results['売却コスト（万円）'] || 0,
-              '売却益（万円）': simulation.results['売却益（万円）'] || 0,
-              '初期費用総額（円）': simulation.results['初期費用総額（円）'] || 0,
-              '自己資金（円）': simulation.results['自己資金（円）'] || 0,
-              '自己資金（万円）': simulation.results['自己資金（万円）'] || 0,
-              '借入額（円）': simulation.results['借入額（円）'] || 0,
-              '土地積算評価（万円）': simulation.results['土地積算評価（万円）'] || 0,
-              '建物積算評価（万円）': simulation.results['建物積算評価（万円）'] || 0
+              '表面利回り（%）': resultsData.surfaceYield || 0,
+              '実質利回り（%）': resultsData.realYield || 0,
+              'IRR（%）': resultsData.irr || 0,
+              'CCR（%）': resultsData.ccr || 0,
+              'CCR（初年度）（%）': resultsData.ccrFirstYear ?? null,
+              'CCR（全期間）（%）': resultsData.ccrTotal ?? null,
+              'ROI（%）': resultsData.roi || 0,
+              'ROI（初年度）（%）': resultsData.roiFirstYear || 0,
+              'ROI（全期間）（%）': resultsData.roiTotal || 0,
+              'DSCR（返済余裕率）': resultsData.dscr || 0,
+              'NOI（円）': resultsData.noi || 0,
+              'LTV（%）': resultsData.ltv || 0,
+              '月間キャッシュフロー（円）': resultsData.monthlyCashFlow || 0,
+              '年間キャッシュフロー（円）': resultsData.annualCashFlow || 0,
+              '積算評価合計（万円）': resultsData.assessedTotal || 0,
+              '収益還元評価額（万円）': resultsData.capRateEval || 0,
+              '想定売却価格（万円）': resultsData.expectedSalePrice || 0,
+              '残債（万円）': resultsData.remainingDebt || 0,
+              '売却コスト（万円）': resultsData.saleCost || 0,
+              '売却益（万円）': resultsData.saleProfit || 0,
+              '初期費用総額（円）': resultsData.initialCost || 0,
+              '自己資金（円）': resultsData.equity || 0,
+              '自己資金（万円）': resultsData.equityInMan || 0,
+              '借入額（円）': resultsData.loanAmount || 0,
+              '土地積算評価（万円）': resultsData.landAssessment || 0,
+              '建物積算評価（万円）': resultsData.buildingAssessment || 0
             },
-            cash_flow_table: simulation.cash_flow_table
+            cash_flow_table: cashFlowData || []
           });
         }
         
@@ -1583,13 +1589,15 @@ const Simulator: React.FC = () => {
           }, 100);
         }
         
-        // ユーザーがログインしている場合はSupabaseに保存
+        // ユーザーがログインしている場合はNeonに保存
         if (user) {
           try {
-            // Supabaseスキーマに合わせたデータ形式
-            const simulationData = {
-              // simulation_data (JSONB) - 入力データ
-              simulation_data: {
+            // 新API形式のデータ
+            const saveData = {
+              name: inputs.propertyName || '無題の物件',
+              propertyUrl: inputs.propertyUrl || undefined,
+              imageUrl: inputs.propertyImageUrl || undefined,
+              inputData: {
                 propertyName: inputs.propertyName || '無題の物件',
                 location: inputs.location,
                 yearBuilt: inputs.yearBuilt,
@@ -1622,22 +1630,19 @@ const Simulator: React.FC = () => {
                 majorRepairCost: inputs.majorRepairCost,
                 buildingPriceForDepreciation: inputs.buildingPriceForDepreciation,
                 depreciationYears: inputs.depreciationYears,
-                propertyUrl: inputs.propertyUrl,
                 propertyMemo: inputs.propertyMemo,
-                propertyImageUrl: inputs.propertyImageUrl,
                 propertyStatus: inputs.propertyStatus
               },
-              // results (JSONB) - 計算結果
               results: {
                 surfaceYield: result.results['表面利回り（%）'] || 0,
-                netYield: result.results['実質利回り（%）'] || 0,
+                realYield: result.results['実質利回り（%）'] || 0,
                 irr: result.results['IRR（%）'] || 0,
                 ccr: result.results['CCR（%）'] || 0,
-                'CCR（初年度）（%）': result.results['CCR（初年度）（%）'] ?? null,
-                'CCR（全期間）（%）': result.results['CCR（全期間）（%）'] ?? null,
+                ccrFirstYear: result.results['CCR（初年度）（%）'] ?? null,
+                ccrTotal: result.results['CCR（全期間）（%）'] ?? null,
                 roi: result.results['ROI（%）'] || 0,
-                'ROI（初年度）（%）': result.results['ROI（初年度）（%）'] || 0,
-                'ROI（全期間）（%）': result.results['ROI（全期間）（%）'] || 0,
+                roiFirstYear: result.results['ROI（初年度）（%）'] || 0,
+                roiTotal: result.results['ROI（全期間）（%）'] || 0,
                 dscr: result.results['DSCR（返済余裕率）'] || 0,
                 noi: result.results['NOI（円）'] || 0,
                 ltv: result.results['LTV（%）'] || 0,
@@ -1646,83 +1651,33 @@ const Simulator: React.FC = () => {
                 assessedTotal: result.results['積算評価合計（万円）'] || 0,
                 capRateEval: result.results['収益還元評価額（万円）'] || 0,
                 expectedSalePrice: result.results['想定売却価格（万円）'] || 0,
-                '実質利回り': result.results['実質利回り（%）'] || 0,
-                'ROI': result.results['ROI（%）'] || 0,
-                'NOI': result.results['NOI（円）'] || 0,
-                'LTV': result.results['LTV（%）'] || 0,
-                '土地積算評価（万円）': result.results['土地積算評価（万円）'] || 0,
-                '建物積算評価（万円）': result.results['建物積算評価（万円）'] || 0
+                landAssessment: result.results['土地積算評価（万円）'] || 0,
+                buildingAssessment: result.results['建物積算評価（万円）'] || 0
               },
-              // cash_flow_table (JSONB) - キャッシュフローテーブル
-              cash_flow_table: result.cash_flow_table || []
+              cashFlow: result.cash_flow_table || []
             };
-            
-            console.log('保存データ詳細:', {
-              renovationCost: simulationData.simulation_data.renovationCost,
-              managementFee: simulationData.simulation_data.managementFee,
-              vacancyRate: simulationData.simulation_data.vacancyRate,
-              fixedCost: simulationData.simulation_data.fixedCost,
-              fullData: simulationData
-            });
-            
-            // サンプル物件の特別処理
-            let actualEditingId = editingId;
-            const isSampleProperty = editingId === 'sample-property-001';
-            
-            if (isSampleProperty) {
-              // サンプル物件の場合、既存のサンプル物件を検索
-              const { data: existingSimulations, error: fetchError } = await getSimulations();
-              
-              if (!fetchError && existingSimulations) {
-                // 物件名が【サンプル】で始まる物件を探す
-                const existingSample = existingSimulations.find(
-                  (sim: any) => sim.simulation_data?.propertyName?.startsWith('【サンプル】')
-                );
-                
-                if (existingSample) {
-                  // 既存のサンプル物件がある場合は、そのIDを使用して更新
-                  actualEditingId = existingSample.id;
-                  console.log('既存のサンプル物件を更新:', actualEditingId);
-                } else {
-                  // 既存のサンプル物件がない場合は新規作成
-                  actualEditingId = null;
-                  console.log('新規サンプル物件として作成');
-                }
-              }
+
+            console.log('保存データ:', saveData);
+
+            // シミュレーションを保存
+            const savedResult = await saveSimulationApi(saveData);
+
+            if (!savedResult) {
+              throw new Error('保存に失敗しました');
             }
-            
-            // 編集モードかどうかを判定（サンプル物件の既存IDも考慮）
-            const isEditMode = Boolean(actualEditingId) && actualEditingId !== 'sample-property-001';
-            console.log('🔍 編集モード:', isEditMode, 'editingId:', actualEditingId);
-            
-            // シミュレーションデータを保存（編集モードの場合は更新、新規の場合は作成）
-            const { data, error: saveError } = await saveSimulation(
-              simulationData, 
-              undefined, // 共有トークンは不要
-              isEditMode ? actualEditingId ?? undefined : undefined
-            );
-            
-            if (saveError) {
-              throw new Error(saveError);
+
+            setSaveMessage('✅ シミュレーション結果を保存しました！');
+            console.log('保存成功:', savedResult);
+
+            // 保存後のIDを記憶
+            if (savedResult.id) {
+              setEditingId(savedResult.id);
+              console.log('保存後、editingIdを設定:', savedResult.id);
             }
-            
-            setSaveMessage(isEditMode ? '✅ シミュレーション結果を更新しました！' : '✅ シミュレーション結果を保存しました！');
-            console.log('保存成功:', data);
-            
-            // 新規保存の場合、次回から更新になるようにeditingIdを設定
-            if (!isEditMode && data && data.id) {
-              setEditingId(data.id);
-              console.log('新規保存後、editingIdを設定:', data.id);
-            }
-            // サンプル物件の場合も、保存後のIDを記憶
-            else if (isSampleProperty && data && data.id) {
-              // 次回からは更新モードになるように、実際のIDを保持
-              console.log('サンプル物件のIDを記憶:', data.id);
-            }
-            
+
           } catch (saveError) {
             console.error('保存エラー:', saveError);
-            setSaveMessage('⚠️ シミュレーションは完了しましたが、保存に失敗しました。');
+            setSaveMessage('⚠️ シミュレーションは完了しましたが、保存に失敗しました。有料プランへの加入が必要な場合があります。');
           }
         } else {
           setSaveMessage('ℹ️ シミュレーションが正常に完了しました！（ログインすると結果を保存できます）');

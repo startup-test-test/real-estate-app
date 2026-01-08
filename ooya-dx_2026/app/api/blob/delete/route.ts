@@ -1,8 +1,18 @@
 import { del } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { getServerUser } from "@/lib/auth/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
+    // 認証チェック
+    const user = await getServerUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: "ログインが必要です" },
+        { status: 401 }
+      );
+    }
+
     const { url } = await request.json();
 
     if (!url) {
@@ -12,6 +22,14 @@ export async function POST(request: Request): Promise<NextResponse> {
     // Vercel BlobのURLかどうか確認
     if (!url.includes("blob.vercel-storage.com")) {
       return NextResponse.json({ error: "無効なURLです" }, { status: 400 });
+    }
+
+    // 自分の画像のみ削除可能（URLにユーザーIDが含まれているか確認）
+    if (!url.includes(`property-images/${user.id}/`)) {
+      return NextResponse.json(
+        { error: "この画像を削除する権限がありません" },
+        { status: 403 }
+      );
     }
 
     await del(url);
