@@ -276,7 +276,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="p-4 border-t border-gray-200">
             <div className="space-y-2 mb-4 px-2">
               <a
-                href="/terms"
+                href="/legal/terms"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
@@ -284,7 +284,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 利用規約
               </a>
               <a
-                href="/privacy"
+                href="/legal/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
@@ -292,7 +292,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 個人情報取り扱いについて
               </a>
               <a
-                href="/tokushoho"
+                href="/legal/tokushoho"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
