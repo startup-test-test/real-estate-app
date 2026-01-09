@@ -2,10 +2,11 @@ import React from 'react';
 
 const CompanyProfile: React.FC = () => {
   return (
-    <section id="company" className="py-8 sm:py-12 lg:py-16 bg-gray-50">
+    <section id="company" className="py-8 sm:py-12 lg:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+        <div className="mb-8 sm:mb-12 text-center">
+          <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">COMPANY</p>
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
             会社概要
           </h2>
         </div>

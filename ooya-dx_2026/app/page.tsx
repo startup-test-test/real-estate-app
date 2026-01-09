@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import LandingPageClient from './LandingPageClient';
+import { getAllArticles } from '@/lib/mdx';
 
 export const metadata = {
   title: '大家DX - 不動産投資シミュレーション',
@@ -7,9 +8,11 @@ export const metadata = {
 };
 
 export default function HomePage() {
+  const articles = getAllArticles().slice(0, 6); // 最新6件
+
   return (
     <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
-      <LandingPageClient />
+      <LandingPageClient articles={articles} />
     </Suspense>
   );
 }

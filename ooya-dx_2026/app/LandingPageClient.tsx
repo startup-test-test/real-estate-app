@@ -1,208 +1,313 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth/client';
 import {
-  Calculator,
-  ArrowRight,
-  Building2,
-  Newspaper,
-  Wrench,
-  TrendingUp,
-  FileText,
-  PiggyBank
+  ChevronDown,
+  LogOut,
+  User,
+  Menu,
+  X
 } from 'lucide-react';
+import BlogPosts from '@/components/landing/BlogPosts';
+import CompanyProfile from '@/components/landing/CompanyProfile';
 
-const LandingPage: React.FC = () => {
+interface Article {
+  slug: string;
+  categorySlug: string;
+  title: string;
+  description: string;
+  date: string;
+  category: string;
+  thumbnail?: string;
+}
+
+interface LandingPageProps {
+  articles: Article[];
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
   const router = useRouter();
+  const auth = useAuth();
+  const user = auth.user;
+  const isLoading = auth.isLoading;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    setIsDropdownOpen(false);
+    try {
+      await auth.signOut();
+      router.push('/');
+    } catch {}
+  };
 
   useEffect(() => {
     document.title = '大家DX｜大家さんのための不動産テックポータル';
   }, []);
 
-  const products = [
+  // サービス一覧データ
+  const services = [
     {
       id: 'simulator',
-      icon: TrendingUp,
       title: '収益シミュレーター',
-      description: 'IRR、CCR、DSCR、35年キャッシュフローを一括計算。物件の収益性を即座に分析。',
+      description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。物件購入の意思決定をデータで支援します。',
       href: '/simulator',
-      color: 'from-blue-600 to-indigo-600',
-      badge: '無料'
-    }
-  ];
-
-  const tools = [
-    {
-      id: 'brokerage-fee',
-      icon: PiggyBank,
-      title: '仲介手数料計算',
-      description: '売買価格から仲介手数料を速算',
-      href: '/tools/calculators/brokerage-fee',
-      color: 'bg-green-100 text-green-600'
+      buttonText: 'まずは無料でシミュレーションをする',
+      mockup: (
+        <img
+          src="/img/kakushin_img01.png"
+          alt="収益シミュレーター"
+          className="w-full h-auto rounded-lg"
+        />
+      )
     },
     {
-      id: 'yield-calculator',
-      icon: Calculator,
-      title: '利回り計算',
-      description: '表面・実質利回りを簡単計算',
-      href: '/tools/calculators/yield',
-      color: 'bg-purple-100 text-purple-600',
-      comingSoon: true
+      id: 'tools',
+      title: '計算ツール',
+      description: '仲介手数料、利回り、ローン返済など不動産投資に必要な計算をすべて無料で。',
+      href: '/tools/brokerage',
+      buttonText: '計算ツールについての詳細',
+      mockup: (
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4 shadow-inner">
+          <div className="space-y-3">
+            <div className="text-xs text-slate-500">売買価格</div>
+            <div className="bg-white rounded px-3 py-2 text-sm font-medium text-slate-700 border border-slate-200">
+              ¥50,000,000
+            </div>
+            <div className="border-t border-slate-200 pt-3">
+              <div className="text-xs text-slate-500 mb-1">仲介手数料</div>
+              <div className="text-lg font-bold text-emerald-600">¥1,716,000</div>
+              <div className="text-xs text-slate-400">（税込）</div>
+            </div>
+          </div>
+        </div>
+      )
     },
-    {
-      id: 'loan-simulator',
-      icon: FileText,
-      title: 'ローン返済計算',
-      description: '月々の返済額・総返済額を算出',
-      href: '/tools/calculators/loan',
-      color: 'bg-orange-100 text-orange-600',
-      comingSoon: true
-    }
-  ];
-
-  const mediaArticles = [
-    {
-      title: '不動産投資の利回りとは？計算方法と目安を解説',
-      category: 'ノウハウ',
-      href: 'https://ooya.tech/media/'
-    },
-    {
-      title: 'キャッシュフロー計算の基本と注意点',
-      category: 'ノウハウ',
-      href: 'https://ooya.tech/media/'
-    },
-    {
-      title: '融資を有利に進めるための準備',
-      category: 'ノウハウ',
-      href: 'https://ooya.tech/media/'
-    }
   ];
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* ヘッダー */}
-      <header className="bg-white/75 backdrop-blur-md border-b border-gray-200/30 md:fixed md:top-0 md:left-0 md:right-0 md:z-50">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200/30 md:fixed md:top-0 md:left-0 md:right-0 md:z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4 sm:py-6">
-            <div className="flex items-center">
-              <a href="/" className="block">
-                <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" />
-              </a>
-            </div>
+            {/* Logo */}
+            <a href="/" className="block">
+              <img
+                src="/img/logo_250709_2.png"
+                alt="大家DX"
+                className="h-8 sm:h-10 w-auto hover:opacity-80 transition-opacity"
+              />
+            </a>
+
             <div className="flex items-center space-x-6">
-              {/* ナビゲーションメニュー */}
+              {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center space-x-6">
-                <a href="#products" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  プロダクト
+                <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  シミュレーター
                 </a>
-                <a href="#tools" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <a href="/tools/brokerage" className="text-gray-600 hover:text-gray-900 transition-colors">
                   計算ツール
                 </a>
-                <a href="https://ooya.tech/media/" className="text-gray-600 hover:text-gray-900 transition-colors" target="_blank" rel="noopener noreferrer">
+                <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors">
                   メディア
                 </a>
               </nav>
 
-              {/* ログイン・サインアップボタン */}
+              {/* Auth Section */}
               <div className="flex items-center space-x-2 sm:space-x-3">
+                {isLoading ? (
+                  <div className="w-24 h-10 bg-gray-100 rounded-md animate-pulse" />
+                ) : user ? (
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-medium">
+                        {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                      </div>
+                      <span className="hidden sm:block text-sm text-gray-700">
+                        {user?.displayName || user?.email?.split('@')[0]}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                        <button
+                          onClick={() => { setIsDropdownOpen(false); router.push('/mypage'); }}
+                          className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <User className="w-4 h-4 mr-3 text-gray-400" />
+                          マイページ
+                        </button>
+                        <button
+                          onClick={handleSignOut}
+                          className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <LogOut className="w-4 h-4 mr-3 text-gray-400" />
+                          ログアウト
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => router.push('/auth/signup')}
+                      className="px-4 sm:px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                    >
+                      <span className="hidden sm:inline">10秒で無料登録</span>
+                      <span className="sm:hidden">無料登録</span>
+                    </button>
+                    <button
+                      onClick={() => router.push('/auth/signin')}
+                      className="px-4 sm:px-5 py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                    >
+                      ログイン
+                    </button>
+                  </>
+                )}
+
+                {/* Mobile Menu Button */}
                 <button
-                  onClick={() => router.push('/auth/signup')}
-                  className="px-4 sm:px-5 py-2.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="md:hidden p-2 text-gray-600 hover:text-gray-900"
                 >
-                  <span className="hidden sm:inline">無料登録</span>
-                  <span className="sm:hidden">登録</span>
-                </button>
-                <button
-                  onClick={() => router.push('/auth/signin')}
-                  className="px-4 sm:px-5 py-2.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
-                >
-                  ログイン
+                  {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
               </div>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-gray-100">
+              <nav className="flex flex-col gap-2">
+                <a href="/simulator" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                  シミュレーター
+                </a>
+                <a href="/tools/brokerage" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                  計算ツール
+                </a>
+                <a href="/media" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                  メディア
+                </a>
+                {!user && (
+                  <a href="/auth/signin" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                    ログイン
+                  </a>
+                )}
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* ヘッダー固定時のスペーサー（PC版のみ） */}
-      <div className="hidden md:block h-[88px]"></div>
+      {/* Spacer for fixed header (PC only) */}
+      <div className="hidden md:block h-[88px]" />
 
-      {/* ヒーローセクション */}
-      <section className="pt-8 pb-12 sm:pt-16 sm:pb-20 bg-gradient-to-b from-blue-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6" style={{ lineHeight: '1.3' }}>
-            大家さんのための
-            <br />
-            <span className="text-blue-600">不動産テック</span>ポータル
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            収益シミュレーション、計算ツール、不動産投資ノウハウを一箇所で。
-            <br className="hidden sm:block" />
-            賃貸経営をテクノロジーで効率化。
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => router.push('/simulator')}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              収益シミュレーターを使う
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </button>
-            <button
-              onClick={() => router.push('#tools')}
-              className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300 font-semibold"
-            >
-              計算ツールを見る
-            </button>
+      {/* Hero Section */}
+      <section className="relative w-full min-h-[400px] sm:min-h-[480px] md:min-h-[560px]">
+        {/* Background Image */}
+        <img
+          src="/images/media/hero-media.jpeg"
+          alt="大家DX"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Content Overlay */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              {/* Left: Text Content */}
+              <div>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
+                  賃貸経営を、
+                  <br />
+                  もっとスマートに
+                </h1>
+                <p className="mt-6 text-lg sm:text-xl text-slate-700 leading-relaxed">
+                  収益シミュレーション、計算ツール、専門メディア。
+                  <br className="hidden sm:block" />
+                  不動産経営のすべてを、このプラットフォームで。
+                </p>
+                <div className="mt-8">
+                  <button
+                    onClick={() => router.push('/simulator')}
+                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    まずは無料でシミュレーションをする
+                  </button>
+                </div>
+              </div>
+
+              {/* Right: Product Image */}
+              <div className="hidden md:flex justify-center items-center">
+                <img
+                  src="/img/kakushin_img01.png"
+                  alt="収益シミュレーター"
+                  className="w-full h-auto max-w-md lg:max-w-lg xl:max-w-xl scale-[1.32]"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* プロダクトセクション */}
-      <section id="products" className="py-12 sm:py-20 bg-white">
+      {/* Service Section - GMO賃貸DX Style */}
+      <section id="service" className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Building2 className="w-6 h-6 text-blue-600" />
-              <span className="text-blue-600 font-semibold">Products</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              プロダクト
+          {/* Section Header */}
+          <div className="mb-12 sm:mb-16 text-center">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">SERVICE</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#32373c] leading-tight">
+              サービス一覧
             </h2>
-            <p className="text-gray-600 text-lg">
-              賃貸経営を効率化するプロダクト
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {products.map((product) => (
+          {/* Service Cards Grid */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+            {services.map((service) => (
               <a
-                key={product.id}
-                href={product.href}
-                className="block bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                key={service.id}
+                href={service.href}
+                className="group block bg-[#eef0f2] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
               >
-                <div className={`h-2 bg-gradient-to-r ${product.color}`}></div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-xl bg-gradient-to-r ${product.color}`}>
-                      <product.icon className="w-6 h-6 text-white" />
-                    </div>
-                    {product.badge && (
-                      <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
-                        {product.badge}
-                      </span>
-                    )}
+                <div className="flex flex-col h-full">
+                  {/* Card Header - Text */}
+                  <div className="pt-10 sm:pt-12 px-6 sm:px-8 pb-6 sm:pb-8 text-center">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-[#32373c] mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-[#32373c] leading-relaxed">
+                      {service.description}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                    {product.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    {product.description}
-                  </p>
-                  <div className="flex items-center text-blue-600 font-medium">
-                    詳しく見る
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+
+                  {/* Mockup Area - Image */}
+                  <div className="px-6 sm:px-8">
+                    {service.mockup}
+                  </div>
+
+                  {/* Button */}
+                  <div className="p-6 sm:p-8 text-center">
+                    <span className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl group-hover:from-blue-700 group-hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg group-hover:shadow-xl transform group-hover:-translate-y-0.5 text-xl">
+                      {service.buttonText}
+                    </span>
                   </div>
                 </div>
               </a>
@@ -211,128 +316,199 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 計算ツールセクション */}
-      <section id="tools" className="py-12 sm:py-20 bg-gray-50">
+      {/* Free Tools Section */}
+      <section id="free-tools" className="py-16 sm:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Wrench className="w-6 h-6 text-blue-600" />
-              <span className="text-blue-600 font-semibold">Tools</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              計算ツール
+          {/* Section Header */}
+          <div className="mb-12 sm:mb-16 text-center">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">CALCULATOR</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#32373c] leading-tight">
+              賃貸経営計算ツール（無料）
             </h2>
-            <p className="text-gray-600 text-lg">
-              不動産投資に役立つ無料計算ツール
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {tools.map((tool) => (
-              <a
-                key={tool.id}
-                href={tool.comingSoon ? '#' : tool.href}
-                className={`block bg-white rounded-xl p-6 shadow-sm border border-gray-100 transition-all duration-300 ${tool.comingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md hover:border-blue-200'}`}
-                onClick={(e) => tool.comingSoon && e.preventDefault()}
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg ${tool.color}`}>
-                    <tool.icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold text-gray-900">{tool.title}</h3>
-                      {tool.comingSoon && (
-                        <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">
-                          近日公開
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600">{tool.description}</p>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <p className="text-gray-500 text-sm">
-              その他の計算ツールも順次追加予定
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* メディアセクション */}
-      <section id="media" className="py-12 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Newspaper className="w-6 h-6 text-blue-600" />
-              <span className="text-blue-600 font-semibold">Media</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              メディア
-            </h2>
-            <p className="text-gray-600 text-lg">
-              不動産投資のノウハウ・最新情報
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
-            {mediaArticles.map((article, index) => (
+          {/* Tools Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6">
+            {[
+              { name: '仲介手数料', href: '/tools/brokerage', available: true },
+              { name: '譲渡所得税', href: '/tools/transfer-tax', available: false },
+              { name: '不動産取得税', href: '/tools/acquisition-tax', available: false },
+              { name: '登録免許税', href: '/tools/registration-tax', available: false },
+              { name: '印紙税', href: '/tools/stamp-duty', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+              { name: 'テキスト', href: '#', available: false },
+            ].map((tool, index) => (
               <a
                 key={index}
-                href={article.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors"
+                href={tool.available ? tool.href : undefined}
+                className={`block bg-white rounded-2xl p-6 text-center shadow-sm transition-all duration-300 ${
+                  tool.available
+                    ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer'
+                    : 'opacity-60 cursor-default'
+                }`}
               >
-                <span className="text-xs text-blue-600 font-medium">{article.category}</span>
-                <h3 className="text-gray-900 font-medium mt-2 line-clamp-2">{article.title}</h3>
+                <h3 className="text-lg font-bold text-[#32373c] mb-2">{tool.name}</h3>
+                {tool.available ? (
+                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">
+                    無料で使う
+                  </span>
+                ) : (
+                  <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-xs font-semibold rounded-full">
+                    準備中
+                  </span>
+                )}
               </a>
             ))}
           </div>
 
-          <div className="text-center">
+          {/* View All Button */}
+          <div className="mt-10 text-center">
             <a
-              href="https://ooya.tech/media/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-blue-600 font-medium hover:text-blue-700"
+              href="/tools"
+              className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
             >
-              メディアをもっと見る
-              <ArrowRight className="w-4 h-4 ml-1" />
+              すべての計算ツールを見る
             </a>
           </div>
         </div>
       </section>
 
-      {/* CTAセクション */}
-      <section className="py-16 sm:py-24 bg-gradient-to-r from-blue-600 to-indigo-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6">
-            今すぐ収益シミュレーションを始めよう
-          </h2>
-          <p className="text-blue-100 text-lg mb-8">
-            完全無料・登録10秒で全機能が使えます
-          </p>
-          <button
-            onClick={() => router.push('/auth/signup')}
-            className="px-10 py-4 bg-white text-blue-600 rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            無料で始める
-            <ArrowRight className="h-5 w-5 ml-2" />
-          </button>
+      {/* Media Section */}
+      <BlogPosts articles={articles} />
+
+      {/* ニュースセクション */}
+      <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 sm:mb-12 text-center">
+            <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">NEWS</p>
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+              ニュース
+            </h2>
+          </div>
+          <div className="bg-gray-50">
+            <div className="space-y-0">
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
+                    メディア<br />掲載
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2025.10.21</p>
+                  <div>
+                    <span className="text-gray-900 text-base">
+                      <a
+                        href="https://www.jutaku-s.com/newsp/id/0000064588"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        住宅新報社様
+                      </a>
+                      に「賃貸経営者向け収益シミュレーションSaaS『大家DX』」が掲載されました（
+                      <a
+                        href="/img/住宅新聞.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        新聞掲載PDF
+                      </a>
+                      ・
+                      <a
+                        href="https://www.jutaku-s.com/newsp/id/0000064588"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        Webメディア
+                      </a>
+                      ）
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
+                    掲載
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2024.10.14</p>
+                  <div>
+                    <span className="text-gray-900 text-base">
+                      <a
+                        href="https://omiya.keizai.biz/release/477943/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        大宮経済新聞
+                      </a>
+                      ・
+                      <a
+                        href="https://saitama.publishing.3rd-in.co.jp/article/2aa1cd40-a89a-11f0-88f0-9ca3ba0a67df#gsc.tab=0"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        saitamaDays
+                      </a>
+                      に掲載されました。
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    リリース
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2025.10.01</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    収益シミュレーターをリリースしました。
+                  </h3>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
+                <div className="flex-shrink-0">
+                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                    リリース
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">2025.08.19</p>
+                  <h3 className="text-gray-900 font-normal text-base">
+                    大家DXをBETA版でリリースしました。
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* フッター */}
+      {/* 会社概要セクション */}
+      <CompanyProfile />
+
+      {/* Footer */}
       <footer className="bg-gray-100 text-gray-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start">
             <div className="mb-4 md:mb-0">
-              <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-8 w-auto mb-2" style={{ mixBlendMode: 'multiply' }} />
+              <img src="/img/logo_250709_2.png" alt="大家DX" className="h-8 w-auto mb-2" style={{ mixBlendMode: 'multiply' }} />
               <div className="text-xs text-gray-600">
                 <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900 block">
                   株式会社StartupMarketing
@@ -344,13 +520,13 @@ const LandingPage: React.FC = () => {
             <div className="flex flex-col items-end">
               {/* PC版ナビゲーション */}
               <nav className="hidden md:flex items-center space-x-6 mb-2">
-                <a href="#products" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
-                  プロダクト
+                <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+                  シミュレーター
                 </a>
-                <a href="#tools" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
+                <a href="/tools/brokerage" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   計算ツール
                 </a>
-                <a href="https://ooya.tech/media/" className="text-gray-600 hover:text-gray-900 transition-colors text-sm" target="_blank" rel="noopener noreferrer">
+                <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
                   メディア
                 </a>
                 <a href="mailto:ooya.tech2025@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
@@ -361,19 +537,19 @@ const LandingPage: React.FC = () => {
               {/* SP版ナビゲーション */}
               <nav className="md:hidden w-full mb-2">
                 <div className="flex justify-start space-x-3">
-                  <a href="#products" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
-                    プロダクト
+                  <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
+                    シミュレーター
                   </a>
                   <span className="text-gray-300">|</span>
-                  <a href="#tools" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                  <a href="/tools/brokerage" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
                     計算ツール
                   </a>
                   <span className="text-gray-300">|</span>
-                  <a href="https://ooya.tech/media/" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap" target="_blank" rel="noopener noreferrer">
+                  <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
                     メディア
                   </a>
                   <span className="text-gray-300">|</span>
-                  <a href="mailto:ooya.tech2025@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors text-xs whitespace-nowrap">
+                  <a href="mailto:ooya.tech2025@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
                     お問合せ
                   </a>
                 </div>
@@ -385,16 +561,16 @@ const LandingPage: React.FC = () => {
                   <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     運営会社
                   </a>
-                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                  <a href="/terms" className="text-gray-500 hover:text-gray-700">
                     利用規約
                   </a>
-                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                  <a href="/privacy" className="text-gray-500 hover:text-gray-700">
                     個人情報保護方針
                   </a>
-                  <a href="/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                  <a href="/tokushoho" className="text-gray-500 hover:text-gray-700">
                     特定商取引法
                   </a>
-                  <a href="/disclaimer" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                  <a href="/disclaimer" className="text-gray-500 hover:text-gray-700">
                     免責事項
                   </a>
                 </div>
@@ -410,16 +586,16 @@ const LandingPage: React.FC = () => {
                     <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                       運営会社
                     </a>
-                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    <a href="/terms" className="text-gray-500 hover:text-gray-700">
                       利用規約
                     </a>
-                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    <a href="/privacy" className="text-gray-500 hover:text-gray-700">
                       個人情報保護方針
                     </a>
-                    <a href="/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    <a href="/tokushoho" className="text-gray-500 hover:text-gray-700">
                       特定商取引法
                     </a>
-                    <a href="/disclaimer" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
+                    <a href="/disclaimer" className="text-gray-500 hover:text-gray-700">
                       免責事項
                     </a>
                   </div>
