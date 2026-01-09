@@ -39,18 +39,25 @@ export const resizeImage = (
     img.onload = () => {
       // 元の画像サイズ
       let { width, height } = img;
-      console.log('📐 元の画像サイズ:', { width, height });
+      console.log('📐 元の画像サイズ: width=' + width + ', height=' + height);
+
+      // サイズが0の場合はエラー
+      if (width === 0 || height === 0) {
+        console.error('❌ 画像サイズが0です');
+        reject(new Error('画像サイズの取得に失敗しました'));
+        return;
+      }
 
       // アスペクト比を保持してリサイズ
       if (width > maxWidth) {
-        height = (height * maxWidth) / width;
+        height = Math.round((height * maxWidth) / width);
         width = maxWidth;
       }
       if (height > maxHeight) {
-        width = (width * maxHeight) / height;
+        width = Math.round((width * maxHeight) / height);
         height = maxHeight;
       }
-      console.log('📐 リサイズ後のサイズ:', { width, height });
+      console.log('📐 リサイズ後のサイズ: width=' + width + ', height=' + height);
 
       // キャンバスサイズを設定
       canvas.width = width;
@@ -62,25 +69,37 @@ export const resizeImage = (
         reject(new Error('Canvas 2D context を取得できませんでした'));
         return;
       }
+
+      // 白背景で塗りつぶし（透過PNG対策）
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+
+      // 画像を描画
       ctx.drawImage(img, 0, 0, width, height);
       console.log('✅ Canvas に描画完了');
+
+      // 出力形式を決定（JPEG推奨、PNGも対応）
+      const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      console.log('📦 出力形式:', outputType);
 
       // Blobに変換
       canvas.toBlob(
         (blob) => {
-          if (blob) {
-            console.log('✅ Blob変換成功:', { size: blob.size, type: blob.type });
+          if (blob && blob.size > 0) {
+            console.log('✅ Blob変換成功: size=' + blob.size + ', type=' + blob.type);
             const resizedFile = new File([blob], file.name, {
-              type: file.type,
+              type: outputType,
               lastModified: Date.now()
             });
             resolve(resizedFile);
           } else {
-            console.error('❌ Blob変換失敗: blobがnull');
-            reject(new Error('画像の圧縮に失敗しました'));
+            console.error('❌ Blob変換失敗: blobがnullまたはサイズ0');
+            // フォールバック：元のファイルをそのまま返す
+            console.log('⚠️ フォールバック：元ファイルを使用');
+            resolve(file);
           }
         },
-        file.type,
+        outputType,
         quality
       );
     };
