@@ -794,6 +794,11 @@ const Simulator: React.FC = () => {
           fixedCost: simData.fixedCost,
           fullData: simData
         });
+        console.log('🖼️ 画像URL確認:', {
+          'simData.propertyImageUrl': simData.propertyImageUrl,
+          'simulation.imageUrl': simulation.imageUrl,
+          '最終値': simData.propertyImageUrl || simulation.imageUrl || '(空)'
+        });
         setInputs({
           propertyName: simData.propertyName || '品川区収益物件',
           location: simData.location || '東京都品川区',
