@@ -2,8 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
-// TODO: 認証移行後に有効化
-// import { useImageUpload } from '@/hooks/useImageUpload';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface ImageUploadProps {
   onImageUploaded: (imageUrl: string) => void;
@@ -21,16 +20,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
 
-  // TODO: 認証移行後に有効化
-  // const { uploadState, uploadImage, resetUploadState, deleteImage } = useImageUpload();
-  // 仮のモック
-  const [uploadState, setUploadState] = useState({ isUploading: false, progress: 0, error: null as string | null });
-  const uploadImage = async (file: File): Promise<string | null> => {
-    // 仮の実装: ローカルURLを返す
-    return URL.createObjectURL(file);
-  };
-  const resetUploadState = () => setUploadState({ isUploading: false, progress: 0, error: null });
-  const deleteImage = async (url: string): Promise<boolean> => true;
+  const { uploadState, uploadImage, resetUploadState, deleteImage } = useImageUpload();
   
   // currentImageUrlが変更されたときにpreviewUrlを更新
   useEffect(() => {

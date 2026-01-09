@@ -15,6 +15,7 @@ const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/simulator', '/billing', '/m
 function HeaderAuthed() {
   const auth = useAuth()
   const user = auth.user
+  const isLoading = auth.isLoading
   const router = useRouter()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -37,6 +38,16 @@ function HeaderAuthed() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  // ローディング中はスケルトン表示
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="w-20 h-9 bg-gray-100 rounded-lg animate-pulse" />
+        <div className="w-20 h-9 bg-gray-100 rounded-lg animate-pulse" />
+      </div>
+    )
+  }
 
   if (!user) {
     return (
