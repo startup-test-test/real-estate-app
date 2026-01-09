@@ -279,8 +279,8 @@ const MyPage: React.FC = () => {
     );
 
     try {
-      // 既にデータが表示されている場合はローディングを表示しない（チラつき防止）
-      if (simulations.length === 0) {
+      // バックグラウンド更新（forceRefresh）ではローディングを表示しない
+      if (!forceRefresh) {
         setLoading(true);
       }
 
