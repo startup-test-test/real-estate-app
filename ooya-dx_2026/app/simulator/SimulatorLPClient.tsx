@@ -16,7 +16,21 @@ import CompanyProfile from '@/components/landing/CompanyProfile';
 import DeveloperProfile from '@/components/landing/DeveloperProfile';
 // import MaintenanceNotice from '@/components/shared/MaintenanceNotice';
 
-const LandingPage: React.FC = () => {
+interface Article {
+  slug: string;
+  categorySlug: string;
+  title: string;
+  description: string;
+  date: string;
+  category: string;
+  thumbnail?: string;
+}
+
+interface LandingPageProps {
+  articles?: Article[];
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
   const router = useRouter();
 
   useEffect(() => {
@@ -786,7 +800,7 @@ const LandingPage: React.FC = () => {
       <CompanyProfile />
 
       {/* ブログ記事セクション */}
-      <BlogPosts />
+      <BlogPosts articles={articles} />
 
       {/* ニュースセクション */}
       <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-white">

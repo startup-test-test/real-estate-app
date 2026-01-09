@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import SimulatorLPClient from './SimulatorLPClient';
+import { getAllArticles } from '@/lib/mdx';
 
 export const metadata = {
   title: '収益シミュレーター | 大家DX',
@@ -7,9 +8,11 @@ export const metadata = {
 };
 
 export default function SimulatorLPPage() {
+  const articles = getAllArticles().slice(0, 6);
+
   return (
     <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
-      <SimulatorLPClient />
+      <SimulatorLPClient articles={articles} />
     </Suspense>
   );
 }

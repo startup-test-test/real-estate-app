@@ -63,7 +63,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
     {
       id: 'simulator',
       title: '収益シミュレーター',
-      description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。物件購入の意思決定をデータで支援します。',
+      description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。\n物件購入の意思決定をデータで支援します。',
       href: '/simulator',
       buttonText: 'まずは無料でシミュレーションをする',
       mockup: (
@@ -76,21 +76,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
     },
     {
       id: 'tools',
-      title: '計算ツール',
-      description: '仲介手数料、利回り、ローン返済など不動産投資に必要な計算をすべて無料で。',
-      href: '/tools/brokerage',
-      buttonText: '計算ツールについての詳細',
+      title: '新商品をリリース予定です',
+      description: '順次リリース予定です',
+      href: '#',
+      buttonText: 'Coming Soon',
+      comingSoon: true,
       mockup: (
-        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4 shadow-inner">
-          <div className="space-y-3">
-            <div className="text-xs text-slate-500">売買価格</div>
-            <div className="bg-white rounded px-3 py-2 text-sm font-medium text-slate-700 border border-slate-200">
-              ¥50,000,000
-            </div>
-            <div className="border-t border-slate-200 pt-3">
-              <div className="text-xs text-slate-500 mb-1">仲介手数料</div>
-              <div className="text-lg font-bold text-emerald-600">¥1,716,000</div>
-              <div className="text-xs text-slate-400">（税込）</div>
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 shadow-inner text-center">
+          <div className="space-y-4">
+            <div className="text-4xl">🚀</div>
+            <div className="text-lg font-bold text-slate-700">新機能開発中</div>
+            <div className="text-sm text-slate-500">
+              順次追加予定
             </div>
           </div>
         </div>
@@ -281,37 +278,53 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
 
           {/* Service Cards Grid */}
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
-            {services.map((service) => (
-              <a
-                key={service.id}
-                href={service.href}
-                className="group block bg-[#eef0f2] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex flex-col h-full">
-                  {/* Card Header - Text */}
-                  <div className="pt-10 sm:pt-12 px-6 sm:px-8 pb-6 sm:pb-8 text-center">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-[#32373c] mb-3">
-                      {service.title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-[#32373c] leading-relaxed">
-                      {service.description}
-                    </p>
-                  </div>
+            {services.map((service) => {
+              const isComingSoon = 'comingSoon' in service && service.comingSoon;
+              const CardWrapper = isComingSoon ? 'div' : 'a';
 
-                  {/* Mockup Area - Image */}
-                  <div className="px-6 sm:px-8">
-                    {service.mockup}
-                  </div>
+              return (
+                <CardWrapper
+                  key={service.id}
+                  href={isComingSoon ? undefined : service.href}
+                  className={`group block bg-[#eef0f2] rounded-3xl overflow-hidden shadow-sm transition-all duration-300 ${
+                    isComingSoon ? 'cursor-default' : 'hover:shadow-lg'
+                  }`}
+                >
+                  <div className="flex flex-col h-full">
+                    {/* Card Header - Text */}
+                    <div className="pt-10 sm:pt-12 px-6 sm:px-8 pb-6 sm:pb-8 text-center relative">
+                      {isComingSoon && (
+                        <span className="absolute top-4 right-4 px-3 py-1 bg-orange-100 text-orange-600 text-xs font-bold rounded-full">
+                          Coming Soon
+                        </span>
+                      )}
+                      <h3 className="text-2xl sm:text-3xl font-bold text-[#32373c] mb-3">
+                        {service.title}
+                      </h3>
+                      <p className="text-sm sm:text-base text-[#32373c] leading-relaxed whitespace-pre-line">
+                        {service.description}
+                      </p>
+                    </div>
 
-                  {/* Button */}
-                  <div className="p-6 sm:p-8 text-center">
-                    <span className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl group-hover:from-blue-700 group-hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg group-hover:shadow-xl transform group-hover:-translate-y-0.5 text-xl">
-                      {service.buttonText}
-                    </span>
+                    {/* Mockup Area - Image */}
+                    <div className="px-6 sm:px-8">
+                      {service.mockup}
+                    </div>
+
+                    {/* Button */}
+                    <div className="p-6 sm:p-8 text-center">
+                      <span className={`inline-block px-8 py-4 rounded-xl transition-all duration-300 font-semibold shadow-lg text-xl ${
+                        isComingSoon
+                          ? 'bg-gray-400 text-white cursor-default'
+                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white group-hover:from-blue-700 group-hover:to-indigo-700 group-hover:shadow-xl transform group-hover:-translate-y-0.5'
+                      }`}>
+                        {service.buttonText}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </a>
-            ))}
+                </CardWrapper>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -323,7 +336,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
           <div className="mb-12 sm:mb-16 text-center">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">CALCULATOR</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#32373c] leading-tight">
-              賃貸経営計算ツール（無料）
+              賃貸経営計算ツール
+              <span className="ml-3 inline-block px-3 py-1 bg-gray-900 text-white text-base sm:text-lg font-bold rounded-full align-middle">
+                無料
+              </span>
             </h2>
           </div>
 

@@ -12,7 +12,7 @@ interface Article {
 }
 
 interface BlogPostsProps {
-  articles: Article[];
+  articles?: Article[];
 }
 
 const formatDate = (dateString: string) => {
@@ -24,8 +24,8 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const BlogPosts: React.FC<BlogPostsProps> = ({ articles }) => {
-  if (articles.length === 0) {
+const BlogPosts: React.FC<BlogPostsProps> = ({ articles = [] }) => {
+  if (!articles || articles.length === 0) {
     return (
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
