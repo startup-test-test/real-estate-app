@@ -825,9 +825,9 @@ const Simulator: React.FC = () => {
           majorRepairCost: simData.majorRepairCost !== undefined ? simData.majorRepairCost : 200,
           buildingPriceForDepreciation: simData.buildingPriceForDepreciation !== undefined ? simData.buildingPriceForDepreciation : 3000,
           depreciationYears: simData.depreciationYears !== undefined ? simData.depreciationYears : 27,
-          propertyUrl: simData.propertyUrl || '',
+          propertyUrl: simData.propertyUrl || simulation.propertyUrl || '',
           propertyMemo: simData.propertyMemo || '',
-          propertyImageUrl: simData.propertyImageUrl || '',
+          propertyImageUrl: simData.propertyImageUrl || simulation.imageUrl || '',
           propertyStatus: simData.propertyStatus || '検討中',
           annualDepreciationRate: simData.annualDepreciationRate !== undefined ? simData.annualDepreciationRate : 1.0,
           priceDeclineRate: simData.priceDeclineRate !== undefined && simData.priceDeclineRate !== null ? simData.priceDeclineRate : 0
