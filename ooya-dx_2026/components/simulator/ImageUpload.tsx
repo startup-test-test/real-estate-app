@@ -35,22 +35,32 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    console.log('📷 画像ファイル選択:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+
     // プレビュー用のローカルURL生成
     const localPreviewUrl = URL.createObjectURL(file);
+    console.log('🖼️ ローカルプレビューURL:', localPreviewUrl);
     setPreviewUrl(localPreviewUrl);
 
     // ファイルアップロード実行
     const uploadedUrl = await uploadImage(file);
-    
+    console.log('☁️ アップロード結果:', uploadedUrl);
+
     if (uploadedUrl) {
       onImageUploaded(uploadedUrl);
       // ローカルプレビューを削除して、アップロード済み画像を表示
       URL.revokeObjectURL(localPreviewUrl);
       setPreviewUrl(uploadedUrl);
+      console.log('✅ プレビューURLを更新:', uploadedUrl);
     } else {
       // アップロード失敗時はプレビューを削除
       URL.revokeObjectURL(localPreviewUrl);
       setPreviewUrl(currentImageUrl || null);
+      console.log('❌ アップロード失敗、プレビューをリセット');
     }
 
     // ファイルインプットをリセット
@@ -95,7 +105,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           <img
             src={previewUrl}
             alt="物件画像プレビュー"
-            className="w-full h-32 md:h-40 object-cover rounded-lg"
+            className="w-full h-32 md:h-40 object-cover rounded-lg bg-gray-100"
+            onError={(e) => {
+              console.error('画像読み込みエラー:', previewUrl);
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+            onLoad={() => {
+              console.log('画像読み込み成功:', previewUrl);
+            }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
             <button
