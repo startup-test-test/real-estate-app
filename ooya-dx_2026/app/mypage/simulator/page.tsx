@@ -1,14 +1,8 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
-import dynamicImport from 'next/dynamic';
 import { getServerUser } from '@/lib/auth/server';
 import { prisma } from '@/lib/prisma';
-
-// 動的インポートでバンドルを分割（初回読み込み高速化）
-const SimulatorClient = dynamicImport(() => import('./SimulatorClient'), {
-  loading: () => <SimulatorSkeleton />,
-  ssr: false, // クライアントサイドのみでレンダリング
-});
+import SimulatorClient from './SimulatorClient';
 
 // ローディングスケルトン
 function SimulatorSkeleton() {
@@ -74,7 +68,7 @@ export default async function SimulatorPage() {
 
   // 4. アクセス許可 → シミュレーター表示
   return (
-    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
+    <Suspense fallback={<SimulatorSkeleton />}>
       <SimulatorClient />
     </Suspense>
   );
