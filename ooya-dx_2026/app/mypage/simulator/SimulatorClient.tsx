@@ -55,6 +55,11 @@ const Simulator: React.FC = () => {
   // シミュレーション保存フック
   const { saveSimulation: saveSimulationApi, getSimulations: getSimulationsApi, getSimulation } = useSimulations();
   const searchParams = useSearchParams();
+  // URLパラメータを取得（view/editがある場合は既存データ読み込みが必要）
+  const viewId = searchParams.get('view');
+  const editId = searchParams.get('edit');
+  const hasExistingData = !!viewId || !!editId;
+
   const usage = { count: 0, limit: -1, isLoading: false, currentCount: 0, isSubscribed: false }; // useUsageStatus();
   const executeWithLimit = async (fn: () => Promise<void>, _type?: string) => { await fn(); return true; };
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -67,7 +72,8 @@ const Simulator: React.FC = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // viewまたはeditパラメータがある場合は最初からローディング表示（チラつき防止）
+  const [isLoading, setIsLoading] = useState(hasExistingData);
   const [isManualDepreciation, setIsManualDepreciation] = useState(false);
   const [showDetailPopup, setShowDetailPopup] = useState(false);
   const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
