@@ -72,7 +72,7 @@ const PremiumPlan: React.FC = () => {
                       ✓
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">収益シミュレーター機能</h4>
+                      <h4 className="font-semibold text-gray-900 mb-1">賃貸経営シミュレーター機能</h4>
                       <p className="text-gray-600 text-sm">
                         回数制限なく、無制限でご利用いただけます。IRR・DSCR・LTV・NOI等の主要指標と35年キャッシュフローを一括計算できます。
                       </p>
@@ -146,7 +146,7 @@ const PremiumPlan: React.FC = () => {
               href="/simulator"
               className="inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
             >
-              収益シミュレーターを使う
+              賃貸経営シミュレーターを使う
             </Link>
             <p className="text-sm text-gray-600 mt-4">
               完全無料・無制限でご利用いただけます

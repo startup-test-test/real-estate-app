@@ -8,7 +8,7 @@ interface TutorialProps {
 
 const tutorialSteps = [
   {
-    title: '🎯 ようこそ！収益シミュレーターへ',
+    title: '🎯 ようこそ！賃貸経営シミュレーターへ',
     content: (
       <div className="space-y-4">
         <p>このツールでは、不動産賃貸経営の収益性を詳しく分析できます。</p>

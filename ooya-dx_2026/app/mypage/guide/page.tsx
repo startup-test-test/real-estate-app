@@ -94,7 +94,7 @@ const UserGuide: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: '収益シミュレーター',
+      title: '賃貸経営シミュレーター',
       description: '物件の収益性と経営リスクを詳細に分析し、長期的な収支予測を行います。'
     },
     {

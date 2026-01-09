@@ -3,7 +3,7 @@ import SimulatorLPClient from './SimulatorLPClient';
 import { getAllArticles } from '@/lib/mdx';
 
 export const metadata = {
-  title: '収益シミュレーター | 大家DX',
+  title: '賃貸経営シミュレーター | 大家DX',
   description: '不動産投資の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
 };
 

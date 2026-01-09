@@ -26,7 +26,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
     ];
 
     if (path.includes('/simulator')) {
-      breadcrumbs.push({ name: '物件収益シミュレーター', path: '/simulator', current: true });
+      breadcrumbs.push({ name: '賃貸経営シミュレーター', path: '/simulator', current: true });
     // } else if (path.includes('/transaction-search')) {
     //   breadcrumbs.push({ name: 'AI取引事例検索', path: '/transaction-search', current: true });
     // } else if (path.includes('/market-analysis')) {

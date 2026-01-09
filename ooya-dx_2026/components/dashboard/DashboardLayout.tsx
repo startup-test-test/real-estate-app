@@ -79,7 +79,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const navigation = [
     { name: 'マイページ', href: '/mypage', icon: Home },
-    { name: '収益シミュレーター', href: '/mypage/simulator', icon: Calculator },
+    { name: '賃貸経営シミュレーター', href: '/mypage/simulator', icon: Calculator },
   ]
 
   const supportNavigation = [

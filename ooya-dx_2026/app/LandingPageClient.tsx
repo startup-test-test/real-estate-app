@@ -62,14 +62,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
   const services = [
     {
       id: 'simulator',
-      title: '収益シミュレーター',
+      title: '賃貸経営シミュレーター',
       description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。\n物件購入の意思決定をデータで支援します。',
       href: '/simulator',
       buttonText: 'まずは無料でシミュレーションをする',
       mockup: (
         <img
           src="/img/kakushin_img01.png"
-          alt="収益シミュレーター"
+          alt="賃貸経営シミュレーター"
           className="w-full h-auto rounded-lg"
         />
       )
@@ -256,7 +256,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
               <div className="hidden md:flex justify-center items-center">
                 <img
                   src="/img/kakushin_img01.png"
-                  alt="収益シミュレーター"
+                  alt="賃貸経営シミュレーター"
                   className="w-full h-auto max-w-md lg:max-w-lg xl:max-w-xl scale-[1.32]"
                 />
               </div>
@@ -403,7 +403,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
 
       {/* ニュースセクション */}
       <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8 sm:mb-12 text-center">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">NEWS</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
@@ -494,7 +494,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                 <div className="flex-1">
                   <p className="text-sm text-gray-500 mb-1">2025.10.01</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    収益シミュレーターをリリースしました。
+                    賃貸経営シミュレーターをリリースしました。
                   </h3>
                 </div>
               </div>
@@ -577,13 +577,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                   <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     運営会社
                   </a>
-                  <a href="/terms" className="text-gray-500 hover:text-gray-700">
+                  <a href="/legal/terms" className="text-gray-500 hover:text-gray-700">
                     利用規約
                   </a>
-                  <a href="/privacy" className="text-gray-500 hover:text-gray-700">
+                  <a href="/legal/privacy" className="text-gray-500 hover:text-gray-700">
                     個人情報保護方針
                   </a>
-                  <a href="/tokushoho" className="text-gray-500 hover:text-gray-700">
+                  <a href="/legal/tokushoho" className="text-gray-500 hover:text-gray-700">
                     特定商取引法
                   </a>
                   <a href="/disclaimer" className="text-gray-500 hover:text-gray-700">
@@ -602,13 +602,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                     <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                       運営会社
                     </a>
-                    <a href="/terms" className="text-gray-500 hover:text-gray-700">
+                    <a href="/legal/terms" className="text-gray-500 hover:text-gray-700">
                       利用規約
                     </a>
-                    <a href="/privacy" className="text-gray-500 hover:text-gray-700">
+                    <a href="/legal/privacy" className="text-gray-500 hover:text-gray-700">
                       個人情報保護方針
                     </a>
-                    <a href="/tokushoho" className="text-gray-500 hover:text-gray-700">
+                    <a href="/legal/tokushoho" className="text-gray-500 hover:text-gray-700">
                       特定商取引法
                     </a>
                     <a href="/disclaimer" className="text-gray-500 hover:text-gray-700">
