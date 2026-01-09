@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/lib/auth/client";
 import { useSimulations, SimulationSummary } from "@/hooks/useSimulations";
 import { sanitizeUrl, sanitizeImageUrl } from "@/lib/utils/securityUtils";
@@ -1413,6 +1414,9 @@ const MyPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* プリフェッチ用の隠しリンク（ページ遷移高速化） */}
+      <Link href="/mypage/simulator" prefetch={true} className="hidden" aria-hidden="true" tabIndex={-1} />
 
       {/* アップグレードモーダル */}
       <UpgradeModal
