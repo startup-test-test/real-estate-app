@@ -101,7 +101,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     if (previewUrl) {
       return (
-        <div className="relative group">
+        <div className="group" style={{ position: 'relative' }}>
           <img
             src={previewUrl}
             alt="物件画像プレビュー"
