@@ -21,17 +21,35 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
+interface Subscription {
+  status: string
+}
+
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
   const pathname = usePathname()
   const router = useRouter()
   const auth = useAuth()
   const user = auth.user
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // TODO: プレミアム状態の取得（将来実装）
-  const isPremium = false
+  // サブスクリプション状態を取得
+  useEffect(() => {
+    if (user) {
+      fetch('/api/stripe/subscription')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.subscription) {
+            setSubscription(data.subscription)
+          }
+        })
+        .catch(() => {})
+    }
+  }, [user])
+
+  const isPremium = subscription?.status === 'active' || subscription?.status === 'trialing'
 
   const handleSignOut = async () => {
     try {
@@ -147,13 +165,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     <div className="flex items-center mt-1">
                       <Sparkles className="h-4 w-4 text-yellow-500 mr-1" />
                       <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                        ベーシックプラン
+                        プレミアムプラン
                       </span>
                     </div>
                   ) : (
                     <div className="flex items-center mt-1">
                       <User className="h-4 w-4 text-gray-400 mr-1" />
-                      <span className="text-sm font-bold text-gray-500">フリープラン</span>
+                      <span className="text-sm font-bold text-gray-500">未契約</span>
                     </div>
                   )}
                 </div>
