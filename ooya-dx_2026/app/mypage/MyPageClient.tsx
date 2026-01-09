@@ -279,9 +279,8 @@ const MyPage: React.FC = () => {
     );
 
     try {
-      if (!forceRefresh && simulations.length > 0) {
-        // バックグラウンド更新
-      } else {
+      // 既にデータが表示されている場合はローディングを表示しない（チラつき防止）
+      if (simulations.length === 0) {
         setLoading(true);
       }
 
