@@ -115,7 +115,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               console.log('画像読み込み成功:', previewUrl);
             }}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
+          <div
+            className="absolute inset-0 group-hover:bg-black/30 transition-all duration-200 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: 'transparent' }}
+          >
             <button
               onClick={handleRemoveImage}
               disabled={disabled || uploadState.isUploading}
