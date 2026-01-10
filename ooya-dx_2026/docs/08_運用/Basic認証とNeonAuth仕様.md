@@ -2,16 +2,18 @@
 
 ## 概要
 
-Vercelプレビュー環境でBasic認証を使用している場合、Neon Authの一部機能に影響が出る。
-localhostでは正常に動作するが、Basic認証が有効なサーバー環境では問題が発生する。
+Basic認証を使用している環境（localhost / Vercelプレビュー）では、Neon Authとの間でAuthorizationヘッダーの衝突が発生する。
+現在、API routeで回避策を適用済みのため、Basic認証環境でもNeon Authは正常に動作する。
 
 ## 問題の発生条件
 
 | 環境 | Basic認証 | Neon Auth | 動作 |
 |------|-----------|-----------|------|
-| ローカル (localhost) | なし | 正常 | OK |
-| Vercelプレビュー | あり | 403エラー | NG |
-| 本番 (独自ドメイン) | なし | 正常 | OK |
+| ローカル (localhost) | あり（.env） | 正常 | OK（※回避策適用済み） |
+| Vercelプレビュー | あり | 正常 | OK（※回避策適用済み） |
+| 本番 (独自ドメイン) | なし推奨 | 正常 | OK |
+
+**注意**: `.env` に `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` が設定されている場合、localhostでもBasic認証がかかる。
 
 ## 技術的な原因
 
@@ -84,14 +86,21 @@ async function stripBasicAuthHeader(request: NextRequest): Promise<NextRequest> 
 
 | 機能 | ローカルで確認可能 | 備考 |
 |------|-------------------|------|
-| ログイン | OK | |
-| ログアウト | OK | |
-| 新規登録 | OK | |
+| ログイン | OK | Basic認証環境でも動作 |
+| ログアウト | OK | Basic認証環境でも動作 |
+| 新規登録 | OK | Basic認証環境でも動作 |
+| パスワードリセット | OK | Basic認証環境でも動作 |
 | セッション管理 | OK | |
 | 認証UI表示 | OK | |
 | Python API | 要外部接続 | Render等にデプロイが必要 |
 | Stripeウェブフック | 要Stripe CLI | `stripe listen --forward-to` で代用 |
 | メール送信 | 実送信される | Resend経由で実際に送信 |
+
+**現在の環境変数設定（.env）**:
+```
+BASIC_AUTH_USER=preview
+BASIC_AUTH_PASSWORD=preview
+```
 
 ## 推奨運用フロー
 
