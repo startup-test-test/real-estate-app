@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEOキーワードデータ一覧</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .controls input, .controls select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .controls input { width: 300px; }
+    .controls select { min-width: 150px; }
+    .stats {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+    }
+    .table-container {
+      background: #fff;
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 80vh;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      background: #2563eb;
+      color: white;
+      padding: 12px 8px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    th:hover { background: #1d4ed8; }
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #eee;
+    }
+    tr:hover { background: #f8fafc; }
+    .source-smlt { color: #059669; font-weight: 500; }
+    .source-casio { color: #dc2626; font-weight: 500; }
+    .source-asset { color: #7c3aed; font-weight: 500; }
+    .num { text-align: right; }
+    .high-volume { background: #fef3c7; }
+    .duplicate { color: #ea580c; font-size: 11px; }
+    .note { color: #6b7280; font-size: 11px; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>SEOキーワードデータ一覧</h1>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="キーワード検索...">
+    <select id="sourceFilter">
+      <option value="">全ソース</option>
+      <option value="smlt.jp">smlt.jp</option>
+      <option value="CASIO">CASIO</option>
+      <option value="アセットランク">アセットランク</option>
+    </select>
+    <select id="categoryFilter">
+      <option value="">全カテゴリ</option>
+    </select>
+    <select id="volumeFilter">
+      <option value="">全検索数</option>
+      <option value="10000">10,000以上</option>
+      <option value="5000">5,000以上</option>
+      <option value="1000">1,000以上</option>
+    </select>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="table-container">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th data-col="0">ソース</th>
+          <th data-col="1">カテゴリ</th>
+          <th data-col="2">ツール名</th>
+          <th data-col="3">キーワード</th>
+          <th data-col="4">難易度</th>
+          <th data-col="5">月間検索数</th>
+          <th data-col="6">順位</th>
+          <th data-col="7">推定流入</th>
+          <th data-col="8">CPC ($)</th>
+          <th data-col="9">競合性</th>
+          <th data-col="10">重複</th>
+          <th data-col="11">備考</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const csvData = `ソース,カテゴリ,ツール名,キーワード,SEO難易度,月間検索数,検索順位,推定流入数,CPC ($),競合性,URL,重複,備考
+smlt.jp,仲介手数料,仲介手数料計算,仲介手数料,29,18100,1,7936,2.39,19,https://smlt.jp/chukai_houshu/,,大家DX作成済み
+smlt.jp,仲介手数料,仲介手数料計算,不動産 ちゅうかい,31,49500,6,3048,10.58,18,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,不動産仲介手数料,28,14800,2,2649,2.06,31,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,仲介手数料の計算,31,5400,1,2368,1.63,8,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,仲介手数料計算,29,5400,1,2368,0.76,6,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,仲介手数料不動産,33,14800,4,1434,3.06,35,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,仲介不動産 手数料,29,14800,4,1434,2.41,30,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,仲介手数料計算 不動産,30,1900,1,833,1.73,20,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,不動産仲介手数料計算,30,1900,1,833,1.57,19,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,土地仲介手数料,39,1600,1,702,3.43,15,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,不動産売買仲介手数料,33,3600,2,644,3.14,46,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料計算,仲介手数料相場,29,9900,6,610,0.89,29,https://smlt.jp/chukai_houshu/,,
+smlt.jp,仲介手数料,仲介手数料（レーマン方式）,レーマン方式 計算,28,320,1,140,1.5,9,https://smlt.jp/chukai_houshu_lehmann/,,
+smlt.jp,贈与税,贈与税計算,贈与税税率,48,49500,3,6114,0.11,20,https://smlt.jp/zouyozei/,,高トラフィック
+smlt.jp,贈与税,贈与税計算,贈与税の税率,33,49500,6,3048,0.1,22,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税計算シミュレーション,33,4400,1,1929,0.37,2,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,税率 贈与税,48,49500,9,1551,0.11,20,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税金 計算,78,8100,3,1001,0.14,7,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税の計算,52,8100,3,1001,0.1,7,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税計算,47,8100,3,1001,0.13,7,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税 いくらから,47,40500,11,818,0.12,20,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税計算シュミレーション,33,4400,2,788,0.71,1,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税シミュレーション,33,1300,1,570,0.12,0,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与 税金,50,90500,17,484,0.2,17,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,土地贈与税計算 シュミレーション,49,720,1,316,0.43,10,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税はいくらから,51,40500,16,267,0.07,20,https://smlt.jp/zouyozei/,,
+smlt.jp,贈与税,贈与税計算,贈与税,49,90500,20,245,0.13,17,https://smlt.jp/zouyozei/,,
+smlt.jp,不動産取得税,土地・住宅取得税,不動産取得税 計算,29,9900,1,4341,0.41,5,https://smlt.jp/shutokuzei_tochi_jutaku/,,高トラフィック
+smlt.jp,不動産取得税,土地・住宅取得税,不動産取得税の計算,44,9900,3,1223,0.35,4,https://smlt.jp/shutokuzei_tochi_jutaku/,,
+smlt.jp,不動産取得税,土地・住宅取得税,取得 税金,33,2400,4,233,0.52,2,https://smlt.jp/shutokuzei_tochi_jutaku/,,
+smlt.jp,不動産取得税,土地・住宅取得税,不動産取得税計算方法,28,1300,3,161,0.54,3,https://smlt.jp/shutokuzei_tochi_jutaku/,,
+smlt.jp,不動産取得税,土地取得税,不動産取得税シミュレーション,27,720,2,129,0,0,https://smlt.jp/shutokuzei_tochi/,,
+smlt.jp,不動産取得税,土地取得税,取得税 計算,30,720,2,129,0.02,3,https://smlt.jp/shutokuzei_tochi/,,
+smlt.jp,不動産取得税,土地取得税,不動産取得税計算ツール,29,1300,4,126,0.26,1,https://smlt.jp/shutokuzei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,登録免許税計算,30,5400,1,2368,0.06,3,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,登録免許税の計算,29,5400,3,667,0.06,3,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,登記費用計算,31,880,1,386,1.25,5,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,登録免許税 計算方法,32,1900,2,340,0.1,5,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,登録免許税の計算方法,33,1900,2,340,0.05,4,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,所有権移転登記 費用 計算,30,320,1,140,0.57,4,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地登録免許税,登記費用の計算,29,880,2,158,0.44,2,https://smlt.jp/tourokumenkyozei_tochi/,,
+smlt.jp,登録免許税,土地・住宅登録免許税,登録免許税,29,14800,7,732,0.09,3,https://smlt.jp/tourokumenkyozei_tochi_jutaku/,,
+smlt.jp,登録免許税,土地・住宅登録免許税,不動産登録免許税,33,1300,3,161,0.04,6,https://smlt.jp/tourokumenkyozei_tochi_jutaku/,,
+smlt.jp,登録免許税,土地・住宅登録免許税,登録免許税不動産,30,1300,4,126,0.19,7,https://smlt.jp/tourokumenkyozei_tochi_jutaku/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,譲渡所得税 計算 シミュレーション,33,2900,1,1272,1.87,19,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,譲渡所得税計算シュミレーション,33,2900,1,1272,1.27,15,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,所得税計算ツール,33,40500,9,1269,2.93,1,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,不動産売却税,49,14800,6,911,1.92,62,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,不動産 税金 売却,33,14800,7,732,0.92,55,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,土地売却 税金 シュミレーション,33,1600,1,702,1.68,30,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,土地売却 税金シミュレーション,33,1600,1,702,1.73,29,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,不動産売却 税金,42,14800,8,581,0.92,55,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,不動産譲渡所得税計算,33,1000,1,438,0.4,35,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,不動産売却税金シミュレーション,32,1000,1,438,1.78,35,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,家売却 税金シミュレーション,31,880,1,386,2.12,55,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,マンション売却 税金計算シミュレーション,33,720,1,316,2.42,64,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,不動産売却税計算,33,1600,2,286,1.26,48,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,譲渡所得,47,12100,11,244,0.3,9,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,譲渡所得税計算,45,1300,2,233,0.48,14,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,譲渡所得税,譲渡所得税計算,土地の売却税金,33,8100,10,204,0.81,53,https://smlt.jp/jotoshotokuzei/,,
+smlt.jp,印紙税,工事請負契約書印紙,工事請負契約書 印紙,42,6600,3,815,9.7,1,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,請負工事契約書 印紙,40,6600,5,512,9.7,1,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,工事請負契約書の印紙,52,6600,7,326,5.9,1,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,請負契約の印紙,33,4400,6,271,3.5,0,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,請負契約印紙,49,4400,6,271,9.13,0,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,工事印紙,42,720,2,129,0,0,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,請負工事印紙,42,1000,3,124,0.07,0,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,工事請負契約書印紙,収入印紙金額表,33,9900,11,200,0.09,0,https://smlt.jp/inshizei_ukeoi_kenchiku/,,
+smlt.jp,印紙税,不動産契約書印紙,不動産印紙代,29,3600,3,445,0.19,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,印紙代,50,9900,8,389,0.07,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,印紙代不動産,29,3600,4,349,0.1,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,印紙売買契約書,42,4400,5,341,5.91,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,売買契約書印紙代,43,3600,5,279,4.17,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,売買契約書印紙,42,4400,6,271,5.91,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,不動産印紙,28,1600,3,198,0,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,印紙 不動産売買,30,1300,3,161,0.58,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,不動産売買契約書印紙,30,3600,8,141,0.49,1,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,印紙代不動産売買,28,1300,4,126,0.96,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,不動産売買印紙,28,1300,4,126,1.07,0,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,印紙税,不動産契約書印紙,不動産売買印紙代,28,1300,4,126,0.26,1,https://smlt.jp/inshizei_keiyakusho_fudosan/,,
+smlt.jp,相続税,相続税計算,相続税の計算,49,33100,10,833,0.48,46,https://smlt.jp/souzokuzei_hoteisouzoku/,,
+smlt.jp,相続税,相続税計算,計算 相続税,33,33100,19,115,0.52,46,https://smlt.jp/souzokuzei_hoteisouzoku/,,
+smlt.jp,法人税,法人税計算,法人税金計算,54,4400,3,543,2.7,11,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,税金計算 法人,33,4400,5,341,2.36,10,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税金シュミレーション,33,1900,2,340,3.43,5,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税 シュミレーション,33,1900,2,340,3.69,8,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税 計算シミュレーション,33,1900,2,340,3.34,9,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税シミュレーション,33,1600,2,286,2.83,6,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税金シミュレーション,33,1600,2,286,2.42,7,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税計算ざっくり,50,3600,5,279,2.36,7,https://smlt.jp/houjinzei_s/,,
+smlt.jp,法人税,法人税計算,法人税計算,33,4400,7,218,1.78,14,https://smlt.jp/houjinzei_s/,,
+smlt.jp,減価償却,減価償却計算,建物 減価償却費 自動計算,33,720,1,316,1.24,4,https://smlt.jp/genkashokyaku/,CASIO重複,
+smlt.jp,減価償却,減価償却計算,建物の減価償却,45,1900,3,235,0.16,4,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,建物減価償却,33,1900,4,184,0.23,4,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,減価償却計算,56,6600,10,166,7.73,6,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,減価償却不動産,30,1300,4,126,1.36,16,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,不動産減価償却,31,1300,4,126,5.32,16,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,減価償却費計算サイト,54,1300,4,126,0,1,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,減価償却費 自動計算,33,1000,3,124,4.29,8,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,減価償却費計算,57,3600,9,113,4.97,7,https://smlt.jp/genkashokyaku/,,
+smlt.jp,減価償却,減価償却計算,減価償却費計算ツール,33,1000,4,97,2.72,4,https://smlt.jp/genkashokyaku/,,
+smlt.jp,路線価,路線価（二方路線）,路線価計算シミュレーション,45,1000,1,438,3.26,46,https://smlt.jp/kantei_rosenka_nihou/,,
+smlt.jp,路線価,路線価（二方路線）,路線価計算,50,1300,5,101,3.67,31,https://smlt.jp/kantei_rosenka_nihou/,,
+smlt.jp,建物評価,建物評価額計算,建物評価額 計算,31,320,1,140,2.81,37,https://smlt.jp/category/tatemono_assessment/,,
+smlt.jp,消費税,建物消費税按分,消費税金計算,33,165000,25,168,0.11,0,https://smlt.jp/shohizei_tatemono/,,
+smlt.jp,消費税,建物消費税按分,消費税計算ツール,51,5400,10,136,1.35,0,https://smlt.jp/shohizei_tatemono/,,
+smlt.jp,消費税,建物消費税按分,不動産消費税,33,880,3,109,0.21,8,https://smlt.jp/shohizei_tatemono/,,
+smlt.jp,消費税,消費税按分（税別）,土地建物按分,18,480,1,210,0.08,0,https://smlt.jp/shohizei_anbun_zeibetsu_h/,,
+smlt.jp,住宅ローン,住宅ローン（元利均等）,住宅ローン,33,110000,25,112,1.59,19,https://smlt.jp/loan_kanso/,CASIO重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,住宅ローンシミュレーション高精度,33,880,2,158,1.99,22,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,借入返済シミュレーション,62,1300,3,161,3.04,23,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,住宅ローンシミュレーション 残高,33,480,2,86,1.68,6,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,住宅ローン残高 シミュレーション,33,480,2,86,1.7,4,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,住宅ローン 残高計算,33,390,2,70,4.19,5,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,住宅ローン残高 シュミレーション,33,480,3,59,1.73,6,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,ローン残債,33,320,2,57,5.27,10,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,住宅ローン 残債シュミレーション,33,320,2,57,2.09,13,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,住宅ローン,住宅ローンシミュレーション,35年ローン計算,33,480,36,0,0.83,28,https://keisan.site/exec/system/1256183644,smlt.jp重複,
+CASIO,減価償却,償却費計算,償却費計算,50,320,1,140,7.56,4,https://keisan.site/exec/system/1339479951,smlt.jp重複,
+CASIO,減価償却,償却費計算,減価償却いくらから,49,1000,30,1,0,1,https://keisan.site/exec/system/1339479951,smlt.jp重複,
+アセットランク,不動産投資シミュレーション,不動産投資シミュレーション,不動産投資シミュレーション,33,880,14,9,5.65,48,https://assetranksimulator.com/,,直接競合
+アセットランク,不動産投資シミュレーション,不動産投資シミュレーション,不動産 投資 シミュレーション ソフト,23,20,1,9,5.14,30,https://assetranksimulator.com/,,
+アセットランク,不動産投資シミュレーション,不動産投資シミュレーション,不動産 シミュレーション ソフト,27,10,1,4,3.71,86,https://assetranksimulator.com/,,
+アセットランク,不動産投資シミュレーション,不動産投資シミュレーション,不動産 シミュレーション,33,320,39,0,5.24,45,https://assetranksimulator.com/,,
+アセットランク,不動産投資シミュレーション,不動産投資シミュレーション,シミュレーション 不動産,32,320,52,0,4,40,https://assetranksimulator.com/,,
+アセットランク,LTV計算,LTV計算,ltvとは 不動産,25,880,18,4,0,2,https://assetranksimulator.com/不動産投資指標のltv.html,,
+アセットランク,LTV計算,LTV計算,ltv不動産,29,390,23,1,0,2,https://assetranksimulator.com/不動産投資指標のltv.html,,
+アセットランク,LTV計算,LTV計算,不動産ltv,29,390,25,0,0,2,https://assetranksimulator.com/不動産投資指標のltv.html,,
+アセットランク,IRR計算,IRR計算,irr計算方法 エクセル,34,480,51,0,0,0,https://assetranksimulator.com/irrの利用方法と目標値の決め方.html,,大家DXオリジナル候補
+アセットランク,IRR計算,IRR計算,irr計算式,26,390,57,0,0,0,https://assetranksimulator.com/irrの利用方法と目標値の決め方.html,,
+アセットランク,IRR計算,IRR計算,irrの計算方法,38,1600,68,0,0.74,0,https://assetranksimulator.com/irrの利用方法と目標値の決め方.html,,月間1600検索
+アセットランク,IRR計算,IRR計算,irr計算方法,37,1600,69,0,0,0,https://assetranksimulator.com/irrの利用方法と目標値の決め方.html,,月間1600検索
+アセットランク,DSCR計算,DSCR計算,dscr 不動産,21,320,69,0,17.72,6,https://assetranksimulator.com/不動産投資指標のdcr.html,,大家DXオリジナル候補
+アセットランク,減価償却,減価償却シミュレーション,不動産 減価償却 計算ツール,33,140,19,0,0,4,https://assetranksimulator.com/,,smlt.jp重複
+アセットランク,減価償却,減価償却シミュレーション,不動産 減価償却 シミュレーション,33,110,19,0,3.58,11,https://assetranksimulator.com/,,smlt.jp重複
+アセットランク,減価償却,減価償却シミュレーション,減価償却シミュレーション,33,590,31,0,10.57,4,https://assetranksimulator.com/,,
+アセットランク,減価償却,減価償却シミュレーション,中古物件の減価償却,24,320,45,0,0.26,2,https://assetranksimulator.com/,,
+アセットランク,減価償却,減価償却シミュレーション,中古減価償却,27,480,91,0,0.55,1,https://assetranksimulator.com/,,
+アセットランク,減価償却,減価償却シミュレーション,中古 耐用年数,24,1300,94,0,0,0,https://assetranksimulator.com/,,月間1300検索
+アセットランク,デッドクロス,デッドクロスシミュレーション,デッド クロス 不動産 シミュレーション,27,10,2,2,6.65,32,https://assetranksimulator.com/,,
+アセットランク,デッドクロス,デッドクロスシミュレーション,デッドクロス 不動産,29,210,21,0,9.27,21,https://assetranksimulator.com/,,
+アセットランク,キャッシュフロー,キャッシュフローシミュレーション,不動産 キャッシュ フロー シミュレーション,30,70,15,1,5.35,38,https://assetranksimulator.com/,,
+アセットランク,キャッシュフロー,キャッシュフローシミュレーション,不動産 cf シミュレーション,30,10,13,0,0,29,https://assetranksimulator.com/,,
+アセットランク,利回り計算,利回り計算,不動産 利回り 計算 エクセル,21,50,11,1,7.75,14,https://assetranksimulator.com/,,
+アセットランク,利回り計算,利回り計算,不動産 利回り 計算 アプリ,31,210,23,0,3.38,29,https://assetranksimulator.com/,,
+アセットランク,利回り計算,利回り計算,不動産 利回り計算シミュレーション,31,590,57,0,1.9,31,https://assetranksimulator.com/,,
+アセットランク,売却シミュレーション,売却シミュレーション,不動産 投資 売却 シミュレーション,29,20,10,1,11.53,76,https://assetranksimulator.com/,,
+アセットランク,売却シミュレーション,売却シミュレーション,不動産売却 計算ツール,29,320,55,0,3.66,67,https://assetranksimulator.com/,,
+アセットランク,売却シミュレーション,売却シミュレーション,不動産売却 シミュレーション,29,260,67,0,13.79,50,https://assetranksimulator.com/,,
+アセットランク,繰上返済,繰上返済シミュレーション,不動産投資 繰り上げ返済,32,110,27,0,6.93,11,https://assetranksimulator.com/,,
+アセットランク,フルレバ,フルレバレッジ投資,フルレバとは,39,390,3,48,2.87,1,https://assetranksimulator.com/,,上位表示
+アセットランク,フルレバ,フルレバレッジ投資,フルレバ,43,260,5,20,0,0,https://assetranksimulator.com/,,`;
+
+    let data = [];
+    let sortCol = 5;
+    let sortAsc = false;
+
+    function parseCSV(csv) {
+      const lines = csv.trim().split('\n');
+      const headers = lines[0].split(',');
+      return lines.slice(1).map(line => {
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+        for (let char of line) {
+          if (char === '"') inQuotes = !inQuotes;
+          else if (char === ',' && !inQuotes) {
+            values.push(current);
+            current = '';
+          } else current += char;
+        }
+        values.push(current);
+        return values;
+      });
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = rows.map(row => {
+        const sourceClass = row[0] === 'smlt.jp' ? 'source-smlt' :
+                           row[0] === 'CASIO' ? 'source-casio' : 'source-asset';
+        const volumeClass = parseInt(row[5]) >= 10000 ? 'high-volume' : '';
+        return `<tr class="${volumeClass}">
+          <td class="${sourceClass}">${row[0]}</td>
+          <td>${row[1]}</td>
+          <td>${row[2]}</td>
+          <td><strong>${row[3]}</strong></td>
+          <td class="num">${row[4]}</td>
+          <td class="num">${parseInt(row[5]).toLocaleString()}</td>
+          <td class="num">${row[6]}</td>
+          <td class="num">${parseInt(row[7]).toLocaleString()}</td>
+          <td class="num">${row[8]}</td>
+          <td class="num">${row[9]}</td>
+          <td class="duplicate">${row[11] || ''}</td>
+          <td class="note">${row[12] || ''}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function updateStats(rows) {
+      const totalVolume = rows.reduce((sum, r) => sum + parseInt(r[5] || 0), 0);
+      const totalTraffic = rows.reduce((sum, r) => sum + parseInt(r[7] || 0), 0);
+      const avgDifficulty = rows.length ?
+        (rows.reduce((sum, r) => sum + parseInt(r[4] || 0), 0) / rows.length).toFixed(1) : 0;
+
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-item"><div class="stat-value">${rows.length}</div><div class="stat-label">キーワード数</div></div>
+        <div class="stat-item"><div class="stat-value">${totalVolume.toLocaleString()}</div><div class="stat-label">総月間検索数</div></div>
+        <div class="stat-item"><div class="stat-value">${totalTraffic.toLocaleString()}</div><div class="stat-label">総推定流入</div></div>
+        <div class="stat-item"><div class="stat-value">${avgDifficulty}</div><div class="stat-label">平均難易度</div></div>
+      `;
+    }
+
+    function filterAndSort() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const source = document.getElementById('sourceFilter').value;
+      const category = document.getElementById('categoryFilter').value;
+      const minVolume = parseInt(document.getElementById('volumeFilter').value) || 0;
+
+      let filtered = data.filter(row => {
+        if (search && !row.join(' ').toLowerCase().includes(search)) return false;
+        if (source && row[0] !== source) return false;
+        if (category && row[1] !== category) return false;
+        if (minVolume && parseInt(row[5]) < minVolume) return false;
+        return true;
+      });
+
+      filtered.sort((a, b) => {
+        let va = a[sortCol], vb = b[sortCol];
+        if ([4,5,6,7,8,9].includes(sortCol)) {
+          va = parseFloat(va) || 0;
+          vb = parseFloat(vb) || 0;
+        }
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+      });
+
+      renderTable(filtered);
+      updateStats(filtered);
+    }
+
+    function init() {
+      data = parseCSV(csvData);
+
+      const categories = [...new Set(data.map(r => r[1]))];
+      const categorySelect = document.getElementById('categoryFilter');
+      categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        categorySelect.appendChild(opt);
+      });
+
+      document.querySelectorAll('th').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = parseInt(th.dataset.col);
+          if (sortCol === col) sortAsc = !sortAsc;
+          else { sortCol = col; sortAsc = true; }
+          filterAndSort();
+        });
+      });
+
+      ['search', 'sourceFilter', 'categoryFilter', 'volumeFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('input', filterAndSort);
+        document.getElementById(id).addEventListener('change', filterAndSort);
+      });
+
+      filterAndSort();
+    }
+
+    init();
+  </script>
+</body>
+</html>
