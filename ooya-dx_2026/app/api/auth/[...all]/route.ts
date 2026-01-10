@@ -11,6 +11,24 @@ function notConfiguredResponse() {
   );
 }
 
+// Basic認証ヘッダーを除去したリクエストを作成
+// プレビュー環境でブラウザがキャッシュしたBasic認証ヘッダーがNeon Authに送られると403エラーになる
+function stripBasicAuthHeader(request: NextRequest): NextRequest {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader && authHeader.startsWith("Basic ")) {
+    const newHeaders = new Headers(request.headers);
+    newHeaders.delete("authorization");
+    return new NextRequest(request.url, {
+      method: request.method,
+      headers: newHeaders,
+      body: request.body,
+      // @ts-ignore - NextRequest accepts duplex option
+      duplex: "half",
+    });
+  }
+  return request;
+}
+
 // 動的インポートで環境変数チェック後にのみロード
 // NEXT_PUBLIC_NEON_AUTH_URLはnext.config.mjsでNEON_AUTH_BASE_URLに自動コピーされる
 async function getHandler() {
@@ -29,7 +47,8 @@ export async function GET(
   const handlers = await getHandler();
   if (!handlers) return notConfiguredResponse();
   const params = await context.params;
-  return handlers.GET(request, {
+  const cleanRequest = stripBasicAuthHeader(request);
+  return handlers.GET(cleanRequest, {
     params: Promise.resolve({ path: params.all }),
   });
 }
@@ -41,7 +60,8 @@ export async function POST(
   const handlers = await getHandler();
   if (!handlers) return notConfiguredResponse();
   const params = await context.params;
-  return handlers.POST(request, {
+  const cleanRequest = stripBasicAuthHeader(request);
+  return handlers.POST(cleanRequest, {
     params: Promise.resolve({ path: params.all }),
   });
 }
@@ -53,7 +73,8 @@ export async function PUT(
   const handlers = await getHandler();
   if (!handlers) return notConfiguredResponse();
   const params = await context.params;
-  return handlers.PUT(request, {
+  const cleanRequest = stripBasicAuthHeader(request);
+  return handlers.PUT(cleanRequest, {
     params: Promise.resolve({ path: params.all }),
   });
 }
@@ -65,7 +86,8 @@ export async function DELETE(
   const handlers = await getHandler();
   if (!handlers) return notConfiguredResponse();
   const params = await context.params;
-  return handlers.DELETE(request, {
+  const cleanRequest = stripBasicAuthHeader(request);
+  return handlers.DELETE(cleanRequest, {
     params: Promise.resolve({ path: params.all }),
   });
 }
@@ -77,7 +99,8 @@ export async function PATCH(
   const handlers = await getHandler();
   if (!handlers) return notConfiguredResponse();
   const params = await context.params;
-  return handlers.PATCH(request, {
+  const cleanRequest = stripBasicAuthHeader(request);
+  return handlers.PATCH(cleanRequest, {
     params: Promise.resolve({ path: params.all }),
   });
 }
