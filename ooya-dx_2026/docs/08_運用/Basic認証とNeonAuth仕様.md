@@ -1,8 +1,9 @@
-# Basic認証とNeon Auth の仕様・制限事項
+# Basic認証とNeon Auth の仕様・制限事項（localhost vs サーバー環境）
 
 ## 概要
 
 Vercelプレビュー環境でBasic認証を使用している場合、Neon Authの一部機能に影響が出る。
+localhostでは正常に動作するが、Basic認証が有効なサーバー環境では問題が発生する。
 
 ## 問題の発生条件
 
