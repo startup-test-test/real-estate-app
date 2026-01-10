@@ -1423,10 +1423,10 @@ const MyPage: React.FC = () => {
         onClose={handleUpgradeClose}
       />
       
-      {/* チュートリアル */}
+      {/* チュートリアル - react-joyride React 19対応まで無効化 */}
       <Joyride
         steps={tutorialSteps}
-        run={runTutorial && !pauseTutorial}  // 一時停止フラグを追加
+        run={false}  // 一時的に無効化
         continuous={false}  // 自動的に次のステップへ進まない
         showProgress={true}  // プログレス表示を有効化
         showSkipButton={true}

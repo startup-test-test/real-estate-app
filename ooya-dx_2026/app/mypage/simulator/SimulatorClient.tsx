@@ -3894,10 +3894,10 @@ const Simulator: React.FC = () => {
         onClose={() => setShowUpgradeModal(false)}
       />
       
-      {/* チュートリアル */}
+      {/* チュートリアル - react-joyride React 19対応まで無効化 */}
       <Joyride
         steps={tutorialSteps}
-        run={runTutorial}
+        run={false}  // 一時的に無効化
         stepIndex={tutorialStep}
         continuous={true}
         showSkipButton={true}
