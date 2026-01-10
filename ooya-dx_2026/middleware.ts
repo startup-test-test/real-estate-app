@@ -45,7 +45,19 @@ function checkBasicAuth(req: NextRequest): NextResponse | null {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // APIルートはBasic認証をスキップ
+  // Auth APIルートはBasic認証をスキップし、Authorizationヘッダーも除去
+  if (pathname.startsWith("/api/auth/")) {
+    // ブラウザがキャッシュしたBasic認証ヘッダーを除去
+    const headers = new Headers(req.headers);
+    headers.delete("authorization");
+    return NextResponse.next({
+      request: {
+        headers,
+      },
+    });
+  }
+
+  // その他のAPIルートはBasic認証をスキップ
   if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }

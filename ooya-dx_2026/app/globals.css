@@ -149,9 +149,6 @@ img[alt="大家DX"] {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-  max-width: none !important;
-  width: auto !important;
-  height: auto !important;
 }
 
 /* チェックボックス背景修正 */

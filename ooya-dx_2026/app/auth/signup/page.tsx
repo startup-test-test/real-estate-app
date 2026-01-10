@@ -53,16 +53,23 @@ export default function SignUpPage() {
           router.replace('/dashboard')
         }
       } else {
-        if (result.error === 'USER_WITH_EMAIL_ALREADY_EXISTS') {
-          setError('このメールアドレスは既に登録されています')
-        } else if (result.error === 'INVALID_EMAIL') {
+        // エラーメッセージをチェック
+        const errorMsg = result.error || ''
+        if (errorMsg.includes('already exists') || errorMsg.includes('USER_ALREADY_EXISTS')) {
+          setError('このメールアドレスは既に登録されています。ログインページからお試しください。')
+        } else if (errorMsg.includes('INVALID_EMAIL') || errorMsg.includes('invalid email')) {
           setError('有効なメールアドレスを入力してください')
         } else {
           setError('登録に失敗しました')
         }
       }
     } catch (err: any) {
-      setError('エラーが発生しました')
+      const errorMsg = err?.message || ''
+      if (errorMsg.includes('already exists') || errorMsg.includes('USER_ALREADY_EXISTS')) {
+        setError('このメールアドレスは既に登録されています。ログインページからお試しください。')
+      } else {
+        setError('エラーが発生しました')
+      }
     } finally {
       setIsLoading(false)
     }

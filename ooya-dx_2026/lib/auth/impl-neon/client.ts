@@ -66,16 +66,20 @@ export function useAuth(): AuthClient {
     },
     async signUp({ email, password }) {
       try {
+        console.log("[Auth] signUp called with:", { email, name: email.split("@")[0] });
         const result = await authClient.signUp.email({
           email,
           password,
           name: email.split("@")[0], // デフォルト名としてメールのローカル部分を使用
         });
+        console.log("[Auth] signUp result:", result);
         if (result.error) {
-          return { ok: false, error: result.error.message || "SIGN_UP_FAILED" };
+          console.log("[Auth] signUp error:", result.error);
+          return { ok: false, error: result.error.message || result.error.code || "SIGN_UP_FAILED" };
         }
         return { ok: true };
       } catch (e: any) {
+        console.error("[Auth] signUp exception:", e);
         return { ok: false, error: e?.message || "SIGN_UP_FAILED" };
       }
     },
