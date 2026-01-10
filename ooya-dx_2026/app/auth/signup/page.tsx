@@ -86,11 +86,19 @@ export default function SignUpPage() {
         <div className="bg-white rounded-2xl shadow-xl px-8 py-10">
           {/* ロゴ */}
           <div className="text-center mb-2">
-            <h1 className="text-4xl font-bold">
-              <span className="text-blue-600">大家</span>
-              <span className="text-blue-800">DX</span>
-            </h1>
-            <p className="text-gray-500 text-sm mt-2">
+            <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+              <img
+                src="/img/logo_250709_2.png"
+                alt="大家DX"
+                style={{
+                  height: '2.5rem',
+                  width: 'auto',
+                  display: 'block',
+                  margin: '0 auto',
+                }}
+              />
+            </Link>
+            <p className="text-sm mt-2" style={{ color: '#6b7280' }}>
               AIが導く、あなたの賃貸経営の未来。
             </p>
           </div>
@@ -192,20 +200,54 @@ export default function SignUpPage() {
             </div>
 
             {/* 同意チェックボックス */}
-            <div className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                id="agreeTerms"
-                checked={agreeTerms}
-                onChange={(e) => setAgreeTerms(e.target.checked)}
-                className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <label htmlFor="agreeTerms" className="text-sm text-gray-600">
-                <Link href="/legal/terms" className="text-blue-600 hover:underline">利用規約</Link>
+            <div className="flex items-start gap-3">
+              <button
+                type="button"
+                onClick={() => setAgreeTerms(!agreeTerms)}
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  minWidth: '20px',
+                  minHeight: '20px',
+                  border: '2px solid #d1d5db',
+                  borderRadius: '4px',
+                  backgroundColor: agreeTerms ? '#2563eb' : '#ffffff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
+                  marginTop: '2px',
+                  flexShrink: 0,
+                }}
+              >
+                {agreeTerms && (
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                  >
+                    <path
+                      d="M2 6L5 9L10 3"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </button>
+              <span
+                className="text-sm cursor-pointer"
+                style={{ color: '#4b5563' }}
+                onClick={() => setAgreeTerms(!agreeTerms)}
+              >
+                <Link href="/legal/terms" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>利用規約</Link>
                 および
-                <Link href="/legal/privacy" className="text-blue-600 hover:underline">プライバシーポリシー</Link>
+                <Link href="/legal/privacy" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>プライバシーポリシー</Link>
                 に同意する
-              </label>
+              </span>
             </div>
 
             {(error || info) && (

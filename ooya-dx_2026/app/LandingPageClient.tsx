@@ -106,7 +106,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
               <img
                 src="/img/logo_250709_2.png"
                 alt="大家DX"
-                className="h-8 sm:h-10 w-auto hover:opacity-80 transition-opacity"
+                className="hover:opacity-80 transition-opacity"
+                style={{ height: '2.5rem', width: 'auto', display: 'block' }}
               />
             </a>
 
@@ -524,7 +525,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start">
             <div className="mb-4 md:mb-0">
-              <img src="/img/logo_250709_2.png" alt="大家DX" className="h-8 w-auto mb-2" style={{ mixBlendMode: 'multiply' }} />
+              <img src="/img/logo_250709_2.png" alt="大家DX" className="mb-2" style={{ height: '2rem', width: 'auto', display: 'block', mixBlendMode: 'multiply' }} />
               <div className="text-xs text-gray-600">
                 <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900 block">
                   株式会社StartupMarketing

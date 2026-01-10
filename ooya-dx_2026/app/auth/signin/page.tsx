@@ -68,11 +68,19 @@ export default function SignInPage() {
         <div className="bg-white rounded-2xl shadow-xl px-8 py-10">
           {/* ロゴ */}
           <div className="text-center mb-2">
-            <h1 className="text-4xl font-bold">
-              <span className="text-blue-600">大家</span>
-              <span className="text-blue-800">DX</span>
-            </h1>
-            <p className="text-gray-500 text-sm mt-2">
+            <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+              <img
+                src="/img/logo_250709_2.png"
+                alt="大家DX"
+                style={{
+                  height: '2.5rem',
+                  width: 'auto',
+                  display: 'block',
+                  margin: '0 auto',
+                }}
+              />
+            </Link>
+            <p className="text-sm mt-2" style={{ color: '#6b7280' }}>
               AIが導く、あなたの賃貸経営の未来。
             </p>
           </div>

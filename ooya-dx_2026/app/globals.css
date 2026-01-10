@@ -143,3 +143,18 @@
 }
 
 html, body { height: 100%; }
+
+/* @neondatabase/auth-ui CSSオーバーライド - 画像表示修正 */
+img[alt="大家DX"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-width: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* チェックボックス背景修正 */
+input[type="checkbox"] {
+  background-color: white !important;
+}

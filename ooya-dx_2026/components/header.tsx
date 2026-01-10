@@ -1,7 +1,6 @@
 "use client"
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { useRouter, usePathname } from 'next/navigation'
@@ -116,12 +115,11 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center group">
-            <Image
+            <img
               src="/img/logo_250709_2.png"
               alt="大家DX"
-              width={120}
-              height={40}
-              className="h-8 w-auto group-hover:opacity-80 transition-opacity duration-200"
+              className="group-hover:opacity-80 transition-opacity duration-200"
+              style={{ height: '2rem', width: 'auto', display: 'block' }}
             />
           </Link>
           <nav className="flex items-center gap-2">
