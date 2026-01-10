@@ -7,13 +7,22 @@ Basic認証を使用している環境（localhost / Vercelプレビュー）で
 
 ## 問題の発生条件
 
-| 環境 | Basic認証 | Neon Auth | 動作 |
-|------|-----------|-----------|------|
-| ローカル (localhost) | あり（.env） | 正常 | OK（※回避策適用済み） |
-| Vercelプレビュー | あり | 正常 | OK（※回避策適用済み） |
-| 本番 (独自ドメイン) | なし推奨 | 正常 | OK |
+| 環境 | Basic認証 | Neon Auth | ログアウト等 | 備考 |
+|------|-----------|-----------|-------------|------|
+| localhost | あり（.env） | 正常 | OK | 開発サーバーでProxyコードが正常動作 |
+| Vercelプレビュー | あり | 制限あり | NG（403） | 本番ビルドでProxyコードが機能しない |
+| 本番 (独自ドメイン) | なし推奨 | 正常 | OK | Basic認証がないので問題なし |
 
 **注意**: `.env` に `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` が設定されている場合、localhostでもBasic認証がかかる。
+
+### localhost vs Vercelの動作差異
+
+同じBasic認証設定でも、localhostとVercelプレビューで動作が異なる：
+
+- **localhost**: Next.js開発サーバーでは、API routeに実装したProxyパターンによるヘッダー除去が正常に動作
+- **Vercelプレビュー**: 本番ビルドでは同じProxyパターンが機能せず、403エラーが発生
+
+これはNext.jsの開発サーバーと本番ビルドでのJavaScript実行環境の違いによるもの。
 
 ## 技術的な原因
 
@@ -106,11 +115,13 @@ BASIC_AUTH_PASSWORD=preview
 
 ```
 開発 (localhost)
-    ↓ Basic認証なし、全機能テスト可能
+    ↓ Basic認証あり、全機能テスト可能（Proxyコードが動作）
+    ↓ → ログイン/ログアウト/新規登録など全てテスト可能
 
 プレビュー (Vercel develop)
     ↓ Basic認証あり、Auth機能は制限あり
     ↓ → UI/レイアウト確認用と割り切る
+    ↓ → ログアウト等は403エラーになる（仕様）
 
 本番 (独自ドメイン)
     ↓ Basic認証なし、全機能動作
