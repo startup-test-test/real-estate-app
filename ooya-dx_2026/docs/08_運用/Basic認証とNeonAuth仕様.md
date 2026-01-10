@@ -1,4 +1,4 @@
-# Basic認証とNeon Auth の仕様・制限事項（localhost vs サーバー環境）
+# localhost環境の制限事項（Basic認証・Neon Auth）
 
 ## 概要
 
@@ -95,15 +95,26 @@ async function stripBasicAuthHeader(request: NextRequest): Promise<NextRequest> 
 
 | 機能 | ローカルで確認可能 | 備考 |
 |------|-------------------|------|
-| ログイン | OK | Basic認証環境でも動作 |
+| **新規登録** | **❌ NG** | **Neon Auth Domainsにlocalhostを追加できないため** |
+| ログイン | OK（既存ユーザー） | Vercel等で登録済みのユーザーでログイン可能 |
 | ログアウト | OK | Basic認証環境でも動作 |
-| 新規登録 | OK | Basic認証環境でも動作 |
-| パスワードリセット | OK | Basic認証環境でも動作 |
+| パスワードリセット | ❌ NG | 新規登録と同様の理由 |
 | セッション管理 | OK | |
 | 認証UI表示 | OK | |
 | Python API | 要外部接続 | Render等にデプロイが必要 |
 | Stripeウェブフック | 要Stripe CLI | `stripe listen --forward-to` で代用 |
 | メール送信 | 実送信される | Resend経由で実際に送信 |
+
+### Neon Auth Domains制限
+
+**Neon AuthのDomainsにlocalhostを追加できない**ため、localhost環境では以下の機能が動作しない：
+
+- 新規会員登録（`/api/auth/sign-up/email`）→ 500エラー
+- パスワードリセット要求
+
+**対策**:
+- 新規ユーザー登録は **Vercelプレビュー環境** または **本番環境** で行う
+- ログイン/ログアウトは、既にVercel等で登録済みのユーザーであればlocalhostでも動作する
 
 **現在の環境変数設定（.env）**:
 ```
@@ -115,17 +126,25 @@ BASIC_AUTH_PASSWORD=preview
 
 ```
 開発 (localhost)
-    ↓ Basic認証あり、全機能テスト可能（Proxyコードが動作）
-    ↓ → ログイン/ログアウト/新規登録など全てテスト可能
+    ↓ Basic認証あり
+    ↓ → 新規登録: ❌ 不可（Neon Auth Domains制限）
+    ↓ → ログイン/ログアウト: ✅ 既存ユーザーで可能
+    ↓ → Stripe決済: ✅ stripe listen で可能
 
 プレビュー (Vercel develop)
     ↓ Basic認証あり、Auth機能は制限あり
+    ↓ → 新規登録: ✅ 可能
+    ↓ → ログアウト等: ❌ 403エラーになる（仕様）
     ↓ → UI/レイアウト確認用と割り切る
-    ↓ → ログアウト等は403エラーになる（仕様）
 
 本番 (独自ドメイン)
     ↓ Basic認証なし、全機能動作
 ```
+
+### 新規ユーザーでテストしたい場合
+
+1. **Vercelプレビュー環境**で新規登録
+2. その後、**localhost**でログインしてテスト
 
 ## 関連ファイル
 
@@ -138,3 +157,4 @@ BASIC_AUTH_PASSWORD=preview
 | 日付 | 内容 |
 |------|------|
 | 2026-01-10 | 初版作成 |
+| 2026-01-10 | Neon Auth Domains制限によりlocalhost新規登録不可を追記 |
