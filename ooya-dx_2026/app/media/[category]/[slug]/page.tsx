@@ -166,12 +166,14 @@ export default async function ArticlePage({ params }: Props) {
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-5 py-12">
             {/* パンくず */}
-            <nav className="text-sm text-gray-500 mb-6">
+            <nav className="flex items-center text-sm text-gray-500 mb-6">
               <Link href="/media" className="hover:text-primary-600">
                 大家DXジャーナル
               </Link>
-              <span className="mx-2">/</span>
-              <span>{article.category}</span>
+              <svg className="h-4 w-4 mx-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <span className="text-gray-900">{article.category}</span>
             </nav>
 
             {/* カテゴリー & 日付 */}
