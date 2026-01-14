@@ -23,7 +23,7 @@ export async function generateStaticParams() {
   }));
 }
 
-const BASE_URL = 'https://ooya-dx2026.vercel.app';
+const BASE_URL = 'https://ooya.tech';
 
 export async function generateMetadata({ params }: Props) {
   const { category, slug } = await params;

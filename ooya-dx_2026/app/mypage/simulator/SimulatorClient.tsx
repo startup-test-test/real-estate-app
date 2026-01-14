@@ -12,8 +12,7 @@ import { useSearchParams } from 'next/navigation';
 // import { useSupabaseData } from '@/hooks/useSupabaseData';
 // import { useAuthContext } from '@/components/AuthProvider';
 // import { useUsageStatus } from '@/hooks/useUsageStatus';
-import UpgradeModal from '@/components/simulator/UpgradeModal';
-import UsageStatusBar from '@/components/simulator/UsageStatusBar';
+// 無料化対応: UpgradeModal, UsageStatusBar を削除
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import Tooltip from '@/components/simulator/Tooltip';
 import BackButton from '@/components/simulator/BackButton';
@@ -60,9 +59,7 @@ const Simulator: React.FC = () => {
   const editId = searchParams.get('edit');
   const hasExistingData = !!viewId || !!editId;
 
-  const usage = { count: 0, limit: -1, isLoading: false, currentCount: 0, isSubscribed: false }; // useUsageStatus();
-  const executeWithLimit = async (fn: () => Promise<void>, _type?: string) => { await fn(); return true; };
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  // 無料化対応: usage, executeWithLimit, showUpgradeModal を削除
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -1156,24 +1153,7 @@ const Simulator: React.FC = () => {
 
   const handleSimulation = async () => {
     console.log('🚀 handleSimulation called');
-    console.log('📊 usage:', usage);
-    console.log('🔧 executeWithLimit:', executeWithLimit);
-
-    // 使用制限チェック
-    if (!usage || !executeWithLimit) {
-      console.error('❌ usage or executeWithLimit is missing');
-      setSaveError('使用状況を確認中です。しばらくお待ちください。');
-      return;
-    }
-
-    console.log('✅ Usage check passed, limit:', usage.limit, 'current:', usage.currentCount);
-
-    // 無料プランの制限チェック（完全無料プランではlimit=-1なのでスキップされる）
-    if (!usage.isSubscribed && usage.limit !== -1 && usage.currentCount >= usage.limit) {
-      console.log('⚠️ Usage limit reached');
-      setShowUpgradeModal(true);
-      return;
-    }
+    // 無料化対応: usage制限チェックを削除
 
     // 必須項目チェック（BUG_010対応）
     const errors = validateForm();
@@ -1378,11 +1358,10 @@ const Simulator: React.FC = () => {
     setFieldErrors({});
     setSaveError(null);
 
-    // 使用制限チェック付きで実行
-    const simulationSuccess = await executeWithLimit(async () => {
-      setIsSimulating(true);
-      
-      try {
+    // 無料化対応: executeWithLimitを削除し、直接実行
+    setIsSimulating(true);
+
+    try {
         // FAST API への送信データを構築
         const apiData = transformFormDataToApiData(inputs);
       
@@ -1683,7 +1662,7 @@ const Simulator: React.FC = () => {
 
           } catch (saveError) {
             console.error('保存エラー:', saveError);
-            setSaveMessage('⚠️ シミュレーションは完了しましたが、保存に失敗しました。有料プランへの加入が必要な場合があります。');
+            setSaveMessage('⚠️ シミュレーションは完了しましたが、保存に失敗しました。');
           }
         } else {
           setSaveMessage('ℹ️ シミュレーションが正常に完了しました！（ログインすると結果を保存できます）');
@@ -1730,15 +1709,10 @@ const Simulator: React.FC = () => {
             }
           }, 100);
         }
-      } finally {
-        setIsSimulating(false);
-      }
-    }, 'simulator');  // executeWithLimitの終了
-
-    // 使用制限に到達した場合
-    if (!simulationSuccess) {
-      setShowUpgradeModal(true);
+    } finally {
+      setIsSimulating(false);
     }
+    // 無料化対応: executeWithLimit終了・使用制限チェックを削除
   };
 
   // PDF保存機能
@@ -1774,8 +1748,7 @@ const Simulator: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen print:bg-white">
-      {/* 使用状況バー（マイページと同様に最上部に配置） */}
-      <UsageStatusBar onUpgradeClick={() => setShowUpgradeModal(true)} />
+      {/* 無料化対応: UsageStatusBar を削除 */}
 
       <div className="p-4 sm:p-6 lg:p-8 print:p-4">
       <div className="max-w-6xl mx-auto print:max-w-full pt-1 md:pt-0">
@@ -3889,10 +3862,7 @@ const Simulator: React.FC = () => {
         onRetry={handleSimulation}
       />
       
-      <UpgradeModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-      />
+      {/* 無料化対応: UpgradeModal を削除 */}
       
       {/* チュートリアル - react-joyride React 19対応まで無効化 */}
       <Joyride

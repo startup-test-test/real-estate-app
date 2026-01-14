@@ -1,7 +1,4 @@
 import { Suspense } from 'react';
-import { redirect } from 'next/navigation';
-import { getServerUser } from '@/lib/auth/server';
-import { prisma } from '@/lib/prisma';
 import SimulatorClient from './SimulatorClient';
 
 // ローディングスケルトン
@@ -45,28 +42,9 @@ export const metadata = {
   description: '投資物件の収益性をシミュレーション。IRR、CCR、DSCRなどの指標を計算します。',
 };
 
-export default async function SimulatorPage() {
-  // 1. ユーザー認証確認
-  const user = await getServerUser();
-  if (!user) {
-    redirect('/auth/signin');
-  }
-
-  // 2. サブスクリプション確認
-  const subscription = await prisma.subscription.findFirst({
-    where: { userId: user.id },
-  });
-
-  // 3. active または trialing でなければ課金ページへリダイレクト
-  const hasAccess =
-    subscription?.status === 'active' ||
-    subscription?.status === 'trialing';
-
-  if (!hasAccess) {
-    redirect('/mypage/billing');
-  }
-
-  // 4. アクセス許可 → シミュレーター表示
+export default function SimulatorPage() {
+  // 無料化対応: 認証・課金チェックを削除
+  // 保存時のみ認証が必要（SimulatorClient側で制御）
   return (
     <Suspense fallback={<SimulatorSkeleton />}>
       <SimulatorClient />

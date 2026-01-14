@@ -1,25 +1,89 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { getAllArticles, getAllCategories } from '@/lib/mdx';
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import { MediaArticleList } from '@/components/media-article-list';
+import { Home } from 'lucide-react';
 
-export const metadata = {
+const BASE_URL = 'https://ooya.tech';
+
+export const metadata: Metadata = {
   title: '大家DXジャーナル｜不動産投資の実践ノウハウ',
   description: '不動産投資の基礎知識から実践的なノウハウまで。データドリブンな不動産投資を支援する情報メディア。',
+  openGraph: {
+    title: '大家DXジャーナル｜不動産投資の実践ノウハウ',
+    description: '不動産投資の基礎知識から実践的なノウハウまで。データドリブンな不動産投資を支援する情報メディア。',
+    url: `${BASE_URL}/media`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [
+      {
+        url: `${BASE_URL}/images/media/hero-media.jpeg`,
+        width: 1200,
+        height: 630,
+        alt: '大家DXジャーナル',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '大家DXジャーナル｜不動産投資の実践ノウハウ',
+    description: '不動産投資の基礎知識から実践的なノウハウまで。データドリブンな不動産投資を支援する情報メディア。',
+    images: [`${BASE_URL}/images/media/hero-media.jpeg`],
+  },
 };
 
+// パンくずリスト構造化データ
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '大家DX',
+      item: BASE_URL,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '大家DXジャーナル',
+      item: `${BASE_URL}/media`,
+    },
+  ],
+};
 
 export default function MediaPage() {
   const articles = getAllArticles();
   const categories = getAllCategories();
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="min-h-screen bg-white flex flex-col">
+        <LandingHeader />
 
-      {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+        {/* ヘッダー固定時のスペーサー */}
+        <div className="h-[72px] sm:h-[88px]"></div>
+
+        {/* パンくずリスト */}
+        <nav className="max-w-2xl mx-auto px-5 py-3 w-full">
+          <ol className="flex items-center text-sm text-gray-500">
+            <li className="flex items-center">
+              <Link href="/" className="hover:text-gray-700 flex items-center">
+                <Home className="h-4 w-4" />
+              </Link>
+            </li>
+            <li className="flex items-center">
+              <span className="mx-2">/</span>
+              <span className="text-gray-900">大家DXジャーナル</span>
+            </li>
+          </ol>
+        </nav>
 
       {/* メインビジュアル - 横幅いっぱい */}
       <div className="relative w-full h-[280px] sm:h-[360px] md:h-[420px]">
@@ -66,7 +130,8 @@ export default function MediaPage() {
         </div>
       </main>
 
-      <LandingFooter />
-    </div>
+        <LandingFooter />
+      </div>
+    </>
   );
 }

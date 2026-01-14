@@ -21,20 +21,13 @@ export default function TokushohoPage() {
       </section>
       
       <section>
-        <h2 className="text-xl font-medium">販売価格・手数料</h2>
-        <p className="text-sm">プレミアム 980円/月（税込）</p>
-        <p className="text-sm">決済手数料等はお客様負担（該当する場合）</p>
+        <h2 className="text-xl font-medium">販売価格</h2>
+        <p className="text-sm">無料（すべての機能を無料でご利用いただけます）</p>
       </section>
-      
+
       <section>
-        <h2 className="text-xl font-medium">お支払い方法・時期</h2>
-        <p className="text-sm">Stripe（クレジットカード等）での前払い</p>
-        <p className="text-sm">購入手続き完了時に決済</p>
-      </section>
-      
-      <section>
-        <h2 className="text-xl font-medium">商品の引渡時期</h2>
-        <p className="text-sm">決済完了後、即時にサービス利用可能</p>
+        <h2 className="text-xl font-medium">サービス利用開始時期</h2>
+        <p className="text-sm">会員登録完了後、即時にサービス利用可能</p>
       </section>
       
       <section>

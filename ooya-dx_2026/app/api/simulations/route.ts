@@ -14,17 +14,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    // サブスク確認（active/trialing のみ保存可能）
-    const subscription = await prisma.subscription.findUnique({
-      where: { userId: user.id },
-    });
-
-    if (!subscription || !["active", "trialing"].includes(subscription.status)) {
-      return NextResponse.json(
-        { error: "有料プランへの加入が必要です" },
-        { status: 403 }
-      );
-    }
+    // 無料化対応: サブスクリプションチェックを削除（ログインユーザーなら誰でも保存可能）
 
     const body = await request.json();
     const { name, propertyUrl, imageUrl, inputData, results, cashFlow } = body;

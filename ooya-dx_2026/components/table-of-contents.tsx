@@ -81,24 +81,33 @@ export function TableOfContents({ content }: TableOfContentsProps) {
         目次
       </h2>
       <ol className="space-y-1 text-sm">
-        {toc.map((item, index) => (
-          <li
-            key={index}
-            className={item.level === 3 ? 'ml-4' : ''}
-          >
-            <a
-              href={`#${item.id}`}
-              onClick={(e) => handleClick(e, item.id)}
-              className={`block py-1 transition-colors hover:text-primary-600 ${
-                activeId === item.id
-                  ? 'text-primary-600 font-medium'
-                  : 'text-gray-600'
-              }`}
-            >
-              {item.text}
-            </a>
-          </li>
-        ))}
+        {(() => {
+          let h2Index = 0;
+          return toc.map((item, index) => {
+            if (item.level === 2) {
+              h2Index++;
+            }
+            const displayNumber = item.level === 2 ? `${h2Index}. ` : '';
+            return (
+              <li
+                key={index}
+                className={item.level === 3 ? 'ml-4' : ''}
+              >
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => handleClick(e, item.id)}
+                  className={`block py-1 transition-colors hover:text-primary-600 ${
+                    activeId === item.id
+                      ? 'text-primary-600 font-medium'
+                      : 'text-gray-600'
+                  }`}
+                >
+                  {displayNumber}{item.text}
+                </a>
+              </li>
+            );
+          });
+        })()}
       </ol>
     </nav>
   );

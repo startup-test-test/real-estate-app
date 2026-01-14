@@ -134,6 +134,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
       {/* ヘッダー固定時のスペーサー（PC版のみ） */}
       <div className="hidden md:block h-[88px]"></div>
 
+      {/* パンくずリスト */}
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <ol className="flex items-center text-sm text-gray-500">
+          <li className="flex items-center">
+            <a href="/" className="hover:text-gray-700 flex items-center">
+              <Home className="h-4 w-4" />
+            </a>
+          </li>
+          <li className="flex items-center">
+            <span className="mx-2">/</span>
+            <span className="text-gray-900">賃貸経営シミュレーター</span>
+          </li>
+        </ol>
+      </nav>
+
       {/* ヒーローセクション */}
       <section 
         id="about" 
@@ -766,27 +781,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
               </p>
             </div>
             
+            {/* 無料化対応: Q5「解約」Q6「支払い方法」を削除 */}
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q5. 解約はいつでもできますか？
+                Q5. データのセキュリティは大丈夫ですか？
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                はい、いつでも解約可能です。
-                解約手続き後も当月末まではサービスをご利用いただけ、
-                翌月以降の課金は自動的に停止されます。
-                複雑な手続きは不要で、マイページから簡単に解約できます。
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                Q6. どのような支払い方法がありますか？
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                クレジットカード決済のみ対応しております。
-                決済システムは世界的に信頼される大手決済プラットフォーム「Stripe」を使用しており、
-                お客様のカード情報は直接弊社サーバーに保存されることはありません。
-                安全性の高い決済環境でご利用いただけます。
+                はい、安心してご利用いただけます。
+                お客様のデータは暗号化された安全なサーバーで管理しており、
+                第三者への提供は行っておりません。
               </p>
             </div>
           </div>

@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { BrokerageCalculator } from './BrokerageCalculator'
 
+const BASE_URL = 'https://ooya.tech';
+
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
   title: '仲介手数料シミュレーター | 不動産売買の手数料を瞬時に計算 | 大家DX',
@@ -17,12 +19,26 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: '仲介手数料シミュレーター | 大家DX',
-    description: '不動産売買の仲介手数料を無料で計算。早見表付き。',
-    type: 'website'
-  }
+    description: '不動産売買の仲介手数料を無料で計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付き。',
+    url: `${BASE_URL}/tools/brokerage`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [
+      {
+        url: `${BASE_URL}/images/media/hero-media.jpeg`,
+        width: 1200,
+        height: 630,
+        alt: '仲介手数料シミュレーター',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '仲介手数料シミュレーター | 大家DX',
+    description: '不動産売買の仲介手数料を無料で計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付き。',
+    images: [`${BASE_URL}/images/media/hero-media.jpeg`],
+  },
 }
-
-const BASE_URL = 'https://ooya-dx.com'
 
 // 構造化データ（WebApplication）
 const webApplicationSchema = {

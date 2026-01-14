@@ -14,7 +14,7 @@ import {
   BookOpen,
   LogOut,
   Sparkles,
-  CreditCard,
+  // CreditCard, // 無料化対応: 課金管理を削除
 } from 'lucide-react'
 
 interface DashboardLayoutProps {
@@ -161,19 +161,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   <div className="text-gray-800 font-medium text-sm truncate max-w-[140px]">
                     {user?.displayName || user?.email?.split('@')[0] || 'ユーザー'}
                   </div>
-                  {isPremium ? (
-                    <div className="flex items-center mt-1">
-                      <Sparkles className="h-4 w-4 text-yellow-500 mr-1" />
-                      <span className="text-sm font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                        プレミアムプラン
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center mt-1">
-                      <User className="h-4 w-4 text-gray-400 mr-1" />
-                      <span className="text-sm font-bold text-gray-500">未契約</span>
-                    </div>
-                  )}
+                  {/* 無料化対応: プレミアム/未契約バッジを削除 */}
                 </div>
               </div>
 
@@ -225,28 +213,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               })}
             </div>
 
-            {/* Plan Section */}
-            <div className="mb-8">
-              <div className="px-4 mb-3">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  アカウント
-                </h3>
-              </div>
-              <div className="space-y-2">
-                <Link
-                  href="/mypage/billing"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                    isActive('/mypage/billing')
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  <CreditCard className="mr-3 h-5 w-5" />
-                  プラン・課金管理
-                </Link>
-              </div>
-            </div>
+            {/* 無料化対応: プラン・課金管理セクションを削除 */}
 
             {/* Support Section */}
             <div className="mb-8">

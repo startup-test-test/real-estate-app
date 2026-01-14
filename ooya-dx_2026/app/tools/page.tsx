@@ -10,10 +10,53 @@ import {
   Home
 } from 'lucide-react'
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
   title: '不動産計算ツール一覧 | 大家DX',
   description: '不動産取引に必要な税金・費用を簡単計算。仲介手数料、譲渡所得税、不動産取得税、登録免許税など、スマホで即座に計算できます。',
+  openGraph: {
+    title: '不動産計算ツール一覧 | 大家DX',
+    description: '不動産取引に必要な税金・費用を簡単計算。仲介手数料、譲渡所得税、不動産取得税、登録免許税など、スマホで即座に計算できます。',
+    url: `${BASE_URL}/tools`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [
+      {
+        url: `${BASE_URL}/images/media/hero-media.jpeg`,
+        width: 1200,
+        height: 630,
+        alt: '不動産計算ツール一覧',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '不動産計算ツール一覧 | 大家DX',
+    description: '不動産取引に必要な税金・費用を簡単計算。仲介手数料、譲渡所得税、不動産取得税、登録免許税など、スマホで即座に計算できます。',
+    images: [`${BASE_URL}/images/media/hero-media.jpeg`],
+  },
 }
+
+// パンくずリスト構造化データ
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: '大家DX',
+      item: BASE_URL,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '不動産計算ツール',
+      item: `${BASE_URL}/tools`,
+    },
+  ],
+};
 
 const categories = [
   {
@@ -66,7 +109,12 @@ const categories = [
 
 export default function ToolsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* パンくずリスト */}
         <nav className="flex items-center text-sm text-gray-500 mb-6">
@@ -136,6 +184,7 @@ export default function ToolsPage() {
           })}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
