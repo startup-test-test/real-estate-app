@@ -771,8 +771,11 @@ const Simulator: React.FC = () => {
       },
       cash_flow_table: []
     });
+
+    // ローディング終了
+    setIsLoading(false);
   };
-  
+
   // 既存データを読み込む
   const loadExistingData = async (simulationId: string) => {
     if (!user) return;
