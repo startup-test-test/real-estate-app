@@ -10,14 +10,6 @@ function checkBasicAuth(req: NextRequest): NextResponse | null {
   const basicUser = process.env.BASIC_AUTH_USER;
   const basicPassword = process.env.BASIC_AUTH_PASSWORD;
 
-  // デバッグ: 環境変数の状態をログ出力
-  console.log('[Basic Auth Debug]', {
-    userSet: !!basicUser,
-    userLength: basicUser?.length,
-    passwordSet: !!basicPassword,
-    passwordLength: basicPassword?.length,
-  });
-
   // 環境変数が設定されていない場合はBasic認証をスキップ
   if (!basicUser || !basicPassword) {
     return null;
