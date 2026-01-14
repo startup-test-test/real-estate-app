@@ -51,7 +51,7 @@ export function NumberInput({
           inputMode="numeric"
           value={formatNumber(value)}
           onChange={handleChange}
-          className="flex-1 border border-gray-300 rounded-l-lg px-4 py-3 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          className="flex-1 border-2 border-yellow-400 bg-yellow-50 rounded-l-lg px-4 py-3 text-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:bg-white outline-none"
           placeholder={placeholder}
         />
         <span className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg px-4 py-3 text-gray-600 flex items-center">

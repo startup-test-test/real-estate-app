@@ -113,7 +113,7 @@ export function BrokerageCalculator() {
 
             {/* タイトル */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              仲介手数料シミュレーター
+              不動産売買の仲介手数料を10秒で無料計算｜早見表付き
             </h1>
             <p className="text-gray-600 mb-8">
               売買価格を入力するだけで、仲介手数料の上限額を瞬時に計算します。
@@ -141,9 +141,13 @@ export function BrokerageCalculator() {
                   unit="円"
                   placeholder="30,000,000"
                 />
-                {price > 0 && (
+                {price > 0 ? (
                   <p className="text-sm text-gray-500 mt-1">
                     = {priceInMan.toLocaleString('ja-JP')} 万円
+                  </p>
+                ) : (
+                  <p className="text-xs text-gray-400 mt-2">
+                    例：3,000万円 → 仲介手数料 約105.6万円（税込）
                   </p>
                 )}
               </div>
@@ -223,6 +227,11 @@ export function BrokerageCalculator() {
                   </a>
                 </li>
                 <li className="ml-4">
+                  <a href="#revision2024" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
+                    2024年法改正について
+                  </a>
+                </li>
+                <li className="ml-4">
                   <a href="#example" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
                     具体的な計算例
                   </a>
@@ -291,6 +300,35 @@ export function BrokerageCalculator() {
               </ul>
               <p className="text-sm text-gray-600 mt-3">
                 速算式「3%+6万円」は、上記の料率を一括で計算できる便利な公式です。
+              </p>
+
+              <h3 id="revision2024" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
+                2024年法改正について
+              </h3>
+              <p className="text-gray-700 mb-3 leading-relaxed">
+                2024年7月1日に国土交通省の告示が改正され、<span className="font-medium">800万円以下の物件</span>について仲介手数料の特例が設けられました。
+              </p>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                <p className="text-sm font-medium text-amber-900 mb-2">改正のポイント</p>
+                <ul className="list-disc list-inside text-gray-700 space-y-2 text-sm">
+                  <li>対象：売買価格800万円以下の宅地・建物</li>
+                  <li>上限：売主・買主それぞれから最大<span className="font-medium">33万円（税込）</span></li>
+                  <li>目的：空き家等の流通促進</li>
+                </ul>
+              </div>
+              <p className="text-sm text-gray-600 mb-3">
+                この特例は、依頼者への事前説明と合意が必要です。本シミュレーターでは通常の計算式で算出していますので、800万円以下の物件については不動産会社にご確認ください。
+              </p>
+              <p className="text-xs text-gray-500">
+                参照：
+                <a
+                  href="https://biz.homes.jp/column/topics-00146"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline ml-1"
+                >
+                  LIFULL HOME'S「800万円以下の不動産契約で仲介手数料見直し」
+                </a>
               </p>
 
               <h3 id="example" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
@@ -396,12 +434,12 @@ export function BrokerageCalculator() {
             <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
               <h3 className="font-semibold text-gray-800 mb-2">免責事項</h3>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>・本シミュレーターの計算結果は概算値です。</li>
-                <li>・実際の仲介手数料は不動産会社との契約内容により異なります。</li>
-                <li>・正確な金額は取引を行う不動産会社にご確認ください。</li>
+                <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
+                <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
+                <li>・最終的な判断は専門家（宅建業者・税理士等）にご相談ください。</li>
               </ul>
               <p className="text-xs text-gray-500 mt-3">
-                最終更新日: 2026年1月
+                最終更新日: 2026年1月14日
               </p>
             </div>
 
