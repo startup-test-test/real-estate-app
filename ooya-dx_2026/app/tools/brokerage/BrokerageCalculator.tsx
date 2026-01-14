@@ -436,7 +436,7 @@ export function BrokerageCalculator() {
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
                 <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
-                <li>・最終的な判断は専門家（宅建業者・税理士等）にご相談ください。</li>
+                <li>・最終的な判断は専門家（宅建業者・税理士・司法書士等）にご相談ください。</li>
               </ul>
               <p className="text-xs text-gray-500 mt-3">
                 最終更新日: 2026年1月14日
