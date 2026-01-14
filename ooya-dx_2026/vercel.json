@@ -1,5 +1,8 @@
 {
   "functions": {
+    "api/*.py": {
+      "maxDuration": 30
+    },
     "app/api/simulations/[id]/route.ts": {
       "maxDuration": 30
     }
