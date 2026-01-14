@@ -252,11 +252,6 @@ export function BrokerageCalculator() {
                     仲介手数料の知っておきたいポイント
                   </a>
                 </li>
-                <li>
-                  <a href="#related" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    関連ツール
-                  </a>
-                </li>
               </ol>
             </nav>
 
@@ -373,7 +368,8 @@ export function BrokerageCalculator() {
               <FAQSection title="仲介手数料の知っておきたいポイント" faqs={faqData} />
             </section>
 
-            {/* 関連ツール */}
+            {/* 関連ツール - ツールが増えたら表示 */}
+            {/*
             <section id="related" className="mb-12">
               <h2 className="text-xl font-bold text-gray-900 mb-4">関連ツール</h2>
               <div className="space-y-3">
@@ -394,6 +390,7 @@ export function BrokerageCalculator() {
                 ))}
               </div>
             </section>
+            */}
 
             {/* 免責事項 */}
             <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">

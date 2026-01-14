@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '仲介手数料シミュレーター | 不動産売買の手数料を瞬時に計算 | 大家DX',
+  title: '不動産売買の仲介手数料を10秒で無料計算｜早見表付き',
   description:
     '不動産売買の仲介手数料を無料で計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付きで1,000万円〜1億円の手数料も一目で確認。',
   keywords: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     '仲介手数料 5000万'
   ],
   openGraph: {
-    title: '仲介手数料シミュレーター | 大家DX',
+    title: '不動産売買の仲介手数料を10秒で無料計算｜早見表付き',
     description: '不動産売買の仲介手数料を無料で計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付き。',
     url: `${BASE_URL}/tools/brokerage`,
     siteName: '大家DX',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '仲介手数料シミュレーター | 大家DX',
+    title: '不動産売買の仲介手数料を10秒で無料計算｜早見表付き',
     description: '不動産売買の仲介手数料を無料で計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付き。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
