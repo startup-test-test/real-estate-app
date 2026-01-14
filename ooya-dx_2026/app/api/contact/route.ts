@@ -140,7 +140,7 @@ ${safeMessage}
 
     // 自動返信メール（お客様向け・テキスト形式）
     await getResend().emails.send({
-      from: `株式会社サンプル <onboarding@resend.dev>`,
+      from: `大家DX <onboarding@resend.dev>`,
       to: safeEmail,
       subject: "お問い合わせを受け付けました",
       text: `${safeName} 様
@@ -153,8 +153,8 @@ ${safeMessage}
 ${safeMessage}
 ---
 
-株式会社サンプル
-support@example.com`,
+大家DX
+ooya.tech2025@gmail.com`,
     });
 
     const res = NextResponse.json({ success: true });
