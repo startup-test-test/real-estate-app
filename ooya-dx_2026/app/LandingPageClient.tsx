@@ -354,11 +354,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
-              { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
+              { name: '住宅ローン', description: '毎月返済額・総返済額を計算', href: '/tools/mortgage-loan', available: true },
+              { name: '減価償却', description: '建物の年間減価償却費を計算', href: '/tools/depreciation', available: true },
               { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true },
               { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
               { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: true },
-              { name: '印紙税', description: '契約書・領収書の印紙税を計算', href: '/tools/stamp-tax', available: true },
             ].map((tool, index) => (
               <a
                 key={index}
