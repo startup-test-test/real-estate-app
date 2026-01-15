@@ -1,14 +1,8 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  Calculator,
-  Receipt,
-  Building,
-  FileText,
-  Landmark,
-  TrendingUp,
-  Home
-} from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
+import { LandingHeader } from '@/components/landing-header'
+import { LandingFooter } from '@/components/landing-footer'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -58,53 +52,13 @@ const breadcrumbJsonLd = {
   ],
 };
 
-const categories = [
-  {
-    slug: 'brokerage',
-    name: '仲介手数料',
-    description: '売買価格から仲介手数料を計算',
-    icon: Receipt,
-    color: 'bg-blue-500',
-    tools: [
-      { slug: 'standard', name: '速算式（税込）' },
-    ]
-  },
-  {
-    slug: 'transfer-tax',
-    name: '譲渡所得税',
-    description: '不動産売却時の税金を計算',
-    icon: TrendingUp,
-    color: 'bg-green-500',
-    tools: [],
-    comingSoon: true
-  },
-  {
-    slug: 'acquisition-tax',
-    name: '不動産取得税',
-    description: '不動産購入時の税金を計算',
-    icon: Building,
-    color: 'bg-purple-500',
-    tools: [],
-    comingSoon: true
-  },
-  {
-    slug: 'registration-tax',
-    name: '登録免許税',
-    description: '登記にかかる税金を計算',
-    icon: Landmark,
-    color: 'bg-orange-500',
-    tools: [],
-    comingSoon: true
-  },
-  {
-    slug: 'stamp-duty',
-    name: '印紙税',
-    description: '契約書・領収書の印紙税を計算',
-    icon: FileText,
-    color: 'bg-red-500',
-    tools: [],
-    comingSoon: true
-  },
+const tools = [
+  { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
+  { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
+  { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/transfer-tax', available: false },
+  { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
+  { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: false },
+  { name: '印紙税', description: '契約書の印紙税を計算', href: '/tools/stamp-duty', available: false },
 ]
 
 export default function ToolsPage() {
@@ -114,76 +68,66 @@ export default function ToolsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* パンくずリスト */}
-        <nav className="flex items-center text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-gray-700 flex items-center">
-            <Home className="h-4 w-4" />
-          </Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">計算ツール</span>
-        </nav>
+      <div className="min-h-screen bg-white flex flex-col">
+        <LandingHeader />
 
-        {/* ヘッダー */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            不動産計算ツール
-          </h1>
-          <p className="text-gray-600">
-            不動産取引に必要な税金・費用を簡単計算。スマホでもPCでも使えます。
-          </p>
-        </div>
+        {/* ヘッダー固定時のスペーサー */}
+        <div className="h-[72px] sm:h-[88px]"></div>
 
-        {/* カテゴリ一覧 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {categories.map((category) => {
-            const Icon = category.icon
-            return (
-              <div
-                key={category.slug}
-                className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ${
-                  category.comingSoon ? 'opacity-60' : 'hover:shadow-md transition-shadow'
-                }`}
-              >
-                <div className={`${category.color} px-4 py-3`}>
-                  <div className="flex items-center text-white">
-                    <Icon className="h-5 w-5 mr-2" />
-                    <h2 className="font-semibold">{category.name}</h2>
-                    {category.comingSoon && (
-                      <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded">
-                        準備中
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-gray-600 text-sm mb-3">
-                    {category.description}
-                  </p>
-                  {category.tools.length > 0 ? (
-                    <div className="space-y-2">
-                      {category.tools.map((tool) => (
-                        <Link
-                          key={tool.slug}
-                          href={`/tools/${category.slug}/${tool.slug}`}
-                          className="block px-4 py-2 bg-gray-50 hover:bg-blue-50 rounded-lg text-gray-700 hover:text-blue-700 transition-colors"
-                        >
-                          {tool.name}
-                        </Link>
-                      ))}
-                    </div>
+        <main className="flex-1 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {/* パンくずリスト */}
+            <nav className="flex items-center text-sm text-gray-500 mb-6">
+              <Link href="/" className="hover:text-primary-600">
+                ホーム
+              </Link>
+              <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
+              <span className="text-gray-900">計算ツール</span>
+            </nav>
+
+            {/* ヘッダー */}
+            <div className="mb-12 text-center">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                賃貸経営計算ツール
+                <span className="ml-3 inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full align-middle">
+                  無料
+                </span>
+              </h1>
+              <p className="text-gray-600 text-base sm:text-lg">
+                不動産取引に必要な税金・費用をかんたん計算。スマホでもPCでも使えます。
+              </p>
+            </div>
+
+            {/* ツール一覧 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {tools.map((tool, index) => (
+                <a
+                  key={index}
+                  href={tool.available ? tool.href : undefined}
+                  className={`block bg-white rounded-2xl p-5 shadow-sm transition-all duration-300 ${
+                    tool.available
+                      ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer'
+                      : 'opacity-50 cursor-default'
+                  }`}
+                >
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#32373c] mb-2">{tool.name}</h3>
+                  <p className="text-sm text-gray-500 mb-3">{tool.description}</p>
+                  {tool.available ? (
+                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">
+                      無料で使う
+                    </span>
                   ) : (
-                    <div className="text-gray-400 text-sm">
-                      近日公開予定
-                    </div>
+                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-xs font-semibold rounded-full">
+                      準備中
+                    </span>
                   )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </main>
+
+        <LandingFooter />
       </div>
     </>
   )

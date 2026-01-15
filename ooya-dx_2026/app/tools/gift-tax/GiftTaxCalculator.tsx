@@ -7,7 +7,6 @@ import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
-import { FAQSection, FAQItem, generateFAQSchema } from '@/components/tools/FAQSection'
 import {
   calculateGiftTax,
   DonorRelation,
@@ -24,32 +23,6 @@ const quickReferenceData: QuickReferenceRow[] = SPECIAL_RATE_TABLE.map(row => ({
   value: formatManYen(row.taxAmount),
   subValue: '特例税率',
 }))
-
-// =================================================================
-// FAQデータ
-// =================================================================
-const faqData: FAQItem[] = [
-  {
-    question: '贈与税の基礎控除110万円とは何ですか？',
-    answer: '暦年課税（1月1日〜12月31日の1年間）において、贈与を受けた人が1年間に受け取った財産の合計額から控除できる金額です。110万円以下の贈与であれば、原則として贈与税はかかりません。ただし、贈与者ごとではなく、受贈者が1年間に受け取った総額が対象となります。',
-  },
-  {
-    question: '特例税率と一般税率の違いは何ですか？',
-    answer: '特例税率は、父母・祖父母などの直系尊属から、18歳以上（贈与を受けた年の1月1日時点）の子・孫への贈与に適用される税率です。一般税率より税負担が軽く設定されています。それ以外の贈与（兄弟間、夫婦間、未成年への贈与など）には一般税率が適用されます。',
-  },
-  {
-    question: '住宅取得資金贈与の非課税特例とは？',
-    answer: '父母や祖父母から住宅取得のための資金贈与を受けた場合、一定の要件を満たせば、省エネ等住宅で最大1,000万円、一般住宅で最大500万円まで非課税となる制度です（2026年12月31日まで）。受贈者の年齢や所得、住宅の床面積などの要件があります。',
-  },
-  {
-    question: '配偶者控除（おしどり贈与）とは？',
-    answer: '婚姻期間が20年以上の配偶者から、居住用不動産またはその購入資金の贈与を受けた場合、基礎控除110万円に加えて最高2,000万円まで控除できる制度です。同一配偶者からは一生に一度のみ適用可能です。',
-  },
-  {
-    question: '贈与税の申告はいつまでに行う必要がありますか？',
-    answer: '贈与を受けた年の翌年2月1日から3月15日までに、受贈者の住所地を管轄する税務署に申告書を提出する必要があります。税額が0円でも、各種特例・控除を適用する場合は申告が必要です。',
-  },
-]
 
 // =================================================================
 // 関連ツール
@@ -87,16 +60,7 @@ export function GiftTaxCalculator() {
   }, [giftAmountInYen, result.taxAmount])
 
   return (
-    <>
-      {/* FAQ構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateFAQSchema(faqData))
-        }}
-      />
-
-      <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
@@ -452,13 +416,6 @@ export function GiftTaxCalculator() {
             </section>
 
             {/* =================================================================
-                FAQ
-            ================================================================= */}
-            <section id="points" className="mb-12">
-              <FAQSection title="よくある質問" faqs={faqData} />
-            </section>
-
-            {/* =================================================================
                 関連ツール
             ================================================================= */}
             {/*
@@ -524,14 +481,12 @@ export function GiftTaxCalculator() {
             <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
               <h3 className="font-semibold text-gray-800 mb-2">免責事項</h3>
               <ul className="text-sm text-gray-600 space-y-1">
-                <li>・本シミュレーターの計算結果は<strong>概算値・目安</strong>であり、実際の税額は異なる場合があります。</li>
-                <li>・不動産の評価額は、固定資産税評価額・路線価等により個別に算定されます。</li>
-                <li>・各種特例の適用には、詳細な要件確認が必要です。</li>
+                <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
                 <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
-                <li>・<strong>正確な税額・申告手続きについては、必ず税理士等の専門家にご相談ください。</strong></li>
+                <li>・最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。</li>
               </ul>
               <p className="text-xs text-gray-500 mt-3">
-                参考法令：相続税法、租税特別措置法｜最終更新日: 2026年1月15日
+                最終更新日: 2026年1月15日
               </p>
             </div>
 
@@ -557,6 +512,5 @@ export function GiftTaxCalculator() {
 
         <LandingFooter />
       </div>
-    </>
   )
 }

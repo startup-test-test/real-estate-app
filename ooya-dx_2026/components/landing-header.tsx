@@ -6,12 +6,12 @@ export function LandingHeader() {
   const router = useRouter();
 
   return (
-    <header className="bg-white/75 backdrop-blur-md border-b border-gray-200/30 fixed top-0 left-0 right-0 z-50">
+    <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 sm:py-6">
           <div className="flex items-center">
             <a href="/" className="block">
-              <img src="/img/logo-media.png" alt="大家DX ロゴ" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" />
+              <img src="/img/logo_250709_2.png" alt="大家DX" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" style={{ mixBlendMode: 'multiply' }} />
             </a>
           </div>
           <div className="flex items-center space-x-6">

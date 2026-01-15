@@ -273,8 +273,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
           <div className="mb-12 sm:mb-16 text-center">
             <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">SERVICE</p>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#32373c] leading-tight">
-              サービス一覧
+              賃貸経営クラウドサービス
             </h2>
+            <p className="mt-4 text-gray-600 text-base sm:text-lg">
+              大家さんの賃貸経営をもっとスマートに。経営判断に必要なツールを作りました。
+            </p>
           </div>
 
           {/* Service Cards Grid */}
@@ -342,38 +345,32 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                 無料
               </span>
             </h2>
+            <p className="mt-4 text-gray-600 text-base sm:text-lg">
+              不動産取引に必要な税金・費用をかんたん計算。スマホでもPCでも使えます。
+            </p>
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
-              { name: '仲介手数料', href: '/tools/brokerage', available: true },
-              { name: '譲渡所得税', href: '/tools/transfer-tax', available: false },
-              { name: '不動産取得税', href: '/tools/acquisition-tax', available: false },
-              { name: '登録免許税', href: '/tools/registration-tax', available: false },
-              { name: '印紙税', href: '/tools/stamp-duty', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
-              { name: 'テキスト', href: '#', available: false },
+              { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
+              { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
+              { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/transfer-tax', available: false },
+              { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
+              { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: false },
+              { name: '印紙税', description: '契約書の印紙税を計算', href: '/tools/stamp-duty', available: false },
             ].map((tool, index) => (
               <a
                 key={index}
                 href={tool.available ? tool.href : undefined}
-                className={`block bg-white rounded-2xl p-6 text-center shadow-sm transition-all duration-300 ${
+                className={`block bg-white rounded-2xl p-5 shadow-sm transition-all duration-300 ${
                   tool.available
                     ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer'
-                    : 'opacity-60 cursor-default'
+                    : 'opacity-50 cursor-default'
                 }`}
               >
-                <h3 className="text-lg font-bold text-[#32373c] mb-2">{tool.name}</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#32373c] mb-2">{tool.name}</h3>
+                <p className="text-sm text-gray-500 mb-3">{tool.description}</p>
                 {tool.available ? (
                   <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">
                     無料で使う

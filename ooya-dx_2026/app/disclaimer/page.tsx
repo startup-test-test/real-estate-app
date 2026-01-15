@@ -10,7 +10,7 @@ const Disclaimer: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-8 px-4">
       <div className="max-w-4xl mx-auto">
         <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6">
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -21,7 +21,7 @@ const Disclaimer: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">免責事項</h1>
 
           <div className="prose prose-gray max-w-none">
-            <p className="text-sm text-gray-600 mb-6">最終更新日: 2025年10月17日</p>
+            <p className="text-sm text-gray-600 mb-6">最終更新日: 2026年1月15日</p>
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">1. サービスのご利用について</h2>
@@ -57,6 +57,20 @@ const Disclaimer: React.FC = () => {
                 <p>
                   本サービスは、株式会社StartupMarketingが開発・運営するものであり、国土交通省が運営するものではありません。
                 </p>
+              </div>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">3. 計算ツール・シミュレーターについて</h2>
+              <div className="text-gray-700 space-y-4">
+                <p>
+                  本サイトで提供する計算ツール・シミュレーターは、概算値を算出する参考ツールです。ご利用にあたっては、以下の点にご注意ください。
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
+                  <li>本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
+                  <li>最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。</li>
+                </ul>
               </div>
             </section>
 

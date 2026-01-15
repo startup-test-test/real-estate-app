@@ -7,7 +7,6 @@ import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
-import { FAQSection, FAQItem, generateFAQSchema } from '@/components/tools/FAQSection'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
 
 // 早見表データ（主要価格帯）
@@ -23,35 +22,6 @@ const quickReferenceData: QuickReferenceRow[] = [
   { label: '8,000万円', value: '270.6万円', subValue: '税抜246万円' },
   { label: '9,000万円', value: '303.6万円', subValue: '税抜276万円' },
   { label: '1億円', value: '336.6万円', subValue: '税抜306万円' }
-]
-
-// FAQデータ
-const faqData: FAQItem[] = [
-  {
-    question: '仲介手数料の金額は決まっていますか？',
-    answer:
-      '法律で定められているのは「上限額」です。実際の手数料は不動産会社によって異なりますので、契約前に確認することをおすすめします。'
-  },
-  {
-    question: '仲介手数料はいつ支払いますか？',
-    answer:
-      '一般的には、売買契約時に半額、物件引き渡し時（決済時）に残りの半額を支払うケースが多いです。ただし、不動産会社によって異なる場合があります。'
-  },
-  {
-    question: '売主と買主、両方が仲介手数料を払うのですか？',
-    answer:
-      'はい、通常は売主・買主それぞれが仲介手数料を支払います。同じ不動産会社が両方を仲介する「両手仲介」の場合、不動産会社は双方から手数料を受け取ります。'
-  },
-  {
-    question: '仲介手数料に消費税はかかりますか？',
-    answer:
-      'はい、仲介手数料には消費税（10%）がかかります。本シミュレーターでは税込金額も表示しています。'
-  },
-  {
-    question: '400万円以下の物件の計算方法は？',
-    answer:
-      '200万円以下の部分は5%、200万円超〜400万円以下の部分は4%で計算します。本シミュレーターでは自動で正確に計算されます。'
-  }
 ]
 
 // 関連ツール
@@ -74,16 +44,7 @@ export function BrokerageCalculator() {
   }, [priceInYen])
 
   return (
-    <>
-      {/* FAQ構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateFAQSchema(faqData))
-        }}
-      />
-
-      <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
@@ -397,11 +358,6 @@ export function BrokerageCalculator() {
               </p>
             </section>
 
-            {/* FAQ */}
-            <section id="points" className="mb-12">
-              <FAQSection title="仲介手数料の知っておきたいポイント" faqs={faqData} />
-            </section>
-
             {/* 関連ツール - ツールが増えたら表示 */}
             {/*
             <section id="related" className="mb-12">
@@ -435,7 +391,7 @@ export function BrokerageCalculator() {
                 <li>・最終的な判断は専門家（宅建業者・税理士・司法書士等）にご相談ください。</li>
               </ul>
               <p className="text-xs text-gray-500 mt-3">
-                最終更新日: 2026年1月14日
+                最終更新日: 2026年1月15日
               </p>
             </div>
 
@@ -461,6 +417,5 @@ export function BrokerageCalculator() {
 
         <LandingFooter />
       </div>
-    </>
   )
 }

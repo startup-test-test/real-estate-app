@@ -8,7 +8,6 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
-import { FAQSection, FAQItem, generateFAQSchema } from '@/components/tools/FAQSection'
 // import { calculateXxx } from '@/lib/calculators/xxx'
 
 // =================================================================
@@ -21,26 +20,7 @@ const quickReferenceData: QuickReferenceRow[] = [
 ]
 
 // =================================================================
-// 【変更箇所2】FAQデータ
-// =================================================================
-const faqData: FAQItem[] = [
-  {
-    question: 'よくある質問1？',
-    answer: '回答1。'
-  },
-  {
-    question: 'よくある質問2？',
-    answer: '回答2。'
-  },
-  {
-    question: 'よくある質問3？',
-    answer: '回答3。'
-  },
-  // 5つ程度推奨
-]
-
-// =================================================================
-// 【変更箇所3】関連ツール（ツールが増えたら有効化）
+// 【変更箇所2】関連ツール（ツールが増えたら有効化）
 // =================================================================
 const relatedTools = [
   { name: '関連ツール1', href: '/tools/xxx', description: '説明文' },
@@ -66,16 +46,7 @@ export function ToolNameCalculator() {
   }, [inputValue])
 
   return (
-    <>
-      {/* FAQ構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateFAQSchema(faqData))
-        }}
-      />
-
-      <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
@@ -235,11 +206,6 @@ export function ToolNameCalculator() {
                     具体的な計算例
                   </a>
                 </li>
-                <li>
-                  <a href="#points" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    知っておきたいポイント
-                  </a>
-                </li>
               </ol>
             </nav>
 
@@ -287,13 +253,6 @@ export function ToolNameCalculator() {
             </section>
 
             {/* =================================================================
-                【変更箇所13】FAQ
-            ================================================================= */}
-            <section id="points" className="mb-12">
-              <FAQSection title="知っておきたいポイント" faqs={faqData} />
-            </section>
-
-            {/* =================================================================
                 関連ツール（ツールが増えたら表示）
             ================================================================= */}
             {/*
@@ -327,7 +286,7 @@ export function ToolNameCalculator() {
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
                 <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
-                <li>・最終的な判断は専門家（宅建業者・税理士・司法書士等）にご相談ください。</li>
+                <li>・最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。</li>
               </ul>
               <p className="text-xs text-gray-500 mt-3">
                 最終更新日: 2026年1月XX日
@@ -358,6 +317,5 @@ export function ToolNameCalculator() {
 
         <LandingFooter />
       </div>
-    </>
   )
 }
