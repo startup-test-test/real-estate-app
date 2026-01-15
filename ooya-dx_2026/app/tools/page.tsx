@@ -55,10 +55,10 @@ const breadcrumbJsonLd = {
 const tools = [
   { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
   { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
-  { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/transfer-tax', available: false },
+  { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true },
   { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
-  { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: false },
-  { name: '印紙税', description: '契約書の印紙税を計算', href: '/tools/stamp-duty', available: false },
+  { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: true },
+  { name: '印紙税', description: '契約書・領収書の印紙税を計算', href: '/tools/stamp-tax', available: true },
 ]
 
 export default function ToolsPage() {
