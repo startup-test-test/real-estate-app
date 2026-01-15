@@ -45,16 +45,16 @@ export function NumberInput({
       <label className="block text-sm font-medium text-gray-700 mb-1">
         {label}
       </label>
-      <div className="flex">
+      <div className="flex w-full">
         <input
           type="text"
           inputMode="numeric"
           value={formatNumber(value)}
           onChange={handleChange}
-          className="flex-1 border-2 border-yellow-400 bg-yellow-50 rounded-l-lg px-4 py-3 text-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:bg-white outline-none"
+          className="flex-1 min-w-0 border-2 border-yellow-400 bg-yellow-50 rounded-l-lg px-3 sm:px-4 py-3 text-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:bg-white outline-none"
           placeholder={placeholder}
         />
-        <span className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg px-4 py-3 text-gray-600 flex items-center">
+        <span className="flex-shrink-0 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg px-3 sm:px-4 py-3 text-gray-600 flex items-center whitespace-nowrap">
           {unit}
         </span>
       </div>

@@ -6,13 +6,11 @@ import { ChevronRight, Info, AlertTriangle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { FAQSection, FAQItem, generateFAQSchema } from '@/components/tools/FAQSection'
 import {
   calculateGiftTax,
   DonorRelation,
-  HousingType,
   SPECIAL_RATE_TABLE,
   GENERAL_RATE_TABLE,
   formatManYen,
@@ -64,23 +62,29 @@ const relatedTools = [
 // メインコンポーネント
 // =================================================================
 export function GiftTaxCalculator() {
-  // 入力状態
-  const [giftAmount, setGiftAmount] = useState<number>(0)
+  // 入力状態（万円単位で入力を受け付ける）
+  const [giftAmountInMan, setGiftAmountInMan] = useState<number>(0)
   const [donorRelation, setDonorRelation] = useState<DonorRelation>('lineal_ascendant_adult')
-  const [applyHousingExemption, setApplyHousingExemption] = useState<boolean>(false)
-  const [housingType, setHousingType] = useState<HousingType>('none')
-  const [applySpouseDeduction, setApplySpouseDeduction] = useState<boolean>(false)
+
+  // 円に変換
+  const giftAmountInYen = giftAmountInMan * 10000
 
   // 計算結果
   const result = useMemo(() => {
     return calculateGiftTax({
-      giftAmount,
+      giftAmount: giftAmountInYen,
       donorRelation,
-      applyHousingExemption,
-      housingType: applyHousingExemption ? housingType : 'none',
-      applySpouseDeduction: applySpouseDeduction && donorRelation === 'spouse_20years',
+      applyHousingExemption: false,
+      housingType: 'none',
+      applySpouseDeduction: false,
     })
-  }, [giftAmount, donorRelation, applyHousingExemption, housingType, applySpouseDeduction])
+  }, [giftAmountInYen, donorRelation])
+
+  // 実効税率（贈与税額 ÷ 贈与金額 × 100）
+  const effectiveRate = useMemo(() => {
+    if (giftAmountInYen <= 0 || result.taxAmount <= 0) return 0
+    return (result.taxAmount / giftAmountInYen) * 100
+  }, [giftAmountInYen, result.taxAmount])
 
   return (
     <>
@@ -149,21 +153,21 @@ export function GiftTaxCalculator() {
                 {/* 贈与金額 */}
                 <NumberInput
                   label="贈与金額（不動産評価額など）"
-                  value={giftAmount}
-                  onChange={setGiftAmount}
-                  unit="円"
-                  placeholder="30,000,000"
+                  value={giftAmountInMan}
+                  onChange={setGiftAmountInMan}
+                  unit="万円"
+                  placeholder="例：3000"
                 />
-                {giftAmount > 0 && (
+                {giftAmountInMan > 0 && (
                   <p className="text-sm text-gray-500">
-                    = {(giftAmount / 10000).toLocaleString('ja-JP')} 万円
+                    = {giftAmountInMan.toLocaleString('ja-JP')}万円（{giftAmountInYen.toLocaleString('ja-JP')}円）
                   </p>
                 )}
 
-                {/* 贈与者との関係 */}
+                {/* 税率区分 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    贈与者との関係
+                    税率区分
                   </label>
                   <select
                     value={donorRelation}
@@ -171,128 +175,44 @@ export function GiftTaxCalculator() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                   >
                     <option value="lineal_ascendant_adult">
-                      父母・祖父母から（受贈者18歳以上）→ 特例税率
-                    </option>
-                    <option value="spouse_20years">
-                      配偶者から（婚姻20年以上）
+                      特例税率（父母・祖父母から18歳以上の子・孫へ）
                     </option>
                     <option value="other">
-                      その他（兄弟、未成年への贈与など）→ 一般税率
+                      一般税率（その他の贈与）
                     </option>
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    ※年齢は贈与を受けた年の1月1日時点で判定されます
+                    ※特例税率は贈与を受けた年の1月1日時点で18歳以上の場合に適用
                   </p>
                 </div>
-
-                {/* 住宅取得資金贈与の非課税特例 */}
-                <div className="border-t pt-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={applyHousingExemption}
-                      onChange={(e) => setApplyHousingExemption(e.target.checked)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">
-                      住宅取得資金贈与の非課税特例を適用
-                    </span>
-                  </label>
-                  {applyHousingExemption && (
-                    <div className="mt-3 ml-7">
-                      <select
-                        value={housingType}
-                        onChange={(e) => setHousingType(e.target.value as HousingType)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
-                      >
-                        <option value="energy_saving">省エネ等住宅（非課税枠：1,000万円）</option>
-                        <option value="standard">一般住宅（非課税枠：500万円）</option>
-                      </select>
-                      <p className="text-xs text-gray-500 mt-1">
-                        ※2026年12月31日までの贈与が対象です
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* 配偶者控除（おしどり贈与） */}
-                {donorRelation === 'spouse_20years' && (
-                  <div className="border-t pt-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={applySpouseDeduction}
-                        onChange={(e) => setApplySpouseDeduction(e.target.checked)}
-                        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        配偶者控除（おしどり贈与）を適用（最大2,000万円）
-                      </span>
-                    </label>
-                    <p className="text-xs text-gray-500 mt-1 ml-7">
-                      ※居住用不動産または購入資金の贈与に限ります
-                    </p>
-                  </div>
-                )}
               </div>
 
-              {/* 適用条件の説明 */}
-              {giftAmount > 0 && (
-                <div className="mb-4 p-3 bg-white border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-800 font-medium mb-2">
-                    適用される控除・特例：
-                  </p>
-                  <ul className="text-xs text-blue-700 space-y-1">
-                    {result.appliedDeductions.map((deduction, index) => (
-                      <li key={index}>・{deduction}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {/* 結果エリア（グリッド表示） */}
+              <div className="bg-white rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-y-3 text-base">
+                  <span className="text-gray-600">贈与金額</span>
+                  <span className="text-right text-lg font-medium">{(result.giftAmount / 10000).toLocaleString('ja-JP')}万円</span>
 
-              {/* 結果エリア */}
-              <div className="space-y-3">
-                <ResultCard
-                  label="贈与金額"
-                  value={result.giftAmount}
-                  unit="円"
-                />
-                {result.housingExemptionAmount > 0 && (
-                  <ResultCard
-                    label="住宅取得資金非課税額"
-                    value={-result.housingExemptionAmount}
-                    unit="円"
-                  />
-                )}
-                {result.spouseDeductionAmount > 0 && (
-                  <ResultCard
-                    label="配偶者控除額"
-                    value={-result.spouseDeductionAmount}
-                    unit="円"
-                  />
-                )}
-                <ResultCard
-                  label="基礎控除額"
-                  value={-result.basicDeductionAmount}
-                  unit="円"
-                />
-                <ResultCard
-                  label="課税価格"
-                  value={result.taxableAmount}
-                  unit="円"
-                />
-                <div className="pt-2 border-t border-blue-200">
-                  <ResultCard
-                    label="贈与税額（概算）"
-                    value={result.taxAmount}
-                    unit="円"
-                    highlight={true}
-                    subText={
-                      result.taxAmount > 0
-                        ? `適用税率：${result.appliedRate}`
-                        : undefined
-                    }
-                  />
+                  <span className="text-gray-600">基礎控除額</span>
+                  <span className="text-right text-lg font-medium text-red-600">-{(result.basicDeductionAmount / 10000).toLocaleString('ja-JP')}万円</span>
+
+                  <span className="text-gray-600 border-t pt-3">課税価格</span>
+                  <span className="text-right text-lg font-medium border-t pt-3">{(result.taxableAmount / 10000).toLocaleString('ja-JP')}万円</span>
+
+                  {/* メイン結果 */}
+                  <span className="text-gray-700 font-medium border-t-2 border-blue-300 pt-4 mt-2">贈与税額（概算）</span>
+                  <span className="text-right text-2xl font-bold text-blue-700 border-t-2 border-blue-300 pt-4 mt-2">
+                    {(result.taxAmount / 10000).toLocaleString('ja-JP')}万円
+                  </span>
+
+                  {result.taxAmount > 0 && (
+                    <>
+                      <span className="text-sm text-gray-500">適用税率</span>
+                      <span className="text-right text-sm text-gray-500">{result.appliedRate}</span>
+                      <span className="text-sm text-gray-500">実効税率</span>
+                      <span className="text-right text-sm text-gray-500">{effectiveRate.toFixed(1)}%</span>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -415,9 +335,18 @@ export function GiftTaxCalculator() {
                       <li>・相続時精算課税に年間110万円の基礎控除が新設</li>
                       <li>・暦年課税の生前贈与加算期間が3年から7年に延長（2024年以降の贈与分から段階的に適用）</li>
                     </ul>
+                    <p className="text-xs text-blue-600 mt-2">
+                      ※具体的な判断は税理士等の専門家にご相談ください。
+                    </p>
                   </div>
                 </div>
               </div>
+              <p className="text-xs text-gray-500 mt-2 mb-4">
+                参考サイト：
+                <a href="https://www.home4u.jp/sell/juku/course/inherit/sell-625-49556" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  「110万円贈与」の廃止されない！2024年の暦年贈与の税制改正の変更点を解説｜HOME4U
+                </a>
+              </p>
 
               <h3 id="calculation" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
                 計算方法
@@ -556,6 +485,40 @@ export function GiftTaxCalculator() {
             */}
 
             {/* =================================================================
+                参考リンク（エビデンス）
+            ================================================================= */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-gray-800 mb-2">参考リンク</h3>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>
+                  <a href="https://www.home4u.jp/sell/juku/course/inherit/sell-625-49556" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    → 2024年の贈与税改正を解説（HOME4U）
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4408.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    → No.4408 贈与税の計算と税率（国税庁）
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4103.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    → No.4103 相続時精算課税の選択（国税庁）
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4508.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    → No.4508 住宅取得資金贈与の非課税（国税庁）
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4452.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    → No.4452 配偶者控除（国税庁）
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* =================================================================
                 免責事項
             ================================================================= */}
             <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
@@ -568,7 +531,7 @@ export function GiftTaxCalculator() {
                 <li>・<strong>正確な税額・申告手続きについては、必ず税理士等の専門家にご相談ください。</strong></li>
               </ul>
               <p className="text-xs text-gray-500 mt-3">
-                参考法令：相続税法、租税特別措置法｜最終更新日: 2026年1月14日
+                参考法令：相続税法、租税特別措置法｜最終更新日: 2026年1月15日
               </p>
             </div>
 

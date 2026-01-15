@@ -6,7 +6,6 @@ import { ArrowRight, ChevronRight } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { FAQSection, FAQItem, generateFAQSchema } from '@/components/tools/FAQSection'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
@@ -63,15 +62,16 @@ const relatedTools = [
 ]
 
 export function BrokerageCalculator() {
-  const [price, setPrice] = useState<number>(0)
+  // 万円単位で入力を受け付ける
+  const [priceInMan, setPriceInMan] = useState<number>(0)
+
+  // 円に変換して計算
+  const priceInYen = priceInMan * 10000
 
   // 価格が変わるたびに自動計算
   const result = useMemo(() => {
-    return calculateBrokerageFee(price)
-  }, [price])
-
-  // 万円単位に変換
-  const priceInMan = price / 10000
+    return calculateBrokerageFee(priceInYen)
+  }, [priceInYen])
 
   return (
     <>
@@ -128,7 +128,7 @@ export function BrokerageCalculator() {
                   </svg>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  今すぐ計算する
+                  仲介手数料を概算計算する
                 </h2>
               </div>
 
@@ -136,58 +136,54 @@ export function BrokerageCalculator() {
               <div className="bg-white rounded-lg p-4 mb-4">
                 <NumberInput
                   label="売買価格を入力"
-                  value={price}
-                  onChange={setPrice}
-                  unit="円"
-                  placeholder="30,000,000"
+                  value={priceInMan}
+                  onChange={setPriceInMan}
+                  unit="万円"
+                  placeholder="例：3000"
                 />
-                {price > 0 ? (
+                {priceInMan > 0 ? (
                   <p className="text-sm text-gray-500 mt-1">
-                    = {priceInMan.toLocaleString('ja-JP')} 万円
+                    = {priceInMan.toLocaleString('ja-JP')}万円（{priceInYen.toLocaleString('ja-JP')}円）
                   </p>
                 ) : (
                   <p className="text-xs text-gray-400 mt-2">
-                    例：3,000万円 → 仲介手数料 約105.6万円（税込）
+                    例：3000 → 3,000万円 → 仲介手数料 約105.6万円（税込）
                   </p>
                 )}
               </div>
 
               {/* 計算式の説明 */}
-              {price > 0 && (
+              {priceInMan > 0 && (
                 <div className="mb-4 p-3 bg-white border border-blue-200 rounded-lg">
                   <p className="text-sm text-blue-800">
                     <span className="font-medium">適用料率：</span>
                     {result.rate}
                   </p>
                   <p className="text-xs text-blue-600 mt-1">
-                    {price <= 2000000 && '200万円以下のため5%を適用'}
-                    {price > 2000000 &&
-                      price <= 4000000 &&
+                    {priceInYen <= 2000000 && '200万円以下のため5%を適用'}
+                    {priceInYen > 2000000 &&
+                      priceInYen <= 4000000 &&
                       '200万円超〜400万円以下のため4%+2万円を適用'}
-                    {price > 4000000 && '400万円超のため3%+6万円（速算式）を適用'}
+                    {priceInYen > 4000000 && '400万円超のため3%+6万円（速算式）を適用'}
                   </p>
                 </div>
               )}
 
-              {/* 結果エリア */}
-              <div className="space-y-3">
-                <ResultCard
-                  label="仲介手数料（税抜）"
-                  value={result.commission}
-                  unit="円"
-                />
-                <ResultCard label="消費税（10%）" value={result.tax} unit="円" />
-                <ResultCard
-                  label="合計（税込）"
-                  value={result.total}
-                  unit="円"
-                  highlight={true}
-                  subText={
-                    result.total > 0
-                      ? `= ${(result.total / 10000).toLocaleString('ja-JP')} 万円`
-                      : undefined
-                  }
-                />
+              {/* 結果エリア（グリッド表示） */}
+              <div className="bg-white rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-y-3 text-base">
+                  <span className="text-gray-600">仲介手数料（税抜）</span>
+                  <span className="text-right text-lg font-medium">{(result.commission / 10000).toLocaleString('ja-JP')}万円</span>
+
+                  <span className="text-gray-600">消費税（10%）</span>
+                  <span className="text-right text-lg font-medium">{(result.tax / 10000).toLocaleString('ja-JP')}万円</span>
+
+                  {/* メイン結果 */}
+                  <span className="text-gray-700 font-medium border-t-2 border-blue-300 pt-4 mt-2">合計（税込）</span>
+                  <span className="text-right text-2xl font-bold text-blue-700 border-t-2 border-blue-300 pt-4 mt-2">
+                    {(result.total / 10000).toLocaleString('ja-JP')}万円
+                  </span>
+                </div>
               </div>
             </div>
 

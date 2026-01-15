@@ -126,7 +126,8 @@ export function ToolNameCalculator() {
                   </svg>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  今すぐ計算する
+                  {/* 【変更】○○を概算計算する の形式に統一 */}
+                  ○○を概算計算する
                 </h2>
               </div>
 
