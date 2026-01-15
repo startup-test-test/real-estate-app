@@ -8,6 +8,7 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
+import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 // import { calculateXxx } from '@/lib/calculators/xxx'
 
 // =================================================================
@@ -280,18 +281,9 @@ export function ToolNameCalculator() {
 
             {/* =================================================================
                 免責事項（基本変更不要）
+                ToolDisclaimerコンポーネントを使用
             ================================================================= */}
-            <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-800 mb-2">免責事項</h3>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
-                <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
-                <li>・最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。</li>
-              </ul>
-              <p className="text-xs text-gray-500 mt-3">
-                最終更新日: 2026年1月XX日
-              </p>
-            </div>
+            <ToolDisclaimer />
 
             {/* =================================================================
                 CTA（基本変更不要）

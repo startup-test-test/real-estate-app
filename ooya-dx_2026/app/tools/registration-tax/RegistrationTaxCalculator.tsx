@@ -8,6 +8,7 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
+import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { calculateRegistrationTax, RegistrationTaxInput } from '@/lib/calculators/registrationTax'
 
 // 早見表データ（新築建売・自己居住・軽減適用の場合）
@@ -459,6 +460,43 @@ export function RegistrationTaxCalculator() {
                     : undefined
                 }
               />
+
+              {/* 計算式表示 */}
+              {hasInput && result.totalTax > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-200 bg-white rounded-lg p-4">
+                  <p className="text-xs text-gray-500 mb-2">計算式</p>
+                  <div className="text-sm text-gray-700 font-mono space-y-2">
+                    {hasLand && result.landTax > 0 && (
+                      <div>
+                        <p className="text-xs text-gray-500">【土地移転登記】</p>
+                        <p>{result.landTaxBase.toLocaleString()}円 × {result.appliedRates.land} = {result.landTax.toLocaleString()}円</p>
+                      </div>
+                    )}
+                    {hasBuilding && transactionType !== 'landOnly' && result.buildingTax > 0 && (
+                      <div>
+                        <p className="text-xs text-gray-500">【建物{transactionType === 'newPurchase' ? '保存' : '移転'}登記】</p>
+                        <p>{result.buildingTaxBase.toLocaleString()}円 × {result.appliedRates.building} = {result.buildingTax.toLocaleString()}円</p>
+                      </div>
+                    )}
+                    {hasLoan && result.mortgageTax > 0 && (
+                      <div>
+                        <p className="text-xs text-gray-500">【抵当権設定登記】</p>
+                        <p>{result.mortgageTaxBase.toLocaleString()}円 × {result.appliedRates.mortgage} = {result.mortgageTax.toLocaleString()}円</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-xs text-gray-500">【合計】</p>
+                      <p>
+                        {[
+                          result.landTax > 0 ? `${result.landTax.toLocaleString()}円` : null,
+                          result.buildingTax > 0 ? `${result.buildingTax.toLocaleString()}円` : null,
+                          result.mortgageTax > 0 ? `${result.mortgageTax.toLocaleString()}円` : null,
+                        ].filter(Boolean).join(' + ')} = {result.totalTax.toLocaleString()}円
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -576,17 +614,7 @@ export function RegistrationTaxCalculator() {
           </section>
 
           {/* 免責事項 */}
-          <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-2">免責事項</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
-              <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
-              <li>・最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。</li>
-            </ul>
-            <p className="text-xs text-gray-500 mt-3">
-              最終更新日: 2026年1月15日
-            </p>
-          </div>
+          <ToolDisclaimer />
 
           {/* CTA */}
           <div className="mt-16 pt-8 border-t border-gray-100">

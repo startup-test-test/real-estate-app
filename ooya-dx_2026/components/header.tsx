@@ -11,6 +11,9 @@ import { hasAuthEnv } from '@/lib/auth/env'
 // ダッシュボード系のルート（サイドバーレイアウトを使用）
 const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/simulator', '/billing', '/mypage/guide']
 
+// 独自ヘッダーを持つルート
+const CUSTOM_HEADER_ROUTES = ['/']
+
 function HeaderAuthed() {
   const auth = useAuth()
   const user = auth.user
@@ -106,7 +109,9 @@ export function Header() {
 
   // ダッシュボード系のルートではヘッダーを非表示（サイドバーを使用）
   const isDashboardRoute = DASHBOARD_ROUTES.some(route => pathname?.startsWith(route))
-  if (isDashboardRoute) {
+  // 独自ヘッダーを持つルートでは非表示
+  const hasCustomHeader = CUSTOM_HEADER_ROUTES.includes(pathname || '')
+  if (isDashboardRoute || hasCustomHeader) {
     return null
   }
 

@@ -7,6 +7,7 @@ import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
+import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import {
   calculateStampTax,
   ContractType,
@@ -268,6 +269,22 @@ export function StampTaxCalculator() {
                 )}
               </div>
 
+              {/* 計算式表示 */}
+              {contractAmountInMan > 0 && !result.isElectronicExempt && !result.isNonBusinessExempt && result.stampTaxAmount > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 mb-2">適用区分</p>
+                  <div className="text-sm text-gray-700 font-mono space-y-1">
+                    <p>【契約金額】{formatYen(result.contractAmount)}</p>
+                    <p>【文書種類】{result.contractTypeName}</p>
+                    {result.isReduced ? (
+                      <p>【税額】本則{formatTax(result.standardTaxAmount)} → 軽減{formatTax(result.stampTaxAmount)}</p>
+                    ) : (
+                      <p>【税額】{formatTax(result.stampTaxAmount)}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* 参考情報（書面契約の場合のみ） */}
               {contractFormat === 'paper' && paperResult.stampTaxAmount > 0 && !result.isNonBusinessExempt && (
                 <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
@@ -509,20 +526,8 @@ export function StampTaxCalculator() {
             </ul>
           </div>
 
-          {/* =================================================================
-              免責事項
-          ================================================================= */}
-          <div className="bg-gray-100 border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-2">免責事項</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。</li>
-              <li>・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。</li>
-              <li>・最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。</li>
-            </ul>
-            <p className="text-xs text-gray-500 mt-3">
-              最終更新日: 2026年1月15日
-            </p>
-          </div>
+          {/* 免責事項 */}
+          <ToolDisclaimer />
 
           {/* CTA */}
           <div className="mt-16 pt-8 border-t border-gray-100">
