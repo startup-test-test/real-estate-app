@@ -23,11 +23,22 @@ interface Article {
   thumbnail?: string;
 }
 
-interface LandingPageProps {
-  articles: Article[];
+interface GlossaryTerm {
+  slug: string;
+  title: string;
+  shortTitle: string;
+  reading: string;
+  description: string;
+  category: string;
+  relatedTools?: string;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
+interface LandingPageProps {
+  articles: Article[];
+  glossaryTerms: GlossaryTerm[];
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) => {
   const router = useRouter();
   const auth = useAuth();
   const user = auth.user;
@@ -355,10 +366,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
             {[
               { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
               { name: '住宅ローン', description: '毎月返済額・総返済額を計算', href: '/tools/mortgage-loan', available: true },
-              { name: '減価償却', description: '建物の年間減価償却費を計算', href: '/tools/depreciation', available: true },
+              { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
+              { name: '相続税', description: '遺産相続時の税金を計算', href: '/tools/inheritance-tax', available: true },
               { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true },
               { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
               { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: true },
+              { name: '印紙税', description: '契約書・領収書の印紙税を計算', href: '/tools/stamp-tax', available: true },
+              { name: '減価償却', description: '建物の年間減価償却費を計算', href: '/tools/depreciation', available: true },
+              { name: '法人税', description: '不動産法人の税金を計算', href: '/tools/corporate-tax', available: true },
             ].map((tool, index) => (
               <a
                 key={index}
@@ -398,6 +413,58 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
 
       {/* Media Section */}
       <BlogPosts articles={articles} />
+
+      {/* 用語集セクション */}
+      {glossaryTerms.length > 0 && (
+        <section id="glossary" className="py-16 sm:py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Section Header */}
+            <div className="mb-12 sm:mb-16 text-center">
+              <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">GLOSSARY</p>
+              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#32373c] leading-tight">
+                賃貸経営用語集
+              </h2>
+              <p className="mt-4 text-gray-600 text-base sm:text-lg">
+                賃貸経営・不動産オーナーが知っておきたい専門用語をわかりやすく解説
+              </p>
+            </div>
+
+            {/* Terms Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {glossaryTerms.map((term) => (
+                <a
+                  key={term.slug}
+                  href={`/glossary/${term.slug}`}
+                  className="block bg-gray-50 rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#32373c] group-hover:text-blue-600 transition-colors">
+                      {term.shortTitle}
+                    </h3>
+                    {term.relatedTools && (
+                      <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
+                        計算ツール
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 mb-2">読み：{term.reading}</p>
+                  <p className="text-sm text-gray-500 line-clamp-2">{term.description}</p>
+                </a>
+              ))}
+            </div>
+
+            {/* View All Button */}
+            <div className="mt-10 text-center">
+              <a
+                href="/glossary"
+                className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
+              >
+                すべての用語を見る
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ニュースセクション */}
       <section id="news" className="pt-8 pb-1 sm:py-8 lg:py-16 bg-gray-50">
