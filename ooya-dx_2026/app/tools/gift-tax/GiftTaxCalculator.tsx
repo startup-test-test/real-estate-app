@@ -8,6 +8,8 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import {
   calculateGiftTax,
   DonorRelation,
@@ -30,6 +32,17 @@ const quickReferenceData: QuickReferenceRow[] = SPECIAL_RATE_TABLE.map(row => ({
 // =================================================================
 const relatedTools = [
   { name: '仲介手数料シミュレーター', href: '/tools/brokerage', description: '不動産売買の仲介手数料を計算' },
+]
+
+// =================================================================
+// 目次データ
+// =================================================================
+const tocItems: TocItem[] = [
+  { id: 'about', title: '贈与税とは', level: 2 },
+  { id: 'calculation', title: '計算方法', level: 3 },
+  { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
+  { id: 'example', title: '具体的な計算例', level: 3 },
+  { id: 'special', title: '主な特例・控除制度', level: 2 },
 ]
 
 // =================================================================
@@ -101,7 +114,7 @@ export function GiftTaxCalculator() {
             {/* =================================================================
                 シミュレーター本体
             ================================================================= */}
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-blue-500 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,6 +225,9 @@ export function GiftTaxCalculator() {
               )}
             </div>
 
+            {/* 計算結果の注記 */}
+            <CalculatorNote />
+
             {/* =================================================================
                 早見表（シミュレーター直下）
             ================================================================= */}
@@ -243,54 +259,13 @@ export function GiftTaxCalculator() {
             {/* =================================================================
                 目次
             ================================================================= */}
-            <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-              <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-                目次
-              </h2>
-              <ol className="space-y-1 text-sm">
-                <li>
-                  <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    贈与税とは
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#calculation" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    計算方法
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#tax-rate" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    税率表
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#example" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    具体的な計算例
-                  </a>
-                </li>
-                <li>
-                  <a href="#special" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    主な特例・控除制度
-                  </a>
-                </li>
-                <li>
-                  <a href="#points" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    よくある質問
-                  </a>
-                </li>
-              </ol>
-            </nav>
+            <TableOfContents items={tocItems} />
 
             {/* =================================================================
                 解説セクション
             ================================================================= */}
             <section className="mb-12">
-              <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-                贈与税とは
-              </h2>
+              <SectionHeading id="about" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
                 贈与税とは、個人から財産を無償で受け取った（贈与された）際に、
                 受け取った人（受贈者）に課される税金です。
@@ -326,9 +301,7 @@ export function GiftTaxCalculator() {
                 </a>
               </p>
 
-              <h3 id="calculation" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                計算方法
-              </h3>
+              <SectionHeading id="calculation" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
                 暦年課税における贈与税額は、以下の計算式で算出されます。
               </p>
@@ -342,9 +315,7 @@ export function GiftTaxCalculator() {
                 </p>
               </div>
 
-              <h3 id="tax-rate" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                税率表（速算表）
-              </h3>
+              <SectionHeading id="tax-rate" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
                 贈与税の税率は、贈与者と受贈者の関係によって「特例税率」と「一般税率」の
                 2種類があります。
@@ -376,9 +347,7 @@ export function GiftTaxCalculator() {
                 </table>
               </div>
 
-              <h3 id="example" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                具体的な計算例
-              </h3>
+              <SectionHeading id="example" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
                 父から成人の子へ、評価額3,000万円の不動産を贈与した場合の概算例：
               </p>
@@ -394,38 +363,30 @@ export function GiftTaxCalculator() {
             </section>
 
             {/* =================================================================
-                主な特例・控除制度
+                主な特例・控除制度（国税庁リンクへ誘導）
             ================================================================= */}
             <section className="mb-12">
-              <h2 id="special" className="text-xl font-bold text-gray-900 mb-4">
-                主な特例・控除制度
-              </h2>
-
-              <div className="space-y-6">
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">住宅取得等資金の非課税特例</h3>
-                  <p className="text-sm text-gray-700 mb-2">
-                    父母・祖父母から住宅取得のための資金贈与を受けた場合に適用できる制度です。
-                  </p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>・省エネ等住宅：最大1,000万円まで非課税</li>
-                    <li>・一般住宅：最大500万円まで非課税</li>
-                    <li>・適用期限：2026年12月31日まで</li>
-                    <li>・受贈者の所得要件：合計所得金額2,000万円以下</li>
-                  </ul>
-                </div>
-
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">配偶者控除（おしどり贈与）</h3>
-                  <p className="text-sm text-gray-700 mb-2">
-                    婚姻期間20年以上の配偶者から居住用不動産等の贈与を受けた場合に適用できる制度です。
-                  </p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>・控除額：基礎控除110万円 + 最大2,000万円</li>
-                    <li>・対象：居住用不動産またはその購入資金</li>
-                    <li>・同一配偶者からは一生に一度のみ</li>
-                  </ul>
-                </div>
+              <SectionHeading id="special" items={tocItems} />
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                贈与税には、住宅取得資金の非課税特例や配偶者控除（おしどり贈与）など、
+                様々な特例・控除制度があります。適用要件や最新情報は、下記の国税庁サイトをご確認ください。
+              </p>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <ul className="text-sm text-blue-700 space-y-2">
+                  <li>
+                    <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4508.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      → No.4508 住宅取得等資金の贈与を受けた場合の非課税（国税庁）
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4452.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      → No.4452 夫婦の間で居住用の不動産を贈与したときの配偶者控除（国税庁）
+                    </a>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500 mt-3">
+                  ※具体的な適用判断は税理士等の専門家にご相談ください。
+                </p>
               </div>
             </section>
 

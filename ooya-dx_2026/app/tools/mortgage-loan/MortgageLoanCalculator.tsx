@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { ChevronRight, Home, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import {
   calculateMortgageLoan,
   RepaymentMethod,
@@ -30,6 +32,17 @@ const quickRefByAmount: QuickReferenceRow[] = QUICK_REFERENCE_BY_AMOUNT.map(row 
   value: `${(row.monthlyPayment / 10000).toFixed(1)}万円`,
   subValue: `利息${formatManYen(row.totalInterest)}`,
 }))
+
+// =================================================================
+// 目次項目
+// =================================================================
+const tocItems: TocItem[] = [
+  { id: 'about', title: '住宅ローンの返済方式とは', level: 2 },
+  { id: 'equal-pi', title: '元利均等返済', level: 3 },
+  { id: 'equal-p', title: '元金均等返済', level: 3 },
+  { id: 'ratio', title: '返済負担率の目安', level: 3 },
+  { id: 'bonus', title: 'ボーナス返済について', level: 3 },
+]
 
 // =================================================================
 // メインコンポーネント
@@ -122,7 +135,7 @@ export function MortgageLoanCalculator() {
           {/* =================================================================
               シミュレーター本体
           ================================================================= */}
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-500 p-2 rounded-lg">
                 <Home className="w-5 h-5 text-white" />
@@ -364,6 +377,9 @@ export function MortgageLoanCalculator() {
             )}
           </div>
 
+          {/* 計算結果の注記 */}
+          <CalculatorNote />
+
           {/* =================================================================
               早見表（金利別）
           ================================================================= */}
@@ -393,57 +409,19 @@ export function MortgageLoanCalculator() {
           {/* =================================================================
               目次
           ================================================================= */}
-          <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              目次
-            </h2>
-            <ol className="space-y-1 text-sm">
-              <li>
-                <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  住宅ローンの返済方式とは
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#equal-pi" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  元利均等返済
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#equal-p" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  元金均等返済
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#ratio" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  返済負担率の目安
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#bonus" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  ボーナス返済について
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents items={tocItems} />
 
           {/* =================================================================
               解説セクション
           ================================================================= */}
           <section className="mb-12">
-            <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-              住宅ローンの返済方式とは
-            </h2>
+            <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               住宅ローンには主に2つの返済方式があるとされています。
               どちらを選択するかによって、毎月の返済額や総返済額が変わってきます。
             </p>
 
-            <h3 id="equal-pi" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              元利均等返済
-            </h3>
+            <SectionHeading id="equal-pi" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               毎月の返済額（元金＋利息）が一定になる返済方式です。
               返済計画が立てやすいため、多くの方に選ばれているとされています。
@@ -462,9 +440,7 @@ export function MortgageLoanCalculator() {
               </div>
             </div>
 
-            <h3 id="equal-p" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              元金均等返済
-            </h3>
+            <SectionHeading id="equal-p" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               毎月の元金返済額が一定で、利息は残高に応じて計算される返済方式です。
               返済が進むにつれて毎月の返済額が減少していく特徴があります。
@@ -483,9 +459,7 @@ export function MortgageLoanCalculator() {
               </div>
             </div>
 
-            <h3 id="ratio" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              返済負担率の目安
-            </h3>
+            <SectionHeading id="ratio" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               返済負担率とは、年収に対する年間返済額の割合です。
               多くの金融機関では、審査基準として30〜35%を上限としている場合が多いとされています。
@@ -514,9 +488,7 @@ export function MortgageLoanCalculator() {
               </div>
             </div>
 
-            <h3 id="bonus" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              ボーナス返済について
-            </h3>
+            <SectionHeading id="bonus" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               ボーナス返済を併用すると、毎月の返済額を抑えることができますが、
               総返済額（利息）はやや増加する傾向があるとされています。

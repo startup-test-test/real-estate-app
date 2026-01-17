@@ -9,6 +9,8 @@ import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import {
   calculateDepreciation,
   BuildingStructure,
@@ -45,6 +47,14 @@ const usedWoodQuickReference: QuickReferenceRow[] = [
   { label: '築15年', value: '約300万円/年', subValue: '耐用年数10年・償却率10.0%' },
   { label: '築20年', value: '約500万円/年', subValue: '耐用年数6年・償却率16.7%' },
   { label: '築22年以上', value: '約750万円/年', subValue: '耐用年数4年・償却率25.0%' },
+]
+
+// 目次データ
+const tocItems: TocItem[] = [
+  { id: 'about', title: '減価償却とは', level: 2 },
+  { id: 'calculation', title: '計算方法（定額法）', level: 3 },
+  { id: 'used-asset', title: '中古資産の耐用年数（簡便法）', level: 3 },
+  { id: 'example', title: '具体的な計算例', level: 3 },
 ]
 
 // =================================================================
@@ -112,7 +122,7 @@ export function DepreciationCalculator() {
           </p>
 
           {/* シミュレーター本体 */}
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-500 p-2 rounded-lg">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,6 +302,9 @@ export function DepreciationCalculator() {
             )}
           </div>
 
+          {/* 計算結果の注記 */}
+          <CalculatorNote />
+
           {/* 早見表（新築・構造別） */}
           <section className="mb-12">
             <QuickReferenceTable
@@ -315,42 +328,11 @@ export function DepreciationCalculator() {
           </section>
 
           {/* 目次 */}
-          <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              目次
-            </h2>
-            <ol className="space-y-1 text-sm">
-              <li>
-                <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  減価償却とは
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#calculation" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  計算方法（定額法）
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#used-asset" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  中古資産の耐用年数（簡便法）
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#example" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  具体的な計算例
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents items={tocItems} />
 
           {/* 解説セクション */}
           <section className="mb-12">
-            <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-              減価償却とは
-            </h2>
+            <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               減価償却とは、建物などの資産を取得した際に、その費用を一括ではなく耐用年数にわたって分割して経費計上する会計処理のことです。
               不動産投資においては、実際のキャッシュアウトを伴わずに経費を計上できるため、節税効果が期待できるとされています。
@@ -359,9 +341,7 @@ export function DepreciationCalculator() {
               土地は減価償却の対象外であるため、建物と土地を一括で購入した場合は、建物部分のみを償却対象とする必要があるとされています。
             </p>
 
-            <h3 id="calculation" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              計算方法（定額法）
-            </h3>
+            <SectionHeading id="calculation" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               平成28年4月1日以降に取得した建物・建物附属設備・構築物は、定額法のみが適用されるとされています。
               定額法では、毎年同額の減価償却費を計上します。
@@ -376,9 +356,7 @@ export function DepreciationCalculator() {
               </p>
             </div>
 
-            <h3 id="used-asset" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              中古資産の耐用年数（簡便法）
-            </h3>
+            <SectionHeading id="used-asset" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               中古資産を取得した場合、法定耐用年数ではなく「簡便法」で計算した短い耐用年数を適用できるとされています。
               特に築古の木造物件では4年という短期間での償却が可能となる場合があり、節税スキームとして活用されることがあるとされています。
@@ -394,9 +372,7 @@ export function DepreciationCalculator() {
               </ul>
             </div>
 
-            <h3 id="example" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              具体的な計算例
-            </h3>
+            <SectionHeading id="example" items={tocItems} />
             <p className="text-gray-700 mb-3 leading-relaxed">
               具体例を用いて計算してみましょう。
             </p>

@@ -8,6 +8,8 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateCorporateTaxTotal, compareCorporateVsIndividual } from '@/lib/calculators/corporate-tax'
 
 // 早見表データ
@@ -27,6 +29,16 @@ const relatedTools = [
   { name: '譲渡所得税シミュレーター', href: '/tools/capital-gains-tax', description: '売却時の税金を計算' },
   { name: '不動産取得税シミュレーター', href: '/tools/acquisition-tax', description: '購入時の税金を計算' },
   { name: '贈与税シミュレーター', href: '/tools/gift-tax', description: '贈与時の税金を計算' },
+]
+
+// 目次データ
+const tocItems: TocItem[] = [
+  { id: 'about', title: '不動産法人にかかる税金とは', level: 2 },
+  { id: 'structure', title: '法人税等の構成', level: 3 },
+  { id: 'effective-rate', title: '実効税率について', level: 3 },
+  { id: 'comparison', title: '個人との比較', level: 3 },
+  { id: 'breakeven', title: '法人化の目安', level: 3 },
+  { id: 'costs', title: '法人の維持コスト', level: 3 },
 ]
 
 export function CorporateTaxCalculator() {
@@ -89,7 +101,7 @@ export function CorporateTaxCalculator() {
           </p>
 
           {/* シミュレーター本体 */}
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-500 p-2 rounded-lg">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,6 +304,9 @@ export function CorporateTaxCalculator() {
             )}
           </div>
 
+          {/* 計算結果の注記 */}
+          <CalculatorNote />
+
           {/* 早見表 */}
           <section className="mb-12">
             <QuickReferenceTable
@@ -304,59 +319,16 @@ export function CorporateTaxCalculator() {
           </section>
 
           {/* 目次 */}
-          <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              目次
-            </h2>
-            <ol className="space-y-1 text-sm">
-              <li>
-                <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  不動産法人にかかる税金とは
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#structure" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  法人税等の構成
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#effective-rate" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  実効税率について
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#comparison" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  個人との比較
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#breakeven" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  法人化の目安
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#costs" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  法人の維持コスト
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents items={tocItems} />
 
           {/* 解説セクション */}
           <section className="mb-12">
-            <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-              不動産法人にかかる税金とは
-            </h2>
+            <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               不動産賃貸業を法人で行う場合、法人が負担する主な税金は「法人税等」と総称されます。これは複数の税金で構成されており、国税と地方税が含まれます。
             </p>
 
-            <h3 id="structure" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              法人税等の構成
-            </h3>
+            <SectionHeading id="structure" items={tocItems} />
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <ul className="text-gray-700 space-y-2 text-sm">
                 <li><span className="font-medium">法人税（国税）</span>：課税所得に対して課税。800万円以下15%、超過分23.2%</li>
@@ -367,9 +339,7 @@ export function CorporateTaxCalculator() {
               </ul>
             </div>
 
-            <h3 id="effective-rate" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              実効税率について
-            </h3>
+            <SectionHeading id="effective-rate" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               実効税率とは、事業税が翌年度に損金算入されることを考慮した実質的な税負担率です。中小法人の場合、一般的な目安は以下の通りです。
             </p>
@@ -383,9 +353,7 @@ export function CorporateTaxCalculator() {
               </p>
             </div>
 
-            <h3 id="comparison" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              個人との比較
-            </h3>
+            <SectionHeading id="comparison" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               個人の所得税・住民税は累進課税で最高税率は約55%に達しますが、法人は約34%で頭打ちとなります。また、法人には以下のようなメリットがあるとされています。
             </p>
@@ -395,9 +363,7 @@ export function CorporateTaxCalculator() {
               <li>家族への給与による所得分散が可能</li>
             </ul>
 
-            <h3 id="breakeven" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              法人化の目安
-            </h3>
+            <SectionHeading id="breakeven" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               一般的に、課税所得が900万円〜1,000万円を超えると法人化のメリットが出始めるとされています。ただし、社会保険料の負担増を考慮すると、実質的なメリットは課税所得1,000万円〜1,200万円程度からとなるケースが多いです。
             </p>
@@ -407,9 +373,7 @@ export function CorporateTaxCalculator() {
               </p>
             </div>
 
-            <h3 id="costs" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              法人の維持コスト
-            </h3>
+            <SectionHeading id="costs" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               法人を設立・維持するには、税金以外にもコストがかかります。
             </p>

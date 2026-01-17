@@ -8,6 +8,8 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import {
   calculateInheritanceTax,
   INHERITANCE_TAX_QUICK_TABLE,
@@ -30,6 +32,15 @@ const quickReferenceDataNoSpouse: QuickReferenceRow[] = INHERITANCE_TAX_QUICK_TA
   value: formatManYen(row.tax),
   subValue: '子2人のみ',
 }))
+
+// 目次データ
+const tocItems: TocItem[] = [
+  { id: 'about', title: '相続税とは', level: 2 },
+  { id: 'basic-deduction', title: '基礎控除の計算', level: 3 },
+  { id: 'calculation', title: '相続税の計算方法', level: 3 },
+  { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
+  { id: 'special', title: '主な特例・控除制度', level: 2 },
+]
 
 // =================================================================
 // メインコンポーネント
@@ -107,7 +118,7 @@ export function InheritanceTaxCalculator() {
           {/* =================================================================
               シミュレーター本体
           ================================================================= */}
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-500 p-2 rounded-lg">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,6 +325,9 @@ export function InheritanceTaxCalculator() {
             )}
           </div>
 
+          {/* 計算結果の注記 */}
+          <CalculatorNote />
+
           {/* =================================================================
               早見表（シミュレーター直下）
           ================================================================= */}
@@ -340,49 +354,13 @@ export function InheritanceTaxCalculator() {
           {/* =================================================================
               目次
           ================================================================= */}
-          <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              目次
-            </h2>
-            <ol className="space-y-1 text-sm">
-              <li>
-                <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  相続税とは
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#basic-deduction" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  基礎控除の計算
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#calculation" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  相続税の計算方法
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#tax-rate" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  税率表
-                </a>
-              </li>
-              <li>
-                <a href="#special" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  主な特例・控除制度
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents items={tocItems} />
 
           {/* =================================================================
               解説セクション
           ================================================================= */}
           <section className="mb-12">
-            <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-              相続税とは
-            </h2>
+            <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               相続税とは、亡くなった方（被相続人）から財産を相続した際に、
               相続人に課される税金です。不動産、預貯金、株式、生命保険金など、
@@ -394,9 +372,7 @@ export function InheritanceTaxCalculator() {
               2015年の税制改正により基礎控除額が引き下げられ、相続税の課税対象者が増加しています。
             </p>
 
-            <h3 id="basic-deduction" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              基礎控除の計算
-            </h3>
+            <SectionHeading id="basic-deduction" items={tocItems} />
             <div className="bg-gray-100 rounded-lg p-4 mb-4">
               <p className="font-mono text-gray-800 text-center">
                 基礎控除額 = 3,000万円 + 600万円 × 法定相続人の数
@@ -428,9 +404,7 @@ export function InheritanceTaxCalculator() {
               </div>
             </div>
 
-            <h3 id="calculation" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              相続税の計算方法
-            </h3>
+            <SectionHeading id="calculation" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               相続税は、以下の手順で計算されます。
             </p>
@@ -446,9 +420,7 @@ export function InheritanceTaxCalculator() {
               ※本シミュレーターは上記のうち1～5までの概算計算を行います
             </p>
 
-            <h3 id="tax-rate" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              税率表（速算表）
-            </h3>
+            <SectionHeading id="tax-rate" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               相続税の税率は、法定相続分に応ずる取得金額に応じて10%から55%の累進税率が適用されます。
             </p>
@@ -483,9 +455,7 @@ export function InheritanceTaxCalculator() {
               主な特例・控除制度
           ================================================================= */}
           <section className="mb-12">
-            <h2 id="special" className="text-xl font-bold text-gray-900 mb-4">
-              主な特例・控除制度
-            </h2>
+            <SectionHeading id="special" items={tocItems} />
 
             <div className="space-y-6">
               <div className="border border-gray-200 rounded-lg p-4">

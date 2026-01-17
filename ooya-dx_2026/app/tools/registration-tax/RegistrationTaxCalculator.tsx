@@ -5,10 +5,12 @@ import Link from 'next/link'
 import { ChevronRight, Info } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { calculateRegistrationTax, RegistrationTaxInput } from '@/lib/calculators/registrationTax'
 
 // 早見表データ（新築建売・自己居住・軽減適用の場合）
@@ -18,6 +20,14 @@ const quickReferenceData: QuickReferenceRow[] = [
   { label: '4,000万円', value: '約27万円', subValue: '土地21万+建物1.6万+抵当3.2万' },
   { label: '5,000万円', value: '約34万円', subValue: '土地26.2万+建物1.6万+抵当4万' },
   { label: '6,000万円', value: '約40万円', subValue: '土地31.5万+建物1.6万+抵当4.8万' },
+]
+
+// 目次項目
+const tocItems: TocItem[] = [
+  { id: 'about', title: '登録免許税とは', level: 2 },
+  { id: 'calculation', title: '計算方法', level: 3 },
+  { id: 'reduction', title: '軽減税率の条件', level: 3 },
+  { id: 'example', title: '具体的な計算例', level: 3 },
 ]
 
 // 構造の選択肢
@@ -137,7 +147,7 @@ export function RegistrationTaxCalculator() {
           </p>
 
           {/* シミュレーター本体 */}
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-500 p-2 rounded-lg">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -500,6 +510,9 @@ export function RegistrationTaxCalculator() {
             </div>
           </div>
 
+          {/* 計算結果の注記 */}
+          <CalculatorNote />
+
           {/* 早見表 */}
           <section className="mb-12">
             <QuickReferenceTable
@@ -512,42 +525,11 @@ export function RegistrationTaxCalculator() {
           </section>
 
           {/* 目次 */}
-          <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              目次
-            </h2>
-            <ol className="space-y-1 text-sm">
-              <li>
-                <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  登録免許税とは
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#calculation" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  計算方法
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#reduction" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  軽減税率の条件
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#example" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  具体的な計算例
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents items={tocItems} />
 
           {/* 解説セクション */}
           <section className="mb-12">
-            <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-              登録免許税とは
-            </h2>
+            <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               登録免許税は、不動産を取得した際に法務局で行う「登記」に対して課される国税とされています。
               所有権の移転（売買）、新築建物の保存登記、住宅ローンの抵当権設定登記などが対象となるとされています。
@@ -557,9 +539,7 @@ export function RegistrationTaxCalculator() {
               費用は買主が負担することが多いとされています。
             </p>
 
-            <h3 id="calculation" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              計算方法
-            </h3>
+            <SectionHeading id="calculation" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               登録免許税は以下の計算式で算出されるとされています。
             </p>
@@ -577,9 +557,7 @@ export function RegistrationTaxCalculator() {
               新築建物の場合は、法務局が定める認定価格（床面積×単価）が使用されるとされています。
             </p>
 
-            <h3 id="reduction" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              軽減税率の条件
-            </h3>
+            <SectionHeading id="reduction" items={tocItems} />
             <p className="text-gray-700 mb-3 leading-relaxed">
               以下の条件を満たす場合、住宅用家屋の軽減税率が適用されるとされています。
             </p>
@@ -595,9 +573,7 @@ export function RegistrationTaxCalculator() {
               土地の売買による移転登記については、住宅用に限らず軽減税率1.5%が適用されるとされています（令和11年3月末まで）。
             </p>
 
-            <h3 id="example" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              具体的な計算例
-            </h3>
+            <SectionHeading id="example" items={tocItems} />
             <p className="text-gray-700 mb-3 leading-relaxed">
               例えば、4,000万円の新築建売住宅（土地2,000万円・建物2,000万円）をローン3,200万円で購入する場合の目安：
             </p>

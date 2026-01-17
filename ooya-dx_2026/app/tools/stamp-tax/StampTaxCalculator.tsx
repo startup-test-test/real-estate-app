@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { ChevronRight, Info, AlertTriangle, FileText, CheckCircle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import {
   calculateStampTax,
   ContractType,
@@ -39,6 +41,17 @@ const receiptQuickRef: QuickReferenceRow[] = RECEIPT_QUICK_REFERENCE.map(row => 
   label: formatYen(row.amount),
   value: formatTax(row.standard),
 }))
+
+// =================================================================
+// 目次項目
+// =================================================================
+const tocItems: TocItem[] = [
+  { id: 'about', title: '印紙税とは', level: 2 },
+  { id: 'documents', title: '不動産取引で必要な印紙', level: 3 },
+  { id: 'reduction', title: '軽減措置について', level: 3 },
+  { id: 'electronic', title: '電子契約と印紙税', level: 3 },
+  { id: 'penalty', title: '貼り忘れのペナルティ', level: 3 },
+]
 
 // =================================================================
 // メインコンポーネント
@@ -116,7 +129,7 @@ export function StampTaxCalculator() {
           {/* =================================================================
               シミュレーター本体
           ================================================================= */}
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-500 p-2 rounded-lg">
                 <FileText className="w-5 h-5 text-white" />
@@ -319,6 +332,9 @@ export function StampTaxCalculator() {
             )}
           </div>
 
+          {/* 計算結果の注記 */}
+          <CalculatorNote />
+
           {/* =================================================================
               早見表（不動産売買契約書）
           ================================================================= */}
@@ -361,49 +377,13 @@ export function StampTaxCalculator() {
           {/* =================================================================
               目次
           ================================================================= */}
-          <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              目次
-            </h2>
-            <ol className="space-y-1 text-sm">
-              <li>
-                <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  印紙税とは
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#documents" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  不動産取引で必要な印紙
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#reduction" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  軽減措置について
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#electronic" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  電子契約と印紙税
-                </a>
-              </li>
-              <li className="ml-4">
-                <a href="#penalty" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                  貼り忘れのペナルティ
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents items={tocItems} />
 
           {/* =================================================================
               解説セクション
           ================================================================= */}
           <section className="mb-12">
-            <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-              印紙税とは
-            </h2>
+            <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               印紙税とは、契約書や領収書など特定の文書（課税文書）を作成した際に課される国税とされています。
               不動産取引においては、売買契約書、建設工事請負契約書、売却代金の領収書などが課税対象となる場合があります。
@@ -412,9 +392,7 @@ export function StampTaxCalculator() {
               税額は文書の種類と記載金額によって異なり、一般的に収入印紙を購入して文書に貼付し、消印することで納税するとされています。
             </p>
 
-            <h3 id="documents" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              不動産取引で必要な印紙
-            </h3>
+            <SectionHeading id="documents" items={tocItems} />
             <div className="space-y-4 mb-6">
               <div className="border border-gray-200 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-2">第1号文書：不動産売買契約書</h4>
@@ -439,9 +417,7 @@ export function StampTaxCalculator() {
               </div>
             </div>
 
-            <h3 id="reduction" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              軽減措置について
-            </h3>
+            <SectionHeading id="reduction" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               不動産売買契約書と建設工事請負契約書には、租税特別措置法による軽減措置が設けられているとされています。
             </p>
@@ -461,9 +437,7 @@ export function StampTaxCalculator() {
               </div>
             </div>
 
-            <h3 id="electronic" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              電子契約と印紙税
-            </h3>
+            <SectionHeading id="electronic" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               電子契約（PDF等の電磁的記録）で契約を締結した場合、印紙税法上の「課税文書の作成」に該当しないとされており、
               印紙税が課されない場合があります。
@@ -473,9 +447,7 @@ export function StampTaxCalculator() {
               詳細な取扱いについては、税務署等にご確認ください。
             </p>
 
-            <h3 id="penalty" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-              貼り忘れのペナルティ（過怠税）
-            </h3>
+            <SectionHeading id="penalty" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               印紙の貼り忘れや金額不足があった場合、以下のようなペナルティが課される場合があるとされています。
             </p>
