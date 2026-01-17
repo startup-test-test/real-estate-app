@@ -230,7 +230,7 @@ export function GiftTaxCalculator() {
                   value1: formatManYen(row.taxAmount),
                   value2: formatManYen(GENERAL_RATE_TABLE[index]?.taxAmount ?? 0),
                 }))}
-                note="※特例税率は贈与を受けた年の1月1日時点で18歳以上の場合に適用"
+                note={`※特例税率は直系尊属（父母・祖父母）から18歳以上の子・孫への贈与に適用。\n※一般税率は兄弟間・夫婦間・未成年への贈与などに適用。`}
               />
             </section>
 
@@ -323,6 +323,9 @@ export function GiftTaxCalculator() {
                     <tr><td className="border border-gray-300 px-3 py-2">4,500万円超</td><td className="border border-gray-300 px-3 py-2 text-center">55%</td><td className="border border-gray-300 px-3 py-2 text-center">640万円</td></tr>
                   </tbody>
                 </table>
+                <p className="text-xs text-gray-500 mt-2">
+                  ※一般税率（兄弟間・夫婦間・未成年への贈与など）は、ページ上部の早見表で比較できます。
+                </p>
               </div>
 
               <SectionHeading id="example" items={tocItems} />

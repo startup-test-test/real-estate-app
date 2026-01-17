@@ -85,7 +85,7 @@ export function QuickReferenceTable({
       </div>
 
       {note && (
-        <p className="text-xs text-gray-500 mt-2">{note}</p>
+        <p className="text-xs text-gray-500 mt-2 whitespace-pre-line">{note}</p>
       )}
     </div>
   )
@@ -176,7 +176,7 @@ export function QuickReferenceTable3Col({
       </div>
 
       {note && (
-        <p className="text-xs text-gray-500 mt-2">{note}</p>
+        <p className="text-xs text-gray-500 mt-2 whitespace-pre-line">{note}</p>
       )}
     </div>
   )
