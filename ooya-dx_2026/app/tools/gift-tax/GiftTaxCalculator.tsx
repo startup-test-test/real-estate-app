@@ -2,13 +2,14 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Info, AlertTriangle } from 'lucide-react'
+import { Info, AlertTriangle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { QuickReferenceTable3Col } from '@/components/tools/QuickReferenceTable'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import {
   calculateGiftTax,
@@ -17,15 +18,6 @@ import {
   GENERAL_RATE_TABLE,
   formatManYen,
 } from '@/lib/calculators/gift-tax'
-
-// =================================================================
-// 早見表データ（暦年課税・特例税率）
-// =================================================================
-const quickReferenceData: QuickReferenceRow[] = SPECIAL_RATE_TABLE.map(row => ({
-  label: formatManYen(row.giftAmount),
-  value: formatManYen(row.taxAmount),
-  subValue: '特例税率',
-}))
 
 // =================================================================
 // 関連ツール
@@ -83,17 +75,7 @@ export function GiftTaxCalculator() {
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-5 py-12">
             {/* パンくず */}
-            <nav className="flex items-center text-sm text-gray-500 mb-6">
-              <Link href="/" className="hover:text-primary-600">
-                ホーム
-              </Link>
-              <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <Link href="/tools" className="hover:text-primary-600">
-                計算ツール
-              </Link>
-              <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <span className="text-gray-900">贈与税シミュレーター</span>
-            </nav>
+            <ToolsBreadcrumb currentPage="贈与税シミュレーター" />
 
             {/* カテゴリー */}
             <div className="flex items-center gap-3 mb-4">
@@ -104,7 +86,7 @@ export function GiftTaxCalculator() {
 
             {/* タイトル・説明文 */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              不動産の贈与税を10秒で無料計算｜早見表・特例控除対応
+              不動産の贈与税 計算シミュレーション｜早見表・特例対応
             </h1>
             <p className="text-gray-600 mb-8">
               贈与金額を入力するだけで、贈与税額の目安を概算計算します。
@@ -232,27 +214,20 @@ export function GiftTaxCalculator() {
                 早見表（シミュレーター直下）
             ================================================================= */}
             <section className="mb-12">
-              <QuickReferenceTable
-                title="贈与税額早見表（暦年課税・特例税率）"
-                description="父母・祖父母から18歳以上の子・孫への贈与の場合の目安です。基礎控除110万円を差し引いた後の税額を表示しています。"
-                headers={['贈与金額', '贈与税額（概算）']}
-                rows={quickReferenceData}
-                note="※一般税率（兄弟間・夫婦間等）の場合は税額が異なります"
-              />
-            </section>
-
-            {/* 一般税率の早見表 */}
-            <section className="mb-12">
-              <QuickReferenceTable
-                title="贈与税額早見表（暦年課税・一般税率）"
-                description="兄弟間、夫婦間、未成年への贈与など、特例税率が適用されない場合の目安です。"
-                headers={['贈与金額', '贈与税額（概算）']}
-                rows={GENERAL_RATE_TABLE.map(row => ({
+              <QuickReferenceTable3Col
+                title="贈与税額早見表（暦年課税）"
+                description="基礎控除110万円を差し引いた後の税額を表示しています。"
+                headers={[
+                  '贈与金額',
+                  { title: '特例税率', sub: '父母・祖父母→子・孫' },
+                  { title: '一般税率', sub: 'その他の贈与' },
+                ]}
+                rows={SPECIAL_RATE_TABLE.map((row, index) => ({
                   label: formatManYen(row.giftAmount),
-                  value: formatManYen(row.taxAmount),
-                  subValue: '一般税率',
+                  value1: formatManYen(row.taxAmount),
+                  value2: formatManYen(GENERAL_RATE_TABLE[index]?.taxAmount ?? 0),
                 }))}
-                note="※特例税率と比較して税負担が重くなります"
+                note="※特例税率は贈与を受けた年の1月1日時点で18歳以上の場合に適用"
               />
             </section>
 

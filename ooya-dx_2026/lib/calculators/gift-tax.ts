@@ -237,6 +237,7 @@ export function calculateGiftTax(input: GiftTaxInput): GiftTaxResult {
 
 /** 暦年課税の早見表データ（特例税率） */
 export const SPECIAL_RATE_TABLE = [
+  { giftAmount: 1000000, taxAmount: 0 },
   { giftAmount: 2000000, taxAmount: 90000 },
   { giftAmount: 3000000, taxAmount: 190000 },
   { giftAmount: 4000000, taxAmount: 335000 },
@@ -252,6 +253,7 @@ export const SPECIAL_RATE_TABLE = [
 
 /** 暦年課税の早見表データ（一般税率） */
 export const GENERAL_RATE_TABLE = [
+  { giftAmount: 1000000, taxAmount: 0 },
   { giftAmount: 2000000, taxAmount: 90000 },
   { giftAmount: 3000000, taxAmount: 190000 },
   { giftAmount: 4000000, taxAmount: 335000 },

@@ -71,7 +71,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: '計算ツール',
+      name: '不動産・賃貸経営計算ツール',
       item: 'https://www.ooya.tech/tools',
     },
     {

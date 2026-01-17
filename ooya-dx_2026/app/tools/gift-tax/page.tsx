@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '不動産の贈与税を10秒で無料計算｜早見表・特例控除対応',
+  title: '不動産の贈与税 計算シミュレーション｜早見表・特例対応',
   description:
     '不動産を贈与した際の贈与税を無料で概算計算。贈与金額を入力するだけで税額の目安がわかります。暦年課税の早見表、住宅取得資金贈与の非課税特例、配偶者控除（おしどり贈与）にも対応。',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '贈与税 110万円',
   ],
   openGraph: {
-    title: '不動産の贈与税を10秒で無料計算｜早見表・特例控除対応',
+    title: '不動産の贈与税 計算シミュレーション｜早見表・特例対応',
     description: '不動産を贈与した際の贈与税を無料で概算計算。贈与金額を入力するだけで税額の目安がわかります。',
     url: `${BASE_URL}/tools/gift-tax`,
     siteName: '大家DX',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産の贈与税を10秒で無料計算｜早見表・特例控除対応',
+    title: '不動産の贈与税 計算シミュレーション｜早見表・特例対応',
     description: '不動産を贈与した際の贈与税を無料で概算計算。贈与金額を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
@@ -76,7 +76,7 @@ const breadcrumbSchema = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: '計算ツール',
+      name: '不動産・賃貸経営計算ツール',
       item: `${BASE_URL}/tools`
     },
     {

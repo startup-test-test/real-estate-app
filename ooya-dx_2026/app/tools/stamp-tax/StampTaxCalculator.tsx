@@ -10,6 +10,7 @@ import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import {
   calculateStampTax,
   ContractType,
@@ -98,17 +99,7 @@ export function StampTaxCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <nav className="flex items-center text-sm text-gray-500 mb-6">
-            <Link href="/" className="hover:text-primary-600">
-              ホーム
-            </Link>
-            <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-            <Link href="/tools" className="hover:text-primary-600">
-              計算ツール
-            </Link>
-            <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-            <span className="text-gray-900">印紙税シミュレーター</span>
-          </nav>
+          <ToolsBreadcrumb currentPage="印紙税シミュレーター" />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">

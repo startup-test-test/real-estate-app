@@ -86,7 +86,7 @@ export default function ToolsPage() {
                 ホーム
               </Link>
               <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <span className="text-gray-900">計算ツール</span>
+              <span className="text-gray-900">不動産・賃貸経営計算ツール</span>
             </nav>
 
             {/* ヘッダー */}
