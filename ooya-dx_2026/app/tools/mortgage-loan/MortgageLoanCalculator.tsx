@@ -1,38 +1,19 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Home, AlertTriangle, CheckCircle, Info } from 'lucide-react'
+import { Home, Info } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import {
   calculateMortgageLoan,
   RepaymentMethod,
-  QUICK_REFERENCE_BY_RATE,
-  QUICK_REFERENCE_BY_AMOUNT,
-  formatManYen,
 } from '@/lib/calculators/mortgageLoan'
-
-// =================================================================
-// 早見表データ
-// =================================================================
-const quickRefByRate: QuickReferenceRow[] = QUICK_REFERENCE_BY_RATE.map(row => ({
-  label: `${row.rate}%`,
-  value: `${Math.floor(row.monthlyPayment / 10000).toLocaleString()}万円`,
-  subValue: `総額${formatManYen(row.totalPayment)}`,
-}))
-
-const quickRefByAmount: QuickReferenceRow[] = QUICK_REFERENCE_BY_AMOUNT.map(row => ({
-  label: formatManYen(row.amount),
-  value: `${(row.monthlyPayment / 10000).toFixed(1)}万円`,
-  subValue: `利息${formatManYen(row.totalInterest)}`,
-}))
 
 // =================================================================
 // 目次項目
@@ -41,7 +22,6 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '住宅ローンの返済方式とは', level: 2 },
   { id: 'equal-pi', title: '元利均等返済', level: 3 },
   { id: 'equal-p', title: '元金均等返済', level: 3 },
-  { id: 'ratio', title: '返済負担率の目安', level: 3 },
   { id: 'bonus', title: 'ボーナス返済について', level: 3 },
 ]
 
@@ -50,16 +30,19 @@ const tocItems: TocItem[] = [
 // =================================================================
 export function MortgageLoanCalculator() {
   // 入力状態
-  const [loanAmountInMan, setLoanAmountInMan] = useState<number>(3000)
+  const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0)
+  const [downPaymentInMan, setDownPaymentInMan] = useState<number>(0)
   const [annualRate, setAnnualRate] = useState<number>(1.5)
   const [loanTermYears, setLoanTermYears] = useState<number>(35)
   const [repaymentMethod, setRepaymentMethod] = useState<RepaymentMethod>('equalPrincipalAndInterest')
-  const [bonusRatio, setBonusRatio] = useState<number>(0)
-  const [annualIncomeInMan, setAnnualIncomeInMan] = useState<number>(0)
+  const [annualBonusInMan, setAnnualBonusInMan] = useState<number>(0)
+
+  // 借入額を自動計算
+  const loanAmountInMan = Math.max(0, propertyPriceInMan - downPaymentInMan)
 
   // 円に変換
   const loanAmountInYen = loanAmountInMan * 10000
-  const annualIncomeInYen = annualIncomeInMan * 10000
+  const annualBonusInYen = annualBonusInMan * 10000
 
   // 計算結果
   const result = useMemo(() => {
@@ -71,29 +54,9 @@ export function MortgageLoanCalculator() {
       annualRate,
       loanTermYears,
       repaymentMethod,
-      bonusRatio,
-      annualIncome: annualIncomeInYen > 0 ? annualIncomeInYen : undefined,
+      annualBonusPayment: annualBonusInYen,
     })
-  }, [loanAmountInYen, annualRate, loanTermYears, repaymentMethod, bonusRatio, annualIncomeInYen])
-
-  // 返済負担率の色
-  const getRatioColor = (evaluation: string | null) => {
-    switch (evaluation) {
-      case 'safe': return 'text-green-600'
-      case 'caution': return 'text-amber-600'
-      case 'danger': return 'text-red-600'
-      default: return 'text-gray-600'
-    }
-  }
-
-  const getRatioBg = (evaluation: string | null) => {
-    switch (evaluation) {
-      case 'safe': return 'bg-green-50 border-green-200'
-      case 'caution': return 'bg-amber-50 border-amber-200'
-      case 'danger': return 'bg-red-50 border-red-200'
-      default: return 'bg-gray-50 border-gray-200'
-    }
-  }
+  }, [loanAmountInYen, annualRate, loanTermYears, repaymentMethod, annualBonusInYen])
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -116,11 +79,11 @@ export function MortgageLoanCalculator() {
 
           {/* タイトル・説明文 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            住宅ローン返済額シミュレーター｜毎月の返済額を10秒で計算
+            住宅ローン 計算シミュレーション｜毎月返済額・総返済額
           </h1>
           <p className="text-gray-600 mb-8">
-            借入額・金利・返済期間を入力するだけで、毎月の返済額や総返済額を概算計算します。
-            ボーナス返済併用や返済負担率の確認にも対応。
+            物件価格・頭金・金利・返済期間を入力するだけで、毎月の返済額や総返済額を概算計算します。
+            ボーナス返済併用にも対応しています。
           </p>
 
           {/* =================================================================
@@ -138,13 +101,31 @@ export function MortgageLoanCalculator() {
 
             {/* 入力エリア */}
             <div className="bg-white rounded-lg p-4 mb-4 space-y-4">
-              {/* 借入額 */}
+              {/* 物件価格 */}
               <NumberInput
-                label="借入額"
-                value={loanAmountInMan}
-                onChange={setLoanAmountInMan}
+                label="物件価格"
+                value={propertyPriceInMan}
+                onChange={setPropertyPriceInMan}
                 unit="万円"
-                placeholder="例：3000"
+                placeholder="例：5000"
+              />
+
+              {/* 頭金 */}
+              <NumberInput
+                label="頭金"
+                value={downPaymentInMan}
+                onChange={setDownPaymentInMan}
+                unit="万円"
+                placeholder="例：500"
+              />
+
+              {/* 年間ボーナス返済額 */}
+              <NumberInput
+                label="ボーナス返済額（年間合計）"
+                value={annualBonusInMan}
+                onChange={setAnnualBonusInMan}
+                unit="万円"
+                placeholder="例：50"
               />
 
               {/* 金利 */}
@@ -188,70 +169,16 @@ export function MortgageLoanCalculator() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   返済方式
                 </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="repaymentMethod"
-                      value="equalPrincipalAndInterest"
-                      checked={repaymentMethod === 'equalPrincipalAndInterest'}
-                      onChange={() => setRepaymentMethod('equalPrincipalAndInterest')}
-                      className="w-4 h-4 text-blue-600"
-                    />
-                    <span className="text-sm text-gray-700">元利均等返済</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="repaymentMethod"
-                      value="equalPrincipal"
-                      checked={repaymentMethod === 'equalPrincipal'}
-                      onChange={() => setRepaymentMethod('equalPrincipal')}
-                      className="w-4 h-4 text-blue-600"
-                    />
-                    <span className="text-sm text-gray-700">元金均等返済</span>
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  ※一般的には元利均等返済が主流です
-                </p>
-              </div>
-
-              {/* ボーナス返済 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ボーナス返済割合
-                </label>
                 <select
-                  value={bonusRatio}
-                  onChange={(e) => setBonusRatio(parseInt(e.target.value))}
+                  value={repaymentMethod}
+                  onChange={(e) => setRepaymentMethod(e.target.value as RepaymentMethod)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                 >
-                  <option value={0}>なし</option>
-                  <option value={10}>10%</option>
-                  <option value={20}>20%</option>
-                  <option value={30}>30%</option>
-                  <option value={40}>40%</option>
-                  <option value={50}>50%（上限）</option>
+                  <option value="equalPrincipalAndInterest">元利均等返済</option>
+                  <option value="equalPrincipal">元金均等返済</option>
                 </select>
               </div>
 
-              {/* 年収（任意） */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  年収（任意：返済負担率の計算用）
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={annualIncomeInMan || ''}
-                    onChange={(e) => setAnnualIncomeInMan(parseInt(e.target.value) || 0)}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="例：500"
-                  />
-                  <span className="text-gray-600 font-medium">万円</span>
-                </div>
-              </div>
             </div>
 
             {/* 結果エリア */}
@@ -259,8 +186,14 @@ export function MortgageLoanCalculator() {
               <div className="bg-white rounded-lg p-4">
                 {/* メイン結果 */}
                 <div className="grid grid-cols-2 gap-y-3 text-base">
-                  <span className="text-gray-600">借入額</span>
-                  <span className="text-right font-medium">{loanAmountInMan.toLocaleString()}万円</span>
+                  <span className="text-gray-600">物件価格</span>
+                  <span className="text-right font-medium">{propertyPriceInMan.toLocaleString()}万円</span>
+
+                  <span className="text-gray-600">頭金</span>
+                  <span className="text-right font-medium text-green-600">-{downPaymentInMan.toLocaleString()}万円</span>
+
+                  <span className="text-gray-600 border-t pt-2">借入額</span>
+                  <span className="text-right font-medium border-t pt-2">{loanAmountInMan.toLocaleString()}万円</span>
 
                   <span className="text-gray-600">金利</span>
                   <span className="text-right font-medium">{annualRate}%</span>
@@ -275,95 +208,41 @@ export function MortgageLoanCalculator() {
                     毎月の返済額
                   </span>
                   <span className="text-right text-2xl font-bold text-blue-700 border-t-2 border-blue-300 pt-4 mt-2">
-                    {(result.monthlyPayment / 10000).toFixed(1)}万円
-                  </span>
-                  <span className="text-gray-500 text-sm"></span>
-                  <span className="text-right text-sm text-gray-500">
-                    = {result.monthlyPayment.toLocaleString()}円
+                    約{(result.monthlyPayment / 10000).toFixed(1)}万円
                   </span>
 
-                  {bonusRatio > 0 && (
+                  {annualBonusInMan > 0 && (
                     <>
-                      <span className="text-gray-600">ボーナス月の返済額</span>
+                      <span className="text-gray-600">ボーナス返済（年間）</span>
                       <span className="text-right font-bold text-blue-600">
-                        {(result.bonusMonthPayment / 10000).toFixed(1)}万円
-                      </span>
-                      <span className="text-gray-500 text-xs">（通常月＋ボーナス加算）</span>
-                      <span className="text-right text-xs text-gray-500">
-                        加算額: {(result.bonusAddition / 10000).toFixed(1)}万円/回
+                        {annualBonusInMan.toLocaleString()}万円
                       </span>
                     </>
                   )}
 
                   <span className="text-gray-600 border-t pt-3">年間返済額</span>
                   <span className="text-right font-medium border-t pt-3">
-                    {(result.annualPayment / 10000).toFixed(1)}万円
+                    約{(result.annualPayment / 10000).toFixed(1)}万円
                   </span>
 
                   <span className="text-gray-600">総返済額</span>
                   <span className="text-right font-medium">
-                    {(result.totalPayment / 10000).toLocaleString()}万円
+                    約{Math.round(result.totalPayment / 10000).toLocaleString()}万円
                   </span>
 
                   <span className="text-gray-600">総利息</span>
                   <span className="text-right font-medium text-amber-600">
-                    {(result.totalInterest / 10000).toLocaleString()}万円
+                    約{Math.round(result.totalInterest / 10000).toLocaleString()}万円
                   </span>
                 </div>
 
                 {/* 計算式表示 */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 mb-2">計算式</p>
-                  <div className="text-sm text-gray-700 font-mono space-y-1">
-                    <p>【毎月返済額】元利均等: P × r(1+r)^n / ((1+r)^n - 1)</p>
-                    <p>【総返済額】{loanAmountInMan.toLocaleString()}万円 + {(result.totalInterest / 10000).toLocaleString()}万円（利息） = {(result.totalPayment / 10000).toLocaleString()}万円</p>
+                  <p className="text-xs text-gray-500 mb-2">計算内訳</p>
+                  <div className="text-sm text-gray-700 space-y-1">
+                    <p>借入額 {loanAmountInMan.toLocaleString()}万円 + 利息 約{Math.round(result.totalInterest / 10000).toLocaleString()}万円 = 総返済額 約{Math.round(result.totalPayment / 10000).toLocaleString()}万円</p>
                   </div>
                 </div>
-
-                {/* 返済負担率 */}
-                {result.repaymentRatio !== null && (
-                  <div className={`mt-4 p-3 rounded-lg border ${getRatioBg(result.repaymentRatioEvaluation)}`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {result.repaymentRatioEvaluation === 'safe' && (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
-                        )}
-                        {result.repaymentRatioEvaluation === 'caution' && (
-                          <AlertTriangle className="w-5 h-5 text-amber-600" />
-                        )}
-                        {result.repaymentRatioEvaluation === 'danger' && (
-                          <AlertTriangle className="w-5 h-5 text-red-600" />
-                        )}
-                        <span className="font-medium text-gray-700">返済負担率</span>
-                      </div>
-                      <span className={`text-xl font-bold ${getRatioColor(result.repaymentRatioEvaluation)}`}>
-                        {result.repaymentRatio}%
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {result.repaymentRatioEvaluation === 'safe' && '安全圏内です（25%以下）'}
-                      {result.repaymentRatioEvaluation === 'caution' && '注意が必要です（25〜35%）'}
-                      {result.repaymentRatioEvaluation === 'danger' && '審査に影響する可能性があります（35%超）'}
-                    </p>
-                  </div>
-                )}
-
-                {/* 注意事項 */}
-                {result.notes.length > 0 && (
-                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-amber-800 mb-1">ご確認ください</p>
-                        <ul className="text-xs text-amber-700 space-y-1">
-                          {result.notes.map((note, index) => (
-                            <li key={index}>・{note}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -372,29 +251,97 @@ export function MortgageLoanCalculator() {
           <CalculatorNote />
 
           {/* =================================================================
-              早見表（金利別）
+              早見表（マトリクス）
           ================================================================= */}
-          <section className="mb-12">
-            <QuickReferenceTable
-              title="金利別 毎月返済額早見表"
-              description="借入額3,000万円・35年返済・元利均等の場合"
-              headers={['金利', '毎月返済額']}
-              rows={quickRefByRate}
-              note="※概算値です。詳細は金融機関にご確認ください"
-            />
-          </section>
-
-          {/* =================================================================
-              早見表（借入額別）
-          ================================================================= */}
-          <section className="mb-12">
-            <QuickReferenceTable
-              title="借入額別 毎月返済額早見表"
-              description="金利1.5%・35年返済・元利均等の場合"
-              headers={['借入額', '毎月返済額']}
-              rows={quickRefByAmount}
-              note="※概算値です。詳細は金融機関にご確認ください"
-            />
+          <section className="mt-12 mb-12">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">住宅ローン返済額の早見表</h2>
+            <p className="text-sm text-gray-600 mb-4">35年返済・元利均等・ボーナス返済なしの場合</p>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 px-2 py-2 text-left font-semibold text-gray-700">借入額＼金利</th>
+                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">0.5%</th>
+                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">1.0%</th>
+                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">1.5%</th>
+                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">2.0%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">1,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">2.6万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">2.8万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">3.1万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">3.3万円</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">2,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">5.2万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">5.6万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">6.1万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">6.6万円</td>
+                  </tr>
+                  <tr className="bg-white">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">3,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">7.8万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">8.5万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">9.2万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">9.9万円</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">4,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">10.4万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">11.3万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">12.2万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">13.3万円</td>
+                  </tr>
+                  <tr className="bg-white">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">5,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">13.0万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">14.1万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">15.3万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">16.6万円</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">6,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">15.6万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">16.9万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">18.4万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">19.9万円</td>
+                  </tr>
+                  <tr className="bg-white">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">7,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">18.2万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">19.8万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">21.4万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">23.2万円</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">8,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">20.8万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">22.6万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">24.5万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">26.5万円</td>
+                  </tr>
+                  <tr className="bg-white">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">9,000万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">23.4万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">25.4万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">27.6万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">29.8万円</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-300 px-2 py-2 text-gray-900">1億円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">26.0万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">28.2万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">30.6万円</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">33.1万円</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">※詳細は金融機関にご確認ください</p>
           </section>
 
           {/* =================================================================
@@ -450,54 +397,11 @@ export function MortgageLoanCalculator() {
               </div>
             </div>
 
-            <SectionHeading id="ratio" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              返済負担率とは、年収に対する年間返済額の割合です。
-              多くの金融機関では、審査基準として30〜35%を上限としている場合が多いとされています。
-            </p>
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <div>
-                  <p className="font-medium text-green-800">25%以下：安全圏</p>
-                  <p className="text-sm text-green-700">余裕を持った返済が可能とされています</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
-                <div>
-                  <p className="font-medium text-amber-800">25〜35%：注意</p>
-                  <p className="text-sm text-amber-700">生活費との兼ね合いを確認することが推奨されています</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                <div>
-                  <p className="font-medium text-red-800">35%超：審査に影響の可能性</p>
-                  <p className="text-sm text-red-700">借入額の見直しを検討することが推奨されています</p>
-                </div>
-              </div>
-            </div>
-
             <SectionHeading id="bonus" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              ボーナス返済を併用すると、毎月の返済額を抑えることができますが、
-              総返済額（利息）はやや増加する傾向があるとされています。
-              また、転職や景気変動によるボーナス減額リスクも考慮が必要です。
+              ボーナス返済を併用すると、毎月の返済額を抑えることができます。
+              ボーナス月（年2回）に追加で返済を行う方式です。
             </p>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-amber-800">ボーナス返済の注意点</p>
-                  <ul className="text-sm text-amber-700 mt-1 space-y-1">
-                    <li>・総利息がやや増加する傾向があるとされています</li>
-                    <li>・ボーナス減額時のリスクを考慮することが推奨されています</li>
-                    <li>・多くの場合、借入額の50%以下が上限とされています</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </section>
 
           {/* =================================================================
@@ -520,7 +424,10 @@ export function MortgageLoanCalculator() {
           </div>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer
+            infoDate="2026年1月"
+            lastUpdated="2026年1月18日"
+          />
 
           {/* CTA */}
           <div className="mt-16 pt-8 border-t border-gray-100">
