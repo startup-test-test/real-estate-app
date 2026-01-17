@@ -499,7 +499,7 @@ export function InheritanceTaxCalculator() {
               参考リンク（エビデンス）
           ================================================================= */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-800 mb-2">参考リンク</h3>
+            <p className="font-semibold text-gray-800 mb-2">参考リンク</p>
             <ul className="text-sm text-blue-700 space-y-1">
               <li>
                 <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4152.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
