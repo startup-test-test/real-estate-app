@@ -8,7 +8,23 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
+
+// 目次データ（見出しの一元管理）
+const tocItems: TocItem[] = [
+  { id: 'about', title: '仲介手数料とは', level: 2 },
+  { id: 'calculation', title: '計算方法（速算式）', level: 3 },
+  { id: 'rate', title: '正式な料率', level: 3 },
+  { id: 'example', title: '具体的な計算例', level: 3 },
+  { id: 'revision2024', title: '2024年法改正について', level: 2 },
+  { id: 'payment', title: '支払いと仕組み', level: 2 },
+  { id: 'timing', title: '支払いのタイミング', level: 3 },
+  { id: 'type', title: '両手仲介と片手仲介', level: 3 },
+  { id: 'free', title: '仲介手数料がかからないケース', level: 2 },
+  { id: 'difference', title: '売買と賃貸の違い', level: 2 },
+]
 
 // 早見表データ（主要価格帯）
 const quickReferenceData: QuickReferenceRow[] = [
@@ -75,14 +91,14 @@ export function BrokerageCalculator() {
 
             {/* タイトル */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              不動産売買の仲介手数料を10秒で無料計算｜早見表付き
+              不動産売買の仲介手数料 計算シミュレーション｜早見表付き
             </h1>
             <p className="text-gray-600 mb-8">
               売買価格を入力するだけで、仲介手数料の上限額を瞬時に計算します。
             </p>
 
             {/* シミュレーター本体 */}
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-12 shadow-sm">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-blue-500 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,6 +186,9 @@ export function BrokerageCalculator() {
               </div>
             </div>
 
+            {/* 計算結果の注記 */}
+            <CalculatorNote />
+
             {/* 早見表（シミュレーター直下） */}
             <section className="mb-12">
               <QuickReferenceTable
@@ -181,81 +200,18 @@ export function BrokerageCalculator() {
               />
             </section>
 
-            {/* 目次 */}
-            <nav className="bg-gray-50 rounded-lg p-5 mb-10">
-              <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-                目次
-              </h2>
-              <ol className="space-y-1 text-sm">
-                <li>
-                  <a href="#about" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    仲介手数料とは
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#calculation" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    計算方法（速算式）
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#rate" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    正式な料率
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#revision2024" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    2024年法改正について
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#example" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    具体的な計算例
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#timing" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    支払いのタイミング
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#type" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    両手仲介と片手仲介
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#free" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    仲介手数料がかからないケース
-                  </a>
-                </li>
-                <li className="ml-4">
-                  <a href="#difference" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    売買と賃貸の違い
-                  </a>
-                </li>
-                <li>
-                  <a href="#points" className="block py-1 text-gray-600 hover:text-primary-600 transition-colors">
-                    仲介手数料の知っておきたいポイント
-                  </a>
-                </li>
-              </ol>
-            </nav>
+            {/* 目次（自動生成） */}
+            <TableOfContents items={tocItems} />
 
             {/* 解説セクション */}
             <section className="mb-12">
-              <h2 id="about" className="text-xl font-bold text-gray-900 mb-4">
-                仲介手数料とは
-              </h2>
+              <SectionHeading id="about" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
                 仲介手数料とは、不動産売買の際に、売主・買主と不動産会社との間で仲介契約を結び、取引が成立した場合に不動産会社に支払う報酬のことです。
                 不動産会社は物件の紹介、内見の手配、契約書類の作成、価格交渉のサポートなど、取引全体をサポートする対価として仲介手数料を受け取ります。
               </p>
 
-              <h3 id="calculation" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                計算方法（速算式）
-              </h3>
+              <SectionHeading id="calculation" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
                 仲介手数料の上限額は法律で定められており、以下の計算式で求められます。
               </p>
@@ -269,9 +225,7 @@ export function BrokerageCalculator() {
                 </p>
               </div>
 
-              <h3 id="rate" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                正式な料率
-              </h3>
+              <SectionHeading id="rate" items={tocItems} />
               <ul className="list-disc list-inside text-gray-700 space-y-2">
                 <li>200万円以下の部分：5%</li>
                 <li>200万円超〜400万円以下の部分：4%</li>
@@ -281,9 +235,7 @@ export function BrokerageCalculator() {
                 速算式「3%+6万円」は、上記の料率を一括で計算できる便利な公式です。
               </p>
 
-              <h3 id="revision2024" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                2024年法改正について
-              </h3>
+              <SectionHeading id="revision2024" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
                 2024年7月1日に国土交通省の告示が改正され、<span className="font-medium">800万円以下の物件</span>について仲介手数料の特例が設けられました。
               </p>
@@ -301,18 +253,25 @@ export function BrokerageCalculator() {
               <p className="text-xs text-gray-500">
                 参照：
                 <a
-                  href="https://biz.homes.jp/column/topics-00146"
+                  href="https://www.mlit.go.jp/totikensangyo/const/1_6_bf_000013.html"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline ml-1"
+                >
+                  国土交通省「不動産取引に関するお知らせ」
+                </a>
+                <span className="mx-1">|</span>
+                <a
+                  href="https://biz.homes.jp/column/topics-00146"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
                 >
                   LIFULL HOME'S「800万円以下の不動産契約で仲介手数料見直し」
                 </a>
               </p>
 
-              <h3 id="example" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                具体的な計算例
-              </h3>
+              <SectionHeading id="example" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
                 3,000万円の物件を購入する場合の仲介手数料を計算してみましょう。
               </p>
@@ -325,9 +284,9 @@ export function BrokerageCalculator() {
                 </ul>
               </div>
 
-              <h3 id="timing" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                支払いのタイミング
-              </h3>
+              <SectionHeading id="payment" items={tocItems} />
+
+              <SectionHeading id="timing" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
                 仲介手数料の支払いタイミングは不動産会社によって異なりますが、一般的には以下のパターンが多いです。
               </p>
@@ -339,9 +298,7 @@ export function BrokerageCalculator() {
                 契約前に不動産会社へ確認しておくことをおすすめします。
               </p>
 
-              <h3 id="type" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                両手仲介と片手仲介
-              </h3>
+              <SectionHeading id="type" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
                 不動産取引には「両手仲介」と「片手仲介」の2つのパターンがあります。
               </p>
@@ -353,21 +310,28 @@ export function BrokerageCalculator() {
                 どちらの場合でも、買主・売主が支払う手数料の上限額は同じです。
               </p>
 
-              <h3 id="free" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                仲介手数料がかからないケース
-              </h3>
+              <SectionHeading id="free" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
-                以下のケースでは仲介手数料が発生しません。
+                仲介手数料は「仲介（媒介）」に対する報酬です。そのため、仲介がない以下のケースでは仲介手数料が発生しません。
               </p>
               <ul className="list-disc list-inside text-gray-700 space-y-2">
                 <li>売主から直接購入する場合（売主物件）</li>
                 <li>不動産会社が売主の場合（自社物件）</li>
                 <li>個人間で直接取引する場合</li>
               </ul>
+              <p className="text-xs text-gray-500 mt-3">
+                参照：
+                <a
+                  href="https://www.homes.co.jp/cont/money/money_00356/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline ml-1"
+                >
+                  LIFULL HOME'S「不動産における仲介手数料について」
+                </a>
+              </p>
 
-              <h3 id="difference" className="text-lg font-semibold text-gray-900 mt-8 mb-3">
-                売買と賃貸の違い
-              </h3>
+              <SectionHeading id="difference" items={tocItems} />
               <p className="text-gray-700 mb-3 leading-relaxed">
                 仲介手数料は売買と賃貸で計算方法が異なります。
               </p>

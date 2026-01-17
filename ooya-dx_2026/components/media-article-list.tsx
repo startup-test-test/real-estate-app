@@ -52,61 +52,63 @@ export function MediaArticleList({ articles, categories }: Props) {
         </div>
       )}
 
-      {/* 記事一覧 */}
-      <div className="divide-y divide-gray-100">
+      {/* 記事一覧 - グリッド表示 */}
+      <div className="py-6">
         {articles.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-gray-400">記事がありません</p>
           </div>
         ) : (
-          articles.map((article, index) => (
-            <Link
-              key={`${article.categorySlug}-${article.slug}`}
-              href={`/media/${article.categorySlug}/${article.slug}`}
-              className="block py-6 group"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <div className="flex gap-4">
-                {/* サムネイル */}
-                <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-24 rounded-lg overflow-hidden bg-gray-100">
-                  {article.thumbnail ? (
-                    <img
-                      src={article.thumbnail}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <span className="text-gray-400 text-xs">No Image</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* コンテンツ */}
-                <div className="flex-1 min-w-0">
-                  {/* カテゴリー & 日付 */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-                      {article.category}
-                    </span>
-                    <time className="text-xs text-gray-400">
-                      {formatDate(article.date)}
-                    </time>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {articles.map((article, index) => (
+              <Link
+                key={`${article.categorySlug}-${article.slug}`}
+                href={`/media/${article.categorySlug}/${article.slug}`}
+                className="block group"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <article className="h-full bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {/* サムネイル */}
+                  <div className="aspect-[16/9] overflow-hidden bg-gray-100">
+                    {article.thumbnail ? (
+                      <img
+                        src={article.thumbnail}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <span className="text-gray-400 text-xs">No Image</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* タイトル */}
-                  <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-snug group-hover:text-primary-600 transition-colors line-clamp-2">
-                    {article.title}
-                  </h2>
+                  {/* コンテンツ */}
+                  <div className="p-4">
+                    {/* カテゴリー & 日付 */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+                        {article.category}
+                      </span>
+                      <time className="text-xs text-gray-400">
+                        {formatDate(article.date)}
+                      </time>
+                    </div>
 
-                  {/* 説明文 - PCのみ表示 */}
-                  <p className="hidden sm:block mt-1 text-sm text-gray-600 leading-relaxed line-clamp-1">
-                    {article.description}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))
+                    {/* タイトル */}
+                    <h2 className="text-base font-bold text-gray-900 leading-snug group-hover:text-primary-600 transition-colors line-clamp-2 mb-2">
+                      {article.title}
+                    </h2>
+
+                    {/* 説明文 */}
+                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">
+                      {article.description}
+                    </p>
+                  </div>
+                </article>
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </>

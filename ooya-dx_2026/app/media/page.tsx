@@ -71,7 +71,7 @@ export default function MediaPage() {
         <div className="h-[72px] sm:h-[88px]"></div>
 
         {/* パンくずリスト */}
-        <nav className="max-w-2xl mx-auto px-5 py-3 w-full">
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 w-full">
           <ol className="flex items-center text-sm text-gray-500">
             <li className="flex items-center">
               <Link href="/" className="hover:text-gray-700 flex items-center">
@@ -93,7 +93,7 @@ export default function MediaPage() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 flex items-center">
-          <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
             <div className="max-w-xl">
               <p className="text-2xl sm:text-3xl md:text-4xl text-gray-900 whitespace-nowrap">
                 テック×不動産で、意思決定を数字で。
@@ -108,7 +108,42 @@ export default function MediaPage() {
 
       {/* メインコンテンツ */}
       <main className="flex-1">
-        <div className="max-w-2xl mx-auto px-5">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+
+          {/* 著者プロフィール */}
+          <div className="py-8 border-b border-gray-100">
+            <Link href="/media/profile" className="group block">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100 group-hover:ring-primary-200 transition-all">
+                  <img
+                    src="/images/profile/profile.jpg"
+                    alt="Tetsuro Togo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
+                      Tetsuro Togo
+                    </h3>
+                    <span className="text-xs text-gray-400">著者</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">
+                    株式会社StartupMarketing 代表取締役
+                  </p>
+                  <p className="text-xs text-gray-500 line-clamp-2">
+                    2025年9月時点で7戸購入、1戸売却、現在6戸保有。開発×マーケ×不動産の掛け合わせで、再生と収益改善に強み。
+                  </p>
+                </div>
+                <div className="hidden sm:flex items-center text-sm text-primary-600 group-hover:translate-x-1 transition-transform">
+                  プロフィールを見る
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
+          </div>
 
           <MediaArticleList articles={articles} categories={categories} />
 
