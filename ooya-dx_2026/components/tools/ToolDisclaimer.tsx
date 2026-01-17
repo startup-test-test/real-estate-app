@@ -8,7 +8,7 @@
 interface ToolDisclaimerProps {
   /** 最終更新日（例: "2026年1月15日"） */
   lastUpdated?: string
-  /** 情報の基準時点（例: "2025年1月"） */
+  /** 情報の基準時点（例: "2025年度の税制"） */
   infoDate?: string
   /** 追加の免責事項項目 */
   additionalItems?: string[]
@@ -16,7 +16,7 @@ interface ToolDisclaimerProps {
 
 export function ToolDisclaimer({
   lastUpdated = '2026年1月15日',
-  infoDate = '2025年1月',
+  infoDate = '2025年度の税制',
   additionalItems = [],
 }: ToolDisclaimerProps) {
   return (

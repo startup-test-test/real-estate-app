@@ -263,8 +263,8 @@ export const GENERAL_RATE_TABLE = [
   { giftAmount: 8000000, taxAmount: 1510000 },
   { giftAmount: 10000000, taxAmount: 2310000 },
   { giftAmount: 15000000, taxAmount: 4505000 },
-  { giftAmount: 20000000, taxAmount: 6955000 },
-  { giftAmount: 30000000, taxAmount: 12305000 },
+  { giftAmount: 20000000, taxAmount: 6950000 },
+  { giftAmount: 30000000, taxAmount: 11950000 },
 ]
 
 // =================================================================

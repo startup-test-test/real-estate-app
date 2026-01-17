@@ -118,6 +118,9 @@ export function GiftTaxCalculator() {
                   unit="万円"
                   placeholder="例：3000"
                 />
+                <p className="text-xs text-gray-500">
+                  ※不動産の場合は「相続税評価額（路線価・固定資産税評価額）」を入力してください。市場価格より低くなります（土地は約8割、建物は約7割が目安）。
+                </p>
                 {giftAmountInMan > 0 && (
                   <p className="text-sm text-gray-500">
                     = {giftAmountInMan.toLocaleString('ja-JP')}万円（{giftAmountInYen.toLocaleString('ja-JP')}円）
@@ -182,7 +185,7 @@ export function GiftTaxCalculator() {
                     <div className="text-sm text-gray-700 font-mono space-y-1">
                       <p>{giftAmountInMan.toLocaleString()}万円 - 110万円（基礎控除） = {(result.taxableAmount / 10000).toLocaleString()}万円</p>
                       {result.taxAmount > 0 && (
-                        <p>{(result.taxableAmount / 10000).toLocaleString()}万円 × {result.appliedRate} - 控除額 = {(result.taxAmount / 10000).toLocaleString()}万円</p>
+                        <p>{(result.taxableAmount / 10000).toLocaleString()}万円 × {result.appliedRate} - {(result.quickDeduction / 10000).toLocaleString()}万円（控除額） = {(result.taxAmount / 10000).toLocaleString()}万円</p>
                       )}
                     </div>
                   </div>
