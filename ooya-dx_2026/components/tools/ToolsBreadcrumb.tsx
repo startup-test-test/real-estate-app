@@ -21,7 +21,7 @@ interface ToolsBreadcrumbProps {
  */
 export function ToolsBreadcrumb({ currentPage }: ToolsBreadcrumbProps) {
   return (
-    <nav className="flex items-center text-sm text-gray-500 mb-6" aria-label="パンくずリスト">
+    <nav className="flex flex-wrap items-center text-sm text-gray-500 mb-6" aria-label="パンくずリスト">
       <Link href="/" className="hover:text-primary-600">
         ホーム
       </Link>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { RegistrationTaxCalculator } from './RegistrationTaxCalculator'
 
 export const metadata: Metadata = {
-  title: '不動産の登録免許税を自動計算｜軽減税率対応【2026年最新】 | 大家DX',
+  title: '不動産の登録免許税 計算シミュレーション｜軽減税率対応',
   description:
     '不動産購入時の登録免許税を無料で計算。土地・建物の移転登記、新築の保存登記、抵当権設定登記に対応。軽減税率（長期優良住宅・低炭素住宅）も自動判定します。',
   keywords: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     '中古住宅 登記費用',
   ],
   openGraph: {
-    title: '不動産の登録免許税を自動計算｜軽減税率対応【2026年最新】',
+    title: '不動産の登録免許税 計算シミュレーション｜軽減税率対応',
     description:
       '不動産購入時の登録免許税を無料で計算。土地・建物の移転登記、新築の保存登記、抵当権設定登記に対応。',
     type: 'website',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産の登録免許税を自動計算｜軽減税率対応',
+    title: '不動産の登録免許税 計算シミュレーション｜軽減税率対応',
     description:
       '不動産購入時の登録免許税を無料で計算。軽減税率も自動判定。',
   },

@@ -7,7 +7,7 @@ import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
-import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
+import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
@@ -33,24 +33,23 @@ const structureOptions: { value: BuildingStructure; label: string; usefulLife: n
 ]
 
 // =================================================================
-// 早見表データ（新築・建物価格3,000万円の場合）
+// 早見表データ（建物価格3,000万円の場合）
 // =================================================================
-const quickReferenceData: QuickReferenceRow[] = [
-  { label: '鉄筋コンクリート造（RC）', value: '約66万円/年', subValue: '耐用年数47年・償却率2.2%' },
-  { label: '重量鉄骨造（4mm超）', value: '約90万円/年', subValue: '耐用年数34年・償却率3.0%' },
-  { label: '軽量鉄骨造（3mm超4mm以下）', value: '約114万円/年', subValue: '耐用年数27年・償却率3.8%' },
-  { label: '木造', value: '約138万円/年', subValue: '耐用年数22年・償却率4.6%' },
-]
-
-// 中古木造の早見表
-const usedWoodQuickReference: QuickReferenceRow[] = [
-  { label: '築10年', value: '約200万円/年', subValue: '耐用年数14年・償却率7.2%' },
-  { label: '築15年', value: '約300万円/年', subValue: '耐用年数10年・償却率10.0%' },
-  { label: '築20年', value: '約500万円/年', subValue: '耐用年数6年・償却率16.7%' },
-  { label: '築22年以上', value: '約750万円/年', subValue: '耐用年数4年・償却率25.0%' },
+const quickReferenceData: QuickReferenceRow3Col[] = [
+  { label: '新築 RC造', value1: '47年', value2: '66万円/年' },
+  { label: '新築 重量鉄骨造', value1: '34年', value2: '90万円/年' },
+  { label: '新築 軽量鉄骨造', value1: '27年', value2: '114万円/年' },
+  { label: '新築 木造', value1: '22年', value2: '138万円/年' },
+  { label: '中古木造（築10年）', value1: '14年', value2: '200万円/年' },
+  { label: '中古木造（築15年）', value1: '10年', value2: '300万円/年' },
+  { label: '中古木造（築20年）', value1: '6年', value2: '500万円/年' },
+  { label: '中古木造（築22年超）', value1: '4年', value2: '750万円/年' },
 ]
 
 // 目次データ
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産の減価償却費 計算シミュレーション｜早見表・中古建物対応'
+
 const tocItems: TocItem[] = [
   { id: 'about', title: '減価償却とは', level: 2 },
   { id: 'calculation', title: '計算方法（定額法）', level: 3 },
@@ -62,27 +61,30 @@ const tocItems: TocItem[] = [
 // コンポーネント
 // =================================================================
 export function DepreciationCalculator() {
-  // 入力状態
-  const [buildingCost, setBuildingCost] = useState<number>(0)
+  // 入力状態（万円単位）
+  const [buildingCostInMan, setBuildingCostInMan] = useState<number>(0)
   const [structure, setStructure] = useState<BuildingStructure>('wood')
   const [buildingAge, setBuildingAge] = useState<number>(0)
   const [acquisitionMonth, setAcquisitionMonth] = useState<number>(1)
 
+  // 円に変換
+  const buildingCostInYen = buildingCostInMan * 10000
+
   // 計算結果（useMemoで自動計算）
   const result = useMemo(() => {
-    if (buildingCost <= 0) {
+    if (buildingCostInMan <= 0) {
       return null
     }
     return calculateDepreciation({
-      buildingCost,
+      buildingCost: buildingCostInYen,
       structure,
       buildingAge,
       acquisitionMonth,
     })
-  }, [buildingCost, structure, buildingAge, acquisitionMonth])
+  }, [buildingCostInYen, structure, buildingAge, acquisitionMonth])
 
   // 入力があるかどうか
-  const hasInput = buildingCost > 0
+  const hasInput = buildingCostInMan > 0
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -94,7 +96,7 @@ export function DepreciationCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="減価償却シミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -105,7 +107,7 @@ export function DepreciationCalculator() {
 
           {/* タイトル・説明文 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            減価償却費を10秒で無料計算｜構造別早見表付き
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             建物の取得価額と構造・築年数を入力するだけで、年間の減価償却費を瞬時に計算します。
@@ -130,20 +132,11 @@ export function DepreciationCalculator() {
               {/* 建物取得価額 */}
               <NumberInput
                 label="建物取得価額（土地を除く）"
-                value={buildingCost}
-                onChange={setBuildingCost}
-                unit="円"
-                placeholder="30,000,000"
+                value={buildingCostInMan}
+                onChange={setBuildingCostInMan}
+                unit="万円"
+                placeholder="例：3000"
               />
-              {buildingCost > 0 ? (
-                <p className="text-sm text-gray-500 -mt-2">
-                  = {(buildingCost / 10000).toLocaleString('ja-JP')} 万円
-                </p>
-              ) : (
-                <p className="text-xs text-gray-400 -mt-2">
-                  例：3,000万円の建物 → 年間約66万円〜138万円（構造による）
-                </p>
-              )}
 
               {/* 建物構造 */}
               <div>
@@ -272,7 +265,7 @@ export function DepreciationCalculator() {
                   {result.usedSimplifiedMethod && buildingAge < USEFUL_LIFE_BY_STRUCTURE[structure] && (
                     <p>【耐用年数】({USEFUL_LIFE_BY_STRUCTURE[structure]} - {buildingAge}) + ({buildingAge} × 0.2) = {result.appliedUsefulLife}年</p>
                   )}
-                  <p>【年間償却費】{buildingCost.toLocaleString()}円 × {(result.depreciationRate * 100).toFixed(1)}% = {result.annualDepreciation.toLocaleString()}円</p>
+                  <p>【年間償却費】{buildingCostInMan.toLocaleString()}万円 × {(result.depreciationRate * 100).toFixed(1)}% = 約{(result.annualDepreciation / 10000).toFixed(1)}万円</p>
                   {result.firstYearMonths < 12 && (
                     <p>【初年度】{result.annualDepreciation.toLocaleString()}円 × {result.firstYearMonths}/12 = {result.firstYearDepreciation.toLocaleString()}円</p>
                   )}
@@ -298,23 +291,16 @@ export function DepreciationCalculator() {
 
           {/* 早見表（新築・構造別） */}
           <section className="mb-12">
-            <QuickReferenceTable
-              title="減価償却費 早見表（新築・構造別）"
+            <QuickReferenceTable3Col
+              title="減価償却費の早見表"
               description="建物価格3,000万円の場合の年間減価償却費の目安です。"
-              headers={['建物構造', '年間減価償却費']}
+              headers={[
+                '区分',
+                { title: '耐用年数' },
+                { title: '減価償却費' },
+              ]}
               rows={quickReferenceData}
-              note="※定額法・事業用の場合。住宅用と事業用で耐用年数が異なる場合があります。"
-            />
-          </section>
-
-          {/* 早見表（中古木造） */}
-          <section className="mb-12">
-            <QuickReferenceTable
-              title="中古木造の減価償却費 早見表"
-              description="建物価格3,000万円・木造の場合の築年数別年間減価償却費の目安です。"
-              headers={['築年数', '年間減価償却費']}
-              rows={usedWoodQuickReference}
-              note="※簡便法による耐用年数計算。築22年以上の木造は4年償却が可能とされています。"
+              note="※定額法・事業用の場合。中古木造は簡便法による耐用年数計算。築22年以上の木造は4年償却となります。"
             />
           </section>
 
@@ -380,7 +366,10 @@ export function DepreciationCalculator() {
           </section>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer
+            infoDate="2026年1月"
+            lastUpdated="2026年1月18日"
+          />
 
           {/* CTA */}
           <div className="mt-16 pt-8 border-t border-gray-100">

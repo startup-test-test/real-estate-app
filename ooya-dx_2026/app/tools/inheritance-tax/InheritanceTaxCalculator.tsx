@@ -2,11 +2,11 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Info, AlertTriangle } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
+import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
@@ -19,20 +19,16 @@ import {
 } from '@/lib/calculators/inheritanceTax'
 
 // =================================================================
-// 早見表データ（配偶者と子2人の場合）
+// 早見表データ（3列：遺産総額・配偶者あり・配偶者なし）
 // =================================================================
-const quickReferenceDataWithSpouse: QuickReferenceRow[] = INHERITANCE_TAX_QUICK_TABLE.map(row => ({
+const quickReferenceData: QuickReferenceRow3Col[] = INHERITANCE_TAX_QUICK_TABLE.map((row, index) => ({
   label: formatManYen(row.assets),
-  value: formatManYen(row.tax),
-  subValue: '配偶者+子2人',
+  value1: formatManYen(row.tax),
+  value2: formatManYen(INHERITANCE_TAX_QUICK_TABLE_NO_SPOUSE[index].tax),
 }))
 
-// 早見表データ（子2人のみの場合）
-const quickReferenceDataNoSpouse: QuickReferenceRow[] = INHERITANCE_TAX_QUICK_TABLE_NO_SPOUSE.map(row => ({
-  label: formatManYen(row.assets),
-  value: formatManYen(row.tax),
-  subValue: '子2人のみ',
-}))
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '相続税 計算シミュレーション｜早見表・基礎控除対応'
 
 // 目次データ
 const tocItems: TocItem[] = [
@@ -40,7 +36,6 @@ const tocItems: TocItem[] = [
   { id: 'basic-deduction', title: '基礎控除の計算', level: 3 },
   { id: 'calculation', title: '相続税の計算方法', level: 3 },
   { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
-  { id: 'special', title: '主な特例・控除制度', level: 2 },
 ]
 
 // =================================================================
@@ -88,7 +83,7 @@ export function InheritanceTaxCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="相続税シミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -99,7 +94,7 @@ export function InheritanceTaxCalculator() {
 
           {/* タイトル・説明文 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            不動産の相続税を10秒で無料計算｜早見表・基礎控除対応
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             遺産総額と相続人の人数を入力するだけで、相続税額の目安を概算計算します。
@@ -146,70 +141,58 @@ export function InheritanceTaxCalculator() {
                 placeholder="例：500"
               />
 
-              {/* 相続人の構成 */}
+              {/* 配偶者 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  相続人の構成
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  配偶者
                 </label>
-                <div className="space-y-3">
-                  {/* 配偶者 */}
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      id="hasSpouse"
-                      checked={hasSpouse}
-                      onChange={(e) => setHasSpouse(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="hasSpouse" className="text-sm text-gray-700">
-                      配偶者あり
-                    </label>
-                  </div>
+                <select
+                  value={hasSpouse ? 'yes' : 'no'}
+                  onChange={(e) => setHasSpouse(e.target.value === 'yes')}
+                  className="w-full border-2 border-gray-300 rounded-lg px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                >
+                  <option value="yes">あり</option>
+                  <option value="no">なし</option>
+                </select>
+              </div>
 
-                  {/* 子の人数 */}
-                  <div className="flex items-center gap-3">
-                    <label className="text-sm text-gray-700">子の人数：</label>
-                    <select
-                      value={childCount}
-                      onChange={(e) => setChildCount(Number(e.target.value))}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                    >
-                      {[0, 1, 2, 3, 4, 5].map((n) => (
-                        <option key={n} value={n}>{n}人</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
+              {/* 子の人数 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  子の人数
+                </label>
+                <select
+                  value={childCount}
+                  onChange={(e) => setChildCount(Number(e.target.value))}
+                  className="w-full border-2 border-gray-300 rounded-lg px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                >
+                  {[0, 1, 2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n}>{n}人</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
                   ※法定相続人の数により基礎控除額が変動します
                 </p>
               </div>
 
-              {/* 詳細設定（折りたたみ） */}
-              <details className="border border-gray-200 rounded-lg">
-                <summary className="px-4 py-3 bg-gray-50 cursor-pointer text-sm font-medium text-gray-700 rounded-lg">
-                  詳細設定（生命保険金・退職金）
-                </summary>
-                <div className="p-4 space-y-4">
-                  <NumberInput
-                    label="生命保険金"
-                    value={lifeInsuranceInMan}
-                    onChange={setLifeInsuranceInMan}
-                    unit="万円"
-                    placeholder="例：1000"
-                  />
-                  <NumberInput
-                    label="死亡退職金"
-                    value={retirementBenefitInMan}
-                    onChange={setRetirementBenefitInMan}
-                    unit="万円"
-                    placeholder="例：500"
-                  />
-                  <p className="text-xs text-gray-500">
-                    ※生命保険金・死亡退職金には「500万円×法定相続人の数」の非課税枠があります
-                  </p>
-                </div>
-              </details>
+              {/* 生命保険金・死亡退職金 */}
+              <NumberInput
+                label="生命保険金"
+                value={lifeInsuranceInMan}
+                onChange={setLifeInsuranceInMan}
+                unit="万円"
+                placeholder="例：1000"
+              />
+              <NumberInput
+                label="死亡退職金"
+                value={retirementBenefitInMan}
+                onChange={setRetirementBenefitInMan}
+                unit="万円"
+                placeholder="例：500"
+              />
+              <p className="text-xs text-gray-500">
+                ※生命保険金・死亡退職金には「500万円×法定相続人の数」の非課税枠があります
+              </p>
             </div>
 
             {/* 結果エリア */}
@@ -323,22 +306,16 @@ export function InheritanceTaxCalculator() {
               早見表（シミュレーター直下）
           ================================================================= */}
           <section className="mb-12">
-            <QuickReferenceTable
-              title="相続税額早見表（配偶者と子2人の場合）"
-              description="配偶者と子2人が相続人の場合の相続税額の目安です。配偶者の税額軽減を適用した後の税額を表示しています。"
-              headers={['遺産総額', '相続税額（概算）']}
-              rows={quickReferenceDataWithSpouse}
-              note="※配偶者の税額軽減（法定相続分または1億6千万円まで非課税）を考慮した概算値です"
-            />
-          </section>
-
-          <section className="mb-12">
-            <QuickReferenceTable
-              title="相続税額早見表（子2人のみの場合）"
-              description="子2人のみが相続人の場合（配偶者がいない場合）の相続税額の目安です。"
-              headers={['遺産総額', '相続税額（概算）']}
-              rows={quickReferenceDataNoSpouse}
-              note="※配偶者がいない場合は税額軽減がないため、税負担が重くなります"
+            <QuickReferenceTable3Col
+              title="相続税額の早見表"
+              description="相続人が配偶者+子2人、または子2人のみの場合の相続税額の目安です。"
+              headers={[
+                '遺産総額',
+                { title: '配偶者あり', sub: '配偶者+子2人' },
+                { title: '配偶者なし', sub: '子2人のみ' },
+              ]}
+              rows={quickReferenceData}
+              note="※配偶者ありは税額軽減（法定相続分または1億6千万円まで非課税）適用後の概算値です"
             />
           </section>
 
@@ -376,23 +353,6 @@ export function InheritanceTaxCalculator() {
               <p className="text-gray-700">
                 3,000万円 + 600万円 × 3人 = <strong>4,800万円</strong>
               </p>
-              <p className="text-sm text-gray-500 mt-2">
-                → 遺産総額が4,800万円以下であれば、原則として相続税は課税されません
-              </p>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <div className="flex items-start gap-2">
-                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-blue-800">法定相続人の数に関する注意点</p>
-                  <ul className="text-sm text-blue-700 mt-1 space-y-1">
-                    <li>・養子は、実子がいる場合1人まで、いない場合2人までが法定相続人の数に算入されます</li>
-                    <li>・相続放棄した人も法定相続人の数に含まれます</li>
-                    <li>・代襲相続人（孫など）も法定相続人に含まれます</li>
-                  </ul>
-                </div>
-              </div>
             </div>
 
             <SectionHeading id="calculation" items={tocItems} />
@@ -443,59 +403,6 @@ export function InheritanceTaxCalculator() {
           </section>
 
           {/* =================================================================
-              主な特例・控除制度
-          ================================================================= */}
-          <section className="mb-12">
-            <SectionHeading id="special" items={tocItems} />
-
-            <div className="space-y-6">
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 mb-2">配偶者の税額軽減</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  配偶者が取得した財産について、以下のいずれか多い金額まで相続税がかからない制度です。
-                </p>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>・1億6千万円</li>
-                  <li>・配偶者の法定相続分相当額</li>
-                </ul>
-                <p className="text-xs text-gray-500 mt-2">
-                  ※適用には申告が必要です
-                </p>
-              </div>
-
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 mb-2">小規模宅地等の特例</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  被相続人の自宅敷地や事業用地について、評価額を最大80%減額できる特例です。
-                </p>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>・特定居住用宅地等：330㎡まで80%減額</li>
-                  <li>・特定事業用宅地等：400㎡まで80%減額</li>
-                  <li>・貸付事業用宅地等：200㎡まで50%減額</li>
-                </ul>
-                <p className="text-xs text-gray-500 mt-2">
-                  ※適用には細かい要件があります。詳細は専門家にご相談ください
-                </p>
-              </div>
-
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 mb-2">生命保険金・死亡退職金の非課税枠</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  生命保険金や死亡退職金には、以下の非課税枠が設けられています。
-                </p>
-                <div className="bg-gray-100 rounded-lg p-3 mt-2">
-                  <p className="font-mono text-gray-800 text-center text-sm">
-                    非課税枠 = 500万円 × 法定相続人の数
-                  </p>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  ※生命保険金と死亡退職金は別々に非課税枠が適用されます
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* =================================================================
               参考リンク（エビデンス）
           ================================================================= */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -525,7 +432,7 @@ export function InheritanceTaxCalculator() {
           </div>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer infoDate="2026年1月" lastUpdated="2026年1月18日" />
 
           {/* CTA */}
           <div className="mt-16 pt-8 border-t border-gray-100">

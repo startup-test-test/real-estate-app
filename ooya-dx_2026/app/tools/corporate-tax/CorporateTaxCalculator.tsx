@@ -32,6 +32,9 @@ const relatedTools = [
   { name: '贈与税シミュレーター', href: '/tools/gift-tax', description: '贈与時の税金を計算' },
 ]
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産法人の法人税等 計算シミュレーション｜早見表付き'
+
 // 目次データ
 const tocItems: TocItem[] = [
   { id: 'about', title: '不動産法人にかかる税金とは', level: 2 },
@@ -74,7 +77,7 @@ export function CorporateTaxCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="法人税シミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -85,7 +88,7 @@ export function CorporateTaxCalculator() {
 
           {/* タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            不動産法人の法人税等を10秒で無料計算｜早見表付き
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             課税所得を入力するだけで、法人税・住民税・事業税等の概算額と実効税率を瞬時に計算します。

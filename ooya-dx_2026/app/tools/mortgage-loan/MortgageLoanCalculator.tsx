@@ -15,6 +15,9 @@ import {
   RepaymentMethod,
 } from '@/lib/calculators/mortgageLoan'
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '住宅ローン 計算シミュレーション｜毎月返済額・総返済額'
+
 // =================================================================
 // 目次項目
 // =================================================================
@@ -68,7 +71,7 @@ export function MortgageLoanCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="住宅ローンシミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -79,7 +82,7 @@ export function MortgageLoanCalculator() {
 
           {/* タイトル・説明文 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            住宅ローン 計算シミュレーション｜毎月返済額・総返済額
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             物件価格・頭金・金利・返済期間を入力するだけで、毎月の返済額や総返済額を概算計算します。

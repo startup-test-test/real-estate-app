@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '不動産取得税を10秒で無料計算｜軽減措置・控除額シミュレーション',
+  title: '不動産取得税 計算シミュレーション｜軽減措置対応',
   description:
     '不動産取得税を無料で概算計算。建物・土地の固定資産税評価額を入力するだけで税額の目安がわかります。新築住宅控除（1,200万円）、認定長期優良住宅（1,300万円）、中古住宅の築年数別控除、土地の軽減措置にも対応。',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '不動産取得税 いくら',
   ],
   openGraph: {
-    title: '不動産取得税を10秒で無料計算｜軽減措置・控除額シミュレーション',
+    title: '不動産取得税 計算シミュレーション｜軽減措置対応',
     description: '不動産取得税を無料で概算計算。建物・土地の固定資産税評価額を入力するだけで税額の目安がわかります。',
     url: `${BASE_URL}/tools/acquisition-tax`,
     siteName: '大家DX',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産取得税を10秒で無料計算｜軽減措置・控除額シミュレーション',
+    title: '不動産取得税 計算シミュレーション｜軽減措置対応',
     description: '不動産取得税を無料で概算計算。建物・土地の固定資産税評価額を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },

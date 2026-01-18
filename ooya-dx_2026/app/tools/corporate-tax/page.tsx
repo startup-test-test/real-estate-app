@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech'
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '不動産法人の法人税等を10秒で無料計算｜早見表付き',
+  title: '不動産法人の法人税等 計算シミュレーション｜早見表付き',
   description:
     '不動産法人（資産管理会社）の法人税・住民税・事業税等を無料で計算。課税所得を入力するだけで、税額と実効税率がすぐわかります。個人との比較機能付き。',
   keywords: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     '法人税 早見表',
   ],
   openGraph: {
-    title: '不動産法人の法人税等を10秒で無料計算｜早見表付き',
+    title: '不動産法人の法人税等 計算シミュレーション｜早見表付き',
     description: '不動産法人の法人税・住民税・事業税等を無料で計算。課税所得を入力するだけで税額と実効税率がすぐわかります。',
     url: `${BASE_URL}/tools/corporate-tax`,
     siteName: '大家DX',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産法人の法人税等を10秒で無料計算｜早見表付き',
+    title: '不動産法人の法人税等 計算シミュレーション｜早見表付き',
     description: '不動産法人の法人税・住民税・事業税等を無料で計算。課税所得を入力するだけで税額と実効税率がすぐわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },

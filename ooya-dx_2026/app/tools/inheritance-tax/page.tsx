@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '相続税を10秒で無料計算｜早見表・基礎控除・税率表対応',
+  title: '相続税 計算シミュレーション｜早見表・基礎控除対応',
   description:
     '相続税を無料で概算計算。遺産総額と相続人の人数を入力するだけで税額の目安がわかります。相続税の早見表、基礎控除の計算方法、税率表も掲載。',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '相続税申告',
   ],
   openGraph: {
-    title: '相続税を10秒で無料計算｜早見表・基礎控除・税率表対応',
+    title: '相続税 計算シミュレーション｜早見表・基礎控除対応',
     description: '相続税を無料で概算計算。遺産総額と相続人の人数を入力するだけで税額の目安がわかります。',
     url: `${BASE_URL}/tools/inheritance-tax`,
     siteName: '大家DX',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '相続税を10秒で無料計算｜早見表・基礎控除・税率表対応',
+    title: '相続税 計算シミュレーション｜早見表・基礎控除対応',
     description: '相続税を無料で概算計算。遺産総額と相続人の人数を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },

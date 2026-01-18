@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '不動産の譲渡所得税を10秒で無料計算｜3000万円控除・軽減税率対応',
+  title: '不動産の譲渡所得税 計算シミュレーション｜3000万円控除対応',
   description:
     '不動産売却時の譲渡所得税（所得税・住民税）を無料で概算計算。売却価格と取得費を入力するだけで税額の目安がわかります。3,000万円特別控除、10年超所有の軽減税率にも対応。',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '居住用財産 特別控除',
   ],
   openGraph: {
-    title: '不動産の譲渡所得税を10秒で無料計算｜3000万円控除・軽減税率対応',
+    title: '不動産の譲渡所得税 計算シミュレーション｜3000万円控除対応',
     description: '不動産売却時の譲渡所得税を無料で概算計算。売却価格と取得費を入力するだけで税額の目安がわかります。',
     url: `${BASE_URL}/tools/capital-gains-tax`,
     siteName: '大家DX',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産の譲渡所得税を10秒で無料計算｜3000万円控除・軽減税率対応',
+    title: '不動産の譲渡所得税 計算シミュレーション｜3000万円控除対応',
     description: '不動産売却時の譲渡所得税を無料で概算計算。売却価格と取得費を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },

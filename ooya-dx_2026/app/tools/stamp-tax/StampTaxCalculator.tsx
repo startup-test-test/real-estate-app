@@ -43,6 +43,9 @@ const receiptQuickRef: QuickReferenceRow[] = RECEIPT_QUICK_REFERENCE.map(row => 
   value: formatTax(row.standard),
 }))
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産契約の印紙税 計算シミュレーション｜軽減措置・電子契約対応'
+
 // =================================================================
 // 目次項目
 // =================================================================
@@ -99,7 +102,7 @@ export function StampTaxCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="印紙税シミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -110,7 +113,7 @@ export function StampTaxCalculator() {
 
           {/* タイトル・説明文 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            不動産契約の印紙税を10秒で無料計算｜軽減措置・電子契約対応
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             契約金額を入力するだけで、不動産売買契約書・建設工事請負契約書・領収書の印紙税額を概算計算します。

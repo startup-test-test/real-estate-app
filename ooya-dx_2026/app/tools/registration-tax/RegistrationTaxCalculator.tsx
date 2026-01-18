@@ -23,6 +23,9 @@ const quickReferenceData: QuickReferenceRow[] = [
   { label: '6,000万円', value: '約40万円', subValue: '土地31.5万+建物1.6万+抵当4.8万' },
 ]
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産の登録免許税 計算シミュレーション｜軽減税率対応'
+
 // 目次項目
 const tocItems: TocItem[] = [
   { id: 'about', title: '登録免許税とは', level: 2 },
@@ -124,7 +127,7 @@ export function RegistrationTaxCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="登録免許税シミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -135,7 +138,7 @@ export function RegistrationTaxCalculator() {
 
           {/* タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            不動産の登録免許税を自動計算｜軽減税率対応
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             土地・建物の固定資産税評価額または売買価格を入力するだけで、登録免許税の目安を概算できます。

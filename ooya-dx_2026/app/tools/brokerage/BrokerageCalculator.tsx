@@ -13,6 +13,9 @@ import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産売買の仲介手数料 計算シミュレーション｜早見表付き'
+
 // 目次データ（見出しの一元管理）
 const tocItems: TocItem[] = [
   { id: 'about', title: '仲介手数料とは', level: 2 },
@@ -71,7 +74,7 @@ export function BrokerageCalculator() {
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-5 py-12">
             {/* パンくず */}
-            <ToolsBreadcrumb currentPage="仲介手数料シミュレーター" />
+            <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
             {/* カテゴリー */}
             <div className="flex items-center gap-3 mb-4">
@@ -82,7 +85,7 @@ export function BrokerageCalculator() {
 
             {/* タイトル */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              不動産売買の仲介手数料 計算シミュレーション｜早見表付き
+              {PAGE_TITLE}
             </h1>
             <p className="text-gray-600 mb-8">
               売買価格を入力するだけで、仲介手数料の上限額を瞬時に計算します。

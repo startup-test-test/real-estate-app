@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '減価償却費を10秒で無料計算｜構造別・中古物件対応・早見表付き',
+  title: '不動産の減価償却費 計算シミュレーション｜早見表・中古建物対応',
   description:
     '不動産投資の減価償却費を無料で計算。建物の取得価額・構造・築年数を入力するだけで年間償却費がすぐわかります。中古物件の簡便法にも対応。構造別・築年数別の早見表付き。',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '不動産投資 節税',
   ],
   openGraph: {
-    title: '減価償却費を10秒で無料計算｜構造別・中古物件対応・早見表付き',
+    title: '不動産の減価償却費 計算シミュレーション｜早見表・中古建物対応',
     description: '不動産投資の減価償却費を無料で計算。建物の取得価額・構造・築年数を入力するだけで年間償却費がすぐわかります。',
     url: `${BASE_URL}/tools/depreciation`,
     siteName: '大家DX',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '減価償却費を10秒で無料計算｜構造別・中古物件対応・早見表付き',
+    title: '不動産の減価償却費 計算シミュレーション｜早見表・中古建物対応',
     description: '不動産投資の減価償却費を無料で計算。建物の取得価額・構造・築年数を入力するだけで年間償却費がすぐわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },

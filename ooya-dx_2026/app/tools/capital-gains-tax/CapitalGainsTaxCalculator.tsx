@@ -26,6 +26,9 @@ const quickReferenceData: QuickReferenceRow[] = QUICK_REFERENCE_TABLE.map(row =>
   subValue: '長期・3,000万円控除適用',
 }))
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産の譲渡所得税 計算シミュレーション｜3000万円控除対応'
+
 // =================================================================
 // 目次データ
 // =================================================================
@@ -80,7 +83,7 @@ export function CapitalGainsTaxCalculator() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <ToolsBreadcrumb currentPage="譲渡所得税シミュレーター" />
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">
@@ -91,7 +94,7 @@ export function CapitalGainsTaxCalculator() {
 
           {/* タイトル・説明文 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            不動産の譲渡所得税を10秒で無料計算｜3000万円控除対応
+            {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
             不動産売却時の譲渡所得税（所得税・住民税）を自動計算。

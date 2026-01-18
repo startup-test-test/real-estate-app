@@ -218,12 +218,6 @@ export function calculateDepreciation(input: DepreciationInput): DepreciationRes
   if (buildingAge > 0) {
     appliedUsefulLife = calculateUsedAssetUsefulLife(legalUsefulLife, buildingAge)
     usedSimplifiedMethod = true
-
-    if (buildingAge >= legalUsefulLife) {
-      notes.push(`法定耐用年数（${legalUsefulLife}年）を超過しているため、簡便法により耐用年数${appliedUsefulLife}年を適用しています`)
-    } else {
-      notes.push(`築${buildingAge}年の中古物件のため、簡便法により耐用年数${appliedUsefulLife}年を適用しています`)
-    }
   } else {
     appliedUsefulLife = legalUsefulLife
   }
@@ -254,18 +248,6 @@ export function calculateDepreciation(input: DepreciationInput): DepreciationRes
   // 7. 表示用の償却率ラベル
   // =================================================================
   const appliedRateLabel = `${(depreciationRate * 100).toFixed(1)}%`
-
-  // =================================================================
-  // 8. 追加の注意事項
-  // =================================================================
-  notes.push('平成28年4月1日以降に取得した建物・建物附属設備・構築物は定額法のみ適用されます')
-
-  if (acquisitionMonth !== 1) {
-    notes.push(`取得月が${acquisitionMonth}月のため、初年度は${firstYearMonths}ヶ月分の月割り計算となっています`)
-  }
-
-  // 備忘価額の説明
-  notes.push('最終年度は取得価額から減価償却累計額を引いた残高が1円（備忘価額）になるまで償却します')
 
   return {
     buildingCost,

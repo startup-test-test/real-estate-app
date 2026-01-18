@@ -38,6 +38,9 @@ const usedHousingDeductionTable = [
   { period: '1954年7月1日〜1963年12月31日', deduction: '100万円' },
 ]
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産取得税 計算シミュレーション｜軽減措置対応'
+
 // =================================================================
 // 目次データ
 // =================================================================
@@ -91,7 +94,7 @@ export function AcquisitionTaxCalculator() {
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-5 py-12">
             {/* パンくず */}
-            <ToolsBreadcrumb currentPage="不動産取得税シミュレーター" />
+            <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
             {/* カテゴリー */}
             <div className="flex items-center gap-3 mb-4">
@@ -102,7 +105,7 @@ export function AcquisitionTaxCalculator() {
 
             {/* タイトル・説明文 */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              不動産取得税を10秒で無料計算｜軽減措置対応
+              {PAGE_TITLE}
             </h1>
             <p className="text-gray-600 mb-8">
               建物・土地の評価額と床面積を入力するだけで、不動産取得税を概算計算します。

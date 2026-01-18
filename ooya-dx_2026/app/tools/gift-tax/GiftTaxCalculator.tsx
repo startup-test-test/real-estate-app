@@ -26,6 +26,9 @@ const relatedTools = [
   { name: '仲介手数料シミュレーター', href: '/tools/brokerage', description: '不動産売買の仲介手数料を計算' },
 ]
 
+// ページタイトル（パンくず・h1で共通使用）
+const PAGE_TITLE = '不動産の贈与税 計算シミュレーション｜早見表・特例対応'
+
 // =================================================================
 // 目次データ
 // =================================================================
@@ -75,7 +78,7 @@ export function GiftTaxCalculator() {
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-5 py-12">
             {/* パンくず */}
-            <ToolsBreadcrumb currentPage="贈与税シミュレーター" />
+            <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
             {/* カテゴリー */}
             <div className="flex items-center gap-3 mb-4">
@@ -86,7 +89,7 @@ export function GiftTaxCalculator() {
 
             {/* タイトル・説明文 */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              不動産の贈与税 計算シミュレーション｜早見表・特例対応
+              {PAGE_TITLE}
             </h1>
             <p className="text-gray-600 mb-8">
               贈与金額を入力するだけで、贈与税額の目安を概算計算します。
