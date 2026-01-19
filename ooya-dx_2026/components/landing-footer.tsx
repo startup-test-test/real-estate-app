@@ -6,7 +6,7 @@ export function LandingFooter() {
     <footer className="bg-gray-100 text-gray-800 print:hidden">
       {/* メインフッターエリア */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* 会社情報セクション */}
           <div className="lg:col-span-1">
             <img
@@ -32,20 +32,38 @@ export function LandingFooter() {
 
           {/* ナビゲーションセクション */}
           {footerNavigation.map((section) => (
-            <div key={section.title}>
+            <div
+              key={section.title}
+              className={section.title === '賃貸経営計算ツール' ? 'lg:col-span-2' : ''}
+            >
               <h3 className="text-sm font-bold text-gray-900 mb-3">{section.title}</h3>
-              <ul className="space-y-2">
-                {section.items.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {section.title === '賃貸経営計算ツール' ? (
+                <ul className="grid grid-cols-2 gap-x-6 gap-y-2">
+                  {section.items.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <ul className="space-y-2">
+                  {section.items.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           ))}
         </div>

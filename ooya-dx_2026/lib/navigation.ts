@@ -33,8 +33,14 @@ export const toolCategories: ToolCategory[] = [
     description: '物件の収益性を多角的に分析',
     items: [
       { name: '賃貸経営シミュレーター', description: 'IRR・CCR・DSCR、35年キャッシュフロー一括計算', href: '/simulator', available: true },
-      { name: '積算評価', description: '土地・建物の積算価格を計算', href: '/tools/assessed-value', available: false },
-      { name: '収益還元', description: '収益還元法による物件評価', href: '/tools/income-capitalization', available: false },
+      { name: 'IRR（内部収益率）', description: '投資の収益性を時間価値で評価', href: '/tools/irr', available: true },
+      { name: '利回り計算', description: '表面利回り・実質利回りを計算', href: '/tools/yield-rate', available: true },
+      { name: 'DCF法', description: '割引キャッシュフロー法による不動産評価', href: '/tools/dcf', available: true },
+      { name: '積算評価', description: '土地・建物の積算価格を計算', href: '/tools/assessed-value', available: true },
+      { name: '収益還元', description: '直接還元法による不動産評価', href: '/tools/income-capitalization', available: true },
+      { name: 'DSCR', description: '債務返済カバー率を計算', href: '/tools/dscr', available: true },
+      { name: 'CCR', description: '自己資金配当率を計算', href: '/tools/ccr', available: true },
+      { name: 'NOI', description: '営業純収益を計算', href: '/tools/noi', available: true },
     ],
   },
   {

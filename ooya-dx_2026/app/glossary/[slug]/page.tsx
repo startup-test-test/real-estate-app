@@ -3,11 +3,12 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import Link from 'next/link';
-import { ChevronRight, ArrowLeft, Calculator } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
+import { GlossaryBreadcrumb } from '@/components/tools/GlossaryBreadcrumb';
 import { getGlossaryTermBySlug, getAllGlossarySlugs, getAllGlossaryTerms } from '@/lib/glossary';
 
 interface Props {
@@ -129,39 +130,28 @@ export default async function GlossaryTermPage({ params }: Props) {
         {/* ヘッダー固定時のスペーサー */}
         <div className="h-[72px] sm:h-[88px]"></div>
 
-        <main className="flex-1 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            {/* パンくずリスト */}
-            <nav className="flex items-center text-sm text-gray-500 mb-6">
-              <Link href="/" className="hover:text-primary-600">
-                ホーム
-              </Link>
-              <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <Link href="/glossary" className="hover:text-primary-600">
+        <main className="flex-1">
+          <article className="max-w-2xl mx-auto px-5 py-12">
+            {/* パンくず */}
+            <GlossaryBreadcrumb currentPage={term.shortTitle} />
+
+            {/* カテゴリー */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
                 用語集
-              </Link>
-              <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <span className="text-gray-900">{term.shortTitle}</span>
-            </nav>
-
-            {/* 戻るリンク */}
-            <Link
-              href="/glossary"
-              className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
-            >
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              用語集一覧に戻る
-            </Link>
-
-            {/* 記事ヘッダー */}
-            <div className="mb-8">
-              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full mb-4">
+              </span>
+              <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
                 {term.category}
               </span>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-                {term.title}
-              </h1>
             </div>
+
+            {/* タイトル */}
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
+              {term.title}
+            </h1>
+            <p className="text-gray-600 mb-8">
+              {term.description}
+            </p>
 
             {/* 関連ツールへのリンク */}
             {term.relatedTools && (
@@ -182,19 +172,17 @@ export default async function GlossaryTermPage({ params }: Props) {
             )}
 
             {/* 本文 */}
-            <article className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 lg:p-10">
-              <div className="prose prose-lg max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-table:border-collapse prose-th:bg-gray-100 prose-th:px-4 prose-th:py-2 prose-td:px-4 prose-td:py-2 prose-td:border prose-td:border-gray-200 prose-th:border prose-th:border-gray-200 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-900 prose-pre:text-gray-100">
-                <MDXRemote
-                  source={term.content}
-                  options={{
-                    mdxOptions: {
-                      remarkPlugins: [remarkGfm],
-                      rehypePlugins: [rehypeSlug],
-                    },
-                  }}
-                />
-              </div>
-            </article>
+            <div className="prose prose-lg max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-table:border-collapse prose-th:bg-gray-100 prose-th:px-4 prose-th:py-2 prose-td:px-4 prose-td:py-2 prose-td:border prose-td:border-gray-200 prose-th:border prose-th:border-gray-200 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-900 prose-pre:text-gray-100 mb-12">
+              <MDXRemote
+                source={term.content}
+                options={{
+                  mdxOptions: {
+                    remarkPlugins: [remarkGfm],
+                    rehypePlugins: [rehypeSlug],
+                  },
+                }}
+              />
+            </div>
 
             {/* 関連用語 */}
             {relatedTerms.length > 0 && (
@@ -222,15 +210,15 @@ export default async function GlossaryTermPage({ params }: Props) {
             )}
 
             {/* CTA */}
-            <div className="mt-12">
+            <div className="mt-16">
               <SimulatorCTA />
             </div>
 
             {/* 運営会社・運営者プロフィール */}
-            <div className="mt-12">
+            <div className="mt-16">
               <CompanyProfileCompact />
             </div>
-          </div>
+          </article>
         </main>
 
         <LandingFooter />
