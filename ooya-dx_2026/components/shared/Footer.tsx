@@ -42,9 +42,6 @@ const Footer: React.FC = () => {
               <Link href="/privacy" className="text-white/70 hover:text-white transition-colors">
                 プライバシーポリシー
               </Link>
-              <Link href="/tokushoho" className="text-white/70 hover:text-white transition-colors">
-                特定商取引法
-              </Link>
               <Link href="/disclaimer" className="text-white/70 hover:text-white transition-colors">
                 免責事項
               </Link>

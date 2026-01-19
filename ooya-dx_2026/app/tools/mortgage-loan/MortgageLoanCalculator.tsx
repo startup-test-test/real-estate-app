@@ -8,6 +8,9 @@ import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import {
@@ -432,22 +435,17 @@ export function MortgageLoanCalculator() {
             lastUpdated="2026年1月18日"
           />
 
+          {/* 関連シミュレーター */}
+          <RelatedTools currentPath="/tools/mortgage-loan" />
+
           {/* CTA */}
-          <div className="mt-16 pt-8 border-t border-gray-100">
-            <p className="text-sm text-gray-500 mb-4 text-center">
-              物件の収益性をシミュレーションしてみませんか？
-            </p>
-            <div className="text-center">
-              <Link
-                href="/simulator"
-                className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-              >
-                収益シミュレーターを試す
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
+          <div className="mt-16">
+            <SimulatorCTA />
+          </div>
+
+          {/* 会社概要・運営者 */}
+          <div className="mt-16">
+            <CompanyProfileCompact />
           </div>
         </article>
       </main>

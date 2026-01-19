@@ -1,7 +1,32 @@
 import { MetadataRoute } from 'next';
 import { getAllArticles } from '@/lib/mdx';
+import fs from 'fs';
+import path from 'path';
 
 const BASE_URL = 'https://ooya.tech';
+
+// /tools ディレクトリから自動的にページを検出
+function getToolSlugs(): string[] {
+  const toolsDir = path.join(process.cwd(), 'app', 'tools');
+
+  try {
+    const entries = fs.readdirSync(toolsDir, { withFileTypes: true });
+    return entries
+      .filter((entry) => {
+        // ディレクトリで、_で始まらない、componentsでない
+        if (!entry.isDirectory()) return false;
+        if (entry.name.startsWith('_')) return false;
+        if (entry.name === 'components') return false;
+        if (entry.name === 'template-demo') return false;
+        // page.tsxが存在するか確認
+        const pagePath = path.join(toolsDir, entry.name, 'page.tsx');
+        return fs.existsSync(pagePath);
+      })
+      .map((entry) => entry.name);
+  } catch {
+    return [];
+  }
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const articles = getAllArticles();
@@ -12,6 +37,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(article.date),
     changeFrequency: 'monthly' as const,
     priority: 0.8,
+  }));
+
+  // 計算ツールページ（自動検出）
+  const toolSlugs = getToolSlugs();
+  const toolPages = toolSlugs.map((slug) => ({
+    url: `${BASE_URL}/tools/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.9,
   }));
 
   // 静的ページ
@@ -29,6 +63,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${BASE_URL}/tools`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    {
       url: `${BASE_URL}/simulator`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
@@ -36,5 +76,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return [...staticPages, ...articlePages];
+  return [...staticPages, ...toolPages, ...articlePages];
 }

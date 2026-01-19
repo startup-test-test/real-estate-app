@@ -9,6 +9,7 @@ import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 // import { calculateXxx } from '@/lib/calculators/xxx'
 
@@ -274,6 +275,12 @@ export function TemplateCalculator() {
                 ToolDisclaimerコンポーネントを使用
             ================================================================= */}
             <ToolDisclaimer />
+
+            {/* =================================================================
+                関連シミュレーター（自動生成）
+                currentPathを変更するだけでOK
+            ================================================================= */}
+            <RelatedTools currentPath="/tools/template-demo" />
 
             {/* =================================================================
                 CTA（基本変更不要）

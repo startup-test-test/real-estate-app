@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { ChevronRight, ArrowLeft, Calculator } from 'lucide-react';
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { getGlossaryTermBySlug, getAllGlossarySlugs, getAllGlossaryTerms } from '@/lib/glossary';
 
 interface Props {
@@ -220,19 +222,13 @@ export default async function GlossaryTermPage({ params }: Props) {
             )}
 
             {/* CTA */}
-            <div className="mt-12 text-center bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8">
-              <h2 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                実際に計算してみよう
-              </h2>
-              <p className="text-blue-100 mb-6">
-                大家DXのシミュレーターで収益性を分析
-              </p>
-              <Link
-                href="/simulator"
-                className="inline-block px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
-              >
-                無料でシミュレーションする
-              </Link>
+            <div className="mt-12">
+              <SimulatorCTA />
+            </div>
+
+            {/* 運営会社・運営者プロフィール */}
+            <div className="mt-12">
+              <CompanyProfileCompact />
             </div>
           </div>
         </main>

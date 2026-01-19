@@ -1,5 +1,7 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import Link from 'next/link';
 
 export const metadata = {
@@ -402,23 +404,12 @@ export default function ProfilePage() {
 
           {/* CTA */}
           <div className="mt-16 pt-8 border-t border-gray-100">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 sm:p-8 text-center text-white">
-              <h3 className="text-lg sm:text-xl font-bold mb-2">
-                大家DX - 賃貸経営シミュレーター
-              </h3>
-              <p className="text-sm text-blue-100 mb-4">
-                IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出
-              </p>
-              <Link
-                href="/simulator"
-                className="inline-flex items-center justify-center h-12 px-8 bg-white text-blue-600 text-sm font-semibold rounded-full hover:bg-blue-50 transition-colors"
-              >
-                シミュレーターを試す
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
+            <SimulatorCTA />
+          </div>
+
+          {/* 運営会社・運営者プロフィール */}
+          <div className="mt-12">
+            <CompanyProfileCompact />
           </div>
         </article>
       </main>

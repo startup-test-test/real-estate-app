@@ -217,8 +217,10 @@ export function calculateRegistrationTax(input: RegistrationTaxInput): Registrat
   // === 2. 建物の計算 ===
   if (input.hasBuilding) {
     if (input.buildingType === 'new') {
-      // 新築：法務局認定価格で計算
-      if (input.prefecture && input.structure && input.floorArea) {
+      // 新築：評価額があればそれを使用、なければ法務局認定価格で計算
+      if (input.buildingAssessedValue && input.buildingAssessedValue > 0) {
+        buildingTaxBase = input.buildingAssessedValue
+      } else if (input.prefecture && input.structure && input.floorArea) {
         buildingTaxBase = calculateNewBuildingTaxBase(
           input.prefecture,
           input.structure,

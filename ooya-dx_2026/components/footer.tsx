@@ -20,9 +20,6 @@ export function Footer() {
             <Link href="/legal/privacy" className="text-gray-400 hover:text-white transition-colors">
               プライバシーポリシー
             </Link>
-            <Link href="/legal/tokushoho" className="text-gray-400 hover:text-white transition-colors">
-              特定商取引法
-            </Link>
             <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
               お問い合わせ
             </Link>

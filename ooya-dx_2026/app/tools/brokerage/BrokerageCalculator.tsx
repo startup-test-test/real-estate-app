@@ -8,6 +8,9 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -365,22 +368,17 @@ export function BrokerageCalculator() {
             {/* 免責事項 */}
             <ToolDisclaimer />
 
+            {/* 関連シミュレーター */}
+            <RelatedTools currentPath="/tools/brokerage" />
+
             {/* CTA */}
-            <div className="mt-16 pt-8 border-t border-gray-100">
-              <p className="text-sm text-gray-500 mb-4 text-center">
-                物件の収益性をシミュレーションしてみませんか？
-              </p>
-              <div className="text-center">
-                <Link
-                  href="/simulator"
-                  className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-                >
-                  収益シミュレーターを試す
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </Link>
-              </div>
+            <div className="mt-16">
+              <SimulatorCTA />
+            </div>
+
+            {/* 会社概要・運営者 */}
+            <div className="mt-16">
+              <CompanyProfileCompact />
             </div>
           </article>
         </main>

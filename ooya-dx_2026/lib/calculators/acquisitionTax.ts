@@ -28,6 +28,7 @@ export interface AcquisitionTaxInput {
   builtDate?: Date                 // 新築年月日（中古の場合）
   isResidential: boolean           // 住宅かどうか
   isLongTermQuality?: boolean      // 認定長期優良住宅かどうか（新築の場合）
+  isForSelfResidence?: boolean     // 自己居住用かどうか（中古住宅の場合に影響）
 
   // 土地情報
   landEvaluation: number           // 土地の固定資産税評価額（円）
@@ -80,6 +81,7 @@ export function calculateAcquisitionTax(input: AcquisitionTaxInput): Acquisition
     builtDate,
     isResidential,
     isLongTermQuality,
+    isForSelfResidence = true,  // デフォルトは自己居住用
     landEvaluation,
     landArea
   } = input
@@ -107,8 +109,9 @@ export function calculateAcquisitionTax(input: AcquisitionTaxInput): Acquisition
         buildingDeduction = 12000000  // 1,200万円
         buildingDeductionType = '新築住宅控除（1,200万円）'
       }
-    } else if (builtDate) {
+    } else if (builtDate && isForSelfResidence) {
       // 中古住宅の控除（築年数テーブル参照）
+      // ※自己居住用のみ適用、投資用（賃貸用）は適用外
       buildingDeduction = getUsedHousingDeduction(builtDate)
       if (buildingDeduction > 0) {
         buildingDeductionType = `中古住宅控除（${(buildingDeduction / 10000).toLocaleString()}万円）`

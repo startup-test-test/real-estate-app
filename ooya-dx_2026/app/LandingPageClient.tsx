@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import BlogPosts from '@/components/landing/BlogPosts';
 import CompanyProfile from '@/components/landing/CompanyProfile';
+import { LandingFooter } from '@/components/landing-footer';
 
 interface Article {
   slug: string;
@@ -361,42 +362,62 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
             </p>
           </div>
 
-          {/* Tools Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {[
-              { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
-              { name: '住宅ローン', description: '毎月返済額・総返済額を計算', href: '/tools/mortgage-loan', available: true },
-              { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
-              { name: '相続税', description: '遺産相続時の税金を計算', href: '/tools/inheritance-tax', available: true },
-              { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true },
-              { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
-              { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: true },
-              { name: '印紙税', description: '契約書・領収書の印紙税を計算', href: '/tools/stamp-tax', available: true },
-              { name: '減価償却', description: '建物の年間減価償却費を計算', href: '/tools/depreciation', available: true },
-              { name: '法人税', description: '不動産法人の税金を計算', href: '/tools/corporate-tax', available: true },
-            ].map((tool, index) => (
-              <a
-                key={index}
-                href={tool.available ? tool.href : undefined}
-                className={`block bg-white rounded-2xl p-5 shadow-sm transition-all duration-300 ${
-                  tool.available
-                    ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer'
-                    : 'opacity-50 cursor-default'
-                }`}
-              >
-                <h3 className="text-xl sm:text-2xl font-bold text-[#32373c] mb-2">{tool.name}</h3>
-                <p className="text-sm text-gray-500 mb-3">{tool.description}</p>
-                {tool.available ? (
-                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">
-                    無料で使う
-                  </span>
-                ) : (
-                  <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-xs font-semibold rounded-full">
-                    準備中
-                  </span>
-                )}
-              </a>
-            ))}
+          {/* カテゴリ別ツール */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* 物件購入・収益分析 */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">物件購入・収益分析</h3>
+              <ul className="space-y-1">
+                <li><a href="/simulator" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>賃貸経営シミュレーター</a></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>積算評価（準備中）</span></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>収益還元（準備中）</span></li>
+              </ul>
+            </div>
+
+            {/* 融資・ローン */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">融資・ローン</h3>
+              <ul className="space-y-1">
+                <li><a href="/tools/mortgage-loan" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>住宅ローン</a></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>借入可能額（準備中）</span></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>繰上返済（準備中）</span></li>
+              </ul>
+            </div>
+
+            {/* 税金 */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">税金</h3>
+              <ul className="space-y-1">
+                <li><a href="/tools/acquisition-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>不動産取得税</a></li>
+                <li><a href="/tools/registration-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>登録免許税</a></li>
+                <li><a href="/tools/stamp-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>印紙税</a></li>
+                <li><a href="/tools/depreciation" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>減価償却</a></li>
+                <li><a href="/tools/corporate-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>法人税</a></li>
+                <li><a href="/tools/gift-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>贈与税</a></li>
+                <li><a href="/tools/inheritance-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>相続税</a></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>固定資産税（準備中）</span></li>
+              </ul>
+            </div>
+
+            {/* 売却 */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">売却</h3>
+              <ul className="space-y-1">
+                <li><a href="/tools/brokerage" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>仲介手数料</a></li>
+                <li><a href="/tools/capital-gains-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>譲渡所得税</a></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>売却手取り（準備中）</span></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>デッドクロス（準備中）</span></li>
+              </ul>
+            </div>
+
+            {/* リフォーム */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">リフォーム</h3>
+              <ul className="space-y-1">
+                <li><span className="text-gray-400"><span className="mr-1">›</span>リフォーム費用（準備中）</span></li>
+                <li><span className="text-gray-400"><span className="mr-1">›</span>リフォームローン（準備中）</span></li>
+              </ul>
+            </div>
           </div>
 
           {/* View All Button */}
@@ -585,110 +606,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
       <CompanyProfile />
 
       {/* Footer */}
-      <footer className="bg-gray-100 text-gray-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start">
-            <div className="mb-4 md:mb-0">
-              <img src="/img/logo_250709_2.png" alt="大家DX" className="mb-2" style={{ height: '2rem', width: 'auto', display: 'block', mixBlendMode: 'multiply' }} />
-              <div className="text-xs text-gray-600">
-                <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900 block">
-                  株式会社StartupMarketing
-                </a>
-                <span className="text-gray-500">〒330-9501 埼玉県さいたま市大宮区桜木町2丁目3番地 大宮マルイ7階</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-end">
-              {/* PC版ナビゲーション */}
-              <nav className="hidden md:flex items-center space-x-6 mb-2">
-                <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
-                  シミュレーター
-                </a>
-                <a href="/tools/brokerage" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
-                  計算ツール
-                </a>
-                <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
-                  メディア
-                </a>
-                <a href="mailto:ooya.tech2025@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors text-sm">
-                  お問合せ
-                </a>
-              </nav>
-
-              {/* SP版ナビゲーション */}
-              <nav className="md:hidden w-full mb-2">
-                <div className="flex justify-start space-x-3">
-                  <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
-                    シミュレーター
-                  </a>
-                  <span className="text-gray-300">|</span>
-                  <a href="/tools/brokerage" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
-                    計算ツール
-                  </a>
-                  <span className="text-gray-300">|</span>
-                  <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
-                    メディア
-                  </a>
-                  <span className="text-gray-300">|</span>
-                  <a href="mailto:ooya.tech2025@gmail.com" className="text-gray-600 hover:text-gray-900 transition-colors text-xs">
-                    お問合せ
-                  </a>
-                </div>
-              </nav>
-
-              {/* PC版: 右寄せ */}
-              <div className="hidden md:flex flex-col items-end">
-                <div className="flex items-center space-x-4 text-xs mb-1">
-                  <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
-                    運営会社
-                  </a>
-                  <a href="/legal/terms" className="text-gray-500 hover:text-gray-700">
-                    利用規約
-                  </a>
-                  <a href="/legal/privacy" className="text-gray-500 hover:text-gray-700">
-                    個人情報保護方針
-                  </a>
-                  <a href="/legal/tokushoho" className="text-gray-500 hover:text-gray-700">
-                    特定商取引法
-                  </a>
-                  <a href="/disclaimer" className="text-gray-500 hover:text-gray-700">
-                    免責事項
-                  </a>
-                </div>
-                <div className="text-xs text-gray-500">
-                  © 2026 大家DX. All rights reserved.
-                </div>
-              </div>
-
-              {/* SP版: 左寄せ */}
-              <div className="md:hidden flex flex-col items-start w-full">
-                <div className="overflow-x-auto w-full mb-1">
-                  <div className="flex items-center space-x-4 text-xs whitespace-nowrap pb-1">
-                    <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
-                      運営会社
-                    </a>
-                    <a href="/legal/terms" className="text-gray-500 hover:text-gray-700">
-                      利用規約
-                    </a>
-                    <a href="/legal/privacy" className="text-gray-500 hover:text-gray-700">
-                      個人情報保護方針
-                    </a>
-                    <a href="/legal/tokushoho" className="text-gray-500 hover:text-gray-700">
-                      特定商取引法
-                    </a>
-                    <a href="/disclaimer" className="text-gray-500 hover:text-gray-700">
-                      免責事項
-                    </a>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-500">
-                  © 2026 大家DX. All rights reserved.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <LandingFooter />
     </div>
   );
 };

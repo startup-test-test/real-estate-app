@@ -3,15 +3,16 @@ import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
+import { toolCategories } from '@/lib/navigation'
 
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '不動産計算ツール一覧 | 大家DX',
-  description: '不動産取引に必要な税金・費用を簡単計算。仲介手数料、譲渡所得税、不動産取得税、登録免許税など、スマホで即座に計算できます。',
+  title: '賃貸経営計算ツール一覧 | 大家DX',
+  description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
   openGraph: {
-    title: '不動産計算ツール一覧 | 大家DX',
-    description: '不動産取引に必要な税金・費用を簡単計算。仲介手数料、譲渡所得税、不動産取得税、登録免許税など、スマホで即座に計算できます。',
+    title: '賃貸経営計算ツール一覧 | 大家DX',
+    description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
     url: `${BASE_URL}/tools`,
     siteName: '大家DX',
     type: 'website',
@@ -20,14 +21,14 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/images/media/hero-media.jpeg`,
         width: 1200,
         height: 630,
-        alt: '不動産計算ツール一覧',
+        alt: '賃貸経営計算ツール一覧',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産計算ツール一覧 | 大家DX',
-    description: '不動産取引に必要な税金・費用を簡単計算。仲介手数料、譲渡所得税、不動産取得税、登録免許税など、スマホで即座に計算できます。',
+    title: '賃貸経営計算ツール一覧 | 大家DX',
+    description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 }
@@ -46,24 +47,11 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: '不動産計算ツール',
+      name: '賃貸経営計算ツール',
       item: `${BASE_URL}/tools`,
     },
   ],
 };
-
-const tools = [
-  { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
-  { name: '住宅ローン', description: '毎月返済額・総返済額を計算', href: '/tools/mortgage-loan', available: true },
-  { name: '贈与税', description: '不動産贈与時の税金を計算', href: '/tools/gift-tax', available: true },
-  { name: '相続税', description: '遺産相続時の税金を計算', href: '/tools/inheritance-tax', available: true },
-  { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true },
-  { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true },
-  { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: true },
-  { name: '印紙税', description: '契約書・領収書の印紙税を計算', href: '/tools/stamp-tax', available: true },
-  { name: '減価償却', description: '建物の年間減価償却費を計算', href: '/tools/depreciation', available: true },
-  { name: '法人税', description: '不動産法人の税金を計算', href: '/tools/corporate-tax', available: true },
-]
 
 export default function ToolsPage() {
   return (
@@ -86,7 +74,7 @@ export default function ToolsPage() {
                 ホーム
               </Link>
               <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <span className="text-gray-900">不動産・賃貸経営計算ツール</span>
+              <span className="text-gray-900">賃貸経営計算ツール</span>
             </nav>
 
             {/* ヘッダー */}
@@ -102,31 +90,62 @@ export default function ToolsPage() {
               </p>
             </div>
 
-            {/* ツール一覧 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {tools.map((tool, index) => (
-                <a
-                  key={index}
-                  href={tool.available ? tool.href : undefined}
-                  className={`block bg-white rounded-2xl p-5 shadow-sm transition-all duration-300 ${
-                    tool.available
-                      ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer'
-                      : 'opacity-50 cursor-default'
-                  }`}
-                >
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#32373c] mb-2">{tool.name}</h3>
-                  <p className="text-sm text-gray-500 mb-3">{tool.description}</p>
-                  {tool.available ? (
-                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">
-                      無料で使う
-                    </span>
-                  ) : (
-                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-xs font-semibold rounded-full">
-                      準備中
-                    </span>
-                  )}
-                </a>
-              ))}
+            {/* カテゴリ別ツール一覧 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* 物件購入・収益分析 */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">物件購入・収益分析</h2>
+                <ul className="space-y-1">
+                  <li><a href="/simulator" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>賃貸経営シミュレーター</a></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>積算評価（準備中）</span></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>収益還元（準備中）</span></li>
+                </ul>
+              </div>
+
+              {/* 融資・ローン */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">融資・ローン</h2>
+                <ul className="space-y-1">
+                  <li><a href="/tools/mortgage-loan" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>住宅ローン</a></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>借入可能額（準備中）</span></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>繰上返済（準備中）</span></li>
+                </ul>
+              </div>
+
+              {/* 税金 */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">税金</h2>
+                <ul className="space-y-1">
+                  <li><a href="/tools/acquisition-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>不動産取得税</a></li>
+                  <li><a href="/tools/registration-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>登録免許税</a></li>
+                  <li><a href="/tools/stamp-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>印紙税</a></li>
+                  <li><a href="/tools/depreciation" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>減価償却</a></li>
+                  <li><a href="/tools/corporate-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>法人税</a></li>
+                  <li><a href="/tools/gift-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>贈与税</a></li>
+                  <li><a href="/tools/inheritance-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>相続税</a></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>固定資産税（準備中）</span></li>
+                </ul>
+              </div>
+
+              {/* 売却 */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">売却</h2>
+                <ul className="space-y-1">
+                  <li><a href="/tools/brokerage" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>仲介手数料</a></li>
+                  <li><a href="/tools/capital-gains-tax" className="text-gray-900 hover:text-gray-600 hover:underline"><span className="text-gray-400 mr-1">›</span>譲渡所得税</a></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>売却手取り（準備中）</span></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>デッドクロス（準備中）</span></li>
+                </ul>
+              </div>
+
+              {/* リフォーム */}
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">リフォーム</h2>
+                <ul className="space-y-1">
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>リフォーム費用（準備中）</span></li>
+                  <li><span className="text-gray-400"><span className="mr-1">›</span>リフォームローン（準備中）</span></li>
+                </ul>
+              </div>
             </div>
           </div>
         </main>

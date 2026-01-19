@@ -164,7 +164,7 @@ export function calculateStampTax(input: StampTaxInput): StampTaxResult {
       isReduced: false,
       isElectronicExempt: true,
       isNonBusinessExempt: false,
-      notes: ['電子契約（PDF等）は印紙税法上の課税文書の作成に当たらないとされています。詳細は税務署等にご確認ください'],
+      notes: [],
     }
   }
 
@@ -181,7 +181,7 @@ export function calculateStampTax(input: StampTaxInput): StampTaxResult {
       isReduced: false,
       isElectronicExempt: false,
       isNonBusinessExempt: true,
-      notes: ['個人がマイホーム（居住用財産）を売却した際の領収書は、営業に関しない受取書として非課税となる場合があります。詳細は税務署等にご確認ください'],
+      notes: [],
     }
   }
 
@@ -197,9 +197,6 @@ export function calculateStampTax(input: StampTaxInput): StampTaxResult {
       contractTypeName = '不動産売買契約書'
       // 軽減措置：10万円超かつ期限内
       canApplyReduction = contractAmount > 100000 && contractDate <= REDUCTION_DEADLINE
-      if (canApplyReduction) {
-        notes.push('不動産売買契約書の軽減措置の対象となる可能性があります（〜2027年3月31日）')
-      }
       break
 
     case 'construction_work':
@@ -207,22 +204,12 @@ export function calculateStampTax(input: StampTaxInput): StampTaxResult {
       contractTypeName = '建設工事請負契約書'
       // 軽減措置：100万円超かつ期限内
       canApplyReduction = contractAmount > 1000000 && contractDate <= REDUCTION_DEADLINE
-      if (canApplyReduction) {
-        notes.push('建設工事請負契約書の軽減措置の対象となる可能性があります（〜2027年3月31日）')
-      } else if (contractAmount <= 1000000 && contractDate <= REDUCTION_DEADLINE) {
-        notes.push('契約金額100万円以下の場合、軽減措置の対象外となります')
-      }
       break
 
     case 'receipt':
       taxTable = RECEIPT_TAX_TABLE
       contractTypeName = '領収書（不動産売却代金）'
       canApplyReduction = false // 領収書には軽減措置なし
-      if (sellerType === 'corporation') {
-        notes.push('法人が発行する領収書は課税対象となる場合があります')
-      } else if (sellerType === 'individual_business') {
-        notes.push('個人でも事業用不動産の売却による領収書は課税対象となる場合があります')
-      }
       break
 
     default:
@@ -240,21 +227,6 @@ export function calculateStampTax(input: StampTaxInput): StampTaxResult {
   const stampTaxAmount = canApplyReduction ? bracket.reduced : bracket.standard
   const reductionAmount = standardTaxAmount - stampTaxAmount
   const isReduced = reductionAmount > 0
-
-  // =================================================================
-  // 5. 追加の注意事項
-  // =================================================================
-  if (stampTaxAmount === 0 && contractAmount > 0) {
-    if (contractType === 'receipt') {
-      notes.push('受取金額5万円未満の領収書は非課税となる場合があります')
-    } else {
-      notes.push('契約金額1万円未満の契約書は非課税となる場合があります')
-    }
-  }
-
-  if (stampTaxAmount > 0) {
-    notes.push('表示される税額は契約書1通あたりの目安です。原本を2通作成する場合は2倍の金額が必要となる場合があります')
-  }
 
   return {
     contractAmount,
@@ -275,7 +247,7 @@ export function calculateStampTax(input: StampTaxInput): StampTaxResult {
 
 /** 不動産売買契約書の早見表データ */
 export const REAL_ESTATE_SALE_QUICK_REFERENCE = [
-  { amount: 1000000, standard: 200, reduced: 200 },
+  { amount: 1000000, standard: 1000, reduced: 500 },
   { amount: 3000000, standard: 2000, reduced: 1000 },
   { amount: 5000000, standard: 2000, reduced: 1000 },
   { amount: 10000000, standard: 10000, reduced: 5000 },
@@ -308,6 +280,7 @@ export const RECEIPT_QUICK_REFERENCE = [
   { amount: 2000000, standard: 400, reduced: 400 },
   { amount: 5000000, standard: 1000, reduced: 1000 },
   { amount: 10000000, standard: 2000, reduced: 2000 },
+  { amount: 20000000, standard: 4000, reduced: 4000 },
   { amount: 30000000, standard: 6000, reduced: 6000 },
   { amount: 50000000, standard: 10000, reduced: 10000 },
   { amount: 100000000, standard: 20000, reduced: 20000 },

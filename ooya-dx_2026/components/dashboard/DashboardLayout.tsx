@@ -277,14 +277,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 個人情報取り扱いについて
               </a>
               <a
-                href="/legal/tokushoho"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                特定商取引法に基づく表記
-              </a>
-              <a
                 href="/disclaimer"
                 target="_blank"
                 rel="noopener noreferrer"

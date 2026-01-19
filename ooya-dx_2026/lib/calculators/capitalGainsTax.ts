@@ -125,8 +125,6 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
     isResidential,
   } = input
 
-  const notes: string[] = []
-
   // =================================================================
   // 1. 取得費の決定（実額 or 概算5%）
   // =================================================================
@@ -139,11 +137,6 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
     // 概算法の方が有利な場合、または取得費不明の場合
     effectiveAcquisitionCost = estimatedCost
     usedEstimatedCost = true
-    if (acquisitionCost > 0 && acquisitionCost < estimatedCost) {
-      notes.push('入力された取得費より概算法（5%）の方が有利なため、概算法を適用しています')
-    } else {
-      notes.push('取得費が不明なため、概算法（売却価格の5%）を適用しています')
-    }
   }
 
   // =================================================================
@@ -157,8 +150,6 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
   let specialDeduction = 0
   if (isResidential && capitalGain > 0) {
     specialDeduction = Math.min(capitalGain, RESIDENTIAL_DEDUCTION)
-    notes.push('居住用財産の3,000万円特別控除を適用した計算です（適用には要件確認が必要です）')
-    notes.push('この特例を受けるには確定申告が必要とされています')
   }
 
   // =================================================================
@@ -187,7 +178,6 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
     reconstructionTax = Math.floor(taxableIncome * SHORT_TERM_RATES.reconstructionTax)
     residentTax = Math.floor(taxableIncome * SHORT_TERM_RATES.residentTax)
     appliedRateLabel = '短期（約39.63%）'
-    notes.push('所有期間5年以下の場合、短期譲渡所得として課税される可能性があります')
   } else if (ownershipPeriod === 'over10years') {
     // 10年超軽減税率（2段階）
     if (taxableIncome <= REDUCED_RATE_THRESHOLD) {
@@ -215,28 +205,15 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
       )
       appliedRateLabel = '10年超軽減（約14.21%/約20.315%）'
     }
-    notes.push('所有期間10年超の居住用財産の場合、軽減税率が適用される可能性があります')
   } else {
     // 長期譲渡所得
     incomeTax = Math.floor(taxableIncome * LONG_TERM_RATES.incomeTax)
     reconstructionTax = Math.floor(taxableIncome * LONG_TERM_RATES.reconstructionTax)
     residentTax = Math.floor(taxableIncome * LONG_TERM_RATES.residentTax)
     appliedRateLabel = '長期（約20.315%）'
-    notes.push('所有期間5年超の場合、長期譲渡所得として課税される可能性があります')
   }
 
   const totalTax = incomeTax + reconstructionTax + residentTax
-
-  // =================================================================
-  // 7. 追加の注意事項
-  // =================================================================
-  if (capitalGain < 0) {
-    notes.push('譲渡損失が発生しています。損益通算の特例が適用できる可能性があります')
-  }
-
-  if (totalTax === 0 && specialDeduction > 0) {
-    notes.push('税額の目安は0円ですが、特例適用のため確定申告が必要とされています')
-  }
 
   return {
     salePrice,
@@ -252,7 +229,7 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
     residentTax,
     totalTax,
     appliedRateLabel,
-    notes,
+    notes: [],
   }
 }
 
@@ -260,14 +237,14 @@ export function calculateCapitalGainsTax(input: CapitalGainsTaxInput): CapitalGa
 // 早見表データ生成
 // =================================================================
 
-/** 早見表用データ（3,000万円控除適用・長期譲渡） */
+/** 早見表用データ（3,000万円控除適用・長期譲渡・取得費は売却額の5%概算法） */
 export const QUICK_REFERENCE_TABLE = [
-  { salePrice: 40000000, taxAmount: 203150 },    // 4,000万円 → 約20万円
-  { salePrice: 50000000, taxAmount: 406300 },    // 5,000万円 → 約40万円
-  { salePrice: 60000000, taxAmount: 609450 },    // 6,000万円 → 約61万円
-  { salePrice: 70000000, taxAmount: 812600 },    // 7,000万円 → 約81万円
-  { salePrice: 80000000, taxAmount: 1015750 },   // 8,000万円 → 約102万円
-  { salePrice: 100000000, taxAmount: 1422050 },  // 1億円 → 約142万円
+  { salePrice: 40000000, taxAmount: 1625200 },    // 4,000万円 → 約163万円（課税800万）
+  { salePrice: 50000000, taxAmount: 3555125 },    // 5,000万円 → 約356万円（課税1,750万）
+  { salePrice: 60000000, taxAmount: 5485050 },    // 6,000万円 → 約549万円（課税2,700万）
+  { salePrice: 70000000, taxAmount: 7414975 },    // 7,000万円 → 約742万円（課税3,650万）
+  { salePrice: 80000000, taxAmount: 9344900 },    // 8,000万円 → 約935万円（課税4,600万）
+  { salePrice: 100000000, taxAmount: 13204750 },  // 1億円 → 約1,321万円（課税6,500万）
 ]
 
 // =================================================================

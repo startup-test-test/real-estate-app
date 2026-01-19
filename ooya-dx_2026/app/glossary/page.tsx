@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { ChevronRight, BookOpen, ArrowRight } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { getAllGlossaryTerms, getKanaChar, KANA_CHAR_ORDER } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
@@ -177,20 +179,13 @@ export default function GlossaryPage() {
             ))}
 
             {/* CTA */}
-            <div className="mt-16 text-center bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 sm:p-12">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                用語を理解したら、実際に計算してみよう
-              </h2>
-              <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-                大家DXのシミュレーターで、IRR・CCR・NOIなどを自動計算。
-                物件の収益性を簡単に分析できます。
-              </p>
-              <Link
-                href="/simulator"
-                className="inline-block px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
-              >
-                無料でシミュレーションする
-              </Link>
+            <div className="mt-16">
+              <SimulatorCTA />
+            </div>
+
+            {/* 運営会社・運営者プロフィール */}
+            <div className="mt-12">
+              <CompanyProfileCompact />
             </div>
           </div>
         </main>

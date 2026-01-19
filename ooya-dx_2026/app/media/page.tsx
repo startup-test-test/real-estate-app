@@ -4,6 +4,8 @@ import { getAllArticles, getAllCategories } from '@/lib/mdx';
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import { MediaArticleList } from '@/components/media-article-list';
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { Home } from 'lucide-react';
 
 const BASE_URL = 'https://ooya.tech';
@@ -148,19 +150,13 @@ export default function MediaPage() {
           <MediaArticleList articles={articles} categories={categories} />
 
           {/* CTA */}
-          <div className="py-12 text-center border-t border-gray-100">
-            <p className="text-sm text-gray-500 mb-4">
-              物件の収益性をシミュレーションしてみませんか？
-            </p>
-            <Link
-              href="/simulator"
-              className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-            >
-              シミュレーターを試す
-              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
+          <div className="py-12 border-t border-gray-100">
+            <SimulatorCTA />
+          </div>
+
+          {/* 運営会社・運営者プロフィール */}
+          <div className="pb-12">
+            <CompanyProfileCompact />
           </div>
         </div>
       </main>

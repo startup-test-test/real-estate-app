@@ -1015,9 +1015,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                   <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     個人情報保護方針
                   </a>
-                  <a href="/legal/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
-                    特定商取引法
-                  </a>
                   <a href="/disclaimer" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                     免責事項
                   </a>
@@ -1039,9 +1036,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                     </a>
                     <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                       個人情報保護方針
-                    </a>
-                    <a href="/legal/tokushoho" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
-                      特定商取引法
                     </a>
                     <a href="/disclaimer" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700">
                       免責事項

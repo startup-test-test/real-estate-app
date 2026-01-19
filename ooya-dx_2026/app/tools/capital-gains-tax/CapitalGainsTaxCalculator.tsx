@@ -2,12 +2,15 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ChevronRight, AlertTriangle } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -158,16 +161,12 @@ export function CapitalGainsTaxCalculator() {
                   onChange={(e) => setOwnershipYears(Number(e.target.value))}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                 >
-                  <option value={3}>3年（短期）</option>
-                  <option value={5}>5年（短期）</option>
-                  <option value={6}>6年（長期）</option>
-                  <option value={10}>10年（長期）</option>
-                  <option value={11}>11年以上（軽減税率対象）</option>
-                  <option value={15}>15年以上</option>
-                  <option value={20}>20年以上</option>
+                  <option value={5}>5年以下（短期）</option>
+                  <option value={6}>5年超〜10年以下（長期）</option>
+                  <option value={11}>10年超（軽減税率対象）</option>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  ※税法上の所有期間は、一般的に譲渡年の1月1日時点で判定されるとされています
+                  ※税法上の所有期間は、譲渡年の1月1日時点で判定されるとされています
                 </p>
               </div>
 
@@ -275,22 +274,6 @@ export function CapitalGainsTaxCalculator() {
               )}
             </div>
 
-            {/* 注意事項 */}
-            {result.notes.length > 0 && (
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-amber-800 mb-1">ご確認ください</p>
-                    <ul className="text-xs text-amber-700 space-y-1">
-                      {result.notes.map((note, index) => (
-                        <li key={index}>・{note}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* 計算結果の注記 */}
@@ -302,10 +285,10 @@ export function CapitalGainsTaxCalculator() {
           <section className="mb-12">
             <QuickReferenceTable
               title="譲渡所得税早見表（3,000万円控除適用・長期譲渡）"
-              description="居住用財産を5年超保有し、3,000万円特別控除を適用した場合の概算税額です。取得費は売却価格の5%（概算法）、譲渡費用は0として計算。"
+              description="取得費不明（概算法5%）の場合の税額です。購入時の書類がある場合は税額が大幅に安くなる可能性があります。"
               headers={['売却価格', '譲渡所得税（概算）']}
               rows={quickReferenceData}
-              note="※取得費が判明している場合は税額が変わります"
+              note="※購入価格が判明している場合、税額は0円〜大幅に減額される場合があります"
             />
           </section>
 
@@ -321,7 +304,7 @@ export function CapitalGainsTaxCalculator() {
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               譲渡所得税とは、土地や建物などの不動産を売却して得た利益（譲渡所得）に対して
-              課される税金とされています。一般的に、所得税、復興特別所得税、住民税の3つで構成されます。
+              課される税金とされています。所得税、復興特別所得税、住民税の3つで構成されるとされています。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
               不動産の譲渡所得は、給与所得などとは分離して課税される
@@ -344,7 +327,7 @@ export function CapitalGainsTaxCalculator() {
 
             <SectionHeading id="tax-rate" items={tocItems} />
             <p className="text-sm text-gray-600 mb-3">
-              以下は一般的な税率の目安です。個別の状況により異なる場合があります。
+              以下は税率の目安です。個別の状況により異なる場合があります。
             </p>
             <div className="overflow-x-auto mb-6">
               <table className="w-full text-sm border-collapse">
@@ -447,22 +430,17 @@ export function CapitalGainsTaxCalculator() {
           {/* 免責事項 */}
           <ToolDisclaimer />
 
+          {/* 関連シミュレーター */}
+          <RelatedTools currentPath="/tools/capital-gains-tax" />
+
           {/* CTA */}
-          <div className="mt-16 pt-8 border-t border-gray-100">
-            <p className="text-sm text-gray-500 mb-4 text-center">
-              物件の収益性をシミュレーションしてみませんか？
-            </p>
-            <div className="text-center">
-              <Link
-                href="/simulator"
-                className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-              >
-                収益シミュレーターを試す
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
+          <div className="mt-16">
+            <SimulatorCTA />
+          </div>
+
+          {/* 会社概要・運営者 */}
+          <div className="mt-16">
+            <CompanyProfileCompact />
           </div>
         </article>
       </main>

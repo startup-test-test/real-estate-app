@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Info } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -10,17 +9,26 @@ import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { calculateRegistrationTax, RegistrationTaxInput } from '@/lib/calculators/registrationTax'
 
 // 早見表データ（新築建売・自己居住・軽減適用の場合）
+// 前提：土地建物比率5:5、土地評価70%、建物評価60%、ローン80%
 const quickReferenceData: QuickReferenceRow[] = [
-  { label: '2,000万円', value: '約13万円', subValue: '土地10.5万+建物1.6万+抵当1.6万' },
-  { label: '3,000万円', value: '約20万円', subValue: '土地15.7万+建物1.6万+抵当2.4万' },
-  { label: '4,000万円', value: '約27万円', subValue: '土地21万+建物1.6万+抵当3.2万' },
-  { label: '5,000万円', value: '約34万円', subValue: '土地26.2万+建物1.6万+抵当4万' },
-  { label: '6,000万円', value: '約40万円', subValue: '土地31.5万+建物1.6万+抵当4.8万' },
+  { label: '1,000万円', value: '約6.5万円', subValue: '土地5.2万+建物0.5万+抵当0.8万' },
+  { label: '2,000万円', value: '約13万円', subValue: '土地10.5万+建物0.9万+抵当1.6万' },
+  { label: '3,000万円', value: '約19.5万円', subValue: '土地15.7万+建物1.4万+抵当2.4万' },
+  { label: '4,000万円', value: '約26万円', subValue: '土地21万+建物1.8万+抵当3.2万' },
+  { label: '5,000万円', value: '約33万円', subValue: '土地26.2万+建物2.3万+抵当4万' },
+  { label: '6,000万円', value: '約39万円', subValue: '土地31.5万+建物2.7万+抵当4.8万' },
+  { label: '7,000万円', value: '約46万円', subValue: '土地36.7万+建物3.2万+抵当5.6万' },
+  { label: '8,000万円', value: '約52万円', subValue: '土地42万+建物3.6万+抵当6.4万' },
+  { label: '9,000万円', value: '約59万円', subValue: '土地47.2万+建物4.1万+抵当7.2万' },
+  { label: '1億円', value: '約65万円', subValue: '土地52.5万+建物4.5万+抵当8万' },
 ]
 
 // ページタイトル（パンくず・h1で共通使用）
@@ -29,16 +37,9 @@ const PAGE_TITLE = '不動産の登録免許税 計算シミュレーション�
 // 目次項目
 const tocItems: TocItem[] = [
   { id: 'about', title: '登録免許税とは', level: 2 },
-  { id: 'calculation', title: '計算方法', level: 3 },
-  { id: 'reduction', title: '軽減税率の条件', level: 3 },
-  { id: 'example', title: '具体的な計算例', level: 3 },
-]
-
-// 構造の選択肢
-const structureOptions = [
-  { value: 'wood', label: '木造' },
-  { value: 'steel', label: '鉄骨造' },
-  { value: 'rc', label: 'RC造（鉄筋コンクリート）' },
+  { id: 'calculation', title: '計算方法', level: 2 },
+  { id: 'reduction', title: '軽減税率について', level: 2 },
+  { id: 'example', title: '具体的な計算例', level: 2 },
 ]
 
 export function RegistrationTaxCalculator() {
@@ -47,30 +48,15 @@ export function RegistrationTaxCalculator() {
 
   // 土地
   const [hasLand, setHasLand] = useState(true)
-  const [landInputMode, setLandInputMode] = useState<'assessed' | 'market'>('market')
-  const [landAssessedValue, setLandAssessedValue] = useState<number>(0)
-  const [landMarketPrice, setLandMarketPrice] = useState<number>(0)
+  const [landAssessedValueInMan, setLandAssessedValueInMan] = useState<number>(0)
 
   // 建物
   const [hasBuilding, setHasBuilding] = useState(true)
-  const [buildingInputMode, setBuildingInputMode] = useState<'assessed' | 'market'>('market')
-  const [buildingAssessedValue, setBuildingAssessedValue] = useState<number>(0)
-  const [buildingMarketPrice, setBuildingMarketPrice] = useState<number>(0)
-
-  // 新築建物の詳細
-  const [prefecture, setPrefecture] = useState('その他')
-  const [structure, setStructure] = useState<'wood' | 'steel' | 'rc'>('wood')
-  const [floorArea, setFloorArea] = useState<number>(0)
-
-  // 軽減条件
-  const [isSelfResidential, setIsSelfResidential] = useState(true)
-  const [isLongTermQuality, setIsLongTermQuality] = useState(false)
-  const [isLowCarbon, setIsLowCarbon] = useState(false)
-  const [isResale, setIsResale] = useState(false)
+  const [buildingAssessedValueInMan, setBuildingAssessedValueInMan] = useState<number>(0)
 
   // ローン
   const [hasLoan, setHasLoan] = useState(true)
-  const [loanAmount, setLoanAmount] = useState<number>(0)
+  const [loanAmountInMan, setLoanAmountInMan] = useState<number>(0)
 
   // 取引種別変更時の処理
   const handleTransactionTypeChange = (type: 'newPurchase' | 'usedPurchase' | 'landOnly') => {
@@ -82,42 +68,42 @@ export function RegistrationTaxCalculator() {
     }
   }
 
+  // 万円→円に変換
+  const landAssessedValue = landAssessedValueInMan * 10000
+  const buildingAssessedValue = buildingAssessedValueInMan * 10000
+  const loanAmount = loanAmountInMan * 10000
+
   // 計算結果
   const result = useMemo(() => {
     const input: RegistrationTaxInput = {
       transactionType,
       hasLand,
-      landAssessedValue: landInputMode === 'assessed' ? landAssessedValue : undefined,
-      landMarketPrice: landInputMode === 'market' ? landMarketPrice : undefined,
+      landAssessedValue,
       hasBuilding: transactionType !== 'landOnly' && hasBuilding,
       buildingType: transactionType === 'newPurchase' ? 'new' : 'used',
-      buildingAssessedValue: buildingInputMode === 'assessed' ? buildingAssessedValue : undefined,
-      buildingMarketPrice: buildingInputMode === 'market' ? buildingMarketPrice : undefined,
-      prefecture: prefecture === '東京都' ? '東京都' : 'default',
-      structure,
-      floorArea,
-      isSelfResidential,
-      isLongTermQuality,
-      isLowCarbon,
-      isResale,
+      buildingAssessedValue,
+      prefecture: 'default',
+      structure: 'wood',
+      floorArea: 0,
+      isSelfResidential: true, // 軽減税率を自動適用
+      isLongTermQuality: false,
+      isLowCarbon: false,
+      isResale: false,
       hasLoan,
       loanAmount,
     }
 
     return calculateRegistrationTax(input)
   }, [
-    transactionType, hasLand, landInputMode, landAssessedValue, landMarketPrice,
-    hasBuilding, buildingInputMode, buildingAssessedValue, buildingMarketPrice,
-    prefecture, structure, floorArea,
-    isSelfResidential, isLongTermQuality, isLowCarbon, isResale,
+    transactionType, hasLand, landAssessedValue,
+    hasBuilding, buildingAssessedValue,
     hasLoan, loanAmount
   ])
 
   // 入力があるか判定
-  const hasInput = (hasLand && (landAssessedValue > 0 || landMarketPrice > 0)) ||
-    (hasBuilding && transactionType === 'newPurchase' && floorArea > 0) ||
-    (hasBuilding && transactionType === 'usedPurchase' && (buildingAssessedValue > 0 || buildingMarketPrice > 0)) ||
-    (hasLoan && loanAmount > 0)
+  const hasInput = (hasLand && landAssessedValueInMan > 0) ||
+    (hasBuilding && transactionType !== 'landOnly' && buildingAssessedValueInMan > 0) ||
+    (hasLoan && loanAmountInMan > 0)
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -162,247 +148,70 @@ export function RegistrationTaxCalculator() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 取引の種類
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { value: 'newPurchase', label: '新築購入' },
-                  { value: 'usedPurchase', label: '中古購入' },
-                  { value: 'landOnly', label: '土地のみ' },
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleTransactionTypeChange(option.value as 'newPurchase' | 'usedPurchase' | 'landOnly')}
-                    className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
-                      transactionType === option.value
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
+              <select
+                value={transactionType}
+                onChange={(e) => handleTransactionTypeChange(e.target.value as 'newPurchase' | 'usedPurchase' | 'landOnly')}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              >
+                <option value="newPurchase">新築購入</option>
+                <option value="usedPurchase">中古購入</option>
+                <option value="landOnly">土地のみ</option>
+              </select>
             </div>
 
             {/* 土地入力 */}
             {hasLand && (
               <div className="bg-white rounded-lg p-4 mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-medium text-gray-700">土地</label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setLandInputMode('market')}
-                      className={`text-xs px-2 py-1 rounded ${
-                        landInputMode === 'market' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                      }`}
-                    >
-                      売買価格から推定
-                    </button>
-                    <button
-                      onClick={() => setLandInputMode('assessed')}
-                      className={`text-xs px-2 py-1 rounded ${
-                        landInputMode === 'assessed' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                      }`}
-                    >
-                      評価額を入力
-                    </button>
-                  </div>
-                </div>
-                {landInputMode === 'market' ? (
-                  <>
-                    <NumberInput
-                      label="土地の売買価格"
-                      value={landMarketPrice}
-                      onChange={setLandMarketPrice}
-                      unit="円"
-                      placeholder="15,000,000"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      ※売買価格の約70%で固定資産税評価額を推定します
-                    </p>
-                  </>
-                ) : (
-                  <NumberInput
-                    label="土地の固定資産税評価額"
-                    value={landAssessedValue}
-                    onChange={setLandAssessedValue}
-                    unit="円"
-                    placeholder="10,500,000"
-                  />
-                )}
+                <NumberInput
+                  label="土地の固定資産税評価額"
+                  value={landAssessedValueInMan}
+                  onChange={setLandAssessedValueInMan}
+                  unit="万円"
+                  placeholder="1050"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  ※売買価格の約70%が目安です
+                </p>
               </div>
             )}
 
             {/* 建物入力 */}
             {hasBuilding && transactionType !== 'landOnly' && (
               <div className="bg-white rounded-lg p-4 mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  建物 {transactionType === 'newPurchase' ? '（新築）' : '（中古）'}
-                </label>
-
-                {transactionType === 'newPurchase' ? (
-                  // 新築の場合：構造と床面積から計算
-                  <>
-                    <div className="grid grid-cols-2 gap-3 mb-3">
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">都道府県</label>
-                        <select
-                          value={prefecture}
-                          onChange={(e) => setPrefecture(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        >
-                          <option value="東京都">東京都</option>
-                          <option value="その他">その他の地域</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">建物構造</label>
-                        <select
-                          value={structure}
-                          onChange={(e) => setStructure(e.target.value as 'wood' | 'steel' | 'rc')}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        >
-                          {structureOptions.map((opt) => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <NumberInput
-                      label="延床面積"
-                      value={floorArea}
-                      onChange={setFloorArea}
-                      unit="㎡"
-                      placeholder="100"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      ※法務局の認定価格で課税標準を計算します
-                    </p>
-                  </>
-                ) : (
-                  // 中古の場合：評価額または売買価格
-                  <>
-                    <div className="flex gap-2 mb-3">
-                      <button
-                        onClick={() => setBuildingInputMode('market')}
-                        className={`text-xs px-2 py-1 rounded ${
-                          buildingInputMode === 'market' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        売買価格から推定
-                      </button>
-                      <button
-                        onClick={() => setBuildingInputMode('assessed')}
-                        className={`text-xs px-2 py-1 rounded ${
-                          buildingInputMode === 'assessed' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        評価額を入力
-                      </button>
-                    </div>
-                    {buildingInputMode === 'market' ? (
-                      <>
-                        <NumberInput
-                          label="建物の売買価格"
-                          value={buildingMarketPrice}
-                          onChange={setBuildingMarketPrice}
-                          unit="円"
-                          placeholder="10,000,000"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          ※売買価格の約60%で固定資産税評価額を推定します
-                        </p>
-                      </>
-                    ) : (
-                      <NumberInput
-                        label="建物の固定資産税評価額"
-                        value={buildingAssessedValue}
-                        onChange={setBuildingAssessedValue}
-                        unit="円"
-                        placeholder="6,000,000"
-                      />
-                    )}
-                  </>
-                )}
+                <NumberInput
+                  label={`建物の固定資産税評価額${transactionType === 'newPurchase' ? '（新築）' : '（中古）'}`}
+                  value={buildingAssessedValueInMan}
+                  onChange={setBuildingAssessedValueInMan}
+                  unit="万円"
+                  placeholder="600"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  ※売買価格の約50〜60%が目安です
+                </p>
               </div>
             )}
 
-            {/* 軽減条件 */}
-            <div className="bg-white rounded-lg p-4 mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                軽減税率の適用条件
-              </label>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={isSelfResidential}
-                    onChange={(e) => setIsSelfResidential(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">自己居住用（マイホーム）</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={isLongTermQuality}
-                    onChange={(e) => {
-                      setIsLongTermQuality(e.target.checked)
-                      if (e.target.checked) setIsLowCarbon(false)
-                    }}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">長期優良住宅の認定あり</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={isLowCarbon}
-                    onChange={(e) => {
-                      setIsLowCarbon(e.target.checked)
-                      if (e.target.checked) setIsLongTermQuality(false)
-                    }}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">低炭素住宅の認定あり</span>
-                </label>
-                {transactionType === 'usedPurchase' && (
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={isResale}
-                      onChange={(e) => setIsResale(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">買取再販住宅（リノベ済み物件）</span>
-                  </label>
-                )}
-              </div>
-              {isSelfResidential && (
-                <p className="text-xs text-blue-600 mt-2 flex items-start gap-1">
-                  <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                  床面積50㎡以上・取得後1年以内の登記が条件とされています
-                </p>
-              )}
-            </div>
-
             {/* 住宅ローン */}
             <div className="bg-white rounded-lg p-4 mb-4">
-              <label className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-3">
                 <input
                   type="checkbox"
+                  id="hasLoan"
                   checked={hasLoan}
                   onChange={(e) => setHasLoan(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-blue-500"
+                  className="w-4 h-4 accent-blue-600 rounded border border-gray-300"
                 />
-                <span className="text-sm font-medium text-gray-700">住宅ローンを利用する</span>
-              </label>
+                <label htmlFor="hasLoan" className="text-sm font-medium text-gray-700">
+                  住宅ローンを利用する
+                </label>
+              </div>
               {hasLoan && (
                 <NumberInput
                   label="借入金額"
-                  value={loanAmount}
-                  onChange={setLoanAmount}
-                  unit="円"
-                  placeholder="30,000,000"
+                  value={loanAmountInMan}
+                  onChange={setLoanAmountInMan}
+                  unit="万円"
+                  placeholder="3000"
                 />
               )}
             </div>
@@ -514,11 +323,11 @@ export function RegistrationTaxCalculator() {
           {/* 早見表 */}
           <section className="mb-12">
             <QuickReferenceTable
-              title="登録免許税 早見表"
-              description="新築建売住宅（土地+建物）購入時の目安です。自己居住用・軽減税率適用・ローン80%の場合。"
+              title="登録免許税 早見表（新築の場合）"
+              description="新築建売住宅購入時の目安です。自己居住用・軽減税率適用・ローン80%の場合。"
               headers={['物件価格', '登録免許税（税込）']}
               rows={quickReferenceData}
-              note="※土地・建物を50:50、建物100㎡・木造で概算。実際の金額は評価額により異なります。"
+              note="※土地・建物を50:50、土地評価70%、建物評価60%で概算。中古住宅の場合は建物の税率が異なるため金額が変わります。"
             />
           </section>
 
@@ -533,8 +342,8 @@ export function RegistrationTaxCalculator() {
               所有権の移転（売買）、新築建物の保存登記、住宅ローンの抵当権設定登記などが対象となるとされています。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              納税のタイミングは登記申請時とされており、実務上は不動産の決済日（引き渡し日）に司法書士を通じて納付することが一般的です。
-              費用は買主が負担することが多いとされています。
+              納税のタイミングは登記申請時とされており、実務上は不動産の決済日（引き渡し日）に司法書士を通じて納付することが多いとされています。
+              費用は買主が負担するケースが多いとされています。
             </p>
 
             <SectionHeading id="calculation" items={tocItems} />
@@ -551,24 +360,14 @@ export function RegistrationTaxCalculator() {
             </div>
             <p className="text-gray-700 mb-4 leading-relaxed">
               <strong>課税標準額</strong>には「固定資産税評価額」が使用されるとされています。
-              これは市場価格（売買価格）とは異なり、一般的に土地は時価の約70%、建物は約50〜60%程度といわれています。
+              これは市場価格（売買価格）とは異なり、土地は時価の約70%、建物は約50〜60%程度が目安とされています。
               新築建物の場合は、法務局が定める認定価格（床面積×単価）が使用されるとされています。
             </p>
 
             <SectionHeading id="reduction" items={tocItems} />
-            <p className="text-gray-700 mb-3 leading-relaxed">
-              以下の条件を満たす場合、住宅用家屋の軽減税率が適用されるとされています。
-            </p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <ul className="text-gray-700 space-y-2 text-sm">
-                <li>・<strong>自己居住用</strong>であること（投資用は対象外とされています）</li>
-                <li>・<strong>床面積50㎡以上</strong>であること</li>
-                <li>・取得後<strong>1年以内</strong>に登記を行うこと</li>
-                <li>・中古住宅の場合、<strong>新耐震基準</strong>（1982年以降築）を満たすこと</li>
-              </ul>
-            </div>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              土地の売買による移転登記については、住宅用に限らず軽減税率1.5%が適用されるとされています（令和11年3月末まで）。
+              自己居住用の住宅には軽減税率が適用される場合があります。
+              適用条件や税率の詳細は<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7191.htm" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国税庁のサイト</a>をご確認ください。
             </p>
 
             <SectionHeading id="example" items={tocItems} />
@@ -590,22 +389,17 @@ export function RegistrationTaxCalculator() {
           {/* 免責事項 */}
           <ToolDisclaimer />
 
+          {/* 関連シミュレーター */}
+          <RelatedTools currentPath="/tools/registration-tax" />
+
           {/* CTA */}
-          <div className="mt-16 pt-8 border-t border-gray-100">
-            <p className="text-sm text-gray-500 mb-4 text-center">
-              物件の収益性をシミュレーションしてみませんか？
-            </p>
-            <div className="text-center">
-              <Link
-                href="/simulator"
-                className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-              >
-                収益シミュレーターを試す
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
+          <div className="mt-16">
+            <SimulatorCTA />
+          </div>
+
+          {/* 会社概要・運営者 */}
+          <div className="mt-16">
+            <CompanyProfileCompact />
           </div>
         </article>
       </main>

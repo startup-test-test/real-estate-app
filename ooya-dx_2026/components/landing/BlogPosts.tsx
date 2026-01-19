@@ -101,7 +101,7 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ articles = [] }) => {
         <div className="mt-10 text-center">
           <Link
             href="/media"
-            className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
           >
             すべての記事を見る
           </Link>

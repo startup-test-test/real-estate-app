@@ -8,21 +8,26 @@ import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import { calculateCorporateTaxTotal, compareCorporateVsIndividual } from '@/lib/calculators/corporate-tax'
+import { calculateCorporateTaxTotal } from '@/lib/calculators/corporate-tax'
 
 // 早見表データ
 const quickReferenceData: QuickReferenceRow[] = [
+  { label: '100万円', value: '約29万円', subValue: '実効税率 約29%' },
+  { label: '200万円', value: '約52万円', subValue: '実効税率 約26%' },
+  { label: '300万円', value: '約74万円', subValue: '実効税率 約25%' },
   { label: '400万円', value: '約97万円', subValue: '実効税率 約24%' },
-  { label: '600万円', value: '約148万円', subValue: '実効税率 約25%' },
-  { label: '800万円', value: '約200万円', subValue: '実効税率 約25%' },
-  { label: '1,000万円', value: '約273万円', subValue: '実効税率 約27%' },
-  { label: '1,500万円', value: '約457万円', subValue: '実効税率 約30%' },
-  { label: '2,000万円', value: '約641万円', subValue: '実効税率 約32%' },
-  { label: '3,000万円', value: '約1,009万円', subValue: '実効税率 約34%' },
-  { label: '5,000万円', value: '約1,745万円', subValue: '実効税率 約35%' },
+  { label: '500万円', value: '約121万円', subValue: '実効税率 約24%' },
+  { label: '600万円', value: '約146万円', subValue: '実効税率 約24%' },
+  { label: '700万円', value: '約171万円', subValue: '実効税率 約24%' },
+  { label: '800万円', value: '約196万円', subValue: '実効税率 約24%' },
+  { label: '900万円', value: '約233万円', subValue: '実効税率 約26%' },
+  { label: '1,000万円', value: '約270万円', subValue: '実効税率 約27%' },
 ]
 
 // 関連ツール
@@ -40,29 +45,20 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '不動産法人にかかる税金とは', level: 2 },
   { id: 'structure', title: '法人税等の構成', level: 3 },
   { id: 'effective-rate', title: '実効税率について', level: 3 },
-  { id: 'comparison', title: '個人との比較', level: 3 },
-  { id: 'breakeven', title: '法人化の目安', level: 3 },
   { id: 'costs', title: '法人の維持コスト', level: 3 },
 ]
 
 export function CorporateTaxCalculator() {
   // 万円単位で入力
   const [incomeInMan, setIncomeInMan] = useState<number>(0)
-  const [isTokyo23, setIsTokyo23] = useState<boolean>(true)
-  const [showComparison, setShowComparison] = useState<boolean>(false)
 
   // 円に変換
   const incomeInYen = incomeInMan * 10000
 
-  // 計算結果
+  // 計算結果（標準税率で一律計算）
   const result = useMemo(() => {
-    return calculateCorporateTaxTotal(incomeInYen, { isTokyo23 })
-  }, [incomeInYen, isTokyo23])
-
-  // 個人との比較
-  const comparison = useMemo(() => {
-    return compareCorporateVsIndividual(incomeInYen, { isTokyo23 })
-  }, [incomeInYen, isTokyo23])
+    return calculateCorporateTaxTotal(incomeInYen)
+  }, [incomeInYen])
 
   // 入力があるかどうか
   const hasInput = incomeInMan > 0
@@ -125,33 +121,6 @@ export function CorporateTaxCalculator() {
                   例：1000 → 1,000万円 → 法人税等 約273万円
                 </p>
               )}
-
-              {/* 地域選択 */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600 mb-2">本店所在地</p>
-                <div className="flex gap-4">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="location"
-                      checked={isTokyo23}
-                      onChange={() => setIsTokyo23(true)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">東京23区</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="location"
-                      checked={!isTokyo23}
-                      onChange={() => setIsTokyo23(false)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">その他（標準税率）</span>
-                  </label>
-                </div>
-              </div>
             </div>
 
             {/* 適用税率の説明 */}
@@ -245,57 +214,14 @@ export function CorporateTaxCalculator() {
                   <div className="text-sm text-gray-700 font-mono space-y-1">
                     <p>【法人税】{incomeInMan <= 800 ? `${incomeInMan.toLocaleString()}万円 × 15%` : `800万円 × 15% + ${(incomeInMan - 800).toLocaleString()}万円 × 23.2%`} = {Math.round(result.corporateTax / 10000).toLocaleString()}万円</p>
                     <p>【地方法人税】{Math.round(result.corporateTax / 10000).toLocaleString()}万円 × 10.3% = {Math.round(result.localCorporateTax / 10000).toLocaleString()}万円</p>
-                    <p>【住民税割】{Math.round(result.corporateTax / 10000).toLocaleString()}万円 × {result.breakdown.residentTaxRate} = {Math.round(result.residentTaxPortion / 10000).toLocaleString()}万円</p>
-                    <p>【合計】約{Math.round(result.totalTax / 10000).toLocaleString()}万円</p>
+                    <p>【住民税】法人税割 + 均等割7万円 = {Math.round((result.residentTaxPortion + result.equalLevy) / 10000).toLocaleString()}万円</p>
+                    <p>【事業税等】事業税 + 特別法人事業税 = {Math.round((result.businessTax + result.specialBusinessTax) / 10000).toLocaleString()}万円</p>
+                    <p>【合計】{Math.round(result.corporateTax / 10000).toLocaleString()} + {Math.round(result.localCorporateTax / 10000).toLocaleString()} + {Math.round((result.residentTaxPortion + result.equalLevy) / 10000).toLocaleString()} + {Math.round((result.businessTax + result.specialBusinessTax) / 10000).toLocaleString()} = 約{Math.round(result.totalTax / 10000).toLocaleString()}万円</p>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* 個人との比較ボタン */}
-            {hasInput && (
-              <div className="mt-4">
-                <button
-                  onClick={() => setShowComparison(!showComparison)}
-                  className="w-full py-3 bg-white border border-blue-300 rounded-lg text-blue-700 font-medium hover:bg-blue-50 transition-colors"
-                >
-                  {showComparison ? '比較を閉じる' : '個人との税額を比較する'}
-                </button>
-              </div>
-            )}
-
-            {/* 個人との比較表示 */}
-            {hasInput && showComparison && (
-              <div className="mt-4 bg-white rounded-lg p-4 border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-3">法人 vs 個人 税額比較</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">法人の税額</p>
-                    <p className="text-xl font-bold text-blue-700">
-                      約{Math.round(comparison.corporate.totalTax / 10000).toLocaleString()}万円
-                    </p>
-                    <p className="text-xs text-gray-500">実効税率 約{comparison.corporate.effectiveRate.toFixed(1)}%</p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">個人の税額</p>
-                    <p className="text-xl font-bold text-gray-700">
-                      約{Math.round(comparison.individual.total / 10000).toLocaleString()}万円
-                    </p>
-                    <p className="text-xs text-gray-500">実効税率 約{comparison.individual.effectiveRate.toFixed(1)}%</p>
-                  </div>
-                </div>
-                <div className="mt-3 p-3 bg-green-50 rounded-lg">
-                  <p className="text-sm text-gray-600">法人化による税額差</p>
-                  <p className={`text-lg font-bold ${comparison.meritAmount > 0 ? 'text-green-700' : 'text-red-700'}`}>
-                    {comparison.meritAmount > 0 ? '法人が有利：' : '個人が有利：'}
-                    約{Math.abs(Math.round(comparison.meritAmount / 10000)).toLocaleString()}万円
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    ※社会保険料や役員報酬は考慮していません。実際の比較には専門家への相談をおすすめします。
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* 計算結果の注記 */}
@@ -308,7 +234,7 @@ export function CorporateTaxCalculator() {
               description="課税所得に対する法人税等の目安です（中小法人・東京都の場合）。"
               headers={['課税所得', '法人税等（概算）']}
               rows={quickReferenceData}
-              note="※上記は概算値です。実際の税額は個別の状況により異なります。"
+              note="※所得が低い場合、均等割（年間約7万円の固定税額）の影響で実効税率が高く表示されます。"
             />
           </section>
 
@@ -335,7 +261,7 @@ export function CorporateTaxCalculator() {
 
             <SectionHeading id="effective-rate" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              実効税率とは、事業税が翌年度に損金算入されることを考慮した実質的な税負担率です。中小法人の場合、一般的な目安は以下の通りです。
+              実効税率とは、事業税が翌年度に損金算入されることを考慮した実質的な税負担率です。中小法人の場合、目安は以下の通りです。
             </p>
             <div className="bg-gray-100 rounded-lg p-4 mb-4">
               <ul className="text-gray-700 space-y-2 text-sm">
@@ -344,26 +270,6 @@ export function CorporateTaxCalculator() {
               </ul>
               <p className="text-xs text-gray-500 mt-2">
                 ※地域や個別の条件により異なります
-              </p>
-            </div>
-
-            <SectionHeading id="comparison" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              個人の所得税・住民税は累進課税で最高税率は約55%に達しますが、法人は約34%で頭打ちとなります。また、法人には以下のようなメリットがあるとされています。
-            </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
-              <li>土地取得の借入金利子も全額経費（個人は損益通算制限あり）</li>
-              <li>赤字の繰越期間が10年（個人は3年）</li>
-              <li>家族への給与による所得分散が可能</li>
-            </ul>
-
-            <SectionHeading id="breakeven" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              一般的に、課税所得が900万円〜1,000万円を超えると法人化のメリットが出始めるとされています。ただし、社会保険料の負担増を考慮すると、実質的なメリットは課税所得1,000万円〜1,200万円程度からとなるケースが多いです。
-            </p>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-              <p className="text-sm text-amber-900">
-                法人化の判断には、税金だけでなく社会保険料、法人維持コスト、将来の事業計画なども考慮する必要があります。具体的な検討には税理士等の専門家への相談をおすすめします。
               </p>
             </div>
 
@@ -383,22 +289,17 @@ export function CorporateTaxCalculator() {
           {/* 免責事項 */}
           <ToolDisclaimer />
 
+          {/* 関連シミュレーター */}
+          <RelatedTools currentPath="/tools/corporate-tax" />
+
           {/* CTA */}
-          <div className="mt-16 pt-8 border-t border-gray-100">
-            <p className="text-sm text-gray-500 mb-4 text-center">
-              物件の収益性をシミュレーションしてみませんか？
-            </p>
-            <div className="text-center">
-              <Link
-                href="/simulator"
-                className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-              >
-                収益シミュレーターを試す
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
+          <div className="mt-16">
+            <SimulatorCTA />
+          </div>
+
+          {/* 会社概要・運営者 */}
+          <div className="mt-16">
+            <CompanyProfileCompact />
           </div>
         </article>
       </main>

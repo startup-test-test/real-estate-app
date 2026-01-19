@@ -1,27 +1,32 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Info } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateAcquisitionTax } from '@/lib/calculators/acquisitionTax'
 
 // =================================================================
-// 早見表データ（新築住宅の場合）
+// 早見表データ（3パターン比較）
 // =================================================================
-const quickReferenceData: QuickReferenceRow[] = [
-  { label: '建物1,000万円 + 土地1,000万円', value: '約0万円', subValue: '控除適用後' },
-  { label: '建物1,500万円 + 土地1,500万円', value: '約13.5万円', subValue: '控除適用後' },
-  { label: '建物2,000万円 + 土地2,000万円', value: '約24万円', subValue: '控除適用後' },
-  { label: '建物2,500万円 + 土地2,500万円', value: '約39万円', subValue: '控除適用後' },
-  { label: '建物3,000万円 + 土地3,000万円', value: '約54万円', subValue: '控除適用後' },
+const quickReferenceData = [
+  { label: '建物1,000万円 + 土地1,000万円', newHousing: '約0万円', usedSelf: '約0万円', usedInvest: '約45万円' },
+  { label: '建物1,500万円 + 土地1,500万円', newHousing: '約9万円', usedSelf: '約9万円', usedInvest: '約68万円' },
+  { label: '建物2,000万円 + 土地2,000万円', newHousing: '約24万円', usedSelf: '約24万円', usedInvest: '約90万円' },
+  { label: '建物2,500万円 + 土地2,500万円', newHousing: '約39万円', usedSelf: '約39万円', usedInvest: '約113万円' },
+  { label: '建物3,000万円 + 土地3,000万円', newHousing: '約54万円', usedSelf: '約54万円', usedInvest: '約135万円' },
+  { label: '建物3,500万円 + 土地3,500万円', newHousing: '約69万円', usedSelf: '約69万円', usedInvest: '約158万円' },
+  { label: '建物4,000万円 + 土地4,000万円', newHousing: '約84万円', usedSelf: '約84万円', usedInvest: '約180万円' },
+  { label: '建物4,500万円 + 土地4,500万円', newHousing: '約99万円', usedSelf: '約99万円', usedInvest: '約203万円' },
+  { label: '建物5,000万円 + 土地5,000万円', newHousing: '約114万円', usedSelf: '約114万円', usedInvest: '約225万円' },
 ]
 
 // =================================================================
@@ -46,8 +51,8 @@ const PAGE_TITLE = '不動産取得税 計算シミュレーション｜軽減�
 // =================================================================
 const tocItems: TocItem[] = [
   { id: 'about', title: '不動産取得税とは', level: 2 },
-  { id: 'calculation', title: '計算方法', level: 3 },
-  { id: 'reduction', title: '軽減措置', level: 3 },
+  { id: 'calculation', title: '計算方法', level: 2 },
+  { id: 'reduction', title: '軽減措置', level: 2 },
   { id: 'used', title: '中古住宅の築年数別控除額', level: 2 },
 ]
 
@@ -64,6 +69,7 @@ export function AcquisitionTaxCalculator() {
   const [isResidential, setIsResidential] = useState<boolean>(true)
   const [builtYear, setBuiltYear] = useState<number>(2020)
   const [isLongTermQuality, setIsLongTermQuality] = useState<boolean>(false)
+  const [isForSelfResidence, setIsForSelfResidence] = useState<boolean>(true)
 
   // 円に変換
   const buildingEvalInYen = buildingEvalInMan * 10000
@@ -79,10 +85,11 @@ export function AcquisitionTaxCalculator() {
       builtDate,
       isResidential,
       isLongTermQuality: isNewBuilding ? isLongTermQuality : false,
+      isForSelfResidence: isNewBuilding ? true : isForSelfResidence, // 中古のみ影響
       landEvaluation: landEvalInYen,
       landArea,
     })
-  }, [buildingEvalInYen, landEvalInYen, floorArea, landArea, isNewBuilding, isResidential, builtYear, isLongTermQuality])
+  }, [buildingEvalInYen, landEvalInYen, floorArea, landArea, isNewBuilding, isResidential, builtYear, isLongTermQuality, isForSelfResidence])
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -159,24 +166,46 @@ export function AcquisitionTaxCalculator() {
                   </div>
                 </div>
 
-                {/* 中古の場合：築年 */}
+                {/* 中古の場合：築年と用途 */}
                 {!isNewBuilding && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      新築年（西暦）
-                    </label>
-                    <input
-                      type="number"
-                      value={builtYear}
-                      onChange={(e) => setBuiltYear(parseInt(e.target.value) || 2000)}
-                      min={1950}
-                      max={2025}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      ※1981年以前の場合は耐震基準適合証明が必要な場合があります
-                    </p>
-                  </div>
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        新築年（西暦）
+                      </label>
+                      <input
+                        type="number"
+                        value={builtYear}
+                        onChange={(e) => setBuiltYear(parseInt(e.target.value) || 2000)}
+                        min={1950}
+                        max={2025}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        ※1981年以前の場合は耐震基準適合証明が必要な場合があります
+                      </p>
+                    </div>
+                    {isResidential && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          取得目的
+                        </label>
+                        <select
+                          value={isForSelfResidence ? 'self' : 'investment'}
+                          onChange={(e) => setIsForSelfResidence(e.target.value === 'self')}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        >
+                          <option value="self">自己居住用</option>
+                          <option value="investment">投資用（賃貸）</option>
+                        </select>
+                        {!isForSelfResidence && (
+                          <p className="text-xs text-amber-600 mt-1">
+                            ※投資用の場合、中古住宅の建物控除は適用されない場合があります
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* 新築の場合：認定長期優良住宅 */}
@@ -353,8 +382,8 @@ export function AcquisitionTaxCalculator() {
               {/* 注意事項 */}
               <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-xs text-amber-700">
-                  ※本計算は2027年3月31日までの特例税率（土地・住宅3%）を適用しています。
-                  評価額は固定資産税評価証明書でご確認ください。
+                  ※本計算は2027年3月31日までの特例税率（土地・住宅3%）を前提として計算しています。
+                  実際の適用可否は専門家にご確認ください。
                 </p>
               </div>
             </div>
@@ -363,16 +392,40 @@ export function AcquisitionTaxCalculator() {
             <CalculatorNote />
 
             {/* =================================================================
-                早見表
+                早見表（3パターン比較）
             ================================================================= */}
-            <section className="mb-12">
-              <QuickReferenceTable
-                title="不動産取得税 早見表（新築住宅の場合）"
-                description="新築住宅（床面積80m²）で軽減措置を適用した場合の目安です。建物評価額から1,200万円を控除、土地は1/2評価を適用。"
-                headers={['物件評価額（建物+土地）', '不動産取得税（概算）']}
-                rows={quickReferenceData}
-                note="※実際の税額は評価額や床面積により異なります"
-              />
+            <section className="mt-10 mb-12">
+              <div className="bg-primary-50 rounded-xl p-5 border border-primary-100">
+                <h2 className="text-lg font-bold text-gray-900 mb-2">不動産取得税 早見表</h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  床面積80m²、土地100m²を想定した概算値です。中古（自己居住）は1997年以降新築の場合。
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border-collapse bg-white rounded-lg overflow-hidden">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="border border-gray-200 px-3 py-2 text-left font-medium">物件評価額</th>
+                        <th className="border border-gray-200 px-3 py-2 text-center font-medium">新築</th>
+                        <th className="border border-gray-200 px-3 py-2 text-center font-medium">中古・自己居住<br/><span className="text-xs font-normal">（1997年以降）</span></th>
+                        <th className="border border-gray-200 px-3 py-2 text-center font-medium">中古・投資用</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {quickReferenceData.map((row, index) => (
+                        <tr key={index}>
+                          <td className="border border-gray-200 px-3 py-2 text-gray-700">{row.label}</td>
+                          <td className="border border-gray-200 px-3 py-2 text-center text-blue-700 font-medium">{row.newHousing}</td>
+                          <td className="border border-gray-200 px-3 py-2 text-center text-blue-700 font-medium">{row.usedSelf}</td>
+                          <td className="border border-gray-200 px-3 py-2 text-center text-red-600 font-medium">{row.usedInvest}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-3">
+                  ※1997年より前に新築された中古住宅は控除額が少なくなり、税額が高くなる場合があります。詳細は上記シミュレーターでご確認ください。
+                </p>
+              </div>
             </section>
 
             {/* =================================================================
@@ -387,31 +440,17 @@ export function AcquisitionTaxCalculator() {
               <SectionHeading id="about" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
                 不動産取得税とは、土地や建物を取得した際に都道府県に納める地方税です。
-                売買、贈与、新築、増築など、取得の原因を問わず課税されます。
-                ただし、相続による取得は非課税となります。
+                売買、贈与、新築、増築など、取得の原因を問わず課税されるのが原則です。
+                ただし、相続による取得は非課税となる場合があります。
               </p>
               <p className="text-gray-700 mb-4 leading-relaxed">
                 「忘れた頃にやってくる税金」とも言われ、取得後3〜6ヶ月後に納税通知書が届くため、
                 資金計画に含めておくことが重要です。
               </p>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div className="flex items-start gap-2">
-                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-blue-800">特例措置の期限</p>
-                    <ul className="text-sm text-blue-700 mt-1 space-y-1">
-                      <li>・土地・住宅の税率3%：2027年3月31日まで（本則4%）</li>
-                      <li>・宅地の課税標準1/2：2027年3月31日まで</li>
-                      <li>・認定長期優良住宅の1,300万円控除：2026年3月31日まで</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
               <SectionHeading id="calculation" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
-                不動産取得税は、建物と土地それぞれについて以下の計算式で算出されます。
+                不動産取得税は、建物と土地それぞれについて以下の計算式で算出されるのが一般的です。
               </p>
 
               <div className="bg-gray-100 rounded-lg p-4 mb-4">
@@ -427,27 +466,10 @@ export function AcquisitionTaxCalculator() {
               </div>
 
               <SectionHeading id="reduction" items={tocItems} />
-
-              {/* 新築住宅の軽減 */}
-              <div className="border border-gray-200 rounded-lg p-4 mb-4">
-                <h4 className="font-semibold text-gray-900 mb-2">新築住宅の控除</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>・控除額：1,200万円（認定長期優良住宅は1,300万円）</li>
-                  <li>・床面積要件：50m²〜240m²（共同住宅は40m²〜）</li>
-                  <li>・住宅用途であること（自己居住・賃貸どちらも可）</li>
-                </ul>
-              </div>
-
-              {/* 土地の軽減 */}
-              <div className="border border-gray-200 rounded-lg p-4 mb-4">
-                <h4 className="font-semibold text-gray-900 mb-2">住宅用土地の軽減</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>・課税標準が1/2に軽減</li>
-                  <li>・さらに以下のいずれか多い方を税額から控除：</li>
-                  <li className="ml-4">A) 45,000円</li>
-                  <li className="ml-4">B)（土地1m²あたり評価額÷2）×（床面積×2、上限200m²）× 3%</li>
-                </ul>
-              </div>
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                新築住宅・中古住宅ともに、一定の要件を満たす場合は控除が適用される場合があります。
+                床面積や用途などの条件は各都道府県により異なる場合がありますので、詳細は下記参考リンクをご確認ください。
+              </p>
             </section>
 
             {/* =================================================================
@@ -456,8 +478,8 @@ export function AcquisitionTaxCalculator() {
             <section className="mb-12">
               <SectionHeading id="used" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
-                中古住宅の場合、新築された年によって控除額が異なります。
-                なお、<strong>自己居住用のみ</strong>が対象となり、投資用（賃貸用）には適用されません。
+                中古住宅の場合、新築された年によって控除額が異なる場合があります。
+                なお、<strong>自己居住用のみ</strong>が対象となり、投資用（賃貸用）には適用されない場合があります。
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
@@ -509,22 +531,17 @@ export function AcquisitionTaxCalculator() {
             {/* 免責事項 */}
             <ToolDisclaimer />
 
+            {/* 関連シミュレーター */}
+            <RelatedTools currentPath="/tools/acquisition-tax" />
+
             {/* CTA */}
-            <div className="mt-16 pt-8 border-t border-gray-100">
-              <p className="text-sm text-gray-500 mb-4 text-center">
-                物件の収益性をシミュレーションしてみませんか？
-              </p>
-              <div className="text-center">
-                <Link
-                  href="/simulator"
-                  className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-                >
-                  収益シミュレーターを試す
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </Link>
-              </div>
+            <div className="mt-16">
+              <SimulatorCTA />
+            </div>
+
+            {/* 会社概要・運営者 */}
+            <div className="mt-16">
+              <CompanyProfileCompact />
             </div>
           </article>
         </main>
