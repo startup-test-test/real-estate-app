@@ -62,7 +62,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
     setIsDropdownOpen(false);
     try {
       await auth.signOut();
-      router.push('/');
+      // 強制的にページをリロードしてセッション状態を更新
+      window.location.href = '/';
     } catch {}
   };
 
