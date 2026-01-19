@@ -32,12 +32,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const articles = getAllArticles();
 
   // 記事ページ
-  const articlePages = articles.map((article) => ({
-    url: `${BASE_URL}/media/${article.categorySlug}/${article.slug}`,
-    lastModified: new Date(article.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }));
+  const articlePages = articles.map((article) => {
+    // 無効な日付の場合は現在日時を使用
+    const date = article.date ? new Date(article.date) : new Date();
+    const lastModified = isNaN(date.getTime()) ? new Date() : date;
+
+    return {
+      url: `${BASE_URL}/media/${article.categorySlug}/${article.slug}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    };
+  });
 
   // 計算ツールページ（自動検出）
   const toolSlugs = getToolSlugs();
