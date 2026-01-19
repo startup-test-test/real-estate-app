@@ -199,11 +199,6 @@ export function calculateGiftTax(input: GiftTaxInput): GiftTaxResult {
     taxAmount = Math.floor(taxableAmount * bracket.rate - bracket.deduction)
     taxAmount = Math.max(0, taxAmount)
 
-    if (isSpecialRate) {
-      notes.push('直系尊属から成人の子・孫への贈与のため、特例税率が適用されます')
-    } else {
-      notes.push('一般税率が適用されます')
-    }
   }
 
   // =================================================================

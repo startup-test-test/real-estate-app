@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { AlertTriangle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -50,14 +49,10 @@ export function InheritanceTaxCalculator() {
   const [debtsInMan, setDebtsInMan] = useState<number>(0)
   const [hasSpouse, setHasSpouse] = useState<boolean>(true)
   const [childCount, setChildCount] = useState<number>(2)
-  const [lifeInsuranceInMan, setLifeInsuranceInMan] = useState<number>(0)
-  const [retirementBenefitInMan, setRetirementBenefitInMan] = useState<number>(0)
 
   // 円に変換
   const totalAssetsInYen = totalAssetsInMan * 10000
   const debtsInYen = debtsInMan * 10000
-  const lifeInsuranceInYen = lifeInsuranceInMan * 10000
-  const retirementBenefitInYen = retirementBenefitInMan * 10000
 
   // 計算結果
   const result = useMemo(() => {
@@ -68,10 +63,10 @@ export function InheritanceTaxCalculator() {
         hasSpouse,
         childCount,
       },
-      lifeInsurance: lifeInsuranceInYen,
-      retirementBenefit: retirementBenefitInYen,
+      lifeInsurance: 0,
+      retirementBenefit: 0,
     })
-  }, [totalAssetsInYen, debtsInYen, hasSpouse, childCount, lifeInsuranceInYen, retirementBenefitInYen])
+  }, [totalAssetsInYen, debtsInYen, hasSpouse, childCount])
 
   // 入力があるかどうか
   const hasInput = totalAssetsInMan > 0
@@ -101,7 +96,7 @@ export function InheritanceTaxCalculator() {
           </h1>
           <p className="text-gray-600 mb-8">
             遺産総額と相続人の人数を入力するだけで、相続税額の目安を概算計算します。
-            基礎控除の自動計算、生命保険金・死亡退職金の非課税枠にも対応。
+            基礎控除の自動計算に対応しています。
           </p>
 
           {/* =================================================================
@@ -178,24 +173,6 @@ export function InheritanceTaxCalculator() {
                 </p>
               </div>
 
-              {/* 生命保険金・死亡退職金 */}
-              <NumberInput
-                label="生命保険金"
-                value={lifeInsuranceInMan}
-                onChange={setLifeInsuranceInMan}
-                unit="万円"
-                placeholder="例：1000"
-              />
-              <NumberInput
-                label="死亡退職金"
-                value={retirementBenefitInMan}
-                onChange={setRetirementBenefitInMan}
-                unit="万円"
-                placeholder="例：500"
-              />
-              <p className="text-xs text-gray-500">
-                ※生命保険金・死亡退職金には「500万円×法定相続人の数」の非課税枠があります
-              </p>
             </div>
 
             {/* 結果エリア */}
@@ -211,19 +188,6 @@ export function InheritanceTaxCalculator() {
                   </>
                 )}
 
-                {result.taxableInsurance > 0 && (
-                  <>
-                    <span className="text-gray-600">課税対象の保険金</span>
-                    <span className="text-right text-lg font-medium">+{(result.taxableInsurance / 10000).toLocaleString('ja-JP')}万円</span>
-                  </>
-                )}
-
-                {result.taxableRetirement > 0 && (
-                  <>
-                    <span className="text-gray-600">課税対象の退職金</span>
-                    <span className="text-right text-lg font-medium">+{(result.taxableRetirement / 10000).toLocaleString('ja-JP')}万円</span>
-                  </>
-                )}
 
                 <span className="text-gray-600 border-t pt-3">正味の遺産額</span>
                 <span className="text-right text-lg font-medium border-t pt-3">{(result.netAssets / 10000).toLocaleString('ja-JP')}万円</span>
@@ -266,40 +230,6 @@ export function InheritanceTaxCalculator() {
               )}
             </div>
 
-            {/* 相続人別の詳細 */}
-            {result.heirDetails.length > 0 && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm font-medium text-blue-800 mb-2">法定相続分に基づく算出税額（参考）</p>
-                <div className="text-xs text-blue-700 space-y-1">
-                  {result.heirDetails.map((detail, index) => (
-                    <p key={index}>
-                      {detail.heirType === 'spouse' ? '配偶者' : detail.heirType === 'child' ? '子' : detail.heirType === 'parent' ? '親' : '兄弟姉妹'}
-                      （{detail.legalShare}）：{(detail.legalShareAmount / 10000).toLocaleString()}万円 → 税額{(detail.calculatedTax / 10000).toLocaleString()}万円
-                    </p>
-                  ))}
-                </div>
-                <p className="text-xs text-blue-600 mt-2">
-                  ※実際の分割割合によって各相続人の負担額は変動します
-                </p>
-              </div>
-            )}
-
-            {/* 注意事項 */}
-            {result.notes.length > 0 && (
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-amber-800 mb-1">ご確認ください</p>
-                    <ul className="text-xs text-amber-700 space-y-1">
-                      {result.notes.map((note, index) => (
-                        <li key={index}>・{note}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* 計算結果の注記 */}

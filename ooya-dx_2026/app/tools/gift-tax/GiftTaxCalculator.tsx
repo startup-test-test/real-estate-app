@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { Info, AlertTriangle } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -263,27 +263,6 @@ export function GiftTaxCalculator() {
                 本シミュレーターでは、一般的な暦年課税方式での概算計算を行います。
               </p>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div className="flex items-start gap-2">
-                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-blue-800">2024年税制改正のポイント</p>
-                    <ul className="text-sm text-blue-700 mt-1 space-y-1">
-                      <li>・相続時精算課税に年間110万円の基礎控除が新設</li>
-                      <li>・暦年課税の生前贈与加算期間が3年から7年に延長（2024年以降の贈与分から段階的に適用）</li>
-                    </ul>
-                    <p className="text-xs text-blue-600 mt-2">
-                      ※具体的な判断は税理士等の専門家にご相談ください。
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2 mb-4">
-                参考サイト：
-                <a href="https://www.home4u.jp/sell/juku/course/inherit/sell-625-49556" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  「110万円贈与」の廃止されない！2024年の暦年贈与の税制改正の変更点を解説｜HOME4U
-                </a>
-              </p>
 
               <SectionHeading id="calculation" items={tocItems} />
               <p className="text-gray-700 mb-4 leading-relaxed">
@@ -409,11 +388,6 @@ export function GiftTaxCalculator() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <p className="font-semibold text-gray-800 mb-2">参考リンク</p>
               <ul className="text-sm text-blue-700 space-y-1">
-                <li>
-                  <a href="https://www.home4u.jp/sell/juku/course/inherit/sell-625-49556" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    → 2024年の贈与税改正を解説（HOME4U）
-                  </a>
-                </li>
                 <li>
                   <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/zoyo/4408.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
                     → No.4408 贈与税の計算と税率（国税庁）

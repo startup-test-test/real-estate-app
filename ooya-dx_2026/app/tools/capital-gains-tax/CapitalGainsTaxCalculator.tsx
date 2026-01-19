@@ -365,7 +365,7 @@ export function CapitalGainsTaxCalculator() {
                 </tbody>
               </table>
               <p className="text-xs text-gray-500 mt-2">
-                ※10年超軽減税率は居住用財産で3,000万円控除と併用できるとされています。課税譲渡所得6,000万円超の部分は約20.315%程度とされています。
+                ※10年超の軽減措置は、マイホーム売却時の3,000万円特別控除との同時適用が可能とされています。なお、課税譲渡所得のうち6,000万円を超える部分については約20.315%で計算されます。
               </p>
             </div>
           </section>
@@ -385,14 +385,14 @@ export function CapitalGainsTaxCalculator() {
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>・現在住んでいる、または住まなくなってから3年以内に売却した場合など</li>
                   <li>・配偶者や親族への売却は対象外となる場合があります</li>
-                  <li>・前年・前々年に同特例を受けていないことが要件となる場合があります</li>
+                  <li>・過去2年以内にこの特例を利用していないことが条件となる場合があります</li>
                 </ul>
               </div>
 
               <div className="border border-gray-200 rounded-lg p-4">
                 <h3 className="font-semibold text-gray-900 mb-2">10年超所有の軽減税率</h3>
                 <p className="text-sm text-gray-700 mb-2">
-                  所有期間10年超の居住用財産は、一定の要件を満たすと軽減税率が適用される場合があります。
+                  マイホームを10年以上所有していた場合、所定の条件をクリアすれば税率が軽減される場合があります。
                 </p>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>・6,000万円以下の部分：14.21%程度</li>
