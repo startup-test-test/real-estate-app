@@ -19,7 +19,7 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (user) router.replace('/dashboard')
+    if (user) router.replace('/mypage')
   }, [user, router])
 
   if (user) {
@@ -50,7 +50,7 @@ export default function SignUpPage() {
         if (result.info === 'verification_sent') {
           setInfo('確認メールを送信しました。メール内のリンクをクリックして認証を完了してください。')
         } else {
-          router.replace('/dashboard')
+          router.replace('/mypage')
         }
       } else {
         // エラーメッセージをチェック

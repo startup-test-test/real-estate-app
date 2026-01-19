@@ -18,7 +18,7 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (user) router.replace('/dashboard')
+    if (user) router.replace('/mypage')
   }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ export default function SignInPage() {
     try {
       const result = await auth.signIn({ email, password })
       if (result.ok) {
-        router.push('/dashboard')
+        router.push('/mypage')
       } else {
         setIsLoading(false)
         if (result.error === 'EMAIL_PASSWORD_MISMATCH') {

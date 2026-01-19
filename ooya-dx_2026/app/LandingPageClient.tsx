@@ -61,10 +61,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
   const handleSignOut = async () => {
     setIsDropdownOpen(false);
     try {
+      console.log('[SignOut] Starting sign out...');
       await auth.signOut();
+      console.log('[SignOut] Sign out completed, reloading page...');
       // 強制的にページをリロードしてセッション状態を更新
       window.location.href = '/';
-    } catch {}
+    } catch (error) {
+      console.error('[SignOut] Error:', error);
+      // エラーが発生してもページをリロード
+      window.location.href = '/';
+    }
   };
 
   useEffect(() => {
