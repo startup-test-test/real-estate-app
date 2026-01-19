@@ -273,7 +273,11 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={isLoading || !agreeTerms}
-              className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`w-full py-3.5 px-4 font-medium rounded-xl flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed ${
+                agreeTerms
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-200 text-gray-400'
+              }`}
             >
               <Mail className="h-5 w-5" />
               <span>{isLoading ? '登録中...' : 'メールでアカウント作成する'}</span>
