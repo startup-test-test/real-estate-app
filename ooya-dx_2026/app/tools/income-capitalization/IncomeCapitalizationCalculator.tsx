@@ -13,11 +13,7 @@ import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import {
-  calculateIncomeCapitalization,
-  formatOkuManYen,
-  CAP_RATE_REFERENCE,
-} from '@/lib/calculators/income-capitalization'
+import { calculateIncomeCapitalization } from '@/lib/calculators/income-capitalization'
 
 // =================================================================
 // 早見表データ
@@ -32,7 +28,7 @@ const quickReferenceData: QuickReferenceRow3Col[] = [
 ]
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '収益還元法（直接還元法） 計算シミュレーション｜不動産価格査定'
+const PAGE_TITLE = '収益還元法（直接還元法） 計算シミュレーション'
 
 // 目次データ
 const tocItems: TocItem[] = [
@@ -215,40 +211,30 @@ export function IncomeCapitalizationCalculator() {
             {/* 結果エリア */}
             <div className="space-y-3">
               <ResultCard
-                label="収益価格（評価額）"
-                value={result?.propertyValue ?? 0}
-                unit="円"
+                label="収益価格（概算）"
+                value={result ? Number((result.propertyValue / 10000).toFixed(1)).toLocaleString() : 0}
+                unit="万円"
                 highlight={true}
-                subText={
-                  result?.propertyValue
-                    ? `= ${formatOkuManYen(result.propertyValue)}`
-                    : undefined
-                }
               />
               <ResultCard
                 label="NOI（純営業収益）"
-                value={result?.netOperatingIncome ?? 0}
-                unit="円/年"
-                subText={
-                  result?.netOperatingIncome
-                    ? `= 約${Math.round(result.netOperatingIncome / 10000).toLocaleString()}万円/年`
-                    : undefined
-                }
+                value={result ? Number((result.netOperatingIncome / 10000).toFixed(1)).toLocaleString() : 0}
+                unit="万円/年"
               />
               <ResultCard
                 label="EGI（実効総収入）"
-                value={result?.effectiveGrossIncome ?? 0}
-                unit="円/年"
+                value={result ? Number((result.effectiveGrossIncome / 10000).toFixed(1)).toLocaleString() : 0}
+                unit="万円/年"
                 subText={
                   result
-                    ? `空室損失 約${Math.round(result.vacancyLoss / 10000).toLocaleString()}万円を控除`
+                    ? `空室損失 ${(result.vacancyLoss / 10000).toFixed(1)}万円を控除`
                     : undefined
                 }
               />
               <ResultCard
                 label="運営費用（OPEX）"
-                value={result?.operatingExpenses ?? 0}
-                unit="円/年"
+                value={result ? Number((result.operatingExpenses / 10000).toFixed(1)).toLocaleString() : 0}
+                unit="万円/年"
                 subText={
                   result
                     ? `EGIの${operatingExpenseRate}%`
@@ -263,11 +249,11 @@ export function IncomeCapitalizationCalculator() {
                 <p className="text-xs text-gray-500 mb-2">計算式</p>
                 <div className="text-sm text-gray-700 font-mono space-y-1 bg-white p-3 rounded">
                   <p>【GPI（満室想定収入）】{annualRentInMan.toLocaleString()}万円</p>
-                  <p>【空室損失】{annualRentInMan.toLocaleString()}万円 × {vacancyRate}% = 約{Math.round(result.vacancyLoss / 10000).toLocaleString()}万円</p>
-                  <p>【EGI（実効総収入）】{annualRentInMan.toLocaleString()}万円 - {Math.round(result.vacancyLoss / 10000).toLocaleString()}万円 = 約{Math.round(result.effectiveGrossIncome / 10000).toLocaleString()}万円</p>
-                  <p>【運営費用】{Math.round(result.effectiveGrossIncome / 10000).toLocaleString()}万円 × {operatingExpenseRate}% = 約{Math.round(result.operatingExpenses / 10000).toLocaleString()}万円</p>
-                  <p>【NOI】{Math.round(result.effectiveGrossIncome / 10000).toLocaleString()}万円 - {Math.round(result.operatingExpenses / 10000).toLocaleString()}万円 = 約{Math.round(result.netOperatingIncome / 10000).toLocaleString()}万円</p>
-                  <p className="font-semibold pt-2 border-t border-gray-200">【収益価格】{Math.round(result.netOperatingIncome / 10000).toLocaleString()}万円 ÷ {capRate}% = {formatOkuManYen(result.propertyValue)}</p>
+                  <p>【空室損失】{annualRentInMan.toLocaleString()}万円 × {vacancyRate}% = {Number((result.vacancyLoss / 10000).toFixed(1)).toLocaleString()}万円</p>
+                  <p>【EGI（実効総収入）】{annualRentInMan.toLocaleString()}万円 - {Number((result.vacancyLoss / 10000).toFixed(1)).toLocaleString()}万円 = {Number((result.effectiveGrossIncome / 10000).toFixed(1)).toLocaleString()}万円</p>
+                  <p>【運営費用】{Number((result.effectiveGrossIncome / 10000).toFixed(1)).toLocaleString()}万円 × {operatingExpenseRate}% = {Number((result.operatingExpenses / 10000).toFixed(1)).toLocaleString()}万円</p>
+                  <p>【NOI】{Number((result.effectiveGrossIncome / 10000).toFixed(1)).toLocaleString()}万円 - {Number((result.operatingExpenses / 10000).toFixed(1)).toLocaleString()}万円 = {Number((result.netOperatingIncome / 10000).toFixed(1)).toLocaleString()}万円</p>
+                  <p className="font-semibold pt-2 border-t border-gray-200">【収益価格】{Number((result.netOperatingIncome / 10000).toFixed(1)).toLocaleString()}万円 ÷ {capRate}% = {Number((result.propertyValue / 10000).toFixed(1)).toLocaleString()}万円</p>
                 </div>
               </div>
             )}
@@ -291,36 +277,6 @@ export function IncomeCapitalizationCalculator() {
             />
           </section>
 
-          {/* キャップレート早見表 */}
-          <section className="mb-12">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">エリア別キャップレートの目安</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left border">エリア</th>
-                    <th className="px-3 py-2 text-center border">RC築浅</th>
-                    <th className="px-3 py-2 text-center border">RC築古</th>
-                    <th className="px-3 py-2 text-center border">木造</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {CAP_RATE_REFERENCE.map((item, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-3 py-2 border font-medium">{item.area}</td>
-                      <td className="px-3 py-2 border text-center">{item.rcNew}</td>
-                      <td className="px-3 py-2 border text-center">{item.rcOld}</td>
-                      <td className="px-3 py-2 border text-center">{item.wood}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              ※ 日本不動産研究所「不動産投資家調査」等を参考にした目安値です。実際のキャップレートは物件の個別要因により大きく異なる場合があります。
-            </p>
-          </section>
-
           {/* 目次 */}
           <TableOfContents items={tocItems} />
 
@@ -328,8 +284,8 @@ export function IncomeCapitalizationCalculator() {
           <section className="mb-12">
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              収益還元法とは、対象不動産が将来生み出すと期待される純収益の現在価値の総和を求めることで、不動産の価格を算出する手法とされています。
-              不動産鑑定評価基準において、投資用不動産の評価に原則として適用されるとされています。
+              収益還元法とは、対象不動産が将来生み出すと期待される純収益の現在価値の総和を求めることで、不動産の価格を算出する手法です。
+              不動産鑑定評価基準において、投資用不動産の評価に原則として適用されます。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
               収益還元法には「直接還元法」と「DCF法」の2種類がありますが、
@@ -338,7 +294,7 @@ export function IncomeCapitalizationCalculator() {
 
             <SectionHeading id="formula" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              直接還元法の基本式は以下の通りとされています。
+              直接還元法の基本式は以下の通りです。
             </p>
 
             <div className="bg-gray-100 rounded-lg p-4 mb-4">
@@ -357,7 +313,7 @@ export function IncomeCapitalizationCalculator() {
 
             <SectionHeading id="noi" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              NOI（純営業収益）は以下の流れで計算されるとされています。
+              NOI（純営業収益）は以下の流れで計算されます。
             </p>
 
             <div className="bg-gray-50 rounded-lg p-4 mb-4 space-y-3">
@@ -377,13 +333,13 @@ export function IncomeCapitalizationCalculator() {
 
             <p className="text-gray-700 mb-4 leading-relaxed">
               運営費用（OPEX）には、管理費（PM/BM）、修繕費、固定資産税・都市計画税、保険料、
-              テナント募集費用などが含まれるとされています。
+              テナント募集費用などが含まれます。
             </p>
 
             <SectionHeading id="cap-rate" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              キャップレート（還元利回り）は、収益価格を決定づける最も重要な変数とされています。
-              一般的に以下の要因で変動するとされています。
+              キャップレート（還元利回り）は、収益価格を決定づける最も重要な変数です。
+              一般的に以下の要因で変動します。
             </p>
 
             <ul className="text-gray-700 space-y-2 mb-4 ml-4">
@@ -392,14 +348,6 @@ export function IncomeCapitalizationCalculator() {
               <li><span className="font-medium">構造：</span>RC造は木造より低くなる傾向</li>
               <li><span className="font-medium">金利動向：</span>金利上昇時はキャップレートも上昇する傾向</li>
             </ul>
-
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-              <p className="text-sm text-amber-800">
-                <span className="font-medium">注意：</span>
-                キャップレートが0.5%変わると、評価額は10%以上変動する場合があります。
-                適正なキャップレートの設定は、市場データや専門家の意見を参考にすることが推奨されます。
-              </p>
-            </div>
 
             <SectionHeading id="example" items={tocItems} />
             <p className="text-gray-700 mb-3 leading-relaxed">
@@ -422,10 +370,6 @@ export function IncomeCapitalizationCalculator() {
           <ToolDisclaimer
             infoDate="2026年1月"
             lastUpdated="2026年1月20日"
-            additionalItems={[
-              'キャップレートは地域・物件により大きく異なります',
-              '実際の不動産評価は不動産鑑定士等にご相談ください',
-            ]}
           />
 
           {/* 関連シミュレーター */}

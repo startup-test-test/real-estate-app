@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { TrendingUp, Info, AlertCircle } from 'lucide-react'
+import { TrendingUp, AlertCircle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -12,7 +12,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
-import { calculateCCR, getCCREvaluation, estimatePurchaseCosts } from '@/lib/calculators/ccr'
+import { calculateCCR, estimatePurchaseCosts } from '@/lib/calculators/ccr'
 
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産投資のCCR（自己資金配当率） 計算シミュレーション｜早見表付き'
@@ -23,7 +23,6 @@ const PAGE_TITLE = '不動産投資のCCR（自己資金配当率） 計算シ�
 const tocItems: TocItem[] = [
   { id: 'about', title: 'CCR（自己資金配当率）とは', level: 2 },
   { id: 'formula', title: 'CCRの計算式', level: 3 },
-  { id: 'standard', title: 'CCRの目安', level: 3 },
   { id: 'leverage', title: 'レバレッジ効果とCCR', level: 2 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
 ]
@@ -63,21 +62,6 @@ export function CCRCalculator() {
       interestRate,
     })
   }, [hasInput, propertyPriceInMan, annualRentInMan, vacancyRate, opexRate, equityInMan, loanAmountInMan, loanTermYears, interestRate])
-
-  // CCR評価
-  const ccrEvaluation = result ? getCCREvaluation(result.ccr) : null
-
-  // CCRに応じた色
-  const getCCRColor = (level: string) => {
-    switch (level) {
-      case 'excellent': return 'text-green-600'
-      case 'good': return 'text-blue-600'
-      case 'fair': return 'text-amber-600'
-      case 'poor': return 'text-orange-600'
-      case 'negative': return 'text-red-600'
-      default: return 'text-gray-600'
-    }
-  }
 
   // レバレッジ効果の色
   const getLeverageColor = (effect: string) => {
@@ -321,19 +305,9 @@ export function CCRCalculator() {
                   <span className="text-gray-700 font-medium border-t-2 border-blue-300 pt-4 mt-2">
                     CCR（自己資金配当率）
                   </span>
-                  <span className={`text-right text-2xl font-bold border-t-2 border-blue-300 pt-4 mt-2 ${ccrEvaluation ? getCCRColor(ccrEvaluation.level) : ''}`}>
+                  <span className="text-right text-2xl font-bold border-t-2 border-blue-300 pt-4 mt-2 text-blue-700">
                     {result.ccr.toFixed(2)}%
                   </span>
-
-                  {/* 評価 */}
-                  {ccrEvaluation && (
-                    <>
-                      <span className="text-gray-600">評価</span>
-                      <span className={`text-right font-medium ${getCCRColor(ccrEvaluation.level)}`}>
-                        {ccrEvaluation.message}
-                      </span>
-                    </>
-                  )}
 
                   {/* 回収期間 */}
                   <span className="text-gray-600 border-t pt-3">自己資金回収期間</span>
@@ -393,33 +367,28 @@ export function CCRCalculator() {
                     <th className="border border-gray-300 px-2 py-2 text-left font-semibold text-gray-700">年間BTCF</th>
                     <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">CCR</th>
                     <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">回収期間</th>
-                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">評価目安</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="bg-white">
                     <td className="border border-gray-300 px-2 py-2 text-gray-900">30万円</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-amber-600 font-medium">3.0%</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">3.0%</td>
                     <td className="border border-gray-300 px-2 py-2 text-center">約33年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-amber-600">標準</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="border border-gray-300 px-2 py-2 text-gray-900">80万円</td>
                     <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">8.0%</td>
                     <td className="border border-gray-300 px-2 py-2 text-center">約12.5年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600">良好</td>
                   </tr>
                   <tr className="bg-white">
                     <td className="border border-gray-300 px-2 py-2 text-gray-900">120万円</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">12.0%</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">12.0%</td>
                     <td className="border border-gray-300 px-2 py-2 text-center">約8.3年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600">良好</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="border border-gray-300 px-2 py-2 text-gray-900">150万円</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">15.0%</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">15.0%</td>
                     <td className="border border-gray-300 px-2 py-2 text-center">約6.7年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600">高収益</td>
                   </tr>
                 </tbody>
               </table>
@@ -440,7 +409,7 @@ export function CCRCalculator() {
           <section className="mb-12">
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              CCR（Cash on Cash Return：自己資金配当率）は、不動産投資の効率性を測る指標の一つとされています。
+              CCR（Cash on Cash Return：自己資金配当率）は、効率性を測る指標の一つです。
               自己資金に対して年間どれくらいのキャッシュフローが得られるかを示し、
               投資判断の参考として活用される場合があります。
             </p>
@@ -463,59 +432,12 @@ export function CCRCalculator() {
               NOI（営業純利益）から年間のローン返済額を差し引いた金額です。
             </p>
 
-            <SectionHeading id="standard" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              CCRの目安は物件タイプや投資戦略によって異なります。
-              一般的な目安は以下の通りですが、リスクや市場環境によっても変動します。
-            </p>
-            <div className="overflow-x-auto mb-4">
-              <table className="w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 px-3 py-2 text-left">物件タイプ</th>
-                    <th className="border border-gray-300 px-3 py-2 text-center">CCRの目安</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white">
-                    <td className="border border-gray-300 px-3 py-2">都心区分マンション</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">2%〜5%程度</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="border border-gray-300 px-3 py-2">一棟アパート（築浅）</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">5%〜10%程度</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-gray-300 px-3 py-2">地方・築古物件</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">10%〜20%程度</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-gray-500">
-              ※上記は一般的な目安であり、個別の投資判断は専門家にご相談ください。
-            </p>
-
             <SectionHeading id="leverage" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               CCRはレバレッジ（借入）の効果を反映する指標です。
               FCR（総収益率）とK%（ローン定数）を比較することで、
               借入が投資効率に与える影響を判断できる場合があります。
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <div className="flex items-start gap-2">
-                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-blue-800">レバレッジ効果の判定基準</p>
-                  <ul className="text-sm text-blue-700 mt-1 space-y-1">
-                    <li>・<strong>FCR &gt; K%</strong>：正のレバレッジ（借入で効率向上）</li>
-                    <li>・<strong>FCR &lt; K%</strong>：逆レバレッジ（借入で効率低下）</li>
-                    <li>・<strong>FCR ≒ K%</strong>：中立（借入の有無による差は小さい）</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
             <SectionHeading id="caution" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               CCRの計算にあたっては、以下の点にご注意ください。
@@ -530,34 +452,8 @@ export function CCRCalculator() {
             </div>
           </section>
 
-          {/* =================================================================
-              参考リンク
-          ================================================================= */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="font-semibold text-gray-800 mb-2">参考リンク</p>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>
-                <a href="https://www.ares.or.jp/" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → 一般社団法人 不動産証券化協会（ARES）
-                </a>
-              </li>
-              <li>
-                <a href="https://www.retio.or.jp/" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → 一般財団法人 不動産適正取引推進機構（RETIO）
-                </a>
-              </li>
-            </ul>
-          </div>
-
           {/* 免責事項 */}
-          <ToolDisclaimer
-            infoDate="2026年1月"
-            lastUpdated="2026年1月20日"
-            additionalItems={[
-              '本計算は税金（所得税・住民税）を考慮していない概算値です',
-              '将来の家賃収入・空室率は保証されるものではありません',
-            ]}
-          />
+          <ToolDisclaimer />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/ccr" />

@@ -4,7 +4,7 @@ import React from 'react'
 
 interface ResultCardProps {
   label: string
-  value: number
+  value: number | string
   unit?: string
   highlight?: boolean
   subText?: string
@@ -17,7 +17,7 @@ export function ResultCard({
   highlight = false,
   subText
 }: ResultCardProps) {
-  const formattedValue = value.toLocaleString('ja-JP')
+  const formattedValue = typeof value === 'number' ? value.toLocaleString('ja-JP') : value
 
   return (
     <div

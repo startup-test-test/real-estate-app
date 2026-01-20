@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { TrendingUp, Info } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -12,7 +12,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
-import { calculateIRR, evaluateIRR } from '@/lib/calculators/irr'
+import { calculateIRR } from '@/lib/calculators/irr'
 
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産投資のIRR（内部収益率） 計算シミュレーション｜早見表付き'
@@ -23,7 +23,6 @@ const PAGE_TITLE = '不動産投資のIRR（内部収益率） 計算シミュ�
 const tocItems: TocItem[] = [
   { id: 'about', title: 'IRR（内部収益率）とは', level: 2 },
   { id: 'difference', title: '利回りとIRRの違い', level: 3 },
-  { id: 'standard', title: 'IRRの目安', level: 3 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
 ]
 
@@ -65,21 +64,6 @@ export function IRRCalculator() {
       saleCostRate: 3,
     })
   }, [initialInvestmentInMan, annualCashFlowInMan, holdingPeriodYears, saleEstimateInMan, loanBalanceAtSaleInMan])
-
-  // IRR評価
-  const irrEvaluation = result ? evaluateIRR(result.irr) : null
-
-  // IRRに応じた色
-  const getIRRColor = (level: string) => {
-    switch (level) {
-      case 'excellent': return 'text-green-600'
-      case 'good': return 'text-blue-600'
-      case 'moderate': return 'text-yellow-600'
-      case 'low': return 'text-orange-600'
-      case 'negative': return 'text-red-600'
-      default: return 'text-gray-600'
-    }
-  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -283,19 +267,9 @@ export function IRRCalculator() {
                   <span className="text-gray-700 font-medium border-t-2 border-blue-300 pt-4 mt-2">
                     IRR（内部収益率）
                   </span>
-                  <span className={`text-right text-2xl font-bold border-t-2 border-blue-300 pt-4 mt-2 ${irrEvaluation ? getIRRColor(irrEvaluation.level) : ''}`}>
+                  <span className="text-right text-2xl font-bold border-t-2 border-blue-300 pt-4 mt-2 text-blue-700">
                     {result.irr !== null ? `${result.irr.toFixed(2)}%` : '計算不能'}
                   </span>
-
-                  {/* 評価 */}
-                  {irrEvaluation && result.irr !== null && (
-                    <>
-                      <span className="text-gray-600">評価</span>
-                      <span className={`text-right font-medium ${getIRRColor(irrEvaluation.level)}`}>
-                        {irrEvaluation.label}
-                      </span>
-                    </>
-                  )}
 
                   <span className="text-gray-600 border-t pt-3">投資倍率</span>
                   <span className="text-right font-medium border-t pt-3">
@@ -389,8 +363,8 @@ export function IRRCalculator() {
           <section className="mb-12">
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              IRR（Internal Rate of Return：内部収益率）は、投資の収益性を測る指標の一つとされています。
-              投資期間全体のキャッシュフローを考慮し、「複利で何%の運用に相当するか」を示す指標とされています。
+              IRR（Internal Rate of Return：内部収益率）は、収益性を測る指標の一つです。
+              期間全体のキャッシュフローを考慮し、「複利で何%の運用に相当するか」を示します。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
               不動産投資では、購入時の初期投資から、保有期間中の家賃収入、そして売却時の収益までを
@@ -399,63 +373,16 @@ export function IRRCalculator() {
 
             <SectionHeading id="difference" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              表面利回りや実質利回りは、主に「ある一時点」の収益性を示す指標とされています。
-              一方、IRRは投資期間全体を通じた収益性を評価できる点が異なるとされています。
+              表面利回りや実質利回りは、主に「ある一時点」の収益性を示す指標です。
+              一方、IRRは期間全体を通じた収益性を評価できる点が異なります。
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <div className="flex items-start gap-2">
-                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-blue-800">IRRの特徴</p>
-                  <ul className="text-sm text-blue-700 mt-1 space-y-1">
-                    <li>・お金の「時間的価値」を考慮している</li>
-                    <li>・売却益（キャピタルゲイン）も含めて評価</li>
-                    <li>・異なる投資案件の比較が可能</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <SectionHeading id="standard" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              IRRの目安は投資家の属性や投資戦略によって異なるとされています。
-              参考として以下のような数値が挙げられることがありますが、リスクや市場環境、物件特性によっても大きく変動します。
-            </p>
-            <div className="overflow-x-auto mb-4">
-              <table className="w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 px-3 py-2 text-left">投資家属性・戦略</th>
-                    <th className="border border-gray-300 px-3 py-2 text-center">目標IRRの目安</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white">
-                    <td className="border border-gray-300 px-3 py-2">J-REIT・機関投資家（安定型）</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">6%〜8%程度</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="border border-gray-300 px-3 py-2">個人投資家（インカム重視）</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">8%〜12%程度</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-gray-300 px-3 py-2">バリューアッド・再生型</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">12%〜18%程度</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-gray-500">
-              ※上記は参考値であり、実際の目標IRRは物件・市場状況により異なります。個別の投資判断は専門家にご相談ください。
-            </p>
-
             <SectionHeading id="caution" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               IRRの計算にあたっては、以下の点にご注意ください。
             </p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
               <ul className="text-sm text-yellow-800 space-y-2">
-                <li>・<strong>譲渡所得税は考慮していません</strong>：売却益に対する税金（短期約39%、長期約20%程度とされる）は別途考慮が必要な場合があります</li>
+                <li>・<strong>譲渡所得税は考慮していません</strong>：売却益に対する税金（短期約39%、長期約20%程度）は別途考慮が必要な場合があります</li>
                 <li>・<strong>家賃下落・空室リスク</strong>：本計算は一定の年間キャッシュフローを前提としています</li>
                 <li>・<strong>売却価格の不確実性</strong>：将来の売却価格は予測が難しく、結果に大きく影響します</li>
                 <li>・<strong>減価償却・デッドクロス</strong>：税務上の損益と実際のキャッシュフローは異なる場合があります</li>
@@ -463,34 +390,8 @@ export function IRRCalculator() {
             </div>
           </section>
 
-          {/* =================================================================
-              参考リンク
-          ================================================================= */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="font-semibold text-gray-800 mb-2">参考リンク</p>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>
-                <a href="https://www.ares.or.jp/" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → 一般社団法人 不動産証券化協会（ARES）
-                </a>
-              </li>
-              <li>
-                <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/joto/jouto.htm" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → 譲渡所得について（国税庁）
-                </a>
-              </li>
-            </ul>
-          </div>
-
           {/* 免責事項 */}
-          <ToolDisclaimer
-            infoDate="2026年1月"
-            lastUpdated="2026年1月20日"
-            additionalItems={[
-              '本計算は譲渡所得税を考慮していない概算値です',
-              '将来の家賃収入・売却価格は保証されるものではありません',
-            ]}
-          />
+          <ToolDisclaimer />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/irr" />

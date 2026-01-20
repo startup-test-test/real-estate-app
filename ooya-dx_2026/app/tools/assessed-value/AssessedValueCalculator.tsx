@@ -5,7 +5,7 @@ import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
-import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
+import { QuickReferenceTable } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { RelatedTools } from '@/components/tools/RelatedTools'
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
@@ -23,19 +23,18 @@ interface StructureConfig {
   value: BuildingStructure
   label: string
   usefulLife: number
-  unitPriceConservative: number // 保守的評価（銀行基準）円/㎡
-  unitPriceMarket: number // 実勢評価（2025年）円/㎡
+  unitPrice: number // 再調達原価（円/㎡）
 }
 
 // =================================================================
 // 定数
 // =================================================================
 const STRUCTURE_OPTIONS: StructureConfig[] = [
-  { value: 'rc', label: '鉄筋コンクリート造（RC）', usefulLife: 47, unitPriceConservative: 190000, unitPriceMarket: 250000 },
-  { value: 'src', label: '鉄骨鉄筋コンクリート造（SRC）', usefulLife: 47, unitPriceConservative: 210000, unitPriceMarket: 270000 },
-  { value: 'steel_heavy', label: '重量鉄骨造（4mm超）', usefulLife: 34, unitPriceConservative: 170000, unitPriceMarket: 210000 },
-  { value: 'steel_light', label: '軽量鉄骨造（4mm以下）', usefulLife: 27, unitPriceConservative: 140000, unitPriceMarket: 170000 },
-  { value: 'wood', label: '木造', usefulLife: 22, unitPriceConservative: 140000, unitPriceMarket: 180000 },
+  { value: 'rc', label: '鉄筋コンクリート造（RC）', usefulLife: 47, unitPrice: 190000 },
+  { value: 'src', label: '鉄骨鉄筋コンクリート造（SRC）', usefulLife: 47, unitPrice: 210000 },
+  { value: 'steel_heavy', label: '重量鉄骨造（4mm超）', usefulLife: 34, unitPrice: 170000 },
+  { value: 'steel_light', label: '軽量鉄骨造（4mm以下）', usefulLife: 27, unitPrice: 140000 },
+  { value: 'wood', label: '木造', usefulLife: 22, unitPrice: 140000 },
 ]
 
 const STRUCTURE_MAP = Object.fromEntries(
@@ -50,17 +49,15 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '積算評価（原価法）とは', level: 2 },
   { id: 'land-valuation', title: '土地の評価方法', level: 3 },
   { id: 'building-valuation', title: '建物の評価方法', level: 3 },
-  { id: 'bank-usage', title: '銀行融資における活用', level: 3 },
 ]
 
-// 早見表データ
-const quickReferenceData: QuickReferenceRow3Col[] = [
-  { label: 'RC造（新築）', value1: '19万円/㎡', value2: '25万円/㎡' },
-  { label: 'RC造（築20年）', value1: '10.9万円/㎡', value2: '14.4万円/㎡' },
-  { label: '重量鉄骨造（新築）', value1: '17万円/㎡', value2: '21万円/㎡' },
-  { label: '重量鉄骨造（築17年）', value1: '8.5万円/㎡', value2: '10.5万円/㎡' },
-  { label: '木造（新築）', value1: '14万円/㎡', value2: '18万円/㎡' },
-  { label: '木造（築11年）', value1: '7万円/㎡', value2: '9万円/㎡' },
+// 早見表データ（構造別の法定耐用年数）
+const quickReferenceData = [
+  { label: '鉄筋コンクリート造（RC）', value: '47年' },
+  { label: '鉄骨鉄筋コンクリート造（SRC）', value: '47年' },
+  { label: '重量鉄骨造（4mm超）', value: '34年' },
+  { label: '軽量鉄骨造（4mm以下）', value: '27年' },
+  { label: '木造', value: '22年' },
 ]
 
 // =================================================================
@@ -72,8 +69,6 @@ interface CalculationResult {
   totalValue: number // 積算評価額（円）
   remainingUsefulLife: number // 残存耐用年数
   depreciationRate: number // 経年減価率（0〜1）
-  collateralValue70: number // 担保評価額（70%掛目）
-  collateralValue80: number // 担保評価額（80%掛目）
 }
 
 function calculateAssessedValue(
@@ -81,15 +76,14 @@ function calculateAssessedValue(
   landAreaSqm: number, // 土地面積（㎡）
   structure: BuildingStructure,
   buildingAreaSqm: number, // 延床面積（㎡）
-  buildingAge: number, // 築年数
-  useMarketPrice: boolean // 実勢評価を使用
+  buildingAge: number // 築年数
 ): CalculationResult | null {
   if (landAreaSqm <= 0 && buildingAreaSqm <= 0) {
     return null
   }
 
   const config = STRUCTURE_MAP[structure]
-  const unitPrice = useMarketPrice ? config.unitPriceMarket : config.unitPriceConservative
+  const unitPrice = config.unitPrice
 
   // 土地評価額 = 路線価（千円/㎡）× 1000 × 土地面積（㎡）
   const landValue = rosenkaPerSqm * 1000 * landAreaSqm
@@ -101,14 +95,10 @@ function calculateAssessedValue(
   const depreciationRate = config.usefulLife > 0 ? remainingUsefulLife / config.usefulLife : 0
 
   // 建物評価額 = 再調達原価 × 延床面積 × (残存耐用年数 / 法定耐用年数)
-  const buildingValue = unitPrice * buildingAreaSqm * depreciationRate
+  const buildingValue = Math.round(unitPrice * buildingAreaSqm * depreciationRate)
 
   // 積算評価額
-  const totalValue = landValue + buildingValue
-
-  // 担保評価額（掛目）
-  const collateralValue70 = totalValue * 0.7
-  const collateralValue80 = totalValue * 0.8
+  const totalValue = Math.round(landValue + buildingValue)
 
   return {
     landValue,
@@ -116,8 +106,6 @@ function calculateAssessedValue(
     totalValue,
     remainingUsefulLife,
     depreciationRate,
-    collateralValue70,
-    collateralValue80,
   }
 }
 
@@ -134,9 +122,6 @@ export function AssessedValueCalculator() {
   const [buildingAreaSqm, setBuildingAreaSqm] = useState<number>(0) // 延床面積（㎡）
   const [buildingAge, setBuildingAge] = useState<number>(0) // 築年数
 
-  // 評価モード
-  const [useMarketPrice, setUseMarketPrice] = useState<boolean>(false)
-
   // 計算結果
   const result = useMemo(() => {
     return calculateAssessedValue(
@@ -144,10 +129,9 @@ export function AssessedValueCalculator() {
       landAreaSqm,
       structure,
       buildingAreaSqm,
-      buildingAge,
-      useMarketPrice
+      buildingAge
     )
-  }, [rosenkaPerSqm, landAreaSqm, structure, buildingAreaSqm, buildingAge, useMarketPrice])
+  }, [rosenkaPerSqm, landAreaSqm, structure, buildingAreaSqm, buildingAge])
 
   // 入力があるかどうか
   const hasInput = landAreaSqm > 0 || buildingAreaSqm > 0
@@ -196,38 +180,6 @@ export function AssessedValueCalculator() {
               </h2>
             </div>
 
-            {/* 評価モード選択 */}
-            <div className="bg-white rounded-lg p-4 mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                評価モード
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="priceMode"
-                    checked={!useMarketPrice}
-                    onChange={() => setUseMarketPrice(false)}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <span className="text-sm text-gray-700">銀行評価（保守的）</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="priceMode"
-                    checked={useMarketPrice}
-                    onChange={() => setUseMarketPrice(true)}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <span className="text-sm text-gray-700">実勢評価（2025年）</span>
-                </label>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                ※ 銀行評価は融資審査で使われる保守的な単価、実勢評価は建設コスト高騰を反映した単価です
-              </p>
-            </div>
-
             {/* 土地入力エリア */}
             <div className="bg-white rounded-lg p-4 mb-4">
               <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -253,7 +205,15 @@ export function AssessedValueCalculator() {
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    ※ 路線価図に「300C」と記載されている場合は「300」と入力してください
+                    <a
+                      href="https://www.rosenka.nta.go.jp/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      国税庁 路線価図
+                    </a>
+                    から路線価を調べてください
                   </p>
                 </div>
 
@@ -328,7 +288,7 @@ export function AssessedValueCalculator() {
               <div className="mb-4 p-3 bg-white border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
                   <span className="font-medium">適用単価：</span>
-                  {currentStructure.label} - {useMarketPrice ? '実勢' : '銀行'}評価 {(useMarketPrice ? currentStructure.unitPriceMarket : currentStructure.unitPriceConservative).toLocaleString()}円/㎡
+                  {currentStructure.label} {currentStructure.unitPrice.toLocaleString()}円/㎡
                 </p>
                 <p className="text-xs text-blue-600 mt-1">
                   残存耐用年数：{result.remainingUsefulLife}年 / {currentStructure.usefulLife}年（経年減価率：{(result.depreciationRate * 100).toFixed(1)}%）
@@ -340,49 +300,20 @@ export function AssessedValueCalculator() {
             <div className="space-y-3">
               <ResultCard
                 label="積算評価額（合計）"
-                value={result?.totalValue ?? 0}
-                unit="円"
+                value={result ? Number((result.totalValue / 10000).toFixed(1)).toLocaleString() : 0}
+                unit="万円"
                 highlight={true}
-                subText={
-                  result?.totalValue
-                    ? `= 約${Math.round(result.totalValue / 10000).toLocaleString()}万円`
-                    : undefined
-                }
               />
               <div className="grid grid-cols-2 gap-3">
                 <ResultCard
                   label="土地評価額"
-                  value={result?.landValue ?? 0}
-                  unit="円"
-                  subText={
-                    result?.landValue
-                      ? `約${Math.round(result.landValue / 10000).toLocaleString()}万円`
-                      : undefined
-                  }
+                  value={result ? Number((result.landValue / 10000).toFixed(1)).toLocaleString() : 0}
+                  unit="万円"
                 />
                 <ResultCard
                   label="建物評価額"
-                  value={result?.buildingValue ?? 0}
-                  unit="円"
-                  subText={
-                    result?.buildingValue
-                      ? `約${Math.round(result.buildingValue / 10000).toLocaleString()}万円`
-                      : undefined
-                  }
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <ResultCard
-                  label="担保評価額（70%）"
-                  value={result?.collateralValue70 ?? 0}
-                  unit="円"
-                  subText="都市銀行の目安"
-                />
-                <ResultCard
-                  label="担保評価額（80%）"
-                  value={result?.collateralValue80 ?? 0}
-                  unit="円"
-                  subText="地方銀行の目安"
+                  value={result ? Number((result.buildingValue / 10000).toFixed(1)).toLocaleString() : 0}
+                  unit="万円"
                 />
               </div>
             </div>
@@ -397,7 +328,7 @@ export function AssessedValueCalculator() {
                   )}
                   {buildingAreaSqm > 0 && (
                     <>
-                      <p>【建物】{((useMarketPrice ? currentStructure.unitPriceMarket : currentStructure.unitPriceConservative) / 10000).toFixed(1)}万円/㎡ × {buildingAreaSqm.toLocaleString()}㎡ × {(result.depreciationRate * 100).toFixed(1)}%</p>
+                      <p>【建物】{(currentStructure.unitPrice / 10000).toFixed(1)}万円/㎡ × {buildingAreaSqm.toLocaleString()}㎡ × {(result.depreciationRate * 100).toFixed(1)}%</p>
                       <p className="pl-8">= 約{Math.round(result.buildingValue / 10000).toLocaleString()}万円</p>
                     </>
                   )}
@@ -412,16 +343,12 @@ export function AssessedValueCalculator() {
 
           {/* 早見表 */}
           <section className="mb-12">
-            <QuickReferenceTable3Col
-              title="建物評価単価の早見表"
-              description="構造・築年数別の建物評価単価（㎡あたり）の目安です。"
-              headers={[
-                '区分',
-                { title: '銀行評価' },
-                { title: '実勢評価' },
-              ]}
+            <QuickReferenceTable
+              title="構造別の法定耐用年数"
+              description="建物構造ごとの法定耐用年数の一覧です。"
+              headers={['建物構造', '法定耐用年数']}
               rows={quickReferenceData}
-              note="※ 建物評価額は「単価 × 延床面積 × 残存耐用年数比率」で計算されます。2025年の建設コスト高騰を反映した実勢評価は銀行評価より高めの数値となる場合があります。"
+              note="※ 残存耐用年数 = 法定耐用年数 − 築年数。耐用年数を超えた建物は積算評価上の建物価値がゼロになります。"
             />
           </section>
 
@@ -433,7 +360,7 @@ export function AssessedValueCalculator() {
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               積算評価（原価法）とは、不動産を「土地」と「建物」に分けて、それぞれの価値を積み上げて評価する方法です。
-              銀行融資の担保評価においては、この積算評価が広く採用されているとされています。
+              銀行融資の担保評価においては、この積算評価が広く採用されています。
             </p>
             <div className="bg-gray-100 rounded-lg p-4 mb-4">
               <p className="font-mono text-gray-800 text-center">
@@ -444,7 +371,7 @@ export function AssessedValueCalculator() {
             <SectionHeading id="land-valuation" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               土地の評価には主に「路線価方式」が用いられます。路線価は国税庁が毎年7月に公表する、道路に面した土地1㎡あたりの価格（千円単位）です。
-              公示地価の約80%を目安に設定されているとされています。
+              公示地価の約80%を目安に設定されています。
             </p>
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <p className="font-semibold text-gray-800 mb-2">土地評価額の計算</p>
@@ -468,26 +395,7 @@ export function AssessedValueCalculator() {
               </p>
             </div>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              法定耐用年数を超えた建物（例：築25年の木造）は、積算評価上の建物価値はゼロとなる場合がありますが、
-              土地の価値が残るため、土地値物件として融資を受けられるケースもあるとされています。
-            </p>
-
-            <SectionHeading id="bank-usage" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              銀行融資においては、積算評価額に「掛け目」を入れて担保評価額を算出します。
-              都市銀行では70%程度、地方銀行では80%程度の掛け目が一般的とされています。
-            </p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <p className="font-semibold text-gray-800 mb-2">担保評価額の目安</p>
-              <ul className="text-gray-700 space-y-2 text-sm">
-                <li><span className="font-medium">都市銀行：</span>積算評価額 × 70%</li>
-                <li><span className="font-medium">地方銀行：</span>積算評価額 × 80%</li>
-                <li><span className="font-medium">信用金庫等：</span>地域の実勢価格を考慮する場合がある</li>
-              </ul>
-            </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              なお、収益性の高い物件であっても積算評価が低い場合、融資額が伸び悩むことがあるとされています。
-              逆に、土地値比率の高い物件では、建物の法定耐用年数を超えた融資が承認されるケースもあるとされています。
+              法定耐用年数を超えた建物（例：築25年の木造）は、積算評価上の建物価値はゼロとなります。
             </p>
           </section>
 
@@ -495,10 +403,6 @@ export function AssessedValueCalculator() {
           <ToolDisclaimer
             infoDate="2026年1月"
             lastUpdated="2026年1月20日"
-            additionalItems={[
-              '路線価は毎年7月に更新されます。最新の路線価は国税庁サイトでご確認ください',
-              '再調達原価は建設市況により変動する場合があります',
-            ]}
           />
 
           {/* 関連シミュレーター */}

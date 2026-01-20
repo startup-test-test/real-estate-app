@@ -137,7 +137,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
                 <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors">
                   シミュレーター
                 </a>
-                <a href="/tools/brokerage" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <a href="/tools" className="text-gray-600 hover:text-gray-900 transition-colors">
                   計算ツール
                 </a>
                 <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors">
@@ -218,7 +218,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
                 <a href="/simulator" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
                   シミュレーター
                 </a>
-                <a href="/tools/brokerage" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                <a href="/tools" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
                   計算ツール
                 </a>
                 <a href="/media" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">

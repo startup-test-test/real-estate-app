@@ -5,7 +5,7 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '収益還元法（直接還元法） 計算シミュレーション｜不動産価格査定',
+  title: '収益還元法（直接還元法） 計算シミュレーション',
   description:
     '収益還元法（直接還元法）による不動産の収益価格を無料で計算。年間賃料収入とキャップレートを入力するだけで、投資用不動産の理論価格を算出できます。NOI計算・キャップレート早見表付き。',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     '純営業収益',
   ],
   openGraph: {
-    title: '収益還元法（直接還元法） 計算シミュレーション｜不動産価格査定',
+    title: '収益還元法（直接還元法） 計算シミュレーション',
     description: '収益還元法（直接還元法）による不動産の収益価格を無料で計算。年間賃料収入とキャップレートを入力するだけで、投資用不動産の理論価格を算出できます。',
     url: `${BASE_URL}/tools/income-capitalization`,
     siteName: '大家DX',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '収益還元法（直接還元法） 計算シミュレーション｜不動産価格査定',
+    title: '収益還元法（直接還元法） 計算シミュレーション',
     description: '収益還元法（直接還元法）による不動産の収益価格を無料で計算。年間賃料収入とキャップレートを入力するだけで、投資用不動産の理論価格を算出できます。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { TrendingUp, Info, ChevronDown, ChevronUp } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -14,12 +14,11 @@ import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import {
   calculateDCF,
-  getDiscountRateReference,
   getTerminalCapRateGuideline,
 } from '@/lib/calculators/dcf'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = 'DCF法 計算シミュレーション｜不動産評価・収益還元法'
+const PAGE_TITLE = 'DCF法 計算シミュレーション'
 
 // =================================================================
 // 目次項目
@@ -29,48 +28,7 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'DCF法の計算式', level: 3 },
   { id: 'parameters', title: '主要パラメーター', level: 3 },
   { id: 'vs-direct', title: '直接還元法との違い', level: 2 },
-  { id: 'usage', title: '活用シーン', level: 2 },
 ]
-
-// =================================================================
-// 割引率の目安テーブル
-// =================================================================
-function DiscountRateReference() {
-  const data = getDiscountRateReference()
-  return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-      <p className="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
-        <Info className="w-4 h-4 text-blue-500" />
-        割引率の目安（参考）
-      </p>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-2 py-1 text-left">カテゴリ</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">エリア</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">割引率目安</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                <td className="border border-gray-300 px-2 py-1">{item.category}</td>
-                <td className="border border-gray-300 px-2 py-1">{item.location}</td>
-                <td className="border border-gray-300 px-2 py-1 text-center font-medium text-blue-600">
-                  {item.rate}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-xs text-gray-500 mt-2">
-        ※日本不動産研究所「不動産投資家調査」等を参考にした目安です
-      </p>
-    </div>
-  )
-}
 
 // =================================================================
 // メインコンポーネント
@@ -81,10 +39,10 @@ export function DCFCalculator() {
   const [discountRate, setDiscountRate] = useState<number>(4.0)
   const [terminalCapRate, setTerminalCapRate] = useState<number>(4.5)
   const [holdingPeriod, setHoldingPeriod] = useState<number>(10)
-  const [growthRate, setGrowthRate] = useState<number>(0)
-  const [saleCostRate, setSaleCostRate] = useState<number>(4.0)
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
-  const [showYearlyDetail, setShowYearlyDetail] = useState<boolean>(false)
+
+  // 固定値（詳細設定を削除）
+  const growthRate = 0
+  const saleCostRate = 4.0
 
   // 円に変換
   const initialNoiInYen = initialNoiInMan * 10000
@@ -165,6 +123,9 @@ export function DCFCalculator() {
               />
               <p className="text-xs text-gray-500 -mt-2">
                 ※NOI = 実効総収益 - 運営費用（減価償却費は含まない）
+                <a href="/tools/noi" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline ml-1">
+                  NOIはこちらで計算してください
+                </a>
               </p>
 
               {/* 割引率 */}
@@ -186,7 +147,7 @@ export function DCFCalculator() {
                   <span className="text-gray-600 font-medium">%</span>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  ※投資家の期待収益率。リスクに応じて設定します。
+                  ※期待収益率。リスクに応じて設定します。
                 </p>
               </div>
 
@@ -229,65 +190,6 @@ export function DCFCalculator() {
                 </select>
               </div>
 
-              {/* 詳細設定の展開 */}
-              <button
-                type="button"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-              >
-                {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                詳細設定
-              </button>
-
-              {showAdvanced && (
-                <div className="pl-4 border-l-2 border-blue-200 space-y-4">
-                  {/* 収益成長率 */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      収益成長率（年率）
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        value={growthRate}
-                        onChange={(e) => setGrowthRate(parseFloat(e.target.value) || 0)}
-                        step="0.1"
-                        min="-10"
-                        max="10"
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="例：1.0"
-                      />
-                      <span className="text-gray-600 font-medium">%</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      ※賃料の上昇・下落を見込む場合に設定（デフォルト: 0%）
-                    </p>
-                  </div>
-
-                  {/* 売却費用率 */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      売却費用率
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        value={saleCostRate}
-                        onChange={(e) => setSaleCostRate(parseFloat(e.target.value) || 0)}
-                        step="0.5"
-                        min="0"
-                        max="10"
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="例：4.0"
-                      />
-                      <span className="text-gray-600 font-medium">%</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      ※仲介手数料（3%+6万円）+諸費用。目安: 3.5〜4.5%
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* 結果エリア */}
@@ -364,53 +266,43 @@ export function DCFCalculator() {
 
                 {/* 年度別詳細 */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={() => setShowYearlyDetail(!showYearlyDetail)}
-                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    {showYearlyDetail ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    年度別キャッシュフロー詳細
-                  </button>
-
-                  {showYearlyDetail && (
-                    <div className="mt-3 overflow-x-auto">
-                      <table className="w-full text-xs">
-                        <thead>
-                          <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-2 py-1 text-center">年度</th>
-                            <th className="border border-gray-300 px-2 py-1 text-right">NOI</th>
-                            <th className="border border-gray-300 px-2 py-1 text-right">割引係数</th>
-                            <th className="border border-gray-300 px-2 py-1 text-right">現在価値</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {result.yearlyDetails.map((detail, index) => (
-                            <tr key={detail.year} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                              <td className="border border-gray-300 px-2 py-1 text-center">{detail.year}年目</td>
-                              <td className="border border-gray-300 px-2 py-1 text-right">
-                                {Math.round(detail.noi / 10000).toLocaleString()}万円
-                              </td>
-                              <td className="border border-gray-300 px-2 py-1 text-right">
-                                {detail.discountFactor.toFixed(4)}
-                              </td>
-                              <td className="border border-gray-300 px-2 py-1 text-right text-blue-600">
-                                {Math.round(detail.presentValue / 10000).toLocaleString()}万円
-                              </td>
-                            </tr>
-                          ))}
-                          <tr className="bg-blue-50 font-medium">
-                            <td className="border border-gray-300 px-2 py-1 text-center">合計</td>
-                            <td className="border border-gray-300 px-2 py-1 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-1 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-1 text-right text-blue-700">
-                              {Math.round(result.totalNoiPV / 10000).toLocaleString()}万円
+                  <p className="text-sm font-medium text-gray-700 mb-3">年度別キャッシュフロー詳細</p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-300 px-2 py-1 text-center">年度</th>
+                          <th className="border border-gray-300 px-2 py-1 text-right">NOI</th>
+                          <th className="border border-gray-300 px-2 py-1 text-right">割引係数</th>
+                          <th className="border border-gray-300 px-2 py-1 text-right">現在価値</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {result.yearlyDetails.map((detail, index) => (
+                          <tr key={detail.year} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <td className="border border-gray-300 px-2 py-1 text-center">{detail.year}年目</td>
+                            <td className="border border-gray-300 px-2 py-1 text-right">
+                              {Math.round(detail.noi / 10000).toLocaleString()}万円
+                            </td>
+                            <td className="border border-gray-300 px-2 py-1 text-right">
+                              {detail.discountFactor.toFixed(4)}
+                            </td>
+                            <td className="border border-gray-300 px-2 py-1 text-right text-blue-600">
+                              {Math.round(detail.presentValue / 10000).toLocaleString()}万円
                             </td>
                           </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                        ))}
+                        <tr className="bg-blue-50 font-medium">
+                          <td className="border border-gray-300 px-2 py-1 text-center">合計</td>
+                          <td className="border border-gray-300 px-2 py-1 text-right">-</td>
+                          <td className="border border-gray-300 px-2 py-1 text-right">-</td>
+                          <td className="border border-gray-300 px-2 py-1 text-right text-blue-700">
+                            {Math.round(result.totalNoiPV / 10000).toLocaleString()}万円
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
@@ -418,11 +310,6 @@ export function DCFCalculator() {
 
           {/* 計算結果の注記 */}
           <CalculatorNote />
-
-          {/* 割引率の目安 */}
-          <section className="mt-8">
-            <DiscountRateReference />
-          </section>
 
           {/* =================================================================
               早見表
@@ -445,11 +332,11 @@ export function DCFCalculator() {
                 </thead>
                 <tbody>
                   {[
-                    { noi: 100, values: ['約2,980', '約2,420', '約1,990', '約1,650'] },
-                    { noi: 200, values: ['約5,970', '約4,840', '約3,990', '約3,300'] },
-                    { noi: 300, values: ['約8,950', '約7,270', '約5,980', '約4,950'] },
-                    { noi: 500, values: ['約14,920', '約12,110', '約9,970', '約8,250'] },
-                    { noi: 1000, values: ['約29,840', '約24,220', '約19,940', '約16,510'] },
+                    { noi: 100, values: ['約2,230', '約1,840', '約1,560', '約1,350'] },
+                    { noi: 200, values: ['約4,460', '約3,690', '約3,120', '約2,700'] },
+                    { noi: 300, values: ['約6,690', '約5,530', '約4,690', '約4,050'] },
+                    { noi: 500, values: ['約1億1,150', '約9,220', '約7,810', '約6,750'] },
+                    { noi: 1000, values: ['約2億2,300', '約1億8,440', '約1億5,620', '約1億3,510'] },
                   ].map((row, index) => (
                     <tr key={row.noi} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="border border-gray-300 px-2 py-2 text-gray-900">{row.noi}万円</td>
@@ -483,23 +370,9 @@ export function DCFCalculator() {
               将来の純収益（キャッシュフロー）と、保有期間終了時の売却価格（復帰価格）を、
               それぞれの発生時期に応じた現在価値に割り引いて合計することで評価額を求めます。
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <div className="flex items-start gap-2">
-                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-blue-800">DCF法の特徴</p>
-                  <ul className="text-sm text-blue-700 mt-1 space-y-1">
-                    <li>・将来のキャッシュフロー変動を織り込める</li>
-                    <li>・計算過程が明示され、説明性に優れている</li>
-                    <li>・J-REIT等の証券化対象不動産では原則として適用されるとされている</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
             <SectionHeading id="formula" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              DCF法の基本公式は以下の通りとされています。
+              DCF法の基本公式は以下の通りです。
             </p>
             <div className="bg-gray-100 border border-gray-200 rounded-lg p-4 mb-4 font-mono text-sm">
               <p className="mb-2">収益価格 = Σ(各期のNCF ÷ (1+r)^t) + (復帰価格 ÷ (1+r)^n)</p>
@@ -519,21 +392,21 @@ export function DCFCalculator() {
               <div className="bg-white border border-gray-200 rounded-lg p-3">
                 <p className="font-medium text-gray-800 mb-1">割引率（Discount Rate）</p>
                 <p className="text-sm text-gray-600">
-                  投資家の期待収益率であり、リスクに応じて設定されます。
-                  リスクフリーレート（国債利回り等）にリスクプレミアムを加算して算出する方法が一般的とされています。
+                  期待収益率であり、リスクに応じて設定されます。
+                  リスクフリーレート（国債利回り等）にリスクプレミアムを加算して算出する方法が一般的です。
                 </p>
               </div>
               <div className="bg-white border border-gray-200 rounded-lg p-3">
                 <p className="font-medium text-gray-800 mb-1">最終還元利回り（Terminal Cap Rate）</p>
                 <p className="text-sm text-gray-600">
                   保有期間終了時の売却価格（復帰価格）を算出するための還元利回りです。
-                  建物老朽化や将来の不確実性を考慮し、割引率より0.1〜0.5%程度高く設定することが一般的とされています。
+                  建物老朽化や将来の不確実性を考慮し、割引率より0.1〜0.5%程度高く設定することが一般的です。
                 </p>
               </div>
               <div className="bg-white border border-gray-200 rounded-lg p-3">
                 <p className="font-medium text-gray-800 mb-1">保有期間</p>
                 <p className="text-sm text-gray-600">
-                  物件の保有予定期間です。実務では5年または10年が用いられることが多いとされています。
+                  物件の保有予定期間です。実務では5年または10年が用いられることが多いです。
                 </p>
               </div>
             </div>
@@ -571,45 +444,12 @@ export function DCFCalculator() {
               </table>
             </div>
 
-            <SectionHeading id="usage" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              DCF法は以下のような場面で活用されるとされています。
-            </p>
-            <ul className="list-disc list-inside text-gray-700 mb-6 space-y-2">
-              <li>J-REIT（不動産投資信託）における物件取得・評価</li>
-              <li>不動産私募ファンドの投資判断</li>
-              <li>開発案件（リノベーション含む）の事業収支シミュレーション</li>
-              <li>不動産鑑定評価（証券化対象不動産では原則適用）</li>
-            </ul>
           </section>
-
-          {/* =================================================================
-              参考リンク
-          ================================================================= */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="font-semibold text-gray-800 mb-2">参考リンク</p>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>
-                <a href="https://www.mlit.go.jp/totikensetu/totikensetu_tk3_000024.html" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → 不動産鑑定評価基準（国土交通省）
-                </a>
-              </li>
-              <li>
-                <a href="https://www.reinet.or.jp/" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → 不動産投資家調査（日本不動産研究所）
-                </a>
-              </li>
-            </ul>
-          </div>
 
           {/* 免責事項 */}
           <ToolDisclaimer
             infoDate="2026年1月"
             lastUpdated="2026年1月20日"
-            additionalItems={[
-              '割引率・還元利回りは物件の立地・用途・築年数等により大きく異なります',
-              '実際の不動産評価は不動産鑑定士にご相談ください',
-            ]}
           />
 
           {/* 関連シミュレーター */}
