@@ -15,7 +15,7 @@ import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { calculateIRR } from '@/lib/calculators/irr'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '不動産投資のIRR（内部収益率） 計算シミュレーション｜早見表付き'
+const PAGE_TITLE = '不動産のIRR（内部収益率） 計算シミュレーション'
 
 // =================================================================
 // 目次項目
@@ -303,58 +303,7 @@ export function IRRCalculator() {
           {/* 計算結果の注記 */}
           <CalculatorNote />
 
-          {/* =================================================================
-              早見表
-          ================================================================= */}
-          <section className="mt-12 mb-12">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">IRRの早見表</h2>
-            <p className="text-sm text-gray-600 mb-4">自己資金1,000万円・保有10年・売却価格=購入価格の場合</p>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 px-2 py-2 text-left font-semibold text-gray-700">年間CF＼保有期間</th>
-                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">5年</th>
-                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">10年</th>
-                    <th className="border border-gray-300 px-2 py-2 text-center font-semibold text-gray-700">15年</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white">
-                    <td className="border border-gray-300 px-2 py-2 text-gray-900">50万円/年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">約2.4%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">約3.7%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">約4.2%</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="border border-gray-300 px-2 py-2 text-gray-900">100万円/年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">約6.4%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">約7.7%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-blue-600 font-medium">約8.3%</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-gray-300 px-2 py-2 text-gray-900">150万円/年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">約11.2%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">約11.8%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">約12.3%</td>
-                  </tr>
-                  <tr className="bg-gray-50">
-                    <td className="border border-gray-300 px-2 py-2 text-gray-900">200万円/年</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">約16.5%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">約15.9%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-green-600 font-medium">約16.3%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              ※売却諸経費3%、売却時ローン残債なしで概算。譲渡所得税は考慮していません。
-            </p>
-          </section>
-
-          {/* =================================================================
-              目次
-          ================================================================= */}
+          {/* 目次 */}
           <TableOfContents items={tocItems} />
 
           {/* =================================================================

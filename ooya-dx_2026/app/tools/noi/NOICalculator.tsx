@@ -12,10 +12,10 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
-import { calculateNOI, getOpexRateByPropertyType, getNOIEvaluation } from '@/lib/calculators/noi'
+import { calculateNOI, getOpexRateByPropertyType } from '@/lib/calculators/noi'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '不動産投資のNOI（営業純収益） 計算シミュレーション｜経費率目安付き'
+const PAGE_TITLE = '不動産のNOI（営業純収益） 計算シミュレーション'
 
 // =================================================================
 // 目次項目
@@ -98,20 +98,6 @@ export function NOICalculator() {
     }, propertyPriceInMan > 0 ? propertyPriceInMan : undefined)
   }, [hasInput, annualRentInMan, vacancyRate, badDebtRate, otherIncomeInMan, pmFeeRate, bmFeeInMan, propertyTaxInMan, maintenanceRate, insuranceInMan, leasingCostInMan, otherExpenseInMan, useSimpleMode, opexRate, propertyPriceInMan])
 
-  // NOI利回り評価
-  const noiEvaluation = result && result.noiYield !== null ? getNOIEvaluation(result.noiYield) : null
-
-  // 評価色
-  const getEvalColor = (level: string) => {
-    switch (level) {
-      case 'excellent': return 'text-green-600'
-      case 'good': return 'text-blue-600'
-      case 'fair': return 'text-amber-600'
-      case 'poor': return 'text-orange-600'
-      default: return 'text-gray-600'
-    }
-  }
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
@@ -136,7 +122,7 @@ export function NOICalculator() {
             {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
-            不動産投資のNOI（営業純収益）を概算計算します。
+            不動産のNOI（営業純収益）を概算計算します。
             GPI・EGI・OPEXの詳細内訳を表示し、キャッシュフローツリーで収益構造を可視化できます。
           </p>
 
@@ -407,17 +393,9 @@ export function NOICalculator() {
                   {result.noiYield !== null && (
                     <>
                       <span className="text-gray-600 border-t pt-3">NOI利回り（キャップレート）</span>
-                      <span className={`text-right font-bold border-t pt-3 ${noiEvaluation ? getEvalColor(noiEvaluation.level) : ''}`}>
+                      <span className="text-right font-bold border-t pt-3">
                         {result.noiYield.toFixed(2)}%
                       </span>
-                      {noiEvaluation && (
-                        <>
-                          <span className="text-gray-600">評価</span>
-                          <span className={`text-right font-medium ${getEvalColor(noiEvaluation.level)}`}>
-                            {noiEvaluation.message}
-                          </span>
-                        </>
-                      )}
                     </>
                   )}
 
@@ -532,12 +510,12 @@ export function NOICalculator() {
           <section className="mb-12">
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              NOI（Net Operating Income：営業純収益）は、不動産投資の収益性を測る最も基本的な指標の一つとされています。
+              NOI（Net Operating Income：営業純収益）は、不動産の収益性を測る基本的な指標の一つとされています。
               物件から得られる収入から、運営に必要な経費を差し引いた「事業としての実力」を示す数値です。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              金融機関が担保評価を行う際や、物件価格の妥当性を判断する際にも参照される重要な指標です。
-              NOIを物件価格で割った「NOI利回り（キャップレート）」は、不動産投資の収益性比較に広く使用されています。
+              物件価格の妥当性を判断する際にも参照される指標です。
+              NOIを物件価格で割った「NOI利回り（キャップレート）」は、不動産の収益性比較に使用される場合があります。
             </p>
 
             <SectionHeading id="formula" items={tocItems} />
@@ -629,33 +607,10 @@ export function NOICalculator() {
             </div>
           </section>
 
-          {/* =================================================================
-              参考リンク
-          ================================================================= */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="font-semibold text-gray-800 mb-2">参考リンク</p>
-            <ul className="text-sm text-blue-700 space-y-1">
-              <li>
-                <a href="https://www.ares.or.jp/learn/glossary/noi.html" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → NOI｜不動産証券化用語集（ARES）
-                </a>
-              </li>
-              <li>
-                <a href="https://www.mlit.go.jp/jutakukentiku/house/content/001747009.pdf" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  → マンションの修繕積立金に関するガイドライン（国土交通省）
-                </a>
-              </li>
-            </ul>
-          </div>
-
           {/* 免責事項 */}
           <ToolDisclaimer
             infoDate="2026年1月"
             lastUpdated="2026年1月20日"
-            additionalItems={[
-              '経費率は物件の状態・立地・管理体制により大きく異なる場合があります',
-              '将来の家賃収入・空室率・経費は保証されるものではありません',
-            ]}
           />
 
           {/* 関連シミュレーター */}

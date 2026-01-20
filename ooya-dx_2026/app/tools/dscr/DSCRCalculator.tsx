@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -13,74 +13,27 @@ import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import {
-  calculateDSCR,
-  getDSCRBenchmarks,
-} from '@/lib/calculators/dscr'
+import { calculateDSCR } from '@/lib/calculators/dscr'
 
 // ページタイトル
-const PAGE_TITLE = 'DSCR（債務返済カバー率） 計算シミュレーション｜融資審査の目安がわかる'
+const PAGE_TITLE = '不動産のDSCR（債務返済カバー率） 計算シミュレーション'
 
 // 早見表データ（NOI 500万円、金利2%、期間25年の場合）
 const quickReferenceData: QuickReferenceRow3Col[] = [
-  { label: '借入5,000万円', value1: 'DSCR 1.85', value2: '返済可能性：高' },
-  { label: '借入6,000万円', value1: 'DSCR 1.54', value2: '返済可能性：高' },
-  { label: '借入7,000万円', value1: 'DSCR 1.32', value2: '返済可能性：中' },
-  { label: '借入8,000万円', value1: 'DSCR 1.16', value2: '返済可能性：低' },
-  { label: '借入9,000万円', value1: 'DSCR 1.03', value2: '返済可能性：要注意' },
-  { label: '借入1億円', value1: 'DSCR 0.93', value2: '返済可能性：困難' },
-]
-
-// 金融機関別基準
-const bankBenchmarkData: QuickReferenceRow3Col[] = [
-  { label: '都市銀行（メガバンク）', value1: '1.3以上', value2: '物件単体の収益力で評価' },
-  { label: '地方銀行', value1: '1.2以上', value2: '積算評価も重視' },
-  { label: '信用金庫・信用組合', value1: '1.1以上', value2: '審査は柔軟、期間は短め' },
-  { label: 'ノンバンク', value1: '1.0以上', value2: '金利は高いが基準は緩め' },
+  { label: '借入5,000万円', value1: 'DSCR 1.97', value2: 'ADS 約254万円' },
+  { label: '借入6,000万円', value1: 'DSCR 1.64', value2: 'ADS 約305万円' },
+  { label: '借入7,000万円', value1: 'DSCR 1.40', value2: 'ADS 約356万円' },
+  { label: '借入8,000万円', value1: 'DSCR 1.23', value2: 'ADS 約407万円' },
+  { label: '借入9,000万円', value1: 'DSCR 1.09', value2: 'ADS 約458万円' },
+  { label: '借入1億円', value1: 'DSCR 0.98', value2: 'ADS 約509万円' },
 ]
 
 // 目次
 const tocItems: TocItem[] = [
   { id: 'about', title: 'DSCRとは', level: 2 },
   { id: 'calculation', title: '計算方法', level: 3 },
-  { id: 'benchmark', title: '金融機関別の目安', level: 3 },
-  { id: 'stress-test', title: 'ストレステストの重要性', level: 3 },
+  { id: 'stress-test', title: 'ストレステストについて', level: 3 },
 ]
-
-// 評価レベルに応じた色を取得
-function getEvaluationColor(level: string): string {
-  switch (level) {
-    case 'excellent':
-      return 'text-green-600'
-    case 'good':
-      return 'text-blue-600'
-    case 'caution':
-      return 'text-yellow-600'
-    case 'danger':
-      return 'text-orange-600'
-    case 'critical':
-      return 'text-red-600'
-    default:
-      return 'text-gray-600'
-  }
-}
-
-function getEvaluationBgColor(level: string): string {
-  switch (level) {
-    case 'excellent':
-      return 'bg-green-50 border-green-200'
-    case 'good':
-      return 'bg-blue-50 border-blue-200'
-    case 'caution':
-      return 'bg-yellow-50 border-yellow-200'
-    case 'danger':
-      return 'bg-orange-50 border-orange-200'
-    case 'critical':
-      return 'bg-red-50 border-red-200'
-    default:
-      return 'bg-gray-50 border-gray-200'
-  }
-}
 
 export function DSCRCalculator() {
   // 入力状態（万円単位）
@@ -136,7 +89,7 @@ export function DSCRCalculator() {
           </h1>
           <p className="text-gray-600 mb-8">
             年間賃料収入と借入条件を入力するだけで、DSCR（債務返済カバー率）を瞬時に計算します。
-            金融機関の融資審査における目安がわかります。
+            借入返済の余力を把握できます。
           </p>
 
           {/* シミュレーター本体 */}
@@ -267,11 +220,11 @@ export function DSCRCalculator() {
                     className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-sm font-medium text-gray-700">
-                    銀行審査モード（ストレステスト）
+                    ストレステストを実施する
                   </span>
                 </label>
                 <p className="text-xs text-gray-500 mt-1 ml-6">
-                  金融機関が実際に使用する厳しい条件でシミュレーションします
+                  厳しめの条件（高金利・高空室率）でシミュレーションします
                 </p>
               </div>
 
@@ -279,7 +232,7 @@ export function DSCRCalculator() {
                 <div className="grid grid-cols-2 gap-4 p-3 bg-amber-50 rounded-lg">
                   <div>
                     <label className="block text-sm font-medium text-amber-700 mb-1">
-                      審査金利
+                      ストレス金利
                     </label>
                     <div className="flex">
                       <input
@@ -298,7 +251,7 @@ export function DSCRCalculator() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-amber-700 mb-1">
-                      審査用空室率
+                      ストレス空室率
                     </label>
                     <div className="flex">
                       <input
@@ -326,20 +279,7 @@ export function DSCRCalculator() {
                 value={result?.dscr ?? 0}
                 unit="倍"
                 highlight={true}
-                subText={result?.evaluation.label}
               />
-
-              {/* 評価表示 */}
-              {hasInput && result && (
-                <div className={`p-3 border rounded-lg ${getEvaluationBgColor(result.evaluation.level)}`}>
-                  <p className={`text-sm font-medium ${getEvaluationColor(result.evaluation.level)}`}>
-                    {result.evaluation.label}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {result.evaluation.description}
-                  </p>
-                </div>
-              )}
 
               <ResultCard
                 label="NOI（純営業収益）"
@@ -364,46 +304,28 @@ export function DSCRCalculator() {
               {showStressTest && hasInput && result && (
                 <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                   <p className="text-sm font-medium text-amber-800 mb-3">
-                    銀行審査モード（ストレステスト）結果
+                    ストレステスト結果
                   </p>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-amber-700">審査用DSCR</span>
-                      <span className={`font-bold ${getEvaluationColor(result.bankEvaluation.level)}`}>
+                      <span className="text-sm text-amber-700">ストレス時DSCR</span>
+                      <span className="font-bold text-amber-800">
                         {result.stressTest.dscr.toFixed(2)}倍
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-amber-700">審査用NOI</span>
+                      <span className="text-sm text-amber-700">ストレス時NOI</span>
                       <span className="font-medium text-gray-700">
                         約{result.stressTest.noi.toLocaleString()}万円/年
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-amber-700">審査用ADS</span>
+                      <span className="text-sm text-amber-700">ストレス時ADS</span>
                       <span className="font-medium text-gray-700">
                         約{result.stressTest.ads.toLocaleString()}万円/年
                       </span>
                     </div>
-                    <div className={`mt-2 p-2 rounded ${getEvaluationBgColor(result.bankEvaluation.level)}`}>
-                      <p className={`text-sm font-medium ${getEvaluationColor(result.bankEvaluation.level)}`}>
-                        融資審査見込み：{result.bankEvaluation.label}
-                      </p>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {result.bankEvaluation.description}
-                      </p>
-                    </div>
                   </div>
-                </div>
-              )}
-
-              {/* 借入可能上限額 */}
-              {hasInput && result && (
-                <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">参考：DSCR 1.2基準での借入可能上限額</p>
-                  <p className="text-lg font-bold text-gray-800">
-                    約{result.maxLoanAmount.toLocaleString()}万円
-                  </p>
                 </div>
               )}
             </div>
@@ -428,21 +350,10 @@ export function DSCRCalculator() {
           <section className="mb-12">
             <QuickReferenceTable3Col
               title="DSCR早見表"
-              description="NOI 500万円、金利2%、借入期間25年の場合の借入金額別DSCRの目安です。"
-              headers={['借入金額', { title: 'DSCR' }, { title: '返済可能性' }]}
+              description="NOI 500万円、金利2%、借入期間25年の場合の借入金額別DSCRです。"
+              headers={['借入金額', { title: 'DSCR' }, { title: 'ADS（年間返済額）' }]}
               rows={quickReferenceData}
-              note="※元利均等返済の場合。実際の融資可否は金融機関の審査によります。"
-            />
-          </section>
-
-          {/* 金融機関別基準 */}
-          <section className="mb-12">
-            <QuickReferenceTable3Col
-              title="金融機関別DSCR基準（目安）"
-              description="金融機関タイプ別の一般的なDSCR基準とされています。"
-              headers={['金融機関タイプ', { title: 'DSCR基準' }, { title: '特徴' }]}
-              rows={bankBenchmarkData}
-              note="※一般的な目安であり、実際の審査基準は各金融機関により異なります。"
+              note="※元利均等返済の場合。"
             />
           </section>
 
@@ -454,11 +365,11 @@ export function DSCRCalculator() {
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               DSCR（Debt Service Coverage Ratio：債務返済カバー率）は、不動産が生み出す純営業収益（NOI）が、年間の借入返済額（ADS）の何倍あるかを示す指標です。
-              金融機関が不動産投資向け融資の審査において、返済能力を判断する際に重視する指標とされています。
+              借入返済の余力を把握するために使用される場合があります。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              DSCRが1.0を超えていれば、物件の収益で返済を賄える状態を意味し、数値が高いほど返済余力があるとされています。
-              一般的に1.2以上が融資審査の合格ラインとされることが多いとされています。
+              DSCRが1.0を超えていれば、物件の収益で返済を賄える状態を意味します。
+              数値が高いほど返済余力があるとされています。
             </p>
 
             <SectionHeading id="calculation" items={tocItems} />
@@ -472,34 +383,18 @@ export function DSCRCalculator() {
               ADS（Annual Debt Service）は、借入金の年間元利返済額です。
             </p>
 
-            <SectionHeading id="benchmark" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              金融機関によってDSCRの審査基準は異なるとされています。
-              一般的に、都市銀行（メガバンク）は1.3以上、地方銀行は1.2以上、信用金庫は1.1以上が目安とされています。
-              ただし、担保評価や借り手の属性によって柔軟に判断される場合もあるとされています。
-            </p>
-
             <SectionHeading id="stress-test" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              金融機関は融資審査において、実際の金利よりも高い「審査金利」（3.5%〜4.0%程度）や、
-              厳しめの空室率（15%〜20%程度）を適用してDSCRを計算することがあるとされています。
-              これは将来の金利上昇リスクや収益悪化に備えたストレステストとされています。
+              ストレステストとは、将来の金利上昇リスクや収益悪化に備えて、
+              厳しめの条件（高い金利、高い空室率）でDSCRを計算する手法です。
             </p>
             <p className="text-gray-700 leading-relaxed">
-              本シミュレーターの「銀行審査モード」では、このストレステストを再現できます。
-              実行金利でのDSCRが良好でも、審査金利でのDSCRが基準を下回る場合、融資が難しくなる可能性があるとされています。
+              本シミュレーターでは、ストレス条件を指定してDSCRをシミュレーションできます。
             </p>
           </section>
 
           {/* 免責事項 */}
-          <ToolDisclaimer
-            infoDate="2026年1月"
-            lastUpdated="2026年1月20日"
-            additionalItems={[
-              '金融機関の融資審査基準は各金融機関により異なります',
-              'DSCRは融資審査における一つの指標であり、融資可否を保証するものではありません',
-            ]}
-          />
+          <ToolDisclaimer />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/dscr" />

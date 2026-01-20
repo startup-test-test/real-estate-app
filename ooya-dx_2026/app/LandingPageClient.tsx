@@ -366,7 +366,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
               </span>
             </h2>
             <p className="mt-4 text-gray-600 text-base sm:text-lg">
-              収益分析・税金・費用をかんたん計算。DCF法・IRR・利回りなど投資指標も充実。
+              収益分析・税金・費用をかんたん計算。利回り・DCF法・IRR（内部収益率）など投資指標も充実。
             </p>
           </div>
 

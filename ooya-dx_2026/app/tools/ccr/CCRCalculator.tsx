@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { TrendingUp, AlertCircle } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -15,7 +15,7 @@ import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { calculateCCR, estimatePurchaseCosts } from '@/lib/calculators/ccr'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '不動産投資のCCR（自己資金配当率） 計算シミュレーション｜早見表付き'
+const PAGE_TITLE = '不動産のCCR（自己資金配当率） 計算シミュレーション'
 
 // =================================================================
 // 目次項目
@@ -63,15 +63,6 @@ export function CCRCalculator() {
     })
   }, [hasInput, propertyPriceInMan, annualRentInMan, vacancyRate, opexRate, equityInMan, loanAmountInMan, loanTermYears, interestRate])
 
-  // レバレッジ効果の色
-  const getLeverageColor = (effect: string) => {
-    switch (effect) {
-      case 'positive': return 'bg-green-50 border-green-200 text-green-800'
-      case 'negative': return 'bg-red-50 border-red-200 text-red-800'
-      default: return 'bg-gray-50 border-gray-200 text-gray-700'
-    }
-  }
-
   // 購入諸経費を自動計算（ヘルパー）
   const handleEstimateCosts = () => {
     if (propertyPriceInMan > 0) {
@@ -103,7 +94,7 @@ export function CCRCalculator() {
             {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
-            不動産投資のCCR（自己資金配当率）を概算計算します。
+            不動産のCCR（自己資金配当率）を概算計算します。
             自己資金に対して年間どれくらいのキャッシュフローが得られるかを把握し、
             投資効率やレバレッジ効果を分析できます。
           </p>
@@ -322,22 +313,6 @@ export function CCRCalculator() {
                   <span className="text-gray-600">K%（ローン定数）</span>
                   <span className="text-right font-medium">{result.loanConstant.toFixed(2)}%</span>
                 </div>
-
-                {/* レバレッジ効果 */}
-                {loanAmountInMan > 0 && (
-                  <div className={`mt-4 p-3 rounded-lg border ${getLeverageColor(result.leverageEffect)}`}>
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium">レバレッジ判定</p>
-                        <p className="text-sm mt-1">{result.leverageMessage}</p>
-                        <p className="text-xs mt-1 opacity-75">
-                          FCR {result.fcr.toFixed(2)}% {result.fcr > result.loanConstant ? '>' : result.fcr < result.loanConstant ? '<' : '='} K% {result.loanConstant.toFixed(2)}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* 計算式表示 */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
