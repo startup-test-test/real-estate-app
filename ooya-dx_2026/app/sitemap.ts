@@ -3,7 +3,7 @@ import { getAllArticles } from '@/lib/mdx';
 import fs from 'fs';
 import path from 'path';
 
-const BASE_URL = 'https://ooya.tech';
+const BASE_URL = 'https://ooya-dx.com';
 
 // /tools ディレクトリから自動的にページを検出
 function getToolSlugs(): string[] {
