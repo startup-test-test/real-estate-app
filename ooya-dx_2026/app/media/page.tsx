@@ -11,11 +11,11 @@ import { Home } from 'lucide-react';
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '大家DXジャーナル｜不動産投資の実践ノウハウ',
-  description: '不動産投資の基礎知識から実践的なノウハウまで。データドリブンな不動産投資を支援する情報メディア。',
+  title: '大家DXジャーナル｜賃貸経営の実践ノウハウ',
+  description: '賃貸経営の基礎知識から実践的なノウハウまで。データドリブンな賃貸経営を支援する情報メディア。',
   openGraph: {
-    title: '大家DXジャーナル｜不動産投資の実践ノウハウ',
-    description: '不動産投資の基礎知識から実践的なノウハウまで。データドリブンな不動産投資を支援する情報メディア。',
+    title: '大家DXジャーナル｜賃貸経営の実践ノウハウ',
+    description: '賃貸経営の基礎知識から実践的なノウハウまで。データドリブンな賃貸経営を支援する情報メディア。',
     url: `${BASE_URL}/media`,
     siteName: '大家DX',
     type: 'website',
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '大家DXジャーナル｜不動産投資の実践ノウハウ',
-    description: '不動産投資の基礎知識から実践的なノウハウまで。データドリブンな不動産投資を支援する情報メディア。',
+    title: '大家DXジャーナル｜賃貸経営の実践ノウハウ',
+    description: '賃貸経営の基礎知識から実践的なノウハウまで。データドリブンな賃貸経営を支援する情報メディア。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 };
@@ -101,7 +101,7 @@ export default function MediaPage() {
                 テック×不動産で、意思決定を数字で。
               </p>
               <p className="mt-3 text-base sm:text-lg text-gray-700 whitespace-nowrap">
-                現役不動産投資家が不動産投資のシミュレーションをわかりやすく解説するメディア
+                現役大家が賃貸経営のシミュレーションをわかりやすく解説するメディア
               </p>
             </div>
           </div>

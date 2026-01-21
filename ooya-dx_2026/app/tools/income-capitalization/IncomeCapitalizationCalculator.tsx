@@ -94,7 +94,7 @@ export function IncomeCapitalizationCalculator() {
           <p className="text-gray-600 mb-8">
             収益還元法（直接還元法）による不動産の収益価格を計算します。
             年間賃料収入とキャップレート（還元利回り）を入力するだけで、
-            投資用不動産の理論価格を算出できます。
+            収益不動産の理論価格を算出できます。
           </p>
 
           {/* シミュレーター本体 */}
@@ -284,8 +284,8 @@ export function IncomeCapitalizationCalculator() {
           <section className="mb-12">
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              収益還元法とは、対象不動産が将来生み出すと期待される純収益の現在価値の総和を求めることで、不動産の価格を算出する手法です。
-              不動産鑑定評価基準において、投資用不動産の評価に原則として適用されます。
+              収益還元法とは、対象不動産が将来生み出すと期待される純収益の現在価値の総和を求めることで、不動産の参考価格を概算する手法です。
+              賃貸物件の価格検討において広く用いられています。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
               収益還元法には「直接還元法」と「DCF法」の2種類がありますが、
@@ -308,7 +308,7 @@ export function IncomeCapitalizationCalculator() {
 
             <ul className="text-gray-700 space-y-2 mb-4 ml-4">
               <li><span className="font-medium">NOI（Net Operating Income）：</span>純営業収益。年間の実収入から運営費用を差し引いた金額</li>
-              <li><span className="font-medium">キャップレート（Cap Rate）：</span>還元利回り。期待する投資利回りまたは市場で観察される利回り</li>
+              <li><span className="font-medium">キャップレート（Cap Rate）：</span>還元利回り。期待する収益利回りまたは市場で観察される利回り</li>
             </ul>
 
             <SectionHeading id="noi" items={tocItems} />

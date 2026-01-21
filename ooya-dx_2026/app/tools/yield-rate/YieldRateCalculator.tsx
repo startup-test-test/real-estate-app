@@ -191,7 +191,7 @@ export function YieldRateCalculator() {
                   </div>
 
                   <p className="text-xs text-gray-500 mb-2 text-right">
-                    NOI {result.annualNOI}万円 / 総投資{result.totalInvestment}万円
+                    NOI {result.annualNOI}万円 / 取得総額{result.totalInvestment}万円
                   </p>
 
                   <div className="flex items-center justify-between bg-amber-50 rounded-lg p-3">

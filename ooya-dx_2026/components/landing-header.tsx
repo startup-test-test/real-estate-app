@@ -30,6 +30,9 @@ export function LandingHeader() {
               <a href="/tools" className="text-gray-600 hover:text-gray-900 transition-colors">
                 計算ツール
               </a>
+              <a href="/glossary" className="text-gray-600 hover:text-gray-900 transition-colors">
+                用語集
+              </a>
               <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors">
                 メディア
               </a>

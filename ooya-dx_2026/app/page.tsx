@@ -7,11 +7,11 @@ import { getAllGlossaryTerms } from '@/lib/glossary';
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '大家DX - 不動産投資シミュレーション',
-  description: 'AI搭載の包括的不動産投資プラットフォーム。収益シミュレーション、市場分析、投資判断をサポートします。',
+  title: '大家DX - 賃貸経営シミュレーション',
+  description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
   openGraph: {
-    title: '大家DX - 不動産投資シミュレーション',
-    description: 'AI搭載の包括的不動産投資プラットフォーム。収益シミュレーション、市場分析、投資判断をサポートします。',
+    title: '大家DX - 賃貸経営シミュレーション',
+    description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
     url: BASE_URL,
     siteName: '大家DX',
     type: 'website',
@@ -20,14 +20,14 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/images/media/hero-media.jpeg`,
         width: 1200,
         height: 630,
-        alt: '大家DX - 不動産投資シミュレーション',
+        alt: '大家DX - 賃貸経営シミュレーション',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '大家DX - 不動産投資シミュレーション',
-    description: 'AI搭載の包括的不動産投資プラットフォーム。収益シミュレーション、市場分析、投資判断をサポートします。',
+    title: '大家DX - 賃貸経営シミュレーション',
+    description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 };
@@ -38,7 +38,7 @@ const websiteJsonLd = {
   '@type': 'WebSite',
   name: '大家DX',
   url: BASE_URL,
-  description: 'AI搭載の包括的不動産投資プラットフォーム。収益シミュレーション、市場分析、投資判断をサポートします。',
+  description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
   potentialAction: {
     '@type': 'SearchAction',
     target: `${BASE_URL}/media?q={search_term_string}`,

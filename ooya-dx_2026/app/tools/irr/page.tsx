@@ -7,7 +7,7 @@ const BASE_URL = 'https://ooya.tech';
 export const metadata: Metadata = {
   title: '賃貸経営のIRR（内部収益率） 計算シミュレーション｜早見表付き',
   description:
-    '賃貸経営のIRR（内部収益率）を無料で計算。物件購入から売却までの収益性を時間価値を考慮して評価。NPV、投資倍率も同時計算。早見表付き。',
+    '賃貸経営のIRR（内部収益率）を無料で計算。物件購入から売却までの収益性を時間価値を考慮して評価。NPV、収益倍率も同時計算。早見表付き。',
   keywords: [
     'IRR 計算',
     'IRR シミュレーション',

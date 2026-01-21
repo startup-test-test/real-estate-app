@@ -7,10 +7,10 @@ const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
   title: '賃貸経営シミュレーター | 大家DX',
-  description: '不動産投資の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
+  description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
   openGraph: {
     title: '賃貸経営シミュレーター | 大家DX',
-    description: '不動産投資の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
+    description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
     url: `${BASE_URL}/simulator`,
     siteName: '大家DX',
     type: 'website',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '賃貸経営シミュレーター | 大家DX',
-    description: '不動産投資の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
+    description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
     images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };

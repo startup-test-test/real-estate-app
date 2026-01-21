@@ -96,7 +96,7 @@ export default function GlossaryPage() {
               <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
                 賃貸経営・不動産オーナーが知っておきたい専門用語をわかりやすく解説。
                 <br className="hidden sm:block" />
-                投資判断に必要な知識を身につけましょう。
+                経営判断に必要な知識を身につけましょう。
               </p>
             </div>
 

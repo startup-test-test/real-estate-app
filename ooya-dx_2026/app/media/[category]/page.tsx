@@ -13,12 +13,12 @@ interface Props {
 
 const categoryMeta: Record<string, { title: string; description: string }> = {
   base: {
-    title: '不動産投資の基礎知識',
-    description: '不動産投資を始めるための基礎知識。利回り計算、物件選び、リスク管理など初心者に必要な情報を解説。',
+    title: '賃貸経営の基礎知識',
+    description: '賃貸経営を始めるための基礎知識。利回り計算、物件選び、リスク管理など初心者に必要な情報を解説。',
   },
   kodate: {
-    title: 'ボロ戸建て投資',
-    description: 'ボロ戸建て投資の実践ノウハウ。物件選び、リフォーム費用、融資、収益化のポイントを解説。',
+    title: 'ボロ戸建て賃貸経営',
+    description: 'ボロ戸建て賃貸経営の実践ノウハウ。物件選び、リフォーム費用、融資、収益化のポイントを解説。',
   },
 };
 

@@ -127,20 +127,38 @@ export function Header() {
               style={{ height: '2rem', width: 'auto', display: 'block' }}
             />
           </Link>
-          <nav className="flex items-center gap-2">
-            <Link href="/glossary">
-              <Button variant="ghost" className="text-gray-700">用語集</Button>
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors">
+              シミュレーター
             </Link>
+            <Link href="/tools" className="text-gray-600 hover:text-gray-900 transition-colors">
+              計算ツール
+            </Link>
+            <Link href="/glossary" className="text-gray-600 hover:text-gray-900 transition-colors">
+              用語集
+            </Link>
+            <Link href="/media" className="text-gray-600 hover:text-gray-900 transition-colors">
+              メディア
+            </Link>
+          </nav>
+          <div className="flex items-center gap-2">
             {stackReady ? (
               <HeaderAuthed />
             ) : (
               <>
-                <Link href="/contact">
-                  <Button variant="ghost" className="text-gray-700">お問い合わせ</Button>
+                <Link href="/auth/signin">
+                  <Button variant="ghost" className="hover:bg-blue-50 hover:text-blue-700 rounded-lg">
+                    ログイン
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg">
+                    新規登録
+                  </Button>
                 </Link>
               </>
             )}
-          </nav>
+          </div>
         </div>
       </div>
     </header>

@@ -139,7 +139,7 @@ export function IRRCalculator() {
               {hasInput && (
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-sm text-gray-600">
-                    自己資金（初期投資額）：
+                    自己資金：
                     <span className="font-bold text-gray-900 ml-2">
                       {initialInvestmentInMan.toLocaleString()}万円
                     </span>
@@ -247,7 +247,7 @@ export function IRRCalculator() {
               <div className="bg-white rounded-lg p-4">
                 {/* メイン結果 */}
                 <div className="grid grid-cols-2 gap-y-3 text-base">
-                  <span className="text-gray-600">自己資金（初期投資）</span>
+                  <span className="text-gray-600">自己資金</span>
                   <span className="text-right font-medium">{initialInvestmentInMan.toLocaleString()}万円</span>
 
                   <span className="text-gray-600">年間キャッシュフロー</span>
@@ -291,7 +291,7 @@ export function IRRCalculator() {
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <p className="text-xs text-gray-500 mb-2">キャッシュフロー推移（概算）</p>
                   <div className="text-sm text-gray-700 font-mono space-y-1">
-                    <p>【0年目】初期投資 -{initialInvestmentInMan.toLocaleString()}万円</p>
+                    <p>【0年目】初期費用 -{initialInvestmentInMan.toLocaleString()}万円</p>
                     <p>【1〜{holdingPeriodYears - 1}年目】年間CF {annualCashFlowInMan.toLocaleString()}万円/年</p>
                     <p>【{holdingPeriodYears}年目】年間CF + 売却手取り 約{Math.round(annualCashFlowInMan + saleEstimateInMan * 0.97 - loanBalanceAtSaleInMan).toLocaleString()}万円</p>
                   </div>

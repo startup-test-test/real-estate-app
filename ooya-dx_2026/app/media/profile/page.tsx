@@ -159,7 +159,7 @@ export default function ProfilePage() {
                   <a href="https://startup-marketing.co.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">株式会社StartupMarketing</a> 代表取締役
                 </p>
                 <p className="text-sm text-gray-600 mb-4">
-                  開発ディレクター / マーケッター / 不動産投資家
+                  開発ディレクター / マーケッター / 不動産オーナー
                 </p>
                 <p className="text-sm text-gray-500">
                   1987年（宮崎県生まれ）
@@ -175,15 +175,15 @@ export default function ProfilePage() {
                 <span className="font-semibold text-blue-600">2025年9月時点で、7戸物件を購入して、1戸売却。現在6戸を保有しております。</span>
               </p>
               <p>
-                開発×マーケ×不動産の掛け合わせで、再生と収益改善に強み。投資家向け高度シミュレーター「大家DX」を2025年8月リリース。
+                開発×マーケ×不動産の掛け合わせで、再生と収益改善に強み。大家向け高度シミュレーター「大家DX」を2025年8月リリース。
               </p>
             </div>
           </section>
 
-          {/* 投資用不動産の購入実績 */}
+          {/* 収益不動産の購入実績 */}
           <section className="mb-12">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
-              【投資用不動産の購入実績】
+              【収益不動産の購入実績】
             </h2>
 
             <div className="space-y-8">

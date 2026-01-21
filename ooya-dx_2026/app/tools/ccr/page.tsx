@@ -4,7 +4,7 @@ import { CCRCalculator } from './CCRCalculator'
 export const metadata: Metadata = {
   title: '賃貸経営のCCR（自己資金配当率） 計算シミュレーション｜早見表付き | OOYA.tech',
   description:
-    'CCR（Cash on Cash Return・自己資金配当率）を計算できる無料シミュレーター。自己資金に対する年間キャッシュフローの収益率を算出し、レバレッジ効果も判定。物件購入の投資効率を分析できます。',
+    'CCR（Cash on Cash Return・自己資金配当率）を計算できる無料シミュレーター。自己資金に対する年間キャッシュフローの収益率を算出し、レバレッジ効果も判定。物件購入の収益効率を分析できます。',
   keywords: [
     'CCR',
     'キャッシュオンキャッシュリターン',
