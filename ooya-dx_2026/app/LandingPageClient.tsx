@@ -140,6 +140,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
                 <a href="/tools" className="text-gray-600 hover:text-gray-900 transition-colors">
                   計算ツール
                 </a>
+                <a href="/glossary" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  用語集
+                </a>
                 <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors">
                   メディア
                 </a>
@@ -220,6 +223,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
                 </a>
                 <a href="/tools" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
                   計算ツール
+                </a>
+                <a href="/glossary" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                  用語集
                 </a>
                 <a href="/media" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
                   メディア

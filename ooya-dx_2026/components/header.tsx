@@ -128,6 +128,9 @@ export function Header() {
             />
           </Link>
           <nav className="flex items-center gap-2">
+            <Link href="/glossary">
+              <Button variant="ghost" className="text-gray-700">用語集</Button>
+            </Link>
             {stackReady ? (
               <HeaderAuthed />
             ) : (
