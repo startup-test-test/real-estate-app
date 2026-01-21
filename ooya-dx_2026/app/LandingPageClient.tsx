@@ -1,18 +1,11 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth/client';
-import {
-  ChevronDown,
-  LogOut,
-  User,
-  Menu,
-  X
-} from 'lucide-react';
 import BlogPosts from '@/components/landing/BlogPosts';
 import CompanyProfile from '@/components/landing/CompanyProfile';
 import { LandingFooter } from '@/components/landing-footer';
+import { SharedHeader } from '@/components/shared-header';
 import { toolCategories } from '@/lib/navigation';
 
 interface Article {
@@ -42,37 +35,6 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) => {
   const router = useRouter();
-  const auth = useAuth();
-  const user = auth.user;
-  const isLoading = auth.isLoading;
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSignOut = async () => {
-    setIsDropdownOpen(false);
-    try {
-      console.log('[SignOut] Starting sign out...');
-      await auth.signOut();
-      console.log('[SignOut] Sign out completed, reloading page...');
-      // 強制的にページをリロードしてセッション状態を更新
-      window.location.href = '/';
-    } catch (error) {
-      console.error('[SignOut] Error:', error);
-      // エラーが発生してもページをリロード
-      window.location.href = '/';
-    }
-  };
 
   useEffect(() => {
     document.title = '大家DX｜大家さんのための不動産テックポータル';
@@ -118,131 +80,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200/30 md:fixed md:top-0 md:left-0 md:right-0 md:z-50">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4 sm:py-6">
-            {/* Logo */}
-            <a href="/" className="block">
-              <img
-                src="/img/logo_250709_2.png"
-                alt="大家DX"
-                className="hover:opacity-80 transition-opacity"
-                style={{ height: '2.5rem', width: 'auto', display: 'block' }}
-              />
-            </a>
+      <SharedHeader />
 
-            <div className="flex items-center space-x-6">
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex items-center space-x-6">
-                <a href="/simulator" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  シミュレーター
-                </a>
-                <a href="/tools" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  計算ツール
-                </a>
-                <a href="/glossary" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  用語集
-                </a>
-                <a href="/media" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  メディア
-                </a>
-              </nav>
-
-              {/* Auth Section */}
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                {isLoading ? (
-                  <div className="w-24 h-10 bg-gray-100 rounded-md animate-pulse" />
-                ) : user ? (
-                  <div className="relative" ref={dropdownRef}>
-                    <button
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-medium">
-                        {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
-                      </div>
-                      <span className="hidden sm:block text-sm text-gray-700">
-                        {user?.displayName || user?.email?.split('@')[0]}
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    {isDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                        <button
-                          onClick={() => { setIsDropdownOpen(false); router.push('/mypage'); }}
-                          className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                        >
-                          <User className="w-4 h-4 mr-3 text-gray-400" />
-                          マイページ
-                        </button>
-                        <button
-                          onClick={handleSignOut}
-                          className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                        >
-                          <LogOut className="w-4 h-4 mr-3 text-gray-400" />
-                          ログアウト
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => router.push('/auth/signup')}
-                      className="px-4 sm:px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
-                    >
-                      <span className="hidden sm:inline">10秒で無料登録</span>
-                      <span className="sm:hidden">無料登録</span>
-                    </button>
-                    <button
-                      onClick={() => router.push('/auth/signin')}
-                      className="px-4 sm:px-5 py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
-                    >
-                      ログイン
-                    </button>
-                  </>
-                )}
-
-                {/* Mobile Menu Button */}
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-                >
-                  {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-100">
-              <nav className="flex flex-col gap-2">
-                <a href="/simulator" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                  シミュレーター
-                </a>
-                <a href="/tools" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                  計算ツール
-                </a>
-                <a href="/glossary" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                  用語集
-                </a>
-                <a href="/media" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                  メディア
-                </a>
-                {!user && (
-                  <a href="/auth/signin" className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                    ログイン
-                  </a>
-                )}
-              </nav>
-            </div>
-          )}
-        </div>
-      </header>
-
-      {/* Spacer for fixed header (PC only) */}
-      <div className="hidden md:block h-[88px]" />
+      {/* Spacer for fixed header */}
+      <div className="h-[72px] sm:h-[88px]" />
 
       {/* Hero Section */}
       <section className="relative w-full min-h-[400px] sm:min-h-[480px] md:min-h-[560px]">

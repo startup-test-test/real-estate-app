@@ -86,7 +86,7 @@ export default async function GlossaryTermPage({ params }: Props) {
       {
         '@type': 'ListItem',
         position: 2,
-        name: '用語集',
+        name: '賃貸経営用語集',
         item: `${BASE_URL}/glossary`,
       },
       {
@@ -138,7 +138,7 @@ export default async function GlossaryTermPage({ params }: Props) {
             {/* カテゴリー */}
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-                用語集
+                賃貸経営用語集
               </span>
               <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
                 {term.category}

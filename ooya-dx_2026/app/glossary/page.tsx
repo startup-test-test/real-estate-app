@@ -40,7 +40,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: '用語集',
+      name: '賃貸経営用語集',
       item: `${BASE_URL}/glossary`,
     },
   ],
@@ -82,7 +82,7 @@ export default function GlossaryPage() {
                 ホーム
               </Link>
               <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <span className="text-gray-900">用語集</span>
+              <span className="text-gray-900">賃貸経営用語集</span>
             </nav>
 
             {/* ヘッダー */}
