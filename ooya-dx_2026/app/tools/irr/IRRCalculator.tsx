@@ -89,7 +89,7 @@ export function IRRCalculator() {
             {PAGE_TITLE}
           </h1>
           <p className="text-gray-600 mb-8">
-            不動産投資のIRR（内部収益率）を概算計算します。
+            不動産のIRR（内部収益率）を概算計算します。
             物件購入から売却までの収益性を、時間価値を考慮して評価できます。
           </p>
 
@@ -271,7 +271,7 @@ export function IRRCalculator() {
                     {result.irr !== null ? `${result.irr.toFixed(2)}%` : '計算不能'}
                   </span>
 
-                  <span className="text-gray-600 border-t pt-3">投資倍率</span>
+                  <span className="text-gray-600 border-t pt-3">資金倍率</span>
                   <span className="text-right font-medium border-t pt-3">
                     {result.multipleOnInvested.toFixed(2)}倍
                   </span>
@@ -316,8 +316,8 @@ export function IRRCalculator() {
               期間全体のキャッシュフローを考慮し、「複利で何%の運用に相当するか」を示します。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              不動産投資では、購入時の初期投資から、保有期間中の家賃収入、そして売却時の収益までを
-              総合的に評価できるため、投資判断の指標として活用される場合があります。
+              不動産では、購入時の初期資金から、保有期間中の家賃収入、そして売却時の収益までを
+              総合的に評価できるため、判断の指標として活用される場合があります。
             </p>
 
             <SectionHeading id="difference" items={tocItems} />
@@ -340,7 +340,10 @@ export function IRRCalculator() {
           </section>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer
+            infoDate="2026年1月"
+            lastUpdated="2026年1月21日"
+          />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/irr" />

@@ -18,7 +18,7 @@ import {
 } from '@/lib/calculators/dcf'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = 'DCF法 計算シミュレーション'
+const PAGE_TITLE = '不動産のDCF法（割引キャッシュフロー法） 計算シミュレーション'
 
 // =================================================================
 // 目次項目
@@ -237,11 +237,6 @@ export function DCFCalculator() {
                   <span className="text-gray-600">復帰価格（売却想定額）</span>
                   <span className="text-right font-medium">
                     約{Math.round(result.terminalValueGross / 10000).toLocaleString()}万円
-                  </span>
-
-                  <span className="text-gray-600">売却費用控除後</span>
-                  <span className="text-right font-medium text-amber-600">
-                    約{Math.round(result.terminalValueNet / 10000).toLocaleString()}万円
                   </span>
 
                   <span className="text-gray-700 font-medium">復帰価格の現在価値</span>

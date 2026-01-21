@@ -95,8 +95,7 @@ export function CCRCalculator() {
           </h1>
           <p className="text-gray-600 mb-8">
             不動産のCCR（自己資金配当率）を概算計算します。
-            自己資金に対して年間どれくらいのキャッシュフローが得られるかを把握し、
-            投資効率やレバレッジ効果を分析できます。
+            賃貸経営において、自己資金に対して年間どれくらいのキャッシュフローが得られるかを把握できます。
           </p>
 
           {/* =================================================================
@@ -386,7 +385,7 @@ export function CCRCalculator() {
             <p className="text-gray-700 mb-4 leading-relaxed">
               CCR（Cash on Cash Return：自己資金配当率）は、効率性を測る指標の一つです。
               自己資金に対して年間どれくらいのキャッシュフローが得られるかを示し、
-              投資判断の参考として活用される場合があります。
+              判断の参考として活用される場合があります。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
               利回りと異なり、CCRは借入を活用したレバレッジ効果を考慮できるため、
@@ -411,7 +410,7 @@ export function CCRCalculator() {
             <p className="text-gray-700 mb-4 leading-relaxed">
               CCRはレバレッジ（借入）の効果を反映する指標です。
               FCR（総収益率）とK%（ローン定数）を比較することで、
-              借入が投資効率に与える影響を判断できる場合があります。
+              借入が資金効率に与える影響を判断できる場合があります。
             </p>
             <SectionHeading id="caution" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
@@ -428,7 +427,10 @@ export function CCRCalculator() {
           </section>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer
+            infoDate="2026年1月"
+            lastUpdated="2026年1月21日"
+          />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/ccr" />

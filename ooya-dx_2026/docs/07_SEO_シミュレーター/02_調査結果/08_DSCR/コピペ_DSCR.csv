@@ -1,0 +1,92 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31701435,"不動産のDSCR（債務返済カバー率） 計算シミュレーション
+年間賃料収入と借入条件を入力するだけで、DSCR（債務返済カバー率）を瞬時に計算します。 借入返済の余力を把握できます。
+
+DSCRを概算計算する
+収入条件
+
+年間想定賃料収入（満室時）
+350
+万円
+想定空室率
+5
+%
+運営経費率
+20
+%
+融資条件
+
+借入金額
+1,500
+万円
+借入金利（実行金利）
+2
+%
+借入期間
+25
+年
+
+ストレステストを実施する
+厳しめの条件（高金利・高空室率）でシミュレーションします
+
+DSCR（債務返済カバー率）
+3.44倍
+NOI（純営業収益）
+2,625,000円
+= 約262.5万円/年
+年間元利返済額（ADS）
+762,900円
+= 約76.29万円/年
+年間キャッシュフロー（税引前）
+1,862,100円
+= 約186.21万円/年
+計算式
+
+【NOI】350万円 × (1 - 5%) - 350万円 × 20% = 約262.5万円
+
+【ADS】借入1,500万円 × 金利2% × 25年返済 = 約76.29万円/年
+
+【DSCR】262.5万円 ÷ 76.29万円 = 3.44倍
+
+※本計算結果は概算値です。実際の金額は異なる場合があります。
+
+※最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。
+
+DSCR早見表
+NOI 500万円、金利2%、借入期間25年の場合の借入金額別DSCRです。
+
+借入金額	
+DSCR
+ADS（年間返済額）
+借入5,000万円	DSCR 1.97	ADS 約254万円
+借入6,000万円	DSCR 1.64	ADS 約305万円
+借入7,000万円	DSCR 1.40	ADS 約356万円
+借入8,000万円	DSCR 1.23	ADS 約407万円
+借入9,000万円	DSCR 1.09	ADS 約458万円
+借入1億円	DSCR 0.98	ADS 約509万円
+※元利均等返済の場合。
+
+目次
+1. DSCRとは
+1-1. 計算方法
+1-2. ストレステストについて
+1. DSCRとは
+DSCR（Debt Service Coverage Ratio：債務返済カバー率）は、不動産が生み出す純営業収益（NOI）が、年間の借入返済額（ADS）の何倍あるかを示す指標です。 借入返済の余力を把握するために使用される場合があります。
+
+DSCRが1.0を超えていれば、物件の収益で返済を賄える状態を意味します。 数値が高いほど返済余力があるとされています。
+
+1-1. 計算方法
+DSCR = NOI（純営業収益） ÷ ADS（年間元利返済額）
+
+NOI（Net Operating Income）は、年間の賃料収入から空室損失と運営経費を差し引いた純営業収益です。 ADS（Annual Debt Service）は、借入金の年間元利返済額です。
+
+1-2. ストレステストについて
+ストレステストとは、将来の金利上昇リスクや収益悪化に備えて、 厳しめの条件（高い金利、高い空室率）でDSCRを計算する手法です。
+
+本シミュレーターでは、ストレス条件を指定してDSCRをシミュレーションできます。
+
+免責事項
+・本シミュレーションは、2025年度の税制時点の情報をもとに試算しています。
+・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。
+・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。
+・最終的な判断は専門家（税理士・宅建業者・司法書士・不動産鑑定士等）にご相談ください。",良好,7%,良好,24%,良好,52%,https://www.ownersbook.jp/blog/basics_of_real_estate_investment/dscr/,"DSCRとは？DSCRの計算式や目安水準を解説 ",https://manabu.orixbank.co.jp/archives/231,"DSCRの計算式や目安は？不動産投資の「返済余裕率」を知っ ... ",https://www.nomura.co.jp/terms/english/other/A02960.html,"DSCR（Debt Service Coverage Ratio） - 野村證券 ",https://vimain.jp/blog-column/346/,"フルローンは本当にリスクか？    DSCRと返済設計で見る融資 ",https://www.ids-soft.co.jp/brand/2025/07/29/fundraising-52/,"不動産投資会社におけるDSCR（債務償還余裕率）の活用法と ... ",https://www.ids-soft.co.jp/brand/2025/07/15/fundraising-51/,"DSCR（債務償還余裕率）の基礎と実践的活用について詳しく ... ",https://www.ooya.tech/disclaimer,"免責事項 - 大家DX ",https://www.financial-modelling.jp/dictionary-posts/dscr-new,"DSCR (Debt Service Coverage Ratio) とは ",https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://zaimani.com/financial-indicators/debt-service-coverage-ratio/,"DSCR | 元利金返済カバー率の意味・計算式 - ザイマニ ",https://www.tson.co.jp/media/rei/rei-actual/3857/,"投資シミュレーターの使い方?【金利上昇ストレスの考え方】 ",https://vimain.jp/blog-column/346/,"フルローンは本当にリスクか？    DSCRと返済設計で見る融資 ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/dscr/,"DSCRとは？DSCRの計算式や目安水準を解説 ",https://manabu.orixbank.co.jp/archives/231,"DSCRの計算式や目安は？不動産投資の「返済余裕率」を知っ ... ",http://www.fudosan-dcf.com/indicators/,"不動産投資用語 ",https://zaimani.com/financial-indicators/debt-service-coverage-ratio/,"DSCR | 元利金返済カバー率の意味・計算式 - ザイマニ ",https://www.ids-soft.co.jp/brand/2025/07/29/fundraising-52/,"不動産投資会社におけるDSCR（債務償還余裕率）の活用法と ... ",https://t-a-link.co.jp/column/2025/03/dscr_kinyukikan_zaimusyohyo/,"金融機関が重視する「DSCR」とは？ ",https://www.acom.co.jp/return/simulation/,"ご返済シミュレーション（借入金額・利息計算） - アコム ",https://www.nomura.co.jp/terms/english/other/A02960.html,"DSCR（Debt Service Coverage Ratio） - 野村證券 ",https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701385,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31688608,https://ccd.cloud/Result/detail?id=31688548,https://ccd.cloud/Result/detail?id=31701380,https://ccd.cloud/Result/detail?id=31688517,https://ccd.cloud/Result/detail?id=31688626,,

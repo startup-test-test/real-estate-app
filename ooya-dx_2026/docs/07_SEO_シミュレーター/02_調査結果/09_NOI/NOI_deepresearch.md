@@ -322,3 +322,4 @@ Best Housing Society Accounting & Management Software, 1月 19, 2026にアクセ
 NOI｜不動産証券化用語集 - 不動産証券化協会, 1月 19, 2026にアクセス、 https://www.ares.or.jp/learn/glossary/noi.html
 WORLD CITIES PRIME RESIDENTIAL INDEX - Savills, 1月 19, 2026にアクセス、 https://pdf.savills.com/documents/World-Research-World-Cities-H1-2025-full.pdf
 投資用不動産の NOI 利回りに関する実態分析～J-REIT を例にして, 1月 19, 2026にアクセス、 https://www.lij.jp/news/research_memo/20210531_1.pdf
+１

@@ -44,7 +44,7 @@ export function NOICalculator() {
   // 入力モード
   const [useSimpleMode, setUseSimpleMode] = useState(true)
   const [propertyType, setPropertyType] = useState('apartment-rc')
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(true)
 
   // 収入入力
   const [annualRentInMan, setAnnualRentInMan] = useState<number>(0)
@@ -599,7 +599,7 @@ export function NOICalculator() {
             </p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
               <ul className="text-sm text-yellow-800 space-y-2">
-                <li>・<strong>NOIには減価償却費は含まれません</strong>：会計上の利益とは異なります</li>
+                <li>・<strong>NOIには減価償却費は含まれません</strong></li>
                 <li>・<strong>NOIにはローン返済は含まれません</strong>：借入の有無に関係なく算出される指標です</li>
                 <li>・<strong>大規模修繕費（CAPEX）は含まれません</strong>：NOIからCAPEXを引いたものがNCFです</li>
                 <li>・<strong>空室率・経費は変動します</strong>：将来の数値は保証されるものではありません</li>

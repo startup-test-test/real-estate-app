@@ -32,7 +32,6 @@ const quickReferenceData: QuickReferenceRow3Col[] = [
 const tocItems: TocItem[] = [
   { id: 'about', title: 'DSCRとは', level: 2 },
   { id: 'calculation', title: '計算方法', level: 3 },
-  { id: 'stress-test', title: 'ストレステストについて', level: 3 },
 ]
 
 export function DSCRCalculator() {
@@ -43,9 +42,6 @@ export function DSCRCalculator() {
   const [loanAmountInMan, setLoanAmountInMan] = useState<number>(0)
   const [interestRate, setInterestRate] = useState<number>(2.0)
   const [loanTermYears, setLoanTermYears] = useState<number>(25)
-  const [stressInterestRate, setStressInterestRate] = useState<number>(3.5)
-  const [stressVacancyRate, setStressVacancyRate] = useState<number>(15)
-  const [showStressTest, setShowStressTest] = useState<boolean>(false)
 
   // 計算結果
   const result = useMemo(() => {
@@ -59,10 +55,8 @@ export function DSCRCalculator() {
       loanAmountInMan,
       interestRate,
       loanTermYears,
-      stressInterestRate: showStressTest ? stressInterestRate : undefined,
-      stressVacancyRate: showStressTest ? stressVacancyRate : undefined,
     })
-  }, [annualRentInMan, vacancyRate, expenseRate, loanAmountInMan, interestRate, loanTermYears, stressInterestRate, stressVacancyRate, showStressTest])
+  }, [annualRentInMan, vacancyRate, expenseRate, loanAmountInMan, interestRate, loanTermYears])
 
   const hasInput = annualRentInMan > 0 && loanAmountInMan > 0
 
@@ -210,67 +204,7 @@ export function DSCRCalculator() {
                 </div>
               </div>
 
-              {/* ストレステスト */}
-              <div className="mt-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showStressTest}
-                    onChange={(e) => setShowStressTest(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    ストレステストを実施する
-                  </span>
-                </label>
-                <p className="text-xs text-gray-500 mt-1 ml-6">
-                  厳しめの条件（高金利・高空室率）でシミュレーションします
-                </p>
               </div>
-
-              {showStressTest && (
-                <div className="grid grid-cols-2 gap-4 p-3 bg-amber-50 rounded-lg">
-                  <div>
-                    <label className="block text-sm font-medium text-amber-700 mb-1">
-                      ストレス金利
-                    </label>
-                    <div className="flex">
-                      <input
-                        type="number"
-                        min={0}
-                        max={10}
-                        step={0.1}
-                        value={stressInterestRate}
-                        onChange={(e) => setStressInterestRate(Math.max(0, parseFloat(e.target.value) || 0))}
-                        className="flex-1 min-w-0 border-2 border-amber-300 rounded-l-lg px-3 py-2 text-base focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-                      />
-                      <span className="flex-shrink-0 bg-amber-100 border border-l-0 border-amber-300 rounded-r-lg px-3 py-2 text-amber-700 flex items-center text-sm">
-                        %
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-amber-700 mb-1">
-                      ストレス空室率
-                    </label>
-                    <div className="flex">
-                      <input
-                        type="number"
-                        min={0}
-                        max={50}
-                        step={1}
-                        value={stressVacancyRate}
-                        onChange={(e) => setStressVacancyRate(Math.max(0, parseFloat(e.target.value) || 0))}
-                        className="flex-1 min-w-0 border-2 border-amber-300 rounded-l-lg px-3 py-2 text-base focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-                      />
-                      <span className="flex-shrink-0 bg-amber-100 border border-l-0 border-amber-300 rounded-r-lg px-3 py-2 text-amber-700 flex items-center text-sm">
-                        %
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* 結果エリア */}
             <div className="space-y-3">
@@ -300,35 +234,7 @@ export function DSCRCalculator() {
                 subText={result ? `= 約${result.annualCashFlow.toLocaleString()}万円/年` : undefined}
               />
 
-              {/* ストレステスト結果 */}
-              {showStressTest && hasInput && result && (
-                <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-sm font-medium text-amber-800 mb-3">
-                    ストレステスト結果
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-amber-700">ストレス時DSCR</span>
-                      <span className="font-bold text-amber-800">
-                        {result.stressTest.dscr.toFixed(2)}倍
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-amber-700">ストレス時NOI</span>
-                      <span className="font-medium text-gray-700">
-                        約{result.stressTest.noi.toLocaleString()}万円/年
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-amber-700">ストレス時ADS</span>
-                      <span className="font-medium text-gray-700">
-                        約{result.stressTest.ads.toLocaleString()}万円/年
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
 
             {/* 計算式表示 */}
             {hasInput && result && (
@@ -383,18 +289,13 @@ export function DSCRCalculator() {
               ADS（Annual Debt Service）は、借入金の年間元利返済額です。
             </p>
 
-            <SectionHeading id="stress-test" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              ストレステストとは、将来の金利上昇リスクや収益悪化に備えて、
-              厳しめの条件（高い金利、高い空室率）でDSCRを計算する手法です。
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              本シミュレーターでは、ストレス条件を指定してDSCRをシミュレーションできます。
-            </p>
-          </section>
+            </section>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer
+            infoDate="2026年1月"
+            lastUpdated="2026年1月21日"
+          />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/dscr" />

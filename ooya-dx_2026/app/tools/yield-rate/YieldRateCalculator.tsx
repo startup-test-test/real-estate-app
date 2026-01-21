@@ -15,7 +15,7 @@ import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/Tab
 import { calculateYieldRate, estimateAnnualExpenses, estimatePurchaseCosts } from '@/lib/calculators/yieldRate'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '表面利回り・実質利回り 計算シミュレーション｜早見表付き'
+const PAGE_TITLE = '不動産の表面利回り・実質利回り 計算シミュレーション｜早見表付き'
 
 // 目次データ（見出しの一元管理）
 const tocItems: TocItem[] = [
@@ -317,7 +317,10 @@ export function YieldRateCalculator() {
           </section>
 
           {/* 免責事項 */}
-          <ToolDisclaimer />
+          <ToolDisclaimer
+            infoDate="2026年1月"
+            lastUpdated="2026年1月21日"
+          />
 
           {/* 関連シミュレーター */}
           <RelatedTools currentPath="/tools/yield-rate" />

@@ -1,0 +1,111 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31701420,"不動産のCCR（自己資金配当率） 計算シミュレーション
+不動産のCCR（自己資金配当率）を概算計算します。 自己資金に対して年間どれくらいのキャッシュフローが得られるかを把握し、 投資効率やレバレッジ効果を分析できます。
+
+CCRを概算計算する
+物件価格
+3,600
+万円
+年間家賃収入（満室想定）
+350
+万円
+想定空室率
+5
+%
+運営経費率（管理費・修繕費・税金等）
+20
+%
+目安：一棟20～25%、区分25～35%程度
+
+頭金（物件価格に対する自己資金）
+100
+万円
+購入諸経費
+0
+万円
+物件価格の7%で概算する
+自己資金合計：100万円（頭金100万円 + 諸経費0万円）
+
+借入金額：3,500万円
+
+借入期間
+
+30年
+借入金利（年利）
+2
+%
+EGI（実効総収入）
+332.5万円/年
+OPEX（運営経費）
+-70万円/年
+NOI（営業純利益）
+262.5万円/年
+ADS（年間返済額）
+-155.2万円/年
+BTCF（税引前CF）
++107.3万円/年
+CCR（自己資金配当率）
+107.26%
+自己資金回収期間
+約0.9年
+FCR（総収益率）
+7.29%
+K%（ローン定数）
+4.44%
+計算式
+
+CCR = BTCF / 自己資金 × 100
+
+CCR = 107.3 / 100 × 100 = 107.26%
+
+※本計算結果は概算値です。実際の金額は異なる場合があります。
+
+※最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。
+
+CCRの早見表
+自己資金1,000万円の場合の年間キャッシュフローとCCR
+
+年間BTCF	CCR	回収期間
+30万円	3.0%	約33年
+80万円	8.0%	約12.5年
+120万円	12.0%	約8.3年
+150万円	15.0%	約6.7年
+※自己資金1,000万円の場合。税金・減価償却は考慮していません。
+
+目次
+1. CCR（自己資金配当率）とは
+1-1. CCRの計算式
+2. レバレッジ効果とCCR
+3. 計算上の注意点
+1. CCR（自己資金配当率）とは
+CCR（Cash on Cash Return：自己資金配当率）は、効率性を測る指標の一つです。 自己資金に対して年間どれくらいのキャッシュフローが得られるかを示し、 投資判断の参考として活用される場合があります。
+
+利回りと異なり、CCRは借入を活用したレバレッジ効果を考慮できるため、 実際に手元に残るキャッシュフローの効率を把握する際に用いられることがあります。
+
+1-1. CCRの計算式
+CCRの計算式
+
+CCR = BTCF / 自己資金 × 100
+
+BTCF = NOI - ADS（年間元利返済額）
+
+自己資金 = 頭金 + 購入諸経費
+
+BTCF（Before Tax Cash Flow：税引前キャッシュフロー）は、 NOI（営業純利益）から年間のローン返済額を差し引いた金額です。
+
+2. レバレッジ効果とCCR
+CCRはレバレッジ（借入）の効果を反映する指標です。 FCR（総収益率）とK%（ローン定数）を比較することで、 借入が投資効率に与える影響を判断できる場合があります。
+
+3. 計算上の注意点
+CCRの計算にあたっては、以下の点にご注意ください。
+
+・税金は考慮していません：実際の手取りは所得税・住民税控除後となります
+・空室・家賃下落リスク：本計算は入力した空室率で一定と仮定しています
+・大規模修繕費用：突発的な修繕は運営経費率に含まれていない場合があります
+・売却益は含まれません：CCRはインカムリターンのみを評価する指標です
+免責事項
+・本シミュレーションは、2025年度の税制時点の情報をもとに試算しています。
+・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。
+・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。
+・最終的な判断は専門家（税理士・宅建業者・司法書士・不動産鑑定士等）にご相談ください。
+最終更新日: 2026年1月15日",良好,5%,良好,40%,良好,57%,https://ir-i.jp/realestate/?p=585,"不動産投資の重要指標CCR、DCRとは？ 投資効率を味方に ... ",https://www.asset-value.jp/news/2021/03/23/1141/,"賃貸経営改善  不動産投資の【CCR】とは？自己資金の運用 ... ",https://www.aqutics.jp/blog/glossary/C/,"CCR(Cash flow Capital Cost Ratio/自己資金配当率)とは ",https://landnet.co.jp/redia/7576/,"投資効率を示すROIとCCRとは？計算方法と不動産投資への ... ",https://restyle.tokyo/forbeginners/ccr.html,"不動産投資ではCCRが重要！計算方法や目安、併用したい ... ",https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm526.html,"賃貸住宅経営に特有の経営指標 回収期間 - 大和ハウス工業 ",https://www.e-sumai.co.jp/business/property_blog/fund-recovery/,"投資用不動産は資金を何年で回収できる？回収期間の目安をご ... ",https://wm.openhouse-group.com/column/-アメリカ不動産用語解説-vol.2-cash-on-cash-return-ccrキャッシュ-オン-キャッシュ-リターン-100004-36,"【アメリカ不動産用語解説】Vol.2「Cash on Cash Return ... ",https://fukuoka-leapup.jp/column/investment/ccr_whats/,"CCR（自己資本配当率）とは？不動産投資の成功を左右する ... ",https://www.e-sumai.co.jp/business/property_blog/yield-words/,"【不動産投資】利回り・ROI・CCRとは？計算方法も解説！ ",https://landnet.co.jp/redia/7576/,"投資効率を示すROIとCCRとは？計算方法と不動産投資への ... ",https://wm.openhouse-group.com/column/-アメリカ不動産用語解説-vol.2-cash-on-cash-return-ccrキャッシュ-オン-キャッシュ-リターン-100004-36,"【アメリカ不動産用語解説】Vol.2「Cash on Cash Return ... ",https://yamatozaitaku.com/column/realestate-investment/240920/,"最低ラインと理想的な数字は？不動産投資の利回り計算を ... ",https://numatashi-fudousan.com/fudousan/-/54278/,"不動産投資分析基礎講座 ",https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm526.html,"賃貸住宅経営に特有の経営指標 回収期間 - 大和ハウス工業 ",https://ir-i.jp/realestate/?p=585,"不動産投資の重要指標CCR、DCRとは？ 投資効率を味方に ... ",https://www.aqutics.jp/blog/glossary/C/,"CCR(Cash flow Capital Cost Ratio/自己資金配当率)とは ",https://fudousan-toushi.jp/column/until-profitable,"不動産投資でプラスになるまでどれくらいかかる？計画性や ... ",https://yanusy.com/landlord/yield/1465,"不動産投資の重要指標「CCR」をマスターして数字に強い ... ",https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701385,https://ccd.cloud/Result/detail?id=31688608,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31688548,https://ccd.cloud/Result/detail?id=31701380,https://ccd.cloud/Result/detail?id=31688517,https://ccd.cloud/Result/detail?id=31688600,https://ccd.cloud/Result/detail?id=31688626,,
