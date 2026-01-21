@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { CCRCalculator } from './CCRCalculator'
 
 export const metadata: Metadata = {
-  title: '不動産投資のCCR（自己資金配当率） 計算シミュレーション｜早見表付き | OOYA.tech',
+  title: '賃貸経営のCCR（自己資金配当率） 計算シミュレーション｜早見表付き | OOYA.tech',
   description:
     'CCR（Cash on Cash Return・自己資金配当率）を計算できる無料シミュレーター。自己資金に対する年間キャッシュフローの収益率を算出し、レバレッジ効果も判定。物件購入の投資効率を分析できます。',
   keywords: [
@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     'CCR計算',
     'CCR不動産',
     'CCRシミュレーション',
-    '不動産投資CCR',
+    '賃貸経営CCR',
     '自己資金利回り',
     'レバレッジ効果',
     'BTCF',
   ],
   openGraph: {
-    title: '不動産投資のCCR（自己資金配当率） 計算シミュレーション | OOYA.tech',
+    title: '賃貸経営のCCR（自己資金配当率） 計算シミュレーション | OOYA.tech',
     description:
       'CCR（自己資金配当率）を計算できる無料シミュレーター。自己資金に対するキャッシュフローの収益率を算出。',
     type: 'website',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産投資のCCR（自己資金配当率） 計算シミュレーション | OOYA.tech',
+    title: '賃貸経営のCCR（自己資金配当率） 計算シミュレーション | OOYA.tech',
     description:
       'CCR（自己資金配当率）を計算できる無料シミュレーター。自己資金に対するキャッシュフローの収益率を算出。',
   },

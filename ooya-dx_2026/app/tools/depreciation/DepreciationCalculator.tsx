@@ -315,7 +315,7 @@ export function DepreciationCalculator() {
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
               減価償却とは、建物などの資産を取得した際に、その費用を一括ではなく耐用年数にわたって分割して経費計上する会計処理のことです。
-              不動産投資においては、実際のキャッシュアウトを伴わずに経費を計上できるため、節税効果が期待できるとされています。
+              賃貸経営においては、実際のキャッシュアウトを伴わずに経費を計上できるため、節税効果が期待できる場合があります。
             </p>
             <p className="text-gray-700 mb-4 leading-relaxed">
               土地は減価償却の対象外であるため、建物と土地を一括で購入した場合は、建物部分のみを償却対象とする必要があるとされています。

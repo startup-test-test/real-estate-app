@@ -248,7 +248,7 @@ export function YieldRateCalculator() {
           <section className="mb-12">
             <SectionHeading id="about" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
-              不動産投資における「利回り」とは、投資した金額に対してどれだけの収益を得られるかを示す指標です。
+              賃貸経営における「利回り」とは、物件価格に対してどれだけの収益を得られるかを示す指標です。
               物件の収益性を比較検討する際の基準として広く使われています。
             </p>
 

@@ -1,11 +1,11 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ChevronRight, BookOpen, ArrowRight } from 'lucide-react'
+import { ChevronRight, BookOpen } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
-import { getAllGlossaryTerms, getKanaChar, KANA_CHAR_ORDER } from '@/lib/glossary'
+import { getAllGlossaryTerms, getKanaRow, KANA_ROW_ORDER } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -49,18 +49,18 @@ const breadcrumbJsonLd = {
 export default function GlossaryPage() {
   const terms = getAllGlossaryTerms();
 
-  // 50音順でグループ化（個別文字ごと）
-  const termsByKanaChar = KANA_CHAR_ORDER.reduce((acc, char) => {
-    const charTerms = terms.filter((term) => getKanaChar(term.reading) === char);
-    if (charTerms.length > 0) {
+  // 50音順でグループ化（行ごと）
+  const termsByKanaRow = KANA_ROW_ORDER.reduce((acc, row) => {
+    const rowTerms = terms.filter((term) => getKanaRow(term.reading) === row);
+    if (rowTerms.length > 0) {
       // 読み仮名順でソート
-      acc[char] = charTerms.sort((a, b) => a.reading.localeCompare(b.reading, 'ja'));
+      acc[row] = rowTerms.sort((a, b) => a.reading.localeCompare(b.reading, 'ja'));
     }
     return acc;
   }, {} as Record<string, typeof terms>);
 
-  // 用語がある文字のみ取得
-  const activeChars = KANA_CHAR_ORDER.filter((char) => termsByKanaChar[char]?.length > 0);
+  // 用語がある行のみ取得
+  const activeRows = KANA_ROW_ORDER.filter((row) => termsByKanaRow[row]?.length > 0);
 
   return (
     <>
@@ -100,26 +100,25 @@ export default function GlossaryPage() {
               </p>
             </div>
 
-            {/* 50音インデックス */}
-            <div className="bg-white rounded-2xl shadow-md p-6 mb-10 sticky top-[72px] sm:top-[88px] z-10 border border-gray-100">
-              <p className="text-center text-sm text-gray-500 mb-4">クリックして該当の用語にジャンプ</p>
-              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
-                {KANA_CHAR_ORDER.map((char) => {
-                  const hasTerms = termsByKanaChar[char]?.length > 0;
+            {/* 50音インデックス（行単位） */}
+            <div className="mb-10">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                {KANA_ROW_ORDER.map((row) => {
+                  const hasTerms = termsByKanaRow[row]?.length > 0;
                   return hasTerms ? (
                     <a
-                      key={char}
-                      href={`#${char}`}
-                      className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-base sm:text-lg font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                      key={row}
+                      href={`#${row}`}
+                      className="px-4 py-2 sm:px-5 sm:py-2.5 flex items-center justify-center gap-1 text-sm sm:text-base font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
                     >
-                      {char}
+                      {row}
                     </a>
                   ) : (
                     <span
-                      key={char}
-                      className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-base sm:text-lg font-bold text-gray-300 bg-gray-100 rounded-lg cursor-default"
+                      key={row}
+                      className="px-4 py-2 sm:px-5 sm:py-2.5 flex items-center justify-center text-sm sm:text-base font-bold text-gray-300 bg-gray-100 rounded-lg cursor-default"
                     >
-                      {char}
+                      {row}
                     </span>
                   );
                 })}
@@ -133,45 +132,33 @@ export default function GlossaryPage() {
               </div>
             )}
 
-            {/* 50音順用語一覧 */}
-            {activeChars.map((char) => (
-              <div key={char} id={char} className="mb-10 scroll-mt-32">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-blue-500 flex items-center">
-                  <span className="bg-blue-600 text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 text-lg">
-                    {char}
-                  </span>
-                  {char}
+            {/* 50音順用語一覧（行単位） */}
+            {activeRows.map((row) => (
+              <div key={row} id={row} className="mb-10 scroll-mt-32">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                  <span className="w-1 h-8 bg-blue-600 mr-3"></span>
+                  {row}
                 </h2>
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  {termsByKanaChar[char].map((term, index) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {termsByKanaRow[row].map((term) => (
                     <Link
                       key={term.slug}
                       href={`/glossary/${term.slug}`}
-                      className={`group flex items-center justify-between p-4 hover:bg-blue-50 transition-colors ${
-                        index !== termsByKanaChar[char].length - 1 ? 'border-b border-gray-100' : ''
-                      }`}
+                      className="group bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-300 hover:shadow-md transition-all"
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                            {term.shortTitle}
-                          </h3>
-                          {term.relatedTools && (
-                            <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
-                              計算ツール
-                            </span>
-                          )}
-                        </div>
-                        {term.reading && (
-                          <p className="text-sm text-gray-400 mt-1">
-                            読み：{term.reading}
-                          </p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                          {term.shortTitle}
+                        </h3>
+                        {term.relatedTools && (
+                          <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
+                            計算ツール
+                          </span>
                         )}
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-1">
-                          {term.description}
-                        </p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition-colors flex-shrink-0 ml-4" />
+                      <p className="text-sm text-gray-500 line-clamp-2">
+                        {term.description}
+                      </p>
                     </Link>
                   ))}
                 </div>

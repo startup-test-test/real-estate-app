@@ -172,7 +172,7 @@ export default async function GlossaryTermPage({ params }: Props) {
             )}
 
             {/* 本文 */}
-            <div className="prose prose-lg max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-table:border-collapse prose-th:bg-gray-100 prose-th:px-4 prose-th:py-2 prose-td:px-4 prose-td:py-2 prose-td:border prose-td:border-gray-200 prose-th:border prose-th:border-gray-200 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-900 prose-pre:text-gray-100 mb-12">
+            <div className="prose prose-lg max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-table:border-collapse prose-th:bg-gray-100 prose-th:px-4 prose-th:py-2 prose-td:px-4 prose-td:py-2 prose-td:border prose-td:border-gray-200 prose-th:border prose-th:border-gray-200 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:text-gray-800 prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200 prose-pre:rounded-lg prose-pre:text-gray-700 [&_pre_code]:bg-transparent [&_pre_code]:text-gray-700 [&_pre_code]:p-0 mb-12">
               <MDXRemote
                 source={term.content}
                 options={{
@@ -197,10 +197,10 @@ export default async function GlossaryTermPage({ params }: Props) {
                       href={`/glossary/${relatedTerm.slug}`}
                       className="block bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all border border-gray-100"
                     >
-                      <h3 className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
+                      <h3 className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
                         {relatedTerm.shortTitle}
                       </h3>
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">
                         {relatedTerm.description}
                       </p>
                     </Link>

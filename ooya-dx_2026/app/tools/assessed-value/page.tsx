@@ -7,7 +7,7 @@ const BASE_URL = 'https://ooya.tech';
 export const metadata: Metadata = {
   title: '不動産の積算評価 計算シミュレーション｜土地・建物の担保価値を算出',
   description:
-    '不動産投資における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。銀行融資の担保評価の目安がわかります。',
+    '賃貸経営における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。銀行融資の担保評価の目安がわかります。',
   keywords: [
     '積算評価',
     '積算価格',
@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     '再調達原価',
     '土地評価',
     '建物評価',
-    '不動産投資',
+    '賃貸経営',
   ],
   openGraph: {
     title: '不動産の積算評価 計算シミュレーション｜土地・建物の担保価値を算出',
-    description: '不動産投資における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。',
+    description: '賃貸経営における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。',
     url: `${BASE_URL}/tools/assessed-value`,
     siteName: '大家DX',
     type: 'website',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '不動産の積算評価 計算シミュレーション｜土地・建物の担保価値を算出',
-    description: '不動産投資における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。',
+    description: '賃貸経営における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 }
@@ -49,7 +49,7 @@ const webApplicationSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: '積算評価シミュレーター',
-  description: '不動産投資における土地・建物の積算評価（原価法）を計算するツール。銀行融資の担保評価の目安を算出。',
+  description: '賃貸経営における土地・建物の積算評価（原価法）を計算するツール。銀行融資の担保評価の目安を算出。',
   applicationCategory: 'FinanceApplication',
   operatingSystem: 'Web',
   offers: {

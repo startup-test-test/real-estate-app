@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { NOICalculator } from './NOICalculator'
 
 export const metadata: Metadata = {
-  title: '不動産投資のNOI（営業純収益） 計算シミュレーション｜経費率目安付き | OOYA.tech',
+  title: '賃貸経営のNOI（営業純収益） 計算シミュレーション｜経費率目安付き | OOYA.tech',
   description:
     'NOI（Net Operating Income・営業純収益）を計算できる無料シミュレーター。GPI・EGI・OPEXの詳細内訳を表示し、キャッシュフローツリーで収益構造を可視化。物件タイプ別の経費率目安も掲載。',
   keywords: [
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     'Net Operating Income',
     'NOI計算',
     'NOIシミュレーション',
-    '不動産投資NOI',
+    '賃貸経営NOI',
     'EGI',
     'GPI',
     'OPEX',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     'キャッシュフロー',
   ],
   openGraph: {
-    title: '不動産投資のNOI（営業純収益） 計算シミュレーション | OOYA.tech',
+    title: '賃貸経営のNOI（営業純収益） 計算シミュレーション | OOYA.tech',
     description:
       'NOI（営業純収益）を計算できる無料シミュレーター。GPI・EGI・OPEXの詳細内訳とキャッシュフローツリーで収益構造を可視化。',
     type: 'website',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産投資のNOI（営業純収益） 計算シミュレーション | OOYA.tech',
+    title: '賃貸経営のNOI（営業純収益） 計算シミュレーション | OOYA.tech',
     description:
       'NOI（営業純収益）を計算できる無料シミュレーター。GPI・EGI・OPEXの詳細内訳とキャッシュフローツリーで収益構造を可視化。',
   },
