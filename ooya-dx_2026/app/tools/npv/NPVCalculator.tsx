@@ -269,28 +269,6 @@ export function NPVCalculator() {
                   )}
                 </div>
 
-                {/* 評価結果 */}
-                <div className={`mt-4 p-3 rounded-lg ${
-                  result.evaluation.level === 'positive' ? 'bg-green-50 border border-green-200' :
-                  result.evaluation.level === 'neutral' ? 'bg-yellow-50 border border-yellow-200' :
-                  'bg-red-50 border border-red-200'
-                }`}>
-                  <p className={`text-sm font-medium ${
-                    result.evaluation.level === 'positive' ? 'text-green-800' :
-                    result.evaluation.level === 'neutral' ? 'text-yellow-800' :
-                    'text-red-800'
-                  }`}>
-                    NPV判定：{result.evaluation.label}
-                  </p>
-                  <p className={`text-xs mt-1 ${
-                    result.evaluation.level === 'positive' ? 'text-green-700' :
-                    result.evaluation.level === 'neutral' ? 'text-yellow-700' :
-                    'text-red-700'
-                  }`}>
-                    {result.evaluation.description}
-                  </p>
-                </div>
-
                 {/* 計算式表示 */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <p className="text-xs text-gray-500 mb-2">計算式</p>
