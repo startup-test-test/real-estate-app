@@ -1,0 +1,430 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { Calculator, ArrowRightLeft, AlertTriangle } from 'lucide-react'
+import { LandingHeader } from '@/components/landing-header'
+import { LandingFooter } from '@/components/landing-footer'
+import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
+import { NumberInput } from '@/components/tools/NumberInput'
+import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { RelatedTools } from '@/components/tools/RelatedTools'
+import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
+import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
+import { CalculatorNote } from '@/components/tools/CalculatorNote'
+import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import {
+  calculateCapRate,
+  calculatePropertyPrice,
+  calculateYieldGap,
+} from '@/lib/calculators/cap-rate'
+
+const PAGE_TITLE = 'キャップレート（還元利回り） 計算シミュレーション'
+
+const tocItems: TocItem[] = [
+  { id: 'about', title: 'キャップレート（還元利回り）とは', level: 2 },
+  { id: 'formula', title: '計算式', level: 3 },
+  { id: 'difference', title: '表面利回りとの違い', level: 3 },
+  { id: 'factors', title: 'キャップレートの決定要因', level: 2 },
+  { id: 'market', title: '地域別・物件タイプ別の相場', level: 2 },
+  { id: 'yield-gap', title: 'イールドギャップとは', level: 2 },
+  { id: 'caution', title: '利用上の注意点', level: 2 },
+]
+
+export function CapRateCalculator() {
+  const [calcMode, setCalcMode] = useState<'normal' | 'reverse'>('normal')
+  const [noiInMan, setNoiInMan] = useState<number>(0)
+  const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0)
+  const [reverseNoiInMan, setReverseNoiInMan] = useState<number>(0)
+  const [targetCapRate, setTargetCapRate] = useState<number>(0)
+  const [interestRate, setInterestRate] = useState<number>(0)
+
+  const result = useMemo(() => {
+    if (calcMode === 'normal') {
+      if (noiInMan <= 0 || propertyPriceInMan <= 0) return null
+      return calculateCapRate(noiInMan, propertyPriceInMan)
+    } else {
+      if (reverseNoiInMan <= 0 || targetCapRate <= 0) return null
+      return calculatePropertyPrice(reverseNoiInMan, targetCapRate)
+    }
+  }, [calcMode, noiInMan, propertyPriceInMan, reverseNoiInMan, targetCapRate])
+
+  const yieldGapResult = useMemo(() => {
+    let capRateValue: number = 0
+    if (calcMode === 'normal' && result) {
+      const normalResult = result as ReturnType<typeof calculateCapRate>
+      capRateValue = normalResult?.capRate ?? 0
+    } else {
+      capRateValue = targetCapRate
+    }
+    if (capRateValue > 0 && interestRate > 0) {
+      return calculateYieldGap(capRateValue, interestRate)
+    }
+    return null
+  }, [calcMode, result, targetCapRate, interestRate])
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      <LandingHeader />
+      <div className="h-[72px] sm:h-[88px]"></div>
+
+      <main className="flex-1">
+        <article className="max-w-2xl mx-auto px-5 py-12">
+          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
+
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+              計算ツール
+            </span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
+            {PAGE_TITLE}
+          </h1>
+          <p className="text-gray-600 mb-8">
+            キャップレート（還元利回り）を概算計算します。
+            NOIと物件価格からキャップレートを算出、または想定キャップレートから物件価格を逆算できます。
+            イールドギャップ分析機能付き。
+          </p>
+
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="bg-blue-500 p-2 rounded-lg">
+                <Calculator className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">
+                キャップレートを概算計算する
+              </h2>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 mb-4 space-y-4">
+              <div className="flex gap-2 mb-4">
+                <button
+                  type="button"
+                  onClick={() => setCalcMode('normal')}
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                    calcMode === 'normal'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <Calculator className="w-4 h-4" />
+                  キャップレート計算
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCalcMode('reverse')}
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                    calcMode === 'reverse'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <ArrowRightLeft className="w-4 h-4" />
+                  物件価格を逆算
+                </button>
+              </div>
+
+              {calcMode === 'normal' ? (
+                <>
+                  <NumberInput
+                    label="NOI（年間営業純収益）"
+                    value={noiInMan}
+                    onChange={setNoiInMan}
+                    unit="万円/年"
+                    placeholder="例：300"
+                  />
+                  <p className="text-xs text-gray-500 -mt-2">
+                    ※NOI = 年間家賃収入 - 空室損失 - 運営経費
+                  </p>
+                  <NumberInput
+                    label="物件価格（購入価格）"
+                    value={propertyPriceInMan}
+                    onChange={setPropertyPriceInMan}
+                    unit="万円"
+                    placeholder="例：5000"
+                  />
+                </>
+              ) : (
+                <>
+                  <NumberInput
+                    label="NOI（年間営業純収益）"
+                    value={reverseNoiInMan}
+                    onChange={setReverseNoiInMan}
+                    unit="万円/年"
+                    placeholder="例：300"
+                  />
+                  <p className="text-xs text-gray-500 -mt-2">
+                    ※NOI = 年間家賃収入 - 空室損失 - 運営経費
+                  </p>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      想定キャップレート
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        value={targetCapRate || ''}
+                        onChange={(e) => setTargetCapRate(parseFloat(e.target.value) || 0)}
+                        step="0.1"
+                        min="0"
+                        max="20"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="例：4.5"
+                      />
+                      <span className="text-gray-600 font-medium">%</span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      目安：都心3.5〜4.5%、郊外5.0〜6.0%、地方6.0%以上
+                    </p>
+                  </div>
+                </>
+              )}
+
+              <hr className="border-gray-200" />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  借入金利（イールドギャップ計算用・任意）
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={interestRate || ''}
+                    onChange={(e) => setInterestRate(parseFloat(e.target.value) || 0)}
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="例：2.0"
+                  />
+                  <span className="text-gray-600 font-medium">%</span>
+                </div>
+              </div>
+            </div>
+
+            {result && (
+              <div className="bg-white rounded-lg p-4">
+                {calcMode === 'normal' ? (
+                  <div className="grid grid-cols-2 gap-y-3 text-base">
+                    <span className="text-gray-600">NOI（年間）</span>
+                    <span className="text-right font-medium">{(result as ReturnType<typeof calculateCapRate>)?.noiInMan.toLocaleString()}万円</span>
+                    <span className="text-gray-600">物件価格</span>
+                    <span className="text-right font-medium">{(result as ReturnType<typeof calculateCapRate>)?.propertyPriceInMan.toLocaleString()}万円</span>
+                    <span className="text-gray-700 font-medium border-t-2 border-blue-300 pt-4 mt-2">キャップレート</span>
+                    <span className="text-right text-2xl font-bold text-blue-600 border-t-2 border-blue-300 pt-4 mt-2">
+                      {(result as ReturnType<typeof calculateCapRate>)?.capRate.toFixed(2)}%
+                    </span>
+                    <span className="text-gray-600 border-t pt-3">月額NOI</span>
+                    <span className="text-right font-medium border-t pt-3">
+                      約{(result as ReturnType<typeof calculateCapRate>)?.monthlyNoiInMan}万円/月
+                    </span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-y-3 text-base">
+                    <span className="text-gray-600">NOI（年間）</span>
+                    <span className="text-right font-medium">{(result as ReturnType<typeof calculatePropertyPrice>)?.noiInMan.toLocaleString()}万円</span>
+                    <span className="text-gray-600">想定キャップレート</span>
+                    <span className="text-right font-medium">{(result as ReturnType<typeof calculatePropertyPrice>)?.capRate}%</span>
+                    <span className="text-gray-700 font-medium border-t-2 border-blue-300 pt-4 mt-2">妥当な物件価格</span>
+                    <span className="text-right text-2xl font-bold text-blue-600 border-t-2 border-blue-300 pt-4 mt-2">
+                      約{(result as ReturnType<typeof calculatePropertyPrice>)?.propertyPriceInMan.toLocaleString()}万円
+                    </span>
+                  </div>
+                )}
+
+                {yieldGapResult && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm font-medium text-gray-700 mb-2">イールドギャップ分析</p>
+                    <div className="grid grid-cols-2 gap-y-2 text-sm">
+                      <span className="text-gray-600">借入金利</span>
+                      <span className="text-right font-medium">{interestRate}%</span>
+                      <span className="text-gray-600">イールドギャップ</span>
+                      <span className={`text-right font-bold ${
+                        yieldGapResult.riskLevel === 'warning' ? 'text-red-600' :
+                        yieldGapResult.riskLevel === 'caution' ? 'text-amber-600' :
+                        'text-green-600'
+                      }`}>
+                        {yieldGapResult.yieldGap > 0 ? '+' : ''}{yieldGapResult.yieldGap}%
+                      </span>
+                    </div>
+
+                    {yieldGapResult.isNegativeLeverage && (
+                      <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                        <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-red-700">
+                          逆レバレッジ状態です。借入によって自己資本利回り（CCR）が悪化する可能性があります。
+                        </p>
+                      </div>
+                    )}
+
+                    {!yieldGapResult.isNegativeLeverage && yieldGapResult.riskLevel === 'caution' && (
+                      <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                        <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-amber-700">
+                          イールドギャップが1.5%未満です。金利上昇リスクに注意が必要とされています。
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 mb-2">計算式</p>
+                  <div className="text-sm text-gray-700 font-mono space-y-1">
+                    {calcMode === 'normal' ? (
+                      <>
+                        <p>キャップレート = NOI ÷ 物件価格 × 100</p>
+                        <p>= {noiInMan} ÷ {propertyPriceInMan} × 100 = {(result as ReturnType<typeof calculateCapRate>)?.capRate.toFixed(2)}%</p>
+                      </>
+                    ) : (
+                      <>
+                        <p>物件価格 = NOI ÷ キャップレート</p>
+                        <p>= {reverseNoiInMan} ÷ {targetCapRate / 100} = {(result as ReturnType<typeof calculatePropertyPrice>)?.propertyPriceInMan.toLocaleString()}万円</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <CalculatorNote />
+
+          <TableOfContents items={tocItems} />
+
+          <section className="mb-12">
+            <SectionHeading id="about" items={tocItems} />
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              キャップレート（Capitalization Rate、還元利回り）は、不動産の収益性を測る重要な指標の一つとされています。
+              NOI（純営業収益）を物件価格で割って算出され、投資家が物件の価値を評価する際に参照される場合があります。
+            </p>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              日本語では「還元利回り」「NOI利回り」とも呼ばれ、収益還元法（直接還元法）における重要なパラメーターとして使用されています。
+            </p>
+
+            <SectionHeading id="formula" items={tocItems} />
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <p className="text-sm font-medium text-gray-800 mb-2">キャップレートの計算式</p>
+              <div className="font-mono text-sm text-gray-700 space-y-2">
+                <p className="font-bold">キャップレート = NOI ÷ 物件価格 × 100</p>
+                <p className="text-xs text-gray-500 mt-2">または</p>
+                <p className="font-bold">物件価格 = NOI ÷ キャップレート</p>
+              </div>
+            </div>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              例えば、NOIが年間300万円、物件価格が5,000万円の場合：<br />
+              キャップレート = 300 ÷ 5,000 × 100 = <strong>6.0%</strong>
+            </p>
+
+            <SectionHeading id="difference" items={tocItems} />
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              キャップレート（NOI利回り）と表面利回りは異なる指標です。
+            </p>
+            <div className="overflow-x-auto mb-4">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 px-3 py-2 text-left">指標</th>
+                    <th className="border border-gray-300 px-3 py-2 text-left">計算式</th>
+                    <th className="border border-gray-300 px-3 py-2 text-left">特徴</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white">
+                    <td className="border border-gray-300 px-3 py-2 font-medium">表面利回り</td>
+                    <td className="border border-gray-300 px-3 py-2 font-mono text-xs">満室家賃 ÷ 物件価格</td>
+                    <td className="border border-gray-300 px-3 py-2 text-gray-600">経費・空室を考慮しない簡易指標</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-300 px-3 py-2 font-medium">キャップレート</td>
+                    <td className="border border-gray-300 px-3 py-2 font-mono text-xs">NOI ÷ 物件価格</td>
+                    <td className="border border-gray-300 px-3 py-2 text-gray-600">経費・空室を控除した収益力指標</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <SectionHeading id="factors" items={tocItems} />
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              キャップレートは以下の要因により変動するとされています。
+            </p>
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <ul className="text-sm text-gray-700 space-y-2">
+                <li><strong>立地</strong>：都心部ほど低く（価格が高い）、郊外・地方ほど高い傾向</li>
+                <li><strong>物件タイプ</strong>：オフィス、住宅、商業施設で異なる水準</li>
+                <li><strong>築年数・グレード</strong>：新築・築浅・ハイグレードほど低い傾向</li>
+                <li><strong>テナント信用力</strong>：優良テナントほどリスクが低く、利回りも低め</li>
+                <li><strong>市場金利</strong>：金利上昇局面ではキャップレートも上昇圧力</li>
+              </ul>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-800">
+                <strong>理論式：</strong>キャップレート = リスクフリーレート + リスクプレミアム - 成長期待率
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                ※リスクフリーレートは国債利回り、リスクプレミアムは不動産固有のリスク対価
+              </p>
+            </div>
+
+            <SectionHeading id="market" items={tocItems} />
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              キャップレートの相場は地域・物件タイプにより異なり、一般的に以下の傾向があるとされています。
+            </p>
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <ul className="text-sm text-gray-700 space-y-1">
+                <li>• 都心部ほどキャップレートは低く（物件価格が高く）、郊外・地方ほど高い傾向</li>
+                <li>• オフィス・商業施設・物流施設など物件タイプによって水準が異なる</li>
+                <li>• 最新の相場は日本不動産研究所「不動産投資家調査」等で確認できます</li>
+              </ul>
+            </div>
+
+            <SectionHeading id="yield-gap" items={tocItems} />
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              イールドギャップとは、キャップレートと借入金利の差のことです。
+              投資の安全性を判断する際の一つの目安とされています。
+            </p>
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <p className="font-mono text-sm text-gray-700 mb-2">
+                <strong>イールドギャップ = キャップレート - 借入金利</strong>
+              </p>
+              <p className="text-sm text-gray-600 mt-2">
+                イールドギャップがプラスの場合、借入を活用することでレバレッジ効果が期待できるとされています。
+                一方、マイナスの場合は「逆レバレッジ」状態となり、借入によって自己資本利回り（CCR）が悪化する可能性があります。
+              </p>
+            </div>
+
+            <SectionHeading id="caution" items={tocItems} />
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <ul className="text-sm text-yellow-800 space-y-2">
+                <li>• <strong>キャップレートは「期待利回り」</strong>：将来の収益を保証するものではありません</li>
+                <li>• <strong>NOIの精度が重要</strong>：空室率・経費の見積もりにより結果が変わります</li>
+                <li>• <strong>出口時のキャップレートは変動</strong>：売却時には入口より高くなる傾向があります</li>
+                <li>• <strong>金利環境に注意</strong>：2025年は金利上昇局面にあり、イールドギャップの圧縮に注意が必要とされています</li>
+              </ul>
+            </div>
+          </section>
+
+          <ToolDisclaimer
+            infoDate="2025年1月"
+            lastUpdated="2026年1月22日"
+            additionalItems={[
+              '実際のキャップレートは物件の個別条件により異なります',
+            ]}
+          />
+
+          <RelatedTools currentPath="/tools/cap-rate" />
+
+          <div className="mt-16">
+            <SimulatorCTA />
+          </div>
+
+          <div className="mt-16">
+            <CompanyProfileCompact />
+          </div>
+        </article>
+      </main>
+
+      <LandingFooter />
+    </div>
+  )
+}
