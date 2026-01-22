@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { TrendingUp, ChevronDown, ChevronUp } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -24,7 +24,6 @@ const tocItems: TocItem[] = [
   { id: 'about', title: 'キャッシュフロー（CF）とは', level: 2 },
   { id: 'formula', title: 'キャッシュフローの計算式', level: 3 },
   { id: 'cf-tree', title: 'キャッシュフローツリー', level: 2 },
-  { id: 'btcf-atcf', title: '税引前CFと税引後CF', level: 2 },
 ]
 
 // =================================================================
@@ -36,12 +35,6 @@ export function CFCalculator() {
   const [vacancyRate, setVacancyRate] = useState<number>(5) // 空室率（%）
   const [annualOpexInMan, setAnnualOpexInMan] = useState<number>(0) // 運営経費（万円）
   const [annualADSInMan, setAnnualADSInMan] = useState<number>(0) // ローン返済額（万円）
-
-  // 税金計算用（詳細入力）
-  const [showTaxDetails, setShowTaxDetails] = useState<boolean>(false)
-  const [annualDepreciationInMan, setAnnualDepreciationInMan] = useState<number>(0) // 減価償却費
-  const [annualInterestInMan, setAnnualInterestInMan] = useState<number>(0) // 支払利息
-  const [taxRate, setTaxRate] = useState<number>(30) // 税率
 
   // 入力があるか判定
   const hasInput = annualGPIInMan > 0
@@ -56,11 +49,8 @@ export function CFCalculator() {
       vacancyRate,
       annualOpexInMan,
       annualADSInMan,
-      annualDepreciationInMan: showTaxDetails ? annualDepreciationInMan : 0,
-      annualInterestInMan: showTaxDetails ? annualInterestInMan : 0,
-      taxRate: showTaxDetails ? taxRate : 30,
     })
-  }, [annualGPIInMan, vacancyRate, annualOpexInMan, annualADSInMan, showTaxDetails, annualDepreciationInMan, annualInterestInMan, taxRate])
+  }, [annualGPIInMan, vacancyRate, annualOpexInMan, annualADSInMan])
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -87,7 +77,7 @@ export function CFCalculator() {
           </h1>
           <p className="text-gray-600 mb-8">
             賃貸経営のキャッシュフロー（CF）を概算計算します。
-            税引前CF（BTCF）・税引後CF（ATCF）を同時に算出し、キャッシュフローツリーで収支を可視化できます。
+            キャッシュフローツリーで収支を可視化し、税引前CF（BTCF）を算出できます。
           </p>
 
           {/* =================================================================
@@ -159,58 +149,6 @@ export function CFCalculator() {
               <p className="text-xs text-gray-500 -mt-2">
                 ※元金＋利息の合計
               </p>
-
-              {/* 税金計算用の詳細入力（折りたたみ） */}
-              <div className="border-t border-gray-200 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowTaxDetails(!showTaxDetails)}
-                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600"
-                >
-                  {showTaxDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  税引後CF（ATCF）を計算する場合
-                </button>
-
-                {showTaxDetails && (
-                  <div className="mt-4 space-y-4 bg-gray-50 rounded-lg p-4">
-                    <NumberInput
-                      label="年間減価償却費"
-                      value={annualDepreciationInMan}
-                      onChange={setAnnualDepreciationInMan}
-                      unit="万円"
-                      placeholder="例：150"
-                    />
-                    <NumberInput
-                      label="年間支払利息"
-                      value={annualInterestInMan}
-                      onChange={setAnnualInterestInMan}
-                      unit="万円"
-                      placeholder="例：80"
-                    />
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        所得税・住民税率
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          value={taxRate}
-                          onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
-                          step="1"
-                          min="0"
-                          max="60"
-                          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="例：30"
-                        />
-                        <span className="text-gray-600 font-medium">%</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        ※所得水準により異なります（15%〜55%程度）
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
 
             {/* 結果エリア */}
@@ -261,32 +199,6 @@ export function CFCalculator() {
                   <span className={`text-right font-medium ${result.monthlyBTCF >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {result.monthlyBTCF >= 0 ? '+' : ''}{result.monthlyBTCF.toLocaleString()}万円/月
                   </span>
-
-                  {result.atcf !== null && (
-                    <>
-                      <span className="text-gray-700 font-medium border-t pt-3">
-                        税引後CF（ATCF）
-                      </span>
-                      <span className={`text-right text-xl font-bold border-t pt-3 ${result.atcf >= 0 ? 'text-green-700' : 'text-red-600'}`}>
-                        {result.atcf >= 0 ? '+' : ''}{result.atcf.toLocaleString()}万円/年
-                      </span>
-
-                      <span className="text-gray-600">月間ATCF</span>
-                      <span className={`text-right font-medium ${result.monthlyATCF !== null && result.monthlyATCF >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {result.monthlyATCF !== null ? (result.monthlyATCF >= 0 ? '+' : '') + result.monthlyATCF.toLocaleString() : '-'}万円/月
-                      </span>
-
-                      <span className="text-gray-600 border-t pt-3">課税所得</span>
-                      <span className="text-right font-medium border-t pt-3">
-                        {result.taxableIncome !== null ? result.taxableIncome.toLocaleString() : '-'}万円
-                      </span>
-
-                      <span className="text-gray-600">所得税・住民税</span>
-                      <span className="text-right font-medium text-red-500">
-                        {result.incomeTax !== null ? result.incomeTax.toLocaleString() : '-'}万円
-                      </span>
-                    </>
-                  )}
 
                   {result.dscr !== null && (
                     <>
@@ -349,8 +261,8 @@ export function CFCalculator() {
               </p>
             </div>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              税引後キャッシュフロー（ATCF）を計算する場合は、さらに所得税・住民税を差し引きます。
-              課税所得は「NOI - 支払利息 - 減価償却費」で計算されるため、帳簿上の利益とキャッシュフローは異なる場合があります。
+              税引後のキャッシュフローは、所得状況や適用される税率により異なります。
+              詳細な税金計算については税理士にご相談ください。
             </p>
 
             <SectionHeading id="cf-tree" items={tocItems} />
@@ -366,21 +278,6 @@ export function CFCalculator() {
                 <li><strong>ATCF</strong>：税引後キャッシュフロー（BTCFから税金を差し引いた額）</li>
               </ul>
             </div>
-
-            <SectionHeading id="btcf-atcf" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              税引前CF（BTCF）は税金を考慮する前の手取り額、税引後CF（ATCF）は税金を支払った後の最終的な手取り額です。
-            </p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <ul className="text-sm text-gray-700 space-y-2">
-                <li><strong>BTCF</strong>：ローン返済後に手元に残る金額。物件の収益力とレバレッジ効果を反映します。</li>
-                <li><strong>ATCF</strong>：最終的な手取り額。税金の影響を含めた実質的なリターンを表します。</li>
-              </ul>
-            </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              減価償却費は現金支出を伴わない経費のため、税金計算上の所得を下げる効果がありますが、
-              キャッシュフロー自体には直接影響しません。
-            </p>
 
           </section>
 

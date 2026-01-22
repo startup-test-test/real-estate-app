@@ -5,23 +5,22 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '賃貸経営のキャッシュフロー 計算シミュレーション｜税引前・税引後CF',
+  title: '賃貸経営のキャッシュフロー 計算シミュレーション｜BTCF・収支可視化',
   description:
-    '賃貸経営のキャッシュフロー（CF）を無料で計算。税引前CF（BTCF）・税引後CF（ATCF）を同時算出。GPI→EGI→NOI→BTCFのキャッシュフローツリーで収支を可視化。',
+    '賃貸経営のキャッシュフロー（CF）を無料で計算。GPI→EGI→NOI→BTCFのキャッシュフローツリーで収支を可視化。DSCR・経費率も同時算出。',
   keywords: [
     'キャッシュフロー 計算',
     'キャッシュフロー シミュレーション',
     '賃貸経営 CF',
     '税引前キャッシュフロー',
-    '税引後キャッシュフロー',
     'BTCF 計算',
-    'ATCF 計算',
     'NOI キャッシュフロー',
     '賃貸経営 収支計算',
+    'キャッシュフローツリー',
   ],
   openGraph: {
-    title: '賃貸経営のキャッシュフロー 計算シミュレーション｜税引前・税引後CF',
-    description: '賃貸経営のキャッシュフロー（CF）を無料で計算。税引前CF・税引後CFを同時算出。',
+    title: '賃貸経営のキャッシュフロー 計算シミュレーション｜BTCF・収支可視化',
+    description: '賃貸経営のキャッシュフロー（CF）を無料で計算。キャッシュフローツリーで収支を可視化。',
     url: `${BASE_URL}/tools/cf`,
     siteName: '大家DX',
     type: 'website',
@@ -36,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '賃貸経営のキャッシュフロー 計算シミュレーション｜税引前・税引後CF',
-    description: '賃貸経営のキャッシュフロー（CF）を無料で計算。税引前CF・税引後CFを同時算出。',
+    title: '賃貸経営のキャッシュフロー 計算シミュレーション｜BTCF・収支可視化',
+    description: '賃貸経営のキャッシュフロー（CF）を無料で計算。キャッシュフローツリーで収支を可視化。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 }
