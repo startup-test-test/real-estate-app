@@ -1,0 +1,110 @@
+import { Metadata } from 'next'
+import { ROICalculator } from './ROICalculator'
+
+const BASE_URL = 'https://ooya.tech';
+
+// SEO最適化されたメタデータ
+export const metadata: Metadata = {
+  title: '賃貸経営のROI（投資利益率） 計算シミュレーション｜CCR・FCR同時計算',
+  description:
+    '賃貸経営のROI（投資利益率）を無料で計算。キャッシュフローROI、CCR（自己資金配当率）、FCR（実質利回り）を同時に算出。自己資金回収年数も確認可能。',
+  keywords: [
+    'ROI 計算',
+    'ROI シミュレーション',
+    '投資利益率 不動産',
+    '賃貸経営 ROI',
+    'ROI 計算方法',
+    'CCR 計算',
+    'FCR 実質利回り',
+    '自己資金回収 年数',
+    '賃貸経営 収益率',
+    'キャッシュフロー ROI',
+  ],
+  openGraph: {
+    title: '賃貸経営のROI（投資利益率） 計算シミュレーション｜CCR・FCR同時計算',
+    description: '賃貸経営のROI（投資利益率）を無料で計算。キャッシュフローROI、CCR、FCRを同時に算出。',
+    url: `${BASE_URL}/tools/roi`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [
+      {
+        url: `${BASE_URL}/images/media/hero-media.jpeg`,
+        width: 1200,
+        height: 630,
+        alt: 'ROIシミュレーター',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '賃貸経営のROI（投資利益率） 計算シミュレーション｜CCR・FCR同時計算',
+    description: '賃貸経営のROI（投資利益率）を無料で計算。キャッシュフローROI、CCR、FCRを同時に算出。',
+    images: [`${BASE_URL}/images/media/hero-media.jpeg`],
+  },
+}
+
+// 構造化データ（WebApplication）
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'ROI（投資利益率）シミュレーター',
+  description: '賃貸経営のROI（投資利益率）を計算するツール',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'JPY'
+  },
+  provider: {
+    '@type': 'Organization',
+    name: '大家DX'
+  }
+}
+
+// パンくずリスト構造化データ
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'ホーム',
+      item: BASE_URL
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: '不動産・賃貸経営計算ツール',
+      item: `${BASE_URL}/tools`
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'ROI（投資利益率）シミュレーター',
+      item: `${BASE_URL}/tools/roi`
+    }
+  ]
+}
+
+export default function ROIPage() {
+  return (
+    <>
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webApplicationSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      <ROICalculator />
+    </>
+  )
+}
