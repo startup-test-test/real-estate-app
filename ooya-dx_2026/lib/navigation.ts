@@ -45,7 +45,7 @@ export const toolCategories: ToolCategory[] = [
       { name: 'LTV（借入比率）', description: 'レバレッジの程度を把握', href: '/tools/ltv', available: true },
       { name: 'NOI（営業純収益）', description: '経費控除後の純収益を計算', href: '/tools/noi', available: true },
       { name: 'CF（キャッシュフロー）', description: '税引前・税引後CFを計算', href: '/tools/cf', available: true },
-      { name: 'キャップレート', description: '還元利回りを計算・物件価格を逆算', href: '/tools/cap-rate', available: true },
+      { name: 'キャップレート（還元利回り）', description: '還元利回りを計算・物件価格を逆算', href: '/tools/cap-rate', available: true },
     ],
   },
   {

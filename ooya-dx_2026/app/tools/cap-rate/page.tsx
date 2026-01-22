@@ -5,9 +5,9 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: 'キャップレート（還元利回り）を10秒で無料計算｜地域別相場・逆算機能付き',
+  title: '不動産のキャップレート（還元利回り）計算シミュレーション｜地域別相場付き',
   description:
-    'キャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出、物件価格の逆算も可能。東京・大阪など地域別の相場データ付きで投資判断をサポート。',
+    '不動産のキャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出。東京・大阪など地域別の相場データ付きで投資判断をサポート。',
   keywords: [
     'キャップレート',
     'キャップレート 計算',
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     '不動産 利回り 計算',
   ],
   openGraph: {
-    title: 'キャップレート（還元利回り）を10秒で無料計算｜地域別相場・逆算機能付き',
-    description: 'キャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出、物件価格の逆算も可能。',
+    title: '不動産のキャップレート（還元利回り）計算シミュレーション｜地域別相場付き',
+    description: '不動産のキャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出。',
     url: `${BASE_URL}/tools/cap-rate`,
     siteName: '大家DX',
     type: 'website',
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'キャップレート（還元利回り）を10秒で無料計算｜地域別相場・逆算機能付き',
-    description: 'キャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出、物件価格の逆算も可能。',
+    title: '不動産のキャップレート（還元利回り）計算シミュレーション｜地域別相場付き',
+    description: '不動産のキャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 }
