@@ -1,0 +1,94 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707718,"賃貸経営のLTV（借入比率） 計算シミュレーション
+賃貸経営のLTV（Loan to Value：借入比率）を概算計算します。 物件価格と借入額からLTVを算出し、自己資金比率も同時に確認できます。
+
+LTVを概算計算する
+物件価格
+2,500
+万円
+借入額
+1,000
+万円
+購入諸経費（任意・物件価格の7%程度が目安）
+100
+万円
+物件価格
+2,500万円
+借入額
+1,000万円
+LTV（借入比率）
+40.00%
+自己資金比率
+60.00%
+自己資金額
+1,600万円
+総投資額
+2,600万円
+総投資額に対するLTV
+38.46%
+計算式
+
+LTV = 借入額 ÷ 物件価格 × 100
+
+= 1,000万円 ÷ 2,500万円 × 100
+
+= 40.00%
+
+※本計算結果は概算値です。実際の金額は異なる場合があります。
+
+※最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。
+
+目次
+1. LTV（借入比率）とは
+1-1. LTVの計算式
+2. 逆算ツール
+3. 関連指標との関係
+1. LTV（借入比率）とは
+LTV（Loan to Value：借入比率）は、物件価格に対する借入額の割合を示す指標です。 賃貸経営におけるレバレッジの程度を把握するために使用されます。
+
+LTVが高いほど借入の割合が大きく、低いほど自己資金の割合が大きいことを意味します。
+
+1-1. LTVの計算式
+LTV（%）= 借入額 ÷ 物件価格 × 100
+
+自己資金比率は「100% - LTV」で算出されます。 例えば、LTVが80%の場合、自己資金比率は20%となります。
+
+2. 逆算ツール
+目標のLTVから必要な借入額を計算したり、自己資金からLTVを計算することもできます。
+
+目標LTVから借入額を計算
+物件価格
+200
+万円
+目標LTV
+10
+%
+必要な借入額：
+
+20万円
+
+自己資金からLTVを計算
+物件価格
+2,500
+万円
+自己資金
+350
+万円
+LTV：
+
+86.00%
+
+借入額：2,150万円
+
+3. 関連指標との関係
+LTVは他の投資指標と組み合わせて分析することで、より詳細な判断材料となります。
+
+CCR（自己資金配当率）：LTVが高いほど自己資金が少なくなり、CCRに影響します。
+DSCR（債務返済カバー率）：借入額が増えると返済負担が増加し、DSCRに影響します。
+ROI（投資利益率）：レバレッジ効果により、LTVがROIに影響を与える場合があります。
+免責事項
+・本シミュレーションは、2026年1月時点の情報をもとに試算しています。
+・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。
+・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。
+・最終的な判断は専門家（税理士・宅建業者・司法書士・不動産鑑定士等）にご相談ください。
+最終更新日: 2026年1月22日",良好,8%,良好,27%,良好,50%,https://www.ownersbook.jp/blog/basics_of_real_estate_investment/ltv/,"不動産のLTVとは？LTVの目安、計算方法、LTVテスト ... ",https://www.n-estem.co.jp/e-trust/column/unyou/2402-05/,"LTVは不動産の投資判断基準の1つ！ 基本的な考え方や目安を ... ",https://land.home4u.jp/guide/land-usage-howto-64-6483,"不動産投資における「LTV」とは？活用方法と投資判断の2 ... ",https://assetranksimulator.com/不動産投資指標のltv.html,"不動産投資指標のLTV (Loan to Value)を利用して借入の安全性 ... ",https://salesrenovation.jp/blog/58,"【図解・具体例あり】LTVとは？計算方法・最大化する5つの ... ",https://www.youtube.com/watch?v=LAtPYyzdoWc,"自己資金と借入の配分どうやって判断する？不動産の「LTV ... ",https://www.cigr.co.jp/biz/column/real-estate/13553/,"不動産投資の分析「NOI・LTV・CCR」・中級編 ",https://video-b.com/blog/wm/di-010471/,"不動産投資における「LTV」とは？重要性や計算法について紹介 ",https://www.agent-hp.com/knowledge-glossary-finance-ltv/,"LTV（ローン・トゥ・バリュー） - ウェルス エージェント ",https://allstar-gh.net/ltvloan-to-value/,"LTV（Loan to Value＝純資産有利子負債比率）について ",https://land.home4u.jp/guide/land-usage-howto-64-6483,"不動産投資における「LTV」とは？活用方法と投資判断の2 ... ",https://www.agent-hp.com/knowledge-glossary-finance-ltv/,"LTV（ローン・トゥ・バリュー） - ウェルス エージェント ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/ltv/,"不動産のLTVとは？LTVの目安、計算方法、LTVテスト ... ",https://www.n-estem.co.jp/e-trust/column/unyou/2402-05/,"LTVは不動産の投資判断基準の1つ！ 基本的な考え方や目安を ... ",https://note.com/cast25/n/n028c73fd28de,"不動産投資の基礎知識 LTV（ローン・トゥ・バリュー - note ",https://note.com/aoyamabussan/n/n99150eb9e089,"1000万円あったら、どんな投資用不動産が買えるか試算して ... ",https://areps.co.jp/knowledge/what-is-the-standard-leverage-for-real-estate-investment,"不動産投資のレバレッジは何倍が目安？効果を高めるポイント ... ",https://www.cigr.co.jp/biz/column/real-estate/13553/,"不動産投資の分析「NOI・LTV・CCR」・中級編 ",https://www.youtube.com/watch?v=LAtPYyzdoWc,"自己資金と借入の配分どうやって判断する？不動産の「LTV ... ",https://allstar-gh.net/ltvloan-to-value/,"LTV（Loan to Value＝純資産有利子負債比率）について ",https://ccd.cloud/Result/detail?id=31707715,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31707519,https://ccd.cloud/Result/detail?id=31701380,https://ccd.cloud/Result/detail?id=31701385,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31688548,,

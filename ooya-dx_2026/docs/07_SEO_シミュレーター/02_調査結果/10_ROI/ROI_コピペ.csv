@@ -1,0 +1,94 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707715,"賃貸経営のROI（投資利益率） 計算シミュレーション
+賃貸経営のROI（投資利益率）を概算計算します。 キャッシュフローROI、CCR（自己資金配当率）、FCR（実質利回り）を同時に算出します。
+
+ROIを概算計算する
+物件価格
+3,000
+万円
+購入諸経費（物件価格の7%程度が目安）
+1,000
+万円
+総投資額：4,000万円
+
+借入額
+2,300
+万円
+自己資金：1,700万円
+
+※総投資額4,000万円 - 借入2,300万円
+
+年間家賃収入（満室想定）
+450
+万円
+年間経費率（管理費・修繕費・税金等）
+20
+%
+経費額：約90万円/年
+
+年間ローン返済額（元利合計）
+250
+万円
+総投資額
+4,000万円
+自己資金
+1,700万円
+NOI（営業純収益）
+360万円/年
+年間キャッシュフロー
+110万円/年
+CF-ROI（キャッシュフローROI）
+2.75%
+FCR（実質利回り）
+9.00%
+CCR（自己資金配当率）
+6.47%
+自己資金回収年数
+約15.5年
+計算式
+
+CF-ROI = 年間キャッシュフロー ÷ 総投資額 × 100
+
+= 110万円 ÷ 4,000万円 × 100
+
+= 2.75%
+
+※本計算結果は概算値です。実際の金額は異なる場合があります。
+
+※最終的な判断は専門家（税理士・宅建業者・司法書士等）にご相談ください。
+
+目次
+1. ROI（投資利益率）とは
+1-1. ROIの計算式
+1-2. 関連指標との違い
+2. ROIの活用方法
+1. ROI（投資利益率）とは
+ROI（Return On Investment：投資利益率）は、投資した金額に対してどれだけの利益が得られたかを示す指標です。 賃貸経営においては、物件への投資額に対するキャッシュフローの割合として計算されます。
+
+ROIを確認することで、投資効率を把握し、複数の投資案件を比較検討する際の参考とすることができます。
+
+1-1. ROIの計算式
+CF-ROI（%）= 年間キャッシュフロー ÷ 総投資額 × 100
+
+総投資額 = 物件価格 + 購入諸経費
+
+年間キャッシュフローは、家賃収入から運営経費とローン返済を差し引いた金額です。 経費には管理費、修繕費、固定資産税、都市計画税、保険料などが含まれます。
+
+1-2. 関連指標との違い
+賃貸経営の収益性を測る指標には、ROI以外にもいくつかの指標があります。
+
+FCR（実質利回り）：NOI（営業純収益）÷ 総投資額。ローン返済を含まない物件の収益力を示します。
+CCR（自己資金配当率）：キャッシュフロー ÷ 自己資金。自己資金に対するリターンを示します。
+IRR（内部収益率）：時間価値を考慮した収益率。売却までの全期間を評価します。
+2. ROIの活用方法
+ROIは以下のような場面で活用されます。
+
+投資効率の確認：投下した資金に対するリターンを数値化できます
+複数案件の比較：異なる物件の投資効率を同じ基準で比較できます
+融資条件の検討：借入額や金利を変えた場合のROIの変化を確認できます
+免責事項
+・本シミュレーションは、2026年1月時点の情報をもとに試算しています。
+・本シミュレーターの計算結果は概算値であり、実際の金額は異なる場合があります。
+・本サイトの情報により生じた損害について、当サイト運営者は一切の責任を負いません。
+・最終的な判断は専門家（税理士・宅建業者・司法書士・不動産鑑定士等）にご相談ください。
+最終更新日: 2026年1月22日",良好,5%,良好,24%,良好,57%,https://www.kaonavi.jp/dictionary/roi/,"ROI（投資利益率）とは？【意味をわかりやすく】計算方法と ... ",https://www.tohshin.co.jp/magazine/article0093.html,"不動産投資の利回りは何％が理想？計算方法や相場 ",https://www.salesforce.com/jp/marketing/lead-generation-guide/what-is-roi/,"ROI（投資対効果）とは？計算方法・重要性・目安・改善策 ... ",https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_apartment/apartment_management_yield-2/,"マンション経営の利回りを徹底解説！指標の種類・平均値 ... ",https://www.nomu.com/pro/contents/knowhow/20250205.html,"初心者でもわかる！キャッシュフローの計算と不動産投資で ... ",https://www.braze.com/ja/resources/articles/what-is-roi,"ROIとはどういう意味？重要性やほかの指標との違い - Braze ",https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm526.html,"賃貸住宅経営に特有の経営指標 回収期間 - 大和ハウス工業 ",https://www.setoshin.co.jp/kozin/kariru/simulation/hensai.html,"ご返済金額のシミュレーション | ローン ... - 瀬戸信用金庫 ",https://www.techs-s.com/media/show/284,"経営判断を変える！製造業でROIを正しく使いこなすための ... ",https://landnet.co.jp/redia/7576/,"投資効率を示すROIとCCRとは？計算方法と不動産投資への ... ",https://www.propertyagent.co.jp/contents/5253/,"IRR（内部収益率とは？）初心者でもできるExcelでの計算 ... ",https://landnet.co.jp/redia/7576/,"投資効率を示すROIとCCRとは？計算方法と不動産投資への ... ",https://ma-la.co.jp/m-and-a/roi-return-on-investment/,"ROI（投資利益率）とは？計算方法や活用術をわかりやすく解説 ",https://sora-ie.jp/investment/irr/,"IRR（内部収益率）とは？利回りとの違いや計算方法 ",https://www.tson.co.jp/media/rei/rei-basic/キーワード/652/,"キャッシュフロー | 不動産AI研究所 - 株式会社TSON ",https://www.tohshin.co.jp/magazine/article0093.html,"不動産投資の利回りは何％が理想？計算方法や相場 ",https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_apartment/apartment_management_yield-2/,"マンション経営の利回りを徹底解説！指標の種類・平均値 ... ",https://fukuoka-leapup.jp/column/investment/ccr_whats/,"CCR（自己資本配当率）とは？不動産投資の成功を左右する ... ",https://www.kaonavi.jp/dictionary/roi/,"ROI（投資利益率）とは？【意味をわかりやすく】計算方法と ... ",https://www.issoh.co.jp/column/details/5251/,"マーケティングにおけるROIの重要性とその測定方法 ",https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701385,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31707530,https://ccd.cloud/Result/detail?id=31701441,,

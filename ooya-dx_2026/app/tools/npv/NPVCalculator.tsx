@@ -367,6 +367,9 @@ export function NPVCalculator() {
               将来のキャッシュフローは「時間価値」を考慮して現在価値に割り引かれます。
               これは、「今日の100万円」と「10年後の100万円」では価値が異なるという考え方に基づいています。
             </p>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              ※最終年度には、毎年のキャッシュフローに加え、売却益（手取り額）も現在価値に割り引いて加算します。
+            </p>
 
             <SectionHeading id="irr-comparison" items={tocItems} />
             <p className="text-gray-700 mb-4 leading-relaxed">
