@@ -39,6 +39,7 @@ export const toolCategories: ToolCategory[] = [
       { name: '表面利回り・実質利回り', description: '物件の利回りを計算', href: '/tools/yield-rate', available: true },
       { name: 'DCF法（収益価格）', description: '割引キャッシュフロー法による不動産評価', href: '/tools/dcf', available: true },
       { name: '積算評価', description: '土地・建物の積算価格を計算', href: '/tools/assessed-value', available: true },
+      { name: '再調達価格', description: '建物の再調達原価を計算', href: '/tools/replacement-cost', available: true },
       { name: '収益還元（直接還元法）', description: '直接還元法による不動産評価', href: '/tools/income-capitalization', available: true },
       { name: 'DSCR（債務返済カバー率）', description: '返済余力を計算', href: '/tools/dscr', available: true },
       { name: 'CCR（自己資金配当率）', description: '自己資金に対する利回りを計算', href: '/tools/ccr', available: true },
@@ -80,8 +81,8 @@ export const toolCategories: ToolCategory[] = [
     items: [
       { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true },
       { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true },
-      { name: '売却手取り', description: '税引き後の手取り額を計算', href: '/tools/sale-proceeds', available: false },
-      { name: 'デッドクロス', description: '発生時期を予測', href: '/tools/dead-cross', available: false },
+      { name: '売却手取り', description: '税引き後の手取り額を計算', href: '/tools/sale-proceeds', available: true },
+      { name: 'デッドクロス', description: '発生時期を予測', href: '/tools/dead-cross', available: true },
     ],
   },
   {
