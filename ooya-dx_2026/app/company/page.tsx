@@ -19,7 +19,6 @@ export default function CompanyPage() {
     { label: '顧問税理士', value: '青山税理士法人' },
     { label: '所在地', value: '〒330-9501 埼玉県さいたま市大宮区桜木町2丁目3番地 大宮マルイ7階' },
     { label: '旧所在地', value: '〒104-0061 東京都中央区銀座1-22-11 銀座大竹ビジデンス 2F（2023年8月に移転）' },
-    { label: '連絡先', value: '050-3590-7936' },
   ];
 
   const banks = [

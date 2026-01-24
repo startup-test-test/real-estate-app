@@ -5,10 +5,11 @@ import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import Link from 'next/link';
 
-export default function ContactPage() {
+export default function CorporateContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    url: '',
     message: ''
   })
   const [agreed, setAgreed] = useState(false)
@@ -30,12 +31,15 @@ export default function ContactPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          source: 'corporate'
+        }),
       })
 
       if (response.ok) {
         setSubmitStatus('success')
-        setFormData({ name: '', email: '', message: '' })
+        setFormData({ name: '', email: '', url: '', message: '' })
         setAgreed(false)
       } else {
         setSubmitStatus('error')
@@ -69,18 +73,25 @@ export default function ContactPage() {
               ホーム
             </Link>
             <span className="mx-2">&gt;</span>
-            <span>大家DXについてのお問い合わせ</span>
+            <Link href="/company" className="hover:text-primary-600">
+              会社概要
+            </Link>
+            <span className="mx-2">&gt;</span>
+            <span>会社についてのお問い合わせ</span>
           </nav>
 
           {/* H1タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
-            大家DXについてのお問い合わせ
+            会社についてのお問い合わせ
           </h1>
 
           {/* 概要 */}
           <section className="mb-8">
             <p className="text-gray-700 leading-relaxed">
-              大家DXに関するご質問、ご要望、その他お問い合わせは以下のフォームからお送りください。
+              お仕事のご相談やご依頼、弊社サービスに関するお問い合わせはメール、もしくはお電話にてお気軽にお問い合わせください。
+            </p>
+            <p className="text-gray-700 leading-relaxed mt-2">
+              2～3営業日以内に、担当よりメールにて返信させていただきます。
             </p>
           </section>
 
@@ -89,7 +100,7 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
-                    お名前 <span className="text-red-500">*</span>
+                    氏名 <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -120,8 +131,24 @@ export default function ContactPage() {
                 </div>
 
                 <div>
+                  <label htmlFor="url" className="block text-sm font-medium text-gray-900 mb-2">
+                    御社または関連サイトのURL <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="url"
+                    id="url"
+                    name="url"
+                    required
+                    value={formData.url}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                    placeholder="https://example.com"
+                  />
+                </div>
+
+                <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-2">
-                    お問い合わせ内容 <span className="text-red-500">*</span>
+                    お問合わせ内容 <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     id="message"
@@ -134,6 +161,20 @@ export default function ContactPage() {
                     placeholder="お問い合わせ内容をご記入ください"
                   />
                 </div>
+
+                {submitStatus === 'success' && (
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-blue-800 text-sm font-medium">お問い合わせを受け付けました</p>
+                    <p className="text-blue-700 text-xs mt-1">2～3営業日以内にご返信いたします。</p>
+                  </div>
+                )}
+
+                {submitStatus === 'error' && (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-800 text-sm font-medium">送信中にエラーが発生しました</p>
+                    <p className="text-red-700 text-xs mt-1">しばらく経ってから再度お試しください。</p>
+                  </div>
+                )}
 
                 {/* 個人情報保護方針同意 */}
                 <div className="flex items-start gap-3">
@@ -149,19 +190,9 @@ export default function ContactPage() {
                   </label>
                 </div>
 
-                {submitStatus === 'success' && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-blue-800 text-sm font-medium">お問い合わせを受け付けました</p>
-                    <p className="text-blue-700 text-xs mt-1">ご連絡ありがとうございます。1〜2営業日以内にご返信いたします。</p>
-                  </div>
-                )}
-
-                {submitStatus === 'error' && (
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-800 text-sm font-medium">送信中にエラーが発生しました</p>
-                    <p className="text-red-700 text-xs mt-1">しばらく経ってから再度お試しください。</p>
-                  </div>
-                )}
+                <p className="text-sm text-gray-500">
+                  ※営業・セールスを目的としたお問い合わせはご遠慮ください。
+                </p>
 
                 <div>
                   <button
@@ -175,6 +206,27 @@ export default function ContactPage() {
               </form>
             </div>
           </div>
+
+          {/* 関連ページ */}
+          <section className="mt-12">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">関連ページ</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Link
+                href="/company"
+                className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all"
+              >
+                <h3 className="font-bold text-gray-900 mb-1">会社概要</h3>
+                <p className="text-sm text-gray-600">基本情報・事業内容</p>
+              </Link>
+              <Link
+                href="/service"
+                className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all"
+              >
+                <h3 className="font-bold text-gray-900 mb-1">メニュー・料金</h3>
+                <p className="text-sm text-gray-600">サービス内容・料金プラン</p>
+              </Link>
+            </div>
+          </section>
 
         </article>
       </main>

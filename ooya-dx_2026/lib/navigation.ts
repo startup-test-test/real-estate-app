@@ -127,7 +127,7 @@ export const footerNavigation: NavigationSection[] = [
 
 // 法的リンク
 export const legalLinks: NavigationItem[] = [
-  { name: '運営会社', href: 'https://startup-marketing.co.jp/' },
+  { name: '運営会社', href: '/company' },
   { name: '利用規約', href: '/legal/terms' },
   { name: '個人情報保護方針', href: '/legal/privacy' },
   { name: '免責事項', href: '/disclaimer' },
