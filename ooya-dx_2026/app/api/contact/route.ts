@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await getResend().emails.send({
       from: `Contact Form <noreply@ooya.tech>`,
       to: toEmail,
-      subject: `[お問い合わせ] ${safeName}様からのお問い合わせ`,
+      subject: `【大家DX】${safeName}様からのお問い合わせ`,
       text: `お問い合わせを受信しました
 
 お名前: ${safeName}

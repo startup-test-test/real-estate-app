@@ -132,13 +132,12 @@ export default function CorporateContactPage() {
 
                 <div>
                   <label htmlFor="url" className="block text-sm font-medium text-gray-900 mb-2">
-                    御社または関連サイトのURL <span className="text-red-500">*</span>
+                    御社または関連サイトのURL
                   </label>
                   <input
                     type="url"
                     id="url"
                     name="url"
-                    required
                     value={formData.url}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
