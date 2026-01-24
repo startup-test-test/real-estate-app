@@ -33,7 +33,10 @@ import {
   sampleProperty,
   hasTutorialBeenCompleted
 } from "@/data/sampleProperty";
-import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+// react-joyride React 19対応まで無効化
+// import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Step = any;  // react-joyride無効化中の仮の型定義
 
 const MyPage: React.FC = () => {
   const router = useRouter();
@@ -1423,71 +1426,10 @@ const MyPage: React.FC = () => {
         onClose={handleUpgradeClose}
       />
       
-      {/* チュートリアル - react-joyride React 19対応まで無効化 */}
-      <Joyride
-        steps={tutorialSteps}
-        run={false}  // 一時的に無効化
-        continuous={false}  // 自動的に次のステップへ進まない
-        showProgress={true}  // プログレス表示を有効化
-        showSkipButton={true}
-        hideBackButton={true}  // 戻るボタンは非表示
-        hideCloseButton={true}  // 閉じるボタンも非表示
-        spotlightClicks={true}
-        disableOverlay={true}
-        disableOverlayClose={false}
-        callback={(data: CallBackProps) => {
-          const { status } = data;
-          const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
-          
-          if (finishedStatuses.includes(status)) {
-            setRunTutorial(false);
-            // チュートリアル完了時にsessionStorageをクリア
-            sessionStorage.removeItem('tutorial_in_progress');
-            // チュートリアル完了をLocalStorageに保存
-            if (user) {
-              localStorage.setItem(`tutorial_completed_${user.id}`, 'true');
-            }
-          }
-        }}
-        locale={{
-          back: '',  // 戻るボタンを非表示
-          close: '',  // 閉じるボタンを非表示
-          last: '',  // 完了ボタンを非表示
-          next: '',  // 次へボタンを非表示
-          skip: 'スキップ'
-        }}
-        styles={{
-          options: {
-            primaryColor: '#3B82F6',
-            textColor: '#1F2937',
-            backgroundColor: '#FFFBEB',  // より薄い黄色の背景
-            arrowColor: '#FFFBEB',  // 矢印も同じ色に
-            zIndex: 10000,
-          },
-          tooltip: {
-            borderRadius: 8,
-            fontSize: 16,
-            padding: '12px 16px',
-          },
-          tooltipContainer: {
-            textAlign: 'left',
-          },
-          tooltipTitle: {
-            marginBottom: 10,
-          },
-          buttonNext: {
-            backgroundColor: '#3B82F6',
-            borderRadius: 6,
-            color: '#FFFFFF',
-          },
-          buttonBack: {
-            marginRight: 10,
-          },
-          buttonSkip: {
-            color: '#6B7280',
-          },
-        }}
-      />
+      {/* チュートリアル - react-joyride React 19対応まで完全に無効化
+         ※ run={false}でもコンポーネントがレンダリングされるとReact 19互換性エラーが発生するため、
+            コンポーネント自体をコメントアウト
+      */}
     </>
   );
 };

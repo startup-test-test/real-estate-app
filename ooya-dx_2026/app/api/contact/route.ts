@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, email, message } = body;
+    const { name, email, message, source } = body;
 
     // バリデーション
     if (!name || !email || !message) {
@@ -88,6 +88,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // 法人向けか大家DX向けかを判定
+    const isCorporate = source === 'corporate';
 
     // Resendの制限: ドメイン未検証の場合、登録メールアドレスにのみ送信可能
     const toEmail = process.env.CONTACT_EMAIL || "support@example.com";
@@ -110,7 +113,7 @@ export async function POST(request: NextRequest) {
 
     // メール送信（テキスト形式）
     const { data, error } = await getResend().emails.send({
-      from: `Contact Form <onboarding@resend.dev>`,
+      from: `Contact Form <noreply@ooya.tech>`,
       to: toEmail,
       subject: `[お問い合わせ] ${safeName}様からのお問い合わせ`,
       text: `お問い合わせを受信しました
@@ -139,11 +142,13 @@ ${safeMessage}
     }
 
     // 自動返信メール（お客様向け・テキスト形式）
-    await getResend().emails.send({
-      from: `大家DX <onboarding@resend.dev>`,
-      to: safeEmail,
-      subject: "お問い合わせを受け付けました",
-      text: `${safeName} 様
+    if (isCorporate) {
+      // 法人向けお問い合わせの自動返信
+      await getResend().emails.send({
+        from: `株式会社StartupMarketing <noreply@ooya.tech>`,
+        to: safeEmail,
+        subject: "株式会社StartupMarketing | お問合せを受付しました",
+        text: `${safeName} 様
 
 この度はお問い合わせいただき、誠にありがとうございます。
 以下の内容でお問い合わせを受け付けました。
@@ -153,9 +158,38 @@ ${safeMessage}
 ${safeMessage}
 ---
 
-大家DX
-ooya.tech2025@gmail.com`,
-    });
+2〜3営業日以内に担当者よりご連絡いたします。
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+株式会社StartupMarketing
+〒330-9501 埼玉県さいたま市大宮区桜木町2丁目3番地 大宮マルイ7階
+会社概要: https://ooya.tech/company
+━━━━━━━━━━━━━━━━━━━━━━━━`,
+      });
+    } else {
+      // 大家DX向けお問い合わせの自動返信
+      await getResend().emails.send({
+        from: `大家DX <noreply@ooya.tech>`,
+        to: safeEmail,
+        subject: "大家DX | お問い合わせを受け付けました",
+        text: `${safeName} 様
+
+この度はお問い合わせいただき、誠にありがとうございます。
+以下の内容でお問い合わせを受け付けました。
+
+---
+内容:
+${safeMessage}
+---
+
+2〜3営業日以内に担当者よりご連絡いたします。
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+大家DX（運営: 株式会社StartupMarketing）
+https://ooya.tech
+━━━━━━━━━━━━━━━━━━━━━━━━`,
+      });
+    }
 
     const res = NextResponse.json({ success: true });
     res.headers.set("X-RateLimit-Remaining", String(remaining));

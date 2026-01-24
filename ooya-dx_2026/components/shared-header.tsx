@@ -40,11 +40,9 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
 
   // ダッシュボード系のルートではヘッダーを非表示
   const isDashboardRoute = DASHBOARD_ROUTES.some(route => pathname?.startsWith(route));
-  if (isDashboardRoute && !forceShow) {
-    return null;
-  }
 
   // ドロップダウン外クリックで閉じる
+  // ※ 早期リターンより前にフックを配置（Reactのルール）
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -54,6 +52,11 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // フックの後で早期リターン
+  if (isDashboardRoute && !forceShow) {
+    return null;
+  }
 
   const handleSignOut = async () => {
     setIsDropdownOpen(false);

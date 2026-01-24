@@ -6,7 +6,10 @@ import {
   AlertCircle,
   Download
 } from 'lucide-react';
-import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+// react-joyride React 19対応まで無効化
+// import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Step = any;  // react-joyride無効化中の仮の型定義
 import { useSearchParams } from 'next/navigation';
 // TODO: 認証を Neon Auth に移行後に有効化
 // import { useSupabaseData } from '@/hooks/useSupabaseData';
@@ -3867,114 +3870,10 @@ const Simulator: React.FC = () => {
       
       {/* 無料化対応: UpgradeModal を削除 */}
       
-      {/* チュートリアル - react-joyride React 19対応まで無効化 */}
-      <Joyride
-        steps={tutorialSteps}
-        run={false}  // 一時的に無効化
-        stepIndex={tutorialStep}
-        continuous={true}
-        showSkipButton={true}
-        disableOverlay={true}  // グレイアウトを無効化（ユーザー要望）
-        disableOverlayClose={true}  // オーバーレイクリック防止（念のため）
-        disableCloseOnEsc={false}
-        scrollToFirstStep={false}
-        scrollOffset={window.innerWidth < 768 ? 100 : 20}
-        disableScrollParentFix={window.innerWidth < 768}
-        spotlightClicks={false}  // 強調エリア外のクリックを防止
-        callback={(data: CallBackProps) => {
-          const { status, index, type, action } = data;
-          
-          console.log('🎯 Joyride callback:', { status, index, type, action });
-          
-          // SP版でステップ2（index=0）が表示される前のスクロール調整
-          if (window.innerWidth < 768 && type === 'step:before' && index === 0) {
-            const target = document.querySelector('[data-field="propertyName"]');
-            if (target) {
-              const rect = target.getBoundingClientRect();
-              const absoluteTop = rect.top + window.pageYOffset;
-              // ヘッダーの高さを考慮してスクロール
-              window.scrollTo({
-                top: absoluteTop - 100,
-                behavior: 'smooth'
-              });
-            }
-          }
-          
-          // ステップが変更されたとき（次へボタンクリック後）
-          if (type === 'step:after') {
-            console.log('📍 Step completed, current index:', index);
-            console.log('📍 Action:', action);
-            
-            // ステップ3（シミュレーション実行ボタン）以外の場合
-            // またはスキップの場合は次へ進む
-            if (action === 'skip' || (action === 'next' && index !== 1)) {
-              const nextIndex = index + 1;
-              console.log('📝 Moving to next step:', nextIndex);
-              setTutorialStep(nextIndex);
-            }
-            
-            // ステップ3（シミュレーション実行ボタン）の場合
-            if (index === 0 && (action === 'next' || action === 'update')) {
-              // ステップ2からステップ3へ
-              console.log('🚀 Moving to simulation button step');
-              setTutorialStep(1);
-            }
-          }
-          
-          // ツアーが開始された時
-          if (type === 'tour:start') {
-            console.log('🚀 Tour started');
-            setTutorialStep(0);
-          }
-          
-          // チュートリアル終了時
-          const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
-          if (finishedStatuses.includes(status)) {
-            console.log('🏁 Tutorial finished or skipped');
-            setRunTutorial(false);
-            sessionStorage.removeItem('tutorial_in_progress');
-            // TODO: 認証移行後に有効化
-            // if (user && user.id) {
-            //   localStorage.setItem(`tutorial_completed_${user.id}`, 'true');
-            // }
-          }
-        }}
-        locale={{
-          back: '',  // 戻るボタンを非表示
-          close: '閉じる',
-          last: '完了',
-          next: '次へ',
-          skip: 'スキップ',
-          open: '開く',
-          nextLabelWithProgress: '次へ'
-        }}
-        showProgress={true}
-        styles={{
-          options: {
-            primaryColor: '#3B82F6',
-            textColor: '#1F2937',
-            backgroundColor: '#FFFFFF',
-            arrowColor: '#FFFFFF',
-            zIndex: 10000,
-          },
-          tooltip: {
-            borderRadius: 8,
-            fontSize: 16,
-            padding: '12px 16px',
-          },
-          tooltipContainer: {
-            textAlign: 'left',
-          },
-          buttonNext: {
-            backgroundColor: '#3B82F6',
-            borderRadius: 6,
-            color: '#FFFFFF',
-          },
-          buttonSkip: {
-            color: '#6B7280',
-          },
-        }}
-      />
+      {/* チュートリアル - react-joyride React 19対応まで完全に無効化
+         ※ run={false}でもコンポーネントがレンダリングされるとReact 19互換性エラーが発生するため、
+            コンポーネント自体をコメントアウト
+      */}
     </div>
     </div>
   );

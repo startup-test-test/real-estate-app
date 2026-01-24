@@ -77,12 +77,12 @@ export default function CorporateContactPage() {
               会社概要
             </Link>
             <span className="mx-2">&gt;</span>
-            <span>会社についてのお問い合わせ</span>
+            <span>法人のお問合せ・受託開発・取材など</span>
           </nav>
 
           {/* H1タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
-            会社についてのお問い合わせ
+            法人のお問合せ・受託開発・取材など
           </h1>
 
           {/* 概要 */}
