@@ -1,5 +1,6 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { CompanyNav } from '@/components/company-nav';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -32,9 +33,12 @@ export default function TeamBeyondPage() {
           </nav>
 
           {/* H1タイトル */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             パラスポーツ、スポーツへの取り組み
           </h1>
+
+          {/* ページナビゲーション */}
+          <CompanyNav />
 
           {/* 概要 */}
           <section className="mb-12">

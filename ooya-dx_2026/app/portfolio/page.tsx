@@ -1,5 +1,6 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { CompanyNav } from '@/components/company-nav';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -35,6 +36,9 @@ export default function PortfolioPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             実績・経歴
           </h1>
+
+          {/* ページナビゲーション */}
+          <CompanyNav />
 
           {/* 概要 */}
           <p className="text-gray-700 leading-relaxed mb-8">

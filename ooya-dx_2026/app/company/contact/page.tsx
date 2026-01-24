@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { CompanyNav } from '@/components/company-nav';
 import Link from 'next/link';
 
 export default function CorporateContactPage() {
@@ -81,9 +82,12 @@ export default function CorporateContactPage() {
           </nav>
 
           {/* H1タイトル */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             法人のお問合せ・受託開発・取材など
           </h1>
+
+          {/* ページナビゲーション */}
+          <CompanyNav />
 
           {/* 概要 */}
           <section className="mb-8">

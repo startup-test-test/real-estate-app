@@ -1,5 +1,6 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { CompanyNav } from '@/components/company-nav';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -51,40 +52,7 @@ export default function CompanyPage() {
           </h1>
 
           {/* ページナビゲーション */}
-          <nav className="mb-8 bg-gray-50 rounded-xl p-4">
-            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-              <li>
-                <span className="text-gray-900 font-medium">
-                  &gt; 会社概要
-                </span>
-              </li>
-              <li>
-                <Link href="/portfolio" className="text-blue-600 hover:text-blue-800 hover:underline">
-                  &gt; 実績・得意領域
-                </Link>
-              </li>
-              <li>
-                <Link href="/service" className="text-blue-600 hover:text-blue-800 hover:underline">
-                  &gt; メニュー・料金
-                </Link>
-              </li>
-              <li>
-                <Link href="/media/profile" className="text-blue-600 hover:text-blue-800 hover:underline">
-                  &gt; プロフィール
-                </Link>
-              </li>
-              <li>
-                <Link href="/media" className="text-blue-600 hover:text-blue-800 hover:underline">
-                  &gt; ブログ
-                </Link>
-              </li>
-              <li>
-                <Link href="/company/contact" className="text-blue-600 hover:text-blue-800 hover:underline">
-                  &gt; お問合わせ
-                </Link>
-              </li>
-            </ul>
-          </nav>
+          <CompanyNav />
 
           {/* 会社紹介 */}
           <section className="mb-12">
