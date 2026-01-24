@@ -210,27 +210,6 @@ export default function CorporateContactPage() {
             </div>
           </div>
 
-          {/* 関連ページ */}
-          <section className="mt-12">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">関連ページ</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <Link
-                href="/company"
-                className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all"
-              >
-                <h3 className="font-bold text-gray-900 mb-1">会社概要</h3>
-                <p className="text-sm text-gray-600">基本情報・事業内容</p>
-              </Link>
-              <Link
-                href="/service"
-                className="block bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all"
-              >
-                <h3 className="font-bold text-gray-900 mb-1">メニュー・料金</h3>
-                <p className="text-sm text-gray-600">サービス内容・料金プラン</p>
-              </Link>
-            </div>
-          </section>
-
         </article>
       </main>
 
