@@ -1,0 +1,5 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /blog/
+RewriteRule ^(.*)$ https://ooya.tech/media/ [R=301,L]
+</IfModule>

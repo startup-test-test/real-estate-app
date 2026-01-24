@@ -1,0 +1,43 @@
+SetEnvIf Request_URI ".*" Ngx_Cache_NoCacheMode=off
+SetEnvIf Request_URI ".*" Ngx_Cache_AllCacheMode
+
+# ========================================
+# 301 Redirect to ooya.tech
+# Updated: 2026-01-24
+# ========================================
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# 個別ページのリダイレクト
+RewriteRule ^contact/?$ https://ooya.tech/company/contact/ [R=301,L]
+RewriteRule ^service/?$ https://ooya.tech/company/service/ [R=301,L]
+RewriteRule ^portfolio/?$ https://ooya.tech/company/portfolio/ [R=301,L]
+RewriteRule ^sdgs/?$ https://ooya.tech/company/sdgs/ [R=301,L]
+RewriteRule ^teambeyond/?$ https://ooya.tech/company/teambeyond/ [R=301,L]
+RewriteRule ^jisyusengen/?$ https://ooya.tech/company/csr/ [R=301,L]
+RewriteRule ^link/?$ https://ooya.tech/company/link/ [R=301,L]
+RewriteRule ^profile/?$ https://ooya.tech/media/profile/ [R=301,L]
+RewriteRule ^news/(.*)$ https://ooya.tech/media/ [R=301,L]
+RewriteRule ^blog/(.*)$ https://ooya.tech/media/ [R=301,L]
+
+# machinoba 等は /company/ へ統合（専用ページ不要）
+# その他全て → /company/
+RewriteRule ^(.*)$ https://ooya.tech/company/ [R=301,L]
+</IfModule>
+
+# BEGIN WordPress
+# "BEGIN WordPress" から "END WordPress" までのディレクティブ (行) は
+# 動的に生成され、WordPress フィルターによってのみ修正が可能です。
+# これらのマーカー間にあるディレクティブへのいかなる変更も上書きされてしまいます。
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+SetEnvIf Request_URI ".*" WpLoginNoLimit

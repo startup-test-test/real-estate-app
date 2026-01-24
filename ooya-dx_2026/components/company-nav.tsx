@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { href: '/company', label: '会社概要' },
-  { href: '/portfolio', label: '実績・得意領域' },
-  { href: '/service', label: 'メニュー・料金' },
+  { href: '/company/portfolio', label: '実績・得意領域' },
+  { href: '/company/service', label: 'メニュー・料金' },
   { href: '/media/profile', label: 'プロフィール' },
   { href: '/media', label: 'ブログ' },
   { href: '/company/contact', label: 'お問合わせ' },

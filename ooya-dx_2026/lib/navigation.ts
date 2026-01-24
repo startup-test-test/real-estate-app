@@ -113,8 +113,8 @@ export const otherLinks: NavigationItem[] = [
 // 会社関連
 export const companyLinks: NavigationItem[] = [
   { name: '会社概要', href: '/company' },
-  { name: '実績・得意領域', href: '/portfolio' },
-  { name: 'メニュー・料金', href: '/service' },
+  { name: '実績・得意領域', href: '/company/portfolio' },
+  { name: 'メニュー・料金', href: '/company/service' },
   { name: 'プロフィール', href: '/media/profile' },
   { name: 'お問合わせ', href: '/company/contact' },
 ];
