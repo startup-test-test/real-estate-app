@@ -31,12 +31,14 @@ export function LandingFooter() {
           </div>
 
           {/* ナビゲーションセクション */}
-          {footerNavigation.map((section) => (
+          {footerNavigation.map((section, sectionIndex) => (
             <div
-              key={section.title}
+              key={section.title || `section-${sectionIndex}`}
               className={section.title === '賃貸経営計算ツール' ? 'lg:col-span-2' : ''}
             >
-              <h3 className="text-sm font-bold text-gray-900 mb-3">{section.title}</h3>
+              {section.title && (
+                <h3 className="text-sm font-bold text-gray-900 mb-3">{section.title}</h3>
+              )}
               {section.title === '賃貸経営計算ツール' ? (
                 <ul className="grid grid-cols-2 gap-x-6 gap-y-2">
                   {section.items.map((item) => (
@@ -52,14 +54,20 @@ export function LandingFooter() {
                 </ul>
               ) : (
                 <ul className="space-y-2">
-                  {section.items.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                      >
-                        {item.name}
-                      </Link>
+                  {section.items.map((item, itemIndex) => (
+                    <li key={`${section.title}-${item.href || item.name}-${itemIndex}`}>
+                      {item.isHeader ? (
+                        <span className={`text-sm font-bold text-gray-900 block ${itemIndex === 0 ? 'mb-1' : 'mt-3'}`}>
+                          {item.name}
+                        </span>
+                      ) : (
+                        <a
+                          href={item.href}
+                          className="text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer inline-block"
+                        >
+                          {item.name}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>

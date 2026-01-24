@@ -10,20 +10,20 @@ export const metadata: Metadata = {
 
 export default function CompanyPage() {
   const companyInfo = [
-    { label: '会社名', value: '株式会社StartupMarketing' },
+    { label: '会社名', value: '株式会社StartupMarketing', hasMigrationNote: true },
+    { label: '会社ロゴ', value: '', isLogo: true },
     { label: '事業内容', value: '不動産テック事業（大家DX）、Web制作・Webコンサルティング、不動産業界向けシステム受託開発' },
     { label: '代表者', value: '代表取締役 東後 哲郎（とうご てつろう）' },
     { label: '設立', value: '2020年9月29日（2016年に個人事業主を開始、2020年に法人化）' },
-    { label: '資本金', value: '9,900,000円' },
+    { label: '資本金', value: '990万円' },
     { label: '顧問弁護士', value: 'スタートビズ法律事務所（代表弁護士: 宮岡 遼 / 第一東京弁護士会）', url: 'https://it-lawyer.jp/' },
     { label: '顧問税理士', value: '青山税理士法人' },
-    { label: '所在地', value: '〒330-9501 埼玉県さいたま市大宮区桜木町2丁目3番地 大宮マルイ7階' },
-    { label: '旧所在地', value: '〒104-0061 東京都中央区銀座1-22-11 銀座大竹ビジデンス 2F（2023年8月に移転）' },
+    { label: '所在地', value: '〒330-9501 埼玉県さいたま市大宮区桜木町2丁目3番地 大宮マルイ7階\n（旧住所：〒104-0061 東京都中央区銀座1-22-11 銀座大竹ビジデンス 2F）' },
   ];
 
   const banks = [
-    { name: '埼玉縣信用金庫（大宮西支店）', note: '2024年12月に資金調達済み（合計4回）' },
-    { name: '日本政策金融公庫（大宮支店）', note: '2024年8月に資金調達済み（合計2回）' },
+    { name: '埼玉縣信用金庫（大宮西支店）', note: '2024年12月に資金調達済み（資金調達合計4回）' },
+    { name: '日本政策金融公庫（大宮支店）', note: '2024年8月に資金調達済み（資金調達合計2回）' },
     { name: '三井住友銀行', note: '' },
   ];
 
@@ -46,9 +46,45 @@ export default function CompanyPage() {
           </nav>
 
           {/* H1タイトル */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             会社概要
           </h1>
+
+          {/* ページナビゲーション */}
+          <nav className="mb-8 bg-gray-50 rounded-xl p-4">
+            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <li>
+                <span className="text-gray-900 font-medium">
+                  &gt; 会社概要
+                </span>
+              </li>
+              <li>
+                <Link href="/portfolio" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  &gt; 実績・得意領域
+                </Link>
+              </li>
+              <li>
+                <Link href="/service" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  &gt; メニュー・料金
+                </Link>
+              </li>
+              <li>
+                <Link href="/media/profile" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  &gt; プロフィール
+                </Link>
+              </li>
+              <li>
+                <Link href="/media" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  &gt; ブログ
+                </Link>
+              </li>
+              <li>
+                <Link href="/company/contact" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  &gt; お問合わせ
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
           {/* 会社紹介 */}
           <section className="mb-12">
@@ -72,7 +108,20 @@ export default function CompanyPage() {
                       {item.label}
                     </dt>
                     <dd className="px-5 py-4 text-gray-700">
-                      {item.label === 'メール' ? (
+                      {'hasMigrationNote' in item && item.hasMigrationNote ? (
+                        <div>
+                          <div className="font-medium">{item.value}</div>
+                          <p className="text-sm text-gray-600 mt-2">
+                            法人ページは https://startup-marketing.co.jp/ から ooya.tech/company/ に移転しました。
+                          </p>
+                        </div>
+                      ) : 'isLogo' in item && item.isLogo ? (
+                        <img
+                          src="/img/logo_startup_marketing.png"
+                          alt="株式会社StartupMarketing"
+                          className="h-8 w-auto"
+                        />
+                      ) : item.label === 'メール' ? (
                         <a href={`mailto:${item.value}`} className="text-blue-600 hover:underline">
                           {item.value}
                         </a>
@@ -80,6 +129,12 @@ export default function CompanyPage() {
                         <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                           {item.value}
                         </a>
+                      ) : item.value.includes('\n') ? (
+                        <div>
+                          {item.value.split('\n').map((line, i) => (
+                            <div key={i}>{line}</div>
+                          ))}
+                        </div>
                       ) : (
                         item.value
                       )}
@@ -222,15 +277,19 @@ export default function CompanyPage() {
             <div className="bg-gray-50 rounded-xl p-6">
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">●</span>
+                  <span className="text-gray-900 mt-0.5">●</span>
                   <Link href="/company/sdgs" className="text-blue-600 hover:text-blue-800 hover:underline">SDGsの達成に向けた取組み</Link>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">●</span>
+                  <span className="text-gray-900 mt-0.5">●</span>
+                  <Link href="/company/consumer-policy" className="text-blue-600 hover:text-blue-800 hover:underline">消費者志向自主宣言ならびに運営ポリシー</Link>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 mt-0.5">●</span>
                   <Link href="/company/teambeyond" className="text-blue-600 hover:text-blue-800 hover:underline">Team Beyond参加</Link>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">●</span>
+                  <span className="text-gray-900 mt-0.5">●</span>
                   <Link href="/company/link" className="text-blue-600 hover:text-blue-800 hover:underline">相互リンク</Link>
                 </li>
               </ul>

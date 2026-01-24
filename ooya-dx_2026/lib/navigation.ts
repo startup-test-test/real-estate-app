@@ -6,6 +6,7 @@ export interface NavigationItem {
   description?: string;
   href: string;
   available?: boolean;
+  isHeader?: boolean;
 }
 
 export interface ToolCategory {
@@ -109,11 +110,27 @@ export const otherLinks: NavigationItem[] = [
   { name: '無料テンプレート', description: 'Excel・スプレッドシート', href: '/templates' },
 ];
 
+// 会社関連
+export const companyLinks: NavigationItem[] = [
+  { name: '会社概要', href: '/company' },
+  { name: '実績・得意領域', href: '/portfolio' },
+  { name: 'メニュー・料金', href: '/service' },
+  { name: 'プロフィール', href: '/media/profile' },
+  { name: 'お問合わせ', href: '/company/contact' },
+];
+
+// 会社関連 + 賃貸経営クラウドサービス（同一カラム内）
+export const companyAndCloudLinks: NavigationItem[] = [
+  ...companyLinks,
+  { name: '賃貸経営クラウドサービス', href: '', isHeader: true },
+  ...simulatorLinks,
+];
+
 // フッターナビゲーションセクション
 export const footerNavigation: NavigationSection[] = [
   {
-    title: '賃貸経営シミュレーター',
-    items: simulatorLinks,
+    title: '会社関連',
+    items: companyAndCloudLinks,
   },
   {
     title: '賃貸経営計算ツール',
@@ -127,7 +144,7 @@ export const footerNavigation: NavigationSection[] = [
 
 // 法的リンク
 export const legalLinks: NavigationItem[] = [
-  { name: '運営会社', href: '/company' },
+  { name: '会社概要', href: '/company' },
   { name: '利用規約', href: '/legal/terms' },
   { name: '個人情報保護方針', href: '/legal/privacy' },
   { name: '免責事項', href: '/disclaimer' },
