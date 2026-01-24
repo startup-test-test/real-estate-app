@@ -91,22 +91,10 @@ export default function ConsumerPolicyPage() {
           </section>
 
           {/* 更新日 */}
-          <div className="text-gray-500 text-sm mb-8">
+          <div className="text-gray-500 text-sm">
             更新日：2024/12/25
           </div>
 
-          {/* 戻るリンク */}
-          <div className="mt-8">
-            <Link
-              href="/company"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800"
-            >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              会社概要に戻る
-            </Link>
-          </div>
         </article>
       </main>
 
