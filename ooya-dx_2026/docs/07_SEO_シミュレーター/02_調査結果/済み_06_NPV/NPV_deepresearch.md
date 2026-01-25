@@ -272,7 +272,7 @@ J-REIT各社 決算説明資料・資産運用報告書
 URL:(https://j-reit.jp/)（一元的な情報ポータル）24
 活用: エリア別・用途別の「実勢割引率」のベンチマークデータとして使用。
 日本不動産研究所（JREI）
-資料: 「不動産投資家調査」
+資料: 「不動産の賃貸経営者調査」
 URL: https://www.reinet.or.jp/ 25
 活用: 期待利回り（キャップレート）の最新トレンド把握。2025年10月調査等のデータを基に、デフォルトの利回り設定を更新する。
 国土交通省
@@ -351,7 +351,7 @@ NPV（正味現在価値）とは？ 重要性と計算方法を深堀りして�
 NPV｜不動産証券化用語集, 1月 21, 2026にアクセス、 https://www.ares.or.jp/learn/glossary/npv.html
 ガイドライン等｜法制度・ガイドライン｜不動産証券化協会 -ARES-, 1月 21, 2026にアクセス、 https://www.ares.or.jp/legal/guideline/
 「ARES J-REIT Databook」 ご利用上の注意, 1月 21, 2026にアクセス、 https://j-reit.jp/statistics/imgs/data/syukeikijun.pdf
-第 53 回 「不動産投資家調査 」（2025 年 10 月現在）の調査結果, 1月 21, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
+第 53 回 「不動産の賃貸経営者調査 」（2025 年 10 月現在）の調査結果, 1月 21, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
 よくわかるJ-REIT - 三井住友トラスト・アセットマネジメント, 1月 21, 2026にアクセス、 https://www.smtam.jp/report_column/pdf/cat_22/HPJ-REIT20253LOOKS0647.pdf
 【 ファイナンス IRR 】 内部収益率 不動産投資などに - 高精度計算サイト, 1月 21, 2026にアクセス、 https://keisan.casio.jp/exec/user/1351775530
 不動産投資シミュレーションソフト「アセットランク ..., 1月 21, 2026にアクセス、 https://assetranksimulator.com/

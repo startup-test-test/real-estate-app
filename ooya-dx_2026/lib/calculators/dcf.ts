@@ -147,7 +147,7 @@ export function calculateDCF(input: DCFInput): DCFResult {
 
 /**
  * 割引率の目安を取得
- * 日本不動産研究所「不動産投資家調査」等を参考にした目安
+ * 日本不動産研究所「不動産の賃貸経営者調査」等を参考にした目安
  */
 export function getDiscountRateReference(): Array<{
   category: string

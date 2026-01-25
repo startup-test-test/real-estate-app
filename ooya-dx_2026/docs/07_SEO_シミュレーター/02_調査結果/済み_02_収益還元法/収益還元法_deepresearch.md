@@ -128,7 +128,7 @@ $$R = \text{リスクフリーレート} + \text{リスクプレミアム} - \te
 4.2 実務的なキャップレートの調査方法・データソース
 シミュレーター開発者は、以下の公的・民間データをデータベース化し、ユーザーの入力条件（エリア・築年数・構造）に応じて適切な利回りをレコメンド（推奨表示）する必要がある。
 
-4.2.1 日本不動産研究所（JREI）「不動産投資家調査」
+4.2.1 日本不動産研究所（JREI）「不動産の賃貸経営者調査」
 24
 
 最も信頼性の高いプロ向けデータ。毎年4月・10月に発表される。
@@ -246,7 +246,7 @@ OPEXの積み上げウィザード:
 不動産鑑定評価基準: https://www.mlit.go.jp/totikensangyo/totikensangyo_fr4_000043.html
 土地総合情報システム（地価公示・取引価格）: https://www.land.mlit.go.jp/webland/
 日本不動産研究所 (JREI):
-不動産投資家調査（年2回公表）: https://www.reinet.or.jp/publication/investor_survey/
+不動産の賃貸経営者調査（年2回公表）: https://www.reinet.or.jp/publication/investor_survey/
 不動産証券化協会 (ARES):
 J-REIT分配金利回り・物件情報: https://j-reit.jp/
 ARES マンスリーレポート: https://www.ares.or.jp/
@@ -334,7 +334,7 @@ def calculate_direct_cap_value(
 不動産のDCF法について解説！直接還元法との違いや計算式を紹介, 1月 19, 2026にアクセス、 https://nakajitsu.com/column/71731p/
 DCF法とは？メリット・デメリットをそれぞれ解説, 1月 19, 2026にアクセス、 https://www.ht-tax.or.jp/navi/dcf-method-advantages-and-disadvantages
 収益還元法とは？計算方法（直接還元法・DCF法）やメリットを詳しく解説！不動産価値の高め方も紹介 - GMOサイン, 1月 19, 2026にアクセス、 https://www.gmosign.com/media/work-style/shuekikangenho/
-収益物件の評価基準｜積算評価と収益還元法を不動産投資家向けに解説 - 株式会社 ASULAND, 1月 19, 2026にアクセス、 https://www.asuland.net/info/post-36/
+収益物件の評価基準｜積算評価と収益還元法を不動産の賃貸経営者向けに解説 - 株式会社 ASULAND, 1月 19, 2026にアクセス、 https://www.asuland.net/info/post-36/
 第27回 融資可否や条件を大きく左右する、物件評価の仕組みと手順 - マンション経営.東京, 1月 19, 2026にアクセス、 https://mansionkeiei.tokyo/oneroom/column/27.html
 収益還元法とは？積算法・取引事例比較法との違いを解説 - 武蔵コーポレーション, 1月 19, 2026にアクセス、 https://www.musashi-corporation.com/wealthhack/profit-return-method
 不動産投資で関わる各金融機関の特徴まとめ | 株式会社日本アセットナビゲーション, 1月 19, 2026にアクセス、 https://www.nihonasset-navi.jp/column/%E4%B8%8D%E5%8B%95%E7%94%A3%E6%8A%95%E8%B3%87%E3%81%A7%E9%96%A2%E3%82%8F%E3%82%8B%E5%90%84%E9%87%91%E8%9E%8D%E6%A9%9F%E9%96%A2%E3%81%AE%E7%89%B9%E5%BE%B4%E3%81%BE%E3%81%A8%E3%82%81/
@@ -348,11 +348,11 @@ OPEX(Operating Expenses/運営費)とは - 不動産投資用語集 - アクテ�
 第２回 自動車関連情報の利活用に関する将来ビジョン ... - 国土交通省, 1月 19, 2026にアクセス、 https://www.mlit.go.jp/common/001035258.pdf
 DCF法の意義解説 - 不動産鑑定の知識, 1月 19, 2026にアクセス、 https://fudousan-kantei.info/%E4%B8%8D%E5%8B%95%E7%94%A3%E9%91%91%E5%AE%9A%E3%81%AE%E7%9F%A5%E8%AD%98/%E4%B8%8D%E5%8B%95%E7%94%A3%E3%81%AE%E8%A9%95%E4%BE%A1%E6%89%8B%E6%B3%95/dcf%E6%B3%95%E3%81%AE%E6%84%8F%E7%BE%A9%E8%A7%A3%E8%AA%AC/
 Chapter109 不動産鑑定評価基準各論 第3章, 1月 19, 2026にアクセス、 https://ameblo.jp/oshimakantei/entry-12299946004.html
-第52回（2025年4月） 不動産投資家調査にみる日本の不動産市場の現状と展望, 1月 19, 2026にアクセス、 https://www.starts-cs.co.jp/coppo/article/toushikachousa202504/
+第52回（2025年4月） 不動産の賃貸経営者調査にみる日本の不動産市場の現状と展望, 1月 19, 2026にアクセス、 https://www.starts-cs.co.jp/coppo/article/toushikachousa202504/
 長期金利上昇がもたらす不動産市場への影響【不動産鑑定評価ならアデックス】 - 株式会社SA, 1月 19, 2026にアクセス、 https://sakk.jp/adex/appraisal/%E9%95%B7%E6%9C%9F%E9%87%91%E5%88%A9%E4%B8%8A%E6%98%87%E3%81%8C%E3%82%82%E3%81%9F%E3%82%89%E3%81%99%E4%B8%8D%E5%8B%95%E7%94%A3%E5%B8%82%E5%A0%B4%E3%81%B8%E3%81%AE%E5%BD%B1%E9%9F%BF%E3%80%90%E4%B8%8D/
 キャップレートの動向と長期国債金利とのイールドギャップ - 大和ハウス工業, 1月 19, 2026にアクセス、 https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm544.html
-第 52 回 「不動産投資家調査 」（2025 年 4 月現在）の調査結果 - 日本不動産研究所, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202504.pdf
-第 51 回 - 不動産投資家調査, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/results_survey51th.pdf
+第 52 回 「不動産の賃貸経営者調査 」（2025 年 4 月現在）の調査結果 - 日本不動産研究所, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202504.pdf
+第 51 回 - 不動産の賃貸経営者調査, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/results_survey51th.pdf
 1月 1, 1970にアクセス、 https://j-reit.jp/market/yield/
 J-REIT銘柄ランキング - JAPAN-REIT.COM, 1月 19, 2026にアクセス、 https://www.japan-reit.com/ranking/all
 利回り一覧- JAPAN-REIT.COM SP版, 1月 19, 2026にアクセス、 http://www.japan-reit.com/list/rimawari/

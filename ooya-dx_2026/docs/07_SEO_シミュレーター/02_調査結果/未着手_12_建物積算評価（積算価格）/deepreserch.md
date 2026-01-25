@@ -253,7 +253,7 @@ A. 基本的には上がりません。積算評価は「構造と築年数」�
 引用文献
 不動産投資における銀行の物件評価について教えてください - 大和財託, 1月 15, 2026にアクセス、 https://yamatozaitaku.com/column/realestate-investment/20210514/
 積算価格とは？計算方法を理解して土地と建物の価値を知ろう！ - アデプトマネジメント, 1月 15, 2026にアクセス、 https://adept-m.net/fudousantoushi/14263/
-収益物件の評価基準｜積算評価と収益還元法を不動産投資家向けに ..., 1月 15, 2026にアクセス、 https://www.asuland.net/info/post-36/
+収益物件の評価基準｜積算評価と収益還元法を不動産の賃貸経営者向けに ..., 1月 15, 2026にアクセス、 https://www.asuland.net/info/post-36/
 不動産投資の融資にもかかわる積算評価とは？ - 株式会社ラルズネット, 1月 15, 2026にアクセス、 https://www.rals.co.jp/invest/column/finance/real-estate-loan-evaluation/
 銀行融資の重要項目「積算価格」とは？税理士が「相続税路線価 ..., 1月 15, 2026にアクセス、 https://houselink.co.jp/column/859
 積算価格とは、土地と建物の価値を合算した価格 - 武蔵コーポレーション, 1月 15, 2026にアクセス、 https://www.musashi-corporation.com/wealthhack/cumulative-price
@@ -274,7 +274,7 @@ A. 基本的には上がりません。積算評価は「構造と築年数」�
 オリックス銀行はこう使え！ローン条件と特徴の総まとめ2024年 ..., 1月 15, 2026にアクセス、 https://fudousan-onepercent.com/yuushi/orix.html
 【事業者向け】容積率オーバーの物件が担保でも融資は受けられる ..., 1月 15, 2026にアクセス、 https://www.fundex.co.jp/contents/post/115
 【2026年】不動産投資の収支計算アプリおすすめ7選！賃貸経営や ..., 1月 15, 2026にアクセス、 https://propally.co.jp/journal/articles/property-investment-income-expenditure-app/
-不動産投資家のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 15, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
+不動産の賃貸経営者のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 15, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
 アパート経営シミュレーション！無料エクセルソフト5選を宅建有資格者が厳選 - アイネット, 1月 15, 2026にアクセス、 https://ainet.life/blog/simulation_free_excel
 【比較】不動産投資の無料エクセルテンプレート3選！利回りや収支を簡単計算 - Propally, 1月 15, 2026にアクセス、 https://propally.co.jp/journal/articles/property-investment-excel-template/
 建物の査定額に耐用年数はどう影響する？寿命との違いや耐用年数超過で評価がどうなるかを解説 - イエウリ, 1月 15, 2026にアクセス、 https://www.ieuri.com/bible/assessment/24244/

@@ -158,7 +158,7 @@ LTV上限
 第4章 市場参加者別のLTV目安と戦略的活用
 LTVの「適正値」は存在せず、プレイヤーの属性や投資目的によって大きく異なる。シミュレーターは、ユーザー属性に応じた適切なベンチマークを提示すべきである。
 4.1 J-REIT（機関投資家）のLTV基準
-J-REITは極めて保守的な財務戦略をとっており、個人の不動産投資家にとっての「安全性の上限」としての参考になる 12。
+J-REITは極めて保守的な財務戦略をとっており、個人の不動産の賃貸経営者にとっての「安全性の上限」としての参考になる 12。
 目安数値:
 巡航速度: **30%〜45%**程度を目安とする銘柄が多い。
 上限ガイドライン: 規約上は60%〜65%を上限としている場合が多いが、実際には格付け維持のために50%未満に抑える運用が一般的である。
@@ -320,7 +320,7 @@ LTVの定義・計算式・基礎知識: 1
 LTV｜不動産証券化用語集, 1月 21, 2026にアクセス、 https://www.ares.or.jp/learn/glossary/ltv.html
 不動産のLTVとは？LTVの目安、計算方法、LTVテストについて解説, 1月 21, 2026にアクセス、 https://www.ownersbook.jp/blog/basics_of_real_estate_investment/ltv/
 不動産担保ローンでいくら借りられる？担保評価額の目安を徹底 ..., 1月 21, 2026にアクセス、 https://www.asax.co.jp/column/1747034616-761556
-収益物件の評価基準｜積算評価と収益還元法を不動産投資家向けに解説 - 株式会社 ASULAND, 1月 21, 2026にアクセス、 https://www.asuland.net/info/post-36/
+収益物件の評価基準｜積算評価と収益還元法を不動産の賃貸経営者向けに解説 - 株式会社 ASULAND, 1月 21, 2026にアクセス、 https://www.asuland.net/info/post-36/
 私募 REIT は新たな投資対象になりうるのか - 大和総研, 1月 21, 2026にアクセス、 https://www.dir.co.jp/report/research/capital-mkt/asset/20130509_007148.pdf
 不動産投資シミュレーション｜強固なデータ基盤で長期収支を数値化 - Hakky Handbook, 1月 21, 2026にアクセス、 https://book.st-hakky.com/industry/real-estate-investment-simulation
 不動産の積算評価方法をざっくり学ぼう, 1月 21, 2026にアクセス、 https://www.c21asumi-baikyaku.com/staff-blog/237875.html
@@ -345,7 +345,7 @@ Maximum LTV/TLTV/HTLTV Ratio Requirements for Conforming and Super Conforming Mo
 自己居住用不動産等向けエクスポージャー他の LTV 比率, 1月 21, 2026にアクセス、 https://www.fsa.go.jp/news/r4/ginkou/20221130/14.pdf
 「信用リスク（標準的手法）」の概要 - 金融庁, 1月 21, 2026にアクセス、 https://www.fsa.go.jp/inter/bis/20171208-1/03.pdf
 リッチアイ | リッチロードの不動産投資シミュレーション, 1月 21, 2026にアクセス、 https://richai.info/
-不動産投資家のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 21, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
+不動産の賃貸経営者のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 21, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
 アパート経営シミュレーション！無料エクセルソフト5選を宅建有資格者が厳選 - アイネット, 1月 21, 2026にアクセス、 https://ainet.life/blog/simulation_free_excel
 失敗しないための不動産投資のシミュレーションとは？無料で使えるツールも紹介, 1月 21, 2026にアクセス、 https://vertex-c.co.jp/column/article/64
 【無料】不動産投資シミュレーションのエクセルテンプレート | 相続対策最適化計画, 1月 21, 2026にアクセス、 https://bf-consulting.jp/real-estate-investment-simulation/

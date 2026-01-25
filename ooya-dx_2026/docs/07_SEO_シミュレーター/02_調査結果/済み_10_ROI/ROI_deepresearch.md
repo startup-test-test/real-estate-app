@@ -329,7 +329,7 @@ Gate.のようなAI予測が難しくとも、「5年後・10年後・15年後�
 参考文献・公式ソース
 5 REISM Column: 不動産投資のROI・IRR・CCRの定義と違い (https://invest.re-ism.co.jp/column/column447)
 6 ランドネット: 不動産投資ROI定義・計算式 (https://landnet.co.jp/redia/7576/)
-27 日本不動産研究所: 不動産投資家調査 (https://www.livable.co.jp/fudosan-toushi/knowledge/basic/pro005/)
+27 日本不動産研究所: 不動産の賃貸経営者調査 (https://www.livable.co.jp/fudosan-toushi/knowledge/basic/pro005/)
 10 不動産証券化協会 (ARES): ガイドライン (https://www.ares.or.jp/legal/guideline/pdf/guideline_kaiji_181129.pdf)
 12 Gate. Investment Planner 機能詳細 (https://xexeq.jp/blogs/media/ai-tool366)
 24 HOME4U: 家賃収入にかかる税金計算 (https://home4u-owners.jp/contents/tax_inheritance-4-171)
@@ -366,7 +366,7 @@ NOI｜不動産証券化用語集, 1月 21, 2026にアクセス、 https://www.a
 マンション経営の利回りを徹底解説！指標の種類・平均値・計算方法を事例で確認 - リロの不動産, 1月 21, 2026にアクセス、 https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_apartment/apartment_management_yield-2/
 不動産投資の利回りは何％が理想？計算方法や相場、注意点をわかりやすく解説, 1月 21, 2026にアクセス、 https://www.tohshin.co.jp/magazine/article0093.html
 【2024年】日本の不動産投資市場を振り返る - 株式会社TSON, 1月 21, 2026にアクセス、 https://www.tson.co.jp/media/rei/rei-news/1307/
-不動産投資家のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 21, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
+不動産の賃貸経営者のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 21, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
 不動産投資におすすめの神アプリ12選！収益最大化の秘訣, 1月 21, 2026にアクセス、 https://hikonefudousan.com/recommended-apps-for-real-estate-investment/
 AI査定と将来予測であなたの営業を強くする |AI査定・投資シミュレーション - Gate., 1月 21, 2026にアクセス、 https://ai.gate.estate/investment-planner/
 大手収益物件情報サイト「健美家」をうまく使いこなそう！ | 不動産投資ユニバーシティでアパート経営・マンション経営を学ぶ, 1月 21, 2026にアクセス、 https://fudousan-onepercent.com/bukken/kenbiya.html

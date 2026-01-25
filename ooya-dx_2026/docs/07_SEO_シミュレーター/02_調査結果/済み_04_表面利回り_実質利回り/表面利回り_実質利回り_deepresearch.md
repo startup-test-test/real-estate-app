@@ -131,7 +131,7 @@ IRRを算出するためには、将来の売却価格を予測する必要が�
 5. 2025年市場相場とトレンド分析
 シミュレーターのデフォルト値や、算出された利回りの良し悪しを判定するベンチマークとして、最新の市場データが必要です。2025年時点でのトレンドを整理します。
 5.1 地域別・用途別の期待利回り動向
-日本不動産研究所「第53回不動産投資家調査（2025年10月）」等のデータに基づくと、以下のような傾向が見られます1。
+日本不動産研究所「第53回不動産の賃貸経営者調査（2025年10月）」等のデータに基づくと、以下のような傾向が見られます1。
 
 地域
 アセットタイプ
@@ -225,7 +225,7 @@ Excel自作ツール 25
 8. 公式データソースとAPI活用
 信頼性の高いシミュレーターを構築するために、バックエンドで参照・連携すべき公式データソースを列挙します。
 国土交通省「不動産価格指数」: 住宅・商業用不動産の価格トレンド把握。APIまたはCSVインポートで定期更新し、価格推移グラフの参照元とする32。
-日本不動産研究所「不動産投資家調査」: 期待利回り（キャップレート）のベンチマークデータとして利用1。
+日本不動産研究所「不動産の賃貸経営者調査」: 期待利回り（キャップレート）のベンチマークデータとして利用1。
 レインズ（REINS）: 成約事例データ。直接のAPI連携は難しいが、不動産会社と提携して成約データを匿名化して取り込むことで、相場判定の精度を上げることが可能。
 地価公示・路線価: 国税庁および国土交通省のデータを基に、積算評価（土地値）の概算を自動算出する機能に使用36。
 国税庁「耐用年数表」: 減価償却計算の基礎マスタとしてデータベース化する。
@@ -268,8 +268,8 @@ $$\text{BER} = \frac{\text{運営経費(OPEX)} + \text{年間返済額(ADS)}}{\t
 ※ この数値が入居率を下回ると赤字転落
 (以上、調査報告書)
 引用文献
-第 53 回 「不動産投資家調査 」（2025 年 10 月 ... - 日本不動産研究所, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
-第52回（2025年4月） 不動産投資家調査にみる日本の不動産市場の現状と展望, 1月 19, 2026にアクセス、 https://www.starts-cs.co.jp/coppo/article/toushikachousa202504/
+第 53 回 「不動産の賃貸経営者調査 」（2025 年 10 月 ... - 日本不動産研究所, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
+第52回（2025年4月） 不動産の賃貸経営者調査にみる日本の不動産市場の現状と展望, 1月 19, 2026にアクセス、 https://www.starts-cs.co.jp/coppo/article/toushikachousa202504/
 表面利回りと実質利回りの差について、シミュレーションに基づき解説 - アレップス, 1月 19, 2026にアクセス、 https://areps.co.jp/knowledge/surface-yield-real-yield
 表面利回りと実質利回りとは？計算方法も合わせて解説 - プレサンスコーポレーション, 1月 19, 2026にアクセス、 https://www.pressance.co.jp/yuzusachi/magazine/monetization/yield/1786/
 不動産投資における表面利回りと実質利回りの違いと注意点 - TECROWD, 1月 19, 2026にアクセス、 https://tecrowd.jp/column/real-estate-crowdfunding/gross-of-return-real-difference/
@@ -294,7 +294,7 @@ IRRとは？計算式や不動産投資での活用のポイントもわかり�
 投資用区分マンション価格が2400万円台、利回りは過去最低の6.56％に - PR TIMES, 1月 19, 2026にアクセス、 https://prtimes.jp/main/html/rd/p/000000528.000001240.html
 失敗しないための不動産投資のシミュレーションとは？無料で使えるツールも紹介, 1月 19, 2026にアクセス、 https://vertex-c.co.jp/column/article/64
 不動産投資アプリ-楽待 - Google Play のアプリ, 1月 19, 2026にアクセス、 https://play.google.com/store/apps/details?id=jp.co.firstlogic.atomicity&hl=ja
-不動産投資家のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 19, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
+不動産の賃貸経営者のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 19, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
 1月 1, 1970にアクセス、 https://www.kenbiya.com/ar/ns/research/market/
 【2026年】不動産投資アプリおすすめ9選！物件管理や利回りシミュレーションが簡単に！, 1月 19, 2026にアクセス、 https://propally.co.jp/journal/articles/property-investment-app/
 不動産投資に役立つアプリおすすめ13選！投資フェーズ別に分けて紹介 | アスピック, 1月 19, 2026にアクセス、 https://www.aspicjapan.org/asu/article/74261

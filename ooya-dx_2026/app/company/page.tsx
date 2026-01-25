@@ -58,7 +58,7 @@ export default function CompanyPage() {
           <section className="mb-12">
             <p className="text-gray-700 leading-relaxed mb-6">
               株式会社StartupMarketingは、不動産オーナー向けの業務効率化ツール「大家DX」の開発・運営を行っています。
-              代表自身が不動産投資家として7戸の物件を購入・運用した経験を活かし、実務に役立つシミュレーターやツールを提供しています。
+              代表自身が不動産の賃貸経営者として7戸の物件を購入・運用した経験を活かし、実務に役立つシミュレーターやツールを提供しています。
             </p>
             <p className="text-gray-700 leading-relaxed">
               また、不動産業界に特化したWebサイト制作・システム開発の受託も承っております。

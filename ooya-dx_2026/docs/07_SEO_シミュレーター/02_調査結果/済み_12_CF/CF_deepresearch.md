@@ -396,7 +396,7 @@ URL: https://www.nta.go.jp/taxes/shiraberu/taxanswer/joto/3202.htm 23
 用途：個人のCFシミュレーションにおける税額計算。
 URL: https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm 37
 9.2 市場統計・ベンチマーク
-日本不動産研究所 (JREI)「不動産投資家調査」
+日本不動産研究所 (JREI)「不動産の賃貸経営者調査」
 用途：エリア別・アセットタイプ別の期待利回り（Cap Rate）のデフォルト値設定。
 URL: https://www.reinet.or.jp/ 39
 不動産証券化協会 (ARES) 不動産証券化用語集
@@ -451,5 +451,5 @@ NOI｜不動産証券化用語集, 1月 21, 2026にアクセス、 https://www.a
 不動産投資アプリ厳選5選！失敗しないためのアプリ活用術 | ウリタツ【不動産売却の達人】, 1月 21, 2026にアクセス、 https://vertex-j.com/magazine/fudousantoushi-apli/
 所得税の計算方法は？税率・控除、2025年度税制改正のポイントをわかりやすく解説 - Freee, 1月 21, 2026にアクセス、 https://www.freee.co.jp/kb/kb-payroll/how-to-calculate-income-tax/
 令和8年分の源泉徴収税額表を公表（国税庁） - PSRネットワーク, 1月 21, 2026にアクセス、 https://www.psrn.jp/topics/detail.php?id=37867
-第 53 回 「不動産投資家調査 」（2025 年 10 月現在）の調査結果, 1月 21, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
+第 53 回 「不動産の賃貸経営者調査 」（2025 年 10 月現在）の調査結果, 1月 21, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
 一棟アパート価格が調査以来最高値を更新し利回り8％前後を維持 「収益物件 市場動向マンスリーレポート」2025年10月期 - 株式会社LIFULL, 1月 21, 2026にアクセス、 https://lifull.com/news/45311/

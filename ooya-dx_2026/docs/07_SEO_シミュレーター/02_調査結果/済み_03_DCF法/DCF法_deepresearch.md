@@ -156,8 +156,8 @@ DCF法シミュレーターの信頼性は、入力するパラメーター（�
 日本のDCF評価におけるリスクフリーレートは、10年国債（JGB）利回りが基準となる。
 調査方法: 財務省のウェブサイト、日本経済新聞のマーケット欄、Bloomberg端末など。
 2025年の動向: 日本銀行の金融政策正常化に伴い、長らく続いたゼロ金利政策が転換され、金利のある世界へと移行している。2025年時点では、長期金利の上昇圧力が存在し、これが不動産の期待利回りに上昇圧力をかける要因となっている13。シミュレーターでは、固定値ではなく外部API等で最新金利を参照するか、ユーザーが任意の金利シナリオを設定できる機能が必須である。
-4.2 不動産投資家調査データの活用
-**一般財団法人日本不動産研究所（JREI）**が半期ごとに公表する「不動産投資家調査」は、プロフェッショナルな投資家（アセットマネージャー、デベロッパー、銀行等）の期待利回りをアンケート調査したものであり、実務において最も信頼されるベンチマークデータの一つである21。
+4.2 不動産の賃貸経営者調査データの活用
+**一般財団法人日本不動産研究所（JREI）**が半期ごとに公表する「不動産の賃貸経営者調査」は、プロフェッショナルな投資家（アセットマネージャー、デベロッパー、銀行等）の期待利回りをアンケート調査したものであり、実務において最も信頼されるベンチマークデータの一つである21。
 主なデータポイント（2025年4月・10月調査等の傾向から推察）:
 期待利回り（Discount Rate相当）:
 東京・丸の内（Aクラスオフィス）: 3.0% 〜 3.2%（横ばい）24。
@@ -210,7 +210,7 @@ URL: https://www.mlit.go.jp/totikensetu/totikensetu_tk3_000024.html
 証券化不動産におけるDCF法適用の詳細規定。
 URL: https://www.mlit.go.jp/common/001204077.pdf 14
 6.2 市場統計・データ機関
-日本不動産研究所（JREI） 不動産投資家調査:
+日本不動産研究所（JREI） 不動産の賃貸経営者調査:
 期待利回り、還元利回りの市場相場データ。
 URL: https://www.reinet.or.jp/ 23
 三井住友トラスト基礎研究所:
@@ -249,9 +249,9 @@ NEWS RELEASE - ジャパンリアルエステイト投資法人, 1月 19, 2026�
 アパート経営シミュレーション！無料エクセルソフト5選を宅建有資格者が厳選 - アイネット, 1月 19, 2026にアクセス、 https://ainet.life/blog/simulation_free_excel
 2025年2月期決算説明資料 - 野村不動産マスターファンド投資法人, 1月 19, 2026にアクセス、 https://www.nre-mf.co.jp/file/top-financial-2a107f0a217507f391091b34ecfa540844072977.pdf
 収益還元法｜用語集 - プレサンスコーポレーション, 1月 19, 2026にアクセス、 https://www.pressance.co.jp/crowdfunding/otherPage/words/nobody/06.html
-第52回（2025年4月） 不動産投資家調査にみる日本の不動産市場の現状と展望, 1月 19, 2026にアクセス、 https://www.starts-cs.co.jp/coppo/article/toushikachousa202504/
-第 53 回 「不動産投資家調査 」（2025 年 10 月現在）の調査結果, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
-第 52 回 「不動産投資家調査 」（2025 年 4 月現在）の調査結果 - 日本不動産研究所, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202504.pdf
+第52回（2025年4月） 不動産の賃貸経営者調査にみる日本の不動産市場の現状と展望, 1月 19, 2026にアクセス、 https://www.starts-cs.co.jp/coppo/article/toushikachousa202504/
+第 53 回 「不動産の賃貸経営者調査 」（2025 年 10 月現在）の調査結果, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202510.pdf
+第 52 回 「不動産の賃貸経営者調査 」（2025 年 4 月現在）の調査結果 - 日本不動産研究所, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/published-document_main_the-japanese-real-estate-investor-survey_202504.pdf
 ARESマンスリーレポート（2025年2月） - 不動産証券化協会, 1月 19, 2026にアクセス、 https://www.ares.or.jp/action/monthly/pdf/ares_monthly_report_202502.pdf
 失敗しないための不動産投資のシミュレーションとは？無料で使えるツールも紹介, 1月 19, 2026にアクセス、 https://vertex-c.co.jp/column/article/64
 不動産投資におけるDCF法の概要と算出法を解説！計算ツール3選, 1月 19, 2026にアクセス、 https://fudousan-kyokasho.com/discounted-cash-flow-method-10589

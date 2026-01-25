@@ -309,7 +309,7 @@ IRR vs. XIRR: What's the Difference? - Datarails, 1月 19, 2026にアクセス�
 不動産を売却したときの税金の計算方法。実際のシミュレーションも紹介, 1月 19, 2026にアクセス、 https://nakajitsu.com/column/66063p/
 Report - 株式会社三井住友トラスト基礎研究所, 1月 19, 2026にアクセス、 https://www.smtri.jp/report_column/report/pdf/report_20250114.pdf
 日本の不動産アセットマネジメント業界：ノルマ・KPI・労働環境の完全ガイド（2025年版） - - bloom, 1月 19, 2026にアクセス、 https://bloom-job.com/workingenvironment/
-第 50 回 「不動産投資家調査 」（2024 年 4 月現在）の調査結果, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/publication_data50th.pdf
+第 50 回 「不動産の賃貸経営者調査 」（2024 年 4 月現在）の調査結果, 1月 19, 2026にアクセス、 https://www.reinet.or.jp/pdf/REIS/publication_data50th.pdf
 ARESマンスリーレポート（2024年8月） - J-REIT.jp, 1月 19, 2026にアクセス、 https://j-reit.jp/download/info/1371.pdf
 Japan Cap Rate Survey March 2025 - CBRE, 1月 19, 2026にアクセス、 https://www.cbre.co.jp/en/insights/reports/japan-cap-rate-survey-march-2025
 IRR（内部収益率）とは？計算方法や利回りとの違いをわかりやすく解説 - 武蔵コーポレーション, 1月 19, 2026にアクセス、 https://www.musashi-corporation.com/wealthhack/irr
@@ -324,7 +324,7 @@ vol.23 不動産投資における収益率の測り方 - メディア掲載情�
 収支シミュレーションのやり方【不動産投資】 | 不動産AI研究所 - 株式会社TSON, 1月 19, 2026にアクセス、 https://www.tson.co.jp/media/rei/429/
 失敗しないための不動産投資のシミュレーションとは？無料で使えるツールも紹介, 1月 19, 2026にアクセス、 https://vertex-c.co.jp/column/article/64
 不動産投資アプリ-楽待 - Google Play のアプリ, 1月 19, 2026にアクセス、 https://play.google.com/store/apps/details?id=jp.co.firstlogic.atomicity&hl=ja
-不動産投資家のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 19, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
+不動産の賃貸経営者のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 19, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
 不動産投資指標のIRR（内部収益率）とシミュレーションを利用して2000万円を不動産と株で運用した際の収益率を比較する, 1月 19, 2026にアクセス、 https://assetranksimulator.com/2000%E4%B8%87%E5%86%86%E3%81%AE%E9%81%8B%E7%94%A8%E5%85%88%E3%82%92%E4%B8%8D%E5%8B%95%E7%94%A3%E4%BB%A5%E5%A4%96%E3%81%A7%E9%81%B8%E6%8A%9E%E8%82%A2%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95.html
 ARES マンスリーレポート （2024年3月） - J-REIT.jp, 1月 19, 2026にアクセス、 https://j-reit.jp/download/info/1348.pdf
 2024年9 期決算説明資料, 1月 19, 2026にアクセス、 https://www.j-re.co.jp/file/term-dad0e8e75e9488be689cac51a47ab5f3c1600525.pdf

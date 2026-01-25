@@ -284,11 +284,11 @@ No.5404 中古資産の耐用年数 - 国税庁, 1月 15, 2026にアクセス、
 令和6年度国土交通省税制改正概要, 1月 15, 2026にアクセス、 https://www.mlit.go.jp/page/content/001712685.pdf
 令和6年度税制改正の大綱 - 総務省, 1月 15, 2026にアクセス、 https://www.soumu.go.jp/main_content/000919575.pdf
 2024年度（令和6年度）税制改正大綱決定！不動産市場への影響は - さくら事務所, 1月 15, 2026にアクセス、 https://www.sakurajimusyo.com/opinion/law/277/
-【2025年12月決定】令和8年度税制改正大綱｜不動産投資家が知るべき5年ルールと3つの対策, 1月 15, 2026にアクセス、 https://roomstyle.co.jp/media/r8-tax
+【2025年12月決定】令和8年度税制改正大綱｜不動産の賃貸経営者が知るべき5年ルールと3つの対策, 1月 15, 2026にアクセス、 https://roomstyle.co.jp/media/r8-tax
 令和2年分 青色申告決算書(一般用)の書き方 税 務 署 - 国税庁, 1月 15, 2026にアクセス、 https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2020/pdf/037.pdf
 決算書・収支内訳書作成コーナー」 で減価償却費の入力を行う場合の操作, 1月 15, 2026にアクセス、 https://www.city.unnan.shimane.jp/unnan/kurashi/zeikin/juuminzei/files/gennkasyoukyaku-tebiki.pdf
 不動産所得と事業所得を兼業する場合の青色申告特別控除の適用順序, 1月 15, 2026にアクセス、 https://ryuchan-tax.com/2020/11/07/taxreturn-9/
 【1室で65万控除可能なケース】事業所得＋不動産所得の場合の青色申告/65万円控除の順番は？/損益通算との関係 - はまだ税理士法人, 1月 15, 2026にアクセス、 https://www.mikagecpa.com/archives/30174/
-不動産投資家のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 15, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
+不動産の賃貸経営者のオススメ！シミュレーションに役立つ無料ツール3選 - インカムラボ, 1月 15, 2026にアクセス、 https://incomlab.jp/real-estate-investment-simulation-9866
 アパート経営シミュレーション！無料エクセルソフト5選を宅建有資格者が厳選 - アイネット, 1月 15, 2026にアクセス、 https://ainet.life/blog/simulation_free_excel
 失敗しないための不動産投資のシミュレーションとは？無料で使えるツールも紹介, 1月 15, 2026にアクセス、 https://vertex-c.co.jp/column/article/64
