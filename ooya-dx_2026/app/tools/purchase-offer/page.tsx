@@ -128,9 +128,11 @@ export default function PurchaseOfferPage() {
   const contDate = formatDateJP(formData.contractDate);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <SharedHeader />
-      <div className="h-[72px] sm:h-[88px]" />
+    <div className="min-h-screen bg-gray-50 print:min-h-0 print:bg-white">
+      <div className="print:hidden">
+        <SharedHeader />
+      </div>
+      <div className="h-[72px] sm:h-[88px] print:hidden" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* ヘッダー */}
@@ -553,7 +555,7 @@ export default function PurchaseOfferPage() {
 
           {/* プレビュー（スティッキー） */}
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="bg-white rounded-2xl shadow-sm p-6 print:p-0 print:shadow-none print:bg-white">
+            <div className="bg-white rounded-2xl shadow-sm p-6 print:p-[15mm] print:shadow-none print:bg-white">
               <h2 className="text-xl font-bold text-gray-900 mb-4 pb-4 border-b print:hidden">プレビュー</h2>
 
               {/* A4プレビュー */}
@@ -774,14 +776,25 @@ export default function PurchaseOfferPage() {
         @media print {
           @page {
             size: A4;
-            margin: 15mm;
+            margin: 0;
           }
-          body {
+          html, body {
+            margin: 0;
+            padding: 0;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
-          .print\\:hidden {
+          .print\\:hidden,
+          header,
+          nav,
+          footer,
+          .no-print,
+          [class*="fixed"] {
             display: none !important;
+            position: static !important;
+          }
+          * {
+            position: static !important;
           }
         }
       `}</style>
