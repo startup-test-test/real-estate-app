@@ -258,6 +258,10 @@ export default function CompanyPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
+                  <Link href="/company/plastics-smart" className="text-blue-600 hover:text-blue-800 hover:underline">プラスチック削減の取り組み</Link>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 mt-0.5">●</span>
                   <Link href="/company/link" className="text-blue-600 hover:text-blue-800 hover:underline">相互リンク</Link>
                 </li>
               </ul>
