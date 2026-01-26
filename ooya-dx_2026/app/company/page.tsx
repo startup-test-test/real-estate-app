@@ -262,6 +262,10 @@ export default function CompanyPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
+                  <Link href="/company/lib-partner" className="text-blue-600 hover:text-blue-800 hover:underline">リチウムイオン電池の火災防止啓発</Link>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 mt-0.5">●</span>
                   <Link href="/company/link" className="text-blue-600 hover:text-blue-800 hover:underline">相互リンク</Link>
                 </li>
               </ul>
