@@ -1,0 +1,54 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31703149,"NPV（正味現在価値）とは？賃貸経営での計算方法をわかりやすく解説
+NPV（正味現在価値）は、将来のキャッシュフローを現在の価値に換算した合計から初期投資額を差し引いた指標です。賃貸経営におけるNPVの計算方法と活用方法を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+NPV（正味現在価値）とは
+**NPV（Net Present Value：正味現在価値）**は、将来得られるキャッシュフローを現在の価値に割り引いて合計し、初期投資額を差し引いた値です。
+
+簡単に言うと、**「今の価値に換算して、いくら得するのか（損するのか）」**を表す指標です。
+
+なぜNPVが重要なのか
+観点	説明
+時間の価値	将来のお金を現在の価値に換算できる
+絶対額の把握	金額ベースで収益性を確認できる
+比較検討	異なる条件の案件を同じ基準で比較できる
+NPVがプラスであれば投じた資金以上のリターンが期待できることを意味し、マイナスであれば期待リターンを下回る可能性を示唆します。
+
+NPVの計算式
+NPV = Σ (CFt / (1 + r)^t) - C0
+CFt：t年目のキャッシュフロー
+r：割引率
+t：年数
+C0：初期投資額
+NPVの計算例
+項目	金額
+初期投資額	1,000万円
+1年目CF	120万円
+2年目CF	120万円
+3年目CF	120万円
+3年目売却額	1,050万円
+割引率	5%
+NPV = 120/(1.05)^1 + 120/(1.05)^2 + (120+1050)/(1.05)^3 - 1000
+    = 114.3 + 108.8 + 1010.5 - 1000
+    = 約233.6万円
+NPVとIRRの違い
+指標	表すもの	単位
+NPV	収益の絶対額	円
+IRR	収益率	%
+NPVは「いくら儲かるか」、IRRは「何%のリターンか」を表します。両方を組み合わせて検討することで、より多角的な分析が可能です。
+
+NPVの活用シーン
+物件取得の検討 - 購入価格が妥当かどうかの参考になる
+売却タイミング - 売却時期による収益性の変化を把握
+融資条件の比較 - 金利や借入期間の違いによる影響を確認
+NPVの注意点
+割引率の設定によって結果が大きく変わる
+将来のキャッシュフロー予測に依存する
+売却価格の想定で結果が変動する
+実際にNPVを計算してみる
+大家DXのIRR計算ツールでは、NPVも同時に計算できます。
+
+→IRR計算ツールを使う",良好,11%,良好,34%,良好,53%,https://www.ma-cp.com/about-ma/net-present-value/,"NPV（正味現在価値）とは？ 重要性と計算方法を深堀りして ... ",https://masouken.com/NPV,"NPV(正味現在価値)とは？意味や計算方法・メリット ... ",https://mitsukitax.tkcnf.com/the-npv-method,"NPV計算方法とIRR比較で失敗しない意思決定と投資戦略 ",https://ma-la.co.jp/m-and-a/net-present-value/,"正味現在価値（NPV）とは？計算式・判断基準・活用シーンを ... ",https://biz.moneyforward.com/work-efficiency/basic/18164/,"NPV関数の使い方：エクセルで正味現在価値を計算して投資 ... ",https://www.propertyagent.co.jp/contents/5061/,"投資判断方法の一つであるNPVについて理解しよう！ ",https://ma-la.co.jp/m-and-a/npv-calculation/,"NPV（正味現在価値）とは？計算方法とM&amp;Aでの活用事例を ... ",https://globis.jp/article/4562/,"NPV（正味現在価値）とは？意味・計算方法・使い方を図解で ... ",https://freeway-keiri.com/blog/view/407,"NPV（正味現在価値）とは何か？その意味と計算式 ",https://globis.jp/article/m1aqmbgay/,"NPV（正味現在価値）とは？投資判断で迷わなくなる財務分析 ... ",https://ma-la.co.jp/m-and-a/net-present-value/,"正味現在価値（NPV）とは？計算式・判断基準・活用シーンを ... ",https://www.ma-cp.com/about-ma/net-present-value/,"NPV（正味現在価値）とは？ 重要性と計算方法を深堀りして ... ",https://houselink.co.jp/column/1919,"NPV（正味現在価値）とは？不動産投資における活用法 ... ",https://www.enegaeru.com/thescienceofpaybackperiod,"投資回収期間（元が取れる？元が取れない？）の科学 ? 理論 ",https://mitsukitax.tkcnf.com/the-npv-method,"NPV計算方法とIRR比較で失敗しない意思決定と投資戦略 ",https://ma-la.co.jp/m-and-a/npv-calculation/,"NPV（正味現在価値）とは？計算方法とM&amp;Aでの活用事例を ... ",https://by-independent.com/column/what-is-npv-calculation-method-and-practice/,"NPVとは？正味現在価値の計算方法から実務での活用まで ... ",https://www.ma-cp.com/about-ma/discounted-present-value/,"M&amp;Aにおける割引現在価値とは？ 計算方法や重要性 ",https://gentosha-go.com/articles/-/69583,"「NPV（正味現在価値）」とは？不動産投資における活用法 ... ",https://www.enegaeru.com/hazardmap-solarpower-storagebattery,"ハザードマップで太陽光発電の投資収益率が2.2%向上！災害 ... ",https://ccd.cloud/Result/detail?id=31703146,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31688608,https://ccd.cloud/Result/detail?id=31701380,,

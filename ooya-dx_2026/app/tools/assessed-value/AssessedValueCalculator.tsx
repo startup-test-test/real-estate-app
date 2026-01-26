@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -49,7 +50,17 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '積算評価（原価法）とは', level: 2 },
   { id: 'land-valuation', title: '土地の評価方法', level: 3 },
   { id: 'building-valuation', title: '建物の評価方法', level: 3 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface Props {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // 早見表データ（構造別の法定耐用年数）
 const quickReferenceData = [
@@ -112,7 +123,7 @@ function calculateAssessedValue(
 // =================================================================
 // コンポーネント
 // =================================================================
-export function AssessedValueCalculator() {
+export function AssessedValueCalculator({ relatedGlossary = [] }: Props) {
   // 土地入力
   const [rosenkaPerSqm, setRosenkaPerSqm] = useState<number>(0) // 路線価（千円/㎡）
   const [landAreaSqm, setLandAreaSqm] = useState<number>(0) // 土地面積（㎡）
@@ -397,6 +408,25 @@ export function AssessedValueCalculator() {
             <p className="text-gray-700 mb-4 leading-relaxed">
               法定耐用年数を超えた建物（例：築25年の木造）は、積算評価上の建物価値はゼロとなります。
             </p>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

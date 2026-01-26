@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -37,12 +38,25 @@ const tocItems: TocItem[] = [
   { id: 'noi', title: 'NOI（純営業収益）の計算', level: 3 },
   { id: 'cap-rate', title: 'キャップレートの目安', level: 3 },
   { id: 'example', title: '具体的な計算例', level: 3 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+// =================================================================
+// 型定義
+// =================================================================
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface Props {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // コンポーネント
 // =================================================================
-export function IncomeCapitalizationCalculator() {
+export function IncomeCapitalizationCalculator({ relatedGlossary = [] }: Props) {
   // 入力状態（万円単位）
   const [annualRentInMan, setAnnualRentInMan] = useState<number>(0)
   const [vacancyRate, setVacancyRate] = useState<number>(5)
@@ -364,6 +378,24 @@ export function IncomeCapitalizationCalculator() {
                 <li>6. 収益価格：912万円 ÷ 5% = <span className="font-semibold">1億8,240万円</span></li>
               </ul>
             </div>
+
+            {/* 関連用語セクション */}
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <div className="flex flex-wrap gap-2">
+                  {relatedGlossary.map((term) => (
+                    <Link
+                      key={term.slug}
+                      href={`/glossary/${term.slug}`}
+                      className="inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors"
+                    >
+                      {term.title}
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

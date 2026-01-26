@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -24,12 +25,22 @@ const tocItems: TocItem[] = [
   { id: 'about', title: 'IRR（内部収益率）とは', level: 2 },
   { id: 'difference', title: '利回りとIRRの違い', level: 3 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface IRRCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function IRRCalculator() {
+export function IRRCalculator({ relatedGlossary = [] }: IRRCalculatorProps) {
   // 入力状態
   const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0) // 物件価格
   const [purchaseCostsInMan, setPurchaseCostsInMan] = useState<number>(0) // 購入諸経費
@@ -337,6 +348,25 @@ export function IRRCalculator() {
                 <li>・<strong>減価償却・デッドクロス</strong>：税務上の損益と実際のキャッシュフローは異なる場合があります</li>
               </ul>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}
@@ -349,7 +379,7 @@ export function IRRCalculator() {
           <RelatedTools currentPath="/tools/irr" />
 
           {/* CTA */}
-          <div className="mt-16">
+          <div className="mt-8">
             <SimulatorCTA />
           </div>
 

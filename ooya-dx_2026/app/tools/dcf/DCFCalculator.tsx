@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -28,12 +29,22 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'DCF法の計算式', level: 3 },
   { id: 'parameters', title: '主要パラメーター', level: 3 },
   { id: 'vs-direct', title: '直接還元法との違い', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface DCFCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function DCFCalculator() {
+export function DCFCalculator({ relatedGlossary = [] }: DCFCalculatorProps) {
   // 入力状態
   const [initialNoiInMan, setInitialNoiInMan] = useState<number>(0)
   const [discountRate, setDiscountRate] = useState<number>(4.0)
@@ -439,6 +450,24 @@ export function DCFCalculator() {
               </table>
             </div>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

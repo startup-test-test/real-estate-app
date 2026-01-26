@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { StampTaxCalculator } from './StampTaxCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -89,6 +90,9 @@ const breadcrumbSchema = {
 }
 
 export default function StampTaxPage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/stamp-tax')
+    .map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -104,7 +108,7 @@ export default function StampTaxPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <StampTaxCalculator />
+      <StampTaxCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

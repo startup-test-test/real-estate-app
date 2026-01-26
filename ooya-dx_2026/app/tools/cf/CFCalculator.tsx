@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -24,12 +25,22 @@ const tocItems: TocItem[] = [
   { id: 'about', title: 'キャッシュフロー（CF）とは', level: 2 },
   { id: 'formula', title: 'キャッシュフローの計算式', level: 3 },
   { id: 'cf-tree', title: 'キャッシュフローツリー', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface CFCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function CFCalculator() {
+export function CFCalculator({ relatedGlossary = [] }: CFCalculatorProps) {
   // 基本入力
   const [annualGPIInMan, setAnnualGPIInMan] = useState<number>(0) // 満室年収（万円）
   const [vacancyRate, setVacancyRate] = useState<number>(5) // 空室率（%）
@@ -279,6 +290,24 @@ export function CFCalculator() {
               </ul>
             </div>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

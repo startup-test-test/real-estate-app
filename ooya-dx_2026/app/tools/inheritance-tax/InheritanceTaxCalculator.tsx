@@ -20,6 +20,15 @@ import {
   formatManYen,
 } from '@/lib/calculators/inheritanceTax'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface InheritanceTaxCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // =================================================================
 // 早見表データ（3列：遺産総額・配偶者あり・配偶者なし）
 // =================================================================
@@ -38,12 +47,13 @@ const tocItems: TocItem[] = [
   { id: 'basic-deduction', title: '基礎控除の計算', level: 3 },
   { id: 'calculation', title: '相続税の計算方法', level: 3 },
   { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function InheritanceTaxCalculator() {
+export function InheritanceTaxCalculator({ relatedGlossary = [] }: InheritanceTaxCalculatorProps) {
   // 入力状態（万円単位で入力を受け付ける）
   const [totalAssetsInMan, setTotalAssetsInMan] = useState<number>(0)
   const [debtsInMan, setDebtsInMan] = useState<number>(0)
@@ -333,6 +343,25 @@ export function InheritanceTaxCalculator() {
                 </tbody>
               </table>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* =================================================================

@@ -1,0 +1,38 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707519,"LTV（ローン対価値比率）とは？賃貸経営での計算方法を解説
+LTV（ローン対価値比率）は、物件価値に対する借入額の割合を示す指標です。賃貸経営におけるLTVの計算方法と目安を解説します。
+
+LTV（ローン対価値比率）とは
+**LTV（Loan to Value：ローン対価値比率）**は、物件価値（または購入価格）に対する借入額の割合を示す指標です。
+
+担保余力を測る目安として使われます。
+
+LTVの計算式
+LTV = 借入額 ÷ 物件価値 × 100（%）
+計算例
+項目	金額
+物件価格	5,000万円
+借入額	4,000万円
+自己資金	1,000万円
+LTV = 4,000万円 ÷ 5,000万円 × 100 = 80%
+LTVの目安
+LTV	評価
+60%以下	保守的（自己資金多め）
+70～80%	一般的な水準
+80～90%	やや高め
+90%以上	フルローンに近い
+LTV 80%程度が一般的な基準とされることがあります。
+
+LTVが高いとどうなるか
+金利上昇時のリスクが高い
+物件価格下落時に「担保割れ」の可能性
+追加融資が受けにくくなる
+LTVが低いとどうなるか
+返済余力に余裕がある
+追加融資を受けやすい
+ただし、自己資金効率（CCR）は低下
+LTVとCCRの関係
+LTV	自己資金	CCRへの影響
+低い	多い	CCR低下
+高い	少ない	CCR上昇
+LTVを高くするとレバレッジ効果でCCRは上がりますが、リスクも増加します。",良好,14%,良好,41%,良好,43%,https://www.n-estem.co.jp/e-trust/column/unyou/2402-05/,"LTVは不動産の投資判断基準の1つ！ 基本的な考え方や目安を ... ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/ltv/,"不動産のLTVとは？LTVの目安、計算方法、LTVテスト ... ",https://land.home4u.jp/guide/land-usage-howto-64-6483,"不動産投資における「LTV」とは？活用方法と投資判断の2 ... ",https://www.nomura.co.jp/terms/english/other/A02931.html,"LTV（Loan to Value）｜証券用語解説集 - 野村證券 ",https://assetranksimulator.com/不動産投資指標のltv.html,"不動産投資指標のLTV (Loan to Value)を利用して借入の安全性 ... ",https://www.hercules-r.co.jp/blog/view/12,"安全な不動産投資【LTVの適正数値】｜ローントゥバリューの ... ",https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://veritas-investment.jp/lounge/contents/5289/,"2020.07.07 ROIとは？不動産投資に必須の3つの指標 ",https://note.com/cast25/n/n028c73fd28de,"不動産投資の基礎知識 LTV（ローン・トゥ・バリュー - note ",https://www.agent-hp.com/knowledge-glossary-finance-ltv/,"LTV（ローン・トゥ・バリュー） - ウェルス エージェント ",https://www.n-estem.co.jp/e-trust/column/unyou/2402-05/,"LTVは不動産の投資判断基準の1つ！ 基本的な考え方や目安を ... ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/ltv/,"不動産のLTVとは？LTVの目安、計算方法、LTVテスト ... ",https://land.home4u.jp/guide/land-usage-howto-64-6483,"不動産投資における「LTV」とは？活用方法と投資判断の2 ... ",https://www.nomura.co.jp/terms/english/other/A02931.html,"LTV（Loan to Value）｜証券用語解説集 - 野村證券 ",https://www.maruhama.biz/不動産オーナー様へ/賃貸不動産の相談/家賃収入の流れ?空室-未回収損/家賃収入の流れ?運営費-opex/家賃収入の流れ?営業純利益-noi/家賃収入の流れ?年間負債支出-ads/家賃収入の流れ?税引き後cf-減価償却/初期投資分析-fcr編-利回り/初期投資分析-ccr編-利回り/初期投資分析-利回り編まとめ/初期投資分析-k/初期投資分析-レバレッジ編/初期投資分析-効率性をみる3つの指標編/初期投資分析-dcr編-安全性/初期投資分析-ber編-安全性/初期投資分析-ltv編-安全性/,"初期投資分析-LTV編（安全性） - 丸浜不動産コンサルティング ",https://www.agent-hp.com/knowledge-glossary-finance-ltv/,"LTV（ローン・トゥ・バリュー） - ウェルス エージェント ",https://tangem.com/ja/glossary/loan-to-value-ltv/,"ローン・トゥ・バリュー（LTV） 暗号資産における意味 ",https://fgh.co.jp/lab/presidents_investment-bldg15/,"【不動産投資 一棟編?】負債比率（LTV：Loan To Value） ",https://note.com/cast25/n/n028c73fd28de,"不動産投資の基礎知識 LTV（ローン・トゥ・バリュー - note ",https://www.chu-kan.co.jp/glossary/ltv（loan-to-value）/,"LTV（Loan To Value） | 不動産用語集 ",https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31707515,https://ccd.cloud/Result/detail?id=31707517,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31703149,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31688517,https://ccd.cloud/Result/detail?id=31688514,,

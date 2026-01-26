@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { CCRCalculator } from './CCRCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 export const metadata: Metadata = {
   title: '賃貸経営のCCR（自己資金配当率） 計算シミュレーション｜早見表付き | OOYA.tech',
@@ -38,5 +39,8 @@ export const metadata: Metadata = {
 }
 
 export default function CCRPage() {
-  return <CCRCalculator />
+  const relatedGlossary = getGlossaryTermsByTool('/tools/ccr')
+    .map(term => ({ slug: term.slug, title: term.title }))
+
+  return <CCRCalculator relatedGlossary={relatedGlossary} />
 }

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { ReplacementCostCalculator } from './ReplacementCostCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const PAGE_TITLE = '建物の再調達価格 計算シミュレーション｜構造・用途別の積算評価'
 const PAGE_DESCRIPTION = '建物の再調達価格（再調達原価）を計算。延床面積・構造・用途・築年数を入力するだけで、新築時の建築費用と現在の建物価値を算出します。'
@@ -79,6 +80,8 @@ const breadcrumbJsonLd = {
 }
 
 export default function ReplacementCostPage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/replacement-cost').map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       <script
@@ -89,7 +92,7 @@ export default function ReplacementCostPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ReplacementCostCalculator />
+      <ReplacementCostCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

@@ -1,0 +1,47 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31703161,"表面利回り（グロス利回り）とは？計算方法をわかりやすく解説
+表面利回り（グロス利回り）は、年間賃料収入を物件価格で割った最もシンプルな利回り指標です。計算方法と活用時の注意点を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+表面利回りとは
+**表面利回り（グロス利回り）**は、年間の賃料収入を物件価格で割った最もシンプルな利回り指標です。
+
+簡単に言うと、**「満室を想定した場合、物件価格の何%が年間賃料として得られるか」**を表します。
+
+なぜ表面利回りが使われるのか
+観点	説明
+計算が簡単	2つの数値だけで計算できる
+物件情報に記載	不動産広告でよく使用される
+初期スクリーニング	物件の大まかな収益性を把握できる
+表面利回りは計算がシンプルなため、物件検索時の初期フィルタリングによく使用されます。
+
+表面利回りの計算式
+表面利回り = 年間賃料収入 ÷ 物件価格 × 100（%）
+表面利回りの計算例
+項目	金額
+物件価格	3,000万円
+月額賃料	25万円
+年間賃料	300万円
+表面利回り = 300万円 ÷ 3,000万円 × 100 = 10%
+表面利回りと実質利回りの違い
+指標	計算内容	考慮する項目
+表面利回り	賃料 ÷ 物件価格	賃料のみ
+実質利回り	(賃料-経費) ÷ (物件価格+諸費用)	経費・諸費用も考慮
+表面利回りは経費や空室を考慮しないため、実際の収益性より高めの数値が出る傾向があります。
+
+表面利回りの注意点
+空室リスクを考慮していない - 満室を前提とした計算
+経費を考慮していない - 管理費、修繕費、税金等は含まれない
+諸費用を含まない - 仲介手数料、登記費用等は物件価格に含まれない
+表面利回りだけで判断せず、実質利回りやその他の指標と合わせて検討することが重要です。
+
+表面利回りの活用シーン
+物件の初期スクリーニング - 大量の物件から候補を絞り込む
+エリア別の比較 - 地域ごとの相場感を把握する
+物件タイプの比較 - マンション、アパート等の傾向を把握する
+実際に表面利回りを計算してみる
+大家DXの利回り計算ツールでは、表面利回りと実質利回りを同時に計算できます。
+
+→利回り計算ツールを使う",良好,9%,良好,37%,良好,56%,https://www.pressance.co.jp/yuzusachi/magazine/monetization/yield/1786/,"表面利回りと実質利回りとは？計算方法も合わせて解説 ",https://www.musashi-corporation.com/wealthhack/real-estate-investment-surface-yield,"表面利回りと実質利回りの違いとは？物件選定の目安となる ... ",https://www.nomu.com/pro/contents/knowhow/20251021.html,"表面利回りとは？実質利回りとの違いや計算方法をわかり ... ",https://www.starmica.co.jp/sell/urilabo/yield/,"表面利回りと実質利回りの違い - 不動産投資の基礎知識と計算 ... ",https://www.vortex-net.com/vshare/magazine/asset/vsh_00048/,"不動産投資の利回りとは？弊社事例を基に高利回り物件の ... ",https://www.seiwa-stss.jp/tochikatsuyo/knowledge/k01cat01/110.html,"不動産投資における利回りの種類・計算方法とは？高利回りの ... ",https://www.kentaku.co.jp/estate/navi/column04/post_499.html,"アパート・マンション経営の利回りとは？主な種類や計算方法 ",https://www.kentaku.co.jp/estate/navi/column04/post_365.html,"アパート経営の利回りの理想と最低ラインの目安は？計算方法 ... ",https://www.tson.co.jp/media/rei/376/,"不動産投資における6種類の利回り解説！注意すべき3つの ... ",https://www.tohshin.co.jp/magazine/article0093.html,"不動産投資の利回りは何％が理想？計算方法や相場 ",https://www.pressance.co.jp/yuzusachi/magazine/monetization/yield/1786/,"表面利回りと実質利回りとは？計算方法も合わせて解説 ",https://www.nomu.com/pro/contents/knowhow/20251021.html,"表面利回りとは？実質利回りとの違いや計算方法をわかり ... ",https://areps.co.jp/knowledge/surface-yield-real-yield,"表面利回りと実質利回りの差について、シミュレーションに ... ",https://www.musashi-corporation.com/wealthhack/real-estate-investment-surface-yield,"表面利回りと実質利回りの違いとは？物件選定の目安となる ... ",https://www.seiwa-stss.jp/tochikatsuyo/knowledge/k01cat01/110.html,"不動産投資における利回りの種類・計算方法とは？高利回りの ... ",https://home.entetsu.co.jp/chintai-owner/oyakudachi/detail/5,"アパート経営の利回りとは？表利回りと実質利回りの違いや ... ",https://www.kentaku.co.jp/estate/navi/column04/post_499.html,"アパート・マンション経営の利回りとは？主な種類や計算方法 ",https://www.rals.co.jp/invest/info.htm,"収支シミュレーション｜利回り計算｜不動産投資連合隊 ",https://vertex-c.co.jp/column/article/68,"表面利回り・実質利回りの計算式と理想的な利回りについて ",https://www.vortex-net.com/vshare/magazine/asset/vsh_00048/,"不動産投資の利回りとは？弊社事例を基に高利回り物件の ... ",https://ccd.cloud/Result/detail?id=31703156,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31703152,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31703146,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701441,https://ccd.cloud/Result/detail?id=31703149,,

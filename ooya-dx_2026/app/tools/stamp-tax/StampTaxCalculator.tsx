@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Info, AlertTriangle, FileText, CheckCircle } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -19,6 +20,15 @@ import {
   formatYen,
   formatTax,
 } from '@/lib/calculators/stampTax'
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface StampTaxCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // 統合早見表データ
@@ -54,12 +64,13 @@ const tocItems: TocItem[] = [
   { id: 'documents', title: '不動産取引で必要な印紙', level: 3 },
   { id: 'reduction', title: '軽減措置について', level: 3 },
   { id: 'electronic', title: '電子契約と印紙税', level: 3 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function StampTaxCalculator() {
+export function StampTaxCalculator({ relatedGlossary = [] }: StampTaxCalculatorProps) {
   // 入力状態
   const [contractType, setContractType] = useState<ContractType>('real_estate_sale')
   const [contractAmountInMan, setContractAmountInMan] = useState<number>(0)
@@ -355,6 +366,24 @@ export function StampTaxCalculator() {
               詳細な取扱いについては、税務署等にご確認ください。
             </p>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* =================================================================

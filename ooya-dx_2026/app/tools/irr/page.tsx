@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { IRRCalculator } from './IRRCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -89,6 +90,10 @@ const breadcrumbSchema = {
 }
 
 export default function IRRPage() {
+  // 関連用語を取得（用語側のrelatedToolsから逆引き）
+  const relatedGlossary = getGlossaryTermsByTool('/tools/irr')
+    .map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -104,7 +109,7 @@ export default function IRRPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <IRRCalculator />
+      <IRRCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

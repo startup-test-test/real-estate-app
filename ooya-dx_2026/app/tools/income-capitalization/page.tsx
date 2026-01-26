@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { IncomeCapitalizationCalculator } from './IncomeCapitalizationCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -89,6 +90,8 @@ const breadcrumbSchema = {
 }
 
 export default function IncomeCapitalizationPage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/income-capitalization').map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -104,7 +107,7 @@ export default function IncomeCapitalizationPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <IncomeCapitalizationCalculator />
+      <IncomeCapitalizationCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

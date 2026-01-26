@@ -18,6 +18,15 @@ import {
   formatManYen,
 } from '@/lib/calculators/saleProceeds'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface SaleProceedsCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産の売却時手取り 計算シミュレーション｜税引き後キャッシュを算出'
 
@@ -41,12 +50,13 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法', level: 3 },
   { id: 'expenses', title: '売却時にかかる費用', level: 2 },
   { id: 'tax', title: '譲渡所得税について', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function SaleProceedsCalculator() {
+export function SaleProceedsCalculator({ relatedGlossary = [] }: SaleProceedsCalculatorProps) {
   // 入力状態（万円単位）
   const [salePriceInMan, setSalePriceInMan] = useState<number>(0)
   const [acquisitionCostInMan, setAcquisitionCostInMan] = useState<number>(0)
@@ -440,6 +450,25 @@ export function SaleProceedsCalculator() {
                 → 譲渡所得税シミュレーター
               </Link>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* =================================================================

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -25,7 +26,17 @@ const tocItems: TocItem[] = [
   { id: 'difference', title: '表面利回りと実質利回りの違い', level: 2 },
   { id: 'expenses', title: '経費に含まれる項目', level: 2 },
   { id: 'caution', title: '利回りを見る際の注意点', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface Props {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // 早見表データ（物件価格1,000万円の場合の利回り別年間賃料）
 const quickReferenceData: QuickReferenceRow[] = [
@@ -40,7 +51,7 @@ const quickReferenceData: QuickReferenceRow[] = [
   { label: '15%', value: '150万円', subValue: '月額約12.5万円' },
 ]
 
-export function YieldRateCalculator() {
+export function YieldRateCalculator({ relatedGlossary = [] }: Props) {
   // 入力値（万円単位）
   const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0)
   const [annualRentInMan, setAnnualRentInMan] = useState<number>(0)
@@ -314,6 +325,25 @@ export function YieldRateCalculator() {
               <li>将来の賃料下落や大規模修繕も考慮した収支計画が重要です</li>
               <li>出口（売却）戦略も含めたトータルリターン（IRR）での判断も有効です</li>
             </ul>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

@@ -1,0 +1,51 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31703175,"CCR（自己資金配当率）とは？賃貸経営での計算方法を解説
+CCR（自己資金配当率）は、自己資金に対する年間キャッシュフローの割合を表す指標です。賃貸経営におけるCCRの計算方法、レバレッジ効果との関係を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+CCR（自己資金配当率）とは
+**CCR（Cash on Cash Return：自己資金配当率）**は、拠出した自己資金に対して、年間どれだけのキャッシュフローが得られるかを表す指標です。
+
+別名「キャッシュオンキャッシュリターン」とも呼ばれます。
+
+CCRの計算式
+CCR = 年間キャッシュフロー ÷ 自己資金 × 100（%）
+計算例
+項目	金額
+物件価格	5,000万円
+自己資金	1,000万円
+借入額	4,000万円
+年間キャッシュフロー	120万円
+CCR = 120万円 ÷ 1,000万円 × 100 = 12%
+CCRでレバレッジの効果を確認する
+CCRは「借入を使うことで自己資金の効率がどう変わるか」を数値で把握できる指標です。
+
+同一物件での資金計画比較
+資金計画	パターンA（現金購入）	パターンB（融資活用）
+物件価格	5,000万円	5,000万円
+自己資金	5,000万円	1,000万円
+借入額	なし	4,000万円
+年間CF	300万円	120万円
+CCR	6%	12%
+パターンBは年間CFこそ少ないものの、手元資金1,000万円で12%のリターンを得ています。残り4,000万円を別の運用に回せる点も、融資活用のメリットです。
+
+CCRを見る際のポイント
+CCRだけで判断せず、以下の点も合わせて確認しましょう。
+
+返済余力（DSCR）との併用 - CCRが高くても、ローン返済に余裕がなければ経営は不安定です
+空室・修繕による変動 - キャッシュフローは満室想定で計算されていることが多いため、実際の運用では下振れする可能性があります
+出口戦略は別途検討 - CCRは保有中の収益性を見る指標であり、売却時の損益は含まれません
+CCRとIRRの使い分け
+指標	何を測るか	売却益	向いている場面
+CCR	今年の手残り効率	含まない	毎年の収益チェック
+IRR	投資全体の年利換算	含む	物件購入時の比較検討
+購入検討時はIRRで複数物件を比較し、運用中はCCRで毎年の収益性をモニタリングする、という使い分けが実践的です。
+
+実際にCCRを計算してみる
+大家DXのCCR計算ツールでは、物件情報を入力するだけでCCRを自動計算できます。
+
+→CCR計算ツールを使う
+
+※本ページの内容は参考情報です。実際の経営判断は専門家にご相談ください。",良好,7%,良好,44%,要注意,71%,https://restyle.tokyo/forbeginners/ccr.html,"不動産投資ではCCRが重要！計算方法や目安、併用したい ... ",https://www.aqutics.jp/blog/glossary/C/,"CCR(Cash flow Capital Cost Ratio/自己資金配当率)とは ",https://ir-i.jp/realestate/?p=585,"不動産投資の重要指標CCR、DCRとは？ 投資効率を味方に ... ",https://fukuoka-leapup.jp/column/investment/ccr_whats/,"CCR（自己資本配当率）とは？不動産投資の成功を左右する ... ",https://wm.openhouse-group.com/column/-アメリカ不動産用語解説-vol.2-cash-on-cash-return-ccrキャッシュ-オン-キャッシュ-リターン-100004-36,"【アメリカ不動産用語解説】Vol.2「Cash on Cash Return ... ",https://www.cigr.co.jp/biz/column/real-estate/13553/,"不動産投資の分析「NOI・LTV・CCR」・中級編 ",https://www.ys-plan.co.jp/new-info/4938/,"不動産投資で注目すべき指標は「CCR（自己資金配当率）」 ",https://www.asset-value.jp/news/2021/03/23/1141/,"賃貸経営改善  不動産投資の【CCR】とは？自己資金の運用 ... ",https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm526.html,"賃貸住宅経営に特有の経営指標 回収期間 - 大和ハウス工業 ",https://areps.co.jp/knowledge/apartment-management-collection-period,"アパート経営の回収期間は？パターン別に目安を調査 ",https://wm.openhouse-group.com/column/-アメリカ不動産用語解説-vol.2-cash-on-cash-return-ccrキャッシュ-オン-キャッシュ-リターン-100004-36,"【アメリカ不動産用語解説】Vol.2「Cash on Cash Return ... ",https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm526.html,"賃貸住宅経営に特有の経営指標 回収期間 - 大和ハウス工業 ",https://www.aqutics.jp/blog/glossary/C/,"CCR(Cash flow Capital Cost Ratio/自己資金配当率)とは ",https://www.cigr.co.jp/biz/column/real-estate/13553/,"不動産投資の分析「NOI・LTV・CCR」・中級編 ",https://ir-i.jp/realestate/?p=585,"不動産投資の重要指標CCR、DCRとは？ 投資効率を味方に ... ",https://assetranksimulator.com/不動産投資指標のccrを使いこなす.html,"不動産投資指標のCCRを使いこなす ",https://fukuoka-leapup.jp/column/investment/ccr_whats/,"CCR（自己資本配当率）とは？不動産投資の成功を左右する ... ",https://wmj-web.com/expert-column/第６回　不動産投資で重要な指標：ccrと節税に影/,"CCRと節税に影響のある法定耐用年数について ",https://stak.tech/news/14100,"不動産投資に欠かせないROIとCCRとは？ | 株式会社stak ",https://restyle.tokyo/forbeginners/ccr.html,"不動産投資ではCCRが重要！計算方法や目安、併用したい ... ",https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31703149,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31703161,https://ccd.cloud/Result/detail?id=31703158,https://ccd.cloud/Result/detail?id=31703152,https://ccd.cloud/Result/detail?id=31703146,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31703156,,

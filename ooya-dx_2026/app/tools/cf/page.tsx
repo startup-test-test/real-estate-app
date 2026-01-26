@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { CFCalculator } from './CFCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -87,6 +88,8 @@ const breadcrumbSchema = {
 }
 
 export default function CFPage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/cf').map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -102,7 +105,7 @@ export default function CFPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <CFCalculator />
+      <CFCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

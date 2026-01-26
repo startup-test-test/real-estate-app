@@ -1,0 +1,40 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31703146,"IRR（内部収益率）とは？賃貸経営での計算方法をわかりやすく解説
+IRR（内部収益率）は、収益性を年率で表す指標です。賃貸経営におけるIRRの計算方法、活用方法を初心者にもわかりやすく解説します。
+
+この用語に関連する計算ツール
+
+計算する
+IRR（内部収益率）とは
+**IRR（Internal Rate of Return：内部収益率）**は、キャッシュフローの現在価値と、初期費用が等しくなる割引率のことです。
+
+簡単に言うと、**「年率何%のリターンがあるのか」**を表す指標です。
+
+なぜIRRが重要なのか
+指標	特徴	欠点
+表面利回り	計算が簡単	空室・経費を考慮しない
+実質利回り	経費を考慮	時間の価値を考慮しない
+IRR	時間の価値を考慮	計算が複雑
+賃貸経営では、売却時の価格や保有期間中のキャッシュフローを総合的に把握できるため、判断の参考になる場合があります。
+
+IRRの計算式
+IRRは以下の式で定義されます：
+
+NPV = Σ (CFt / (1 + IRR)^t) - 初期投資額 = 0
+CFt：t年目のキャッシュフロー
+IRR：内部収益率
+t：年数
+この式を満たすIRRを求めます。
+
+IRRの活用シーン
+物件比較 - 複数の物件を比較する際の参考になる場合がある
+売却タイミング - 売却時期の検討材料
+融資条件の検討 - 金利や借入期間の違いによる影響を把握
+IRRの注意点
+将来のキャッシュフロー予測に依存する
+売却価格の設定で結果が大きく変わる
+複数の解が存在する場合がある
+実際にIRRを計算してみる
+大家DXのIRR計算ツールでは、物件情報を入力するだけでIRRを自動計算できます。
+
+→IRR計算ツールを使う",良好,16%,良好,39%,良好,40%,https://www.musashi-corporation.com/wealthhack/irr,"IRR（内部収益率）とは？計算方法や利回りとの違いをわかり ... ",https://yamatozaitaku.com/column/realestate-investment/irr/,"IRR（内部収益率）とは？計算方法やメリットを分かりやすく ... ",https://creal.jp/blogs/real-estate-investment/1682/,"IRR（内部収益率）とは？初心者もすぐわかる計算式や利回り ... ",https://www.propertyagent.co.jp/contents/5253/,"IRR（内部収益率とは？）初心者でもできるExcelでの計算 ... ",https://biz.moneyforward.com/ma/basic/404/,"IRR（内部収益率）とは？計算方法やNPVとの違いを解説 ",https://www.ma-cp.com/about-ma/irr/,"IRR（内部収益率）とは？ 基本概念と計算方法を解説 ",https://www.nihon-ma.co.jp/columns/2024/x20240906/,"IRR（内部収益率）とは？計算方法やメリット・デメリット ",https://ma-la.co.jp/m-and-a/irr/,"IRRとは？内部収益率の計算方法とExcel活用をわかりやすく ... ",https://join-to.anabuki.ne.jp/article075/,"IRRをわかりやすく解説！不動産投資における計算方法を紹介 ",https://apart.familycorporation.co.jp/column/know-how/113060,"IRR（内部収益率）とは？不動産投資における計算方法や目安 ... ",https://www.ma-cp.com/about-ma/irr/,"IRR（内部収益率）とは？ 基本概念と計算方法を解説 ",https://www.musashi-corporation.com/wealthhack/irr,"IRR（内部収益率）とは？計算方法や利回りとの違いをわかり ... ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/irr/,"IRR（内部収益率）とは？IRRの意味・計算式を解説 ",https://www.propertyagent.co.jp/contents/5253/,"IRR（内部収益率とは？）初心者でもできるExcelでの計算 ... ",https://ma-la.co.jp/m-and-a/irr/,"IRRとは？内部収益率の計算方法とExcel活用をわかりやすく ... ",https://biz.moneyforward.com/ma/basic/404/,"IRR（内部収益率）とは？計算方法やNPVとの違いを解説 ",https://www.nihon-ma.co.jp/columns/2024/x20240906/,"IRR（内部収益率）とは？計算方法やメリット・デメリット ",https://creal.jp/blogs/real-estate-investment/1682/,"IRR（内部収益率）とは？初心者もすぐわかる計算式や利回り ... ",https://yamatozaitaku.com/column/realestate-investment/irr/,"IRR（内部収益率）とは？計算方法やメリットを分かりやすく ... ",https://zaimani.com/plus/simulator/irr/,"IRR｜内部収益率の計算・グラフ化シミュレーターツール ",https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701385,https://ccd.cloud/Result/detail?id=31701441,https://ccd.cloud/Result/detail?id=31688633,https://ccd.cloud/Result/detail?id=31701380,,

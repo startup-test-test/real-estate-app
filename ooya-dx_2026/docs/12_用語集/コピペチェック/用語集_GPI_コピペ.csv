@@ -1,0 +1,60 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707547,"GPI（総潜在収入）とは？賃貸経営での計算方法を解説
+GPI（総潜在収入）は、物件が満室稼働した場合の年間最大賃料収入です。賃貸経営におけるGPIの計算方法を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+GPI（総潜在収入）とは
+GPI（Gross Potential Income：総潜在収入）は、物件が満室で稼働した場合に得られる年間最大の賃料収入です。
+
+「潜在総収入」「最大想定収入」とも呼ばれ、収益計算の出発点となる数値です。
+
+GPIの計算式
+GPI = 満室時の月額賃料合計 × 12ヶ月
+計算例
+部屋	月額賃料
+101号室	6万円
+102号室	6万円
+201号室	6.5万円
+202号室	6.5万円
+月額合計	25万円
+GPI = 25万円 × 12ヶ月 = 300万円
+GPIに含める収入
+収入項目	含めるか
+住居賃料	○
+駐車場収入	○
+看板・アンテナ使用料	○
+自動販売機収入	○
+礼金・更新料	含めない場合が多い
+GPIからNOIまでの流れ
+収益計算は以下の流れで行われます：
+
+GPI（総潜在収入）
+　↓ － 空室損・未回収損
+EGI（有効総収入）
+　↓ － 運営経費
+NOI（営業純収益）
+計算例
+項目	金額
+GPI	300万円
+空室損（10%）	▲30万円
+EGI	270万円
+運営経費（20%）	▲54万円
+NOI	216万円
+GPIを使う場面
+物件の収益力評価 - 最大でどれだけ稼げるかを把握
+空室率の計算基準 - GPIに対する実収入の割合
+利回り計算 - 表面利回りの分子として使用
+GPIの注意点
+実際の収入ではない - あくまで満室想定の理論値
+賃料設定が適正かどうかの検証が必要
+空室が続く物件は、GPIと実収入の乖離が大きくなる
+表面利回りとの関係
+表面利回りは一般的にGPIを使って計算されます：
+
+表面利回り = GPI ÷ 物件価格 × 100（%）
+例：GPI 300万円、物件価格5,000万円の場合
+
+表面利回り = 300万円 ÷ 5,000万円 × 100 = 6.0%
+※本ページの内容は参考情報です。実際の経営判断は専門家にご相談ください。",良好,6%,良好,36%,良好,43%,https://yamatozaitaku.com/column/realestate-investment/240920/,"最低ラインと理想的な数字は？不動産投資の利回り計算を ... ",https://www.maruhama.biz/不動産オーナー様へ/賃貸不動産の相談/コラムフォーマット/,"家賃収入の流れ?総潜在収入（GPI ",https://www.artavenue.co.jp/useful/cash-flow-tree_001/,"不動産投資の キャッシュフローツリー とは？ 計算方法や ... ",https://www.aqutics.jp/blog/glossary_detail/25,"GPI(総潜在賃料収入／Gross Potential Income) ",https://live-ap.net/glossary/sa/173/,"GPI （Gross Potential Income）：総潜在収入 - 不動産用語と ... ",https://cube2002.com/fudosan-toushi/gpi/,"満室想定賃料（GPI）とは | 経営者のための不動産投資ガイド ",https://www.misawa.co.jp/area/other/tama/s-navi/column/20150401_16.html,"不動産投資を行うにあたり参考となる指標の基礎知識を解説 ",https://fgh.co.jp/lab/presidents_investment-bldg6/,"【不動産投資 一棟編?】実効総収入（EGI） ",https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_apartment/apartment_management_yield-2/,"マンション経営の利回りを徹底解説！指標の種類・平均値 ... ",https://bf-consulting.jp/what-is-the-ideal-yield-on-a-real-estate-investment/,"不動産投資の利回りは何％が理想？｜計算方法や最低ラインを ... ",https://yamatozaitaku.com/column/realestate-investment/240920/,"最低ラインと理想的な数字は？不動産投資の利回り計算を ... ",https://yamatozaitaku.com/column/realestate-investment/純利回りネット利回りとはどういう意味でし/,"不動産投資における利回りを徹底解説！ 〈利回りの ... - 大和財託 ",https://owners-style.net/article/detail/124531/,"アパート経営の利回り最低合格ラインと理想の目安は？計算 ... ",https://www.maruhama.biz/不動産オーナー様へ/賃貸不動産の相談/コラムフォーマット/,"家賃収入の流れ?総潜在収入（GPI ",https://owners-age.com/blog/column20201211,"【コラム】重視すべきは営業純利益（NOI）。不動産分析の ... ",https://www.daiwahouse.co.jp/tochikatsu/souken/scolumn/sclm498.html,"賃貸住宅経営を行う上で、注意すべき指標とは - 大和ハウス工業 ",https://live-ap.net/glossary/sa/173/,"GPI （Gross Potential Income）：総潜在収入 - 不動産用語と ... ",https://www.artavenue.co.jp/useful/cash-flow-tree_001/,"不動産投資の キャッシュフローツリー とは？ 計算方法や ... ",https://wm.openhouse-group.com/word/92,"海外不動産用語集 ",https://cube2002.com/fudosan-toushi/gpi/,"満室想定賃料（GPI）とは | 経営者のための不動産投資ガイド ",https://ccd.cloud/Result/detail?id=31703161,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31703156,https://ccd.cloud/Result/detail?id=31707530,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31707541,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31707545,https://ccd.cloud/Result/detail?id=31703148,,

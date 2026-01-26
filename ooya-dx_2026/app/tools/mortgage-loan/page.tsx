@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { MortgageLoanCalculator } from './MortgageLoanCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -89,6 +90,9 @@ const breadcrumbSchema = {
 }
 
 export default function MortgageLoanPage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/mortgage-loan')
+    .map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -104,7 +108,7 @@ export default function MortgageLoanPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <MortgageLoanCalculator />
+      <MortgageLoanCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

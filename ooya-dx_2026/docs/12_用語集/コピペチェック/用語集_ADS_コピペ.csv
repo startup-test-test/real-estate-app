@@ -1,0 +1,40 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707517,"ADS（年間元利返済額）とは？賃貸経営での計算方法を解説
+ADS（年間元利返済額）は、1年間に返済する元金と利息の合計額です。賃貸経営におけるADSの計算方法とDSCRとの関係を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+ADS（年間元利返済額）とは
+ADS（Annual Debt Service：年間元利返済額）は、1年間に返済する元金と利息の合計額のことです。
+
+月々の返済額 × 12ヶ月で計算でき、**DSCR（債務返済カバー率）**の計算に使用される重要な指標です。
+
+ADSの計算式
+ADS = 月々の返済額 × 12
+計算例
+項目	金額
+借入額	4,000万円
+金利	2.0%
+借入期間	30年
+月々返済額	約14.8万円
+ADS	約177.6万円
+ADSとDSCRの関係
+DSCRは「NOI ÷ ADS」で計算されるため、ADSが大きいほどDSCRは低くなります。
+
+条件変更	ADSへの影響	DSCRへの影響
+借入額を増やす	増加	低下
+金利が上がる	増加	低下
+借入期間を短くする	増加	低下
+ADSを下げる方法
+借入期間を延ばす - 月々の返済額が減少
+金利を下げる - 金利交渉、借り換え
+借入額を減らす - 自己資金を増やす
+ADSの注意点
+元利均等返済と元金均等返済で計算が異なる
+変動金利の場合、金利上昇でADSが増加するリスク
+ボーナス返済を含む場合は別途計算が必要
+実際にADSを確認してみる
+大家DXのDSCR計算ツールでは、ローン条件を入力するとADSも自動計算されます。
+
+→DSCR計算ツールを使うあぁ",良好,13%,良好,27%,良好,45%,https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://www.smtb.jp/personal/loan/house/house-column/column-05,"元利均等返済と元金均等返済の違いは？ - 三井住友信託銀行 ",https://manabu.orixbank.co.jp/archives/231,"DSCRの計算式や目安は？不動産投資の「返済余裕率」を知っ ... ",https://fgh.co.jp/lab/presidents_investment-bldg10/,"【不動産投資 一棟編?】年間返済額（ADS：Annual Dept ... ",https://www.smbc.co.jp/kojin/money-viva/housing_loan/repayment/,"元利均等返済と元金均等返済どっちがお得？知っておくべき ... ",https://www.jibunbank.co.jp/column/article/00417/,"元利均等返済と元金均等返済の違いとは？各メリットや注意点 ... ",https://study.fp-univ.net/manual/60,"不動産投資分析機能 - FP-UNIVライフプラン ",https://www.flat35.com/hajimete/atoz/04.html,"元利均等返済と元金均等返済とは？ - フラット35 ",https://www.agent-hp.com/real-estate-cashflow-tree-basics/,"不動産投資は儲かるの？キャッシュフローツリーを学ぼう！ ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/dscr/,"DSCRとは？DSCRの計算式や目安水準を解説 ",https://www.ownersbook.jp/blog/basics_of_real_estate_investment/dscr/,"DSCRとは？DSCRの計算式や目安水準を解説 ",https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://www.token.co.jp/estate/useful/archipedia/word.php?jid=00023&wid=27648&wdid=01,"【東建コーポレーション】DCR｜商業建築用語辞書 ",https://study.fp-univ.net/manual/60,"不動産投資分析機能 - FP-UNIVライフプラン ",https://house.home4u.jp/contents/loan-40-22066,"住宅ローン返済額早見表で返済額を確認！計算方法や ... ",https://keisan.casio.jp/exec/system/1256183644,"ローン返済（毎月払い） - 高精度計算サイト ",https://www.ids-soft.co.jp/brand/2025/07/29/fundraising-52/,"不動産投資会社におけるDSCR（債務償還余裕率）の活用法と ... ",https://www.agent-hp.com/real-estate-cashflow-tree-basics/,"不動産投資は儲かるの？キャッシュフローツリーを学ぼう！ ",https://www.ren-ibaraki.jp/2017_1107_1/,"ファイナンス実務 | いばらき自然エネルギーネットワーク ",https://www.smtb.jp/personal/loan/house/house-column/column-05,"元利均等返済と元金均等返済の違いは？ - 三井住友信託銀行 ",https://ccd.cloud/Result/detail?id=31707515,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31688608,https://ccd.cloud/Result/detail?id=31703149,https://ccd.cloud/Result/detail?id=31703152,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31703161,https://ccd.cloud/Result/detail?id=31703158,,

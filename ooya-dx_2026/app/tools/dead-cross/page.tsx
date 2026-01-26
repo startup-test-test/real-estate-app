@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { DeadCrossCalculator } from './DeadCrossCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -87,6 +88,9 @@ const breadcrumbSchema = {
 }
 
 export default function DeadCrossPage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/dead-cross')
+    .map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -102,7 +106,7 @@ export default function DeadCrossPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <DeadCrossCalculator />
+      <DeadCrossCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

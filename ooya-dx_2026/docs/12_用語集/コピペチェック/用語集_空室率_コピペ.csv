@@ -1,0 +1,54 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707541,"空室率とは？賃貸経営での計算方法を解説
+空室率は、総戸数に対する空室の割合を示す指標です。賃貸経営における空室率の計算方法と目安を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+空室率とは
+空室率は、物件の総戸数（または総賃貸可能面積）に対する空室の割合を示す指標です。
+
+賃貸経営の収支計算において、想定収入からの減額要因として考慮される重要な数値です。
+
+空室率の計算式
+戸数ベースの計算
+空室率 = 空室数 ÷ 総戸数 × 100（%）
+計算例
+項目	数値
+総戸数	10戸
+入居中	9戸
+空室	1戸
+空室率 = 1戸 ÷ 10戸 × 100 = 10%
+稼働率との関係
+空室率と稼働率は表裏の関係にあります。
+
+稼働率 = 100% － 空室率
+空室率	稼働率
+5%	95%
+10%	90%
+15%	85%
+空室率の目安
+空室率	特徴
+5%以下	想定としては少なめ
+5～10%	収支計算でよく使われる想定値
+10～15%	やや多め
+15%以上	収支への影響が大きい
+※実際の空室率はエリアや物件タイプによって異なります。
+
+空室率が収益に与える影響
+年間家賃収入600万円の物件の場合：
+
+空室率	空室損	実収入
+5%	30万円	570万円
+10%	60万円	540万円
+15%	90万円	510万円
+空室率を見込む際のポイント
+エリアの需給バランス - 地域の平均空室率を参考にする
+物件の築年数 - 築古物件は高めに見込む
+入退去の頻度 - 単身向けは回転が早い傾向
+募集から成約までの期間 - 通常1～2ヶ月程度
+注意点
+瞬間的な空室率と年間平均は異なる
+退去から入居までの空白期間も考慮が必要
+フリーレント期間は稼働していても収入がない
+※本ページの内容は参考情報です。実際の経営判断は専門家にご相談ください。",良好,8%,良好,43%,良好,35%,https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_vacancy/vacancy_rate/,"空室率とは何か？ 賃貸経営・不動産投資の重要指標を事例で ... ",https://www.t-estate-nagoya.co.jp/column/income-property/p8942/,"賃貸物件の空室率とは？正しい計算・判断・改善・売却を専門 ... ",https://www.token.co.jp/estate/column/estate-library/h_193/,"【土地活用】3つの空室率とは？ 計算方法や平均値を解説 ",https://s-echoes.jp/useful-information/vacancy-measures/vacancy-rate/,"空室率は賃貸経営の重要指標！計算式や対策方法を解説 ",https://rent.landnet.co.jp/topics/2714/,"【賃貸経営】空室率の目安は？種類や計算方法を解説 ",https://kamiooyasan.jp/column/vacancy-rate/,"空室率とは何か？調べ方や平均値、低くするための対策を解説 ",https://www.zennichi.or.jp/law_faq/「空室率」３つの定義の使い方/,"「空室率」3つの定義の使い方 - 公益社団法人 全日本不動産協会 ",https://land.ieul.jp/knowledge/mansion/management/667/,"マンション経営の空室率は5％が理想です！空室対策の成功談 ... ",https://office.mecyes.co.jp/column/detail/337,"オフィスビルの「空室率」とは？オフィスマーケットを ... ",https://toushi.homes.co.jp/column/rental_management/differentiation/beginner1198/,"不動産投資における空室率の推移とは？国土交通省データに ... ",https://www.t-estate-nagoya.co.jp/column/income-property/p8942/,"賃貸物件の空室率とは？正しい計算・判断・改善・売却を専門 ... ",https://s-echoes.jp/useful-information/vacancy-measures/vacancy-rate/,"空室率は賃貸経営の重要指標！計算式や対策方法を解説 ",https://media.moneyforward.com/articles/5964?page=2,"「節税目的の不動産投資はおトク？」押さえたい基本用語 ... ",https://rent.landnet.co.jp/topics/2714/,"【賃貸経営】空室率の目安は？種類や計算方法を解説 ",https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_vacancy/vacancy_rate/,"空室率とは何か？ 賃貸経営・不動産投資の重要指標を事例で ... ",https://land.ieul.jp/knowledge/mansion/management/667/,"マンション経営の空室率は5％が理想です！空室対策の成功談 ... ",https://hps-hps.com/guide005/,"不動産用語 ",https://www.jsps.go.jp/file/storage/kaken_27_kohyo6-1/0-1_r6.pdf,"令和 6 年度科学研究費助成事業の配分について ",https://office.mecyes.co.jp/column/detail/337,"オフィスビルの「空室率」とは？オフィスマーケットを ... ",https://www.token.co.jp/estate/column/estate-library/h_193/,"【土地活用】3つの空室率とは？ 計算方法や平均値を解説 ",https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703161,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31703156,https://ccd.cloud/Result/detail?id=31707515,https://ccd.cloud/Result/detail?id=31707533,https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31703152,https://ccd.cloud/Result/detail?id=31707530,,

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -32,9 +33,20 @@ const quickReferenceData: QuickReferenceRow3Col[] = [
 const tocItems: TocItem[] = [
   { id: 'about', title: 'DSCRとは', level: 2 },
   { id: 'calculation', title: '計算方法', level: 3 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
-export function DSCRCalculator() {
+// 関連用語の型定義
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface Props {
+  relatedGlossary: GlossaryItem[]
+}
+
+export function DSCRCalculator({ relatedGlossary }: Props) {
   // 入力状態（万円単位）
   const [annualRentInMan, setAnnualRentInMan] = useState<number>(0)
   const [vacancyRate, setVacancyRate] = useState<number>(5)
@@ -289,6 +301,24 @@ export function DSCRCalculator() {
               ADS（Annual Debt Service）は、借入金の年間元利返済額です。
             </p>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
             </section>
 
           {/* 免責事項 */}

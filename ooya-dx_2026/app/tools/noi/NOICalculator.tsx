@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Calculator, Info, ChevronDown, ChevronUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -26,7 +27,17 @@ const tocItems: TocItem[] = [
   { id: 'cashflow-tree', title: 'キャッシュフローツリー', level: 3 },
   { id: 'opex', title: '運営経費（OPEX）の内訳', level: 2 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface NOICalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // 物件タイプ選択肢
 const propertyTypes = [
@@ -40,7 +51,7 @@ const propertyTypes = [
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function NOICalculator() {
+export function NOICalculator({ relatedGlossary = [] }: NOICalculatorProps) {
   // 入力モード
   const [useSimpleMode, setUseSimpleMode] = useState(true)
   const [propertyType, setPropertyType] = useState('apartment-rc')
@@ -605,6 +616,25 @@ export function NOICalculator() {
                 <li>・<strong>空室率・経費は変動します</strong>：将来の数値は保証されるものではありません</li>
               </ul>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

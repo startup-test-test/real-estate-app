@@ -23,6 +23,15 @@ import {
   formatManYen,
 } from '@/lib/calculators/depreciation'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface DepreciationCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // =================================================================
 // 建物構造の選択肢
 // =================================================================
@@ -58,12 +67,13 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法（定額法）', level: 3 },
   { id: 'used-asset', title: '中古資産の耐用年数（簡便法）', level: 3 },
   { id: 'example', title: '具体的な計算例', level: 3 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
 // コンポーネント
 // =================================================================
-export function DepreciationCalculator() {
+export function DepreciationCalculator({ relatedGlossary = [] }: DepreciationCalculatorProps) {
   // 入力状態（万円単位）
   const [buildingCostInMan, setBuildingCostInMan] = useState<number>(0)
   const [structure, setStructure] = useState<BuildingStructure>('wood')
@@ -366,6 +376,25 @@ export function DepreciationCalculator() {
                 <li>⑤ 初年度（4月〜12月・9ヶ月）：750万円 × 9/12 = <span className="font-semibold">約562万円</span></li>
               </ul>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

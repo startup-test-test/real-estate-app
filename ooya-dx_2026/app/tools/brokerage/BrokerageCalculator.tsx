@@ -16,6 +16,15 @@ import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface BrokerageCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産売買の仲介手数料 計算シミュレーション｜早見表付き'
 
@@ -31,6 +40,7 @@ const tocItems: TocItem[] = [
   { id: 'type', title: '両手仲介と片手仲介', level: 3 },
   { id: 'free', title: '仲介手数料がかからないケース', level: 2 },
   { id: 'difference', title: '売買と賃貸の違い', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // 早見表データ（主要価格帯）
@@ -55,7 +65,7 @@ const relatedTools = [
   { name: '登録免許税シミュレーター', href: '/tools/registration-tax', description: '登記にかかる税金を計算' }
 ]
 
-export function BrokerageCalculator() {
+export function BrokerageCalculator({ relatedGlossary = [] }: BrokerageCalculatorProps) {
   // 万円単位で入力を受け付ける
   const [priceInMan, setPriceInMan] = useState<number>(0)
 
@@ -339,6 +349,25 @@ export function BrokerageCalculator() {
               <p className="text-sm text-gray-600 mt-3">
                 本シミュレーターは売買の仲介手数料を計算するためのツールです。
               </p>
+
+              {relatedGlossary.length > 0 && (
+                <>
+                  <SectionHeading id="glossary" items={tocItems} />
+                  <ul className="space-y-2">
+                    {relatedGlossary.map((item) => (
+                      <li key={item.slug}>
+                        <Link
+                          href={`/glossary/${item.slug}`}
+                          className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                        >
+                          <span className="text-gray-400 mr-1">›</span>
+                          {item.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </section>
 
             {/* 関連ツール - ツールが増えたら表示 */}

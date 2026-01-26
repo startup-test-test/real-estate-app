@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -25,12 +26,22 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'ROIの計算式', level: 3 },
   { id: 'related-metrics', title: '関連指標との違い', level: 3 },
   { id: 'usage', title: 'ROIの活用方法', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface ROICalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function ROICalculator() {
+export function ROICalculator({ relatedGlossary = [] }: ROICalculatorProps) {
   // 入力状態
   const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0) // 物件価格（万円）
   const [purchaseCostsInMan, setPurchaseCostsInMan] = useState<number>(0) // 購入諸経費（万円）
@@ -330,6 +341,24 @@ export function ROICalculator() {
               </ul>
             </div>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

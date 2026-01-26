@@ -1,0 +1,45 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707530,"K%（ローン定数）とは？賃貸経営での計算方法を解説
+K%（ローン定数）は、借入額に対する年間返済額の割合を示す指標です。賃貸経営におけるK%の計算方法と活用方法を解説します。
+
+K%（ローン定数）とは
+**K%（Mortgage Constant：ローン定数）**は、借入額に対する年間返済額（ADS）の割合を示す指標です。
+
+金利と借入期間が決まれば自動的に決まる値で、借入条件の比較に使われます。
+
+K%の計算式
+K% = ADS（年間元利返済額） ÷ 借入額 × 100（%）
+計算例
+項目	金額
+借入額	4,000万円
+金利	2.0%
+借入期間	30年
+年間返済額（ADS）	約177.6万円
+K% = 177.6万円 ÷ 4,000万円 × 100 = 4.44%
+K%の目安
+借入期間	金利2%のK%	金利3%のK%
+20年	約6.1%	約6.7%
+25年	約5.1%	約5.7%
+30年	約4.4%	約5.1%
+35年	約4.0%	約4.6%
+借入期間が長いほど、金利が低いほど、K%は小さくなります。
+
+K%とキャップレートの関係（イールドギャップ）
+K%はキャップレート（還元利回り）との比較で、レバレッジ効果の判定に使われます。
+
+条件	状態	意味
+キャップレート &gt; K%	順イールド	借入によって投資効率（CCR）が上がる
+キャップレート &lt; K%	逆イールド	借入によって投資効率（CCR）が下がる
+「キャップレート － K%」の差をイールドギャップと呼び、これがプラスであれば借入を活用したレバレッジ効果が期待できます。
+
+※「NOIで返済を賄えるか」を判断する指標はDSCRです。K%との比較はあくまで投資効率の判断に使います。
+
+K%を活用する場面
+借入条件の比較 - 複数の借入条件を比較
+返済負担の把握 - 借入額に対する返済の重さを確認
+イールドギャップの確認 - キャップレートとの比較でレバレッジ効果を判定
+K%の注意点
+元利均等返済を前提とした指標
+金利変動リスクは考慮されていない
+実際のキャッシュフローは空室・経費も考慮が必要
+※本ページの内容は参考情報です。実際の経営判断は専門家にご相談ください。",良好,3%,良好,29%,良好,43%,https://yamatozaitaku.com/column/realestate-investment/20210122/,"イールドギャップの正しい解釈｜不動産投資を始める前に知る ... ",https://www.musashi-corporation.com/wealthhack/yield-gap,"不動産投資におけるイールドギャップとは？適正値や実践的な ... ",https://www.aqutics.jp/blog/glossary/K/,"K%(Loan Constant/ローン定数)とは - 不動産投資用語集 ",https://www.livable.co.jp/fudosan-toushi/propertista/learn/index08.html,"区分マンションの投資指標?レバレッジ効果と ... - 東急リバブル ",https://www.musashi-corporation.com/wealthhack/cap-rate,"還元利回り（キャップレート）とは？初心者にも分かりやすく ... ",https://www.starts-cam.co.jp/guide/article142.html,"キャップレートとは？意味や不動産価格への影響を解説 ",https://yamatozaitaku.com/column/realestate-investment/ローン定数ｋとは？/,"ローン定数Kとは？ - 大和財託 ",https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://manabu.orixbank.co.jp/archives/104,"不動産投資のイールドギャップとは？考え方や計算方法を解説 ",https://house.home4u.jp/contents/loan-40-22066,"住宅ローン返済額早見表で返済額を確認！計算方法や ... ",https://owners-age.com/blog/column20180705,"【コラム】不動産業界人なら知っておきたい「レバレッジ」の ... ",http://www.reifa.jp/indicators,"不動産投資用語 | REIFA ",https://www.assetconsul.jp/14.php,"不動産投資分析 | ASSET CONSUL | ふくい いけだ くにお ",https://relo-fudosan.jp/hack/knowledge/real-estate-investment/real-estate-investment_information/real_estate_investment_leverage/,"不動産投資のレバレッジ効果を事例で解説！自己資本利回りの ... ",https://www.tr.mufg.jp/houjin/fudousan/f_report/pdf/fr_2024011201.pdf,"不動産マーケットリサーチレポート - 三菱UFJ信託銀行 ",https://www.livable.co.jp/fudosan-toushi/propertista/learn/index08.html,"区分マンションの投資指標?レバレッジ効果と ... - 東急リバブル ",https://www.aqutics.jp/blog/glossary/K/,"K%(Loan Constant/ローン定数)とは - 不動産投資用語集 ",https://study.fp-univ.net/manual/60,"不動産投資分析機能 - FP-UNIVライフプラン ",https://yamatozaitaku.com/column/realestate-investment/20210122/,"イールドギャップの正しい解釈｜不動産投資を始める前に知る ... ",https://areps.co.jp/knowledge/what-is-the-standard-leverage-for-real-estate-investment,"不動産投資のレバレッジは何倍が目安？効果を高めるポイント ... ",https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31707517,https://ccd.cloud/Result/detail?id=31707515,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31707519,https://ccd.cloud/Result/detail?id=31703152,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31688608,,

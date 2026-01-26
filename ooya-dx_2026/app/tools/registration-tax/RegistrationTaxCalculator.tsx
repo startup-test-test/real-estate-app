@@ -16,6 +16,15 @@ import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { calculateRegistrationTax, RegistrationTaxInput } from '@/lib/calculators/registrationTax'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface RegistrationTaxCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // 早見表データ（新築建売・自己居住・軽減適用の場合）
 // 前提：土地建物比率5:5、土地評価70%、建物評価60%、ローン80%
 const quickReferenceData: QuickReferenceRow[] = [
@@ -40,9 +49,10 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法', level: 2 },
   { id: 'reduction', title: '軽減税率について', level: 2 },
   { id: 'example', title: '具体的な計算例', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
-export function RegistrationTaxCalculator() {
+export function RegistrationTaxCalculator({ relatedGlossary = [] }: RegistrationTaxCalculatorProps) {
   // 取引種別
   const [transactionType, setTransactionType] = useState<'newPurchase' | 'usedPurchase' | 'landOnly'>('newPurchase')
 
@@ -384,6 +394,25 @@ export function RegistrationTaxCalculator() {
                 </li>
               </ul>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

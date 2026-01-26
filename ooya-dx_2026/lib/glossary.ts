@@ -176,3 +176,9 @@ export function getAllGlossarySlugs(): string[] {
   const terms = getAllGlossaryTerms();
   return terms.map((term) => term.slug);
 }
+
+// 特定のツールに関連する用語を取得（逆引き）
+export function getGlossaryTermsByTool(toolPath: string): GlossaryMeta[] {
+  const terms = getAllGlossaryTerms();
+  return terms.filter((term) => term.relatedTools === toolPath);
+}

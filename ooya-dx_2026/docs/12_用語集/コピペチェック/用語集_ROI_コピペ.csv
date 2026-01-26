@@ -1,0 +1,50 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31703145,"ROI（投資収益率）とは？賃貸経営での計算方法をわかりやすく解説
+ROI（投資収益率）は、投じた資金に対してどれだけの利益を得られたかを表す指標です。賃貸経営におけるROIの計算方法と活用方法を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+ROI（投資収益率）とは
+**ROI（Return on Investment：投資収益率）**は、投じた資金に対してどれだけの利益を得られたかを比率で表す指標です。
+
+簡単に言うと、**「投じたお金に対して、何%のリターンがあったか」**を表します。
+
+なぜROIが重要なのか
+観点	説明
+シンプルな比較	異なる規模の案件を同じ基準で比較できる
+効率性の把握	資金効率を確認できる
+汎用性	不動産以外の分野でも広く使われる
+ROIは計算がシンプルで理解しやすいため、基本的な収益性の確認によく使用されます。
+
+ROIの計算式
+ROI = (利益 ÷ 投資額) × 100（%）
+賃貸経営の場合：
+
+ROI = (年間収益 - 年間経費) ÷ 総投資額 × 100（%）
+ROIの計算例
+項目	金額
+物件購入価格	3,000万円
+諸費用	300万円
+年間賃料収入	300万円
+年間経費	60万円
+総投資額 = 3,000万円 + 300万円 = 3,300万円
+年間利益 = 300万円 - 60万円 = 240万円
+ROI = 240万円 ÷ 3,300万円 × 100 = 約7.3%
+ROIとその他の利回り指標の違い
+指標	計算内容	特徴
+表面利回り	賃料収入 ÷ 物件価格	経費を考慮しない
+実質利回り	(賃料-経費) ÷ 物件価格	経費を考慮
+ROI	利益 ÷ 総投資額	諸費用も含めた総投資で計算
+ROIは諸費用（仲介手数料、登記費用など）も含めた総投資額で計算するため、より実態に近い数値となります。
+
+ROIの活用シーン
+物件比較 - 複数の物件を比較検討する際の参考になる
+収益性の確認 - 運用状況の把握
+改善効果の測定 - リフォームや賃料改定の効果を確認
+ROIの注意点
+融資を活用した場合のレバレッジ効果は反映されない
+単年度の数値であり、長期的な収益性は別途検討が必要
+キャピタルゲイン（売却益）は含まれない場合が多い
+実際にROIを計算してみる
+大家DXの収益シミュレーターでは、物件情報を入力するだけでROIを含む各種指標を計算できます。",良好,6%,良好,33%,良好,32%,https://ma-la.co.jp/m-and-a/roi-return-on-investment/,"ROI（投資利益率）とは？計算方法や活用術をわかりやすく解説 ",https://www.kaonavi.jp/dictionary/roi/,"ROI（投資利益率）とは？【意味をわかりやすく】計算方法と ... ",https://www.aruie-honkawagoe.jp/blog/entry-474519/,"不動産投資の重要指標ROIとは？ - アルイエ松堀不動産 ",https://www.athome.co.jp/contents/for-owners/owners-cost/roi/,"不動産投資の成功の鍵！ROIを理解して収益性を向上させる方法 ",https://www.nec-solutioninnovators.co.jp/sp/contents/column/20221216_roi.html,"ROIとは？意味や計算式、ROASとの違いや改善方法を解説 ",https://blastmail.jp/blog/marketing/roi,"ROI（投資利益率）はどんな指標？計算方法やマーケティング ... ",https://www.tohshin.co.jp/magazine/article0093.html,"不動産投資の利回りは何％が理想？計算方法や相場 ",https://landnet.co.jp/redia/7576/,"投資効率を示すROIとCCRとは？計算方法と不動産投資への ... ",https://manabu.orixbank.co.jp/archives/239,"アパート経営の利回りの理想と最低ラインは？安定化には経費 ... ",https://www.e-sumai.co.jp/business/property_blog/yield-words/,"【不動産投資】利回り・ROI・CCRとは？計算方法も解説！ ",https://ma-la.co.jp/m-and-a/roi-return-on-investment/,"ROI（投資利益率）とは？計算方法や活用術をわかりやすく解説 ",https://emberpoint.com/blog/column/241225-001.html,"ROI（投資収益率）とは？ビジネス上の意味や計算方法を ... ",https://digima.lycbiz.com/roi/,"ROIとは？計算方法から活用・改善・他指標との違いを解説 ",https://restyle.tokyo/forbeginners/ccr.html,"不動産投資ではCCRが重要！計算方法や目安、併用したい ... ",https://www.obc.co.jp/360/list/post300,"ROA（総資産利益率）とは？計算式やROE・ROIとの違いを ... ",https://www.nec-solutioninnovators.co.jp/sp/contents/column/20221216_roi.html,"ROIとは？意味や計算式、ROASとの違いや改善方法を解説 ",https://relo-fudosan.jp/hack/knowledge/rental-management/rental-management_apartment/apartment_management_yield-2/,"マンション経営の利回りを徹底解説！指標の種類・平均値 ... ",https://www.issoh.co.jp/column/details/5251/,"マーケティングにおけるROIの重要性とその測定方法 ",https://support.google.com/google-ads/answer/14090?hl=ja,"費用対効果（ROI、投資収益率）とは - Google 広告 ヘルプ ",https://blastmail.jp/blog/marketing/roi,"ROI（投資利益率）はどんな指標？計算方法やマーケティング ... ",https://ccd.cloud/Result/detail?id=31701403,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701420,https://ccd.cloud/Result/detail?id=31701441,https://ccd.cloud/Result/detail?id=31701385,https://ccd.cloud/Result/detail?id=31701435,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31688548,https://ccd.cloud/Result/detail?id=31688633,https://ccd.cloud/Result/detail?id=31688522,,

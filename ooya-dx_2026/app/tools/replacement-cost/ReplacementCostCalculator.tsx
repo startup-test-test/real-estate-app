@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -32,7 +33,17 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '再調達価格（再調達原価）とは', level: 2 },
   { id: 'calculation', title: '計算方法', level: 3 },
   { id: 'unit-price', title: '構造・用途別の建築単価', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface Props {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // 早見表データ（構造別の法定耐用年数）
 const usefulLifeTableData = [
@@ -42,7 +53,7 @@ const usefulLifeTableData = [
   { label: '鉄骨鉄筋コンクリート造（SRC造）', value: '47年' },
 ]
 
-export function ReplacementCostCalculator() {
+export function ReplacementCostCalculator({ relatedGlossary = [] }: Props) {
   // 入力状態
   const [floorArea, setFloorArea] = useState<number>(0)
   const [buildingAge, setBuildingAge] = useState<number>(0)
@@ -318,6 +329,25 @@ export function ReplacementCostCalculator() {
             <p className="text-xs text-gray-500">
               ※ 単価は参考値です。実際の建築費用は立地・仕様・時期により異なります。
             </p>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

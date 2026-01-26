@@ -1,0 +1,58 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31703158,"PI（収益性指数）とは？賃貸経営での計算方法をわかりやすく解説
+PI（収益性指数）は、投資額1円あたりどれだけの価値を生み出すかを表す指標です。賃貸経営におけるPIの計算方法と活用方法を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+PI（収益性指数）とは
+**PI（Profitability Index：収益性指数）**は、投資額1円あたりどれだけの現在価値を生み出すかを表す指標です。
+
+簡単に言うと、**「投資額に対して何倍の価値が得られるか」**を表します。
+
+なぜPIが重要なのか
+観点	説明
+投資効率の把握	限られた資金での効率を比較できる
+相対評価	規模の異なる案件を比較しやすい
+意思決定の補助	複数案件の優先順位付けに活用できる
+PIは特に資金制約がある場合に、どの案件に優先的に投資すべきかを検討する際の参考になります。
+
+PIの計算式
+PI = 将来キャッシュフローの現在価値合計 ÷ 初期投資額
+または、NPVを使って：
+
+PI = (NPV + 初期投資額) ÷ 初期投資額
+PI = 1 + (NPV ÷ 初期投資額)
+PIの計算例
+項目	金額
+初期投資額	1,000万円
+将来CFの現在価値合計	1,200万円
+PI = 1,200万円 ÷ 1,000万円 = 1.2
+PI = 1.2 は、投資額1円あたり1.2円の価値が得られることを意味します。
+
+PIの判断基準
+PI値	意味
+PI &gt; 1	投資額以上の価値が得られる可能性
+PI = 1	投資額と得られる価値が同等
+PI &lt; 1	投資額を下回る可能性
+一般的にPI &gt; 1の案件が検討対象となりますが、PIの数値だけで判断せず、他の指標と合わせて総合的に検討することが重要です。
+
+PIとNPV・IRRの関係
+指標	表すもの	単位	特徴
+NPV	収益の絶対額	円	金額ベースで把握
+IRR	収益率	%	年率で把握
+PI	投資効率	倍	相対的な効率を把握
+3つの指標を組み合わせることで、より多角的な分析が可能です。
+
+PIの活用シーン
+複数案件の比較 - 資金制約がある中での優先順位付け
+投資効率の確認 - 効率的な資金配分の検討
+代替案の評価 - 異なる投資オプションの比較
+PIの注意点
+案件の規模（投資額の大きさ）は考慮されない
+割引率の設定によって結果が変わる
+将来のキャッシュフロー予測に依存する
+実際にPIを計算してみる
+大家DXのIRR計算ツールでは、PIも同時に計算できます。
+
+→IRR計算ツールを使う",良好,6%,良好,44%,良好,53%,https://mtame.jp/column/Investment_evaluation/,"投資評価の5つの指標をご存知ですか？～NPV、IRR - エムタメ ",https://note.com/humble_prawn2177/n/n4823a0e1a15f,"【財務・会計】収益性指数法(PI)｜一時休止中 - note ",https://keiei-manabu.com/finance/pi.html,"PI（Profitability Index：収益性指標） ",https://www.ebc.com/jp/forex/145939.html,"収益性指数(PI): 投資の可能性を測定する方法 ",https://digimarl.com/tips/detail/9689/,"収益性指数法｜用語集 - デジマール株式会社 ",https://dear-reicious-online.jp/archives/1320,"不動産投資の指標とは？5つの判断基準を図解付きでわかり ... ",https://www.musashi-corporation.com/wealthhack/irr,"IRR（内部収益率）とは？計算方法や利回りとの違いをわかり ... ",https://action-hub.jp/topics/profitability-index-pi/,"収益性指数（PI）とは何か？投資の成功に導く指標の使い方 ",https://www.ma-cp.com/about-ma/net-present-value/,"NPV（正味現在価値）とは？ 重要性と計算方法を深堀りして ... ",https://www.mof.go.jp/pri/research/discussion_paper/ron315.pdf,"プロジェクト等の経済性計算についての論点の整理 - 財務省 ",https://mtame.jp/column/Investment_evaluation/,"投資評価の5つの指標をご存知ですか？～NPV、IRR - エムタメ ",https://www.xs.com/jp/glossary/profitability-index-pi-pi,"Profitability Index (PI): 利益性指数（PI） - XS ",https://action-hub.jp/topics/profitability-index-pi/,"収益性指数（PI）とは何か？投資の成功に導く指標の使い方 ",https://dear-reicious-online.jp/archives/1320,"不動産投資の指標とは？5つの判断基準を図解付きでわかり ... ",https://www.ebc.com/jp/forex/145939.html,"収益性指数(PI): 投資の可能性を測定する方法 ",https://keiei-manabu.com/finance/pi.html,"PI（Profitability Index：収益性指標） ",https://note.com/humble_prawn2177/n/n4823a0e1a15f,"【財務・会計】収益性指数法(PI)｜一時休止中 - note ",https://www.musashi-corporation.com/wealthhack/irr,"IRR（内部収益率）とは？計算方法や利回りとの違いをわかり ... ",https://www.unepfi.org/wordpress/wp-content/uploads/2018/12/PI-Impact-Radar_J.pdf,"インパクトレーダー ",https://www.meti.go.jp/policy/recycle/main/3r_policy/policy/pdf/text_2_2_b.pdf,"環境管理会計 - 経済産業省 ",https://ccd.cloud/Result/detail?id=31703149,https://ccd.cloud/Result/detail?id=31703146,https://ccd.cloud/Result/detail?id=31703145,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703156,https://ccd.cloud/Result/detail?id=31703152,https://ccd.cloud/Result/detail?id=31703148,https://ccd.cloud/Result/detail?id=31701412,https://ccd.cloud/Result/detail?id=31701392,https://ccd.cloud/Result/detail?id=31701403,,

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Calculator, AlertTriangle } from 'lucide-react'
+import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -26,9 +27,19 @@ const tocItems: TocItem[] = [
   { id: 'factors', title: 'キャップレートの決定要因', level: 2 },
   { id: 'market', title: '地域別・物件タイプ別の相場', level: 2 },
   { id: 'yield-gap', title: 'イールドギャップとは', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
-export function CapRateCalculator() {
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface CapRateCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
+export function CapRateCalculator({ relatedGlossary = [] }: CapRateCalculatorProps) {
   const [noiInMan, setNoiInMan] = useState<number>(0)
   const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0)
   const [interestRate, setInterestRate] = useState<number>(0)
@@ -275,6 +286,24 @@ export function CapRateCalculator() {
               </p>
             </div>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           <ToolDisclaimer

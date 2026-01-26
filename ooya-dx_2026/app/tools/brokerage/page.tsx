@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { BrokerageCalculator } from './BrokerageCalculator'
+import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -86,6 +87,9 @@ const breadcrumbSchema = {
 }
 
 export default function BrokeragePage() {
+  const relatedGlossary = getGlossaryTermsByTool('/tools/brokerage')
+    .map(term => ({ slug: term.slug, title: term.title }))
+
   return (
     <>
       {/* 構造化データ */}
@@ -101,7 +105,7 @@ export default function BrokeragePage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <BrokerageCalculator />
+      <BrokerageCalculator relatedGlossary={relatedGlossary} />
     </>
   )
 }

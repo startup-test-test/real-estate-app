@@ -20,6 +20,15 @@ import {
   formatManYen,
 } from '@/lib/calculators/capitalGainsTax'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface CapitalGainsTaxCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // =================================================================
 // 早見表データ
 // =================================================================
@@ -40,12 +49,13 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法', level: 3 },
   { id: 'tax-rate', title: '税率表（参考）', level: 3 },
   { id: 'special', title: '主な特例・控除制度', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function CapitalGainsTaxCalculator() {
+export function CapitalGainsTaxCalculator({ relatedGlossary = [] }: CapitalGainsTaxCalculatorProps) {
   // 入力状態（万円単位）
   const [salePriceInMan, setSalePriceInMan] = useState<number>(0)
   const [acquisitionCostInMan, setAcquisitionCostInMan] = useState<number>(0)
@@ -401,6 +411,25 @@ export function CapitalGainsTaxCalculator() {
                 </ul>
               </div>
             </div>
+
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* =================================================================

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Percent } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
@@ -25,12 +26,22 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'LTVの計算式', level: 3 },
   { id: 'reverse', title: '逆算ツール', level: 2 },
   { id: 'related-metrics', title: '関連指標との関係', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
+
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface LTVCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function LTVCalculator() {
+export function LTVCalculator({ relatedGlossary = [] }: LTVCalculatorProps) {
   // 入力状態
   const [propertyPriceInMan, setPropertyPriceInMan] = useState<number>(0) // 物件価格（万円）
   const [loanAmountInMan, setLoanAmountInMan] = useState<number>(0) // 借入額（万円）
@@ -320,6 +331,24 @@ export function LTVCalculator() {
               </ul>
             </div>
 
+            {relatedGlossary.length > 0 && (
+              <>
+                <SectionHeading id="glossary" items={tocItems} />
+                <ul className="space-y-2">
+                  {relatedGlossary.map((item) => (
+                    <li key={item.slug}>
+                      <Link
+                        href={`/glossary/${item.slug}`}
+                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                      >
+                        <span className="text-gray-400 mr-1">›</span>
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
 
           {/* 免責事項 */}

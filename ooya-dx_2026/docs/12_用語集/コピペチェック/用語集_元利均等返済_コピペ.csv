@@ -1,0 +1,51 @@
+'ID,文章,類似度判定結果,類似度,一致率判定結果,一致率,テキスト間チェック結果,テキスト類似度,"類似度判定 対象URL1","類似度判定 サイトタイトル1","類似度判定 対象URL2","類似度判定 サイトタイトル2","類似度判定 対象URL3","類似度判定 サイトタイトル3","類似度判定 対象URL4","類似度判定 サイトタイトル4","類似度判定 対象URL5","類似度判定 サイトタイトル5","類似度判定 対象URL6","類似度判定 サイトタイトル6","類似度判定 対象URL7","類似度判定 サイトタイトル7","類似度判定 対象URL8","類似度判定 サイトタイトル8","類似度判定 対象URL9","類似度判定 サイトタイトル9","類似度判定 対象URL10","類似度判定 サイトタイトル10","一致率判定 対象URL1","一致率判定 サイトタイトル1","一致率判定 対象URL2","一致率判定 サイトタイトル2","一致率判定 対象URL3","一致率判定 サイトタイトル3","一致率判定 対象URL4","一致率判定 サイトタイトル4","一致率判定 対象URL5","一致率判定 サイトタイトル5","一致率判定 対象URL6","一致率判定 サイトタイトル6","一致率判定 対象URL7","一致率判定 サイトタイトル7","一致率判定 対象URL8","一致率判定 サイトタイトル8","一致率判定 対象URL9","一致率判定 サイトタイトル9","一致率判定 対象URL10","一致率判定 サイトタイトル10","テキスト間チェック 対象URL1","テキスト間チェック 対象URL2","テキスト間チェック 対象URL3","テキスト間チェック 対象URL4","テキスト間チェック 対象URL5","テキスト間チェック 対象URL6","テキスト間チェック 対象URL7","テキスト間チェック 対象URL8","テキスト間チェック 対象URL9","テキスト間チェック 対象URL10",チェックURL,メモ
+31707533,"元利均等返済とは？賃貸経営でのローン返済方法を解説
+元利均等返済は、毎月の返済額が一定となるローン返済方法です。賃貸経営における元利均等返済の仕組みと特徴を解説します。
+
+この用語に関連する計算ツール
+
+計算する
+元利均等返済とは
+元利均等返済は、毎月の返済額（元金＋利息）が一定となるローン返済方法です。
+
+賃貸経営で最も一般的に利用される返済方式で、返済計画が立てやすいという特徴があります。
+
+元利均等返済の仕組み
+毎月の返済額は一定ですが、その内訳は変化します。
+
+返済時期	元金部分	利息部分
+返済初期	少ない	多い
+返済中期	増加	減少
+返済後期	多い	少ない
+計算例
+項目	金額
+借入額	4,000万円
+金利	2.0%
+借入期間	30年
+毎月返済額	約14.8万円（一定）
+返済1回目と返済300回目の内訳：
+
+回数	元金	利息	合計
+1回目	約8.1万円	約6.7万円	約14.8万円
+300回目	約14.5万円	約0.3万円	約14.8万円
+元利均等返済のメリット
+返済額が一定 - 毎月の支出が予測しやすい
+初期の返済負担が軽い - 元金均等返済より初期返済額が少ない
+キャッシュフロー計算がしやすい - 収支計画を立てやすい
+元利均等返済のデメリット
+総返済額が多くなる傾向 - 元金均等返済より利息総額が多い場合がある
+元金の減りが遅い - 初期は利息の割合が大きい
+残債の減少が遅い - 売却時の手取りに影響する可能性
+元利均等返済と元金均等返済の比較
+借入額4,000万円、金利2%、30年の場合：
+
+項目	元利均等返済	元金均等返済
+初回返済額	約14.8万円	約17.8万円
+最終返済額	約14.8万円	約11.1万円
+総返済額	約5,325万円	約5,203万円
+返済方式の選択で考慮される点
+重視するポイント	特徴のある返済方式
+初期の手元資金確保	元利均等返済（初期返済額が少ない）
+総返済額の抑制	元金均等返済（利息総額が少ない傾向）
+返済計画のシンプルさ	元利均等返済（毎月一定額）
+※本ページの内容は参考情報です。実際の経営判断は専門家にご相談ください。",良好,13%,良好,46%,良好,44%,https://www.flat35.com/hajimete/atoz/04.html,"元利均等返済と元金均等返済とは？ - フラット35 ",https://www.smtb.jp/personal/loan/house/house-column/column-05,"元利均等返済と元金均等返済の違いは？ - 三井住友信託銀行 ",https://www.sbishinseibank.co.jp/retail/housing/column/vol79.html,"元利均等返済とは？元金均等返済 - 住宅ローン - SBI新生銀行 ",https://www.jibunbank.co.jp/column/article/00417/,"元利均等返済と元金均等返済の違いとは？各メリットや注意点 ... ",https://www.smbc.co.jp/kojin/money-viva/housing_loan/repayment/,"元利均等返済と元金均等返済どっちがお得？知っておくべき ... ",https://finance.recruit.co.jp/article/k025/,"元利均等返済と元金均等返済 どちらの返済方法の方がお得？ ",https://mogecheck.jp/articles/show/gOyBbAMV4rmlqm7RDvda,"元利均等返済と元金均等返済ではどっちがお得？違いや ... ",https://www.j-fsa.or.jp/personal/borrowing/diagnosis/loanlife/,"返済シミュレーション - 日本貸金業協会 ",https://suumo.jp/article/oyakudachi/oyaku/sumai_nyumon/money/gankin_kintohensai/,"元金均等返済は損か得か 元利均等返済との違い - SUUMO ",https://www.eloan.co.jp/home/sim/payment/fine/,"住宅ローンのこだわり返済額シミュレーション ",https://www.smtb.jp/personal/loan/house/house-column/column-05,"元利均等返済と元金均等返済の違いは？ - 三井住友信託銀行 ",https://www.smbc.co.jp/kojin/jutaku_loan/column/kinri_calculation/,"住宅ローン金利の計算方法をシミュレーションと共にご紹介 ... ",https://www.jibunbank.co.jp/column/article/00417/,"元利均等返済と元金均等返済の違いとは？各メリットや注意点 ... ",https://www.sbishinseibank.co.jp/retail/housing/column/vol79.html,"元利均等返済とは？元金均等返済 - 住宅ローン - SBI新生銀行 ",https://mogecheck.jp/articles/show/gOyBbAMV4rmlqm7RDvda,"元利均等返済と元金均等返済ではどっちがお得？違いや ... ",https://www.netbk.co.jp/contents/lineup/home-loan/first/hensai/,"はじめての住宅ローン元利均等返済と元金均等返済 ",https://www.ponta-house.net/media/kiji.php?n=250,"総返済額を抑えるチャンス！「元利均等返済」と「元金均等 ... ",https://www.smbc.co.jp/kojin/money-viva/housing_loan/repayment/,"元利均等返済と元金均等返済どっちがお得？知っておくべき ... ",https://finance.recruit.co.jp/article/k025/,"元利均等返済と元金均等返済 どちらの返済方法の方がお得？ ",https://www.flat35.com/hajimete/atoz/04.html,"元利均等返済と元金均等返済とは？ - フラット35 ",https://ccd.cloud/Result/detail?id=31688608,https://ccd.cloud/Result/detail?id=31707517,https://ccd.cloud/Result/detail?id=31707530,https://ccd.cloud/Result/detail?id=31703153,https://ccd.cloud/Result/detail?id=31703175,https://ccd.cloud/Result/detail?id=31703149,https://ccd.cloud/Result/detail?id=31688522,https://ccd.cloud/Result/detail?id=31707515,https://ccd.cloud/Result/detail?id=31688548,https://ccd.cloud/Result/detail?id=31688600,,

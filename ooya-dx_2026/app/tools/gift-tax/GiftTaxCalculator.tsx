@@ -22,6 +22,15 @@ import {
   formatManYen,
 } from '@/lib/calculators/gift-tax'
 
+interface GlossaryItem {
+  slug: string
+  title: string
+}
+
+interface GiftTaxCalculatorProps {
+  relatedGlossary?: GlossaryItem[]
+}
+
 // =================================================================
 // 関連ツール
 // =================================================================
@@ -41,12 +50,13 @@ const tocItems: TocItem[] = [
   { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
   { id: 'example', title: '具体的な計算例', level: 3 },
   { id: 'special', title: '主な特例・控除制度', level: 2 },
+  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function GiftTaxCalculator() {
+export function GiftTaxCalculator({ relatedGlossary = [] }: GiftTaxCalculatorProps) {
   // 入力状態（万円単位で入力を受け付ける）
   const [giftAmountInMan, setGiftAmountInMan] = useState<number>(0)
   const [donorRelation, setDonorRelation] = useState<DonorRelation>('lineal_ascendant_adult')
@@ -354,6 +364,25 @@ export function GiftTaxCalculator() {
                   ※具体的な適用判断は税理士等の専門家にご相談ください。
                 </p>
               </div>
+
+              {relatedGlossary.length > 0 && (
+                <>
+                  <SectionHeading id="glossary" items={tocItems} />
+                  <ul className="space-y-2">
+                    {relatedGlossary.map((item) => (
+                      <li key={item.slug}>
+                        <Link
+                          href={`/glossary/${item.slug}`}
+                          className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                        >
+                          <span className="text-gray-400 mr-1">›</span>
+                          {item.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </section>
 
             {/* =================================================================

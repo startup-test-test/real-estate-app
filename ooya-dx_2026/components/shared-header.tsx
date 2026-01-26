@@ -8,7 +8,7 @@ import { Menu, X, ChevronDown, LogOut, User } from 'lucide-react';
 
 // ナビゲーションリンク
 const NAV_LINKS = [
-  { href: '/simulator', label: 'シミュレーター' },
+  { href: '/simulator', label: '賃貸経営シミュレーター' },
   { href: '/tools', label: '計算ツール' },
   { href: '/glossary', label: '賃貸経営用語集' },
   { href: '/media', label: 'メディア' },
@@ -79,9 +79,12 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
   return (
     <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 sm:py-6">
+        <div className="flex justify-between items-center py-4 sm:py-6 md:pt-12 md:pb-6">
           {/* ロゴ */}
-          <Link href={logoHref} className="block">
+          <Link href={logoHref} className="block relative">
+            <span className="hidden md:block text-sm text-gray-900 absolute -top-5 left-0 whitespace-nowrap">
+              賃貸経営をもっとスマートに
+            </span>
             <img
               src={logoSrc}
               alt={logoAlt}
