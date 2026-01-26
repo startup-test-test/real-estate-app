@@ -22,10 +22,12 @@ import {
   HelpCircle,
   TrendingUp,
   MapPin,
+  FileText,
 } from "lucide-react";
 import UsageStatusBar from "@/components/simulator/UsageStatusBar";
 import UpgradeModal from "@/components/simulator/UpgradeModal";
 import HelpButton from "@/components/HelpButton";
+import PurchaseOfferGenerator from "@/components/tools/PurchaseOfferGenerator";
 // import MaintenanceNotice from "@/components/shared/MaintenanceNotice";
 // TODO: 認証移行後に有効化
 // import { useUsageStatus } from "@/hooks/useUsageStatus";
@@ -191,6 +193,9 @@ const MyPage: React.FC = () => {
       });
     }
   }, [user, isAuthenticated, authLoading]);
+
+  // 右カラムの表示切り替え
+  const [showPurchaseOffer, setShowPurchaseOffer] = React.useState(false);
 
   // Supabase state management
   const [simulations, setSimulations] = React.useState<any[]>([]);
@@ -723,6 +728,20 @@ const MyPage: React.FC = () => {
         },
       ],
     },
+    {
+      category: "買付申込書ジェネレーター",
+      icon: FileText,
+      color: "bg-slate-700",
+      description:
+        "フォームに入力するだけで、A4サイズの買付申込書PDFを作成",
+      actions: [
+        {
+          name: "買付申込書を作成する",
+          primary: true,
+          path: "/mypage/purchase-offer",
+        },
+      ],
+    },
     // メンテナンス中のため一時的に非表示
     // {
     //   category: "AI市場分析",
@@ -917,9 +936,14 @@ const MyPage: React.FC = () => {
                               if (action.disabled) {
                                 return;
                               }
+                              // 買付申込書：右カラムに表示
+                              if (action.path === "#purchase-offer") {
+                                setShowPurchaseOffer(true);
+                                return;
+                              }
                               // シミュレーター（完全無料・無制限）
                               if (action.path === "/mypage/simulator" || action.path === "/market-analysis") {
-                                // 完全無料プランのため、制限チェックをスキップ
+                                setShowPurchaseOffer(false);
                                 router.push(action.path);
                               } else if (action.path !== "#") {
                                 router.push(action.path);
@@ -945,6 +969,31 @@ const MyPage: React.FC = () => {
                   );
                 })}
               </div>
+
+              {/* 買付申込書ジェネレーター（右カラム） */}
+              {showPurchaseOffer && (
+                <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6 mb-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <FileText className="h-6 w-6 text-blue-500 mr-2" />
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        買付申込書ジェネレーター
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setShowPurchaseOffer(false)}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      ✕ 閉じる
+                    </button>
+                  </div>
+                  <PurchaseOfferGenerator
+                    showHeader={false}
+                    showDisclaimer={true}
+                    compact={false}
+                  />
+                </div>
+              )}
 
               {/* Property List Section */}
               <div

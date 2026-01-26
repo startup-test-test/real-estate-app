@@ -15,8 +15,8 @@ const NAV_LINKS = [
   { href: '/company', label: '会社概要' },
 ];
 
-// ダッシュボード系のルート（ヘッダーを非表示）
-const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/billing', '/mypage/guide'];
+// ダッシュボード系のルート・独自ヘッダーを持つページ（グローバルヘッダーを非表示）
+const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/billing', '/mypage/guide', '/simulator'];
 
 interface SharedHeaderProps {
   /** メディアページ用のロゴを使用するか */

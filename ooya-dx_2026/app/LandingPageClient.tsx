@@ -7,6 +7,7 @@ import CompanyProfile from '@/components/landing/CompanyProfile';
 import { LandingFooter } from '@/components/landing-footer';
 import { SharedHeader } from '@/components/shared-header';
 import { toolCategories } from '@/lib/navigation';
+import { useAuth } from '@/lib/auth/client';
 
 interface Article {
   slug: string;
@@ -35,9 +36,17 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) => {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
+
+  // ログイン済みユーザーはマイページにリダイレクト
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace('/mypage');
+    }
+  }, [user, isLoading, router]);
 
   useEffect(() => {
-    document.title = '大家DX｜大家さんのための不動産テックポータル';
+    document.title = '大家DX｜賃貸経営をもっとスマートに';
   }, []);
 
   // サービス一覧データ
@@ -47,7 +56,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
       title: '賃貸経営シミュレーター',
       description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。\n物件購入の意思決定をデータで支援します。',
       href: '/simulator',
-      buttonText: 'まずは無料でシミュレーションをする',
+      buttonText: 'シミュレーションをする（完全無料）',
       mockup: (
         <img
           src="/img/kakushin_img01.png"
@@ -57,22 +66,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
       )
     },
     {
-      id: 'tools',
-      title: '新商品をリリース予定です',
-      description: '順次リリース予定です',
-      href: '#',
-      buttonText: 'Coming Soon',
-      comingSoon: true,
+      id: 'purchase-offer',
+      title: '買付申込書ジェネレーター',
+      description: 'フォームに入力するだけで、A4サイズの買付申込書PDFを作成。\n物件購入時の意思表示をスムーズに。',
+      href: '/tools/purchase-offer',
+      buttonText: '買付申込書を作成する（完全無料）',
       mockup: (
-        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 shadow-inner text-center">
-          <div className="space-y-4">
-            <div className="text-4xl">🚀</div>
-            <div className="text-lg font-bold text-slate-700">新機能開発中</div>
-            <div className="text-sm text-slate-500">
-              順次追加予定
-            </div>
-          </div>
-        </div>
+        <img
+          src="/img/kakushin_img02.png"
+          alt="買付申込書ジェネレーター"
+          className="w-full h-auto rounded-lg"
+        />
       )
     },
   ];
@@ -171,6 +175,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
                       )}
                       <h3 className="text-2xl sm:text-3xl font-bold text-[#32373c] mb-3">
                         {service.title}
+                        <span className="ml-2 inline-block px-2 py-0.5 bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-full align-middle">
+                          完全無料
+                        </span>
                       </h3>
                       <p className="text-sm sm:text-base text-[#32373c] leading-relaxed whitespace-pre-line">
                         {service.description}

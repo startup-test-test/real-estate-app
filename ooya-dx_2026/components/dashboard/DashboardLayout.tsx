@@ -14,6 +14,7 @@ import {
   BookOpen,
   LogOut,
   Sparkles,
+  FileText,
   // CreditCard, // 無料化対応: 課金管理を削除
 } from 'lucide-react'
 
@@ -80,6 +81,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigation = [
     { name: 'マイページ', href: '/mypage', icon: Home },
     { name: '賃貸経営シミュレーター', href: '/mypage/simulator', icon: Calculator },
+    { name: '買付申込書ジェネレーター', href: '/mypage/purchase-offer', icon: FileText },
   ]
 
   const supportNavigation = [
