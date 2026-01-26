@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       replace={handleReplace}
       onSessionChange={handleSessionChange}
       Link={Link}
-      redirectTo="/dashboard"
+      redirectTo="/mypage"
     >
       {children}
     </NeonAuthUIProvider>
