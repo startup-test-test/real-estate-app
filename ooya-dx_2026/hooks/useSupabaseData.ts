@@ -4,6 +4,19 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Property, Simulation, MarketAnalysis } from '../types'
 
+// crypto.randomUUID() のポリフィル（古いブラウザ対応）
+const generateUUID = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  // フォールバック: RFC 4122 v4 UUID生成
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export function useSupabaseData() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -118,12 +131,12 @@ export function useSupabaseData() {
       if (!user) {
         console.log('🧪 User not authenticated, returning local simulation data');
         const localSimulation = {
-          id: existingId || crypto.randomUUID(),
+          id: existingId || generateUUID(),
           simulation_name: simulationData.simulation_name,
           input_data: simulationData.input_data,
           result_data: simulationData.result_data,
           user_id: 'anonymous',
-          share_token: shareToken || crypto.randomUUID().replace(/-/g, '').substring(0, 32),
+          share_token: shareToken || generateUUID().replace(/-/g, '').substring(0, 32),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
