@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: '/tools', label: '計算ツール' },
   { href: '/glossary', label: '賃貸経営用語集' },
   { href: '/media', label: 'メディア' },
+  { href: '/company', label: '会社概要' },
 ];
 
 // ダッシュボード系のルート（ヘッダーを非表示）
