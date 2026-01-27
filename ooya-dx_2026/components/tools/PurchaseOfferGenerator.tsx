@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb';
 
 interface FormData {
   // 申込日
@@ -141,12 +142,16 @@ export default function PurchaseOfferGenerator({
       {/* ヘッダー */}
       {showHeader && (
         <>
+          {/* パンくず */}
+          <div className="print:hidden">
+            <ToolsBreadcrumb currentPage="買付申込書ジェネレーター" />
+          </div>
           <div className="text-center mb-8 print:hidden">
-            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full mb-4">
-              無料ツール
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 inline-flex items-center justify-center gap-3 flex-wrap">
               買付申込書ジェネレーター
+              <span className="px-3 py-1 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full">
+                無料ツール
+              </span>
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
               フォームに入力するだけで、A4サイズの買付予約書PDFを作成できます。
@@ -575,9 +580,9 @@ export default function PurchaseOfferGenerator({
                 overflow: 'auto'
               }}
             >
-              {/* タイトル */}
+              {/* タイトル（PDF出力用・SEO対象外） */}
               <div className="text-center mb-6">
-                <h1 className="text-xl font-bold tracking-[0.5em]">買 付 申 込 書</h1>
+                <div className="text-xl font-bold tracking-[0.5em]" role="heading" aria-level={1} aria-hidden="true">買 付 申 込 書</div>
               </div>
 
               {/* 日付 */}

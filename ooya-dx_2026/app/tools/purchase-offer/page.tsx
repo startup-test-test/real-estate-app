@@ -13,7 +13,7 @@ export default function PurchaseOfferPage() {
       </div>
       <div className="h-[72px] sm:h-[88px] print:hidden" />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-5 py-12">
         <PurchaseOfferGenerator
           showHeader={true}
           showDisclaimer={true}
