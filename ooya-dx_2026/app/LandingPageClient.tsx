@@ -144,7 +144,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
           {/* Service Cards Grid */}
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             {services.map((service) => {
-              const isComingSoon = 'comingSoon' in service && service.comingSoon;
+              const isComingSoon = 'comingSoon' in service && (service as { comingSoon?: boolean }).comingSoon;
               const CardWrapper = isComingSoon ? 'div' : 'a';
 
               return (
