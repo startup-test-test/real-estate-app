@@ -7,8 +7,6 @@ import CompanyProfile from '@/components/landing/CompanyProfile';
 import { LandingFooter } from '@/components/landing-footer';
 import { SharedHeader } from '@/components/shared-header';
 import { toolCategories } from '@/lib/navigation';
-import { useAuth } from '@/lib/auth/client';
-
 interface Article {
   slug: string;
   categorySlug: string;
@@ -36,14 +34,6 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) => {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
-
-  // ログイン済みユーザーはマイページにリダイレクト
-  useEffect(() => {
-    if (!isLoading && user) {
-      router.replace('/mypage');
-    }
-  }, [user, isLoading, router]);
 
   useEffect(() => {
     document.title = '大家DX｜賃貸経営をもっとスマートに';

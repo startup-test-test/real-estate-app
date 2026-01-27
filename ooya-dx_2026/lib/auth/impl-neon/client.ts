@@ -91,7 +91,10 @@ export function useAuth(): AuthClient {
       }
     },
     async signInWithGoogle() {
-      await authClient.signIn.social({ provider: "google" });
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/mypage"
+      });
     },
     async sendPasswordReset(email: string) {
       try {
