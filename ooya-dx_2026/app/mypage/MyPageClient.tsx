@@ -10,24 +10,16 @@ import { logError } from "@/lib/utils/errorHandler";
 import {
   Calculator,
   Building,
-  Search,
   Plus,
   Edit,
   Trash2,
-  ChevronDown,
   Loader,
   ChevronLeft,
   ChevronRight,
   BarChart3,
-  HelpCircle,
-  TrendingUp,
-  MapPin,
-  FileText,
 } from "lucide-react";
 import UsageStatusBar from "@/components/simulator/UsageStatusBar";
 import UpgradeModal from "@/components/simulator/UpgradeModal";
-import HelpButton from "@/components/HelpButton";
-import PurchaseOfferGenerator from "@/components/tools/PurchaseOfferGenerator";
 // import MaintenanceNotice from "@/components/shared/MaintenanceNotice";
 // TODO: 認証移行後に有効化
 // import { useUsageStatus } from "@/hooks/useUsageStatus";
@@ -158,7 +150,7 @@ const MyPage: React.FC = () => {
   }, [runTutorial, user, router]);
 
   useEffect(() => {
-    document.title = 'マイページ | 大家DX';
+    document.title = '収益シミュレーション | 大家DX';
   }, []);
 
   // 決済成功処理
@@ -194,8 +186,6 @@ const MyPage: React.FC = () => {
     }
   }, [user, isAuthenticated, authLoading]);
 
-  // 右カラムの表示切り替え
-  const [showPurchaseOffer, setShowPurchaseOffer] = React.useState(false);
 
   // Supabase state management
   const [simulations, setSimulations] = React.useState<any[]>([]);
@@ -631,7 +621,7 @@ const MyPage: React.FC = () => {
           results.monthlyCashFlow || fallbackValues.monthlyCashFlow || 0,
         annualCashFlow: getAnnualCashFlow(),
         cumulativeCF10Year: calculateSaleNetCF10Year(),
-        date: new Date(sim.created_at)
+        date: new Date(sim.updated_at || sim.created_at)
           .toLocaleDateString("ja-JP", {
             year: "numeric",
             month: "2-digit",
@@ -715,30 +705,16 @@ const MyPage: React.FC = () => {
     }>;
   }> = [
     {
-      category: "賃貸経営シミュレーター",
+      category: "収益シミュレーション",
       icon: Calculator,
       color: "bg-slate-700",
       description:
         "売却時ネットCF・キャッシュフロー推移・収益利回りをグラフと数値で診断",
       actions: [
         {
-          name: "賃貸経営シミュレーター",
+          name: "新規作成",
           primary: true,
           path: "/mypage/simulator",
-        },
-      ],
-    },
-    {
-      category: "買付申込書ジェネレーター",
-      icon: FileText,
-      color: "bg-slate-700",
-      description:
-        "フォームに入力するだけで、A4サイズの買付申込書PDFを作成",
-      actions: [
-        {
-          name: "買付申込書を作成する",
-          primary: true,
-          path: "/mypage/purchase-offer",
         },
       ],
     },
@@ -851,7 +827,7 @@ const MyPage: React.FC = () => {
     if (amount >= 10000) {
       return `${(amount / 10000).toFixed(0)}万円`;
     }
-    return `${amount.toFixed(1)}万円`;
+    return `${Math.round(amount)}万円`;
   };
 
   const formatNumber = (num: number) => {
@@ -891,7 +867,7 @@ const MyPage: React.FC = () => {
             <div className="mb-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">収益シミュレーション</h1>
                   <p className="text-gray-600 mt-1">
                     賃貸経営の成果を一目で確認できます
                   </p>
@@ -970,31 +946,6 @@ const MyPage: React.FC = () => {
                 })}
               </div>
 
-              {/* 買付申込書ジェネレーター（右カラム） */}
-              {showPurchaseOffer && (
-                <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6 mb-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <FileText className="h-6 w-6 text-blue-500 mr-2" />
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        買付申込書ジェネレーター
-                      </h3>
-                    </div>
-                    <button
-                      onClick={() => setShowPurchaseOffer(false)}
-                      className="text-sm text-gray-500 hover:text-gray-700"
-                    >
-                      ✕ 閉じる
-                    </button>
-                  </div>
-                  <PurchaseOfferGenerator
-                    showHeader={false}
-                    showDisclaimer={true}
-                    compact={false}
-                  />
-                </div>
-              )}
-
               {/* Property List Section */}
               <div
                 id="property-list"
@@ -1006,23 +957,6 @@ const MyPage: React.FC = () => {
                     <h3 className="text-lg font-semibold text-gray-900">
                       保存済み収益シミュレーション
                     </h3>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {/* ヘルプボタン（控えめなデザイン） */}
-                    <HelpButton
-                      onStartTutorial={handleStartTutorial}
-                      showPulse={!hasTutorialBeenCompleted(user?.id || '') && simulations.length === 0}
-                    />
-                    <button
-                      onClick={async () => {
-                        // 完全無料プランのため、制限チェックをスキップ
-                        router.push("/mypage/simulator");
-                      }}
-                      className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      賃貸経営シミュレーターを開始する
-                    </button>
                   </div>
                 </div>
 
@@ -1037,60 +971,6 @@ const MyPage: React.FC = () => {
                     </button>
                   </div>
                 )}
-
-                {/* Search and Filter Controls - PC版のみ表示 */}
-                <div className="mb-6 hidden md:block">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0 sm:space-x-4">
-                    {/* Search */}
-                    <div className="relative flex-1 max-w-md">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <input
-                        type="text"
-                        placeholder="物件名・住所で検索"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    {/* Filters */}
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <select
-                          value={filterStatus}
-                          onChange={(e) => setFilterStatus(e.target.value)}
-                          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none pr-8"
-                        >
-                          <option value="all">すべて</option>
-                          <option value="検討中">🔍 検討中</option>
-                          <option value="内見予定">👀 内見予定</option>
-                          <option value="申込検討">⏳ 申込検討</option>
-                          <option value="契約手続中">📋 契約手続中</option>
-                          <option value="取得済み">✅ 取得済み</option>
-                          <option value="見送り">❌ 見送り</option>
-                          <option value="保留">📝 保留</option>
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                      </div>
-
-                      <div className="relative">
-                        <select
-                          value={sortBy}
-                          onChange={(e) => setSortBy(e.target.value)}
-                          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none pr-8"
-                        >
-                          <option value="newest">更新日：新しい順</option>
-                          <option value="oldest">更新日：古い順</option>
-                          <option value="yield-high">利回り：高い順</option>
-                          <option value="yield-low">利回り：低い順</option>
-                          <option value="price-high">価格：高い順</option>
-                          <option value="price-low">価格：安い順</option>
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
                 {/* Results Count */}
                 <div className="mb-4 flex justify-between items-center">
@@ -1127,7 +1007,20 @@ const MyPage: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                    {/* テーブルヘッダー（PC版のみ） */}
+                    <div className="hidden md:flex items-center bg-gray-100 border-b border-gray-200 text-sm font-medium text-gray-600">
+                      <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200">物件名</div>
+                      <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">
+                        <div>購入価格</div>
+                        <div className="text-xs text-gray-500">表面利回り</div>
+                      </div>
+                      <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">年間CF</div>
+                      <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">更新日</div>
+                      <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">結果を見る</div>
+                      <div className="flex-1 text-center px-2 py-3">編集・削除</div>
+                    </div>
+
                     {paginatedResults.map((sim, index) => {
                       // サンプル物件の最初のインデックスを取得
                       const firstSampleIndex = paginatedResults.findIndex(s =>
@@ -1138,280 +1031,194 @@ const MyPage: React.FC = () => {
                       const isFirstSample = (sim.id === 'sample-property-001' || sim.propertyName?.startsWith('【サンプル】'))
                         && index === firstSampleIndex;
 
+                      // ステータスの絵文字を取得
+                      const getStatusEmoji = (status: string) => {
+                        switch (status) {
+                          case "検討中": return "🔍";
+                          case "内見予定": return "👀";
+                          case "申込検討": return "⏳";
+                          case "契約手続中": return "📋";
+                          case "取得済み": return "✅";
+                          case "売却済み": return "💰";
+                          case "見送り": return "❌";
+                          case "保留": return "📝";
+                          default: return "🔍";
+                        }
+                      };
+
+                      const isLastItem = index === paginatedResults.length - 1;
+
+                      // 交互背景色（ゼブラストライプ）
+                      const isEvenRow = index % 2 === 1;
+
                       return (
                         <div
                           key={sim.id}
-                          className={`relative rounded-lg overflow-hidden transition-all duration-300 cursor-pointer ${
+                          className={`transition-all duration-200 cursor-pointer ${
                             isFirstSample ? 'sample-property-card' : ''
                           } ${
+                            !isLastItem ? 'border-b border-gray-200' : ''
+                          } ${
                             sim.status === "取得済み"
-                              ? "border-2 border-green-400 bg-green-50 hover:shadow-lg hover:border-green-500"
+                              ? "bg-green-50 hover:bg-green-100"
                               : sim.status === "契約手続中"
-                                ? "border-2 border-blue-400 bg-blue-50 hover:shadow-lg hover:border-blue-500"
-                                : "border border-gray-200 bg-white hover:shadow-lg"
+                                ? "bg-blue-50 hover:bg-blue-100"
+                                : isEvenRow
+                                  ? "bg-blue-50 hover:bg-blue-100"
+                                  : "bg-white hover:bg-blue-50"
                           }`}
-                        onClick={(e) => {
-                          // ボタンがクリックされていない場合のみ遷移
-                          const target = e.target as HTMLElement;
-                          if (!target.closest("button")) {
-                            // チュートリアル中はハッシュを付けない
-                            const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
-                            const url = isTutorial 
-                              ? `/mypage/simulator?view=${sim.id}` 
-                              : `/mypage/simulator?view=${sim.id}#results`;
-                            router.push(url);
-                          }
-                        }}
-                      >
-                        {/* Property Image */}
-                        <div className="relative h-40">
-                          <img
-                            src={sim.thumbnail}
-                            alt={sim.propertyName}
-                            className="w-full h-full object-cover transition-all duration-300"
-                            onError={(e) => {
-                              // 画像読み込みエラー時のフォールバック
-                              const target = e.target as HTMLImageElement;
-                              target.src =
-                                "https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=400";
-                            }}
-                          />
-                          <div className="absolute top-3 left-3">
-                            <div className="bg-black/70 text-white px-3 py-2 rounded-lg shadow-lg backdrop-blur-sm">
-                              <span className="text-xs text-gray-300 block">
-                                登録日：{sim.date}
-                              </span>
-                              <span
-                                className="text-sm font-medium block mt-1 truncate"
-                                title={sim.propertyName}
-                              >
-                                {sim.propertyName.length > 15
-                                  ? `${sim.propertyName.slice(0, 15)}...`
-                                  : sim.propertyName}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Status Badge */}
-                        <div className="absolute top-4 right-3">
-                          <span
-                            className={`px-4 py-2 text-base rounded-md font-medium ${
-                              sim.status === "検討中"
-                                ? "bg-blue-100 text-blue-700"
-                                : sim.status === "内見予定"
-                                  ? "bg-purple-100 text-purple-700"
-                                  : sim.status === "申込検討"
-                                    ? "bg-orange-100 text-orange-700"
-                                    : sim.status === "契約手続中"
-                                      ? "bg-yellow-100 text-yellow-700"
-                                      : sim.status === "取得済み"
-                                        ? "bg-green-100 text-green-700"
-                                        : sim.status === "売却済み"
-                                          ? "bg-indigo-100 text-indigo-700"
-                                          : sim.status === "見送り"
-                                            ? "bg-red-100 text-red-700"
-                                            : sim.status === "保留"
-                                              ? "bg-gray-100 text-gray-700"
-                                              : "bg-blue-100 text-blue-700"
-                            }`}
-                          >
-                            {sim.status === "検討中"
-                              ? "🔍 検討中"
-                              : sim.status === "内見予定"
-                                ? "👀 内見予定"
-                                : sim.status === "申込検討"
-                                  ? "⏳ 申込検討"
-                                  : sim.status === "契約手続中"
-                                    ? "📋 契約手続中"
-                                    : sim.status === "取得済み"
-                                      ? "✅ 取得済み"
-                                      : sim.status === "売却済み"
-                                        ? "💰 売却済み"
-                                        : sim.status === "見送り"
-                                          ? "❌ 見送り"
-                                          : sim.status === "保留"
-                                            ? "📝 保留"
-                                            : "🔍 検討中"}
-                          </span>
-                        </div>
-
-                        <div
-                          className={`p-3 md:p-4 ${
-                            sim.status === "取得済み"
-                              ? "bg-green-50"
-                              : sim.status === "契約手続中"
-                                ? "bg-blue-50"
-                                : "bg-white"
-                          }`}
+                          onClick={(e) => {
+                            const target = e.target as HTMLElement;
+                            if (!target.closest("button")) {
+                              const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
+                              const url = isTutorial
+                                ? `/mypage/simulator?view=${sim.id}`
+                                : `/mypage/simulator?view=${sim.id}#results`;
+                              router.push(url);
+                            }
+                          }}
                         >
-                          {/* Property Info */}
-                          <div className="mb-4">
-                            <div className="mb-2">
-                              <div className="overflow-hidden flex items-center">
-                                <span className="text-sm text-gray-500 flex-shrink-0">
-                                  住所：
-                                </span>
-                                <span
-                                  className="text-base text-gray-900 font-medium truncate ml-1"
-                                  title={sim.location}
-                                >
-                                  {sim.location.length > 20
-                                    ? `${sim.location.slice(0, 20)}...`
-                                    : sim.location}
-                                </span>
-                              </div>
+                          {/* PC版: 横並びレイアウト */}
+                          <div className="hidden md:flex items-stretch">
+                            {/* 物件名・住所 */}
+                            <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200 flex flex-col justify-center">
+                              <p className="font-semibold text-gray-900 truncate mb-1" title={sim.propertyName}>
+                                {sim.propertyName}
+                              </p>
+                              <p className="text-sm text-gray-500 truncate" title={sim.location}>
+                                {sim.location}
+                              </p>
                             </div>
 
-                            {/* Property URL and Memo - Compact */}
-                            <div className="mb-3 p-2 bg-gray-50 rounded text-sm space-y-1">
-                              <div className="flex items-center">
-                                <span className="text-gray-600 mr-2">URL:</span>
-                                {sim.propertyUrl && sim.propertyUrl !== "#" ? (
-                                  <a
-                                    href={sim.propertyUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-800 underline truncate flex-1"
-                                  >
-                                    {sim.propertyUrl.replace(
-                                      /^https?:\/\//,
-                                      "",
-                                    )}
-                                  </a>
-                                ) : (
-                                  <span className="text-gray-400">未登録</span>
-                                )}
-                              </div>
-                              <div className="flex items-start">
-                                <span className="text-gray-600 mr-2">
-                                  メモ:
-                                </span>
-                                <p className="text-gray-700 flex-1 line-clamp-1">
-                                  {sim.propertyMemo || (
-                                    <span className="text-gray-400">なし</span>
-                                  )}
-                                </p>
-                              </div>
+                            {/* 購入価格・表面利回り */}
+                            <div className="flex-1 text-center px-2 py-3 border-r border-gray-200 flex flex-col justify-center">
+                              <p className="font-bold text-gray-900">{formatCurrency(sim.acquisitionPrice)}</p>
+                              <p className="font-bold text-gray-900">{sim.surfaceYield.toFixed(2)}%</p>
                             </div>
 
-                            {/* Financial Details - Compact */}
-                            <div className="grid grid-cols-2 gap-3 mb-3">
-                              <div>
-                                <span className="text-sm text-gray-500">
-                                  購入価格
-                                </span>
-                                <div className="font-bold text-base">
-                                  {formatCurrency(sim.acquisitionPrice)}
-                                </div>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-500">
-                                  不動産収入
-                                </span>
-                                <div className="font-bold text-base">
-                                  {sim.annualIncome}万円
-                                </div>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-500">
-                                  年間CF
-                                </span>
-                                <div
-                                  className={`font-bold text-base ${
-                                    sim.annualCashFlow >= 0
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }`}
-                                >
-                                  {sim.annualCashFlow >= 0 ? "+" : ""}
-                                  {formatNumber(Math.round(sim.annualCashFlow))}
-                                  万円
-                                </div>
-                              </div>
-                              <div>
-                                <span className="text-sm text-gray-500">
-                                  売却時ネットCF(10年)
-                                </span>
-                                <div
-                                  className={`font-bold text-base ${
-                                    sim.cumulativeCF10Year >= 0
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }`}
-                                >
-                                  {sim.cumulativeCF10Year >= 0 ? "+" : ""}
-                                  {formatNumber(
-                                    Math.round(sim.cumulativeCF10Year),
-                                  )}
-                                  万円
-                                </div>
-                              </div>
+                            {/* 年間CF */}
+                            <div className="flex-1 text-center px-2 py-3 border-r border-gray-200 flex flex-col justify-center">
+                              <p className={`font-bold ${sim.annualCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                {sim.annualCashFlow >= 0 ? "+" : ""}{formatNumber(Math.round(sim.annualCashFlow))}万
+                              </p>
                             </div>
-                          </div>
 
-                          {/* Action Buttons - メインアクション＋サブアクション */}
-                          <div className="space-y-3">
-                            {/* メインアクション: 結果表示（大きめ） */}
-                            <button
-                              onClick={() => {
-                                // チュートリアル中はハッシュを付けない
-                                const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
-                                const url = isTutorial 
-                                  ? `/mypage/simulator?view=${sim.id}` 
-                                  : `/mypage/simulator?view=${sim.id}#results`;
-                                router.push(url);
-                              }}
-                              className={`group w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm ${
-                                runTutorial && (sim.id === 'sample-property-001' || sim.propertyName?.startsWith('【サンプル】'))
-                                  ? 'tutorial-highlight-button'
-                                  : ''
-                              }`}
-                              title="シミュレーション結果を詳しく確認"
-                            >
-                              <BarChart3 className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                              シミュレーション結果を見る
-                            </button>
+                            {/* 登録日 */}
+                            <div className="flex-1 text-center px-2 py-3 border-r border-gray-200 flex flex-col justify-center">
+                              <p className="text-sm text-gray-700">{sim.date}</p>
+                            </div>
 
-                            {/* サブアクション: 共有・編集・削除 */}
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() =>
-                                  router.push(`/mypage/simulator?edit=${sim.id}`)
-                                }
-                                className="group flex-1 flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 transition-all duration-200"
-                                title="物件データを編集・再計算"
-                              >
-                                <Edit className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
-                                編集
-                              </button>
-
+                            {/* 結果ボタン（独立列） */}
+                            <div className="flex-1 px-2 py-3 border-r border-gray-200 flex items-center justify-center">
                               <button
                                 onClick={() => {
-                                  if (
-                                    window.confirm(
-                                      `「${sim.propertyName}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`,
-                                    )
-                                  ) {
-                                    if (
-                                      window.confirm(
-                                        "本当に削除しますか？\n\n削除後は復元できません。",
-                                      )
-                                    ) {
+                                  const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
+                                  const url = isTutorial
+                                    ? `/mypage/simulator?view=${sim.id}`
+                                    : `/mypage/simulator?view=${sim.id}#results`;
+                                  router.push(url);
+                                }}
+                                className="px-5 py-2.5 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                title="結果を見る"
+                              >
+                                結果を見る
+                              </button>
+                            </div>
+
+                            {/* 編集・削除 */}
+                            <div className="flex-1 px-2 py-3 flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => router.push(`/mypage/simulator?edit=${sim.id}`)}
+                                className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
+                                title="編集"
+                              >
+                                <Edit className="h-4 w-4" />
+                                <span>編集</span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？`)) {
+                                    if (window.confirm("本当に削除しますか？")) {
                                       handleDelete(sim.id, sim.propertyName);
                                     }
                                   }
                                 }}
-                                className="group flex-1 flex items-center justify-center px-3 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-all duration-200"
-                                title="この物件データを完全に削除"
+                                className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-sm font-medium rounded hover:bg-red-100 transition-colors"
+                                title="削除"
                               >
-                                <Trash2 className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
-                                削除
+                                <Trash2 className="h-4 w-4" />
+                                <span>削除</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* SP版: 縦並びコンパクトレイアウト */}
+                          <div className="md:hidden p-3">
+                            {/* 1行目: 物件名 */}
+                            <p className="font-semibold text-gray-900 truncate mb-2" title={sim.propertyName}>
+                              {sim.propertyName}
+                            </p>
+
+                            {/* 2行目: 住所 */}
+                            <p className="text-sm text-gray-500 truncate mb-2" title={sim.location}>
+                              {sim.location}
+                            </p>
+
+                            {/* 3行目: 指標 */}
+                            <div className="flex items-center gap-4 text-sm mb-3">
+                              <div>
+                                <span className="text-gray-500">購入:</span>
+                                <span className="font-bold ml-1">{formatCurrency(sim.acquisitionPrice)}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-500">年間CF:</span>
+                                <span className={`font-bold ml-1 ${sim.annualCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                  {sim.annualCashFlow >= 0 ? "+" : ""}{formatNumber(Math.round(sim.annualCashFlow))}万
+                                </span>
+                              </div>
+                              <div className="text-gray-400 text-xs">
+                                {sim.date}
+                              </div>
+                            </div>
+
+                            {/* 4行目: ボタン */}
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => {
+                                  const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
+                                  const url = isTutorial
+                                    ? `/mypage/simulator?view=${sim.id}`
+                                    : `/mypage/simulator?view=${sim.id}#results`;
+                                  router.push(url);
+                                }}
+                                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                <BarChart3 className="h-4 w-4" />
+                                <span>結果</span>
+                              </button>
+                              <button
+                                onClick={() => router.push(`/mypage/simulator?edit=${sim.id}`)}
+                                className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                title="編集"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？`)) {
+                                    if (window.confirm("本当に削除しますか？")) {
+                                      handleDelete(sim.id, sim.propertyName);
+                                    }
+                                  }
+                                }}
+                                className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                title="削除"
+                              >
+                                <Trash2 className="h-4 w-4" />
                               </button>
                             </div>
                           </div>
                         </div>
-                      </div>
                       );
                     })}
                   </div>

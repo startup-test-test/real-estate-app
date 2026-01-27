@@ -15,6 +15,7 @@ import {
   LogOut,
   Sparkles,
   FileText,
+  Mail,
   // CreditCard, // 無料化対応: 課金管理を削除
 } from 'lucide-react'
 
@@ -79,13 +80,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const navigation = [
-    { name: 'マイページ', href: '/mypage', icon: Home },
-    { name: '賃貸経営シミュレーター', href: '/mypage/simulator', icon: Calculator },
-    { name: '買付申込書ジェネレーター', href: '/mypage/purchase-offer', icon: FileText },
+    { name: '収益シミュレーション', href: '/mypage', icon: Home },
   ]
 
   const supportNavigation = [
     { name: 'ご利用ガイド・よくある質問', href: '/mypage/guide', icon: BookOpen },
+    { name: 'お問い合わせ', href: '/contact', icon: Mail },
   ]
 
   const isActive = (href: string) => {
@@ -149,7 +149,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               </Link>
               <p className="text-gray-600 text-sm font-medium text-center">
-                AIが導く、あなたの賃貸経営の未来。
+                賃貸経営シミュレーションなら<br />「大家DX」
               </p>
             </div>
 

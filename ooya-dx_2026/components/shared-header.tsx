@@ -6,13 +6,19 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/auth/client';
 import { Menu, X, ChevronDown, LogOut, User } from 'lucide-react';
 
-// ナビゲーションリンク
+// 一般向けナビゲーションリンク
 const NAV_LINKS = [
   { href: '/simulator', label: '賃貸経営シミュレーター' },
   { href: '/tools', label: '計算ツール' },
   { href: '/glossary', label: '賃貸経営用語集' },
   { href: '/media', label: 'メディア' },
   { href: '/company', label: '会社概要' },
+];
+
+// ログインユーザー向けナビゲーションリンク（マイページ系）
+const MYPAGE_NAV_LINKS = [
+  { href: '/mypage', label: '収益シミュレーション' },
+  { href: '/mypage/guide', label: 'ご利用ガイド' },
 ];
 
 // ダッシュボード系のルート・独自ヘッダーを持つページ（グローバルヘッダーを非表示）
@@ -96,11 +102,15 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
           <div className="flex items-center space-x-4 sm:space-x-6">
             {/* デスクトップナビゲーション */}
             <nav className="hidden md:flex items-center space-x-6">
-              {NAV_LINKS.map((link) => (
+              {(isDashboardRoute ? MYPAGE_NAV_LINKS : NAV_LINKS).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  className={`transition-colors ${
+                    pathname === link.href
+                      ? 'text-blue-600 font-medium'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -133,7 +143,7 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
                         className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                       >
                         <User className="w-4 h-4 mr-3 text-gray-400" />
-                        マイページ
+                        シミュレーション一覧
                       </button>
                       <button
                         onClick={handleSignOut}
@@ -179,23 +189,27 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <nav className="flex flex-col gap-2">
-              {NAV_LINKS.map((link) => (
+              {(isDashboardRoute ? MYPAGE_NAV_LINKS : NAV_LINKS).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                  className={`px-3 py-2 rounded-lg ${
+                    pathname === link.href
+                      ? 'text-blue-600 bg-blue-50 font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              {user && (
+              {!isDashboardRoute && user && (
                 <Link
                   href="/mypage"
                   className="px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  マイページ
+                  シミュレーション一覧
                 </Link>
               )}
             </nav>
