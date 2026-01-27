@@ -21,18 +21,10 @@ export function PWAInstallBanner() {
     const userAgent = navigator.userAgent;
     const ios = /iPad|iPhone|iPod/.test(userAgent);
     const android = /Android/.test(userAgent);
+    const isMobile = ios || android;
 
-    // iOSでSafari以外のブラウザかどうか（Chrome, Firefox等）
-    // これらのブラウザではホーム画面追加ができない
-    const isIOSNonSafari = ios && (
-      /CriOS/.test(userAgent) ||  // Chrome on iOS
-      /FxiOS/.test(userAgent) ||  // Firefox on iOS
-      /EdgiOS/.test(userAgent) || // Edge on iOS
-      /OPiOS/.test(userAgent)     // Opera on iOS
-    );
-
-    // iOSでSafari以外の場合はバナーを表示しない
-    if (isIOSNonSafari) {
+    // スマートフォンではバナーを表示しない
+    if (isMobile) {
       return;
     }
 
@@ -51,11 +43,7 @@ export function PWAInstallBanner() {
       return;
     }
 
-    // モバイルデバイスの場合はバナーを表示（iOSはSafariのみ）
-    if (ios || android) {
-      setShowBanner(true);
-    }
-
+    // PCでbeforeinstallpromptイベントが発火した場合のみ表示
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
