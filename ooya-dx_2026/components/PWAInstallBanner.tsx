@@ -76,7 +76,7 @@ export function PWAInstallBanner() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-4 print:hidden">
+    <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-4 print:hidden relative z-50">
       <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="bg-white/20 p-2 rounded-lg">
@@ -98,14 +98,14 @@ export function PWAInstallBanner() {
           {!isIOS && deferredPrompt && (
             <button
               onClick={handleInstall}
-              className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
+              className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors min-h-[44px] min-w-[44px] touch-manipulation cursor-pointer active:bg-blue-100"
             >
               追加する
             </button>
           )}
           <button
             onClick={handleDismiss}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors min-h-[44px] min-w-[44px] touch-manipulation cursor-pointer active:bg-white/30"
             aria-label="閉じる"
           >
             <X className="w-5 h-5" />
