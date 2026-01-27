@@ -9,7 +9,8 @@ import { LandingFooter } from '@/components/landing-footer';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { GlossaryBreadcrumb } from '@/components/tools/GlossaryBreadcrumb';
-import { getGlossaryTermBySlug, getAllGlossarySlugs, getAllGlossaryTerms } from '@/lib/glossary';
+import { RelatedTools } from '@/components/tools/RelatedTools';
+import { getGlossaryTermBySlug, getAllGlossarySlugs, getAllGlossaryTerms, getGlossaryTermsByTool } from '@/lib/glossary';
 
 interface Props {
   params: Promise<{
@@ -192,21 +193,36 @@ export default async function GlossaryTermPage({ params }: Props) {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {relatedTerms.map((relatedTerm) => (
-                    <Link
+                    <div
                       key={relatedTerm.slug}
-                      href={`/glossary/${relatedTerm.slug}`}
-                      className="block bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all border border-gray-100"
+                      className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all border border-gray-100"
                     >
-                      <h3 className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-                        {relatedTerm.shortTitle}
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                        {relatedTerm.description}
-                      </p>
-                    </Link>
+                      <Link href={`/glossary/${relatedTerm.slug}`}>
+                        <h3 className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                          {relatedTerm.shortTitle}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                          {relatedTerm.description}
+                        </p>
+                      </Link>
+                      {relatedTerm.relatedTools && (
+                        <Link
+                          href={relatedTerm.relatedTools}
+                          className="inline-flex items-center gap-1 mt-2 text-xs text-blue-600 hover:text-blue-700 hover:underline"
+                        >
+                          <Calculator className="w-3 h-3" />
+                          計算ツール
+                        </Link>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* 関連シミュレーター一覧 */}
+            {term.relatedTools && (
+              <RelatedTools currentPath={term.relatedTools} />
             )}
 
             {/* CTA */}
