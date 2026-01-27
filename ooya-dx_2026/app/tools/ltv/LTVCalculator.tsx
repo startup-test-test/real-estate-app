@@ -13,6 +13,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { calculateLTV, calculateLoanFromLTV, calculateLTVFromEquity } from '@/lib/calculators/ltv'
 
 // ページタイトル（パンくず・h1で共通使用）
@@ -103,6 +104,12 @@ export function LTVCalculator({ relatedGlossary = [] }: LTVCalculatorProps) {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
+
+          {/* シェアボタン */}
+          <div className="mb-4">
+            <ShareButtons title={PAGE_TITLE} />
+          </div>
+
           <p className="text-gray-600 mb-8">
             賃貸経営のLTV（Loan to Value：借入比率）を概算計算します。
             物件価格と借入額からLTVを算出し、自己資金比率も同時に確認できます。

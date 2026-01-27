@@ -13,6 +13,7 @@ import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
 
@@ -100,6 +101,12 @@ export function BrokerageCalculator({ relatedGlossary = [] }: BrokerageCalculato
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
               {PAGE_TITLE}
             </h1>
+
+            {/* シェアボタン */}
+            <div className="mb-4">
+              <ShareButtons title={PAGE_TITLE} />
+            </div>
+
             <p className="text-gray-600 mb-8">
               売買価格を入力するだけで、仲介手数料の上限額を瞬時に計算します。
             </p>

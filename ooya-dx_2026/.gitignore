@@ -6,3 +6,7 @@ node_modules
 .env*.local
 CLAUDE.md
 .env.vercel
+
+# PWA generated files
+public/sw.js
+public/workbox-*.js

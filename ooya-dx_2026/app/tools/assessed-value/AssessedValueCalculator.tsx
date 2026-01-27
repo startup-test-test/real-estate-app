@@ -13,6 +13,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 
 // =================================================================
@@ -173,6 +174,12 @@ export function AssessedValueCalculator({ relatedGlossary = [] }: Props) {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
+
+          {/* シェアボタン */}
+          <div className="mb-4">
+            <ShareButtons title={PAGE_TITLE} />
+          </div>
+
           <p className="text-gray-600 mb-8">
             路線価・建物構造・築年数を入力するだけで、土地・建物の積算価格を計算します。
             銀行融資における担保評価の目安を把握できます。

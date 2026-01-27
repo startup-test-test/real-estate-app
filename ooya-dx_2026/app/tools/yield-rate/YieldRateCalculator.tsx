@@ -12,6 +12,7 @@ import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateYieldRate, estimateAnnualExpenses, estimatePurchaseCosts } from '@/lib/calculators/yieldRate'
 
@@ -103,6 +104,12 @@ export function YieldRateCalculator({ relatedGlossary = [] }: Props) {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
+
+          {/* シェアボタン */}
+          <div className="mb-4">
+            <ShareButtons title={PAGE_TITLE} />
+          </div>
+
           <p className="text-gray-600 mb-8">
             物件価格と年間賃料を入力するだけで、表面利回り・実質利回りを瞬時に計算します。
           </p>

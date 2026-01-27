@@ -11,6 +11,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateAcquisitionTax } from '@/lib/calculators/acquisitionTax'
 
@@ -124,6 +125,12 @@ export function AcquisitionTaxCalculator({ relatedGlossary = [] }: AcquisitionTa
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
               {PAGE_TITLE}
             </h1>
+
+            {/* シェアボタン */}
+            <div className="mb-4">
+              <ShareButtons title={PAGE_TITLE} />
+            </div>
+
             <p className="text-gray-600 mb-8">
               建物・土地の評価額と床面積を入力するだけで、不動産取得税を概算計算します。
               新築・中古住宅の軽減措置にも対応。

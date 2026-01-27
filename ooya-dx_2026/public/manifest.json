@@ -1,0 +1,28 @@
+{
+  "name": "大家DX - 賃貸経営シミュレーター",
+  "short_name": "大家DX",
+  "description": "不動産投資・賃貸経営の計算ツール。利回り、キャッシュフロー、税金などを簡単シミュレーション。",
+  "start_url": "/mypage",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "business", "utilities"],
+  "lang": "ja",
+  "dir": "ltr"
+}

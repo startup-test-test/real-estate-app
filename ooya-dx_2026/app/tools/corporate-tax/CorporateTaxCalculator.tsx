@@ -13,6 +13,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateCorporateTaxTotal } from '@/lib/calculators/corporate-tax'
 
@@ -96,6 +97,12 @@ export function CorporateTaxCalculator({ relatedGlossary = [] }: CorporateTaxCal
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
+
+          {/* シェアボタン */}
+          <div className="mb-4">
+            <ShareButtons title={PAGE_TITLE} />
+          </div>
+
           <p className="text-gray-600 mb-8">
             課税所得を入力するだけで、法人税・住民税・事業税等の概算額と実効税率を瞬時に計算します。
           </p>

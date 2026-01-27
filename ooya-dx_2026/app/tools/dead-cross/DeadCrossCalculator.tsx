@@ -13,6 +13,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import {
   calculateDeadCross,
@@ -105,6 +106,12 @@ export function DeadCrossCalculator({ relatedGlossary = [] }: DeadCrossCalculato
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
+
+          {/* シェアボタン */}
+          <div className="mb-4">
+            <ShareButtons title={PAGE_TITLE} />
+          </div>
+
           <p className="text-gray-600 mb-8">
             建物の減価償却費とローン元本返済額の推移から、デッドクロスが発生する時期を予測します。
             黒字倒産リスクの事前把握にご活用ください。

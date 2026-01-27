@@ -9,6 +9,7 @@ import { TableOfContents } from '@/components/table-of-contents';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { RelatedTools } from '@/components/tools/RelatedTools';
+import { ShareButtons } from '@/components/tools/ShareButtons';
 import Link from 'next/link';
 
 interface Props {
@@ -190,9 +191,14 @@ export default async function ArticlePage({ params }: Props) {
             </div>
 
             {/* タイトル */}
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
               {article.title}
             </h1>
+
+            {/* シェアボタン */}
+            <div className="mb-8">
+              <ShareButtons title={article.title} url={url} />
+            </div>
 
             {/* メインビジュアル */}
             {article.thumbnail ? (

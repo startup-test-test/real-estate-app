@@ -13,6 +13,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { ShareButtons } from '@/components/tools/ShareButtons'
 import {
   calculateCapRate,
   calculateYieldGap,
@@ -74,6 +75,12 @@ export function CapRateCalculator({ relatedGlossary = [] }: CapRateCalculatorPro
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
+
+          {/* シェアボタン */}
+          <div className="mb-4">
+            <ShareButtons title={PAGE_TITLE} />
+          </div>
+
           <p className="text-gray-600 mb-8">
             キャップレート（還元利回り）を概算計算します。
             NOIと物件価格からキャップレートを算出。イールドギャップ分析機能付き。

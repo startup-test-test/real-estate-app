@@ -10,6 +10,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { GlossaryBreadcrumb } from '@/components/tools/GlossaryBreadcrumb';
 import { RelatedTools } from '@/components/tools/RelatedTools';
+import { ShareButtons } from '@/components/tools/ShareButtons';
 import { getGlossaryTermBySlug, getAllGlossarySlugs, getAllGlossaryTerms, getGlossaryTermsByTool } from '@/lib/glossary';
 
 interface Props {
@@ -66,6 +67,8 @@ export default async function GlossaryTermPage({ params }: Props) {
   if (!term) {
     notFound();
   }
+
+  const url = `${BASE_URL}/glossary/${slug}`;
 
   // 同じカテゴリの他の用語を取得
   const allTerms = getAllGlossaryTerms();
@@ -150,6 +153,12 @@ export default async function GlossaryTermPage({ params }: Props) {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
               {term.title}
             </h1>
+
+            {/* シェアボタン */}
+            <div className="mb-4">
+              <ShareButtons title={term.title} url={url} />
+            </div>
+
             <p className="text-gray-600 mb-8">
               {term.description}
             </p>
