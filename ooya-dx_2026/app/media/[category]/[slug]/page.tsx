@@ -8,6 +8,7 @@ import { LandingFooter } from '@/components/landing-footer';
 import { TableOfContents } from '@/components/table-of-contents';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
+import { RelatedTools } from '@/components/tools/RelatedTools';
 import Link from 'next/link';
 
 interface Props {
@@ -241,6 +242,9 @@ export default async function ArticlePage({ params }: Props) {
             <div className="mt-16 pt-8 border-t border-gray-100">
               <SimulatorCTA />
             </div>
+
+            {/* 関連シミュレーター一覧 */}
+            <RelatedTools currentPath="" />
 
             {/* 運営会社・運営者プロフィール */}
             <div className="mt-12">
