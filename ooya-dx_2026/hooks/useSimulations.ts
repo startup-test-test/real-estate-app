@@ -158,6 +158,46 @@ export function useSimulations() {
     }
   }, []);
 
+  // シミュレーション複製
+  const duplicateSimulation = useCallback(async (id: string): Promise<{ id: string } | null> => {
+    setLoading(true);
+    setError(null);
+    try {
+      // 元のシミュレーションを取得
+      const original = await getSimulation(id);
+      if (!original) {
+        throw new Error('複製元のシミュレーションが見つかりません');
+      }
+
+      // 物件名に「(コピー)」を付けて複製
+      const inputData = original.inputData as Record<string, unknown>;
+      const originalName = (inputData.propertyName as string) || original.name || '無題';
+      const copiedName = `${originalName}（コピー）`;
+
+      const duplicatedData: SaveSimulationData = {
+        name: copiedName,
+        propertyUrl: original.propertyUrl || undefined,
+        imageUrl: original.imageUrl || undefined,
+        inputData: {
+          ...inputData,
+          propertyName: copiedName,
+        },
+        results: original.results || undefined,
+        cashFlow: original.cashFlow || undefined,
+      };
+
+      // 新規保存
+      const result = await saveSimulation(duplicatedData);
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '複製に失敗しました';
+      setError(message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [getSimulation, saveSimulation]);
+
   return {
     loading,
     error,
@@ -166,5 +206,6 @@ export function useSimulations() {
     saveSimulation,
     updateSimulation,
     deleteSimulation,
+    duplicateSimulation,
   };
 }

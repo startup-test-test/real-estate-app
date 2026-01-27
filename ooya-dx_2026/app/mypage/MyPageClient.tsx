@@ -13,6 +13,7 @@ import {
   Plus,
   Edit,
   Trash2,
+  Copy,
   Loader,
   ChevronLeft,
   ChevronRight,
@@ -41,7 +42,7 @@ const MyPage: React.FC = () => {
   const authLoading = auth.isLoading;
 
   // シミュレーション保存フック
-  const { getSimulations, deleteSimulation, loading: simLoading } = useSimulations();
+  const { getSimulations, deleteSimulation, duplicateSimulation, loading: simLoading } = useSimulations();
 
   const refetchUsage = () => {};
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
@@ -334,6 +335,31 @@ const MyPage: React.FC = () => {
     } catch (err: any) {
       setError(err.message);
       alert("削除処理中にエラーが発生しました: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDuplicate = async (id: string, propertyName: string) => {
+    // フロントエンド固定のサンプル物件は複製不可
+    if (id === 'sample-property-001') {
+      alert("サンプル物件は複製できません。");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await duplicateSimulation(id);
+      if (!result) {
+        setError("複製に失敗しました");
+        alert("複製に失敗しました");
+      } else {
+        // 複製成功後、編集画面に遷移
+        router.push(`/mypage/simulator?edit=${result.id}`);
+      }
+    } catch (err: any) {
+      setError(err.message);
+      alert("複製処理中にエラーが発生しました: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -825,9 +851,9 @@ const MyPage: React.FC = () => {
 
   const formatCurrency = (amount: number) => {
     if (amount >= 10000) {
-      return `${(amount / 10000).toFixed(0)}万円`;
+      return `${Math.round(amount / 10000).toLocaleString()}万円`;
     }
-    return `${Math.round(amount)}万円`;
+    return `${Math.round(amount).toLocaleString()}万円`;
   };
 
   const formatNumber = (num: number) => {
@@ -1010,7 +1036,7 @@ const MyPage: React.FC = () => {
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     {/* テーブルヘッダー（PC版のみ） */}
                     <div className="hidden md:flex items-center bg-gray-100 border-b border-gray-200 text-sm font-medium text-gray-600">
-                      <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200">物件名</div>
+                      <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200 text-center">物件名</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">
                         <div>購入価格</div>
                         <div className="text-xs text-gray-500">表面利回り</div>
@@ -1018,7 +1044,9 @@ const MyPage: React.FC = () => {
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">年間CF</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">更新日</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">結果を見る</div>
-                      <div className="flex-1 text-center px-2 py-3">編集・削除</div>
+                      <div className="w-20 text-center px-2 py-3 border-r border-gray-200">編集</div>
+                      <div className="w-20 text-center px-2 py-3 border-r border-gray-200">複製</div>
+                      <div className="w-20 text-center px-2 py-3">削除</div>
                     </div>
 
                     {paginatedResults.map((sim, index) => {
@@ -1125,16 +1153,28 @@ const MyPage: React.FC = () => {
                               </button>
                             </div>
 
-                            {/* 編集・削除 */}
-                            <div className="flex-1 px-2 py-3 flex items-center justify-center gap-2">
+                            {/* 編集 */}
+                            <div className="w-20 px-2 py-3 border-r border-gray-200 flex items-center justify-center">
                               <button
                                 onClick={() => router.push(`/mypage/simulator?edit=${sim.id}`)}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 transition-colors"
+                                className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors"
                                 title="編集"
                               >
-                                <Edit className="h-4 w-4" />
-                                <span>編集</span>
+                                編集
                               </button>
+                            </div>
+                            {/* 複製 */}
+                            <div className="w-20 px-2 py-3 border-r border-gray-200 flex items-center justify-center">
+                              <button
+                                onClick={() => handleDuplicate(sim.id, sim.propertyName)}
+                                className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors"
+                                title="複製"
+                              >
+                                複製
+                              </button>
+                            </div>
+                            {/* 削除 */}
+                            <div className="w-20 px-2 py-3 flex items-center justify-center">
                               <button
                                 onClick={() => {
                                   if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？`)) {
@@ -1143,11 +1183,10 @@ const MyPage: React.FC = () => {
                                     }
                                   }
                                 }}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-sm font-medium rounded hover:bg-red-100 transition-colors"
+                                className="px-3 py-1.5 bg-white border border-red-300 text-red-600 text-sm font-medium rounded hover:bg-red-50 transition-colors"
                                 title="削除"
                               >
-                                <Trash2 className="h-4 w-4" />
-                                <span>削除</span>
+                                削除
                               </button>
                             </div>
                           </div>
@@ -1202,6 +1241,13 @@ const MyPage: React.FC = () => {
                                 title="編集"
                               >
                                 <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDuplicate(sim.id, sim.propertyName)}
+                                className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                title="複製"
+                              >
+                                <Copy className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => {
