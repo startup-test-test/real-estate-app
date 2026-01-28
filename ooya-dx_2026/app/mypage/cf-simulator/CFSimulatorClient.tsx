@@ -228,15 +228,17 @@ const CFSimulatorClient: React.FC = () => {
               </div>
             </div>
 
-            {/* デフォルト値の説明とボタンを横並び */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div className="text-xs text-gray-500">
-                ※ 諸費用7%、管理費5%、空室率5%、固定資産税1%、保有期間35年で自動計算
-              </div>
+            {/* デフォルト値の説明 */}
+            <div className="text-xs text-gray-500 text-center mb-3">
+              ※ 諸費用7%、管理費5%、空室率5%、固定資産税1%、保有期間35年で自動計算
+            </div>
+
+            {/* シミュレーション実行ボタン */}
+            <div className="flex justify-center">
               <button
                 onClick={runSimulation}
                 disabled={isSimulating || inputs.purchasePrice <= 0 || inputs.monthlyRent <= 0}
-                className={`px-6 py-2 rounded-lg font-bold transition-colors flex items-center justify-center whitespace-nowrap ${
+                className={`px-8 py-3 rounded-lg font-bold text-lg transition-colors flex items-center justify-center ${
                   isSimulating
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -244,12 +246,12 @@ const CFSimulatorClient: React.FC = () => {
               >
                 {isSimulating ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     計算中...
                   </>
                 ) : (
                   <>
-                    <Calculator className="h-4 w-4 mr-2" />
+                    <Calculator className="h-5 w-5 mr-2" />
                     シミュレーション実行
                   </>
                 )}
