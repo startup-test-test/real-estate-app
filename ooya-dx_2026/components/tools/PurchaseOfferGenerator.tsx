@@ -770,7 +770,7 @@ export default function PurchaseOfferGenerator({
             </li>
             <li className="flex gap-2">
               <span className="text-gray-400">3.</span>
-              <span><strong>書面の性質</strong> - 買付申込書は購入意思を示すものであり、売買契約とは異なります。</span>
+              <span><strong>書面の性質</strong> - 買付申込書は購入意思を示すものであり、売買契約を成立させるものではありません。</span>
             </li>
             <li className="flex gap-2">
               <span className="text-gray-400">4.</span>
