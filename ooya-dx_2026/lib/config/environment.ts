@@ -23,7 +23,7 @@ export const getCurrentEnvironment = (): Environment => {
   const hostname = window.location.hostname;
   
   // 本番環境
-  if (hostname === 'ooya.tech') {
+  if (hostname === 'ooya.tech' || hostname === 'www.ooya.tech') {
     return Environment.PRODUCTION;
   }
   
