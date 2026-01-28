@@ -489,81 +489,172 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                   </div>
                 </div>
 
-                {/* 収益指標 */}
+                {/* 収益指標 - ピル型バッジ（ホバーで説明表示） */}
                 <h3 className="text-lg font-semibold text-gray-800 mb-3">収益指標</h3>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['表面利回り（%）'] || 0) >= 8 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['表面利回り（%）'] || 0) >= 6 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['表面利回り（%）'] || 0) >= 4 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">表面利回り</span>
-                    <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                  {/* 表面利回り */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['表面利回り（%）'] || 0) >= 8 ? 'bg-green-100 text-green-800' :
+                      (simulationResults.results['表面利回り（%）'] || 0) >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                      (simulationResults.results['表面利回り（%）'] || 0) >= 4 ? 'bg-orange-100 text-orange-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">表面利回り</span>
+                      <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">表面利回り</div>
+                      <div className="mb-2">年間家賃収入を購入価格で割った基本的な利回りです。</div>
+                      <div className="text-gray-300 text-xs">計算式：年間家賃収入 ÷ 購入価格 × 100</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['実質利回り（%）'] || 0) >= 6 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['実質利回り（%）'] || 0) >= 4.5 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['実質利回り（%）'] || 0) >= 3 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">実質利回り</span>
-                    <span className="font-semibold">{simulationResults.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                  {/* 実質利回り */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['実質利回り（%）'] || 0) >= 6 ? 'bg-green-100 text-green-800' :
+                      (simulationResults.results['実質利回り（%）'] || 0) >= 4.5 ? 'bg-yellow-100 text-yellow-800' :
+                      (simulationResults.results['実質利回り（%）'] || 0) >= 3 ? 'bg-orange-100 text-orange-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">実質利回り</span>
+                      <span className="font-semibold">{simulationResults.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">実質利回り</div>
+                      <div className="mb-2">経費を差し引いた実際の収益率です。</div>
+                      <div className="text-gray-300 text-xs">計算式：(年間家賃収入 − 経費) ÷ 購入価格 × 100</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['年間キャッシュフロー（円）'] || 0) >= 0 ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">年間CF</span>
-                    <span className="font-semibold">{formatNumber(Math.round((simulationResults.results['年間キャッシュフロー（円）'] || 0) / 10000))}万円</span>
+                  {/* 年間CF */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['年間キャッシュフロー（円）'] || 0) >= 0 ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">年間CF</span>
+                      <span className="font-semibold">{formatNumber(Math.round((simulationResults.results['年間キャッシュフロー（円）'] || 0) / 10000))}万円</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">年間キャッシュフロー</div>
+                      <div className="mb-2">ローン返済後に手元に残る年間の現金収入です。</div>
+                      <div className="text-gray-300 text-xs">計算式：年間家賃収入 − 経費 − ローン返済額</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="px-4 py-2 rounded-full text-sm font-medium inline-flex items-center bg-blue-100 text-blue-800">
-                    <span className="font-normal mr-1">NOI</span>
-                    <span className="font-semibold">{formatNumber(Math.round((simulationResults.results['NOI（円）'] || 0) / 10000))}万円</span>
+                  {/* NOI */}
+                  <div className="group relative">
+                    <div className="px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help bg-blue-100 text-blue-800">
+                      <span className="font-normal mr-1">NOI</span>
+                      <span className="font-semibold">{formatNumber(Math.round((simulationResults.results['NOI（円）'] || 0) / 10000))}万円</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">NOI（営業純利益）</div>
+                      <div className="mb-2">ローン返済前の純利益です。物件の収益力を示します。</div>
+                      <div className="text-gray-300 text-xs">計算式：年間家賃収入 − 経費</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
+                {/* 2行目 */}
                 <div className="flex flex-wrap gap-2">
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['IRR（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['IRR（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['IRR（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">IRR</span>
-                    <span className="font-semibold">{simulationResults.results['IRR（%）'] !== null && simulationResults.results['IRR（%）'] !== undefined ? `${simulationResults.results['IRR（%）'].toFixed(2)}%` : 'N/A'}</span>
+                  {/* IRR */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['IRR（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
+                      (simulationResults.results['IRR（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                      (simulationResults.results['IRR（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">IRR</span>
+                      <span className="font-semibold">{simulationResults.results['IRR（%）'] !== null && simulationResults.results['IRR（%）'] !== undefined ? `${simulationResults.results['IRR（%）'].toFixed(2)}%` : 'N/A'}</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">IRR（内部収益率）</div>
+                      <div className="mb-2">投資期間全体の年平均収益率です。高いほど投資効率が良いことを示します。</div>
+                      <div className="text-gray-300 text-xs">目安：10%以上が優良</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['CCR（初年度）（%）'] || 0) >= 10 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['CCR（初年度）（%）'] || 0) >= 6 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['CCR（初年度）（%）'] || 0) >= 3 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">CCR（初年度）</span>
-                    <span className="font-semibold">{simulationResults.results['CCR（初年度）（%）']?.toFixed(2) || 'N/A'}%</span>
+                  {/* CCR */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['CCR（初年度）（%）'] || 0) >= 10 ? 'bg-green-100 text-green-800' :
+                      (simulationResults.results['CCR（初年度）（%）'] || 0) >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                      (simulationResults.results['CCR（初年度）（%）'] || 0) >= 3 ? 'bg-orange-100 text-orange-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">CCR（初年度）</span>
+                      <span className="font-semibold">{simulationResults.results['CCR（初年度）（%）']?.toFixed(2) || 'N/A'}%</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
+                      <div className="mb-2">自己資金に対する年間リターンの割合です。</div>
+                      <div className="text-gray-300 text-xs">計算式：年間CF ÷ 自己資金 × 100</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.5 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.3 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.1 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">DSCR</span>
-                    <span className="font-semibold">{simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
+                  {/* DSCR */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.5 ? 'bg-green-100 text-green-800' :
+                      (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.3 ? 'bg-yellow-100 text-yellow-800' :
+                      (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.1 ? 'bg-orange-100 text-orange-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">DSCR</span>
+                      <span className="font-semibold">{simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">DSCR（返済余裕率）</div>
+                      <div className="mb-2">ローン返済に対する余裕度を示します。1.0以上で返済可能。</div>
+                      <div className="text-gray-300 text-xs">計算式：NOI ÷ 年間ローン返済額</div>
+                      <div className="text-gray-400 text-xs mt-1">目安：1.3以上で安全</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
-                    (simulationResults.results['LTV（%）'] || 0) <= 70 ? 'bg-green-100 text-green-800' :
-                    (simulationResults.results['LTV（%）'] || 0) <= 80 ? 'bg-yellow-100 text-yellow-800' :
-                    (simulationResults.results['LTV（%）'] || 0) <= 90 ? 'bg-orange-100 text-orange-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    <span className="font-normal mr-1">LTV</span>
-                    <span className="font-semibold">{simulationResults.results['LTV（%）']?.toFixed(1) || '0.0'}%</span>
+                  {/* LTV */}
+                  <div className="group relative">
+                    <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
+                      (simulationResults.results['LTV（%）'] || 0) <= 70 ? 'bg-green-100 text-green-800' :
+                      (simulationResults.results['LTV（%）'] || 0) <= 80 ? 'bg-yellow-100 text-yellow-800' :
+                      (simulationResults.results['LTV（%）'] || 0) <= 90 ? 'bg-orange-100 text-orange-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      <span className="font-normal mr-1">LTV</span>
+                      <span className="font-semibold">{simulationResults.results['LTV（%）']?.toFixed(1) || '0.0'}%</span>
+                    </div>
+                    <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
+                      <div className="font-semibold mb-1">LTV（借入比率）</div>
+                      <div className="mb-2">物件価格に対する借入額の割合です。低いほど安全性が高い。</div>
+                      <div className="text-gray-300 text-xs">計算式：借入額 ÷ 購入価格 × 100</div>
+                      <div className="text-gray-400 text-xs mt-1">目安：80%以下が理想</div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                        <div className="border-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
