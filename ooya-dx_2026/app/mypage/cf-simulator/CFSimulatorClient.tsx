@@ -131,14 +131,20 @@ const CFSimulatorClient: React.FC = () => {
         <div className="max-w-6xl mx-auto print:max-w-full">
           {/* ヘッダー */}
           <div className="mb-6 print:hidden">
-            <BackButton />
-            <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              <Calculator className="inline-block h-7 w-7 mr-2 text-blue-600" />
-              簡易CFシミュレーター
-            </h1>
-            <p className="text-gray-600 mt-1">
-              6項目の入力で、キャッシュフローを簡単にシミュレーションできます
-            </p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="mb-4 md:mb-0">
+                <h1 className="text-2xl font-bold text-gray-900">
+                  <Calculator className="inline-block h-7 w-7 mr-2 text-blue-600" />
+                  簡易CFシミュレーター
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  6項目の入力で、キャッシュフローを簡単にシミュレーションできます
+                </p>
+              </div>
+              <div className="hidden lg:block">
+                <BackButton />
+              </div>
+            </div>
           </div>
 
           {/* 入力フォーム */}
