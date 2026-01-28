@@ -942,6 +942,7 @@ const MyPage: React.FC = () => {
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     {/* テーブルヘッダー（PC版のみ） */}
                     <div className="hidden md:flex items-center bg-gray-100 border-b border-gray-200 text-base font-medium text-gray-600">
+                      <div className="w-12 text-center px-2 py-3 border-r border-gray-200">No.</div>
                       <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200 text-center">物件名</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">
                         <div>購入価格</div>
@@ -949,7 +950,8 @@ const MyPage: React.FC = () => {
                       </div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">年間CF</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">更新日</div>
-                      <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">結果を見る</div>
+                      <div className="w-32 text-center px-2 py-3 border-r border-gray-200">ステータス</div>
+                      <div className="w-28 text-center px-2 py-3 border-r border-gray-200">結果を見る</div>
                       <div className="w-20 text-center px-2 py-3 border-r border-gray-200">編集</div>
                       <div className="w-20 text-center px-2 py-3 border-r border-gray-200">複製</div>
                       <div className="w-20 text-center px-2 py-3">削除</div>
@@ -1014,6 +1016,10 @@ const MyPage: React.FC = () => {
                         >
                           {/* PC版: 横並びレイアウト */}
                           <div className="hidden md:flex items-stretch">
+                            {/* No. */}
+                            <div className="w-12 text-center px-2 py-3 border-r border-gray-200 flex items-center justify-center">
+                              <span className="text-sm font-medium text-gray-700">{index + 1}</span>
+                            </div>
                             {/* 物件名・住所 */}
                             <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200 flex flex-col justify-center">
                               <p className="font-semibold text-gray-900 truncate mb-1" title={sim.propertyName}>
@@ -1042,8 +1048,15 @@ const MyPage: React.FC = () => {
                               <p className="text-sm text-gray-700">{sim.date}</p>
                             </div>
 
+                            {/* ステータス */}
+                            <div className="w-32 text-center px-2 py-3 border-r border-gray-200 flex items-center justify-center">
+                              <span className="text-sm">
+                                {getStatusEmoji(sim.status || '検討中')} {sim.status || '検討中'}
+                              </span>
+                            </div>
+
                             {/* 結果ボタン（独立列） */}
-                            <div className="flex-1 px-2 py-3 border-r border-gray-200 flex items-center justify-center">
+                            <div className="w-28 px-2 py-3 border-r border-gray-200 flex items-center justify-center">
                               <button
                                 onClick={() => {
                                   const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
@@ -1052,7 +1065,7 @@ const MyPage: React.FC = () => {
                                     : `/mypage/simulator?view=${sim.id}#results`;
                                   router.push(url);
                                 }}
-                                className="px-5 py-2.5 bg-blue-600 text-white text-base font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                className="px-3 py-2 bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap"
                                 title="結果を見る"
                               >
                                 結果を見る
@@ -1099,12 +1112,17 @@ const MyPage: React.FC = () => {
 
                           {/* SP版: 縦並びコンパクトレイアウト */}
                           <div className="md:hidden p-3">
-                            {/* 1行目: 物件名 */}
-                            <p className="font-semibold text-gray-900 truncate mb-2" title={sim.propertyName}>
-                              {sim.propertyName}
+                            {/* 1行目: No.と物件名 */}
+                            <p className="font-semibold text-gray-900 truncate mb-1" title={sim.propertyName}>
+                              <span className="text-gray-500 mr-2">{index + 1}.</span>{sim.propertyName}
                             </p>
 
-                            {/* 2行目: 住所 */}
+                            {/* 2行目: ステータス */}
+                            <p className="text-sm text-gray-600 mb-2">
+                              {getStatusEmoji(sim.status || '検討中')} {sim.status || '検討中'}
+                            </p>
+
+                            {/* 3行目: 住所 */}
                             <p className="text-sm text-gray-500 truncate mb-2" title={sim.location}>
                               {sim.location}
                             </p>
@@ -1136,7 +1154,7 @@ const MyPage: React.FC = () => {
                                     : `/mypage/simulator?view=${sim.id}#results`;
                                   router.push(url);
                                 }}
-                                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors"
                               >
                                 <BarChart3 className="h-4 w-4" />
                                 <span>結果</span>

@@ -8,7 +8,6 @@ import { Icons } from '@/components/ui/icons'
 import {
   Calculator,
   User,
-  Home,
   Menu,
   X,
   BookOpen,
@@ -80,7 +79,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const navigation = [
-    { name: '収益シミュレーション', href: '/mypage', icon: Home },
+    { name: '収益シミュレーション', href: '/mypage', icon: Calculator },
   ]
 
   const supportNavigation = [

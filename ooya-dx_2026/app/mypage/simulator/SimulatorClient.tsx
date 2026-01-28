@@ -21,7 +21,6 @@ import Tooltip from '@/components/simulator/Tooltip';
 import BackButton from '@/components/simulator/BackButton';
 import HelpButton from '@/components/HelpButton';
 import Breadcrumb from '@/components/simulator/Breadcrumb';
-import ImageUpload from '@/components/simulator/ImageUpload';
 import ErrorAlert from '@/components/simulator/ErrorMessage';
 import ErrorModal from '@/components/simulator/ErrorModal';
 import LegalDisclaimer from '@/components/simulator/LegalDisclaimer';
@@ -69,6 +68,7 @@ const Simulator: React.FC = () => {
   useEffect(() => {
     document.title = '不動産賃貸経営シミュレーション | 大家DX';
   }, []);
+
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -163,13 +163,13 @@ const Simulator: React.FC = () => {
       }
     });
     
-    // ステップ4: 評価額と収益指標説明
+    // ステップ4: 参考情報と収益指標説明
     steps.push({
       target: '.investment-metrics-section',
       content: (
         <div className="py-1">
           <div className="text-sm text-gray-500 mb-2">ステップ 4/7</div>
-          <h3 className="font-bold text-lg mb-1">📊 評価額と収益指標</h3>
+          <h3 className="font-bold text-lg mb-1">📊 参考情報と収益指標</h3>
           <p className="mb-1">物件価値の推移や収益効率を確認できます。</p>
           <p className="text-sm text-gray-600">IRRや回収期間など重要な指標が表示されます。</p>
         </div>
@@ -381,7 +381,7 @@ const Simulator: React.FC = () => {
           case 1: // ステップ3: シミュレーション実行ボタン
             targetSelector = '.simulate-button';
             break;
-          case 2: // ステップ4: 評価額と収益指標
+          case 2: // ステップ4: 参考情報と収益指標
             targetSelector = '.investment-metrics-section';
             break;
           case 3: // ステップ5: 年次キャッシュフロー
@@ -583,7 +583,7 @@ const Simulator: React.FC = () => {
           const hasResults = simulationResults !== null;
 
           if (hasResults) {
-            // 結果がある場合はステップ4（評価額と収益指標）から開始
+            // 結果がある場合はステップ4（参考情報と収益指標）から開始
             console.log('📌 Tutorial: Starting from step 4 (results section)');
             setTutorialStep(2); // インデックス2 = ステップ4
           } else {
@@ -632,7 +632,7 @@ const Simulator: React.FC = () => {
                 const hasResults = sim.results !== null && sim.results !== undefined;
 
                 if (hasResults) {
-                  // 結果がある場合はステップ4（評価額と収益指標）から開始
+                  // 結果がある場合はステップ4（参考情報と収益指標）から開始
                   console.log('📌 Tutorial: Starting from step 4 (results section)');
                   setTutorialStep(2); // インデックス2 = ステップ4
                 } else {
@@ -1555,12 +1555,12 @@ const Simulator: React.FC = () => {
           // ステップ3（シミュレーション実行ボタン）クリック時の処理
           if (runTutorial && tutorialStep === 1) {
             // シミュレーション実行ボタンをクリックした場合
-            // 結果が表示されたら次のステップ（ステップ4: 評価額と収益指標）へ
+            // 結果が表示されたら次のステップ（ステップ4: 参考情報と収益指標）へ
             console.log('🎯 Tutorial: Simulation button clicked at step 1');
-            console.log('📝 Will move to step 4 (評価額と収益指標) after results load');
+            console.log('📝 Will move to step 4 (参考情報と収益指標) after results load');
             
             setTimeout(() => {
-              setTutorialStep(2); // ステップ4（インデックス2: 評価額と収益指標）へ
+              setTutorialStep(2); // ステップ4（インデックス2: 参考情報と収益指標）へ
               setRunTutorial(true); // チュートリアルを確実に継続
               console.log('📝 Tutorial advanced to step:', 2);
               // Joyrideが自動的にスクロールするため、手動スクロールは不要
@@ -2777,15 +2777,6 @@ const Simulator: React.FC = () => {
                 </div>
               </div>
 
-              {/* 物件画像 */}
-              <div className="mb-6">
-                <ImageUpload
-                  onImageUploaded={(imageUrl) => handleInputChange('propertyImageUrl', imageUrl)}
-                  onImageRemoved={() => handleInputChange('propertyImageUrl', '')}
-                  currentImageUrl={inputs.propertyImageUrl}
-                  disabled={isSimulating}
-                />
-              </div>
             </div>
           </div>
 
@@ -2919,7 +2910,7 @@ const Simulator: React.FC = () => {
             
             {/* 物件価値評価と重要収益指標 */}
             <div className="mb-6 print:mb-2 investment-metrics-section">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と収益指標</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 参考情報と収益指標</h3>
               
               {/* SP版: 4つの重要指標のみ表示 */}
               <div className="md:hidden print:hidden">
@@ -3065,7 +3056,6 @@ const Simulator: React.FC = () => {
                   }`}>
                     <span className="font-normal mr-1">表面利回り</span>
                     <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults.results['表面利回り（%）'] >= 8 && <span className="ml-1">⭐</span>}
                     {simulationResults.results['表面利回り（%）'] < 4 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
@@ -3089,7 +3079,6 @@ const Simulator: React.FC = () => {
                   }`}>
                     <span className="font-normal mr-1">実質利回り</span>
                     <span className="font-semibold">{simulationResults?.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
-                    {simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] >= 6 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['実質利回り（%）'] && simulationResults.results['実質利回り（%）'] < 3 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
@@ -3115,7 +3104,6 @@ const Simulator: React.FC = () => {
                   }`}>
                     <span className="font-normal mr-1">IRR</span>
                     <span className="font-semibold">{simulationResults?.results['IRR（%）'] !== null && simulationResults?.results['IRR（%）'] !== undefined ? `${simulationResults.results['IRR（%）'].toFixed(2)}%` : 'N/A'}</span>
-                    {simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] >= 15 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['IRR（%）'] && simulationResults.results['IRR（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
@@ -3139,7 +3127,6 @@ const Simulator: React.FC = () => {
                   }`}>
                     <span className="font-normal mr-1">CCR（初年度）</span>
                     <span className="font-semibold">{simulationResults?.results['CCR（初年度）（%）'] !== null && simulationResults?.results['CCR（初年度）（%）'] !== undefined ? `${simulationResults.results['CCR（初年度）（%）'].toFixed(2)}%` : 'N/A'}</span>
-                    {simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] >= 12 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['CCR（初年度）（%）'] && simulationResults.results['CCR（初年度）（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
@@ -3168,7 +3155,6 @@ const Simulator: React.FC = () => {
                   }`}>
                     <span className="font-normal mr-1">CCR（全期間）</span>
                     <span className="font-semibold">{simulationResults?.results['CCR（全期間）（%）'] !== null && simulationResults?.results['CCR（全期間）（%）'] !== undefined ? `${simulationResults.results['CCR（全期間）（%）'].toFixed(2)}%` : 'N/A'}</span>
-                    {simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] >= 12 && <span className="ml-1">⭐</span>}
                     {simulationResults?.results['CCR（全期間）（%）'] && simulationResults.results['CCR（全期間）（%）'] < 5 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
@@ -3192,7 +3178,6 @@ const Simulator: React.FC = () => {
                   }`}>
                     <span className="font-normal mr-1">DSCR</span>
                     <span className="font-semibold">{simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
-                    {simulationResults.results['DSCR（返済余裕率）'] >= 1.5 && <span className="ml-1">✓</span>}
                     {simulationResults.results['DSCR（返済余裕率）'] < 1.1 && <span className="ml-1">⚠️</span>}
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
@@ -3728,12 +3713,12 @@ const Simulator: React.FC = () => {
         </div>
       )}
       
-      {/* SP版評価額と収益指標ポップアップ */}
+      {/* SP版参考情報と収益指標ポップアップ */}
       {showEvaluationPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 md:hidden">
           <div className="bg-white rounded-lg max-w-sm w-full max-h-[80vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">評価額と収益指標の詳細</h3>
+              <h3 className="text-lg font-semibold">参考情報と収益指標の詳細</h3>
               <button
                 onClick={() => setShowEvaluationPopup(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
