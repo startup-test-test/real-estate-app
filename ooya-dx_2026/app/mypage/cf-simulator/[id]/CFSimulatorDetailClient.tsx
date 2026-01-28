@@ -429,7 +429,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                     </div>
                   ) : (
                     <div className="flex items-center justify-center">
-                      再計算する
+                      シミュレーションを実行する
                     </div>
                   )}
                 </button>
