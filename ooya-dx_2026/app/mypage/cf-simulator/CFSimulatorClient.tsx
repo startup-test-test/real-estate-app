@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertCircle, Calculator, Download } from 'lucide-react';
+import { AlertCircle, Calculator, Download, BarChart3 } from 'lucide-react';
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
