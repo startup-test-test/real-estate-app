@@ -46,6 +46,12 @@ const CFSimulatorClient: React.FC = () => {
     return num.toLocaleString('ja-JP');
   };
 
+  // 通貨フォーマット（万円単位、シンボルなし）- 収益シミュレーションと同じ
+  const formatCurrencyNoSymbol = (value: number | undefined): string => {
+    if (value === undefined || value === null) return '0';
+    return Math.round(value / 10000).toLocaleString('ja-JP');
+  };
+
   // PDF保存機能
   const handleSaveToPDF = () => {
     const originalTitle = document.title;
@@ -148,9 +154,9 @@ const CFSimulatorClient: React.FC = () => {
           </div>
 
           {/* 入力フォーム */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6 print:hidden">
+          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 print:hidden">
             {/* 1行目: 物件名、購入価格、月額家賃 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">物件名</label>
                 <input
@@ -158,7 +164,7 @@ const CFSimulatorClient: React.FC = () => {
                   value={inputs.propertyName}
                   onChange={(e) => handleInputChange('propertyName', e.target.value)}
                   placeholder="例：品川区マンション"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -168,9 +174,9 @@ const CFSimulatorClient: React.FC = () => {
                     type="number"
                     value={inputs.purchasePrice}
                     onChange={(e) => handleInputChange('purchasePrice', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12 text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-14"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">万円</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">万円</span>
                 </div>
               </div>
               <div>
@@ -180,15 +186,15 @@ const CFSimulatorClient: React.FC = () => {
                     type="number"
                     value={inputs.monthlyRent}
                     onChange={(e) => handleInputChange('monthlyRent', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12 text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-14"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">万円</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">万円</span>
                 </div>
               </div>
             </div>
 
             {/* 2行目: 借入額、金利、借入期間 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">借入額 <span className="text-red-500">*</span></label>
                 <div className="relative">
@@ -196,9 +202,9 @@ const CFSimulatorClient: React.FC = () => {
                     type="number"
                     value={inputs.loanAmount}
                     onChange={(e) => handleInputChange('loanAmount', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12 text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-14"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">万円</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">万円</span>
                 </div>
               </div>
               <div>
@@ -209,9 +215,9 @@ const CFSimulatorClient: React.FC = () => {
                     step="0.1"
                     value={inputs.interestRate}
                     onChange={(e) => handleInputChange('interestRate', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8 text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">%</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">%</span>
                 </div>
               </div>
               <div>
@@ -221,9 +227,9 @@ const CFSimulatorClient: React.FC = () => {
                     type="number"
                     value={inputs.loanYears}
                     onChange={(e) => handleInputChange('loanYears', Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8 text-sm"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">年</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">年</span>
                 </div>
               </div>
             </div>
@@ -372,60 +378,67 @@ const CFSimulatorClient: React.FC = () => {
                     <span className="font-semibold">{simulationResults.results['LTV（%）']?.toFixed(1) || '0.0'}%</span>
                   </div>
                 </div>
+
+                {/* キャッシュフローチャート - シミュレーション結果内 */}
+                {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
+                      年次キャッシュフロー推移
+                    </h3>
+                    <CashFlowChart data={simulationResults.cash_flow_table} />
+                  </div>
+                )}
               </div>
 
-              {/* キャッシュフローチャート */}
+              {/* 詳細キャッシュフロー分析 - 収益シミュレーションと同じデザイン */}
               {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
-                    年次キャッシュフロー推移
-                  </h2>
-                  <CashFlowChart data={simulationResults.cash_flow_table} />
-                </div>
-              )}
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
+                  </div>
 
-              {/* 詳細キャッシュフローテーブル */}
-              {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                    📋 詳細キャッシュフロー分析
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                      <thead>
-                        <tr className="bg-gray-100">
-                          <th className="px-3 py-2 text-center font-medium text-gray-700 border-b">年</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-700 border-b">家賃収入</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-700 border-b">経費</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-700 border-b">返済額</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-700 border-b">税引前CF</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-700 border-b">累計CF</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {simulationResults.cash_flow_table.map((row, index) => (
-                          <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-3 py-2 text-center border-b">{row['年次'] || `${index + 1}年目`}</td>
-                            <td className="px-3 py-2 text-right border-b">
-                              {formatNumber(Math.round((row['実効収入'] || 0) / 10000))}万
-                            </td>
-                            <td className="px-3 py-2 text-right border-b">
-                              {formatNumber(Math.round((row['経費'] || 0) / 10000))}万
-                            </td>
-                            <td className="px-3 py-2 text-right border-b">
-                              {formatNumber(Math.round((row['ローン返済'] || 0) / 10000))}万
-                            </td>
-                            <td className={`px-3 py-2 text-right border-b font-medium ${(row['営業CF'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {(row['営業CF'] || 0) >= 0 ? '+' : ''}{formatNumber(Math.round((row['営業CF'] || 0) / 10000))}万
-                            </td>
-                            <td className={`px-3 py-2 text-right border-b font-medium ${(row['累計CF'] || 0) >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                              {(row['累計CF'] || 0) >= 0 ? '+' : ''}{formatNumber(Math.round((row['累計CF'] || 0) / 10000))}万
-                            </td>
+                  <div className="border border-gray-300 rounded-lg overflow-hidden">
+                    <div className="relative overflow-x-auto overflow-y-auto max-h-[600px] md:max-h-[700px] print:overflow-visible print:max-h-none">
+                      <table className="min-w-full bg-white print:min-w-0 print:w-full print:table-fixed">
+                        <thead className="bg-blue-900 sticky top-0 z-30 shadow-lg">
+                          <tr>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">不動産<br/>収入</th>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">経費</th>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">ローン<br/>返済</th>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年間<br/>CF</th>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">累計<br/>CF</th>
+                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">借入<br/>残高</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {simulationResults.cash_flow_table.map((row, index) => (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="px-2 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
+                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['実効収入'])}
+                              </td>
+                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['経費'])}
+                              </td>
+                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['ローン返済'])}
+                              </td>
+                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['営業CF'] || 0)}
+                              </td>
+                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['累計CF'])}
+                              </td>
+                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {Math.round(row['借入残高'] || 0).toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               )}
