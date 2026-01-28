@@ -5,6 +5,7 @@ import { AlertCircle, Calculator, TrendingUp, BarChart3 } from 'lucide-react';
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
+import { transformFormDataToApiData } from '@/lib/utils/dataTransform';
 import BackButton from '@/components/simulator/BackButton';
 
 interface SimulationResult {
@@ -51,48 +52,47 @@ const CFSimulatorClient: React.FC = () => {
     setError(null);
 
     try {
-      // デフォルト値を設定して完全なAPIリクエストを構築
+      // デフォルト値を設定してフォームデータを構築
       const otherCosts = Math.round(inputs.purchasePrice * 0.07); // 諸費用7%
-      const managementFee = Math.round(inputs.monthlyRent * 10000 * 0.05); // 管理費5%
-      const vacancyRate = 5; // 空室率5%
-      const propertyTax = Math.round(inputs.purchasePrice * 0.01); // 固定資産税1%
-      const holdingYears = 10; // 保有期間10年
-      const rentDecline = 1; // 家賃下落率1%
-      const exitCapRate = 6; // 出口キャップレート6%
+      const managementFee = Math.round(inputs.monthlyRent * 10000 * 0.05); // 管理費5%（円単位）
+      const propertyTax = Math.round(inputs.purchasePrice * 100); // 固定資産税（円単位、購入価格の1%）
 
-      // APIはキャメルケースを期待
-      const apiData = {
+      // transformFormDataToApiDataが期待する形式でデータを構築
+      const formData = {
         propertyName: inputs.propertyName || "CFシミュレーション物件",
         location: "簡易シミュレーション",
+        yearBuilt: 2020,  // 築年（年号）
+        propertyType: "木造",
+        landArea: 100,
+        buildingArea: 100,  // 必須フィールド
+        roadPrice: 200000,
+        marketValue: Math.round(inputs.purchasePrice * 0.9),
         purchasePrice: inputs.purchasePrice,
         otherCosts: otherCosts,
         renovationCost: 0,
-        monthlyRent: inputs.monthlyRent,
-        managementFee: managementFee,
+        monthlyRent: inputs.monthlyRent,  // 万円単位
+        managementFee: managementFee,  // 円単位
         fixedCost: 0,
-        propertyTax: propertyTax * 10000,
-        vacancyRate: vacancyRate,
-        rentDecline: rentDecline,
+        propertyTax: propertyTax,  // 円単位
+        vacancyRate: 5,
+        rentDecline: 1,
         loanAmount: inputs.loanAmount,
         interestRate: inputs.interestRate,
         loanYears: inputs.loanYears,
         loanType: "元利均等",
-        holdingYears: holdingYears,
-        exitCapRate: exitCapRate,
-        expectedSalePrice: Math.round(inputs.purchasePrice * 0.9),
+        holdingYears: 35,
+        exitCapRate: 6,
+        priceDeclineRate: 1,
         ownershipType: "個人",
         effectiveTaxRate: 20,
         majorRepairCycle: 10,
         majorRepairCost: Math.round(inputs.purchasePrice * 0.03),
         buildingPriceForDepreciation: Math.round(inputs.purchasePrice * 0.5),
         depreciationYears: 22,
-        yearBuilt: 10,
-        landArea: 100,
-        buildingArea: 100,
-        roadPrice: 200000,
-        propertyType: "木造",
-        priceDeclineRate: 1
       };
+
+      // 共通の変換関数でAPIデータを生成（snake_case形式）
+      const apiData = transformFormDataToApiData(formData);
 
       const response = await fetch(API_ENDPOINTS.SIMULATE, {
         method: 'POST',
@@ -101,7 +101,10 @@ const CFSimulatorClient: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('シミュレーションに失敗しました');
+        const errorData = await response.json().catch(() => null);
+        console.error('API Error:', errorData);
+        const errorMessage = errorData?.details?.join(', ') || errorData?.error || 'シミュレーションに失敗しました';
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
