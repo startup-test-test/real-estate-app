@@ -2867,7 +2867,7 @@ const Simulator: React.FC = () => {
             >
             <div className="mb-6">
               {/* PC版: タイトルとボタンを横並び */}
-              <div className="hidden md:flex items-center justify-between">
+              <div className="hidden md:flex print:flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
                   <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
@@ -2894,7 +2894,7 @@ const Simulator: React.FC = () => {
               </div>
               
               {/* SP版: タイトルとボタンを縦並び */}
-              <div className="md:hidden">
+              <div className="md:hidden print:hidden">
                 <div className="flex items-center mb-3">
                   <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
                   <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
@@ -2922,7 +2922,7 @@ const Simulator: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と収益指標</h3>
               
               {/* SP版: 4つの重要指標のみ表示 */}
-              <div className="md:hidden">
+              <div className="md:hidden print:hidden">
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {/* 積算評価額 */}
                   <div className="p-3 bg-blue-100 rounded-lg text-center">
@@ -2977,7 +2977,7 @@ const Simulator: React.FC = () => {
               </div>
               
               {/* PC版: 従来の全指標表示 */}
-              <div className="hidden md:flex flex-wrap gap-2">
+              <div className="hidden md:flex print:flex flex-wrap gap-2">
                 {/* 積算評価額 */}
                 <div className="group relative">
                   <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
@@ -3051,7 +3051,7 @@ const Simulator: React.FC = () => {
                 </div>
                 
                 {/* 区切り線 */}
-                <div className="flex items-center px-2">
+                <div className="flex items-center px-2 print:hidden">
                   <div className="h-8 w-px bg-gray-300"></div>
                 </div>
                 
@@ -3104,7 +3104,7 @@ const Simulator: React.FC = () => {
                 </div>
               </div>
               {/* 2行目: 収益指標 - PC版のみ表示 */}
-              <div className="hidden md:flex flex-wrap gap-2 mt-3">
+              <div className="hidden md:flex print:flex flex-wrap gap-2 mt-3 print:mt-1">
                 {/* IRR */}
                 <div className="group relative">
                   <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help ${
@@ -3322,7 +3322,7 @@ const Simulator: React.FC = () => {
             {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
               <div className="mb-6 print:mb-1">
                 {/* PC版: タイトルとデータ数を横並び */}
-                <div className="hidden md:flex items-center justify-between mb-4 print:mb-2">
+                <div className="hidden md:flex print:flex items-center justify-between mb-4 print:mb-2">
                   <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
                     35年分のデータ
@@ -3330,7 +3330,7 @@ const Simulator: React.FC = () => {
                 </div>
                 
                 {/* SP版: タイトルとデータ数を縦並び */}
-                <div className="md:hidden mb-4">
+                <div className="md:hidden print:hidden mb-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded inline-block">
                     35年分のデータ
@@ -3342,8 +3342,8 @@ const Simulator: React.FC = () => {
                   <CashFlowChart data={simulationResults.cash_flow_table} />
                 </div>
 
-                {/* 詳細キャッシュフロー分析 - 印刷時は2ページ目に配置 */}
-                <div className="mb-4 print:break-before-page detail-cashflow-analysis-section">
+                {/* 詳細キャッシュフロー分析 */}
+                <div className="mb-4 detail-cashflow-analysis-section">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
 
                 </div>
@@ -3526,7 +3526,7 @@ const Simulator: React.FC = () => {
                     </thead>
                     <tbody>
                       {simulationResults.cash_flow_table.map((row, index) => (
-                        <tr key={index} className={`hover:bg-gray-50 ${index >= 30 ? 'print:hidden' : ''}`}>
+                        <tr key={index} className="hover:bg-gray-50">
                           <td className="px-0.5 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['実効収入'])}</td>
                           <td className={`px-0.5 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>{formatCurrencyNoSymbol(row['経費'])}</td>
@@ -3566,8 +3566,8 @@ const Simulator: React.FC = () => {
         </div>
       )}
 
-      {/* 計算ロジック説明・注意事項 - 印刷時は3ページ目に配置 */}
-      <div className="p-4 sm:p-6 lg:p-8 print:break-before-page">
+      {/* 計算ロジック説明・注意事項 - 印刷時は非表示 */}
+      <div className="p-4 sm:p-6 lg:p-8 print:hidden">
         <div className="max-w-6xl mx-auto">
           {simulationResults && (
           <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">

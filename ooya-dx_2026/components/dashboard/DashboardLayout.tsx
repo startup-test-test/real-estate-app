@@ -98,7 +98,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header - SP版のみ表示 */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-[99999]">
+      <div className="lg:hidden print:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-[99999]">
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <Link href="/mypage" className="flex items-center">
             <img
@@ -131,7 +131,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 z-[100002] ${
+        className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 z-[100002] print:hidden ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -305,8 +305,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <div className="lg:pl-72">
-        <main className="min-h-screen pt-16 lg:pt-0">
+      <div className="lg:pl-72 print:pl-0">
+        <main className="min-h-screen pt-16 lg:pt-0 print:pt-0 print:min-h-0">
           {children}
         </main>
       </div>
