@@ -645,43 +645,54 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                   <h4 className="text-sm font-semibold text-gray-700 mb-2">📊 主要指標の計算方法</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
                     <div>
-                      <span className="font-medium">・表面利回り</span>：年間家賃収入 ÷ 物件価格 × 100
+                      <span className="font-medium">・表面利回り</span>：年間家賃収入 ÷ 購入価格 × 100
+                    </div>
+                    <div>
+                      <span className="font-medium">・実質利回り</span>：（年間家賃収入 − 経費）÷ 購入価格 × 100
+                    </div>
+                    <div>
+                      <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額
+                    </div>
+                    <div>
+                      <span className="font-medium">・NOI</span>：年間家賃収入 − 経費（ローン返済前利益）
                     </div>
                     <div>
                       <span className="font-medium">・CCR（自己資金回収率）</span>：年間CF ÷ 自己資金 × 100
                     </div>
                     <div>
+                      <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
+                    </div>
+                    <div>
                       <span className="font-medium">・IRR（内部収益率）</span>：運用期間全体の収益率
                     </div>
                     <div>
-                      <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
+                      <span className="font-medium">・LTV</span>：借入額 ÷ 購入価格 × 100
                     </div>
                   </div>
                 </div>
 
-                {/* 物件価値評価の計算方法 */}
+                {/* 自動計算値の説明 */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">📐 物件価値評価の算出方法</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-600">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">📐 自動設定される値</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
                     <div>
-                      <span className="font-medium">・積算評価額</span>：土地評価額 + 建物評価額
+                      <span className="font-medium">・諸費用</span>：購入価格 × 7%
                     </div>
                     <div>
-                      <span className="font-medium">・収益還元評価額</span>：年間NOI ÷ CapRate
+                      <span className="font-medium">・管理費</span>：年間家賃収入 × 5%
                     </div>
                     <div>
-                      <span className="font-medium">・想定売却価格</span>：出口戦略で設定した売却予定価格
+                      <span className="font-medium">・空室率</span>：5%
                     </div>
-                  </div>
-                  <div className="mt-3 p-3 bg-blue-50 rounded text-xs">
-                    <span className="font-medium text-blue-800">💡 売却価格の算定方法</span>
-                    <p className="mt-1 text-gray-700">
-                      売却価格は想定売却価格を採用しています：<br/>
-                      ① 想定売却価格（手動入力値に価格下落率を適用）<br/>
-                      <span className="text-gray-500">参考値：<br/>
-                      ② 収益還元価格（売却時のNOI ÷ 売却時Cap Rate）<br/>
-                      ③ 積算評価（土地評価額 + 建物評価額）</span>
-                    </p>
+                    <div>
+                      <span className="font-medium">・固定資産税</span>：購入価格 × 1%
+                    </div>
+                    <div>
+                      <span className="font-medium">・保有期間</span>：35年
+                    </div>
+                    <div>
+                      <span className="font-medium">・家賃下落率</span>：年1%
+                    </div>
                   </div>
                 </div>
 
@@ -689,9 +700,8 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                 <div className="border-t border-gray-300 pt-4">
                   <h4 className="text-sm font-semibold text-red-600 mb-2">⚠️ 重要な注意事項</h4>
                   <div className="text-xs text-gray-600 space-y-1">
-                    <p>※ これらの数値はユーザー入力値に基づく参考計算値です。実際の取引価格は市況により変動します。</p>
+                    <p>※ 本シミュレーションは簡易計算です。より詳細な分析には「収益シミュレーション」をご利用ください。</p>
                     <p>※ 投資判断は必ず複数の専門家（不動産業者、税理士、FP等）にご相談の上、自己責任で行ってください。</p>
-                    <p>※ 本シミュレーションは簡易計算であり、実際の収支とは異なる場合があります。</p>
                     <p>※ 税制改正、金利変動、空室リスク等により実際の収益は変動する可能性があります。</p>
                   </div>
                 </div>
