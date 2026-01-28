@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertCircle, Calculator, TrendingUp, BarChart3 } from 'lucide-react';
+import { AlertCircle, Calculator, Download } from 'lucide-react';
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
@@ -44,6 +44,14 @@ const CFSimulatorClient: React.FC = () => {
   // 数値フォーマット（カンマ区切り）
   const formatNumber = (num: number): string => {
     return num.toLocaleString('ja-JP');
+  };
+
+  // PDF保存機能
+  const handleSaveToPDF = () => {
+    const originalTitle = document.title;
+    document.title = `${inputs.propertyName || '簡易CFシミュレーション'} - シミュレーション結果`;
+    window.print();
+    document.title = originalTitle;
   };
 
   // シミュレーション実行
@@ -118,11 +126,11 @@ const CFSimulatorClient: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto">
+    <div className="bg-gray-50 min-h-screen print:bg-white">
+      <div className="p-4 sm:p-6 lg:p-8 print:p-4">
+        <div className="max-w-6xl mx-auto print:max-w-full">
           {/* ヘッダー */}
-          <div className="mb-6">
+          <div className="mb-6 print:hidden">
             <BackButton />
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
               <Calculator className="inline-block h-7 w-7 mr-2 text-blue-600" />
@@ -134,7 +142,7 @@ const CFSimulatorClient: React.FC = () => {
           </div>
 
           {/* 入力フォーム */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 print:hidden">
             <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm mr-2">STEP 1</span>
               物件情報を入力
@@ -280,72 +288,107 @@ const CFSimulatorClient: React.FC = () => {
           {/* シミュレーション結果 */}
           {simulationResults && (
             <div className="space-y-6">
-              {/* 収益指標 */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
-                  収益指標
-                </h2>
+              {/* 結果ヘッダー */}
+              <div className="bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 print:border print:shadow-none">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center">
+                    <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                    <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+                  </div>
+                  <button
+                    onClick={handleSaveToPDF}
+                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
+                    title="PDFとして保存"
+                  >
+                    <Download size={18} />
+                    <span>PDF保存</span>
+                  </button>
+                </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* 収益指標 - ピル型バッジ */}
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 収益指標</h3>
+                <div className="flex flex-wrap gap-2 mb-3">
                   {/* 表面利回り */}
-                  <div className="p-4 bg-blue-50 rounded-lg text-center">
-                    <p className="text-sm text-gray-600 mb-1">表面利回り</p>
-                    <p className="text-2xl font-bold text-blue-700">
-                      {simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%
-                    </p>
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['表面利回り（%）'] || 0) >= 8 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['表面利回り（%）'] || 0) >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['表面利回り（%）'] || 0) >= 4 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">表面利回り</span>
+                    <span className="font-semibold">{simulationResults.results['表面利回り（%）']?.toFixed(2) || '0.00'}%</span>
                   </div>
 
                   {/* 実質利回り */}
-                  <div className="p-4 bg-green-50 rounded-lg text-center">
-                    <p className="text-sm text-gray-600 mb-1">実質利回り</p>
-                    <p className="text-2xl font-bold text-green-700">
-                      {simulationResults.results['実質利回り（%）']?.toFixed(2) || '0.00'}%
-                    </p>
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['実質利回り（%）'] || 0) >= 6 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['実質利回り（%）'] || 0) >= 4.5 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['実質利回り（%）'] || 0) >= 3 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">実質利回り</span>
+                    <span className="font-semibold">{simulationResults.results['実質利回り（%）']?.toFixed(2) || '0.00'}%</span>
                   </div>
 
-                  {/* 年間キャッシュフロー */}
-                  <div className="p-4 bg-purple-50 rounded-lg text-center">
-                    <p className="text-sm text-gray-600 mb-1">年間CF</p>
-                    <p className={`text-2xl font-bold ${(simulationResults.results['年間キャッシュフロー（円）'] || 0) >= 0 ? 'text-purple-700' : 'text-red-600'}`}>
-                      {formatNumber(Math.round((simulationResults.results['年間キャッシュフロー（円）'] || 0) / 10000))}万円
-                    </p>
+                  {/* 年間CF */}
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['年間キャッシュフロー（円）'] || 0) >= 0 ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">年間CF</span>
+                    <span className="font-semibold">{formatNumber(Math.round((simulationResults.results['年間キャッシュフロー（円）'] || 0) / 10000))}万円</span>
                   </div>
 
-                  {/* DSCR */}
-                  <div className="p-4 bg-orange-50 rounded-lg text-center">
-                    <p className="text-sm text-gray-600 mb-1">DSCR</p>
-                    <p className="text-2xl font-bold text-orange-700">
-                      {simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}
-                    </p>
+                  {/* NOI */}
+                  <div className="px-4 py-2 rounded-full text-sm font-medium inline-flex items-center bg-blue-100 text-blue-800">
+                    <span className="font-normal mr-1">NOI</span>
+                    <span className="font-semibold">{formatNumber(Math.round((simulationResults.results['NOI（円）'] || 0) / 10000))}万円</span>
                   </div>
                 </div>
 
-                {/* 追加指標 */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                  <div className="p-3 bg-gray-50 rounded-lg text-center">
-                    <p className="text-xs text-gray-500 mb-1">IRR</p>
-                    <p className="text-lg font-semibold text-gray-700">
-                      {simulationResults.results['IRR（%）']?.toFixed(2) || 'N/A'}%
-                    </p>
+                {/* 2行目 */}
+                <div className="flex flex-wrap gap-2">
+                  {/* IRR */}
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['IRR（%）'] || 0) >= 15 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['IRR（%）'] || 0) >= 10 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['IRR（%）'] || 0) >= 5 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">IRR</span>
+                    <span className="font-semibold">{simulationResults.results['IRR（%）'] !== null && simulationResults.results['IRR（%）'] !== undefined ? `${simulationResults.results['IRR（%）'].toFixed(2)}%` : 'N/A'}</span>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg text-center">
-                    <p className="text-xs text-gray-500 mb-1">CCR（初年度）</p>
-                    <p className="text-lg font-semibold text-gray-700">
-                      {simulationResults.results['CCR（初年度）（%）']?.toFixed(2) || 'N/A'}%
-                    </p>
+
+                  {/* CCR */}
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['CCR（初年度）（%）'] || 0) >= 10 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['CCR（初年度）（%）'] || 0) >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['CCR（初年度）（%）'] || 0) >= 3 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">CCR（初年度）</span>
+                    <span className="font-semibold">{simulationResults.results['CCR（初年度）（%）']?.toFixed(2) || 'N/A'}%</span>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg text-center">
-                    <p className="text-xs text-gray-500 mb-1">NOI</p>
-                    <p className="text-lg font-semibold text-gray-700">
-                      {formatNumber(Math.round((simulationResults.results['NOI（円）'] || 0) / 10000))}万円
-                    </p>
+
+                  {/* DSCR */}
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.5 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.3 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['DSCR（返済余裕率）'] || 0) >= 1.1 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">DSCR</span>
+                    <span className="font-semibold">{simulationResults.results['DSCR（返済余裕率）']?.toFixed(2) || '0.00'}</span>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg text-center">
-                    <p className="text-xs text-gray-500 mb-1">LTV</p>
-                    <p className="text-lg font-semibold text-gray-700">
-                      {simulationResults.results['LTV（%）']?.toFixed(1) || '0.0'}%
-                    </p>
+
+                  {/* LTV */}
+                  <div className={`px-4 py-2 rounded-full text-sm font-medium inline-flex items-center ${
+                    (simulationResults.results['LTV（%）'] || 0) <= 70 ? 'bg-green-100 text-green-800' :
+                    (simulationResults.results['LTV（%）'] || 0) <= 80 ? 'bg-yellow-100 text-yellow-800' :
+                    (simulationResults.results['LTV（%）'] || 0) <= 90 ? 'bg-orange-100 text-orange-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    <span className="font-normal mr-1">LTV</span>
+                    <span className="font-semibold">{simulationResults.results['LTV（%）']?.toFixed(1) || '0.0'}%</span>
                   </div>
                 </div>
               </div>
