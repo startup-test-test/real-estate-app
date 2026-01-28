@@ -328,8 +328,8 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
             </div>
           </div>
 
-          {/* 編集モードの場合は入力フォームを表示 */}
-          {isEditMode && (
+          {/* 入力フォーム（常に表示） */}
+          {true && (
             <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 print:hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
@@ -464,20 +464,18 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                     <h2 className="text-2xl font-bold text-gray-900">シミュレーション結果</h2>
                   </div>
                   <div className="flex items-center space-x-2 print:hidden">
-                    {isEditMode && (
-                      <button
-                        onClick={handleSaveSimulation}
-                        disabled={isSaving || saveSuccess}
-                        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                          isSaving || saveSuccess
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-green-600 hover:bg-green-700 text-white'
-                        }`}
-                      >
-                        <Save size={18} />
-                        <span>{isSaving ? '保存中...' : saveSuccess ? '保存済み' : '更新を保存'}</span>
-                      </button>
-                    )}
+                    <button
+                      onClick={handleSaveSimulation}
+                      disabled={isSaving || saveSuccess}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                        isSaving || saveSuccess
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-green-600 hover:bg-green-700 text-white'
+                      }`}
+                    >
+                      <Save size={18} />
+                      <span>{isSaving ? '保存中...' : saveSuccess ? '保存済み' : '更新を保存'}</span>
+                    </button>
                     <button
                       onClick={handleSaveToPDF}
                       className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
