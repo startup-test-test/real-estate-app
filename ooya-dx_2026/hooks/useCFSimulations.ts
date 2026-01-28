@@ -77,7 +77,7 @@ export function useCFSimulations() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/cf-simulations/${id}`);
+      const response = await fetch(`/api/cf-simulations?id=${id}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -125,7 +125,7 @@ export function useCFSimulations() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/cf-simulations/${id}`, {
+      const response = await fetch(`/api/cf-simulations?id=${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -151,7 +151,7 @@ export function useCFSimulations() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/cf-simulations/${id}`, {
+      const response = await fetch(`/api/cf-simulations?id=${id}`, {
         method: 'DELETE',
       });
       const result = await response.json();
