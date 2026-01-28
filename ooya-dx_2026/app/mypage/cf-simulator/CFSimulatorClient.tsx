@@ -238,22 +238,21 @@ const CFSimulatorClient: React.FC = () => {
               <button
                 onClick={runSimulation}
                 disabled={isSimulating || inputs.purchasePrice <= 0 || inputs.monthlyRent <= 0}
-                className={`px-8 py-3 rounded-lg font-bold text-lg transition-colors flex items-center justify-center ${
+                className={`flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] ${
                   isSimulating
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 active:scale-[0.98] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
                 }`}
               >
                 {isSimulating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                     計算中...
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    <Calculator className="h-5 w-5 mr-2" />
-                    シミュレーション実行
-                  </>
+                  <div className="flex items-center justify-center">
+                    シミュレーションを実行する
+                  </div>
                 )}
               </button>
             </div>
