@@ -19,6 +19,8 @@ import { useSearchParams } from 'next/navigation';
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import Tooltip from '@/components/simulator/Tooltip';
 import BackButton from '@/components/simulator/BackButton';
+import HelpButton from '@/components/HelpButton';
+import Breadcrumb from '@/components/simulator/Breadcrumb';
 import ImageUpload from '@/components/simulator/ImageUpload';
 import ErrorAlert from '@/components/simulator/ErrorMessage';
 import ErrorModal from '@/components/simulator/ErrorModal';
@@ -64,16 +66,9 @@ const Simulator: React.FC = () => {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // ページタイトルをモードに応じて設定
-  const getPageTitle = () => {
-    if (viewId) return 'シミュレーション結果';
-    if (editId) return 'シミュレーション編集';
-    return '新規シミュレーション';
-  };
-
   useEffect(() => {
-    document.title = `${getPageTitle()} | 大家DX`;
-  }, [viewId, editId]);
+    document.title = '不動産賃貸経営シミュレーション | 大家DX';
+  }, []);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -1730,7 +1725,7 @@ const Simulator: React.FC = () => {
   const handleSaveToPDF = () => {
     // PDFの印刷時に表示するタイトル
     const originalTitle = document.title;
-    document.title = `${inputs.propertyName} - シミュレーション結果`;
+    document.title = `${inputs.propertyName} - 不動産賃貸経営シミュレーション結果`;
     
     // 印刷ダイアログを表示
     // 注意: ブラウザの印刷設定で「ヘッダーとフッター」のチェックを外すと、
@@ -1763,16 +1758,42 @@ const Simulator: React.FC = () => {
 
       <div className="p-4 sm:p-6 lg:p-8 print:p-4">
       <div className="max-w-6xl mx-auto print:max-w-full pt-1 md:pt-0">
+        {/* Breadcrumb - PC版のみ表示 */}
+        <div className="print:hidden hidden md:block">
+          <Breadcrumb />
+        </div>
+        
         {/* Header */}
         <div className="mb-6 print:hidden">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {getPageTitle()}
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                不動産賃貸経営シミュレーション
               </h1>
+              <p className="text-gray-600">
+                物件の収益性を詳細に計算し、経営分析の参考情報を提供します。
+              </p>
             </div>
-            <div className="hidden lg:block">
-              <BackButton />
+            <div className="flex items-center space-x-3">
+              <HelpButton
+                onStartTutorial={() => {
+                  console.log('📖 チュートリアル開始');
+                  sessionStorage.setItem('tutorial_in_progress', 'true');
+
+                  if (simulationResults) {
+                    setTutorialStep(2);
+                  } else {
+                    setTutorialStep(0);
+                  }
+
+                  setTimeout(() => {
+                    setRunTutorial(true);
+                  }, 100);
+                }}
+              />
+              <div className="hidden lg:block">
+                <BackButton />
+              </div>
             </div>
           </div>
         </div>
@@ -2846,7 +2867,7 @@ const Simulator: React.FC = () => {
             >
             <div className="mb-6">
               {/* PC版: タイトルとボタンを横並び */}
-              <div className="hidden md:flex print:flex items-center justify-between">
+              <div className="hidden md:flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
                   <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
@@ -2873,7 +2894,7 @@ const Simulator: React.FC = () => {
               </div>
               
               {/* SP版: タイトルとボタンを縦並び */}
-              <div className="md:hidden print:hidden">
+              <div className="md:hidden">
                 <div className="flex items-center mb-3">
                   <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
                   <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
@@ -2901,7 +2922,7 @@ const Simulator: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-800 mb-3 print:mb-2 print:text-base">📊 評価額と収益指標</h3>
               
               {/* SP版: 4つの重要指標のみ表示 */}
-              <div className="md:hidden print:hidden">
+              <div className="md:hidden">
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {/* 積算評価額 */}
                   <div className="p-3 bg-blue-100 rounded-lg text-center">
@@ -2956,13 +2977,13 @@ const Simulator: React.FC = () => {
               </div>
               
               {/* PC版: 従来の全指標表示 */}
-              <div className="hidden md:flex print:flex flex-wrap gap-2">
+              <div className="hidden md:flex flex-wrap gap-2">
                 {/* 積算評価額 */}
                 <div className="group relative">
                   <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
                     <span className="font-normal mr-1">積算</span>
                     <span className="font-semibold">{simulationResults?.results['積算評価合計（万円）']?.toFixed(0) || '0'}万円</span>
-                    <span className="text-xs ml-1 print:hidden">※</span>
+                    <span className="text-xs ml-1">※</span>
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-80">
                     <div className="font-semibold mb-2">積算評価額の内訳</div>
@@ -2997,13 +3018,13 @@ const Simulator: React.FC = () => {
                   <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
                     <span className="font-normal mr-1">収益還元</span>
                     <span className="font-semibold">{simulationResults?.results['収益還元評価額（万円）']?.toFixed(0) || '0'}万円</span>
-                    <span className="text-xs ml-1 print:hidden">※</span>
+                    <span className="text-xs ml-1">※</span>
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">収益還元評価額</div>
                     <div className="mb-2">物件の収益力から逆算した評価額です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間純収益（NOI） ÷ 還元利回り</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 収益物件の収益性を重視した評価方法</div>
+                    <div className="text-gray-400 text-xs">※ 収益物件の収益性を重視した評価方法</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3015,7 +3036,7 @@ const Simulator: React.FC = () => {
                   <div className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium inline-flex items-center cursor-help">
                     <span className="font-normal mr-1">想定売却価格</span>
                     <span className="font-semibold">{simulationResults?.results['想定売却価格（万円）']?.toFixed(0) || '0'}万円</span>
-                    <span className="text-xs ml-1 print:hidden">※</span>
+                    <span className="text-xs ml-1">※</span>
                   </div>
                   <div className="absolute z-10 invisible group-hover:visible bg-gray-800 text-white text-xs rounded py-3 px-4 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64">
                     <div className="font-semibold mb-1">想定売却価格</div>
@@ -3051,7 +3072,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">表面利回り</div>
                     <div className="mb-2">年間家賃収入を物件価格で割った基本的な利回りです。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間家賃収入 ÷ 物件価格 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 経費を考慮しない単純計算</div>
+                    <div className="text-gray-400 text-xs">※ 経費を考慮しない単純計算</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3075,7 +3096,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">実質利回り</div>
                     <div className="mb-2">経費を差し引いた実際の収益率です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：(年間家賃収入 - 年間経費) ÷ 物件価格 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ より現実的な収益性を表す指標</div>
+                    <div className="text-gray-400 text-xs">※ より現実的な収益性を表す指標</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3101,7 +3122,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">IRR（内部収益率）</div>
                     <div className="mb-2">投下した資金が年何％で増えているかを示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：投下資金と将来収益から複利計算で算出</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 定期預金の金利のようなもの</div>
+                    <div className="text-gray-400 text-xs">※ 定期預金の金利のようなもの</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3125,7 +3146,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">CCR（初年度）</div>
                     <div className="mb-2">初年度の自己資金回収率を示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 自己資金 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 改装費を含む初年度実質収益</div>
+                    <div className="text-gray-400 text-xs">※ 改装費を含む初年度実質収益</div>
                     <div className="text-yellow-400 text-xs border-t border-gray-600 pt-2 mt-2">
                       <div className="font-semibold mb-1">⚠️ 初年度のCCRについて</div>
                       初年度に改装費などがある場合、CCRはマイナスになることがあります。
@@ -3154,7 +3175,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">CCR（自己資金回収率）</div>
                     <div className="mb-2">投下した自己資金が年何％戻ってくるかを示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間平均CF ÷ 自己資金 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 10%なら約10年で元本回収</div>
+                    <div className="text-gray-400 text-xs">※ 10%なら約10年で元本回収</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3178,7 +3199,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">DSCR（債務返済能力）</div>
                     <div className="mb-2">年間純収益がローン返済額の何倍あるかを示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間純収益 ÷ 年間ローン返済額</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 1.0以上で返済可能、1.3以上が一般的な目安</div>
+                    <div className="text-gray-400 text-xs">※ 1.0以上で返済可能、1.3以上が一般的な目安</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3202,7 +3223,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">NOI（純営業収益）</div>
                     <div className="mb-2">年間家賃収入から運営費を差し引いた純収益です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間家賃収入 - 運営費（管理費・税金等）</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ ローン返済前の実質的な収益力</div>
+                    <div className="text-gray-400 text-xs">※ ローン返済前の実質的な収益力</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3226,7 +3247,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">ROI（初年度）</div>
                     <div className="mb-2">初年度の収益率を示します。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：初年度CF ÷ 初期費用総額 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 改装費含む初年度実質収益</div>
+                    <div className="text-gray-400 text-xs">※ 改装費含む初年度実質収益</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3250,7 +3271,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">ROI（収益率）</div>
                     <div className="mb-2">投下した総額に対する年間収益の割合です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：年間キャッシュフロー ÷ 初期費用総額 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 収益効率を測る基本指標</div>
+                    <div className="text-gray-400 text-xs">※ 収益効率を測る基本指標</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3278,7 +3299,7 @@ const Simulator: React.FC = () => {
                     <div className="font-semibold mb-1">LTV（融資比率）</div>
                     <div className="mb-2">物件価格に対する借入金額の割合です。</div>
                     <div className="text-gray-300 text-xs mb-1">計算式：借入金額 ÷ 物件価格 × 100</div>
-                    <div className="text-gray-400 text-xs print:hidden">※ 低いほど安全性が高い（70%以下推奨）</div>
+                    <div className="text-gray-400 text-xs">※ 低いほど安全性が高い（70%以下推奨）</div>
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                       <div className="border-4 border-transparent border-t-gray-800"></div>
                     </div>
@@ -3287,11 +3308,11 @@ const Simulator: React.FC = () => {
               </div>
               
               {/* N/A表記の注釈 - 自己資金がマイナスの場合のみ表示 */}
-              {simulationResults &&
-               simulationResults.results &&
+              {simulationResults && 
+               simulationResults.results && 
                ((simulationResults.results['自己資金（万円）'] !== undefined && simulationResults.results['自己資金（万円）'] <= 0) ||
                 (simulationResults.results['自己資金（円）'] !== undefined && simulationResults.results['自己資金（円）'] <= 0)) && (
-                <div className="mt-3 text-xs text-gray-500 print:hidden">
+                <div className="mt-3 text-xs text-gray-500">
                   ※ 自己資金がマイナス（借入額が初期費用総額を上回る）のため算出できない項目はN/Aと表記しています
                 </div>
               )}
@@ -3301,15 +3322,15 @@ const Simulator: React.FC = () => {
             {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
               <div className="mb-6 print:mb-1">
                 {/* PC版: タイトルとデータ数を横並び */}
-                <div className="hidden md:flex print:flex items-center justify-between mb-4 print:mb-2">
+                <div className="hidden md:flex items-center justify-between mb-4 print:mb-2">
                   <h3 className="text-lg font-semibold text-gray-800">📋 年次キャッシュフロー詳細</h3>
-                  <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded print:hidden">
+                  <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded">
                     35年分のデータ
                   </span>
                 </div>
                 
                 {/* SP版: タイトルとデータ数を縦並び */}
-                <div className="md:hidden print:hidden mb-4">
+                <div className="md:hidden mb-4">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">📋 年次キャッシュフロー詳細</h3>
                   <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded inline-block">
                     35年分のデータ
@@ -3545,8 +3566,8 @@ const Simulator: React.FC = () => {
         </div>
       )}
 
-      {/* 計算ロジック説明・注意事項 - 印刷時は非表示 */}
-      <div className="p-4 sm:p-6 lg:p-8 print:hidden">
+      {/* 計算ロジック説明・注意事項 - 印刷時は3ページ目に配置 */}
+      <div className="p-4 sm:p-6 lg:p-8 print:break-before-page">
         <div className="max-w-6xl mx-auto">
           {simulationResults && (
           <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">
