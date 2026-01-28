@@ -38,7 +38,6 @@ const CFSimulatorNewClient: React.FC = () => {
   });
 
   const [isSimulating, setIsSimulating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -67,53 +66,7 @@ const CFSimulatorNewClient: React.FC = () => {
     document.title = originalTitle;
   };
 
-  // シミュレーション結果を保存
-  const handleSaveSimulation = async () => {
-    if (!simulationResults) return;
-
-    setIsSaving(true);
-    try {
-      const results = simulationResults.results;
-      const result = await saveSimulation({
-        name: inputs.propertyName || 'CFシミュレーション物件',
-        inputData: {
-          propertyName: inputs.propertyName || 'CFシミュレーション物件',
-          purchasePrice: inputs.purchasePrice,
-          monthlyRent: inputs.monthlyRent,
-          loanAmount: inputs.loanAmount,
-          interestRate: inputs.interestRate,
-          loanYears: inputs.loanYears,
-        },
-        status: '検討中',
-        results: {
-          surfaceYield: results['表面利回り（%）'] || 0,
-          netYield: results['実質利回り（%）'] || 0,
-          annualCashFlow: Math.round((results['年間キャッシュフロー（円）'] || 0) / 10000),
-          noi: Math.round((results['NOI（円）'] || 0) / 10000),
-          irr: results['IRR（%）'] || 0,
-          ccr: results['CCR（初年度）（%）'] || 0,
-          dscr: results['DSCR（返済余裕率）'] || 0,
-          ltv: results['LTV（%）'] || 0,
-        },
-        cashFlowTable: simulationResults.cash_flow_table as Record<string, unknown>[],
-      });
-
-      if (result) {
-        setSaveSuccess(true);
-        setTimeout(() => {
-          router.push('/mypage/cf-simulator');
-        }, 1500);
-      } else {
-        setError('保存に失敗しました');
-      }
-    } catch (err) {
-      setError('保存に失敗しました');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // シミュレーション実行
+  // シミュレーション実行（自動保存）
   const runSimulation = async () => {
     setIsSimulating(true);
     setError(null);
@@ -175,6 +128,40 @@ const CFSimulatorNewClient: React.FC = () => {
 
       const result = await response.json();
       setSimulationResults(result);
+
+      // 自動保存
+      const simulationResultData = result.results;
+      const saveResult = await saveSimulation({
+        name: inputs.propertyName || 'CFシミュレーション物件',
+        inputData: {
+          propertyName: inputs.propertyName || 'CFシミュレーション物件',
+          purchasePrice: inputs.purchasePrice,
+          monthlyRent: inputs.monthlyRent,
+          loanAmount: inputs.loanAmount,
+          interestRate: inputs.interestRate,
+          loanYears: inputs.loanYears,
+        },
+        status: '検討中',
+        results: {
+          surfaceYield: simulationResultData['表面利回り（%）'] || 0,
+          netYield: simulationResultData['実質利回り（%）'] || 0,
+          annualCashFlow: Math.round((simulationResultData['年間キャッシュフロー（円）'] || 0) / 10000),
+          noi: Math.round((simulationResultData['NOI（円）'] || 0) / 10000),
+          irr: simulationResultData['IRR（%）'] || 0,
+          ccr: simulationResultData['CCR（初年度）（%）'] || 0,
+          dscr: simulationResultData['DSCR（返済余裕率）'] || 0,
+          ltv: simulationResultData['LTV（%）'] || 0,
+        },
+        cashFlowTable: result.cash_flow_table as Record<string, unknown>[],
+      });
+
+      if (saveResult) {
+        setSaveSuccess(true);
+        // 保存成功後、詳細ページに遷移
+        setTimeout(() => {
+          router.push(`/mypage/cf-simulator/${saveResult.id}`);
+        }, 1500);
+      }
 
     } catch (err: any) {
       setError(err.message || 'エラーが発生しました');
@@ -334,7 +321,7 @@ const CFSimulatorNewClient: React.FC = () => {
           {saveSuccess && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
               <Save className="h-5 w-5 text-green-500 mr-2" />
-              <p className="text-green-800">保存しました。一覧ページに移動します...</p>
+              <p className="text-green-800">自動保存しました。詳細ページに移動します...</p>
             </div>
           )}
 
@@ -349,18 +336,6 @@ const CFSimulatorNewClient: React.FC = () => {
                     <h2 className="text-2xl font-bold text-gray-900">シミュレーション結果</h2>
                   </div>
                   <div className="flex items-center space-x-2 print:hidden">
-                    <button
-                      onClick={handleSaveSimulation}
-                      disabled={isSaving || saveSuccess}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                        isSaving || saveSuccess
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-green-600 hover:bg-green-700 text-white'
-                      }`}
-                    >
-                      <Save size={18} />
-                      <span>{isSaving ? '保存中...' : saveSuccess ? '保存済み' : '保存する'}</span>
-                    </button>
                     <button
                       onClick={handleSaveToPDF}
                       className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"

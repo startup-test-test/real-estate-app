@@ -14,6 +14,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { useCFSimulations, CFSimulationData } from "@/hooks/useCFSimulations";
+import { sampleCFSimulation, isSampleCFSimulation } from "@/data/sampleCFSimulation";
 
 const CFSimulatorListClient: React.FC = () => {
   const router = useRouter();
@@ -33,8 +34,22 @@ const CFSimulatorListClient: React.FC = () => {
     loadData();
   }, [getSimulations]);
 
+  // サンプル物件を含めたデータを生成
+  const hasSampleInDB = simulations.some(sim =>
+    sim.inputData?.propertyName?.startsWith('【サンプル】')
+  );
+  const displaySimulations = !hasSampleInDB
+    ? [sampleCFSimulation, ...simulations]
+    : simulations;
+
   // 削除ハンドラ
   const handleDelete = async (id: string, propertyName: string) => {
+    // サンプル物件は削除不可
+    if (isSampleCFSimulation(id)) {
+      alert("サンプル物件は削除できません。");
+      return;
+    }
+
     if (window.confirm(`「${propertyName}」を削除してもよろしいですか？`)) {
       if (window.confirm("本当に削除しますか？")) {
         const success = await deleteSimulation(id);
@@ -58,6 +73,12 @@ const CFSimulatorListClient: React.FC = () => {
 
   // 複製ハンドラ
   const handleDuplicate = async (id: string) => {
+    // サンプル物件は複製不可
+    if (isSampleCFSimulation(id)) {
+      alert("サンプル物件は複製できません。");
+      return;
+    }
+
     const duplicated = await duplicateSimulation(id);
     if (duplicated) {
       router.push(`/mypage/cf-simulator/${duplicated.id}`);
@@ -152,11 +173,11 @@ const CFSimulatorListClient: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900">
                   CFシミュレーション一覧
                 </h3>
-                <span className="text-lg font-semibold text-gray-900 ml-2">{simulations.length}件</span>
+                <span className="text-lg font-semibold text-gray-900 ml-2">{displaySimulations.length}件</span>
               </div>
 
               {/* Card Grid */}
-              {simulations.length === 0 ? (
+              {displaySimulations.length === 0 ? (
                 <div className="text-center py-12">
                   <Building className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -192,8 +213,8 @@ const CFSimulatorListClient: React.FC = () => {
                     <div className="w-20 text-center px-2 py-3">削除</div>
                   </div>
 
-                  {simulations.map((sim, index) => {
-                    const isLastItem = index === simulations.length - 1;
+                  {displaySimulations.map((sim, index) => {
+                    const isLastItem = index === displaySimulations.length - 1;
                     const isEvenRow = index % 2 === 1;
                     const propertyName = sim.inputData?.propertyName || sim.name || '無題';
                     const purchasePrice = sim.inputData?.purchasePrice || 0;
