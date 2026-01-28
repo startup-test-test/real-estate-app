@@ -43,3 +43,17 @@ model Simulation {
 
   @@index([userId])                           // ユーザーIDでの検索を高速化
 }
+
+model CFSimulation {
+  id            String   @id @default(cuid())
+  userId        String                        // Neon Auth の User ID
+  name          String                        // 物件名
+  inputData     Json                          // 入力データ（購入価格、月額家賃、ローン金額等）
+  results       Json?                         // 計算結果（表面利回り、実質利回り、IRR、CCR、DSCR等）
+  cashFlowTable Json?                         // 年次キャッシュフローテーブル
+  status        String   @default("draft")    // ステータス（draft, saved等）
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])                           // ユーザーIDでの検索を高速化
+}

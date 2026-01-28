@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AlertCircle, Calculator, Download, BarChart3, Save, ArrowLeft } from 'lucide-react';
+import { AlertCircle, Calculator, Download, BarChart3, Save, ArrowLeft, Loader } from 'lucide-react';
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
@@ -44,6 +44,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
     loanYears: 35,
   });
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSimulating, setIsSimulating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [simulationResults, setSimulationResults] = useState<SimulationResult | null>(null);
@@ -53,36 +54,41 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
 
   // データ読み込み
   useEffect(() => {
-    const data = getSimulationById(id);
-    if (data) {
-      setSimulation(data);
-      setInputs({
-        propertyName: data.propertyName,
-        purchasePrice: data.purchasePrice,
-        monthlyRent: data.monthlyRent,
-        loanAmount: data.loanAmount,
-        interestRate: data.interestRate,
-        loanYears: data.loanYears,
-      });
-      // 保存されている結果があれば表示
-      if (data.results && data.cashFlowTable) {
-        setSimulationResults({
-          results: {
-            '表面利回り（%）': data.results.surfaceYield,
-            '実質利回り（%）': data.results.netYield,
-            '年間キャッシュフロー（円）': data.results.annualCashFlow * 10000,
-            'NOI（円）': data.results.noi * 10000,
-            'IRR（%）': data.results.irr,
-            'CCR（初年度）（%）': data.results.ccr,
-            'DSCR（返済余裕率）': data.results.dscr,
-            'LTV（%）': data.results.ltv,
-          } as SimulationResultData,
-          cash_flow_table: data.cashFlowTable,
+    const loadData = async () => {
+      setIsLoading(true);
+      const data = await getSimulationById(id);
+      if (data) {
+        setSimulation(data);
+        setInputs({
+          propertyName: data.inputData?.propertyName || data.name || '',
+          purchasePrice: data.inputData?.purchasePrice || 5000,
+          monthlyRent: data.inputData?.monthlyRent || 30,
+          loanAmount: data.inputData?.loanAmount || 4500,
+          interestRate: data.inputData?.interestRate || 1.5,
+          loanYears: data.inputData?.loanYears || 35,
         });
+        // 保存されている結果があれば表示
+        if (data.results && data.cashFlowTable) {
+          setSimulationResults({
+            results: {
+              '表面利回り（%）': data.results.surfaceYield,
+              '実質利回り（%）': data.results.netYield,
+              '年間キャッシュフロー（円）': data.results.annualCashFlow * 10000,
+              'NOI（円）': data.results.noi * 10000,
+              'IRR（%）': data.results.irr,
+              'CCR（初年度）（%）': data.results.ccr,
+              'DSCR（返済余裕率）': data.results.dscr,
+              'LTV（%）': data.results.ltv,
+            } as SimulationResultData,
+            cash_flow_table: data.cashFlowTable as CashFlowData[],
+          });
+        }
+      } else {
+        setNotFound(true);
       }
-    } else {
-      setNotFound(true);
-    }
+      setIsLoading(false);
+    };
+    loadData();
   }, [id, getSimulationById]);
 
   // 入力値変更ハンドラ
@@ -110,19 +116,22 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
   };
 
   // シミュレーション結果を更新保存
-  const handleSaveSimulation = () => {
+  const handleSaveSimulation = async () => {
     if (!simulationResults) return;
 
     setIsSaving(true);
     try {
       const results = simulationResults.results;
-      updateSimulation(id, {
-        propertyName: inputs.propertyName || 'CFシミュレーション物件',
-        purchasePrice: inputs.purchasePrice,
-        monthlyRent: inputs.monthlyRent,
-        loanAmount: inputs.loanAmount,
-        interestRate: inputs.interestRate,
-        loanYears: inputs.loanYears,
+      const success = await updateSimulation(id, {
+        name: inputs.propertyName || 'CFシミュレーション物件',
+        inputData: {
+          propertyName: inputs.propertyName || 'CFシミュレーション物件',
+          purchasePrice: inputs.purchasePrice,
+          monthlyRent: inputs.monthlyRent,
+          loanAmount: inputs.loanAmount,
+          interestRate: inputs.interestRate,
+          loanYears: inputs.loanYears,
+        },
         results: {
           surfaceYield: results['表面利回り（%）'] || 0,
           netYield: results['実質利回り（%）'] || 0,
@@ -133,13 +142,17 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
           dscr: results['DSCR（返済余裕率）'] || 0,
           ltv: results['LTV（%）'] || 0,
         },
-        cashFlowTable: simulationResults.cash_flow_table,
+        cashFlowTable: simulationResults.cash_flow_table as Record<string, unknown>[],
       });
 
-      setSaveSuccess(true);
-      setTimeout(() => {
-        setSaveSuccess(false);
-      }, 3000);
+      if (success) {
+        setSaveSuccess(true);
+        setTimeout(() => {
+          setSaveSuccess(false);
+        }, 3000);
+      } else {
+        setError('保存に失敗しました');
+      }
     } catch (err) {
       setError('保存に失敗しました');
     } finally {
@@ -216,6 +229,21 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="max-w-6xl mx-auto flex items-center justify-center h-64">
+            <div className="text-center">
+              <Loader className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+              <p className="text-gray-600">データを読み込み中...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (notFound) {
     return (
       <div className="bg-gray-50 min-h-screen">
@@ -249,7 +277,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                   {isEditMode ? 'CFシミュレーション編集' : 'CFシミュレーション結果'}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {simulation?.propertyName || 'シミュレーション詳細'}
+                  {simulation?.inputData?.propertyName || simulation?.name || 'シミュレーション詳細'}
                 </p>
               </div>
               <div className="hidden lg:block">

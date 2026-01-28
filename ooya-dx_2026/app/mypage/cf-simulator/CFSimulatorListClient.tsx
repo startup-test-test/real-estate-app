@@ -24,19 +24,23 @@ const CFSimulatorListClient: React.FC = () => {
 
   // データ読み込み
   useEffect(() => {
-    setLoading(true);
-    const data = getSimulations();
-    setSimulations(data);
-    setLoading(false);
+    const loadData = async () => {
+      setLoading(true);
+      const data = await getSimulations();
+      setSimulations(data);
+      setLoading(false);
+    };
+    loadData();
   }, [getSimulations]);
 
   // 削除ハンドラ
-  const handleDelete = (id: string, propertyName: string) => {
+  const handleDelete = async (id: string, propertyName: string) => {
     if (window.confirm(`「${propertyName}」を削除してもよろしいですか？`)) {
       if (window.confirm("本当に削除しますか？")) {
-        const success = deleteSimulation(id);
+        const success = await deleteSimulation(id);
         if (success) {
-          setSimulations(getSimulations());
+          const data = await getSimulations();
+          setSimulations(data);
           // 成功フィードバック
           const toast = document.createElement("div");
           toast.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50";
@@ -53,10 +57,9 @@ const CFSimulatorListClient: React.FC = () => {
   };
 
   // 複製ハンドラ
-  const handleDuplicate = (id: string) => {
-    const duplicated = duplicateSimulation(id);
+  const handleDuplicate = async (id: string) => {
+    const duplicated = await duplicateSimulation(id);
     if (duplicated) {
-      setSimulations(getSimulations());
       router.push(`/mypage/cf-simulator/${duplicated.id}`);
     }
   };
@@ -192,6 +195,10 @@ const CFSimulatorListClient: React.FC = () => {
                   {simulations.map((sim, index) => {
                     const isLastItem = index === simulations.length - 1;
                     const isEvenRow = index % 2 === 1;
+                    const propertyName = sim.inputData?.propertyName || sim.name || '無題';
+                    const purchasePrice = sim.inputData?.purchasePrice || 0;
+                    const surfaceYield = sim.results?.surfaceYield || 0;
+                    const annualCashFlow = sim.results?.annualCashFlow || 0;
 
                     return (
                       <div
@@ -216,21 +223,21 @@ const CFSimulatorListClient: React.FC = () => {
                           </div>
                           {/* 物件名 */}
                           <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200 flex flex-col justify-center">
-                            <p className="font-semibold text-gray-900 truncate mb-1" title={sim.propertyName}>
-                              {sim.propertyName}
+                            <p className="font-semibold text-gray-900 truncate mb-1" title={propertyName}>
+                              {propertyName}
                             </p>
                           </div>
 
                           {/* 購入価格・表面利回り */}
                           <div className="flex-1 text-center px-2 py-3 border-r border-gray-200 flex flex-col justify-center">
-                            <p className="font-bold text-gray-900">{formatCurrency(sim.purchasePrice)}</p>
-                            <p className="font-bold text-gray-900">{sim.results?.surfaceYield?.toFixed(2) || '0.00'}%</p>
+                            <p className="font-bold text-gray-900">{formatCurrency(purchasePrice)}</p>
+                            <p className="font-bold text-gray-900">{surfaceYield?.toFixed(2) || '0.00'}%</p>
                           </div>
 
                           {/* 年間CF */}
                           <div className="flex-1 text-center px-2 py-3 border-r border-gray-200 flex flex-col justify-center">
-                            <p className={`font-bold ${(sim.results?.annualCashFlow || 0) >= 0 ? "text-green-600" : "text-red-600"}`}>
-                              {(sim.results?.annualCashFlow || 0) >= 0 ? "+" : ""}{Math.round(sim.results?.annualCashFlow || 0)}万
+                            <p className={`font-bold ${annualCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}>
+                              {annualCashFlow >= 0 ? "+" : ""}{Math.round(annualCashFlow)}万
                             </p>
                           </div>
 
@@ -280,7 +287,7 @@ const CFSimulatorListClient: React.FC = () => {
                           {/* 削除 */}
                           <div className="w-20 px-2 py-3 flex items-center justify-center">
                             <button
-                              onClick={() => handleDelete(sim.id, sim.propertyName)}
+                              onClick={() => handleDelete(sim.id, propertyName)}
                               className="px-3 py-1.5 bg-white border border-red-300 text-red-600 text-sm font-medium rounded hover:bg-red-50 transition-colors"
                               title="削除"
                             >
@@ -292,8 +299,8 @@ const CFSimulatorListClient: React.FC = () => {
                         {/* SP版: 縦並びコンパクトレイアウト */}
                         <div className="md:hidden p-3">
                           {/* 1行目: No.と物件名 */}
-                          <p className="font-semibold text-gray-900 truncate mb-1" title={sim.propertyName}>
-                            <span className="text-gray-500 mr-2">{index + 1}.</span>{sim.propertyName}
+                          <p className="font-semibold text-gray-900 truncate mb-1" title={propertyName}>
+                            <span className="text-gray-500 mr-2">{index + 1}.</span>{propertyName}
                           </p>
 
                           {/* 2行目: ステータス */}
@@ -305,12 +312,12 @@ const CFSimulatorListClient: React.FC = () => {
                           <div className="flex items-center gap-4 text-sm mb-3">
                             <div>
                               <span className="text-gray-500">購入:</span>
-                              <span className="font-bold ml-1">{formatCurrency(sim.purchasePrice)}</span>
+                              <span className="font-bold ml-1">{formatCurrency(purchasePrice)}</span>
                             </div>
                             <div>
                               <span className="text-gray-500">年間CF:</span>
-                              <span className={`font-bold ml-1 ${(sim.results?.annualCashFlow || 0) >= 0 ? "text-green-600" : "text-red-600"}`}>
-                                {(sim.results?.annualCashFlow || 0) >= 0 ? "+" : ""}{Math.round(sim.results?.annualCashFlow || 0)}万
+                              <span className={`font-bold ml-1 ${annualCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                {annualCashFlow >= 0 ? "+" : ""}{Math.round(annualCashFlow)}万
                               </span>
                             </div>
                             <div className="text-gray-400 text-xs">
@@ -342,7 +349,7 @@ const CFSimulatorListClient: React.FC = () => {
                               <Copy className="h-4 w-4" />
                             </button>
                             <button
-                              onClick={() => handleDelete(sim.id, sim.propertyName)}
+                              onClick={() => handleDelete(sim.id, propertyName)}
                               className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                               title="削除"
                             >

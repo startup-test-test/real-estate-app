@@ -68,19 +68,22 @@ const CFSimulatorNewClient: React.FC = () => {
   };
 
   // シミュレーション結果を保存
-  const handleSaveSimulation = () => {
+  const handleSaveSimulation = async () => {
     if (!simulationResults) return;
 
     setIsSaving(true);
     try {
       const results = simulationResults.results;
-      saveSimulation({
-        propertyName: inputs.propertyName || 'CFシミュレーション物件',
-        purchasePrice: inputs.purchasePrice,
-        monthlyRent: inputs.monthlyRent,
-        loanAmount: inputs.loanAmount,
-        interestRate: inputs.interestRate,
-        loanYears: inputs.loanYears,
+      const result = await saveSimulation({
+        name: inputs.propertyName || 'CFシミュレーション物件',
+        inputData: {
+          propertyName: inputs.propertyName || 'CFシミュレーション物件',
+          purchasePrice: inputs.purchasePrice,
+          monthlyRent: inputs.monthlyRent,
+          loanAmount: inputs.loanAmount,
+          interestRate: inputs.interestRate,
+          loanYears: inputs.loanYears,
+        },
         status: '検討中',
         results: {
           surfaceYield: results['表面利回り（%）'] || 0,
@@ -92,13 +95,17 @@ const CFSimulatorNewClient: React.FC = () => {
           dscr: results['DSCR（返済余裕率）'] || 0,
           ltv: results['LTV（%）'] || 0,
         },
-        cashFlowTable: simulationResults.cash_flow_table,
+        cashFlowTable: simulationResults.cash_flow_table as Record<string, unknown>[],
       });
 
-      setSaveSuccess(true);
-      setTimeout(() => {
-        router.push('/mypage/cf-simulator');
-      }, 1500);
+      if (result) {
+        setSaveSuccess(true);
+        setTimeout(() => {
+          router.push('/mypage/cf-simulator');
+        }, 1500);
+      } else {
+        setError('保存に失敗しました');
+      }
     } catch (err) {
       setError('保存に失敗しました');
     } finally {
