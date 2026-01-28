@@ -382,21 +382,21 @@ const CFSimulatorClient: React.FC = () => {
                       <tbody>
                         {simulationResults.cash_flow_table.map((row, index) => (
                           <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                            <td className="px-3 py-2 text-center border-b">{row['年数'] || index + 1}年目</td>
+                            <td className="px-3 py-2 text-center border-b">{row['年次'] || `${index + 1}年目`}</td>
                             <td className="px-3 py-2 text-right border-b">
-                              {formatNumber(Math.round((row['賃料収入（税込）'] || 0) / 10000))}万
-                            </td>
-                            <td className="px-3 py-2 text-right border-b">
-                              {formatNumber(Math.round((row['総経費'] || 0) / 10000))}万
+                              {formatNumber(Math.round((row['実効収入'] || 0) / 10000))}万
                             </td>
                             <td className="px-3 py-2 text-right border-b">
-                              {formatNumber(Math.round((row['ローン返済額'] || 0) / 10000))}万
+                              {formatNumber(Math.round((row['経費'] || 0) / 10000))}万
                             </td>
-                            <td className={`px-3 py-2 text-right border-b font-medium ${(row['税引前キャッシュフロー'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {(row['税引前キャッシュフロー'] || 0) >= 0 ? '+' : ''}{formatNumber(Math.round((row['税引前キャッシュフロー'] || 0) / 10000))}万
+                            <td className="px-3 py-2 text-right border-b">
+                              {formatNumber(Math.round((row['ローン返済'] || 0) / 10000))}万
                             </td>
-                            <td className={`px-3 py-2 text-right border-b font-medium ${(row['累計キャッシュフロー'] || 0) >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                              {(row['累計キャッシュフロー'] || 0) >= 0 ? '+' : ''}{formatNumber(Math.round((row['累計キャッシュフロー'] || 0) / 10000))}万
+                            <td className={`px-3 py-2 text-right border-b font-medium ${(row['営業CF'] || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {(row['営業CF'] || 0) >= 0 ? '+' : ''}{formatNumber(Math.round((row['営業CF'] || 0) / 10000))}万
+                            </td>
+                            <td className={`px-3 py-2 text-right border-b font-medium ${(row['累計CF'] || 0) >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                              {(row['累計CF'] || 0) >= 0 ? '+' : ''}{formatNumber(Math.round((row['累計CF'] || 0) / 10000))}万
                             </td>
                           </tr>
                         ))}
