@@ -52,11 +52,6 @@ const CFSimulatorClient: React.FC = () => {
 
     try {
       // デフォルト値を設定して完全なAPIリクエストを構築
-      const purchasePriceYen = inputs.purchasePrice * 10000;
-      const monthlyRentYen = inputs.monthlyRent * 10000;
-      const loanAmountYen = inputs.loanAmount * 10000;
-
-      // デフォルト値
       const otherCosts = Math.round(inputs.purchasePrice * 0.07); // 諸費用7%
       const managementFee = Math.round(inputs.monthlyRent * 10000 * 0.05); // 管理費5%
       const vacancyRate = 5; // 空室率5%
@@ -65,37 +60,38 @@ const CFSimulatorClient: React.FC = () => {
       const rentDecline = 1; // 家賃下落率1%
       const exitCapRate = 6; // 出口キャップレート6%
 
+      // APIはキャメルケースを期待
       const apiData = {
-        "物件名": inputs.propertyName || "CFシミュレーション物件",
-        "住所": "未設定",
-        "購入価格（円）": purchasePriceYen,
-        "諸費用（万円）": otherCosts,
-        "改装費（万円）": 0,
-        "月額家賃（円）": monthlyRentYen,
-        "管理費（円）": managementFee,
-        "固定経費（円）": 0,
-        "固定資産税（円）": propertyTax * 10000,
-        "空室率（%）": vacancyRate,
-        "家賃下落率（%）": rentDecline,
-        "借入金額（万円）": inputs.loanAmount,
-        "金利（%）": inputs.interestRate,
-        "借入期間（年）": inputs.loanYears,
-        "ローンタイプ": "元利均等",
-        "保有予定年数": holdingYears,
-        "出口キャップレート（%）": exitCapRate,
-        "想定売却価格（万円）": Math.round(inputs.purchasePrice * 0.9), // 購入価格の90%
-        "所有形態": "個人",
-        "実効税率（%）": 20,
-        "大規模修繕周期（年）": 10,
-        "大規模修繕費（万円）": Math.round(inputs.purchasePrice * 0.03), // 購入価格の3%
-        "建物価格（減価償却用）（万円）": Math.round(inputs.purchasePrice * 0.5), // 購入価格の50%
-        "減価償却期間（年）": 22,
-        "築年数": 10,
-        "土地面積（㎡）": 100,
-        "建物面積（㎡）": 100,
-        "路線価（円/㎡）": 200000,
-        "建物構造": "木造",
-        "価格下落率（%）": 1
+        propertyName: inputs.propertyName || "CFシミュレーション物件",
+        location: "簡易シミュレーション",
+        purchasePrice: inputs.purchasePrice,
+        otherCosts: otherCosts,
+        renovationCost: 0,
+        monthlyRent: inputs.monthlyRent,
+        managementFee: managementFee,
+        fixedCost: 0,
+        propertyTax: propertyTax * 10000,
+        vacancyRate: vacancyRate,
+        rentDecline: rentDecline,
+        loanAmount: inputs.loanAmount,
+        interestRate: inputs.interestRate,
+        loanYears: inputs.loanYears,
+        loanType: "元利均等",
+        holdingYears: holdingYears,
+        exitCapRate: exitCapRate,
+        expectedSalePrice: Math.round(inputs.purchasePrice * 0.9),
+        ownershipType: "個人",
+        effectiveTaxRate: 20,
+        majorRepairCycle: 10,
+        majorRepairCost: Math.round(inputs.purchasePrice * 0.03),
+        buildingPriceForDepreciation: Math.round(inputs.purchasePrice * 0.5),
+        depreciationYears: 22,
+        yearBuilt: 10,
+        landArea: 100,
+        buildingArea: 100,
+        roadPrice: 200000,
+        propertyType: "木造",
+        priceDeclineRate: 1
       };
 
       const response = await fetch(API_ENDPOINTS.SIMULATE, {
