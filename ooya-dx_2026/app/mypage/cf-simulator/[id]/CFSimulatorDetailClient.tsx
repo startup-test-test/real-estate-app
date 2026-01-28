@@ -8,6 +8,7 @@ import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
 import { transformFormDataToApiData } from '@/lib/utils/dataTransform';
 import { useCFSimulations, CFSimulationData } from '@/hooks/useCFSimulations';
+import { sampleCFSimulation, isSampleCFSimulation } from '@/data/sampleCFSimulation';
 import Link from 'next/link';
 
 interface SimulationResult {
@@ -56,6 +57,40 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
+
+      // サンプル物件の場合はフロントエンドデータを使用
+      if (isSampleCFSimulation(id)) {
+        const data = sampleCFSimulation;
+        setSimulation(data);
+        setInputs({
+          propertyName: data.inputData?.propertyName || data.name || '',
+          purchasePrice: data.inputData?.purchasePrice || 5000,
+          monthlyRent: data.inputData?.monthlyRent || 30,
+          loanAmount: data.inputData?.loanAmount || 4500,
+          interestRate: data.inputData?.interestRate || 1.5,
+          loanYears: data.inputData?.loanYears || 35,
+        });
+        // サンプルの結果を表示
+        if (data.results && data.cashFlowTable) {
+          setSimulationResults({
+            results: {
+              '表面利回り（%）': data.results.surfaceYield,
+              '実質利回り（%）': data.results.netYield,
+              '年間キャッシュフロー（円）': data.results.annualCashFlow * 10000,
+              'NOI（円）': data.results.noi * 10000,
+              'IRR（%）': data.results.irr,
+              'CCR（初年度）（%）': data.results.ccr,
+              'DSCR（返済余裕率）': data.results.dscr,
+              'LTV（%）': data.results.ltv,
+            } as SimulationResultData,
+            cash_flow_table: data.cashFlowTable as CashFlowData[],
+          });
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // 通常の物件はAPIから取得
       const data = await getSimulationById(id);
       if (data) {
         setSimulation(data);
