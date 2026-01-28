@@ -938,16 +938,7 @@ const MyPage: React.FC = () => {
                               if (action.disabled) {
                                 return;
                               }
-                              // 買付申込書：右カラムに表示
-                              if (action.path === "#purchase-offer") {
-                                setShowPurchaseOffer(true);
-                                return;
-                              }
-                              // シミュレーター（完全無料・無制限）
-                              if (action.path === "/mypage/simulator" || action.path === "/market-analysis") {
-                                setShowPurchaseOffer(false);
-                                router.push(action.path);
-                              } else if (action.path !== "#") {
+                              if (action.path !== "#") {
                                 router.push(action.path);
                               }
                             }}
