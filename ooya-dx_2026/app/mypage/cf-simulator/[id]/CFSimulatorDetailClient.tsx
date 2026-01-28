@@ -258,6 +258,38 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
       const result = await response.json();
       setSimulationResults(result);
 
+      // 自動保存（サンプル物件以外）
+      if (!isSampleCFSimulation(id)) {
+        const simulationResultData = result.results;
+        const success = await updateSimulation(id, {
+          name: inputs.propertyName || 'CFシミュレーション物件',
+          inputData: {
+            propertyName: inputs.propertyName || 'CFシミュレーション物件',
+            purchasePrice: inputs.purchasePrice,
+            monthlyRent: inputs.monthlyRent,
+            loanAmount: inputs.loanAmount,
+            interestRate: inputs.interestRate,
+            loanYears: inputs.loanYears,
+          },
+          results: {
+            surfaceYield: simulationResultData['表面利回り（%）'] || 0,
+            netYield: simulationResultData['実質利回り（%）'] || 0,
+            annualCashFlow: Math.round((simulationResultData['年間キャッシュフロー（円）'] || 0) / 10000),
+            noi: Math.round((simulationResultData['NOI（円）'] || 0) / 10000),
+            irr: simulationResultData['IRR（%）'] || 0,
+            ccr: simulationResultData['CCR（初年度）（%）'] || 0,
+            dscr: simulationResultData['DSCR（返済余裕率）'] || 0,
+            ltv: simulationResultData['LTV（%）'] || 0,
+          },
+          cashFlowTable: result.cash_flow_table as Record<string, unknown>[],
+        });
+
+        if (success) {
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+        }
+      }
+
     } catch (err: any) {
       setError(err.message || 'エラーが発生しました');
     } finally {
@@ -464,18 +496,6 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                     <h2 className="text-2xl font-bold text-gray-900">シミュレーション結果</h2>
                   </div>
                   <div className="flex items-center space-x-2 print:hidden">
-                    <button
-                      onClick={handleSaveSimulation}
-                      disabled={isSaving || saveSuccess}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                        isSaving || saveSuccess
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-green-600 hover:bg-green-700 text-white'
-                      }`}
-                    >
-                      <Save size={18} />
-                      <span>{isSaving ? '保存中...' : saveSuccess ? '保存済み' : '更新を保存'}</span>
-                    </button>
                     <button
                       onClick={handleSaveToPDF}
                       className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
