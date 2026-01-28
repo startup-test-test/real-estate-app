@@ -2,8 +2,8 @@ import { Suspense } from 'react';
 import MyPageClient from './MyPageClient';
 
 export const metadata = {
-  title: 'マイページ | 大家DX',
-  description: 'サービスの管理、シミュレーション結果の確認、アカウント設定を行えます。',
+  title: '収益シミュレーション | 大家DX',
+  description: '保存したシミュレーションの管理を行えます。',
 };
 
 export default function MypagePage() {

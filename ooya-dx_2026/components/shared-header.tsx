@@ -137,13 +137,13 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
                     <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                       <button
                         onClick={() => { setIsDropdownOpen(false); router.push('/mypage'); }}
-                        className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                        className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap"
                       >
-                        <User className="w-4 h-4 mr-3 text-gray-400" />
-                        シミュレーション一覧
+                        <User className="w-4 h-4 mr-3 text-gray-400 flex-shrink-0" />
+                        賃貸経営シミュレーション
                       </button>
                       <button
                         onClick={handleSignOut}

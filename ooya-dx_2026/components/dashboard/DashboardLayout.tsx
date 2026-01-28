@@ -16,7 +16,7 @@ import {
   Sparkles,
   FileText,
   Mail,
-  // CreditCard, // 無料化対応: 課金管理を削除
+  Plus,
 } from 'lucide-react'
 
 interface DashboardLayoutProps {
@@ -80,7 +80,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const navigation = [
-    { name: '収益シミュレーション', href: '/mypage', icon: Home },
+    { name: '収益シミュレーション', href: '/mypage', icon: Calculator },
   ]
 
   const supportNavigation = [
@@ -98,7 +98,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header - SP版のみ表示 */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-[99999]">
+      <div className="lg:hidden print:hidden fixed top-0 left-0 right-0 bg-white shadow-lg z-[99999]">
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <Link href="/mypage" className="flex items-center">
             <img
@@ -131,7 +131,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 z-[100002] ${
+        className={`fixed left-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 z-[100002] print:hidden ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -154,39 +154,32 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             {/* Profile Section */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-semibold shadow-soft">
-                  {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
-                </div>
-                <div>
-                  <div className="text-gray-800 font-medium text-sm truncate max-w-[140px]">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                className="w-full flex items-center justify-between p-2 -mx-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-semibold shadow-soft">
+                    {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                  </div>
+                  <div className="text-gray-800 font-medium text-sm truncate max-w-[140px] text-left">
                     {user?.displayName || user?.email?.split('@')[0] || 'ユーザー'}
                   </div>
-                  {/* 無料化対応: プレミアム/未契約バッジを削除 */}
                 </div>
-              </div>
-
-              {/* User Dropdown */}
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  className="p-1 text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                >
-                  <Icons.chevronDown className={`w-4 h-4 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {isUserDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      <LogOut className="w-4 h-4 mr-3" />
-                      ログアウト
-                    </button>
-                  </div>
-                )}
-              </div>
+                <Icons.chevronDown className={`w-4 h-4 text-gray-600 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isUserDropdownOpen && (
+                <div className="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <LogOut className="w-4 h-4 mr-3" />
+                    ログアウト
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -214,8 +207,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 )
               })}
             </div>
-
-            {/* 無料化対応: プラン・課金管理セクションを削除 */}
 
             {/* Support Section */}
             <div className="mb-8">
@@ -305,8 +296,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <div className="lg:pl-72">
-        <main className="min-h-screen pt-16 lg:pt-0">
+      <div className="lg:pl-72 print:pl-0">
+        <main className="min-h-screen pt-16 lg:pt-0 print:pt-0 print:min-h-0">
           {children}
         </main>
       </div>

@@ -38,7 +38,7 @@ function SimulatorSkeleton() {
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: '不動産賃貸経営シミュレーション | 大家DX',
+  title: 'シミュレーション | 大家DX',
   description: '賃貸物件の収益性をシミュレーション。IRR、CCR、DSCRなどの指標を計算します。',
 };
 

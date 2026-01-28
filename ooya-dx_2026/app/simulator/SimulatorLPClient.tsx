@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth/client';
 import {
   Calculator,
   CheckCircle,
@@ -9,7 +10,10 @@ import {
   Smartphone,
   UserPlus,
   Home,
-  FileText
+  FileText,
+  ChevronDown,
+  LogOut,
+  User
 } from 'lucide-react';
 import BlogPosts from '@/components/landing/BlogPosts';
 import CompanyProfile from '@/components/landing/CompanyProfile';
@@ -33,10 +37,37 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
   const router = useRouter();
+  const auth = useAuth();
+  const user = auth.user;
+  const isLoading = auth.isLoading;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.title = '賃貸経営のためのシミュレーション｜大家DX';
   }, []);
+
+  // ドロップダウン外クリックで閉じる
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    setIsDropdownOpen(false);
+    try {
+      await auth.signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('[SignOut] Error:', error);
+      window.location.href = '/';
+    }
+  };
 
   const personas = [
     {
@@ -111,21 +142,62 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                 </a>
               </nav>
               
-              {/* ログイン・サインアップボタン */}
+              {/* 認証セクション */}
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <button
-                  onClick={() => router.push('/auth/signup')}
-                  className="px-4 sm:px-5 py-2.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
-                >
-                  <span className="hidden sm:inline">10秒で無料登録</span>
-                  <span className="sm:hidden">10秒無料登録</span>
-                </button>
-                <button
-                  onClick={() => router.push('/auth/signin')}
-                  className="px-4 sm:px-5 py-2.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
-                >
-                  ログイン
-                </button>
+                {isLoading ? (
+                  <div className="w-24 h-10 bg-gray-100 rounded-md animate-pulse" />
+                ) : user ? (
+                  // ログイン済み
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-medium">
+                        {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                      </div>
+                      <span className="hidden sm:block text-sm text-gray-700">
+                        {user?.displayName || user?.email?.split('@')[0]}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                        <button
+                          onClick={() => { setIsDropdownOpen(false); router.push('/mypage'); }}
+                          className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap"
+                        >
+                          <User className="w-4 h-4 mr-3 text-gray-400 flex-shrink-0" />
+                          賃貸経営シミュレーション
+                        </button>
+                        <button
+                          onClick={handleSignOut}
+                          className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <LogOut className="w-4 h-4 mr-3 text-gray-400" />
+                          ログアウト
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // 未ログイン
+                  <>
+                    <button
+                      onClick={() => router.push('/auth/signup')}
+                      className="px-4 sm:px-5 py-2.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                    >
+                      <span className="hidden sm:inline">10秒で無料登録</span>
+                      <span className="sm:hidden">10秒無料登録</span>
+                    </button>
+                    <button
+                      onClick={() => router.push('/auth/signin')}
+                      className="px-4 sm:px-5 py-2.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                    >
+                      ログイン
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

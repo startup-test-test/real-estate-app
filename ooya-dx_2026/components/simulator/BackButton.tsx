@@ -32,13 +32,13 @@ const BackButton: React.FC<BackButtonProps> = ({
     if (label) return label;
 
     const path = pathname || '';
-    if (path.includes('/property-detail')) return 'マイページへ戻る';
-    if (path.includes('/simulator')) return 'マイページへ戻る';
-    if (path.includes('/transaction-search')) return 'マイページへ戻る';
-    if (path.includes('/market-analysis')) return 'マイページへ戻る';
-    if (path.includes('/guide')) return 'マイページへ戻る';
-    if (path.includes('/faq')) return 'マイページへ戻る';
-    if (path.includes('/pricing')) return 'マイページへ戻る';
+    if (path.includes('/property-detail')) return '一覧に戻る';
+    if (path.includes('/simulator')) return '一覧に戻る';
+    if (path.includes('/transaction-search')) return '一覧に戻る';
+    if (path.includes('/market-analysis')) return '一覧に戻る';
+    if (path.includes('/guide')) return '一覧に戻る';
+    if (path.includes('/faq')) return '一覧に戻る';
+    if (path.includes('/pricing')) return '一覧に戻る';
 
     return '戻る';
   };

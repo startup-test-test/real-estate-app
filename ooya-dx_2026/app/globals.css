@@ -200,3 +200,93 @@ input[type="radio"]:focus {
   outline: 2px solid #3b82f6 !important;
   outline-offset: 2px !important;
 }
+
+/* PDF保存・印刷用スタイル */
+@media print {
+  /* ページ設定 */
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+
+  /* 背景を白に */
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 全幅表示 */
+  .simulation-results {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 1ページ目: 指標セクションをコンパクトに */
+  .investment-metrics-section {
+    page-break-inside: avoid !important;
+    margin-bottom: 8px !important;
+  }
+
+  .investment-metrics-section h3 {
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* グラフセクションの印刷設定 */
+  .cashflow-chart-container {
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    max-height: 280px !important;
+  }
+
+  /* 2ページ目: テーブル専用 */
+  .detail-cashflow-analysis-section {
+    page-break-before: always !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .detail-cashflow-analysis-section h3 {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* テーブルの印刷設定 */
+  .cashflow-table-container {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .cashflow-table-container table {
+    min-width: 100% !important;
+    width: 100% !important;
+    font-size: 7px !important;
+    table-layout: fixed !important;
+  }
+
+  .cashflow-table-container thead {
+    background: #1e3a5f !important;
+  }
+
+  .cashflow-table-container th {
+    padding: 3px 1px !important;
+    font-size: 6px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+  }
+
+  .cashflow-table-container td {
+    padding: 2px 1px !important;
+    white-space: nowrap !important;
+    font-size: 7px !important;
+  }
+
+  .detail-cashflow-table-wrapper {
+    page-break-inside: avoid !important;
+    border: 1px solid #ccc !important;
+  }
+}

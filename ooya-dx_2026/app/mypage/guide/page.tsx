@@ -21,7 +21,6 @@ import {
 // import { useUsageStatus } from '@/hooks/useUsageStatus';
 import UsageStatusBar from '@/components/simulator/UsageStatusBar';
 import UpgradeModal from '@/components/simulator/UpgradeModal';
-import Breadcrumb from '@/components/simulator/Breadcrumb';
 
 const UserGuide: React.FC = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -94,7 +93,7 @@ const UserGuide: React.FC = () => {
   const features = [
     {
       icon: Calculator,
-      title: '賃貸経営シミュレーター',
+      title: '収益シミュレーション',
       description: '物件の収益性と経営リスクを詳細に分析し、長期的な収支予測を行います。'
     },
     {
@@ -121,11 +120,6 @@ const UserGuide: React.FC = () => {
 
       <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Breadcrumb - PC版のみ表示 */}
-        <div className="hidden md:block mb-4">
-          <Breadcrumb />
-        </div>
-
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center mb-4">

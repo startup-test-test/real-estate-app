@@ -15,7 +15,6 @@ import {
   Trash2,
   Copy,
   Loader,
-  ChevronLeft,
   ChevronRight,
   BarChart3,
 } from "lucide-react";
@@ -195,9 +194,7 @@ const MyPage: React.FC = () => {
   const [sortBy, setSortBy] = React.useState("newest");
   const [filterStatus, setFilterStatus] = React.useState("all");
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [currentPage, setCurrentPage] = React.useState(1);
   const [isInitialLoad, setIsInitialLoad] = React.useState(true); // 初回読み込みフラグ
-  const itemsPerPage = 12;
 
   // キャッシュキーの生成（ユーザーごとに異なるキャッシュ）
   const getCacheKey = () => `simulations_cache_${user?.id || "anonymous"}`;
@@ -823,31 +820,8 @@ const MyPage: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // ページネーション計算
-  const totalPages = Math.ceil(filteredResults.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedResults = filteredResults.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
-
-  // 検索・フィルター変更時にページをリセット
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filterStatus]);
-
-  // ページ変更時にスムーズスクロール
-  React.useEffect(() => {
-    if (currentPage > 1) {
-      const propertyListElement = document.getElementById("property-list");
-      if (propertyListElement) {
-        propertyListElement.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    }
-  }, [currentPage]);
+  // 全件表示（ページネーションなし）
+  const displayResults = filteredResults;
 
   const formatCurrency = (amount: number) => {
     if (amount >= 10000) {
@@ -895,7 +869,7 @@ const MyPage: React.FC = () => {
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">収益シミュレーション</h1>
                   <p className="text-gray-600 mt-1">
-                    賃貸経営の成果を一目で確認できます
+                    物件情報を入力して収益性を3分で分析。賃貸経営の成果を一目で確認できます。
                   </p>
                 </div>
 
@@ -903,64 +877,19 @@ const MyPage: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-              {/* Quick Actions Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
-                {quickActions.map((section, index) => {
-                  const Icon = section.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative"
-                    >
-                      {section.badge && (
-                        <div className="absolute top-4 right-4 z-10">
-                          <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                            {section.badge}
-                          </span>
-                        </div>
-                      )}
-                      <div className={`${section.color} px-6 py-3`}>
-                        <div className="flex items-center text-white">
-                          <Icon className="h-5 w-5 mr-2" />
-                          <h3 className="text-base font-semibold">{section.category}</h3>
-                        </div>
-                      </div>
-                      <div className="p-3 md:p-6">
-                        {/* Description */}
-                        <p className="text-gray-600 text-sm mb-4">
-                          {section.description}
-                        </p>
-
-                        {section.actions.map((action, actionIndex) => (
-                          <button
-                            key={actionIndex}
-                            onClick={async () => {
-                              if (action.disabled) {
-                                return;
-                              }
-                              if (action.path !== "#") {
-                                router.push(action.path);
-                              }
-                            }}
-                            disabled={action.disabled}
-                            className={`w-full px-4 py-2.5 rounded-lg border-2 transition-all duration-200 ${
-                              action.disabled
-                                ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : action.primary
-                                ? "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300"
-                                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
-                            }`}
-                          >
-                            <div className="flex items-center justify-center">
-                              <span className="text-base">{action.name}</span>
-                              {!action.disabled && <ChevronRight className="h-4 w-4 ml-2" />}
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+              {/* 新規作成ボタン */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => router.push("/mypage/simulator")}
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-8 py-4 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <span className="text-lg font-semibold">
+                      新規収益シミュレーションを作成する
+                    </span>
+                    <ChevronRight className="h-5 w-5 ml-3 flex-shrink-0" />
+                  </div>
+                </button>
               </div>
 
               {/* Property List Section */}
@@ -968,13 +897,12 @@ const MyPage: React.FC = () => {
                 id="property-list"
                 className="bg-white rounded-lg border border-gray-200 p-3 md:p-6"
               >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center">
-                    <Calculator className="h-6 w-6 text-purple-500 mr-2" />
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      保存済み収益シミュレーション
-                    </h3>
-                  </div>
+                <div className="flex items-center mb-6">
+                  <Calculator className="h-6 w-6 text-blue-600 mr-2" />
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    収益シミュレーション一覧
+                  </h3>
+                  <span className="text-lg font-semibold text-gray-900 ml-2">{filteredResults.length}件</span>
                 </div>
 
                 {error && (
@@ -988,19 +916,6 @@ const MyPage: React.FC = () => {
                     </button>
                   </div>
                 )}
-
-                {/* Results Count */}
-                <div className="mb-4 flex justify-between items-center">
-                  <p className="text-gray-600">
-                    {filteredResults.length}件中 {startIndex + 1}〜
-                    {Math.min(
-                      startIndex + itemsPerPage,
-                      filteredResults.length,
-                    )}
-                    件を表示
-                    {totalPages > 1 && ` (${currentPage}/${totalPages}ページ)`}
-                  </p>
-                </div>
 
                 {/* Card Grid - Responsive Layout */}
                 {filteredResults.length === 0 ? (
@@ -1026,11 +941,11 @@ const MyPage: React.FC = () => {
                 ) : (
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     {/* テーブルヘッダー（PC版のみ） */}
-                    <div className="hidden md:flex items-center bg-gray-100 border-b border-gray-200 text-sm font-medium text-gray-600">
+                    <div className="hidden md:flex items-center bg-gray-100 border-b border-gray-200 text-base font-medium text-gray-600">
                       <div className="flex-[2] min-w-0 px-4 py-3 border-r border-gray-200 text-center">物件名</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">
                         <div>購入価格</div>
-                        <div className="text-xs text-gray-500">表面利回り</div>
+                        <div className="text-sm text-gray-500">表面利回り</div>
                       </div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">年間CF</div>
                       <div className="flex-1 text-center px-2 py-3 border-r border-gray-200">更新日</div>
@@ -1040,9 +955,9 @@ const MyPage: React.FC = () => {
                       <div className="w-20 text-center px-2 py-3">削除</div>
                     </div>
 
-                    {paginatedResults.map((sim, index) => {
+                    {displayResults.map((sim, index) => {
                       // サンプル物件の最初のインデックスを取得
-                      const firstSampleIndex = paginatedResults.findIndex(s =>
+                      const firstSampleIndex = displayResults.findIndex(s =>
                         s.id === 'sample-property-001' || s.propertyName?.startsWith('【サンプル】')
                       );
 
@@ -1065,7 +980,7 @@ const MyPage: React.FC = () => {
                         }
                       };
 
-                      const isLastItem = index === paginatedResults.length - 1;
+                      const isLastItem = index === displayResults.length - 1;
 
                       // 交互背景色（ゼブラストライプ）
                       const isEvenRow = index % 2 === 1;
@@ -1261,49 +1176,6 @@ const MyPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="mt-8 flex justify-center items-center space-x-2">
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      disabled={currentPage === 1}
-                      className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-
-                    {/* Page Numbers */}
-                    <div className="flex space-x-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`px-3 py-2 rounded-lg transition-colors ${
-                              currentPage === page
-                                ? "bg-indigo-600 text-white"
-                                : "text-gray-700 hover:bg-gray-50 border border-gray-300"
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        ),
-                      )}
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
