@@ -42,8 +42,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
   } catch (error) {
     console.error("CF Simulation save error:", error);
+    const errorMessage = error instanceof Error ? error.message : "不明なエラー";
     return NextResponse.json(
-      { error: "保存に失敗しました" },
+      { error: "保存に失敗しました", details: errorMessage },
       { status: 500 }
     );
   }

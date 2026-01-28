@@ -9,6 +9,7 @@ import { API_ENDPOINTS } from '@/lib/config/api';
 import { transformFormDataToApiData } from '@/lib/utils/dataTransform';
 import { useCFSimulations } from '@/hooks/useCFSimulations';
 import Link from 'next/link';
+import LegalDisclaimer from '@/components/simulator/LegalDisclaimer';
 
 interface SimulationResult {
   results: SimulationResultData;
@@ -161,6 +162,10 @@ const CFSimulatorNewClient: React.FC = () => {
         setTimeout(() => {
           router.push(`/mypage/cf-simulator/${saveResult.id}`);
         }, 1500);
+      } else {
+        // 保存に失敗した場合でもシミュレーション結果は表示
+        console.error('保存に失敗しました。ログインしているか確認してください。');
+        setError('シミュレーション結果の保存に失敗しました。ログインしているか確認してください。');
       }
 
     } catch (err: any) {
@@ -498,10 +503,75 @@ const CFSimulatorNewClient: React.FC = () => {
                 </div>
               )}
 
-              {/* 注意事項 */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
-                <p className="font-medium mb-1">ご注意</p>
-                <p>本シミュレーションは参考値です。実際の投資判断には専門家にご相談ください。</p>
+              {/* 計算ロジック説明・注意事項 */}
+              <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <svg className="h-5 w-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  計算ロジック・注意事項
+                </h3>
+
+                {/* 計算ロジック説明 */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">📊 主要指標の計算方法</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
+                    <div>
+                      <span className="font-medium">・表面利回り</span>：年間家賃収入 ÷ 物件価格 × 100
+                    </div>
+                    <div>
+                      <span className="font-medium">・CCR（自己資金回収率）</span>：年間CF ÷ 自己資金 × 100
+                    </div>
+                    <div>
+                      <span className="font-medium">・IRR（内部収益率）</span>：運用期間全体の収益率
+                    </div>
+                    <div>
+                      <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
+                    </div>
+                  </div>
+                </div>
+
+                {/* 物件価値評価の計算方法 */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">📐 物件価値評価の算出方法</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-600">
+                    <div>
+                      <span className="font-medium">・積算評価額</span>：土地評価額 + 建物評価額
+                    </div>
+                    <div>
+                      <span className="font-medium">・収益還元評価額</span>：年間NOI ÷ CapRate
+                    </div>
+                    <div>
+                      <span className="font-medium">・想定売却価格</span>：出口戦略で設定した売却予定価格
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-blue-50 rounded text-xs">
+                    <span className="font-medium text-blue-800">💡 売却価格の算定方法</span>
+                    <p className="mt-1 text-gray-700">
+                      売却価格は想定売却価格を採用しています：<br/>
+                      ① 想定売却価格（手動入力値に価格下落率を適用）<br/>
+                      <span className="text-gray-500">参考値：<br/>
+                      ② 収益還元価格（売却時のNOI ÷ 売却時Cap Rate）<br/>
+                      ③ 積算評価（土地評価額 + 建物評価額）</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* 注意事項 */}
+                <div className="border-t border-gray-300 pt-4">
+                  <h4 className="text-sm font-semibold text-red-600 mb-2">⚠️ 重要な注意事項</h4>
+                  <div className="text-xs text-gray-600 space-y-1">
+                    <p>※ これらの数値はユーザー入力値に基づく参考計算値です。実際の取引価格は市況により変動します。</p>
+                    <p>※ 投資判断は必ず複数の専門家（不動産業者、税理士、FP等）にご相談の上、自己責任で行ってください。</p>
+                    <p>※ 本シミュレーションは簡易計算であり、実際の収支とは異なる場合があります。</p>
+                    <p>※ 税制改正、金利変動、空室リスク等により実際の収益は変動する可能性があります。</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Legal Disclaimer */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <LegalDisclaimer variant="subtle" />
               </div>
             </div>
           )}
