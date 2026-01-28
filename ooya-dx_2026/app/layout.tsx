@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { Providers } from './providers'
 import { HeaderWrapper } from '@/components/header-wrapper'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
-import { PWAInstallBanner } from '@/components/PWAInstallBanner'
 // import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
@@ -41,7 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-grow relative">
             {children}
           </main>
-          <PWAInstallBanner />
           {/* <Footer /> */}
         </Providers>
       </body>
