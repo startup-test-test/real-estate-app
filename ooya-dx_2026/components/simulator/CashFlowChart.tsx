@@ -192,11 +192,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             if (value === null || value === undefined) {
               return `${label}: データなし`;
             }
-            // 累計CF、売却後累計CF、借入残高は小数点第一位まで表示
-            if (label.includes('累計CF') || label.includes('借入残高')) {
-              return `${label}: ${Number(value).toFixed(1)}万円`;
-            }
-            return `${label}: ${Number(value).toLocaleString()}万円`;
+            // 全ての値を小数点第一位まで表示
+            return `${label}: ${Number(value).toFixed(1)}万円`;
           },
           afterBody: function(tooltipItems) {
             const index = tooltipItems[0].dataIndex;
