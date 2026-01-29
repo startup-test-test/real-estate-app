@@ -80,8 +80,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const navigation = [
+  const mainNavigation = [
     { name: 'マイページ', href: '/mypage', icon: Home },
+  ]
+
+  const simulatorNavigation = [
     { name: 'CFシミュレーション', href: '/mypage/cf-simulator', icon: BarChart3 },
     { name: '収益シミュレーション', href: '/mypage/revenue-simulator', icon: Calculator },
   ]
@@ -201,9 +204,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 overflow-y-auto">
-            {/* Main Navigation */}
-            <div className="space-y-2 mb-8">
-              {navigation.map((item) => {
+            {/* Main Navigation - マイページ */}
+            <div className="space-y-2 mb-6">
+              {mainNavigation.map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.href)
                 return (
@@ -224,7 +227,35 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               })}
             </div>
 
-            {/* 無料化対応: プラン・課金管理セクションを削除 */}
+            {/* Simulator Section */}
+            <div className="mb-6">
+              <div className="px-4 mb-3">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  シミュレーション
+                </h3>
+              </div>
+              <div className="space-y-2">
+                {simulatorNavigation.map((item) => {
+                  const Icon = item.icon
+                  const active = isActive(item.href)
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                        active
+                          ? 'bg-blue-50 text-blue-600'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      <Icon className="mr-3 h-5 w-5" />
+                      {item.name}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
 
             {/* Support Section */}
             <div className="mb-8">
