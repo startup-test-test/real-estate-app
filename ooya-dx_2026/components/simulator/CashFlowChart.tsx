@@ -58,8 +58,8 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
     return (row['売却時累計CF'] || 0) / 10000;
   });
   
-  // 借入残高（線グラフ用）- 万円単位に変換、負の値は0にする
-  const loanBalance = data.map(row => Math.max(0, (row['借入残高'] || 0) / 10000));
+  // 借入残高（線グラフ用）- 既に万円単位、負の値は0にする
+  const loanBalance = data.map(row => Math.max(0, row['借入残高'] || 0));
   
   // デバッグ用ログ（最初の3行のみ）
   // デバッグ用ログは削除
