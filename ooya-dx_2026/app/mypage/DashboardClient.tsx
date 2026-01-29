@@ -6,7 +6,7 @@ import { Calculator, BarChart3, ArrowRight } from 'lucide-react';
 
 const DashboardClient: React.FC = () => {
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="p-5 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto pt-1 md:pt-0">
         {/* Header */}
         <div className="mb-8">

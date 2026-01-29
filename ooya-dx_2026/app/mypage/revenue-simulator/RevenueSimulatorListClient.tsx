@@ -737,7 +737,7 @@ const MyPage: React.FC = () => {
         {
           name: "新規作成",
           primary: true,
-          path: "/mypage/revenue-simulator",
+          path: "/mypage/revenue-simulator?new=true",
         },
       ],
     },
@@ -836,7 +836,7 @@ const MyPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <div className="p-5 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto pt-5 lg:pt-0">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -861,7 +861,7 @@ const MyPage: React.FC = () => {
         </div>
         */}
 
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+        <div className="p-5 sm:p-6 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto pt-1 md:pt-0">
             {/* Header */}
             <div className="mb-6">
@@ -880,7 +880,7 @@ const MyPage: React.FC = () => {
               {/* 新規作成ボタン */}
               <div className="flex justify-center">
                 <button
-                  onClick={() => router.push("/mypage/revenue-simulator")}
+                  onClick={() => router.push("/mypage/revenue-simulator?new=true")}
                   className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-8 py-4 transition-all duration-200"
                 >
                   <div className="flex items-center">
@@ -1112,20 +1112,24 @@ const MyPage: React.FC = () => {
 
                           {/* SP版: 縦並びコンパクトレイアウト */}
                           <div className="md:hidden p-3">
+                            {/* 更新日 */}
+                            <p className="text-xs text-gray-700 mb-1">
+                              {sim.date}更新
+                            </p>
                             {/* 1行目: No.と物件名 */}
                             <p className="font-semibold text-gray-900 truncate mb-1" title={sim.propertyName}>
                               <span className="text-gray-500 mr-2">{index + 1}.</span>{sim.propertyName}
                             </p>
 
-                            {/* 2行目: ステータス */}
-                            <p className="text-sm text-gray-600 mb-2">
-                              {getStatusEmoji(sim.status || '検討中')} {sim.status || '検討中'}
-                            </p>
-
-                            {/* 3行目: 住所 */}
-                            <p className="text-sm text-gray-500 truncate mb-2" title={sim.location}>
-                              {sim.location}
-                            </p>
+                            {/* 2行目: 住所 + ステータス */}
+                            <div className="flex items-center gap-2 mb-2">
+                              <p className="text-sm text-gray-500 truncate flex-1" title={sim.location}>
+                                {sim.location}
+                              </p>
+                              <span className="text-sm text-gray-600 whitespace-nowrap">
+                                {getStatusEmoji(sim.status || '検討中')} {sim.status || '検討中'}
+                              </span>
+                            </div>
 
                             {/* 3行目: 指標 */}
                             <div className="flex items-center gap-4 text-sm mb-3">
@@ -1139,13 +1143,11 @@ const MyPage: React.FC = () => {
                                   {sim.annualCashFlow >= 0 ? "+" : ""}{formatNumber(Math.round(sim.annualCashFlow))}万
                                 </span>
                               </div>
-                              <div className="text-gray-400 text-xs">
-                                {sim.date}
-                              </div>
                             </div>
 
-                            {/* 4行目: ボタン */}
-                            <div className="flex items-center gap-2">
+                            {/* 4行目: ボタン（2段レイアウト） */}
+                            <div className="space-y-2">
+                              {/* 上段: 結果を見るボタン */}
                               <button
                                 onClick={() => {
                                   const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
@@ -1154,38 +1156,41 @@ const MyPage: React.FC = () => {
                                     : `/mypage/revenue-simulator?view=${sim.id}#results`;
                                   router.push(url);
                                 }}
-                                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors"
+                                className="w-full flex items-center justify-center gap-1 px-3 py-2 bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors"
                               >
                                 <BarChart3 className="h-4 w-4" />
-                                <span>結果</span>
+                                <span>結果を見る</span>
                               </button>
-                              <button
-                                onClick={() => router.push(`/mypage/revenue-simulator?edit=${sim.id}`)}
-                                className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                title="編集"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDuplicate(sim.id, sim.propertyName)}
-                                className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                title="複製"
-                              >
-                                <Copy className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => {
-                                  if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？`)) {
-                                    if (window.confirm("本当に削除しますか？")) {
-                                      handleDelete(sim.id, sim.propertyName);
+                              {/* 下段: 編集・複製・削除 */}
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => router.push(`/mypage/revenue-simulator?edit=${sim.id}`)}
+                                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                  <span>編集</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDuplicate(sim.id, sim.propertyName)}
+                                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors"
+                                >
+                                  <Copy className="h-4 w-4" />
+                                  <span>複製</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`「${sim.propertyName}」を削除してもよろしいですか？`)) {
+                                      if (window.confirm("本当に削除しますか？")) {
+                                        handleDelete(sim.id, sim.propertyName);
+                                      }
                                     }
-                                  }
-                                }}
-                                className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                                title="削除"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                                  }}
+                                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-white border border-red-300 text-red-600 text-sm font-medium rounded hover:bg-red-50 transition-colors"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  <span>削除</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>

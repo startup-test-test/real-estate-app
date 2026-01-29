@@ -46,13 +46,13 @@ export const metadata = {
 export default async function RevenueSimulatorPage({
   searchParams,
 }: {
-  searchParams: Promise<{ view?: string; edit?: string }>;
+  searchParams: Promise<{ view?: string; edit?: string; new?: string }>;
 }) {
   const params = await searchParams;
-  const hasViewOrEdit = params.view || params.edit;
+  const hasViewOrEditOrNew = params.view || params.edit || params.new;
 
-  // view または edit パラメータがある場合はシミュレーター詳細を表示
-  if (hasViewOrEdit) {
+  // view, edit, new パラメータがある場合はシミュレーター詳細を表示
+  if (hasViewOrEditOrNew) {
     return (
       <Suspense fallback={<SimulatorSkeleton />}>
         <SimulatorClient />
