@@ -93,7 +93,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     // idがない場合は一覧取得
     const cfSimulations = await prisma.cFSimulation.findMany({
       where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
     });
 
     return NextResponse.json({ simulations: cfSimulations });

@@ -32,7 +32,7 @@ function CFSimulatorListSkeleton() {
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'CFシミュレーター | 大家DX',
+  title: 'CFシミュレーション | 大家DX',
   description: '賃貸物件のキャッシュフローを簡単にシミュレーション。保存した結果を一覧で管理できます。',
 };
 

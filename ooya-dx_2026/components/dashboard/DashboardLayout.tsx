@@ -81,7 +81,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const navigation = [
     { name: '収益シミュレーション', href: '/mypage', icon: Calculator },
-    { name: 'CFシミュレーター', href: '/mypage/cf-simulator', icon: BarChart3 },
+    { name: 'CFシミュレーション', href: '/mypage/cf-simulator', icon: BarChart3 },
   ]
 
   const supportNavigation = [

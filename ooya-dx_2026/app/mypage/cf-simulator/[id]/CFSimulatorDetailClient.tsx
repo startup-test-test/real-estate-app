@@ -333,8 +333,8 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen print:bg-white">
-      <div className="p-4 sm:p-6 lg:p-8 print:p-4">
+    <div className="bg-gray-50 min-h-screen print:bg-white print:min-h-0">
+      <div className="p-4 sm:p-6 lg:p-8 print:p-2">
         <div className="max-w-6xl mx-auto print:max-w-full">
           {/* ヘッダー */}
           <div className="mb-6 print:hidden">
@@ -440,7 +440,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                 </div>
               </div>
 
-              <div className="text-sm text-gray-600 text-center mb-4">
+              <div className="text-base text-gray-600 text-center mb-4">
                 ※ 諸費用7%、管理費5%、空室率5%、固定資産税1%、保有期間35年で自動計算
               </div>
 
@@ -487,7 +487,8 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
 
           {/* シミュレーション結果 */}
           {simulationResults && (
-            <div className="space-y-6">
+            <>
+            <div className="space-y-6 print:space-y-2">
               {/* 結果ヘッダー */}
               <div className="bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 print:border print:shadow-none">
                 <div className="flex items-center justify-between mb-6">
@@ -688,9 +689,9 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                 )}
               </div>
 
-              {/* 詳細キャッシュフロー分析 */}
+              {/* 詳細キャッシュフロー分析（PDF2ページ目） */}
               {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-lg border border-gray-200 p-6 print:break-before-page print:break-after-avoid">
                   <div className="mb-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">詳細キャッシュフロー分析</h3>
                   </div>
@@ -700,36 +701,66 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                       <table className="min-w-full bg-white print:min-w-0 print:w-full print:table-fixed">
                         <thead className="bg-blue-900 sticky top-0 z-30 shadow-lg">
                           <tr>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">不動産<br/>収入</th>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">経費</th>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">ローン<br/>返済</th>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年間<br/>CF</th>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">累計<br/>CF</th>
-                            <th className="px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">借入<br/>残高</th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              不動産<br/>収入
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                年間の家賃収入（空室率考慮後）
+                              </div>
+                            </th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              経費
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                管理費・固定資産税等のランニングコスト
+                              </div>
+                            </th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              ローン<br/>返済
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                年間ローン返済額（元金＋利息）
+                              </div>
+                            </th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              年間<br/>CF
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                年間キャッシュフロー<br/>= 不動産収入 − 経費 − ローン返済
+                              </div>
+                            </th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              累計<br/>CF
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                累計キャッシュフロー<br/>運用開始からの合計CF
+                              </div>
+                            </th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              借入<br/>残高
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                借入残高（万円）<br/>ローン返済後の残債
+                              </div>
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {simulationResults.cash_flow_table.map((row, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="px-2 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
-                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className="px-2 py-2 print:px-1 print:py-1 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['実効収入'])}
                               </td>
-                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['経費'])}
                               </td>
-                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['ローン返済'])}
                               </td>
-                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['営業CF'] || 0)}
                               </td>
-                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['累計CF'])}
                               </td>
-                              <td className={`px-2 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                                {Math.round(row['借入残高'] || 0).toLocaleString()}
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {((row['借入残高'] || 0) / 10000).toFixed(1)}
                               </td>
                             </tr>
                           ))}
@@ -740,87 +771,90 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                 </div>
               )}
 
-              {/* 計算ロジック説明・注意事項 */}
-              <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  計算ロジック・注意事項
-                </h3>
+            </div>
 
-                {/* 計算ロジック説明 */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">📊 主要指標の計算方法</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
-                    <div>
-                      <span className="font-medium">・表面利回り</span>：年間家賃収入 ÷ 購入価格 × 100
-                    </div>
-                    <div>
-                      <span className="font-medium">・実質利回り</span>：（年間家賃収入 − 経費）÷ 購入価格 × 100
-                    </div>
-                    <div>
-                      <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額
-                    </div>
-                    <div>
-                      <span className="font-medium">・NOI</span>：年間家賃収入 − 経費（ローン返済前利益）
-                    </div>
-                    <div>
-                      <span className="font-medium">・CCR（自己資金回収率）</span>：年間CF ÷ 自己資金 × 100
-                    </div>
-                    <div>
-                      <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
-                    </div>
-                    <div>
-                      <span className="font-medium">・IRR（内部収益率）</span>：運用期間全体の収益率
-                    </div>
-                    <div>
-                      <span className="font-medium">・LTV</span>：借入額 ÷ 購入価格 × 100
-                    </div>
+            {/* 以下はPDF非表示セクション（space-y-6の外に配置） */}
+            {/* 計算ロジック説明・注意事項（PDF非表示） */}
+            <div className="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200 print:hidden">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <svg className="h-5 w-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                計算ロジック・注意事項
+              </h3>
+
+              {/* 計算ロジック説明 */}
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">📊 主要指標の計算方法</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
+                  <div>
+                    <span className="font-medium">・表面利回り</span>：年間家賃収入 ÷ 購入価格 × 100
                   </div>
-                </div>
-
-                {/* 自動計算値の説明 */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">📐 自動設定される値</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
-                    <div>
-                      <span className="font-medium">・諸費用</span>：購入価格 × 7%
-                    </div>
-                    <div>
-                      <span className="font-medium">・管理費</span>：年間家賃収入 × 5%
-                    </div>
-                    <div>
-                      <span className="font-medium">・空室率</span>：5%
-                    </div>
-                    <div>
-                      <span className="font-medium">・固定資産税</span>：購入価格 × 1%
-                    </div>
-                    <div>
-                      <span className="font-medium">・保有期間</span>：35年
-                    </div>
-                    <div>
-                      <span className="font-medium">・家賃下落率</span>：年1%
-                    </div>
+                  <div>
+                    <span className="font-medium">・実質利回り</span>：（年間家賃収入 − 経費）÷ 購入価格 × 100
                   </div>
-                </div>
-
-                {/* 注意事項 */}
-                <div className="border-t border-gray-300 pt-4">
-                  <h4 className="text-sm font-semibold text-red-600 mb-2">⚠️ 重要な注意事項</h4>
-                  <div className="text-xs text-gray-600 space-y-1">
-                    <p>※ 本シミュレーションは簡易計算です。より詳細な分析には「収益シミュレーション」をご利用ください。</p>
-                    <p>※ 投資判断は必ず複数の専門家（不動産業者、税理士、FP等）にご相談の上、自己責任で行ってください。</p>
-                    <p>※ 税制改正、金利変動、空室リスク等により実際の収益は変動する可能性があります。</p>
+                  <div>
+                    <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額
+                  </div>
+                  <div>
+                    <span className="font-medium">・NOI</span>：年間家賃収入 − 経費（ローン返済前利益）
+                  </div>
+                  <div>
+                    <span className="font-medium">・CCR（自己資金回収率）</span>：年間CF ÷ 自己資金 × 100
+                  </div>
+                  <div>
+                    <span className="font-medium">・DSCR（返済余裕率）</span>：NOI ÷ 年間ローン返済額
+                  </div>
+                  <div>
+                    <span className="font-medium">・IRR（内部収益率）</span>：運用期間全体の収益率
+                  </div>
+                  <div>
+                    <span className="font-medium">・LTV</span>：借入額 ÷ 購入価格 × 100
                   </div>
                 </div>
               </div>
 
-              {/* Legal Disclaimer */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <LegalDisclaimer variant="subtle" />
+              {/* 自動計算値の説明 */}
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">📐 自動設定される値</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
+                  <div>
+                    <span className="font-medium">・諸費用</span>：購入価格 × 7%
+                  </div>
+                  <div>
+                    <span className="font-medium">・管理費</span>：年間家賃収入 × 5%
+                  </div>
+                  <div>
+                    <span className="font-medium">・空室率</span>：5%
+                  </div>
+                  <div>
+                    <span className="font-medium">・固定資産税</span>：購入価格 × 1%
+                  </div>
+                  <div>
+                    <span className="font-medium">・保有期間</span>：35年
+                  </div>
+                  <div>
+                    <span className="font-medium">・家賃下落率</span>：年1%
+                  </div>
+                </div>
+              </div>
+
+              {/* 注意事項 */}
+              <div className="border-t border-gray-300 pt-4">
+                <h4 className="text-sm font-semibold text-red-600 mb-2">⚠️ 重要な注意事項</h4>
+                <div className="text-xs text-gray-600 space-y-1">
+                  <p>※ 本シミュレーションは簡易計算です。より詳細な分析には「収益シミュレーション」をご利用ください。</p>
+                  <p>※ 投資判断は必ず複数の専門家（不動産業者、税理士、FP等）にご相談の上、自己責任で行ってください。</p>
+                  <p>※ 税制改正、金利変動、空室リスク等により実際の収益は変動する可能性があります。</p>
+                </div>
               </div>
             </div>
+
+            {/* Legal Disclaimer（PDF非表示） */}
+            <div className="mt-6 pt-4 border-t border-gray-200 print:hidden">
+              <LegalDisclaimer variant="subtle" />
+            </div>
+            </>
           )}
         </div>
       </div>

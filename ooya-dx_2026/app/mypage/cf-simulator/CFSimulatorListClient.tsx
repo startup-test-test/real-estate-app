@@ -116,7 +116,7 @@ const CFSimulatorListClient: React.FC = () => {
   };
 
   useEffect(() => {
-    document.title = 'CFシミュレーター | 大家DX';
+    document.title = 'CFシミュレーション | 大家DX';
   }, []);
 
   if (loading) {
@@ -142,7 +142,7 @@ const CFSimulatorListClient: React.FC = () => {
           <div className="mb-6">
             <div className="flex justify-between items-start">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">CFシミュレーター</h1>
+                <h1 className="text-2xl font-bold text-gray-900">CFシミュレーション</h1>
                 <p className="text-gray-600 mt-1">
                   6項目の入力でキャッシュフローを簡単にシミュレーション。結果を保存して一覧で管理できます。
                 </p>
@@ -184,7 +184,7 @@ const CFSimulatorListClient: React.FC = () => {
                     シミュレーションがまだありません
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    CFシミュレーターで物件のキャッシュフローを分析してみましょう。
+                    CFシミュレーションで物件のキャッシュフローを分析してみましょう。
                   </p>
                   <button
                     onClick={() => router.push("/mypage/cf-simulator/new")}

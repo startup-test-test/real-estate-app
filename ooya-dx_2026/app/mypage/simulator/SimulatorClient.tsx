@@ -4,8 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   CheckCircle,
   AlertCircle,
-  Download
+  Download,
+  ArrowLeft
 } from 'lucide-react';
+import Link from 'next/link';
 // react-joyride React 19対応まで無効化
 // import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,9 +20,6 @@ import { useSearchParams } from 'next/navigation';
 // 無料化対応: UpgradeModal, UsageStatusBar を削除
 import CashFlowChart from '@/components/simulator/CashFlowChart';
 import Tooltip from '@/components/simulator/Tooltip';
-import BackButton from '@/components/simulator/BackButton';
-import HelpButton from '@/components/HelpButton';
-import Breadcrumb from '@/components/simulator/Breadcrumb';
 import ErrorAlert from '@/components/simulator/ErrorMessage';
 import ErrorModal from '@/components/simulator/ErrorModal';
 import LegalDisclaimer from '@/components/simulator/LegalDisclaimer';
@@ -66,7 +65,7 @@ const Simulator: React.FC = () => {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = '不動産賃貸経営シミュレーション | 大家DX';
+    document.title = '収益シミュレーション | 大家DX';
   }, []);
 
   const [isSimulating, setIsSimulating] = useState(false);
@@ -1725,7 +1724,7 @@ const Simulator: React.FC = () => {
   const handleSaveToPDF = () => {
     // PDFの印刷時に表示するタイトル
     const originalTitle = document.title;
-    document.title = `${inputs.propertyName} - 不動産賃貸経営シミュレーション結果`;
+    document.title = `${inputs.propertyName} - 収益シミュレーション結果`;
     
     // 印刷ダイアログを表示
     // 注意: ブラウザの印刷設定で「ヘッダーとフッター」のチェックを外すと、
@@ -1758,41 +1757,26 @@ const Simulator: React.FC = () => {
 
       <div className="p-4 sm:p-6 lg:p-8 print:p-4">
       <div className="max-w-6xl mx-auto print:max-w-full pt-1 md:pt-0">
-        {/* Breadcrumb - PC版のみ表示 */}
-        <div className="print:hidden hidden md:block">
-          <Breadcrumb />
-        </div>
-        
         {/* Header */}
         <div className="mb-6 print:hidden">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-4 md:mb-0">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                不動産賃貸経営シミュレーション
+                収益シミュレーション
               </h1>
               <p className="text-gray-600">
                 物件の収益性を詳細に計算し、経営分析の参考情報を提供します。
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <HelpButton
-                onStartTutorial={() => {
-                  console.log('📖 チュートリアル開始');
-                  sessionStorage.setItem('tutorial_in_progress', 'true');
-
-                  if (simulationResults) {
-                    setTutorialStep(2);
-                  } else {
-                    setTutorialStep(0);
-                  }
-
-                  setTimeout(() => {
-                    setRunTutorial(true);
-                  }, 100);
-                }}
-              />
               <div className="hidden lg:block">
-                <BackButton />
+                <Link
+                  href="/mypage/simulator"
+                  className="inline-flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  一覧に戻る
+                </Link>
               </div>
             </div>
           </div>
