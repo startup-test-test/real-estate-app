@@ -208,7 +208,7 @@ const CFSimulatorNewClient: React.FC = () => {
             {/* 1行目: 物件名、購入価格、月額家賃 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">物件名</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">物件名 <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={inputs.propertyName}
@@ -293,7 +293,7 @@ const CFSimulatorNewClient: React.FC = () => {
             <div className="flex justify-center">
               <button
                 onClick={runSimulation}
-                disabled={isSimulating || inputs.purchasePrice <= 0 || inputs.monthlyRent <= 0}
+                disabled={isSimulating || !inputs.propertyName.trim() || inputs.purchasePrice <= 0 || inputs.monthlyRent <= 0}
                 className={`flex items-center justify-center px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-200 min-h-[64px] ${
                   isSimulating
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
