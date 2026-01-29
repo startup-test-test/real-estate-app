@@ -108,7 +108,7 @@ const CFSimulatorClient: React.FC = () => {
       // 共通の変換関数でAPIデータを生成（snake_case形式）
       const apiData = transformFormDataToApiData(formData);
 
-      const response = await fetch(API_ENDPOINTS.SIMULATE, {
+      const response = await fetch(API_ENDPOINTS.CF_SIMULATE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(apiData),

@@ -72,6 +72,9 @@ export const API_ENDPOINTS = {
   },
   get MARKET_ANALYSIS() {
     return `${getSimulatorApiUrl()}/api/market-analysis`;
+  },
+  get CF_SIMULATE() {
+    return `${getSimulatorApiUrl()}/api/cf-simulate`;
   }
 } as const;
 
@@ -90,7 +93,8 @@ export const getApiConfig = () => {
     endpoints: {
       health: API_ENDPOINTS.HEALTH,
       simulate: API_ENDPOINTS.SIMULATE,
-      marketAnalysis: API_ENDPOINTS.MARKET_ANALYSIS
+      marketAnalysis: API_ENDPOINTS.MARKET_ANALYSIS,
+      cfSimulate: API_ENDPOINTS.CF_SIMULATE
     },
     hostname: envInfo.hostname,
     isProduction: envInfo.isProduction,
