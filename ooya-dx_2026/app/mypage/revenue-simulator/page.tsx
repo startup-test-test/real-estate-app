@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import RevenueSimulatorListClient from './RevenueSimulatorListClient';
 import SimulatorClient from './SimulatorClient';
 
 // ローディングスケルトン
@@ -38,16 +39,31 @@ function SimulatorSkeleton() {
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'シミュレーション | 大家DX',
+  title: '収益シミュレーション | 大家DX',
   description: '賃貸物件の収益性をシミュレーション。IRR、CCR、DSCRなどの指標を計算します。',
 };
 
-export default function SimulatorPage() {
-  // 無料化対応: 認証・課金チェックを削除
-  // 保存時のみ認証が必要（SimulatorClient側で制御）
+export default async function RevenueSimulatorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string; edit?: string }>;
+}) {
+  const params = await searchParams;
+  const hasViewOrEdit = params.view || params.edit;
+
+  // view または edit パラメータがある場合はシミュレーター詳細を表示
+  if (hasViewOrEdit) {
+    return (
+      <Suspense fallback={<SimulatorSkeleton />}>
+        <SimulatorClient />
+      </Suspense>
+    );
+  }
+
+  // パラメータがない場合は一覧を表示
   return (
-    <Suspense fallback={<SimulatorSkeleton />}>
-      <SimulatorClient />
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
+      <RevenueSimulatorListClient />
     </Suspense>
   );
 }

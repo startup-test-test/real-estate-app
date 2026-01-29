@@ -83,7 +83,7 @@ const MyPage: React.FC = () => {
     const handleNextClick = () => {
       // サンプル物件のIDでシミュレーション結果ページに遷移
       // チュートリアルフラグは残したまま遷移（Simulatorページでチュートリアル継続）
-      const url = `/mypage/simulator?view=sample-property-001`;
+      const url = `/mypage/revenue-simulator?view=sample-property-001`;
       router.push(url);
       // チュートリアルは終了しない（Simulatorページに引き継ぐ）
     };
@@ -352,7 +352,7 @@ const MyPage: React.FC = () => {
         alert("複製に失敗しました");
       } else {
         // 複製成功後、編集画面に遷移
-        router.push(`/mypage/simulator?edit=${result.id}`);
+        router.push(`/mypage/revenue-simulator?edit=${result.id}`);
       }
     } catch (err: any) {
       setError(err.message);
@@ -737,7 +737,7 @@ const MyPage: React.FC = () => {
         {
           name: "新規作成",
           primary: true,
-          path: "/mypage/simulator",
+          path: "/mypage/revenue-simulator",
         },
       ],
     },
@@ -880,7 +880,7 @@ const MyPage: React.FC = () => {
               {/* 新規作成ボタン */}
               <div className="flex justify-center">
                 <button
-                  onClick={() => router.push("/mypage/simulator")}
+                  onClick={() => router.push("/mypage/revenue-simulator")}
                   className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-8 py-4 transition-all duration-200"
                 >
                   <div className="flex items-center">
@@ -930,7 +930,7 @@ const MyPage: React.FC = () => {
                     <button
                       onClick={async () => {
                         // 完全無料プランのため、制限チェックをスキップ
-                        router.push("/mypage/simulator");
+                        router.push("/mypage/revenue-simulator");
                       }}
                       className="inline-flex items-center px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
@@ -1008,8 +1008,8 @@ const MyPage: React.FC = () => {
                             if (!target.closest("button")) {
                               const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
                               const url = isTutorial
-                                ? `/mypage/simulator?view=${sim.id}`
-                                : `/mypage/simulator?view=${sim.id}#results`;
+                                ? `/mypage/revenue-simulator?view=${sim.id}`
+                                : `/mypage/revenue-simulator?view=${sim.id}#results`;
                               router.push(url);
                             }
                           }}
@@ -1061,8 +1061,8 @@ const MyPage: React.FC = () => {
                                 onClick={() => {
                                   const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
                                   const url = isTutorial
-                                    ? `/mypage/simulator?view=${sim.id}`
-                                    : `/mypage/simulator?view=${sim.id}#results`;
+                                    ? `/mypage/revenue-simulator?view=${sim.id}`
+                                    : `/mypage/revenue-simulator?view=${sim.id}#results`;
                                   router.push(url);
                                 }}
                                 className="px-3 py-2 bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap"
@@ -1075,7 +1075,7 @@ const MyPage: React.FC = () => {
                             {/* 編集 */}
                             <div className="w-20 px-2 py-3 border-r border-gray-200 flex items-center justify-center">
                               <button
-                                onClick={() => router.push(`/mypage/simulator?edit=${sim.id}`)}
+                                onClick={() => router.push(`/mypage/revenue-simulator?edit=${sim.id}`)}
                                 className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors"
                                 title="編集"
                               >
@@ -1150,8 +1150,8 @@ const MyPage: React.FC = () => {
                                 onClick={() => {
                                   const isTutorial = sessionStorage.getItem('tutorial_in_progress') === 'true';
                                   const url = isTutorial
-                                    ? `/mypage/simulator?view=${sim.id}`
-                                    : `/mypage/simulator?view=${sim.id}#results`;
+                                    ? `/mypage/revenue-simulator?view=${sim.id}`
+                                    : `/mypage/revenue-simulator?view=${sim.id}#results`;
                                   router.push(url);
                                 }}
                                 className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors"
@@ -1160,7 +1160,7 @@ const MyPage: React.FC = () => {
                                 <span>結果</span>
                               </button>
                               <button
-                                onClick={() => router.push(`/mypage/simulator?edit=${sim.id}`)}
+                                onClick={() => router.push(`/mypage/revenue-simulator?edit=${sim.id}`)}
                                 className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                                 title="編集"
                               >
@@ -1201,7 +1201,7 @@ const MyPage: React.FC = () => {
       </div>
 
       {/* プリフェッチ用の隠しリンク（ページ遷移高速化） */}
-      <Link href="/mypage/simulator" prefetch={true} className="hidden" aria-hidden="true" tabIndex={-1} />
+      <Link href="/mypage/revenue-simulator" prefetch={true} className="hidden" aria-hidden="true" tabIndex={-1} />
 
       {/* アップグレードモーダル */}
       <UpgradeModal

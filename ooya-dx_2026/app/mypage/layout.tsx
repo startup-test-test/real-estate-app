@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import { MypageLayoutClient } from './MypageLayoutClient'
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout'
 
 export const metadata: Metadata = {
-  title: '収益シミュレーション - 大家DX',
-  description: '保存したシミュレーションの管理を行えます。'
+  title: 'マイページ - 大家DX',
+  description: '不動産投資シミュレーションツールのダッシュボード'
 }
 
 export default function MypageLayout({
@@ -11,5 +11,5 @@ export default function MypageLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <MypageLayoutClient>{children}</MypageLayoutClient>
+  return <DashboardLayout>{children}</DashboardLayout>
 }

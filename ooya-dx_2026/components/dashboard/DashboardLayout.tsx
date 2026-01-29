@@ -16,6 +16,7 @@ import {
   FileText,
   Mail,
   BarChart3,
+  Home,
   // CreditCard, // 無料化対応: 課金管理を削除
 } from 'lucide-react'
 
@@ -80,8 +81,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const navigation = [
-    { name: '収益シミュレーション', href: '/mypage', icon: Calculator },
+    { name: 'マイページ', href: '/mypage', icon: Home },
     { name: 'CFシミュレーション', href: '/mypage/cf-simulator', icon: BarChart3 },
+    { name: '収益シミュレーション', href: '/mypage/revenue-simulator', icon: Calculator },
   ]
 
   const supportNavigation = [
@@ -91,8 +93,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const isActive = (href: string) => {
     if (href === '/mypage') {
-      // /mypageは完全一致のみ（cf-simulatorなど他のサブページは除外）
       return pathname === '/mypage'
+    }
+    if (href === '/mypage/revenue-simulator') {
+      return pathname?.startsWith('/mypage/revenue-simulator')
     }
     if (href === '/mypage/cf-simulator') {
       return pathname?.startsWith('/mypage/cf-simulator')

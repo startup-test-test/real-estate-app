@@ -17,12 +17,12 @@ const NAV_LINKS = [
 
 // ログインユーザー向けナビゲーションリンク（マイページ系）
 const MYPAGE_NAV_LINKS = [
-  { href: '/mypage', label: '収益シミュレーション' },
+  { href: '/mypage/revenue-simulator', label: '収益シミュレーション' },
   { href: '/mypage/guide', label: 'ご利用ガイド' },
 ];
 
 // ダッシュボード系のルート・独自ヘッダーを持つページ（グローバルヘッダーを非表示）
-const DASHBOARD_ROUTES = ['/mypage', '/dashboard', '/billing', '/mypage/guide', '/simulator'];
+const DASHBOARD_ROUTES = ['/mypage', '/mypage/revenue-simulator', '/dashboard', '/billing', '/mypage/guide', '/simulator'];
 
 interface SharedHeaderProps {
   /** メディアページ用のロゴを使用するか */

@@ -1771,7 +1771,7 @@ const Simulator: React.FC = () => {
             <div className="flex items-center space-x-3">
               <div className="hidden lg:block">
                 <Link
-                  href="/mypage/simulator"
+                  href="/mypage/revenue-simulator"
                   className="inline-flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
