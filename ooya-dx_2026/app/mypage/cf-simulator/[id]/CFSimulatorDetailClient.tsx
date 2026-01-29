@@ -769,7 +769,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                                 {formatCurrencyNoSymbol(row['累計CF'])}
                               </td>
                               <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                                {((row['借入残高'] || 0) / 10000).toFixed(1)}
+                                {Math.round(row['借入残高'] || 0).toLocaleString()}
                               </td>
                             </tr>
                           ))}

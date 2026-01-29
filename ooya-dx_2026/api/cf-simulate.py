@@ -119,6 +119,7 @@ def transform_for_cf_simulator(result: dict) -> dict:
         "CCR（%）": original_results.get('CCR（%）'),
         "CCR（初年度）（%）": original_results.get('CCR（初年度）（%）'),
         "ROI（%）": original_results.get('ROI（%）', 0),
+        "IRR（%）": original_results.get('IRR（%）'),
         "年間ローン返済額（円）": original_results.get('年間ローン返済額（円）', 0),
         "NOI（円）": original_results.get('NOI（円）', 0),
         "DSCR（返済余裕率）": original_results.get('DSCR（返済余裕率）', 0),
