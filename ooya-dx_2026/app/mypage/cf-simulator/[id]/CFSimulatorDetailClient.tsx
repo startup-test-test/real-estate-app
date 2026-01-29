@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Calculator, Download, BarChart3, Save, ArrowLeft, Loader } from 'lucide-react';
-import CashFlowChart from '@/components/simulator/CashFlowChart';
+import CFSimpleChart from '@/components/simulator/CFSimpleChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
 import { transformFormDataToApiData } from '@/lib/utils/dataTransform';
@@ -684,7 +684,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                       <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
                       年次キャッシュフロー推移
                     </h3>
-                    <CashFlowChart data={simulationResults.cash_flow_table} />
+                    <CFSimpleChart data={simulationResults.cash_flow_table} />
                   </div>
                 )}
               </div>
