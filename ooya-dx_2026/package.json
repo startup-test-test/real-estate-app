@@ -13,6 +13,10 @@
     "start": "next start",
     "startpack:init": "node scripts/startpack-init.mjs",
     "lint": "next lint",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
@@ -50,6 +54,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.0",
     "@types/node": "25.0.3",
     "@types/react": "19.2.7",
     "autoprefixer": "10.4.23",
