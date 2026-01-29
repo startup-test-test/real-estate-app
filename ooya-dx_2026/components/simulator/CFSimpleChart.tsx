@@ -72,8 +72,8 @@ const CFSimpleChart: React.FC<CFSimpleChartProps> = ({ data }) => {
         type: 'bar' as const,
         label: '累計CF',
         data: cumulativeCashFlow,
-        backgroundColor: 'rgba(139, 92, 246, 0.6)', // 紫系
-        borderColor: 'rgba(139, 92, 246, 0)',
+        backgroundColor: 'rgba(59, 130, 246, 0.6)', // 青系
+        borderColor: 'rgba(59, 130, 246, 0)',
         borderWidth: 0,
         yAxisID: 'y',
       },
