@@ -205,7 +205,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
     try {
       const otherCosts = Math.round(inputs.purchasePrice * 0.07);
       const managementFee = Math.round(inputs.monthlyRent * 10000 * 0.05);
-      const propertyTax = Math.round(inputs.purchasePrice * 100);
+      const propertyTax = Math.round(inputs.purchasePrice * 50); // 0.5%に変更
 
       const formData = {
         propertyName: inputs.propertyName || "CFシミュレーション物件",
@@ -224,7 +224,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
         fixedCost: 0,
         propertyTax: propertyTax,
         vacancyRate: 5,
-        rentDecline: 1,
+        rentDecline: 0, // 家賃下落なし（シンプル化）
         loanAmount: inputs.loanAmount,
         interestRate: inputs.interestRate,
         loanYears: inputs.loanYears,
@@ -234,8 +234,8 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
         priceDeclineRate: 1,
         ownershipType: "個人",
         effectiveTaxRate: 20,
-        majorRepairCycle: 10,
-        majorRepairCost: Math.round(inputs.purchasePrice * 0.03),
+        majorRepairCycle: 0, // 大規模修繕なし（シンプル化）
+        majorRepairCost: 0,
         buildingPriceForDepreciation: Math.round(inputs.purchasePrice * 0.5),
         depreciationYears: 22,
       };
@@ -721,9 +721,15 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                               </div>
                             </th>
                             <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                              税金
+                              <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
+                                所得税・住民税（税引後CF計算用）
+                              </div>
+                            </th>
+                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
                               年間<br/>CF
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
-                                年間キャッシュフロー<br/>= 不動産収入 − 経費 − ローン返済
+                                年間キャッシュフロー<br/>= 不動産収入 − 経費 − ローン返済 − 税金
                               </div>
                             </th>
                             <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
@@ -752,6 +758,9 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                               </td>
                               <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['ローン返済'])}
+                              </td>
+                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['税金'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['税金'] || 0)}
                               </td>
                               <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['営業CF'] || 0)}
@@ -794,7 +803,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                     <span className="font-medium">・実質利回り</span>：（年間家賃収入 − 経費）÷ 購入価格 × 100
                   </div>
                   <div>
-                    <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額
+                    <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額 − 税金
                   </div>
                   <div>
                     <span className="font-medium">・NOI</span>：年間家賃収入 − 経費（ローン返済前利益）
@@ -828,13 +837,13 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                     <span className="font-medium">・空室率</span>：5%
                   </div>
                   <div>
-                    <span className="font-medium">・固定資産税</span>：購入価格 × 1%
+                    <span className="font-medium">・固定資産税</span>：購入価格 × 0.5%
+                  </div>
+                  <div>
+                    <span className="font-medium">・税金（実効税率）</span>：20%
                   </div>
                   <div>
                     <span className="font-medium">・保有期間</span>：35年
-                  </div>
-                  <div>
-                    <span className="font-medium">・家賃下落率</span>：年1%
                   </div>
                 </div>
               </div>

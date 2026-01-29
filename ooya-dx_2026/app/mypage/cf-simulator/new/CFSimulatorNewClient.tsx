@@ -77,7 +77,7 @@ const CFSimulatorNewClient: React.FC = () => {
       // デフォルト値を設定してフォームデータを構築
       const otherCosts = Math.round(inputs.purchasePrice * 0.07);
       const managementFee = Math.round(inputs.monthlyRent * 10000 * 0.05);
-      const propertyTax = Math.round(inputs.purchasePrice * 100);
+      const propertyTax = Math.round(inputs.purchasePrice * 50); // 0.5%に変更
 
       const formData = {
         propertyName: inputs.propertyName || "CFシミュレーション物件",
@@ -96,7 +96,7 @@ const CFSimulatorNewClient: React.FC = () => {
         fixedCost: 0,
         propertyTax: propertyTax,
         vacancyRate: 5,
-        rentDecline: 1,
+        rentDecline: 0, // 家賃下落なし（シンプル化）
         loanAmount: inputs.loanAmount,
         interestRate: inputs.interestRate,
         loanYears: inputs.loanYears,
@@ -106,8 +106,8 @@ const CFSimulatorNewClient: React.FC = () => {
         priceDeclineRate: 1,
         ownershipType: "個人",
         effectiveTaxRate: 20,
-        majorRepairCycle: 10,
-        majorRepairCost: Math.round(inputs.purchasePrice * 0.03),
+        majorRepairCycle: 0, // 大規模修繕なし（シンプル化）
+        majorRepairCost: 0,
         buildingPriceForDepreciation: Math.round(inputs.purchasePrice * 0.5),
         depreciationYears: 22,
       };
