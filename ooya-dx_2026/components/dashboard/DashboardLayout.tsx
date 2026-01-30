@@ -85,7 +85,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   ]
 
   const simulatorNavigation = [
-    { name: 'CFシミュレーション', href: '/mypage/cf-simulator', icon: BarChart3 },
+    { name: 'CFシミュレーション', href: '/mypage/cf-simulator', icon: BarChart3, isNew: true },
     { name: '収益シミュレーション', href: '/mypage/revenue-simulator', icon: Calculator },
   ]
 
@@ -251,6 +251,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     >
                       <Icon className="mr-3 h-5 w-5" />
                       {item.name}
+                      {'isNew' in item && item.isNew && (
+                        <span className="ml-2 px-1.5 py-0.5 text-xs font-semibold bg-red-500 text-white rounded">
+                          New
+                        </span>
+                      )}
                     </Link>
                   )
                 })}
