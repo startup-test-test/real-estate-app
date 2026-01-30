@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { AlertCircle, Calculator, Download, BarChart3, Save, ArrowLeft } from 'lucide-react';
-import CashFlowChart from '@/components/simulator/CashFlowChart';
+import CFSimpleChart from '@/components/simulator/CFSimpleChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
 import { transformFormDataToApiData } from '@/lib/utils/dataTransform';
@@ -26,7 +25,6 @@ interface SimpleInputs {
 }
 
 const CFSimulatorNewClient: React.FC = () => {
-  const router = useRouter();
   const { saveSimulation } = useCFSimulations();
 
   const [inputs, setInputs] = useState<SimpleInputs>({
@@ -158,10 +156,7 @@ const CFSimulatorNewClient: React.FC = () => {
 
       if (saveResult) {
         setSaveSuccess(true);
-        // 保存成功後、詳細ページに遷移
-        setTimeout(() => {
-          router.push(`/mypage/cf-simulator/${saveResult.id}`);
-        }, 1500);
+        // 結果はその場で表示（リダイレクトしない）
       } else {
         // 保存に失敗した場合でもシミュレーション結果は表示
         console.error('保存に失敗しました。ログインしているか確認してください。');
@@ -528,7 +523,7 @@ const CFSimulatorNewClient: React.FC = () => {
                       <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
                       年次キャッシュフロー推移
                     </h3>
-                    <CashFlowChart data={simulationResults.cash_flow_table} />
+                    <CFSimpleChart data={simulationResults.cash_flow_table} />
                   </div>
                 )}
               </div>
