@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { AlertCircle, Calculator, Download, BarChart3, Save, ArrowLeft } from 'lucide-react';
 import CFSimpleChart from '@/components/simulator/CFSimpleChart';
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
@@ -26,6 +26,7 @@ interface SimpleInputs {
 
 const CFSimulatorNewClient: React.FC = () => {
   const { saveSimulation } = useCFSimulations();
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const [inputs, setInputs] = useState<SimpleInputs>({
     propertyName: '',
@@ -156,11 +157,27 @@ const CFSimulatorNewClient: React.FC = () => {
 
       if (saveResult) {
         setSaveSuccess(true);
-        // 結果はその場で表示（リダイレクトしない）
+        // 結果はその場で表示し、結果セクションまでスクロール
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }, 100);
       } else {
-        // 保存に失敗した場合でもシミュレーション結果は表示
+        // 保存に失敗した場合でもシミュレーション結果は表示し、結果セクションまでスクロール
         console.error('保存に失敗しました。ログインしているか確認してください。');
         setError('シミュレーション結果の保存に失敗しました。ログインしているか確認してください。');
+        setTimeout(() => {
+          if (resultsRef.current) {
+            resultsRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }, 100);
       }
 
     } catch (err: any) {
@@ -327,7 +344,7 @@ const CFSimulatorNewClient: React.FC = () => {
 
           {/* シミュレーション結果 */}
           {simulationResults && (
-            <div className="space-y-6">
+            <div ref={resultsRef} className="space-y-6">
               {/* 結果ヘッダー */}
               <div className="bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 print:border print:shadow-none">
                 <div className="flex items-center justify-between mb-6">

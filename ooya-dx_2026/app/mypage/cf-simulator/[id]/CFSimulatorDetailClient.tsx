@@ -334,8 +334,8 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
 
   return (
     <div className="bg-gray-50 min-h-screen print:bg-white print:min-h-0">
-      <div className="p-4 sm:p-6 lg:p-8 print:p-2">
-        <div className="max-w-6xl mx-auto print:max-w-full">
+      <div className="p-4 sm:p-6 lg:p-8 print:p-4">
+        <div className="max-w-6xl mx-auto print:max-w-full pt-1 md:pt-0">
           {/* ヘッダー */}
           <div className="mb-6 print:hidden">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -362,7 +362,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
 
           {/* 入力フォーム（常に表示） */}
           {true && (
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 print:hidden">
+            <div className="property-form-container bg-transparent md:bg-white md:rounded-lg md:border md:border-gray-200 p-0 md:p-6 mb-6 print:hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">物件名</label>
@@ -490,21 +490,41 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
             <>
             <div className="space-y-6 print:space-y-2">
               {/* 結果ヘッダー */}
-              <div className="bg-white rounded-lg border-2 border-blue-200 shadow-lg p-6 print:border print:shadow-none">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center">
-                    <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
-                    <h2 className="text-2xl font-bold text-gray-900">シミュレーション結果</h2>
+              <div className="bg-white md:rounded-lg md:border-2 md:border-blue-200 md:shadow-lg p-2 sm:p-4 md:p-6 scroll-mt-4 simulation-results print:m-0 print:shadow-none">
+                <div className="mb-6">
+                  {/* PC版: タイトルとボタンを横並び */}
+                  <div className="hidden md:flex print:flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                      <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={handleSaveToPDF}
+                        className="pdf-save-button pdf-save-button-pc flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 print:hidden"
+                        title="PDFとして保存"
+                      >
+                        <Download size={18} />
+                        <span>PDF保存</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 print:hidden">
-                    <button
-                      onClick={handleSaveToPDF}
-                      className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                      title="PDFとして保存"
-                    >
-                      <Download size={18} />
-                      <span>PDF保存</span>
-                    </button>
+                  {/* SP版: タイトルとボタンを縦並び */}
+                  <div className="md:hidden print:hidden">
+                    <div className="flex items-center mb-3">
+                      <div className="w-1 h-8 bg-blue-500 rounded-full mr-3"></div>
+                      <h2 className="text-2xl font-bold text-gray-900">📊 シミュレーション結果</h2>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <button
+                        onClick={handleSaveToPDF}
+                        className="pdf-save-button pdf-save-button-sp flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm print:hidden"
+                        title="PDFとして保存"
+                      >
+                        <Download size={16} />
+                        <span>PDF保存</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -691,54 +711,71 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
 
               {/* 詳細キャッシュフロー分析（PDF2ページ目） */}
               {simulationResults.cash_flow_table && simulationResults.cash_flow_table.length > 0 && (
-                <div className="bg-white rounded-lg border border-gray-200 p-6 print:break-before-page print:break-after-avoid">
-                  <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">詳細キャッシュフロー分析</h3>
+                <div className="bg-white md:rounded-lg md:border md:border-gray-200 p-2 sm:p-4 md:p-6 print:break-before-page print:break-after-avoid">
+                  <div className="mb-4 detail-cashflow-analysis-section">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 詳細キャッシュフロー分析</h3>
                   </div>
 
-                  <div className="border border-gray-300 rounded-lg overflow-hidden">
-                    <div className="relative overflow-x-auto overflow-y-auto max-h-[600px] md:max-h-[700px] print:overflow-visible print:max-h-none">
-                      <table className="min-w-full bg-white print:min-w-0 print:w-full print:table-fixed">
+                  <div className="border border-gray-300 rounded-lg overflow-hidden relative detail-cashflow-table-wrapper">
+                    {/* スクロール案内 - PCのみ表示、5秒後に自動フェードアウト */}
+                    <div
+                      className="hidden md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none print:hidden"
+                      style={{ animation: 'fadeOut 0.5s ease-in-out 5s forwards' }}
+                    >
+                      <div className="bg-gray-700 bg-opacity-90 rounded-lg px-6 py-4 inline-flex items-center gap-3 shadow-lg">
+                        <span className="text-white text-2xl">←</span>
+                        <div className="flex flex-col items-center">
+                          <span className="text-3xl mb-1">👆</span>
+                          <div className="text-sm text-white font-medium text-center">
+                            <div>縦と横に</div>
+                            <div>スクロールできます</div>
+                          </div>
+                        </div>
+                        <span className="text-white text-2xl">→</span>
+                      </div>
+                    </div>
+                    <div className="relative overflow-x-hidden md:overflow-x-auto overflow-y-auto max-h-[600px] md:max-h-[700px] cashflow-table-container print:overflow-visible print:max-h-none">
+                      <table className="w-full md:min-w-[800px] bg-white print:w-full print:table-fixed">
                         <thead className="bg-blue-900 sticky top-0 z-30 shadow-lg">
                           <tr>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900">年次</th>
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                               不動産<br/>収入
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 年間の家賃収入（空室率考慮後）
                               </div>
                             </th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
-                              経費
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                              経<br/>費
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 管理費・固定資産税等のランニングコスト
                               </div>
                             </th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                               ローン<br/>返済
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 年間ローン返済額（元金＋利息）
                               </div>
                             </th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
-                              税金
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
+                              税<br/>金
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 所得税・住民税（税引後CF計算用）
                               </div>
                             </th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                               年間<br/>CF
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 年間キャッシュフロー<br/>= 不動産収入 − 経費 − ローン返済 − 税金
                               </div>
                             </th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                               累計<br/>CF
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 left-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 累計キャッシュフロー<br/>運用開始からの合計CF
                               </div>
                             </th>
-                            <th className="px-2 py-2 print:px-1 print:py-1 text-center text-sm font-medium text-white border-b border-blue-900 relative group">
+                            <th className="px-1 md:px-2 py-2 text-center text-sm font-medium text-white border-b border-blue-900 relative group cursor-help">
                               借入<br/>残高
                               <div className="absolute z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-800 text-white text-xs rounded py-2 px-3 right-0 top-full mt-1 pointer-events-none min-w-[200px] print:hidden">
                                 借入残高（万円）<br/>ローン返済後の残債
@@ -749,27 +786,27 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
                         <tbody>
                           {simulationResults.cash_flow_table.map((row, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="px-2 py-2 print:px-1 print:py-1 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className="px-1 md:px-2 py-2 text-sm text-gray-900 border-b text-center">{row['年次']}</td>
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['実効収入'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['実効収入'])}
                               </td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['経費'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['経費'])}
                               </td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['ローン返済'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['ローン返済'])}
                               </td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['税金'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['税金'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['税金'] || 0)}
                               </td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['営業CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['営業CF'] || 0)}
                               </td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['累計CF'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
                                 {formatCurrencyNoSymbol(row['累計CF'])}
                               </td>
-                              <td className={`px-2 py-2 print:px-1 print:py-1 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                                {Math.round(row['借入残高'] || 0).toLocaleString()}
+                              <td className={`px-1 md:px-2 py-2 text-sm border-b text-center ${(row['借入残高'] || 0) < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrencyNoSymbol(row['借入残高'])}
                               </td>
                             </tr>
                           ))}

@@ -159,7 +159,7 @@ const CFSimulatorListClient: React.FC = () => {
               >
                 <div className="flex items-center">
                   <span className="text-lg font-semibold">
-                    新規CFシミュレーションを作成する
+                    新規作成する
                   </span>
                   <ChevronRight className="h-5 w-5 ml-3 flex-shrink-0" />
                 </div>
