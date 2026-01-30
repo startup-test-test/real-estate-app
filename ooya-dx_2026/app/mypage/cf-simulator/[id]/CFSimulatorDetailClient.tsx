@@ -441,7 +441,7 @@ const CFSimulatorDetailClient: React.FC<Props> = ({ id }) => {
               </div>
 
               <div className="text-base text-gray-600 text-center mb-4">
-                ※ 諸費用7%、管理費5%、空室率5%、固定資産税1%、保有期間35年で自動計算
+                ※ 諸費用7%、管理費5%、空室率5%、固定資産税0.5%、保有期間35年で自動計算
               </div>
 
               <div className="flex justify-center">

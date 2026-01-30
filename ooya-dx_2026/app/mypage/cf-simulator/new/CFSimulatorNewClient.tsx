@@ -281,7 +281,7 @@ const CFSimulatorNewClient: React.FC = () => {
 
             {/* デフォルト値の説明 */}
             <div className="text-sm text-gray-600 text-center mb-4">
-              ※ 諸費用7%、管理費5%、空室率5%、固定資産税1%、保有期間35年で自動計算
+              ※ 諸費用7%、管理費5%、空室率5%、固定資産税0.5%、保有期間35年で自動計算
             </div>
 
             {/* シミュレーション実行ボタン */}
@@ -600,7 +600,7 @@ const CFSimulatorNewClient: React.FC = () => {
                       <span className="font-medium">・実質利回り</span>：（年間家賃収入 − 経費）÷ 購入価格 × 100
                     </div>
                     <div>
-                      <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額
+                      <span className="font-medium">・年間CF</span>：年間家賃収入 − 経費 − ローン返済額 − 税金
                     </div>
                     <div>
                       <span className="font-medium">・NOI</span>：年間家賃収入 − 経費（ローン返済前利益）
@@ -634,13 +634,13 @@ const CFSimulatorNewClient: React.FC = () => {
                       <span className="font-medium">・空室率</span>：5%
                     </div>
                     <div>
-                      <span className="font-medium">・固定資産税</span>：購入価格 × 1%
+                      <span className="font-medium">・固定資産税</span>：購入価格 × 0.5%
                     </div>
                     <div>
                       <span className="font-medium">・保有期間</span>：35年
                     </div>
                     <div>
-                      <span className="font-medium">・家賃下落率</span>：年1%
+                      <span className="font-medium">・家賃下落率</span>：なし
                     </div>
                   </div>
                 </div>
