@@ -321,7 +321,7 @@ const CFSimulatorNewClient: React.FC = () => {
           {saveSuccess && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
               <Save className="h-5 w-5 text-green-500 mr-2" />
-              <p className="text-green-800">自動保存しました。詳細ページに移動します...</p>
+              <p className="text-green-800">自動保存しました。</p>
             </div>
           )}
 
