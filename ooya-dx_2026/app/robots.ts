@@ -1,0 +1,22 @@
+import { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = 'https://ooya.tech';
+
+  return {
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: [
+          '/mypage/',      // ログイン後のマイページ
+          '/api/',         // APIエンドポイント
+          '/auth/',        // 認証関連
+          '/_next/',       // Next.js内部ファイル
+          '/test-error',   // テスト用エラーページ
+        ],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
+}
