@@ -8,6 +8,7 @@ if (process.env.NEXT_PUBLIC_NEON_AUTH_URL && !process.env.NEON_AUTH_BASE_URL) {
 const nextConfig = {
   reactStrictMode: true,
   turbopack: {},
+  trailingSlash: false, // URLの末尾スラッシュを統一（なしに統一）
   async redirects() {
     return [
       // 古いURL構造からのリダイレクト
