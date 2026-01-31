@@ -30,6 +30,9 @@ env/
 .env.local
 .env.*.local
 .env.ftp
+.env.preview
+.env.production
+.env.vercel
 
 # FTP sync state
 .ftp-deploy-sync-state.json
@@ -53,6 +56,8 @@ logs/
 .pytest_cache/
 .coverage
 htmlcov/
+test-results/
+playwright-report/
 
 # Jupyter Notebook
 .ipynb_checkpoints
