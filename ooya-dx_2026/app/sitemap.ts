@@ -96,7 +96,82 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
+    // お問い合わせ・FAQ・料金
+    {
+      url: `${BASE_URL}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/faq`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/pricing`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    // 法的ページ
+    {
+      url: `${BASE_URL}/legal/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/legal/terms`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/disclaimer`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly' as const,
+      priority: 0.5,
+    },
+    // プロフィールページ
+    {
+      url: `${BASE_URL}/media/profile`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
   ];
 
-  return [...staticPages, ...toolPages, ...glossaryPages, ...articlePages];
+  // 会社情報ページ
+  const companyPages = [
+    { slug: '', priority: 0.7 },           // /company (会社概要)
+    { slug: '/service', priority: 0.7 },   // サービス
+    { slug: '/portfolio', priority: 0.6 }, // ポートフォリオ
+    { slug: '/contact', priority: 0.7 },   // お問い合わせ
+    { slug: '/csr', priority: 0.5 },       // CSR
+    { slug: '/sdgs', priority: 0.5 },      // SDGs
+    { slug: '/climate-adaptation', priority: 0.5 },
+    { slug: '/plastics-smart', priority: 0.5 },
+    { slug: '/teambeyond', priority: 0.5 },
+    { slug: '/lib-partner', priority: 0.5 },
+    { slug: '/consumer-policy', priority: 0.5 },
+    { slug: '/link', priority: 0.4 },      // リンク集
+  ].map((page) => ({
+    url: `${BASE_URL}/company${page.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: page.priority,
+  }));
+
+  // メディアカテゴリページ（記事から動的に取得）
+  const categories = new Set(articles.map((article) => article.categorySlug));
+  const mediaCategoryPages = Array.from(categories).map((category) => ({
+    url: `${BASE_URL}/media/${category}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...glossaryPages, ...articlePages];
 }
