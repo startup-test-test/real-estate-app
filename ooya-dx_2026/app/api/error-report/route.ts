@@ -54,10 +54,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, skipped: true });
     }
 
+    // subjectとtoから改行を除去（Resendは改行を許可しない）
+    const sanitizedSubject = `[エラー発生] ${(message || "Unknown Error").replace(/[\r\n]/g, " ").substring(0, 50)}`;
+    const sanitizedTo = toEmail.trim();
+
     const { error } = await getResend().emails.send({
       from: `大家DX エラー通知 <noreply@ooya.tech>`,
-      to: toEmail,
-      subject: `[エラー発生] ${message?.substring(0, 50) || "Unknown Error"}`,
+      to: sanitizedTo,
+      subject: sanitizedSubject,
       text: `大家DXでエラーが発生しました
 
 発生日時: ${timestamp || new Date().toISOString()}
