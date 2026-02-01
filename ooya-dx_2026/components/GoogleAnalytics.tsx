@@ -4,7 +4,6 @@ import Script from 'next/script'
 
 const GA_MEASUREMENT_ID = 'G-Z2QBGBT7JP'
 const GOOGLE_SITE_VERIFICATION = 'FERI9xJOWHijjbYzGTJ-QXJGqPFv-wVJAsa-_ZAfG7A'
-const AHREFS_DATA_KEY = '/hlXktE60u9qqkU2yVH6cA'
 
 export function GoogleAnalytics() {
   // 本番環境のみで発火（開発環境では読み込まない）
@@ -30,13 +29,7 @@ export function GoogleAnalytics() {
           gtag('config', '${GA_MEASUREMENT_ID}');
         `}
       </Script>
-
-      {/* Ahrefs Web Analytics */}
-      <Script
-        src="https://analytics.ahrefs.com/analytics.js"
-        data-key={AHREFS_DATA_KEY}
-        strategy="afterInteractive"
-      />
     </>
   )
 }
+// Ahrefs Web Analytics は app/layout.tsx の head セクションで読み込み

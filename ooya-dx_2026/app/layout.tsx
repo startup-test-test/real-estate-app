@@ -72,6 +72,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
+        {/* Ahrefs Web Analytics - 本番環境のみ */}
+        {process.env.NODE_ENV === 'production' && (
+          <script
+            src="https://analytics.ahrefs.com/analytics.js"
+            data-key="/hlXktE60u9qqkU2yVH6cA"
+            async
+          />
+        )}
       </head>
       <body className="min-h-screen bg-gray-50 text-gray-900 flex flex-col antialiased" suppressHydrationWarning>
         <GoogleAnalytics />
