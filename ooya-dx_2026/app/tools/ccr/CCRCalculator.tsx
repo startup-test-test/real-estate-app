@@ -15,6 +15,7 @@ import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { calculateCCR, estimatePurchaseCosts } from '@/lib/calculators/ccr'
+import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産のCCR（自己資金配当率） 計算シミュレーション'
@@ -94,11 +95,19 @@ export function CCRCalculator({ relatedGlossary = [] }: CCRCalculatorProps) {
           {/* パンくず */}
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-          {/* カテゴリー */}
+          {/* カテゴリー & 日付 */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
               計算ツール
             </span>
+            {(() => {
+              const toolInfo = getToolInfo('/tools/ccr')
+              return toolInfo?.lastUpdated ? (
+                <time className="text-xs text-gray-400">
+                  {formatToolDate(toolInfo.lastUpdated)}
+                </time>
+              ) : null
+            })()}
           </div>
 
           {/* タイトル・説明文 */}

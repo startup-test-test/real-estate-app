@@ -15,6 +15,7 @@ import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
+import { getToolInfo, formatToolDate } from '@/lib/navigation'
 import {
   calculateReplacementCost,
   STRUCTURE_OPTIONS,
@@ -86,11 +87,19 @@ export function ReplacementCostCalculator({ relatedGlossary = [] }: Props) {
           {/* パンくず */}
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-          {/* カテゴリー */}
+          {/* カテゴリー & 日付 */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
               計算ツール
             </span>
+            {(() => {
+              const toolInfo = getToolInfo('/tools/replacement-cost')
+              return toolInfo?.lastUpdated ? (
+                <time className="text-xs text-gray-400">
+                  {formatToolDate(toolInfo.lastUpdated)}
+                </time>
+              ) : null
+            })()}
           </div>
 
           {/* タイトル・説明文 */}

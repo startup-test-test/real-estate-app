@@ -16,6 +16,7 @@ import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateBrokerageFee } from '@/lib/calculators/brokerage'
+import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 interface GlossaryItem {
   slug: string
@@ -90,11 +91,19 @@ export function BrokerageCalculator({ relatedGlossary = [] }: BrokerageCalculato
             {/* パンくず */}
             <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-            {/* カテゴリー */}
+            {/* カテゴリー & 日付 */}
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
                 計算ツール
               </span>
+              {(() => {
+                const toolInfo = getToolInfo('/tools/brokerage')
+                return toolInfo?.lastUpdated ? (
+                  <time className="text-xs text-gray-400">
+                    {formatToolDate(toolInfo.lastUpdated)}
+                  </time>
+                ) : null
+              })()}
             </div>
 
             {/* タイトル */}

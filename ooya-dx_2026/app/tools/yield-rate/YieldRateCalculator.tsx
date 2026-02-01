@@ -15,6 +15,7 @@ import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { calculateYieldRate, estimateAnnualExpenses, estimatePurchaseCosts } from '@/lib/calculators/yieldRate'
+import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産の表面利回り・実質利回り 計算シミュレーション｜早見表付き'
@@ -93,11 +94,19 @@ export function YieldRateCalculator({ relatedGlossary = [] }: Props) {
           {/* パンくず */}
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-          {/* カテゴリー */}
+          {/* カテゴリー & 日付 */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
               計算ツール
             </span>
+            {(() => {
+              const toolInfo = getToolInfo('/tools/yield-rate')
+              return toolInfo?.lastUpdated ? (
+                <time className="text-xs text-gray-400">
+                  {formatToolDate(toolInfo.lastUpdated)}
+                </time>
+              ) : null
+            })()}
           </div>
 
           {/* タイトル */}

@@ -3,6 +3,7 @@ import { LandingFooter } from '@/components/landing-footer';
 import { CompanyNav } from '@/components/company-nav';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
 export const metadata: Metadata = {
   title: 'SDGsの達成に向けた取組み | 株式会社StartupMarketing',
@@ -92,6 +93,21 @@ export default function SDGsPage() {
             <span className="mx-2">&gt;</span>
             <span>SDGsの達成に向けた取組み</span>
           </nav>
+
+          {/* カテゴリー & 日付 */}
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+              会社情報
+            </span>
+            {(() => {
+              const pageInfo = getCompanyPageInfo('/company/sdgs');
+              return pageInfo?.lastUpdated ? (
+                <time className="text-xs text-gray-400">
+                  {formatToolDate(pageInfo.lastUpdated)}
+                </time>
+              ) : null;
+            })()}
+          </div>
 
           {/* H1タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">

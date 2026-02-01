@@ -20,6 +20,7 @@ import {
   INHERITANCE_TAX_QUICK_TABLE_NO_SPOUSE,
   formatManYen,
 } from '@/lib/calculators/inheritanceTax'
+import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 interface GlossaryItem {
   slug: string
@@ -94,11 +95,19 @@ export function InheritanceTaxCalculator({ relatedGlossary = [] }: InheritanceTa
           {/* パンくず */}
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-          {/* カテゴリー */}
+          {/* カテゴリー & 日付 */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
               計算ツール
             </span>
+            {(() => {
+              const toolInfo = getToolInfo('/tools/inheritance-tax')
+              return toolInfo?.lastUpdated ? (
+                <time className="text-xs text-gray-400">
+                  {formatToolDate(toolInfo.lastUpdated)}
+                </time>
+              ) : null
+            })()}
           </div>
 
           {/* タイトル・説明文 */}

@@ -18,6 +18,7 @@ import {
   calculateCapRate,
   calculateYieldGap,
 } from '@/lib/calculators/cap-rate'
+import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 const PAGE_TITLE = 'キャップレート（還元利回り） 計算シミュレーション'
 
@@ -66,10 +67,19 @@ export function CapRateCalculator({ relatedGlossary = [] }: CapRateCalculatorPro
         <article className="max-w-2xl mx-auto px-5 py-12">
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
+          {/* カテゴリー & 日付 */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
               計算ツール
             </span>
+            {(() => {
+              const toolInfo = getToolInfo('/tools/cap-rate')
+              return toolInfo?.lastUpdated ? (
+                <time className="text-xs text-gray-400">
+                  {formatToolDate(toolInfo.lastUpdated)}
+                </time>
+              ) : null
+            })()}
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
