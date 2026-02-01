@@ -5,6 +5,36 @@ import { HeaderWrapper } from '@/components/header-wrapper'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 // import { Footer } from '@/components/footer'
 
+const BASE_URL = 'https://ooya.tech';
+
+// 構造化データ: Organization（会社情報）
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: '大家DX',
+  url: BASE_URL,
+  logo: `${BASE_URL}/img/logo_250709_2.png`,
+  description: '賃貸経営のためのシミュレーションツール・計算ツールを提供',
+  sameAs: [],
+};
+
+// 構造化データ: WebSite（サイト情報）
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: '大家DX',
+  url: BASE_URL,
+  description: '賃貸経営のためのシミュレーションツール',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${BASE_URL}/search?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export const metadata: Metadata = {
   title: '大家DX',
   description: '賃貸経営のためのシミュレーションツール',
@@ -33,6 +63,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
       <body className="min-h-screen bg-gray-50 text-gray-900 flex flex-col antialiased" suppressHydrationWarning>
         <GoogleAnalytics />
         <Providers>
