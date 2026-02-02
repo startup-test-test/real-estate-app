@@ -17,6 +17,7 @@ import {
   Mail,
   BarChart3,
   Home,
+  Percent,
   // CreditCard, // 無料化対応: 課金管理を削除
 } from 'lucide-react'
 
@@ -87,6 +88,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const simulatorNavigation = [
     { name: 'CFシミュレーション', href: '/mypage/cf-simulator', icon: BarChart3, isNew: true },
     { name: '収益シミュレーション', href: '/mypage/revenue-simulator', icon: Calculator },
+    { name: '各種計算ツール', href: '/mypage/calculators', icon: Percent },
   ]
 
   const supportNavigation = [
@@ -103,6 +105,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
     if (href === '/mypage/cf-simulator') {
       return pathname?.startsWith('/mypage/cf-simulator')
+    }
+    if (href === '/mypage/calculators') {
+      return pathname?.startsWith('/mypage/calculators')
     }
     return pathname?.startsWith(href)
   }

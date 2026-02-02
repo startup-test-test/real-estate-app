@@ -1,10 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
-import { NumberInput } from '@/components/tools/NumberInput'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { RelatedTools } from '@/components/tools/RelatedTools'
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
@@ -13,7 +11,7 @@ import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import { calculateAcquisitionTax } from '@/lib/calculators/acquisitionTax'
+import { AcquisitionTaxCalculatorCompact } from '@/components/calculators'
 import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 interface GlossaryItem {
@@ -72,37 +70,6 @@ const tocItems: TocItem[] = [
 // メインコンポーネント
 // =================================================================
 export function AcquisitionTaxCalculator({ relatedGlossary = [] }: AcquisitionTaxCalculatorProps) {
-  // 入力状態（万円単位）
-  const [buildingEvalInMan, setBuildingEvalInMan] = useState<number>(0)
-  const [landEvalInMan, setLandEvalInMan] = useState<number>(0)
-  const [floorArea, setFloorArea] = useState<number>(80)
-  const [landArea, setLandArea] = useState<number>(100)
-  const [isNewBuilding, setIsNewBuilding] = useState<boolean>(true)
-  const [isResidential, setIsResidential] = useState<boolean>(true)
-  const [builtYear, setBuiltYear] = useState<number>(2020)
-  const [isLongTermQuality, setIsLongTermQuality] = useState<boolean>(false)
-  const [isForSelfResidence, setIsForSelfResidence] = useState<boolean>(true)
-
-  // 円に変換
-  const buildingEvalInYen = buildingEvalInMan * 10000
-  const landEvalInYen = landEvalInMan * 10000
-
-  // 計算結果
-  const result = useMemo(() => {
-    const builtDate = isNewBuilding ? undefined : new Date(builtYear, 3, 1) // 4月1日で仮定
-    return calculateAcquisitionTax({
-      buildingEvaluation: buildingEvalInYen,
-      isNewBuilding,
-      floorArea,
-      builtDate,
-      isResidential,
-      isLongTermQuality: isNewBuilding ? isLongTermQuality : false,
-      isForSelfResidence: isNewBuilding ? true : isForSelfResidence, // 中古のみ影響
-      landEvaluation: landEvalInYen,
-      landArea,
-    })
-  }, [buildingEvalInYen, landEvalInYen, floorArea, landArea, isNewBuilding, isResidential, builtYear, isLongTermQuality, isForSelfResidence])
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
@@ -145,273 +112,15 @@ export function AcquisitionTaxCalculator({ relatedGlossary = [] }: AcquisitionTa
               新築・中古住宅の軽減措置にも対応。
             </p>
 
-            {/* =================================================================
-                シミュレーター本体
-            ================================================================= */}
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="bg-blue-500 p-2 rounded-lg">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">
-                  不動産取得税を概算計算する
-                </h2>
-              </div>
+            {/* シミュレーター本体（コンパクト版コンポーネント） */}
+            <AcquisitionTaxCalculatorCompact showTitle={true} />
 
-              {/* 入力エリア */}
-              <div className="bg-white rounded-lg p-4 mb-4 space-y-4">
-                {/* 物件種別 */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      新築 / 中古
-                    </label>
-                    <select
-                      value={isNewBuilding ? 'new' : 'used'}
-                      onChange={(e) => setIsNewBuilding(e.target.value === 'new')}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                    >
-                      <option value="new">新築</option>
-                      <option value="used">中古</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      用途
-                    </label>
-                    <select
-                      value={isResidential ? 'residential' : 'commercial'}
-                      onChange={(e) => setIsResidential(e.target.value === 'residential')}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                    >
-                      <option value="residential">住宅</option>
-                      <option value="commercial">非住宅（店舗・事務所等）</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* 中古の場合：築年と用途 */}
-                {!isNewBuilding && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        新築年（西暦）
-                      </label>
-                      <input
-                        type="number"
-                        value={builtYear}
-                        onChange={(e) => setBuiltYear(parseInt(e.target.value) || 2000)}
-                        min={1950}
-                        max={2025}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        ※1981年以前の場合は耐震基準適合証明が必要な場合があります
-                      </p>
-                    </div>
-                    {isResidential && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          取得目的
-                        </label>
-                        <select
-                          value={isForSelfResidence ? 'self' : 'investment'}
-                          onChange={(e) => setIsForSelfResidence(e.target.value === 'self')}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                        >
-                          <option value="self">自己居住用</option>
-                          <option value="investment">投資用（賃貸）</option>
-                        </select>
-                        {!isForSelfResidence && (
-                          <p className="text-xs text-amber-600 mt-1">
-                            ※投資用の場合、中古住宅の建物控除は適用されない場合があります
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {/* 新築の場合：認定長期優良住宅 */}
-                {isNewBuilding && isResidential && (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="longTermQuality"
-                      checked={isLongTermQuality}
-                      onChange={(e) => setIsLongTermQuality(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="longTermQuality" className="text-sm text-gray-700">
-                      認定長期優良住宅（控除額1,300万円）
-                    </label>
-                  </div>
-                )}
-
-                {/* 建物評価額 */}
-                <NumberInput
-                  label="建物の固定資産税評価額"
-                  value={buildingEvalInMan}
-                  onChange={setBuildingEvalInMan}
-                  unit="万円"
-                  placeholder="例：1500"
-                />
-                <p className="text-xs text-gray-500 -mt-2">
-                  ※新築の場合は建築費の約50〜60%が目安です
-                </p>
-
-                {/* 土地評価額 */}
-                <NumberInput
-                  label="土地の固定資産税評価額"
-                  value={landEvalInMan}
-                  onChange={setLandEvalInMan}
-                  unit="万円"
-                  placeholder="例：2000"
-                />
-                <p className="text-xs text-gray-500 -mt-2">
-                  ※実勢価格（売買価格）の約70%が目安です
-                </p>
-
-                {/* 床面積・土地面積 */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      建物床面積
-                    </label>
-                    <div className="flex">
-                      <input
-                        type="number"
-                        value={floorArea}
-                        onChange={(e) => setFloorArea(parseFloat(e.target.value) || 0)}
-                        className="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                      <span className="flex-shrink-0 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg px-3 py-3 text-gray-600">
-                        m²
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      土地面積
-                    </label>
-                    <div className="flex">
-                      <input
-                        type="number"
-                        value={landArea}
-                        onChange={(e) => setLandArea(parseFloat(e.target.value) || 0)}
-                        className="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                      <span className="flex-shrink-0 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg px-3 py-3 text-gray-600">
-                        m²
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 -mt-2">
-                  ※床面積は50〜240m²で軽減措置が適用されます
-                </p>
-              </div>
-
-              {/* 結果エリア */}
-              <div className="bg-white rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">計算結果</h3>
-
-                {/* 建物の税額 */}
-                <div className="mb-4 pb-4 border-b border-gray-200">
-                  <p className="text-sm text-gray-600 mb-2">【建物】</p>
-                  <div className="grid grid-cols-2 gap-y-2 text-sm">
-                    <span className="text-gray-600">課税標準額</span>
-                    <span className="text-right">{(result.buildingTaxBase / 10000).toLocaleString('ja-JP')}万円</span>
-
-                    <span className="text-gray-600">控除額</span>
-                    <span className="text-right text-red-600">-{(result.buildingDeduction / 10000).toLocaleString('ja-JP')}万円</span>
-
-                    <span className="text-gray-600">課税対象額</span>
-                    <span className="text-right">{(result.buildingTaxableAmount / 10000).toLocaleString('ja-JP')}万円</span>
-
-                    <span className="text-gray-600">税率</span>
-                    <span className="text-right">{(result.buildingTaxRate * 100).toFixed(0)}%</span>
-
-                    <span className="text-gray-700 font-medium">建物の税額</span>
-                    <span className="text-right font-medium">{(result.buildingTax / 10000).toLocaleString('ja-JP')}万円</span>
-                  </div>
-                  {result.buildingDeductionType !== 'なし' && (
-                    <p className="text-xs text-blue-600 mt-2">
-                      適用控除：{result.buildingDeductionType}
-                    </p>
-                  )}
-                </div>
-
-                {/* 土地の税額 */}
-                <div className="mb-4 pb-4 border-b border-gray-200">
-                  <p className="text-sm text-gray-600 mb-2">【土地】</p>
-                  <div className="grid grid-cols-2 gap-y-2 text-sm">
-                    <span className="text-gray-600">課税標準額（1/2後）</span>
-                    <span className="text-right">{(result.landTaxBase / 10000).toLocaleString('ja-JP')}万円</span>
-
-                    <span className="text-gray-600">控除前税額</span>
-                    <span className="text-right">{(result.landInitialTax / 10000).toLocaleString('ja-JP')}万円</span>
-
-                    <span className="text-gray-600">控除額</span>
-                    <span className="text-right text-red-600">-{(result.landDeduction / 10000).toLocaleString('ja-JP')}万円</span>
-
-                    <span className="text-gray-700 font-medium">土地の税額</span>
-                    <span className="text-right font-medium">{(result.landTax / 10000).toLocaleString('ja-JP')}万円</span>
-                  </div>
-                  {result.isLandDeductionApplied && (
-                    <p className="text-xs text-blue-600 mt-2">
-                      ※住宅用土地の軽減措置を適用
-                    </p>
-                  )}
-                </div>
-
-                {/* 合計 */}
-                <div className="grid grid-cols-2 gap-y-2">
-                  <span className="text-gray-700 font-bold text-lg">不動産取得税（概算）</span>
-                  <span className="text-right text-2xl font-bold text-blue-700">
-                    {(result.totalTax / 10000).toLocaleString('ja-JP')}万円
-                  </span>
-                  <span className="text-gray-500 text-sm"></span>
-                  <span className="text-right text-sm text-gray-500">
-                    = {result.totalTax.toLocaleString('ja-JP')}円
-                  </span>
-                </div>
-
-                {/* 計算式表示 */}
-                {(buildingEvalInMan > 0 || landEvalInMan > 0) && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-xs text-gray-500 mb-2">計算式</p>
-                    <div className="text-sm text-gray-700 font-mono space-y-2">
-                      {buildingEvalInMan > 0 && (
-                        <div>
-                          <p className="text-xs text-gray-500">【建物】</p>
-                          <p>({buildingEvalInMan.toLocaleString()}万円 - {(result.buildingDeduction / 10000).toLocaleString()}万円) × {(result.buildingTaxRate * 100).toFixed(0)}% = {(result.buildingTax / 10000).toLocaleString()}万円</p>
-                        </div>
-                      )}
-                      {landEvalInMan > 0 && (
-                        <div>
-                          <p className="text-xs text-gray-500">【土地】</p>
-                          <p>{landEvalInMan.toLocaleString()}万円 × 1/2 × 3% - {(result.landDeduction / 10000).toLocaleString()}万円 = {(result.landTax / 10000).toLocaleString()}万円</p>
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-xs text-gray-500">【合計】</p>
-                        <p>{(result.buildingTax / 10000).toLocaleString()}万円 + {(result.landTax / 10000).toLocaleString()}万円 = {(result.totalTax / 10000).toLocaleString()}万円</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* 注意事項 */}
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-xs text-amber-700">
-                  ※本計算は2027年3月31日までの特例税率（土地・住宅3%）を前提として計算しています。
-                  実際の適用可否は専門家にご確認ください。
-                </p>
-              </div>
+            {/* 注意事項 */}
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-xs text-amber-700">
+                ※本計算は2027年3月31日までの特例税率（土地・住宅3%）を前提として計算しています。
+                実際の適用可否は専門家にご確認ください。
+              </p>
             </div>
 
             {/* 計算結果の注記 */}
