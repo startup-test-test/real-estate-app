@@ -253,6 +253,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                   <span className="absolute left-0 w-full h-1 sm:h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-4px', animationDelay: '0.5s'}}></span>
                 </p>
               </div>
+
+              {/* スマホ・タブレット用画像（CVRボタンの上） */}
+              <div className="flex lg:hidden justify-center mb-6">
+                <img
+                  src="/img/kakushin_img01.png"
+                  alt="大家DX メインビジュアル"
+                  className="w-full h-auto max-w-xs sm:max-w-md"
+                />
+              </div>
+
               <button
                 onClick={() => router.push('/auth/signup')}
                 className="w-full sm:w-auto px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
@@ -265,12 +275,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
               </button>
             </div>
             
-            {/* 右側：画像 */}
-            <div className="flex justify-center lg:justify-end overflow-hidden sm:overflow-visible">
+            {/* 右側：画像（PC用） */}
+            <div className="hidden lg:flex justify-center lg:justify-end overflow-visible">
               <img
                 src="/img/kakushin_img01.png"
                 alt="大家DX メインビジュアル"
-                className="w-full h-auto max-w-3xl sm:max-w-4xl lg:max-w-5xl main-visual-image scale-125"
+                className="w-full h-auto max-w-xs sm:max-w-xl lg:max-w-3xl main-visual-image scale-100 sm:scale-110 lg:scale-125"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -566,25 +576,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
           
           {/* 統一CTA */}
           <div className="text-center mt-12">
-            <p className="text-3xl lg:text-4xl text-gray-700">
-              {/* SP版: 改行あり */}
-              <span className="sm:hidden">
-                <span className="relative inline-block mb-2">
-                  どの課題も「大家DX」なら
-                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
-                </span>
-                <br />
-                <span className="relative inline-block">
-                  <span className="font-bold text-blue-600">効率的に解決</span>できます
-                  <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
-                </span>
-              </span>
-
-              {/* PC版: 改行なし */}
-              <span className="hidden sm:inline-block relative">
-                どの課題も「大家DX」なら<span className="font-bold text-blue-600">効率的に解決</span>できます
-                <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
-              </span>
+            <p className="text-2xl sm:text-3xl lg:text-4xl text-gray-700 relative inline-block">
+              どの課題も「大家DX」なら<span className="font-bold text-blue-600">効率的に解決</span>できます
+              <span className="absolute left-0 w-full h-2 bg-blue-500 opacity-80 z-0 underline-animation" style={{bottom: '-8px'}}></span>
             </p>
           </div>
         </div>
