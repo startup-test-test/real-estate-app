@@ -129,12 +129,38 @@ export default function PrivacyPage() {
             </ul>
           </div>
 
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h4 className="font-semibold text-gray-900 mb-2">エ. Neon</h4>
+            <ul className="list-disc list-inside space-y-1 text-gray-700 text-sm">
+              <li>情報収集モジュール提供者：Neon, Inc.</li>
+              <li>提供される利用者情報の項目：メールアドレス、パスワード（暗号化）、ユーザーID、シミュレーション入力データ、アカウント情報</li>
+              <li>提供の手段・方法：Neon, Inc.の提供するデータベースサービス及び認証サービス（Neon Auth）を利用して送信・保存します</li>
+              <li>利用目的：ユーザー認証、アカウント管理、シミュレーションデータの保存のために当社で利用します</li>
+              <li>第三者提供の有無：無（法的要請、サービス提供に必要な場合を除く）</li>
+              <li>データ保存先：シンガポール（AWS ap-southeast-1）</li>
+              <li>プライバシーポリシー：<a href="https://neon.tech/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://neon.tech/privacy</a></li>
+            </ul>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h4 className="font-semibold text-gray-900 mb-2">オ. Resend</h4>
+            <ul className="list-disc list-inside space-y-1 text-gray-700 text-sm">
+              <li>情報収集モジュール提供者：Resend, Inc.</li>
+              <li>提供される利用者情報の項目：メールアドレス、メール送信内容</li>
+              <li>提供の手段・方法：Resend, Inc.の提供するAPIを利用して送信します</li>
+              <li>利用目的：お問い合わせ受付確認メール、システム通知メールの送信のために当社で利用します</li>
+              <li>第三者提供の有無：無（法的要請、サービス提供に必要な場合を除く）</li>
+              <li>プライバシーポリシー：<a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://resend.com/legal/privacy-policy</a></li>
+            </ul>
+          </div>
+
           <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">(3) 提供先の所在国</h3>
           <p className="text-gray-700 leading-relaxed mb-2">
             提供先には、お客様のお住まいの国または地域以外の国または地域にある委託先、グループ会社などの第三者を含みます。提供先の事業者の所在国または地域は以下のとおりです。
           </p>
           <ul className="list-disc list-inside space-y-1 text-gray-700">
             <li>米国、英国および欧州経済領域</li>
+            <li>シンガポール（Neonデータベースサーバー所在地）</li>
             <li>欧州委員会が十分な保護水準を確保していると認定している国または地域</li>
             <li>APECによる越境個人情報保護に係る枠組み（CBPRシステム）の加盟国</li>
           </ul>
@@ -204,7 +230,8 @@ export default function PrivacyPage() {
             以上
           </p>
           <p className="text-gray-600 mt-4">
-            2025年8月11日　制定
+            2025年8月11日　制定<br />
+            2026年2月2日　改定（情報収集モジュールにNeon、Resendを追加）
           </p>
           <p className="text-gray-600 mt-4">
             株式会社StartupMarketing
