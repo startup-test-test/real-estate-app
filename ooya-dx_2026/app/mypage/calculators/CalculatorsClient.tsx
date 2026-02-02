@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { X, ExternalLink } from 'lucide-react'
-import { BrokerageCalculatorCompact, AcquisitionTaxCalculatorCompact, RegistrationTaxCalculatorCompact } from '@/components/calculators'
+import { BrokerageCalculatorCompact, AcquisitionTaxCalculatorCompact, RegistrationTaxCalculatorCompact, StampTaxCalculatorCompact, YieldRateCalculatorCompact, NOICalculatorCompact } from '@/components/calculators'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 
 // ツール定義
@@ -52,7 +52,7 @@ const toolCategories: ToolCategory[] = [
         name: '印紙税',
         description: '契約書に必要な印紙税額を計算',
         seoPath: '/tools/stamp-tax',
-        component: null,
+        component: StampTaxCalculatorCompact,
       },
     ],
   },
@@ -62,17 +62,17 @@ const toolCategories: ToolCategory[] = [
     tools: [
       {
         id: 'yield-rate',
-        name: '利回り',
-        description: '表面利回り・実質利回りを計算',
+        name: '表面利回り・実質利回り',
+        description: '物件の収益性を計算',
         seoPath: '/tools/yield-rate',
-        component: null,
+        component: YieldRateCalculatorCompact,
       },
       {
         id: 'noi',
         name: 'NOI（営業純利益）',
         description: '経費控除後の純収益を計算',
         seoPath: '/tools/noi',
-        component: null,
+        component: NOICalculatorCompact,
       },
       {
         id: 'depreciation',
@@ -120,9 +120,9 @@ export default function CalculatorsClient() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* ヘッダー */}
-        <div className="mb-8 text-center">
+        <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">
             各種計算ツール
             <span className="ml-3 inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full align-middle">
