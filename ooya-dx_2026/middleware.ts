@@ -92,7 +92,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - img (public images)
+     * - icons (PWA icons)
      */
-    "/((?!_next/static|_next/image|favicon.ico|img/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|img/|icons/).*)",
   ],
 };
