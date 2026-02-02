@@ -188,7 +188,7 @@ export default function CalculatorsClient() {
 
       {/* モーダル */}
       {selectedTool && selectedTool.component && (
-        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-4">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 pt-20 pb-8 sm:pt-4 sm:pb-4">
           {/* オーバーレイ */}
           <div
             className="absolute inset-0 bg-black/50"
@@ -196,7 +196,7 @@ export default function CalculatorsClient() {
           />
 
           {/* モーダル本体 */}
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col">
             {/* ヘッダー */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
               <h3 className="text-lg font-bold text-gray-900">{selectedTool.name}</h3>
@@ -209,7 +209,7 @@ export default function CalculatorsClient() {
             </div>
 
             {/* スクロールコンテナ */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-4">
+            <div className="flex-1 min-h-0 overflow-y-auto p-2 sm:p-3">
               <selectedTool.component compact={false} showTitle={false} />
 
               {/* 詳細ページへのリンク */}
