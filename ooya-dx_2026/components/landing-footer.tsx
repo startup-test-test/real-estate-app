@@ -17,9 +17,7 @@ export function LandingFooter() {
             />
             <div className="text-sm text-gray-600 space-y-1">
               <a
-                href="https://startup-marketing.co.jp/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="https://www.ooya.tech/company"
                 className="text-gray-700 hover:text-gray-900 block font-medium"
               >
                 株式会社StartupMarketing

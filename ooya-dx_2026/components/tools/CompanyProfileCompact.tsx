@@ -11,9 +11,7 @@ export function CompanyProfileCompact() {
             <span className="text-gray-500">会社名</span>
             <span>
               <a
-                href="https://startup-marketing.co.jp/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="https://www.ooya.tech/company"
                 className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
               >
                 株式会社StartupMarketing

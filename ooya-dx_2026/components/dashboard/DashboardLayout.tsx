@@ -337,9 +337,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 免責事項
               </a>
               <a
-                href="https://startup-marketing.co.jp/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="https://www.ooya.tech/company"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 運営会社
