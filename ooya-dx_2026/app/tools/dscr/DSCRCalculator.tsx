@@ -77,10 +77,10 @@ export function DSCRCalculator({ relatedGlossary }: Props) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
-      <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
+      <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
 
       <main className="flex-1">
-        <article className="max-w-2xl mx-auto px-4 sm:px-5 py-4 sm:py-8 md:py-12">
+        <article className="max-w-2xl mx-auto px-4 sm:px-5 py-4 sm:py-6 md:py-8">
           {/* パンくず */}
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 

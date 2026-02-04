@@ -104,11 +104,11 @@ export function BrokerageCalculator() {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
+      <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
 
       <main className="flex-1">
         {/* 2カラムレイアウト */}
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
           <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-10">
             {/* 左カラム（メインコンテンツ） */}
             <article>

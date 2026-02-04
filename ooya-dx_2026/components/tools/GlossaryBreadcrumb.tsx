@@ -21,7 +21,7 @@ interface GlossaryBreadcrumbProps {
  */
 export function GlossaryBreadcrumb({ currentPage }: GlossaryBreadcrumbProps) {
   return (
-    <div className="relative mb-2 sm:mb-6">
+    <div className="relative mb-2 sm:mb-3">
       <nav
         className="flex items-center text-sm text-gray-500 overflow-x-auto scrollbar-hide whitespace-nowrap"
         aria-label="パンくずリスト"

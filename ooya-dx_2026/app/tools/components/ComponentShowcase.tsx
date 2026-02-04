@@ -40,7 +40,7 @@ export function ComponentShowcase() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
-      <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
+      <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
 
       <main className="flex-1 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-12">

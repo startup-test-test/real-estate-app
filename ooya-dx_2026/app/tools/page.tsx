@@ -64,10 +64,10 @@ export default function ToolsPage() {
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
+        <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
 
         <main className="flex-1 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             {/* パンくずリスト */}
             <div className="relative mb-2 sm:mb-6">
               <nav className="flex items-center text-sm text-gray-500 overflow-x-auto scrollbar-hide whitespace-nowrap" aria-label="パンくずリスト">
