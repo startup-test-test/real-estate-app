@@ -285,7 +285,7 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <Link
-            href="/tools/stamp-duty"
+            href="/tools/stamp-tax"
             className="flex items-center justify-between px-2 py-2 sm:px-3 sm:py-2.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group border border-blue-200 hover:border-blue-300"
           >
             <span className="text-sm sm:text-base text-blue-800 group-hover:text-blue-900">印紙税：<span className="font-bold text-base sm:text-lg">{priceInMan > 0 ? `${(calculateStampDuty(priceInYen) / 10000).toLocaleString('ja-JP')}万円` : '___万円'}</span></span>
