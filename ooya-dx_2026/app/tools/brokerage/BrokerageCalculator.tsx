@@ -133,7 +133,7 @@ export function BrokerageCalculator() {
                 {PAGE_TITLE}
               </h1>
 
-              {/* シミュレーター本体（コンパクト版コンポーネント） */}
+              {/* シミュレーター本体（h1で目的が明確なためh2不要） */}
               <BrokerageCalculatorCompact showTitle={false} />
 
               {/* 計算結果の注記 */}
@@ -141,7 +141,7 @@ export function BrokerageCalculator() {
 
               {/* 早見表（4列テーブル） */}
               <section className="mb-8 mt-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">仲介手数料 早見表</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">仲介手数料の早見表（売買価格別の相場一覧）</h2>
                 <p className="text-sm text-gray-600 mb-4">主要な売買価格に対する仲介手数料の目安です。</p>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
@@ -169,6 +169,84 @@ export function BrokerageCalculator() {
                 <p className="text-sm text-gray-600 mt-1">※特例：2024年7月法改正により、800万円以下の物件は最大33万円（税込）が請求される場合があります。</p>
               </section>
 
+              {/* 仲介手数料の説明 */}
+              <section className="mb-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-3">仲介手数料の上限額と計算方法</h2>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-gray-800 mb-3">
+                    不動産売買における仲介手数料は、宅地建物取引業法で<span className="font-bold">上限額</span>が定められています。
+                  </p>
+                  <div className="overflow-x-auto mb-3">
+                    <table className="w-full border-collapse text-sm">
+                      <thead>
+                        <tr className="bg-gray-200">
+                          <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">売買価格</th>
+                          <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">上限額（税抜）</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 px-3 py-2 text-gray-900">200万円以下</td>
+                          <td className="border border-gray-300 px-3 py-2 text-gray-900 font-medium">売買価格 × 5%</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="border border-gray-300 px-3 py-2 text-gray-900">200万円超〜400万円以下</td>
+                          <td className="border border-gray-300 px-3 py-2 text-gray-900 font-medium">売買価格 × 4% + 2万円</td>
+                        </tr>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 px-3 py-2 text-gray-900">400万円超</td>
+                          <td className="border border-gray-300 px-3 py-2 text-gray-900 font-medium">売買価格 × 3% + 6万円</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">※上記金額に消費税（10%）が加算されます。</p>
+                  <p className="text-sm text-gray-600 mb-1">※2024年7月の法改正により、800万円以下の空家等については、売主・買主それぞれから最大33万円（税込）を受領可能となりました。</p>
+                  <p className="text-sm text-gray-600">
+                    参照：
+                    <a href="https://www.mlit.go.jp/totikensangyo/const/1_6_bf_000013.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">国土交通省「不動産取引に関するお知らせ」</a>
+                  </p>
+                </div>
+              </section>
+
+              {/* よくある質問（FAQスキーマ対応） */}
+              <section className="mb-12">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">よくある質問</h2>
+                <div className="space-y-4">
+                  {/* Q1 */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="font-bold text-gray-900 mb-2">Q. 「3%+6万円」の計算式とは？</h3>
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      売買価格が400万円を超える場合、仲介手数料の上限は「売買価格×3%+6万円（税抜）」で計算できます。
+                      これは宅地建物取引業法で定められた上限額を、一つの式で簡単に求められるようにした計算式です。
+                      正式には価格帯ごとに5%・4%・3%の料率が適用されますが、この式を使えば同じ結果が得られます。
+                      なぜ6万円を足すのか？それは200万円までの2%分（4万円）と、400万円までの1%分（2万円）の差額を調整するためです。
+                    </p>
+                  </div>
+                  {/* Q2 */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="font-bold text-gray-900 mb-2">Q. 2024年法改正（800万円特例）とは？</h3>
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      2024年7月の宅建業法改正により、売買価格800万円以下の物件については、
+                      売主・買主それぞれから最大33万円（税込）を仲介手数料の上限として受け取れるようになりました。
+                      低額物件の流通促進を目的とした特例で、適用には媒介契約時の合意が必要です。
+                      詳しくは<a href="https://www.mlit.go.jp/totikensangyo/const/1_6_bf_000013.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">国土交通省「不動産取引に関するお知らせ」</a>をご確認ください。
+                    </p>
+                  </div>
+                  {/* Q3 */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="font-bold text-gray-900 mb-2">Q. 仲介手数料に消費税はかかりますか？</h3>
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      はい、仲介手数料には消費税（10%）がかかります。
+                      「3%+6万円」などの計算式で求めた金額は税抜価格のため、
+                      実際に支払う金額は消費税を加算した税込価格となります。
+                      また、売買価格に建物の消費税が含まれている場合は、消費税を差し引いた本体価格で仲介手数料を計算します。
+                      本シミュレーターでは税込金額を自動計算して表示しています。
+                    </p>
+                  </div>
+                </div>
+              </section>
+
               {/* 解説ページへのリンク */}
               <section className="mb-12">
                 <Link
@@ -194,9 +272,9 @@ export function BrokerageCalculator() {
               <div className="lg:hidden mt-12 space-y-8">
                 {/* 全計算ツール（カテゴリ別） */}
                 <div>
-                  <h3 className="text-base font-bold text-gray-900 mb-3 pb-2 border-b border-dashed border-gray-900">
+                  <p className="text-base font-bold text-gray-900 mb-3 pb-2 border-b border-dashed border-gray-900">
                     無料で使える計算ツール<span className="text-sm font-medium text-white bg-primary-600 px-2 py-0.5 rounded ml-2">全24種類</span>
-                  </h3>
+                  </p>
                   <div className="space-y-4">
                     {toolCategories.map((category) => {
                       const IconComponent = category.icon
@@ -225,10 +303,10 @@ export function BrokerageCalculator() {
 
                 {/* 不動産投資シミュレーターCTA */}
                 <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 border border-primary-100">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+                  <p className="text-xl font-bold text-gray-900 mb-4 text-center">
                     <span className="block text-sm font-normal text-gray-600 mb-1">現役大家さんが開発した、</span>
                     不動産投資シミュレーター
-                  </h3>
+                  </p>
                   <Image
                     src="/img/kakushin_img01.png"
                     alt="不動産投資シミュレーター"
@@ -261,9 +339,9 @@ export function BrokerageCalculator() {
               <div className="sticky top-28 space-y-6">
                 {/* 全計算ツール（カテゴリ別） */}
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-dashed border-gray-900">
+                  <p className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-dashed border-gray-900">
                     無料で使える計算ツール<span className="text-sm font-medium text-white bg-primary-600 px-2 py-0.5 rounded ml-2">全24種類</span>
-                  </h3>
+                  </p>
                   <div className="space-y-4">
                     {toolCategories.map((category) => {
                       const IconComponent = category.icon
@@ -301,10 +379,10 @@ export function BrokerageCalculator() {
 
                 {/* 不動産投資シミュレーターCTA */}
                 <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-5 border border-primary-100">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+                  <p className="text-xl font-bold text-gray-900 mb-4 text-center">
                     <span className="block text-sm font-normal text-gray-600 mb-1">現役大家さんが開発した、</span>
                     不動産投資シミュレーター
-                  </h3>
+                  </p>
                   <Image
                     src="/img/kakushin_img01.png"
                     alt="不動産投資シミュレーター"

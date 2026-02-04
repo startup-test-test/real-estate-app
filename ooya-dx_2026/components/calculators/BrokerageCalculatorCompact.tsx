@@ -2,8 +2,37 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { AlertTriangle, Copy, Check } from 'lucide-react'
+import Link from 'next/link'
+import { AlertTriangle, Copy, Check, ArrowRight } from 'lucide-react'
 import { calculateBrokerageFee, BrokerageResult } from '@/lib/calculators/brokerage'
+
+// 印紙税の計算（売買契約書）
+function calculateStampDuty(priceInYen: number): number {
+  if (priceInYen <= 0) return 0
+  if (priceInYen <= 500000) return 200
+  if (priceInYen <= 1000000) return 500
+  if (priceInYen <= 5000000) return 1000
+  if (priceInYen <= 10000000) return 5000
+  if (priceInYen <= 50000000) return 10000
+  if (priceInYen <= 100000000) return 30000
+  if (priceInYen <= 500000000) return 60000
+  if (priceInYen <= 1000000000) return 160000
+  return 320000
+}
+
+// 登録免許税の概算（売買価格×70%を評価額とし、税率2%で計算）
+function calculateRegistrationTaxEstimate(priceInYen: number): number {
+  if (priceInYen <= 0) return 0
+  const assessedValue = priceInYen * 0.7 // 評価額は売買価格の約70%
+  return Math.floor(assessedValue * 0.02) // 所有権移転: 2%
+}
+
+// 不動産取得税の概算（売買価格×70%を評価額とし、税率3%で計算）
+function calculateAcquisitionTaxEstimate(priceInYen: number): number {
+  if (priceInYen <= 0) return 0
+  const assessedValue = priceInYen * 0.7 // 評価額は売買価格の約70%
+  return Math.floor(assessedValue * 0.03) // 住宅: 3%
+}
 
 // 2024年7月法改正の特例上限（税込）
 const SPECIAL_PROVISION_LIMIT = 330000 // 33万円
@@ -171,14 +200,14 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
 
           {/* メイン結果 */}
           <div className="flex justify-between items-center border-t-2 border-blue-400 pt-4 mt-2">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900">
               合計（税込）
             </span>
             <div className="text-right">
-              <span className="text-5xl font-extrabold text-blue-700">
+              <span className="text-3xl sm:text-5xl font-extrabold text-blue-700 whitespace-nowrap">
                 {(result.total / 10000).toLocaleString('ja-JP')}万円
               </span>
-              <span className="block text-lg text-gray-700">
+              <span className="block text-base sm:text-lg text-gray-700">
                 （{result.total.toLocaleString('ja-JP')}円）
               </span>
             </div>
@@ -213,33 +242,73 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
       </div>
 
       {/* 計算式表示（結果ボックスの外） */}
-      {priceInMan > 0 && (
-        <div className="mt-6 bg-gray-50 rounded-lg p-4">
-          <p className="text-base font-bold text-gray-900 mb-3">
-            計算式（適用料率：{result.rate}）
-          </p>
-          <p className="text-lg text-gray-800 mb-2">
-            <span className="font-bold text-gray-700">仲介手数料：</span>
-            <span className="font-mono">
-              {priceInYen <= 2000000 && (
-                <>{priceInMan.toLocaleString()}万円 × 5% = {(result.commission / 10000).toLocaleString()}万円</>
-              )}
-              {priceInYen > 2000000 && priceInYen <= 4000000 && (
-                <>{priceInMan.toLocaleString()}万円 × 4% + 2万円 = {(result.commission / 10000).toLocaleString()}万円</>
-              )}
-              {priceInYen > 4000000 && (
-                <>{priceInMan.toLocaleString()}万円 × 3% + 6万円 = {(result.commission / 10000).toLocaleString()}万円</>
-              )}
-            </span>
-          </p>
-          <p className="text-lg text-gray-800">
-            <span className="font-bold text-gray-700">消費税：</span>
-            <span className="font-mono">{(result.commission / 10000).toLocaleString()}万円 × 10% = {(result.tax / 10000).toLocaleString()}万円</span>
-          </p>
-        </div>
-      )}
+      <div className="mt-6 bg-gray-50 rounded-lg p-4">
+        <p className="text-base font-bold text-gray-900 mb-3">
+          📊 仲介手数料の計算式
+        </p>
+        <p className="text-lg text-gray-800 mb-2">
+          <span className="font-bold text-gray-700">仲介手数料：</span>
+          <span className="font-mono">
+            {priceInMan > 0 ? (
+              <>
+                {priceInYen <= 2000000 && (
+                  <>{priceInMan.toLocaleString()}万円 × 5% = {(result.commission / 10000).toLocaleString()}万円</>
+                )}
+                {priceInYen > 2000000 && priceInYen <= 4000000 && (
+                  <>{priceInMan.toLocaleString()}万円 × 4% + 2万円 = {(result.commission / 10000).toLocaleString()}万円</>
+                )}
+                {priceInYen > 4000000 && (
+                  <>{priceInMan.toLocaleString()}万円 × 3% + 6万円 = {(result.commission / 10000).toLocaleString()}万円</>
+                )}
+              </>
+            ) : (
+              <span className="text-gray-400">売買価格 × 3% + 6万円 = ___万円</span>
+            )}
+          </span>
+        </p>
+        <p className="text-lg text-gray-800">
+          <span className="font-bold text-gray-700">消費税：</span>
+          <span className="font-mono">
+            {priceInMan > 0 ? (
+              <>{(result.commission / 10000).toLocaleString()}万円 × 10% = {(result.tax / 10000).toLocaleString()}万円</>
+            ) : (
+              <span className="text-gray-400">___万円 × 10% = ___万円</span>
+            )}
+          </span>
+        </p>
+      </div>
 
-      {/* 2024年7月法改正特例の警告（800万円以下の場合） */}
+      {/* その他の費用（概算） */}
+      <div className="mt-6 bg-gray-50 rounded-lg p-4">
+        <p className="text-base font-bold text-gray-900 mb-3">
+          📋 物件購入時にかかるその他の費用（概算）
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <Link
+            href="/tools/stamp-duty"
+            className="flex items-center justify-between px-2 py-2 sm:px-3 sm:py-2.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group border border-blue-200 hover:border-blue-300"
+          >
+            <span className="text-sm sm:text-base text-blue-800 group-hover:text-blue-900">印紙税：<span className="font-bold text-base sm:text-lg">{priceInMan > 0 ? `${(calculateStampDuty(priceInYen) / 10000).toLocaleString('ja-JP')}万円` : '___万円'}</span></span>
+            <ArrowRight className="h-4 w-4 text-blue-400 group-hover:text-blue-600 flex-shrink-0" />
+          </Link>
+          <Link
+            href="/tools/registration-tax"
+            className="flex items-center justify-between px-2 py-2 sm:px-3 sm:py-2.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group border border-blue-200 hover:border-blue-300"
+          >
+            <span className="text-sm sm:text-base text-blue-800 group-hover:text-blue-900">登録免許税：<span className="font-bold text-base sm:text-lg">{priceInMan > 0 ? `約${(calculateRegistrationTaxEstimate(priceInYen) / 10000).toLocaleString('ja-JP')}万円` : '___万円'}</span></span>
+            <ArrowRight className="h-4 w-4 text-blue-400 group-hover:text-blue-600 flex-shrink-0" />
+          </Link>
+          <Link
+            href="/tools/acquisition-tax"
+            className="flex items-center justify-between px-2 py-2 sm:px-3 sm:py-2.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group border border-blue-200 hover:border-blue-300"
+          >
+            <span className="text-sm sm:text-base text-blue-800 group-hover:text-blue-900">不動産取得税：<span className="font-bold text-base sm:text-lg">{priceInMan > 0 ? `約${(calculateAcquisitionTaxEstimate(priceInYen) / 10000).toLocaleString('ja-JP')}万円` : '___万円'}</span></span>
+            <ArrowRight className="h-4 w-4 text-blue-400 group-hover:text-blue-600 flex-shrink-0" />
+          </Link>
+        </div>
+      </div>
+
+      {/* 2024年7月法改正特例の情報（800万円以下の場合のみ表示） */}
       {priceInMan > 0 && priceInYen <= SPECIAL_PROVISION_THRESHOLD && (
         <div className="mt-4 bg-amber-50 border border-amber-300 rounded-lg p-4">
           <div className="flex items-start gap-3">
@@ -249,12 +318,12 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
                 2024年7月法改正による特例
               </p>
               <p className="text-sm text-amber-700 mt-1">
-                800万円以下の物件は、売主・買主それぞれから
+                800万円以下の物件は、売主・買主それぞれ
                 <span className="font-bold">最大33万円（税込）</span>
-                が請求される可能性があります。
+                が仲介手数料の上限となる場合があります。
               </p>
               <p className="text-xs text-amber-600 mt-2">
-                ※低廉な空家等の流通促進を目的とした特例です。適用には仲介会社からの事前説明と合意が必要です。
+                詳しくは<a href="https://www.mlit.go.jp/totikensangyo/const/1_6_bf_000013.html" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-800">国土交通省のページ</a>をご確認ください。
               </p>
             </div>
           </div>
