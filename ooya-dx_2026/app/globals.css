@@ -121,10 +121,19 @@
   }
   
   .bg-grid-pattern {
-    background-image: 
+    background-image:
       linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
     background-size: 20px 20px;
+  }
+
+  /* スクロールバー非表示（横スクロール用） */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 

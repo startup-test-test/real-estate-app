@@ -29,8 +29,6 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 mr-1">シェア:</span>
-
       {/* X (Twitter) */}
       <a
         href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}

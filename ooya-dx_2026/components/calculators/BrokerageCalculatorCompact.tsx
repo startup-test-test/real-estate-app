@@ -121,7 +121,7 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
   }, [getResultText])
 
   return (
-    <div className={`bg-blue-50 border-2 border-blue-200 rounded-xl shadow-sm ${compact ? 'p-4' : 'p-6'} ${className}`}>
+    <div className={`bg-blue-50 border-2 border-blue-200 rounded-xl shadow-sm ${compact ? 'p-4' : 'p-3 sm:p-6'} ${className}`}>
       {showTitle && (
         <div className="flex items-center gap-2 mb-4">
           <div className="bg-blue-500 p-2 rounded-lg">
@@ -136,9 +136,9 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
       )}
 
       {/* 入力エリア */}
-      <div className="mb-4">
-        <label className="flex items-center gap-2 text-xl font-bold text-gray-900 mb-3">
-          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mb-3 sm:mb-4">
+        <label className="flex items-center gap-2 text-base sm:text-xl font-bold text-gray-900 mb-3">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
           売買価格を入力してください
@@ -153,61 +153,61 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
               setPriceInMan(value === '' ? 0 : Number(value))
             }}
             placeholder="例：3000"
-            className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 bg-orange-50 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-2xl sm:text-4xl font-bold text-gray-900"
+            className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-4 bg-orange-50 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-xl sm:text-4xl font-bold text-gray-900"
           />
-          <span className="text-xl text-gray-700 font-medium">万円</span>
+          <span className="text-base sm:text-xl text-gray-700 font-medium">万円</span>
         </div>
         {priceInMan === 0 && (
-          <p className="text-base text-gray-900 mt-2">
+          <p className="text-sm sm:text-base text-gray-900 mt-2">
             💡 数字だけ入力してください（例：3000万円の場合 →「3000」と入力）
           </p>
         )}
       </div>
 
       {/* 結果エリア */}
-      <div className="bg-white rounded-xl p-5 border-2 border-blue-300 relative mt-8">
+      <div className="bg-white rounded-xl p-3 sm:p-5 border-2 border-blue-300 relative mt-6 sm:mt-8">
         {/* 吹き出し風ラベル */}
         <div className="absolute -top-4 left-4">
-          <span className="inline-block bg-blue-600 text-white text-lg font-bold px-4 py-1.5 rounded-full shadow-md">
+          <span className="inline-block bg-blue-600 text-white text-sm sm:text-lg font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-md">
             シミュレーション結果
           </span>
         </div>
         <div className="mt-4"></div>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold text-gray-700">仲介手数料（税抜）</span>
+            <span className="text-sm sm:text-xl font-bold text-gray-700">仲介手数料（税抜）</span>
             <div className="text-right">
-              <span className="text-3xl font-bold text-gray-900">
+              <span className="text-xl sm:text-3xl font-bold text-gray-900">
                 {(result.commission / 10000).toLocaleString('ja-JP')}万円
               </span>
-              <span className="block text-base text-gray-700">
+              <span className="block text-xs sm:text-base text-gray-700">
                 （{result.commission.toLocaleString('ja-JP')}円）
               </span>
             </div>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold text-gray-700">消費税（10%）</span>
+            <span className="text-sm sm:text-xl font-bold text-gray-700">消費税（10%）</span>
             <div className="text-right">
-              <span className="text-3xl font-bold text-gray-900">
+              <span className="text-xl sm:text-3xl font-bold text-gray-900">
                 {(result.tax / 10000).toLocaleString('ja-JP')}万円
               </span>
-              <span className="block text-base text-gray-700">
+              <span className="block text-xs sm:text-base text-gray-700">
                 （{result.tax.toLocaleString('ja-JP')}円）
               </span>
             </div>
           </div>
 
           {/* メイン結果 */}
-          <div className="flex justify-between items-center border-t-2 border-blue-400 pt-4 mt-2">
-            <span className="text-xl sm:text-2xl font-bold text-gray-900">
+          <div className="flex justify-between items-center border-t-2 border-blue-400 pt-3 sm:pt-4 mt-2">
+            <span className="text-base sm:text-2xl font-bold text-gray-900">
               合計（税込）
             </span>
             <div className="text-right">
-              <span className="text-3xl sm:text-5xl font-extrabold text-blue-700 whitespace-nowrap">
+              <span className="text-2xl sm:text-5xl font-extrabold text-blue-700 whitespace-nowrap">
                 {(result.total / 10000).toLocaleString('ja-JP')}万円
               </span>
-              <span className="block text-base sm:text-lg text-gray-700">
+              <span className="block text-xs sm:text-lg text-gray-700">
                 （{result.total.toLocaleString('ja-JP')}円）
               </span>
             </div>
@@ -215,10 +215,10 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
 
           {/* 結果を共有ボタン */}
           {priceInMan > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={handleCopy}
-                className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 text-base font-medium ${
+                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-all duration-300 text-xs sm:text-base font-medium ${
                   copied
                     ? 'bg-green-100 text-green-700 border-2 border-green-400'
                     : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-2 border-blue-300 hover:border-blue-400'
@@ -226,13 +226,14 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
               >
                 {copied ? (
                   <>
-                    <Check className="h-5 w-5" />
+                    <Check className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span>コピーしました！</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-5 w-5" />
-                    <span>結果をコピーしてLINEやメールで共有</span>
+                    <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline">結果をコピーしてLINEやメールで共有</span>
+                    <span className="sm:hidden">結果をコピーして送る</span>
                   </>
                 )}
               </button>
@@ -242,11 +243,11 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
       </div>
 
       {/* 計算式表示（結果ボックスの外） */}
-      <div className="mt-6 bg-gray-50 rounded-lg p-4">
-        <p className="text-base font-bold text-gray-900 mb-3">
+      <div className="mt-4 sm:mt-6 bg-gray-50 rounded-lg p-3 sm:p-4">
+        <p className="text-sm sm:text-base font-bold text-gray-900 mb-2 sm:mb-3">
           📊 仲介手数料の計算式
         </p>
-        <p className="text-lg text-gray-800 mb-2">
+        <p className="text-sm sm:text-lg text-gray-800 mb-2">
           <span className="font-bold text-gray-700">仲介手数料：</span>
           <span className="font-mono">
             {priceInMan > 0 ? (
@@ -266,7 +267,7 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
             )}
           </span>
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-sm sm:text-lg text-gray-800">
           <span className="font-bold text-gray-700">消費税：</span>
           <span className="font-mono">
             {priceInMan > 0 ? (
@@ -279,9 +280,9 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
       </div>
 
       {/* その他の費用（概算） */}
-      <div className="mt-6 bg-gray-50 rounded-lg p-4">
-        <p className="text-base font-bold text-gray-900 mb-3">
-          📋 物件購入時にかかるその他の費用（概算）
+      <div className="mt-4 sm:mt-6 bg-gray-50 rounded-lg p-3 sm:p-4">
+        <p className="text-sm sm:text-base font-bold text-gray-900 mb-2 sm:mb-3">
+          📋 その他の費用（概算）
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <Link

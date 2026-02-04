@@ -104,33 +104,30 @@ export function BrokerageCalculator() {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
 
       <main className="flex-1">
         {/* 2カラムレイアウト */}
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-12">
           <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-10">
             {/* 左カラム（メインコンテンツ） */}
             <article>
               {/* パンくず */}
               <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-              {/* 日付 & シェアボタン */}
-              <div className="flex flex-wrap items-center justify-between gap-y-2 mb-4">
-                <div className="flex items-center gap-3 text-xs text-gray-900">
-                  <span>公開日：2026年1月15日</span>
-                  {(() => {
-                    const toolInfo = getToolInfo('/tools/brokerage')
-                    return toolInfo?.lastUpdated ? (
-                      <span>更新日：{formatToolDate(toolInfo.lastUpdated)}</span>
-                    ) : null
-                  })()}
-                </div>
-                <ShareButtons title={PAGE_TITLE} />
+              {/* 日付 */}
+              <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+                <span>公開日：2026年1月15日</span>
+                {(() => {
+                  const toolInfo = getToolInfo('/tools/brokerage')
+                  return toolInfo?.lastUpdated ? (
+                    <span>更新日：{formatToolDate(toolInfo.lastUpdated)}</span>
+                  ) : null
+                })()}
               </div>
 
               {/* タイトル */}
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-6">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4 sm:mb-6">
                 {PAGE_TITLE}
               </h1>
 
@@ -142,34 +139,39 @@ export function BrokerageCalculator() {
               {/* 計算結果の注記 */}
               <CalculatorNote />
 
+              {/* シェアボタン */}
+              <div className="flex items-center justify-end mt-4">
+                <ShareButtons title={PAGE_TITLE} />
+              </div>
+
               {/* 早見表（4列テーブル） */}
-              <section className="mb-8 mt-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">仲介手数料の早見表（売買価格別の相場一覧）</h2>
-                <p className="text-sm text-gray-600 mb-4">主要な売買価格に対する仲介手数料の目安です。</p>
+              <section className="mb-6 sm:mb-8 mt-6 sm:mt-8">
+                <h2 className="text-base sm:text-xl font-bold text-gray-900 mb-2">仲介手数料の早見表（売買価格別の相場一覧）</h2>
+                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">主要な売買価格に対する仲介手数料の目安です。</p>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse text-sm">
                     <thead>
                       <tr className="bg-gray-100">
-                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">売買価格</th>
-                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">適用料率</th>
-                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">計算式（税抜）</th>
-                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">税込</th>
+                        <th className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-semibold text-gray-700 whitespace-nowrap">売買価格</th>
+                        <th className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-semibold text-gray-700 whitespace-nowrap">適用料率</th>
+                        <th className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-semibold text-gray-700 whitespace-nowrap hidden sm:table-cell">計算式（税抜）</th>
+                        <th className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-semibold text-gray-700 whitespace-nowrap">税込</th>
                       </tr>
                     </thead>
                     <tbody>
                       {quickReferenceData.map((row, index) => (
                         <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="border border-gray-300 px-3 py-2 text-left text-gray-900">{row.price}</td>
-                          <td className="border border-gray-300 px-3 py-2 text-left text-gray-900 text-sm">{row.rate}</td>
-                          <td className="border border-gray-300 px-3 py-2 text-left text-gray-900 text-sm font-mono">{row.formula}</td>
-                          <td className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-900">{row.fee}</td>
+                          <td className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left text-gray-900 whitespace-nowrap">{row.price}</td>
+                          <td className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left text-gray-900 whitespace-nowrap">{row.rate}</td>
+                          <td className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left text-gray-900 font-mono whitespace-nowrap hidden sm:table-cell">{row.formula}</td>
+                          <td className="border border-gray-300 px-2 sm:px-3 py-1.5 sm:py-2 text-left font-semibold text-gray-900 whitespace-nowrap">{row.fee}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <p className="text-sm text-gray-600 mt-2">※上記は上限額です。実際の手数料は不動産会社との契約内容により異なる場合があります。</p>
-                <p className="text-sm text-gray-600 mt-1">※特例：2024年7月法改正により、800万円以下の物件は最大33万円（税込）が請求される場合があります。</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-2">※上記は上限額です。実際の手数料は不動産会社との契約内容により異なる場合があります。</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">※特例：2024年7月法改正により、800万円以下の物件は最大33万円（税込）が請求される場合があります。</p>
               </section>
 
               {/* 仲介手数料の説明 */}

@@ -85,7 +85,7 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
   return (
     <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 sm:py-6 md:pt-8 md:pb-4">
+        <div className="flex justify-between items-center py-2 sm:py-4 md:pt-8 md:pb-4">
           {/* ロゴ */}
           <Link href={logoHref} className="block relative">
             <span className="hidden md:block text-sm text-gray-900 absolute -top-5 left-0 whitespace-nowrap">
@@ -94,7 +94,7 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
             <img
               src={logoSrc}
               alt={logoAlt}
-              className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity"
+              className="h-7 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity"
               style={{ mixBlendMode: 'multiply' }}
             />
           </Link>
@@ -160,14 +160,13 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
                 <>
                   <button
                     onClick={() => router.push('/auth/signup')}
-                    className="px-4 sm:px-5 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                    className="px-2.5 sm:px-5 py-1.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[11px] sm:text-sm whitespace-nowrap"
                   >
-                    <span className="hidden sm:inline">無料登録</span>
-                    <span className="sm:hidden">登録</span>
+                    無料登録
                   </button>
                   <button
                     onClick={() => router.push('/auth/signin')}
-                    className="px-4 sm:px-5 py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[15px] sm:text-sm whitespace-nowrap"
+                    className="px-2.5 sm:px-5 py-1.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[11px] sm:text-sm whitespace-nowrap"
                   >
                     ログイン
                   </button>
