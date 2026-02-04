@@ -98,10 +98,10 @@ export function NPVCalculator({ relatedGlossary = [] }: NPVCalculatorProps) {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
 
       <main className="flex-1">
-        <article className="max-w-2xl mx-auto px-5 py-12">
+        <article className="max-w-2xl mx-auto px-4 sm:px-5 py-4 sm:py-8 md:py-12">
           {/* パンくず */}
           <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
@@ -121,7 +121,7 @@ export function NPVCalculator({ relatedGlossary = [] }: NPVCalculatorProps) {
           </div>
 
           {/* タイトル・説明文 */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4">
             {PAGE_TITLE}
           </h1>
 

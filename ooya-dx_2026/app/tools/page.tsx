@@ -64,28 +64,30 @@ export default function ToolsPage() {
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[72px] sm:h-[88px]"></div>
+        <div className="h-[52px] sm:h-[72px] md:h-[88px]"></div>
 
         <main className="flex-1 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-12">
             {/* パンくずリスト */}
-            <nav className="flex items-center text-sm text-gray-500 mb-6">
-              <Link href="/" className="hover:text-primary-600">
-                ホーム
-              </Link>
-              <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-              <span className="text-gray-900">賃貸経営計算ツール</span>
-            </nav>
+            <div className="relative mb-2 sm:mb-6">
+              <nav className="flex items-center text-sm text-gray-500 overflow-x-auto scrollbar-hide whitespace-nowrap" aria-label="パンくずリスト">
+                <Link href="/" className="hover:text-primary-600 flex-shrink-0">
+                  大家DX
+                </Link>
+                <ChevronRight className="h-4 w-4 mx-1 text-gray-400 flex-shrink-0" />
+                <span className="text-gray-900 flex-shrink-0">賃貸経営計算ツール</span>
+              </nav>
+            </div>
 
             {/* ヘッダー */}
-            <div className="mb-12 text-center">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <div className="mb-6 sm:mb-12 text-center">
+              <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
                 賃貸経営計算ツール
-                <span className="ml-3 inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full align-middle">
+                <span className="ml-2 sm:ml-3 inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full align-middle">
                   無料
                 </span>
               </h1>
-              <p className="text-gray-600 text-base sm:text-lg">
+              <p className="text-gray-600 text-sm sm:text-base md:text-lg">
                 不動産取引に必要な税金・費用をかんたん計算。スマホでもPCでも使えます。
               </p>
             </div>

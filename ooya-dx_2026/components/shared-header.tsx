@@ -160,13 +160,13 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
                 <>
                   <button
                     onClick={() => router.push('/auth/signup')}
-                    className="px-2.5 sm:px-5 py-1.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[11px] sm:text-sm whitespace-nowrap"
+                    className="px-2.5 sm:px-5 py-1.5 sm:py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-[13px] sm:text-sm whitespace-nowrap"
                   >
                     無料登録
                   </button>
                   <button
                     onClick={() => router.push('/auth/signin')}
-                    className="px-2.5 sm:px-5 py-1.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[11px] sm:text-sm whitespace-nowrap"
+                    className="px-2.5 sm:px-5 py-1.5 sm:py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium text-[13px] sm:text-sm whitespace-nowrap"
                   >
                     ログイン
                   </button>

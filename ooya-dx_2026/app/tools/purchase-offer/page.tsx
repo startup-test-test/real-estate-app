@@ -11,9 +11,9 @@ export default function PurchaseOfferPage() {
       <div className="print:hidden">
         <SharedHeader />
       </div>
-      <div className="h-[72px] sm:h-[88px] print:hidden" />
+      <div className="h-[52px] sm:h-[72px] md:h-[88px] print:hidden" />
 
-      <main className="max-w-7xl mx-auto px-5 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-5 py-4 sm:py-8 md:py-12">
         <PurchaseOfferGenerator
           showHeader={true}
           showDisclaimer={true}
