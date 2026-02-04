@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { AlertTriangle, Share2, Check } from 'lucide-react'
+import { AlertTriangle, Copy, Check } from 'lucide-react'
 import { calculateBrokerageFee, BrokerageResult } from '@/lib/calculators/brokerage'
 
 // 2024年7月法改正の特例上限（税込）
@@ -124,13 +124,13 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
               setPriceInMan(value === '' ? 0 : Number(value))
             }}
             placeholder="例：3000"
-            className="flex-1 px-4 py-4 bg-orange-50 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-4xl font-bold text-gray-900"
+            className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 bg-orange-50 border-2 border-orange-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-2xl sm:text-4xl font-bold text-gray-900"
           />
           <span className="text-xl text-gray-700 font-medium">万円</span>
         </div>
         {priceInMan === 0 && (
-          <p className="text-sm text-gray-500 mt-2">
-            例：3000 → 3,000万円 → 仲介手数料 約105.6万円（税込）
+          <p className="text-base text-gray-900 mt-2">
+            💡 数字だけ入力してください（例：3000万円の場合 →「3000」と入力）
           </p>
         )}
       </div>
@@ -147,16 +147,26 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-xl font-bold text-gray-700">仲介手数料（税抜）</span>
-            <span className="text-3xl font-bold text-gray-900">
-              {(result.commission / 10000).toLocaleString('ja-JP')}万円
-            </span>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-gray-900">
+                {(result.commission / 10000).toLocaleString('ja-JP')}万円
+              </span>
+              <span className="block text-base text-gray-700">
+                （{result.commission.toLocaleString('ja-JP')}円）
+              </span>
+            </div>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-xl font-bold text-gray-700">消費税（10%）</span>
-            <span className="text-3xl font-bold text-gray-900">
-              {(result.tax / 10000).toLocaleString('ja-JP')}万円
-            </span>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-gray-900">
+                {(result.tax / 10000).toLocaleString('ja-JP')}万円
+              </span>
+              <span className="block text-base text-gray-700">
+                （{result.tax.toLocaleString('ja-JP')}円）
+              </span>
+            </div>
           </div>
 
           {/* メイン結果 */}
@@ -164,17 +174,22 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
             <span className="text-2xl font-bold text-gray-900">
               合計（税込）
             </span>
-            <span className="text-4xl font-extrabold text-blue-600">
-              {(result.total / 10000).toLocaleString('ja-JP')}万円
-            </span>
+            <div className="text-right">
+              <span className="text-5xl font-extrabold text-blue-700">
+                {(result.total / 10000).toLocaleString('ja-JP')}万円
+              </span>
+              <span className="block text-lg text-gray-700">
+                （{result.total.toLocaleString('ja-JP')}円）
+              </span>
+            </div>
           </div>
 
           {/* 結果を共有ボタン */}
           {priceInMan > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={handleCopy}
-                className={`flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg transition-all duration-300 text-base font-medium ${
+                className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 text-base font-medium ${
                   copied
                     ? 'bg-green-100 text-green-700 border-2 border-green-400'
                     : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-2 border-blue-300 hover:border-blue-400'
@@ -187,7 +202,7 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
                   </>
                 ) : (
                   <>
-                    <Share2 className="h-5 w-5" />
+                    <Copy className="h-5 w-5" />
                     <span>結果をコピーしてLINEやメールで共有</span>
                   </>
                 )}

@@ -1,22 +1,18 @@
 import { Metadata } from 'next'
 import { BrokerageCalculator } from './BrokerageCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '不動産売買の仲介手数料 計算シミュレーション｜早見表付き',
+  title: '仲介手数料計算シミュレーター｜不動産売買の手数料を10秒で計算',
   description:
-    '不動産売買の仲介手数料を10秒で無料計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付きで1,000万円〜1億円の手数料も一目で確認。',
+    '不動産売買の仲介手数料を10秒で無料計算。売買価格を入力するだけで、税込金額がすぐわかります。早見表付き。',
   keywords: [
-    '仲介手数料',
     '仲介手数料 計算',
     '仲介手数料 シミュレーター',
-    '不動産 仲介手数料',
     '仲介手数料 早見表',
-    '仲介手数料 3000万',
-    '仲介手数料 5000万'
+    '不動産 仲介手数料 計算',
   ],
   openGraph: {
     title: '不動産売買の仲介手数料 計算シミュレーション｜早見表付き',
@@ -41,14 +37,14 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ（WebApplication）
-const webApplicationSchema = {
+// 構造化データ（SoftwareApplication - Calculator）
+const softwareApplicationSchema = {
   '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: '仲介手数料シミュレーター',
-  description: '不動産売買の仲介手数料を計算するツール',
+  '@type': 'SoftwareApplication',
+  name: '仲介手数料計算シミュレーター',
+  description: '不動産売買の仲介手数料を瞬時に計算するツール。売買価格を入力するだけで税込金額がわかります。',
   applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web',
+  operatingSystem: 'Windows, macOS, Android, iOS',
   offers: {
     '@type': 'Offer',
     price: '0',
@@ -56,7 +52,33 @@ const webApplicationSchema = {
   },
   provider: {
     '@type': 'Organization',
-    name: '大家DX'
+    name: '大家DX',
+    url: 'https://ooya.tech'
+  },
+  featureList: [
+    '仲介手数料の自動計算',
+    '税込・税抜金額の表示',
+    '早見表による確認'
+  ]
+}
+
+// WebPage構造化データ（日付情報含む）
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応',
+  description: '不動産売買の仲介手数料を瞬時に計算。2024年法改正の800万円特例にも対応。早見表・計算式付き。',
+  url: `${BASE_URL}/tools/brokerage`,
+  datePublished: '2026-01-15',
+  dateModified: '2026-02-04',
+  publisher: {
+    '@type': 'Organization',
+    name: '大家DX',
+    url: 'https://ooya.tech'
+  },
+  mainEntity: {
+    '@type': 'SoftwareApplication',
+    name: '仲介手数料計算シミュレーター'
   }
 }
 
@@ -87,16 +109,19 @@ const breadcrumbSchema = {
 }
 
 export default function BrokeragePage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/brokerage')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(webApplicationSchema)
+          __html: JSON.stringify(webPageSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareApplicationSchema)
         }}
       />
       <script
@@ -105,7 +130,7 @@ export default function BrokeragePage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <BrokerageCalculator relatedGlossary={relatedGlossary} />
+      <BrokerageCalculator />
     </>
   )
 }

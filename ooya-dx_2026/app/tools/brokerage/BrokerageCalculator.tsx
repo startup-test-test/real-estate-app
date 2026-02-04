@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Calculator, TrendingUp } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight, TrendingUp, Percent, BarChart3, Building2, Receipt, Wallet, Calendar } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 // 早見表は3列カスタムテーブルを使用
@@ -32,26 +33,67 @@ const quickReferenceData = [
 ]
 
 // 関連ツールデータ
-const relatedCalculators = [
+// カテゴリ別の全ツールデータ（アイコン付き）
+const toolCategories = [
   {
-    href: '/tools/stamp-duty',
-    title: '印紙税計算',
-    description: '売買契約書の印紙代'
+    category: '利回りを計算したい',
+    icon: Percent,
+    tools: [
+      { href: '/tools/yield', title: '表面利回り・実質利回り' },
+      { href: '/tools/cap-rate', title: 'キャップレート' },
+      { href: '/tools/income-approach', title: '収益還元（直接還元法）' },
+      { href: '/tools/cost-approach', title: '積算評価' },
+      { href: '/tools/replacement-cost', title: '再調達価格' },
+    ]
   },
   {
-    href: '/tools/registration-tax',
-    title: '登録免許税計算',
-    description: '所有権移転登記の税額'
+    category: '収益性を分析したい',
+    icon: BarChart3,
+    tools: [
+      { href: '/tools/noi', title: 'NOI（営業純収益）' },
+      { href: '/tools/ccr', title: 'CCR（自己資金配当率）' },
+      { href: '/tools/dscr', title: 'DSCR（返済余力）' },
+      { href: '/tools/npv', title: 'NPV（正味現在価値）' },
+      { href: '/tools/roi', title: 'ROI（投資利益率）' },
+    ]
   },
   {
-    href: '/tools/acquisition-tax',
-    title: '不動産取得税計算',
-    description: '取得時にかかる税金'
+    category: 'ローンを計算したい',
+    icon: Building2,
+    tools: [
+      { href: '/tools/loan', title: '住宅ローン返済額' },
+      { href: '/tools/ltv', title: 'LTV（借入比率）' },
+      { href: '/tools/cashflow', title: 'CF（キャッシュフロー）' },
+    ]
   },
   {
-    href: '/tools/transfer-income-tax',
-    title: '譲渡所得税計算',
-    description: '売却時の税金'
+    category: '税金・費用を計算したい',
+    icon: Receipt,
+    tools: [
+      { href: '/tools/acquisition-tax', title: '不動産取得税' },
+      { href: '/tools/registration-tax', title: '登録免許税' },
+      { href: '/tools/stamp-duty', title: '印紙税' },
+      { href: '/tools/brokerage', title: '仲介手数料' },
+      { href: '/tools/corporate-tax', title: '法人税' },
+    ]
+  },
+  {
+    category: '売却時の手取りを知りたい',
+    icon: Wallet,
+    tools: [
+      { href: '/tools/sale-proceeds', title: '売却手取り' },
+      { href: '/tools/transfer-income-tax', title: '譲渡所得税' },
+      { href: '/tools/depreciation', title: '減価償却' },
+    ]
+  },
+  {
+    category: '長期収支を把握したい',
+    icon: Calendar,
+    tools: [
+      { href: '/tools/irr', title: 'IRR（内部収益率）' },
+      { href: '/tools/dcf', title: 'DCF法' },
+      { href: '/tools/dead-cross', title: 'デッドクロス' },
+    ]
   },
 ]
 
@@ -72,12 +114,9 @@ export function BrokerageCalculator() {
               {/* パンくず */}
               <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-              {/* カテゴリー & 日付 */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
-                <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-                  計算ツール
-                </span>
-                <div className="flex items-center gap-3 text-xs text-gray-400">
+              {/* 日付 & シェアボタン */}
+              <div className="flex flex-wrap items-center justify-between gap-y-2 mb-4">
+                <div className="flex items-center gap-3 text-xs text-gray-900">
                   <span>公開日：2026年1月15日</span>
                   {(() => {
                     const toolInfo = getToolInfo('/tools/brokerage')
@@ -86,17 +125,13 @@ export function BrokerageCalculator() {
                     ) : null
                   })()}
                 </div>
+                <ShareButtons title={PAGE_TITLE} />
               </div>
 
               {/* タイトル */}
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-6">
                 {PAGE_TITLE}
               </h1>
-
-              {/* シェアボタン */}
-              <div className="mb-6">
-                <ShareButtons title={PAGE_TITLE} />
-              </div>
 
               {/* シミュレーター本体（コンパクト版コンポーネント） */}
               <BrokerageCalculatorCompact showTitle={false} />
@@ -157,50 +192,61 @@ export function BrokerageCalculator() {
 
               {/* モバイル用：関連ツール・CTA（PCでは右カラムに表示） */}
               <div className="lg:hidden mt-12 space-y-8">
-                {/* 賃貸経営シミュレーターCTA */}
-                <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 border border-primary-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="h-5 w-5 text-primary-600" />
-                    <span className="text-xs font-medium text-primary-600 bg-white px-2 py-0.5 rounded">
-                      無料
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    賃貸経営シミュレーター
+                {/* 全計算ツール（カテゴリ別） */}
+                <div>
+                  <h3 className="text-base font-bold text-gray-900 mb-3 pb-2 border-b border-dashed border-gray-900">
+                    無料で使える計算ツール<span className="text-sm font-medium text-white bg-primary-600 px-2 py-0.5 rounded ml-2">全24種類</span>
                   </h3>
+                  <div className="space-y-4">
+                    {toolCategories.map((category) => {
+                      const IconComponent = category.icon
+                      return (
+                        <div key={category.category}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <IconComponent className="h-5 w-5 text-primary-600" />
+                            <p className="text-base font-bold text-gray-900">{category.category}</p>
+                          </div>
+                          <div className="space-y-1 ml-6">
+                            {category.tools.map((tool) => (
+                              <Link
+                                key={tool.href}
+                                href={tool.href}
+                                className="block py-2 px-3 text-sm text-gray-700 hover:text-primary-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                {tool.title}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* 不動産投資シミュレーターCTA */}
+                <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 border border-primary-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+                    <span className="block text-sm font-normal text-gray-600 mb-1">現役大家さんが開発した、</span>
+                    不動産投資シミュレーター
+                  </h3>
+                  <Image
+                    src="/img/kakushin_img01.png"
+                    alt="不動産投資シミュレーター"
+                    width={400}
+                    height={200}
+                    className="w-[90%] h-auto rounded-lg mb-4 mx-auto"
+                  />
                   <p className="text-sm text-gray-600 mb-4">
                     IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。
                     物件購入の意思決定をデータで支援します。
                   </p>
                   <Link
                     href="/simulator"
-                    className="inline-flex items-center justify-center w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+                    className="inline-flex items-center justify-center w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors"
                   >
                     無料でシミュレーションをする
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
-                </div>
-
-                {/* 関連計算ツール */}
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-3">関連計算ツール</h3>
-                  <div className="space-y-2">
-                    {relatedCalculators.map((tool) => (
-                      <Link
-                        key={tool.href}
-                        href={tool.href}
-                        className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
-                      >
-                        <div>
-                          <p className="text-sm font-medium text-gray-900 group-hover:text-primary-600">
-                            {tool.title}
-                          </p>
-                          <p className="text-xs text-gray-500">{tool.description}</p>
-                        </div>
-                        <Calculator className="h-4 w-4 text-gray-400 group-hover:text-primary-500" />
-                      </Link>
-                    ))}
-                  </div>
                 </div>
               </div>
 
@@ -213,48 +259,34 @@ export function BrokerageCalculator() {
             {/* 右カラム（サイドバー）- PCのみ表示 */}
             <aside className="hidden lg:block">
               <div className="sticky top-28 space-y-6">
-                {/* 賃貸経営シミュレーターCTA */}
-                <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-5 border border-primary-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="h-5 w-5 text-primary-600" />
-                    <span className="text-xs font-medium text-primary-600 bg-white px-2 py-0.5 rounded">
-                      無料
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-2">
-                    賃貸経営シミュレーター
+                {/* 全計算ツール（カテゴリ別） */}
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-dashed border-gray-900">
+                    無料で使える計算ツール<span className="text-sm font-medium text-white bg-primary-600 px-2 py-0.5 rounded ml-2">全24種類</span>
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                    IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。物件購入の意思決定をデータで支援します。
-                  </p>
-                  <Link
-                    href="/simulator"
-                    className="inline-flex items-center justify-center w-full px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
-                  >
-                    無料でシミュレーションをする
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </div>
-
-                {/* 関連計算ツール */}
-                <div className="bg-white rounded-xl p-5 border border-gray-200">
-                  <h3 className="text-sm font-bold text-gray-900 mb-4">関連計算ツール</h3>
-                  <div className="space-y-2">
-                    {relatedCalculators.map((tool) => (
-                      <Link
-                        key={tool.href}
-                        href={tool.href}
-                        className="flex items-center justify-between p-2.5 hover:bg-gray-50 rounded-lg transition-colors group"
-                      >
-                        <div>
-                          <p className="text-sm font-medium text-gray-900 group-hover:text-primary-600">
-                            {tool.title}
-                          </p>
-                          <p className="text-xs text-gray-500">{tool.description}</p>
+                  <div className="space-y-4">
+                    {toolCategories.map((category) => {
+                      const IconComponent = category.icon
+                      return (
+                        <div key={category.category}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <IconComponent className="h-5 w-5 text-primary-600" />
+                            <p className="text-base font-bold text-gray-900">{category.category}</p>
+                          </div>
+                          <div className="space-y-1 ml-6">
+                            {category.tools.map((tool) => (
+                              <Link
+                                key={tool.href}
+                                href={tool.href}
+                                className="block py-1.5 px-2 text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded transition-colors"
+                              >
+                                {tool.title}
+                              </Link>
+                            ))}
+                          </div>
                         </div>
-                        <Calculator className="h-4 w-4 text-gray-400 group-hover:text-primary-500 flex-shrink-0" />
-                      </Link>
-                    ))}
+                      )
+                    })}
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <Link
@@ -267,20 +299,31 @@ export function BrokerageCalculator() {
                   </div>
                 </div>
 
-                {/* 解説へのリンク */}
-                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                  <h3 className="text-sm font-bold text-gray-900 mb-2">仲介手数料について</h3>
-                  <p className="text-xs text-gray-600 mb-3">
-                    計算方法・2024年法改正・支払いタイミングなど
+                {/* 不動産投資シミュレーターCTA */}
+                <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-5 border border-primary-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+                    <span className="block text-sm font-normal text-gray-600 mb-1">現役大家さんが開発した、</span>
+                    不動産投資シミュレーター
+                  </h3>
+                  <Image
+                    src="/img/kakushin_img01.png"
+                    alt="不動産投資シミュレーター"
+                    width={300}
+                    height={150}
+                    className="w-[90%] h-auto rounded-lg mb-4 mx-auto"
+                  />
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    物件情報を入力するだけで、利回り・キャッシュフロー・投資指標を自動計算。投資判断の参考にできます。
                   </p>
                   <Link
-                    href="/tools/brokerage/guide"
-                    className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center"
+                    href="/simulator"
+                    className="inline-flex items-center justify-center w-full px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg transition-colors"
                   >
-                    詳しく見る
-                    <ArrowRight className="h-3 w-3 ml-1" />
+                    無料でシミュレーションをする
+                    <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </div>
+
               </div>
             </aside>
           </div>
