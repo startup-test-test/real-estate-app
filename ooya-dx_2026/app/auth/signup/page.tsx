@@ -88,7 +88,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-8 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl px-8 py-10">
           {/* ロゴ */}
