@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, TrendingUp, Percent, BarChart3, Building2, Receipt, Wallet, Calendar } from 'lucide-react'
@@ -134,7 +135,9 @@ export function BrokerageCalculator() {
               </h1>
 
               {/* シミュレーター本体（h1で目的が明確なためh2不要） */}
-              <BrokerageCalculatorCompact showTitle={false} />
+              <Suspense fallback={<div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 animate-pulse"><div className="h-8 bg-blue-100 rounded w-1/2 mb-4"></div><div className="h-12 bg-blue-100 rounded mb-4"></div></div>}>
+                <BrokerageCalculatorCompact showTitle={false} />
+              </Suspense>
 
               {/* 計算結果の注記 */}
               <CalculatorNote />
