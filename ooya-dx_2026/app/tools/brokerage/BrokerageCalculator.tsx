@@ -1,327 +1,293 @@
 'use client'
 
 import Link from 'next/link'
+import { ArrowRight, Calculator, TrendingUp } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
-import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
+// 早見表は3列カスタムテーブルを使用
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
-import { RelatedTools } from '@/components/tools/RelatedTools'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
-import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
-import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { BrokerageCalculatorCompact } from '@/components/calculators'
 import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface BrokerageCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
-
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '不動産売買の仲介手数料 計算シミュレーション｜早見表付き'
+const PAGE_TITLE = '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応'
 
-// 目次データ（見出しの一元管理）
-const tocItems: TocItem[] = [
-  { id: 'about', title: '仲介手数料とは', level: 2 },
-  { id: 'calculation', title: '計算方法（速算式）', level: 3 },
-  { id: 'rate', title: '正式な料率', level: 3 },
-  { id: 'example', title: '具体的な計算例', level: 3 },
-  { id: 'revision2024', title: '2024年法改正について', level: 2 },
-  { id: 'payment', title: '支払いと仕組み', level: 2 },
-  { id: 'timing', title: '支払いのタイミング', level: 3 },
-  { id: 'type', title: '両手仲介と片手仲介', level: 3 },
-  { id: 'free', title: '仲介手数料がかからないケース', level: 2 },
-  { id: 'difference', title: '売買と賃貸の違い', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
+// 早見表データ（主要価格帯）- 適用料率・計算式を列として表示
+// 800万円以下は2024年法改正特例（最大33万円）の対象
+const quickReferenceData = [
+  { price: '100万円', rate: '5%', formula: '100万×5%=5万', fee: '5.5万円', hasSpecialProvision: true },
+  { price: '300万円', rate: '4%+2万円', formula: '300万×4%+2万=14万', fee: '15.4万円', hasSpecialProvision: true },
+  { price: '500万円', rate: '3%+6万円', formula: '500万×3%+6万=21万', fee: '23.1万円', hasSpecialProvision: true },
+  { price: '800万円', rate: '3%+6万円', formula: '800万×3%+6万=30万', fee: '33万円', hasSpecialProvision: true },
+  { price: '1,000万円', rate: '3%+6万円', formula: '1,000万×3%+6万=36万', fee: '39.6万円', hasSpecialProvision: false },
+  { price: '2,000万円', rate: '3%+6万円', formula: '2,000万×3%+6万=66万', fee: '72.6万円', hasSpecialProvision: false },
+  { price: '3,000万円', rate: '3%+6万円', formula: '3,000万×3%+6万=96万', fee: '105.6万円', hasSpecialProvision: false },
+  { price: '5,000万円', rate: '3%+6万円', formula: '5,000万×3%+6万=156万', fee: '171.6万円', hasSpecialProvision: false },
+  { price: '7,000万円', rate: '3%+6万円', formula: '7,000万×3%+6万=216万', fee: '237.6万円', hasSpecialProvision: false },
+  { price: '1億円', rate: '3%+6万円', formula: '1億×3%+6万=306万', fee: '336.6万円', hasSpecialProvision: false }
 ]
 
-// 早見表データ（主要価格帯）
-const quickReferenceData: QuickReferenceRow[] = [
-  { label: '500万円', value: '23.1万円', subValue: '税抜21万円' },
-  { label: '1,000万円', value: '39.6万円', subValue: '税抜36万円' },
-  { label: '2,000万円', value: '72.6万円', subValue: '税抜66万円' },
-  { label: '3,000万円', value: '105.6万円', subValue: '税抜96万円' },
-  { label: '4,000万円', value: '138.6万円', subValue: '税抜126万円' },
-  { label: '5,000万円', value: '171.6万円', subValue: '税抜156万円' },
-  { label: '6,000万円', value: '204.6万円', subValue: '税抜186万円' },
-  { label: '7,000万円', value: '237.6万円', subValue: '税抜216万円' },
-  { label: '8,000万円', value: '270.6万円', subValue: '税抜246万円' },
-  { label: '9,000万円', value: '303.6万円', subValue: '税抜276万円' },
-  { label: '1億円', value: '336.6万円', subValue: '税抜306万円' }
+// 関連ツールデータ
+const relatedCalculators = [
+  {
+    href: '/tools/stamp-duty',
+    title: '印紙税計算',
+    description: '売買契約書の印紙代'
+  },
+  {
+    href: '/tools/registration-tax',
+    title: '登録免許税計算',
+    description: '所有権移転登記の税額'
+  },
+  {
+    href: '/tools/acquisition-tax',
+    title: '不動産取得税計算',
+    description: '取得時にかかる税金'
+  },
+  {
+    href: '/tools/transfer-income-tax',
+    title: '譲渡所得税計算',
+    description: '売却時の税金'
+  },
 ]
 
-export function BrokerageCalculator({ relatedGlossary = [] }: BrokerageCalculatorProps) {
+export function BrokerageCalculator() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-        <LandingHeader />
+      <LandingHeader />
 
-        {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[72px] sm:h-[88px]"></div>
+      {/* ヘッダー固定時のスペーサー */}
+      <div className="h-[72px] sm:h-[88px]"></div>
 
-        <main className="flex-1">
-          <article className="max-w-2xl mx-auto px-5 py-12">
-            {/* パンくず */}
-            <ToolsBreadcrumb currentPage={PAGE_TITLE} />
+      <main className="flex-1">
+        {/* 2カラムレイアウト */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+          <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-10">
+            {/* 左カラム（メインコンテンツ） */}
+            <article>
+              {/* パンくず */}
+              <ToolsBreadcrumb currentPage={PAGE_TITLE} />
 
-            {/* カテゴリー & 日付 */}
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-                計算ツール
-              </span>
-              {(() => {
-                const toolInfo = getToolInfo('/tools/brokerage')
-                return toolInfo?.lastUpdated ? (
-                  <time className="text-xs text-gray-400">
-                    {formatToolDate(toolInfo.lastUpdated)}
-                  </time>
-                ) : null
-              })()}
-            </div>
-
-            {/* タイトル */}
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
-              {PAGE_TITLE}
-            </h1>
-
-            {/* シェアボタン */}
-            <div className="mb-4">
-              <ShareButtons title={PAGE_TITLE} />
-            </div>
-
-            <p className="text-gray-600 mb-8">
-              売買価格を入力するだけで、仲介手数料の上限額を瞬時に計算します。
-            </p>
-
-            {/* シミュレーター本体（コンパクト版コンポーネント） */}
-            <BrokerageCalculatorCompact showTitle={true} />
-
-            {/* 計算結果の注記 */}
-            <CalculatorNote />
-
-            {/* 早見表（シミュレーター直下） */}
-            <section className="mb-12">
-              <QuickReferenceTable
-                title="仲介手数料 早見表"
-                description="主要な売買価格に対する仲介手数料の目安です。"
-                headers={['売買価格', '仲介手数料（税込）']}
-                rows={quickReferenceData}
-                note="※上記は上限額です。実際の手数料は不動産会社との契約内容により異なる場合があります。"
-              />
-            </section>
-
-            {/* 目次（自動生成） */}
-            <TableOfContents items={tocItems} />
-
-            {/* 解説セクション */}
-            <section className="mb-12">
-              <SectionHeading id="about" items={tocItems} />
-              <p className="text-gray-700 mb-4 leading-relaxed">
-                仲介手数料とは、不動産売買の際に、売主・買主と不動産会社との間で仲介契約を結び、取引が成立した場合に不動産会社に支払う報酬のことです。
-                不動産会社は物件の紹介、内見の手配、契約書類の作成、価格交渉のサポートなど、取引全体をサポートする対価として仲介手数料を受け取ります。
-              </p>
-
-              <SectionHeading id="calculation" items={tocItems} />
-              <p className="text-gray-700 mb-4 leading-relaxed">
-                仲介手数料の上限額は法律で定められており、以下の計算式で求められます。
-              </p>
-
-              <div className="bg-gray-100 rounded-lg p-4 mb-4">
-                <p className="font-mono text-gray-800 text-center">
-                  売買価格 × 3% + 6万円 + 消費税
-                </p>
-                <p className="text-xs text-gray-500 text-center mt-2">
-                  ※400万円を超える取引の場合
-                </p>
+              {/* カテゴリー & 日付 */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
+                <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+                  計算ツール
+                </span>
+                <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <span>公開日：2026年1月15日</span>
+                  {(() => {
+                    const toolInfo = getToolInfo('/tools/brokerage')
+                    return toolInfo?.lastUpdated ? (
+                      <span>更新日：{formatToolDate(toolInfo.lastUpdated)}</span>
+                    ) : null
+                  })()}
+                </div>
               </div>
 
-              <SectionHeading id="rate" items={tocItems} />
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>200万円以下の部分：5%</li>
-                <li>200万円超〜400万円以下の部分：4%</li>
-                <li>400万円超の部分：3%</li>
-              </ul>
-              <p className="text-sm text-gray-600 mt-3">
-                速算式「3%+6万円」は、上記の料率を一括で計算できる便利な公式です。
-              </p>
+              {/* タイトル */}
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
+                {PAGE_TITLE}
+              </h1>
 
-              <SectionHeading id="revision2024" items={tocItems} />
-              <p className="text-gray-700 mb-3 leading-relaxed">
-                2024年7月1日に国土交通省の告示が改正され、<span className="font-medium">800万円以下の物件</span>について仲介手数料の特例が設けられました。
-              </p>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-                <p className="text-sm font-medium text-amber-900 mb-2">改正のポイント</p>
-                <ul className="list-disc list-inside text-gray-700 space-y-2 text-sm">
-                  <li>対象：売買価格800万円以下の宅地・建物</li>
-                  <li>上限：売主・買主それぞれから最大<span className="font-medium">33万円（税込）</span></li>
-                  <li>目的：空き家等の流通促進</li>
-                </ul>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">
-                この特例は、依頼者への事前説明と合意が必要です。本シミュレーターでは通常の計算式で算出していますので、800万円以下の物件については不動産会社にご確認ください。
-              </p>
-              <p className="text-xs text-gray-500">
-                参照：
-                <a
-                  href="https://www.mlit.go.jp/totikensangyo/const/1_6_bf_000013.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline ml-1"
-                >
-                  国土交通省「不動産取引に関するお知らせ」
-                </a>
-                <span className="mx-1">|</span>
-                <a
-                  href="https://biz.homes.jp/column/topics-00146"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  LIFULL HOME'S「800万円以下の不動産契約で仲介手数料見直し」
-                </a>
-              </p>
-
-              <SectionHeading id="example" items={tocItems} />
-              <p className="text-gray-700 mb-3 leading-relaxed">
-                3,000万円の物件を購入する場合の仲介手数料を計算してみましょう。
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <ul className="text-gray-700 space-y-2 text-sm">
-                  <li>① 売買価格：3,000万円</li>
-                  <li>② 速算式：3,000万円 × 3% + 6万円 = 96万円（税抜）</li>
-                  <li>③ 消費税：96万円 × 10% = 9.6万円</li>
-                  <li>④ <span className="font-semibold">合計：105.6万円（税込）</span></li>
-                </ul>
+              {/* シェアボタン */}
+              <div className="mb-6">
+                <ShareButtons title={PAGE_TITLE} />
               </div>
 
-              <SectionHeading id="payment" items={tocItems} />
+              {/* シミュレーター本体（コンパクト版コンポーネント） */}
+              <BrokerageCalculatorCompact showTitle={false} />
 
-              <SectionHeading id="timing" items={tocItems} />
-              <p className="text-gray-700 mb-3 leading-relaxed">
-                仲介手数料の支払いタイミングは不動産会社によって異なりますが、一般的には以下のパターンが多いです。
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>売買契約時に50%、決済・引き渡し時に50%</li>
-                <li>決済・引き渡し時に全額</li>
-              </ul>
-              <p className="text-sm text-gray-600 mt-3">
-                契約前に不動産会社へ確認しておくことをおすすめします。
-              </p>
+              {/* 計算結果の注記 */}
+              <CalculatorNote />
 
-              <SectionHeading id="type" items={tocItems} />
-              <p className="text-gray-700 mb-3 leading-relaxed">
-                不動産取引には「両手仲介」と「片手仲介」の2つのパターンがあります。
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li><span className="font-medium">両手仲介</span>：1社の不動産会社が売主・買主の両方を仲介。双方から手数料を受け取る</li>
-                <li><span className="font-medium">片手仲介</span>：売主側と買主側で別々の不動産会社が仲介。それぞれの会社が片方から手数料を受け取る</li>
-              </ul>
-              <p className="text-sm text-gray-600 mt-3">
-                どちらの場合でも、買主・売主が支払う手数料の上限額は同じです。
-              </p>
+              {/* 早見表（4列テーブル） */}
+              <section className="mb-8 mt-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">仲介手数料 早見表</h2>
+                <p className="text-sm text-gray-600 mb-4">主要な売買価格に対する仲介手数料の目安です。</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">売買価格</th>
+                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">適用料率</th>
+                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">計算式（税抜）</th>
+                        <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-700">税込</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {quickReferenceData.map((row, index) => (
+                        <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="border border-gray-300 px-3 py-2 text-left text-gray-900">{row.price}</td>
+                          <td className="border border-gray-300 px-3 py-2 text-left text-gray-900 text-sm">{row.rate}</td>
+                          <td className="border border-gray-300 px-3 py-2 text-left text-gray-900 text-sm font-mono">{row.formula}</td>
+                          <td className="border border-gray-300 px-3 py-2 text-left font-semibold text-gray-900">{row.fee}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-sm text-gray-600 mt-2">※上記は上限額です。実際の手数料は不動産会社との契約内容により異なる場合があります。</p>
+                <p className="text-sm text-gray-600 mt-1">※特例：2024年7月法改正により、800万円以下の物件は最大33万円（税込）が請求される場合があります。</p>
+              </section>
 
-              <SectionHeading id="free" items={tocItems} />
-              <p className="text-gray-700 mb-3 leading-relaxed">
-                仲介手数料は「仲介（媒介）」に対する報酬です。そのため、仲介がない以下のケースでは仲介手数料が発生しません。
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>売主から直接購入する場合（売主物件）</li>
-                <li>不動産会社が売主の場合（自社物件）</li>
-                <li>個人間で直接取引する場合</li>
-              </ul>
-              <p className="text-xs text-gray-500 mt-3">
-                参照：
-                <a
-                  href="https://www.homes.co.jp/cont/money/money_00356/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline ml-1"
+              {/* 解説ページへのリンク */}
+              <section className="mb-12">
+                <Link
+                  href="/tools/brokerage/guide"
+                  className="flex items-center justify-between p-4 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group border border-gray-200"
                 >
-                  LIFULL HOME'S「不動産における仲介手数料について」
-                </a>
-              </p>
+                  <div>
+                    <p className="font-medium text-gray-900 group-hover:text-blue-700">
+                      仲介手数料の仕組みを詳しく見る
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      計算方法・2024年法改正・支払いタイミングなど
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 flex-shrink-0" />
+                </Link>
+              </section>
 
-              <SectionHeading id="difference" items={tocItems} />
-              <p className="text-gray-700 mb-3 leading-relaxed">
-                仲介手数料は売買と賃貸で計算方法が異なります。
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li><span className="font-medium">売買</span>：売買価格に応じた料率（本ページの計算式）</li>
-                <li><span className="font-medium">賃貸</span>：家賃の1ヶ月分が上限（貸主・借主合わせて）</li>
-              </ul>
-              <p className="text-sm text-gray-600 mt-3">
-                本シミュレーターは売買の仲介手数料を計算するためのツールです。
-              </p>
+              {/* 免責事項 */}
+              <ToolDisclaimer />
 
-              {relatedGlossary.length > 0 && (
-                <>
-                  <SectionHeading id="glossary" items={tocItems} />
-                  <ul className="space-y-2">
-                    {relatedGlossary.map((item) => (
-                      <li key={item.slug}>
-                        <Link
-                          href={`/glossary/${item.slug}`}
-                          className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                        >
-                          <span className="text-gray-400 mr-1">›</span>
-                          {item.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </section>
-
-            {/* 関連ツール - ツールが増えたら表示 */}
-            {/*
-            <section id="related" className="mb-12">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">関連ツール</h2>
-              <div className="space-y-3">
-                {relatedTools.map((tool) => (
+              {/* モバイル用：関連ツール・CTA（PCでは右カラムに表示） */}
+              <div className="lg:hidden mt-12 space-y-8">
+                {/* 賃貸経営シミュレーターCTA */}
+                <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 border border-primary-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingUp className="h-5 w-5 text-primary-600" />
+                    <span className="text-xs font-medium text-primary-600 bg-white px-2 py-0.5 rounded">
+                      無料
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    賃貸経営シミュレーター
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。
+                    物件購入の意思決定をデータで支援します。
+                  </p>
                   <Link
-                    key={tool.href}
-                    href={tool.href}
-                    className="flex items-center justify-between p-4 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group"
+                    href="/simulator"
+                    className="inline-flex items-center justify-center w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
                   >
-                    <div>
-                      <p className="font-medium text-gray-900 group-hover:text-blue-700">
-                        {tool.name}
-                      </p>
-                      <p className="text-sm text-gray-600">{tool.description}</p>
-                    </div>
-                    <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500" />
+                    無料でシミュレーションをする
+                    <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
-                ))}
+                </div>
+
+                {/* 関連計算ツール */}
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">関連計算ツール</h3>
+                  <div className="space-y-2">
+                    {relatedCalculators.map((tool) => (
+                      <Link
+                        key={tool.href}
+                        href={tool.href}
+                        className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-primary-600">
+                            {tool.title}
+                          </p>
+                          <p className="text-xs text-gray-500">{tool.description}</p>
+                        </div>
+                        <Calculator className="h-4 w-4 text-gray-400 group-hover:text-primary-500" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </section>
-            */}
 
-            {/* 免責事項 */}
-            <ToolDisclaimer />
+              {/* 会社概要・運営者 */}
+              <div className="mt-16">
+                <CompanyProfileCompact />
+              </div>
+            </article>
 
-            {/* 関連シミュレーター */}
-            <RelatedTools currentPath="/tools/brokerage" />
+            {/* 右カラム（サイドバー）- PCのみ表示 */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-28 space-y-6">
+                {/* 賃貸経営シミュレーターCTA */}
+                <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-5 border border-primary-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingUp className="h-5 w-5 text-primary-600" />
+                    <span className="text-xs font-medium text-primary-600 bg-white px-2 py-0.5 rounded">
+                      無料
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-2">
+                    賃貸経営シミュレーター
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。物件購入の意思決定をデータで支援します。
+                  </p>
+                  <Link
+                    href="/simulator"
+                    className="inline-flex items-center justify-center w-full px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  >
+                    無料でシミュレーションをする
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Link>
+                </div>
 
-            {/* CTA */}
-            <div className="mt-16">
-              <SimulatorCTA />
-            </div>
+                {/* 関連計算ツール */}
+                <div className="bg-white rounded-xl p-5 border border-gray-200">
+                  <h3 className="text-sm font-bold text-gray-900 mb-4">関連計算ツール</h3>
+                  <div className="space-y-2">
+                    {relatedCalculators.map((tool) => (
+                      <Link
+                        key={tool.href}
+                        href={tool.href}
+                        className="flex items-center justify-between p-2.5 hover:bg-gray-50 rounded-lg transition-colors group"
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 group-hover:text-primary-600">
+                            {tool.title}
+                          </p>
+                          <p className="text-xs text-gray-500">{tool.description}</p>
+                        </div>
+                        <Calculator className="h-4 w-4 text-gray-400 group-hover:text-primary-500 flex-shrink-0" />
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <Link
+                      href="/tools"
+                      className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center"
+                    >
+                      すべての計算ツールを見る
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Link>
+                  </div>
+                </div>
 
-            {/* 会社概要・運営者 */}
-            <div className="mt-16">
-              <CompanyProfileCompact />
-            </div>
-          </article>
-        </main>
+                {/* 解説へのリンク */}
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3 className="text-sm font-bold text-gray-900 mb-2">仲介手数料について</h3>
+                  <p className="text-xs text-gray-600 mb-3">
+                    計算方法・2024年法改正・支払いタイミングなど
+                  </p>
+                  <Link
+                    href="/tools/brokerage/guide"
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center"
+                  >
+                    詳しく見る
+                    <ArrowRight className="h-3 w-3 ml-1" />
+                  </Link>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
 
-        <LandingFooter />
-      </div>
+      <LandingFooter />
+    </div>
   )
 }
