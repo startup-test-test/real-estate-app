@@ -22,12 +22,6 @@ export default function LinkPage() {
       date: '2026年1月21日',
     },
     {
-      name: 'いしはた歯科クリニック',
-      description: '',
-      url: 'https://ishihata-dental.com/',
-      date: '2024年12月26日',
-    },
-    {
       name: '無料掲載ﾘﾝｸ集ｲｰﾀｳﾝ埼玉',
       description: '',
       url: 'https://www.saitamaken.net/',
@@ -43,12 +37,6 @@ export default function LinkPage() {
       name: '不動産応援.com',
       description: '不動産・建築専門　のぼり&看板&現場シートの製作',
       url: 'https://www.fudousan-ouen.com/',
-      date: '2024年12月25日',
-    },
-    {
-      name: '近畿の魅力をまるっと掲載「LOVE関西」',
-      description: '「LOVE関西」は関西地区の魅力的な地域ブランド、まちおこし活動など紹介しております。愛と希望溢れる近畿の創造を願い頑張る地域と人々を応援いたします。',
-      url: 'http://love-kansai.jp/',
       date: '2024年12月25日',
     },
   ];

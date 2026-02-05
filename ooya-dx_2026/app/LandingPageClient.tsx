@@ -334,15 +334,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
 
           </div>
 
-          {/* View All Button */}
-          <div className="mt-10 text-center">
-            <a
-              href="/templates"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
-            >
-              すべてのテンプレートを見る
-            </a>
-          </div>
         </div>
       </section>
 
