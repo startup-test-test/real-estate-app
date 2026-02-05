@@ -81,7 +81,7 @@ export const toolCategories: ToolCategory[] = [
     title: '売却',
     description: '売却時の費用・税金を計算',
     items: [
-      { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true, lastUpdated: '2026-02-04' },
+      { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true, lastUpdated: '2026-02-05' },
       { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true, lastUpdated: '2026-01-15' },
       { name: '売却手取り', description: '税引き後の手取り額を計算', href: '/tools/sale-proceeds', available: true, lastUpdated: '2026-01-15' },
       { name: 'デッドクロス', description: '発生時期を予測', href: '/tools/dead-cross', available: true, lastUpdated: '2026-01-15' },
