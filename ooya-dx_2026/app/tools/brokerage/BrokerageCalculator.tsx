@@ -16,7 +16,7 @@ import { BrokerageCalculatorCompact } from '@/components/calculators'
 import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 // ページタイトル（パンくず・h1で共通使用）
-const PAGE_TITLE = '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応'
+const PAGE_TITLE = '仲介手数料の計算シミュレーション【2026最新】800万特例対応'
 
 // 早見表データ（主要価格帯）- 適用料率・計算式を列として表示
 // 800万円以下は2024年法改正特例（最大33万円）の対象

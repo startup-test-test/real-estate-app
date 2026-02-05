@@ -5,18 +5,12 @@ const BASE_URL = 'https://ooya.tech';
 
 // SEO最適化されたメタデータ
 export const metadata: Metadata = {
-  title: '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応',
+  title: '仲介手数料の計算シミュレーション【2026最新】800万特例対応',
   description:
-    '不動産売買の仲介手数料を10秒で無料計算。2024年法改正の800万円特例にも対応。売買価格を入力するだけで税込金額がすぐわかります。早見表・計算式付き。',
-  keywords: [
-    '仲介手数料 計算',
-    '仲介手数料 シミュレーター',
-    '仲介手数料 早見表',
-    '不動産 仲介手数料 計算',
-  ],
+    '不動産売買の仲介手数料を無料で計算。2024年法改正の800万円特例に対応した2026年最新版。売買価格を入力するだけで税込金額を自動計算。速算式・早見表付き。',
   openGraph: {
-    title: '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応',
-    description: '不動産売買の仲介手数料を10秒で無料計算。2024年法改正の800万円特例にも対応。売買価格を入力するだけで税込金額がすぐわかります。',
+    title: '仲介手数料の計算シミュレーション【2026最新】800万特例対応',
+    description: '不動産売買の仲介手数料を無料で計算。2024年法改正の800万円特例に対応した2026年最新版。売買価格を入力するだけで税込金額を自動計算。速算式・早見表付き。',
     url: `${BASE_URL}/tools/brokerage`,
     siteName: '大家DX',
     type: 'website',
@@ -31,8 +25,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応',
-    description: '不動産売買の仲介手数料を10秒で無料計算。2024年法改正の800万円特例にも対応。売買価格を入力するだけで税込金額がすぐわかります。',
+    title: '仲介手数料の計算シミュレーション【2026最新】800万特例対応',
+    description: '不動産売買の仲介手数料を無料で計算。2024年法改正の800万円特例に対応した2026年最新版。売買価格を入力するだけで税込金額を自動計算。速算式・早見表付き。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
 }
@@ -66,11 +60,11 @@ const softwareApplicationSchema = {
 const webPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  name: '【2026年最新】仲介手数料シミュレーター｜早見表・800万円特例対応',
-  description: '不動産売買の仲介手数料を瞬時に計算。2024年法改正の800万円特例にも対応。早見表・計算式付き。',
+  name: '仲介手数料の計算シミュレーション【2026最新】800万特例対応',
+  description: '不動産売買の仲介手数料を無料で計算。2024年法改正の800万円特例に対応した2026年最新版。売買価格を入力するだけで税込金額を自動計算。速算式・早見表付き。',
   url: `${BASE_URL}/tools/brokerage`,
   datePublished: '2026-01-15',
-  dateModified: '2026-02-04',
+  dateModified: '2026-02-05',
   publisher: {
     '@type': 'Organization',
     name: '大家DX',
@@ -134,7 +128,7 @@ const breadcrumbSchema = {
     {
       '@type': 'ListItem',
       position: 3,
-      name: '仲介手数料シミュレーター',
+      name: '仲介手数料の計算シミュレーション',
       item: `${BASE_URL}/tools/brokerage`
     }
   ]
