@@ -1,19 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { LandingHeader } from '@/components/landing-header'
-import { LandingFooter } from '@/components/landing-footer'
+import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
-import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
-import { RelatedTools } from '@/components/tools/RelatedTools'
-import { SimulatorCTA } from '@/components/tools/SimulatorCTA'
-import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
-import { CalculatorNote } from '@/components/tools/CalculatorNote'
-import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
-import { ShareButtons } from '@/components/tools/ShareButtons'
 import { RegistrationTaxCalculatorCompact } from '@/components/calculators'
-import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
 interface GlossaryItem {
   slug: string
@@ -51,156 +42,127 @@ const tocItems: TocItem[] = [
   { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
+// =================================================================
+// シミュレーター部分
+// =================================================================
+function RegistrationTaxSimulator() {
+  return (
+    <>
+      <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
+        土地・建物の固定資産税評価額または売買価格を入力するだけで、登録免許税の目安を概算できます。
+      </p>
+
+      {/* シミュレーター本体（コンパクト版コンポーネント） */}
+      <RegistrationTaxCalculatorCompact showTitle={true} />
+    </>
+  )
+}
+
+// =================================================================
+// 追加コンテンツ部分
+// =================================================================
+function RegistrationTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+  return (
+    <>
+      {/* 早見表 */}
+      <section className="mt-10 mb-12">
+        <QuickReferenceTable
+          title="登録免許税 早見表（新築の場合）"
+          description="新築建売住宅購入時の目安です。自己居住用・軽減税率適用・ローン80%の場合。"
+          headers={['物件価格', '登録免許税（税込）']}
+          rows={quickReferenceData}
+          note="※土地・建物を50:50、土地評価70%、建物評価60%で概算。中古住宅の場合は建物の税率が異なるため金額が変わります。"
+        />
+      </section>
+
+      {/* 目次 */}
+      <TableOfContents items={tocItems} />
+
+      {/* 解説セクション */}
+      <section className="mb-12">
+        <SectionHeading id="about" items={tocItems} />
+        <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
+          登録免許税は、不動産を取得した際に法務局で行う「登記」に対して課される国税とされています。
+          所有権の移転（売買）、新築建物の保存登記、住宅ローンの抵当権設定登記などが対象となるとされています。
+        </p>
+        <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
+          納税のタイミングは登記申請時とされており、実務上は不動産の決済日（引き渡し日）に司法書士を通じて納付することが多いとされています。
+          費用は買主が負担するケースが多いとされています。
+        </p>
+
+        <SectionHeading id="calculation" items={tocItems} />
+        <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
+          登録免許税は以下の計算式で算出されるとされています。
+        </p>
+        <div className="bg-gray-100 rounded-lg p-3 sm:p-4 mb-4">
+          <p className="font-mono text-gray-800 text-center text-sm sm:text-base">
+            登録免許税 = 課税標準額 × 税率
+          </p>
+          <p className="text-xs text-gray-500 text-center mt-2">
+            ※課税標準額は固定資産税評価額（売買価格ではありません）
+          </p>
+        </div>
+        <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
+          <strong>課税標準額</strong>には「固定資産税評価額」が使用されるとされています。
+          これは市場価格（売買価格）とは異なり、土地は時価の約70%、建物は約50〜60%程度が目安とされています。
+          新築建物の場合は、法務局が定める認定価格（床面積×単価）が使用されるとされています。
+        </p>
+
+        <SectionHeading id="reduction" items={tocItems} />
+        <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
+          自己居住用の住宅には軽減税率が適用される場合があります。
+          適用条件や税率の詳細は<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7191.htm" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国税庁のサイト</a>をご確認ください。
+        </p>
+
+        <SectionHeading id="example" items={tocItems} />
+        <p className="text-sm sm:text-base text-gray-700 mb-3 leading-relaxed">
+          例えば、4,000万円の新築建売住宅（土地2,000万円・建物2,000万円）をローン3,200万円で購入する場合の目安：
+        </p>
+        <div className="bg-gray-50 rounded-lg p-3 sm:p-4 mb-4">
+          <ul className="text-gray-700 space-y-2 text-xs sm:text-sm">
+            <li>① <strong>土地移転登記</strong>：評価額1,400万円 × 1.5% = <strong>210,000円</strong></li>
+            <li>② <strong>建物保存登記</strong>：100㎡ × 107,000円 × 0.15% = <strong>16,000円</strong></li>
+            <li>③ <strong>抵当権設定</strong>：3,200万円 × 0.1% = <strong>32,000円</strong></li>
+            <li className="pt-2 border-t border-gray-200">
+              <span className="font-semibold">合計：約258,000円</span>
+            </li>
+          </ul>
+        </div>
+
+        {relatedGlossary.length > 0 && (
+          <>
+            <SectionHeading id="glossary" items={tocItems} />
+            <ul className="space-y-2">
+              {relatedGlossary.map((item) => (
+                <li key={item.slug}>
+                  <Link
+                    href={`/glossary/${item.slug}`}
+                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
+                  >
+                    <span className="text-gray-400 mr-1">›</span>
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+    </>
+  )
+}
+
+// =================================================================
+// メインコンポーネント
+// =================================================================
 export function RegistrationTaxCalculator({ relatedGlossary = [] }: RegistrationTaxCalculatorProps) {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
-      <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
-
-      <main className="flex-1">
-        <article className="max-w-2xl mx-auto px-4 sm:px-5 py-4 sm:py-6 md:py-8">
-          {/* パンくず */}
-          <ToolsBreadcrumb currentPage={PAGE_TITLE} />
-
-          {/* カテゴリー & 日付 */}
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-              計算ツール
-            </span>
-            {(() => {
-              const toolInfo = getToolInfo('/tools/registration-tax')
-              return toolInfo?.lastUpdated ? (
-                <time className="text-xs text-gray-400">
-                  {formatToolDate(toolInfo.lastUpdated)}
-                </time>
-              ) : null
-            })()}
-          </div>
-
-          {/* タイトル */}
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-4">
-            {PAGE_TITLE}
-          </h1>
-
-          {/* シェアボタン */}
-          <div className="mb-4">
-            <ShareButtons title={PAGE_TITLE} />
-          </div>
-
-          <p className="text-gray-600 mb-8">
-            土地・建物の固定資産税評価額または売買価格を入力するだけで、登録免許税の目安を概算できます。
-          </p>
-
-          {/* シミュレーター本体（コンパクト版コンポーネント） */}
-          <RegistrationTaxCalculatorCompact showTitle={true} />
-
-          {/* 計算結果の注記 */}
-          <CalculatorNote />
-
-          {/* 早見表 */}
-          <section className="mb-12">
-            <QuickReferenceTable
-              title="登録免許税 早見表（新築の場合）"
-              description="新築建売住宅購入時の目安です。自己居住用・軽減税率適用・ローン80%の場合。"
-              headers={['物件価格', '登録免許税（税込）']}
-              rows={quickReferenceData}
-              note="※土地・建物を50:50、土地評価70%、建物評価60%で概算。中古住宅の場合は建物の税率が異なるため金額が変わります。"
-            />
-          </section>
-
-          {/* 目次 */}
-          <TableOfContents items={tocItems} />
-
-          {/* 解説セクション */}
-          <section className="mb-12">
-            <SectionHeading id="about" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              登録免許税は、不動産を取得した際に法務局で行う「登記」に対して課される国税とされています。
-              所有権の移転（売買）、新築建物の保存登記、住宅ローンの抵当権設定登記などが対象となるとされています。
-            </p>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              納税のタイミングは登記申請時とされており、実務上は不動産の決済日（引き渡し日）に司法書士を通じて納付することが多いとされています。
-              費用は買主が負担するケースが多いとされています。
-            </p>
-
-            <SectionHeading id="calculation" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              登録免許税は以下の計算式で算出されるとされています。
-            </p>
-            <div className="bg-gray-100 rounded-lg p-4 mb-4">
-              <p className="font-mono text-gray-800 text-center">
-                登録免許税 = 課税標準額 × 税率
-              </p>
-              <p className="text-xs text-gray-500 text-center mt-2">
-                ※課税標準額は固定資産税評価額（売買価格ではありません）
-              </p>
-            </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              <strong>課税標準額</strong>には「固定資産税評価額」が使用されるとされています。
-              これは市場価格（売買価格）とは異なり、土地は時価の約70%、建物は約50〜60%程度が目安とされています。
-              新築建物の場合は、法務局が定める認定価格（床面積×単価）が使用されるとされています。
-            </p>
-
-            <SectionHeading id="reduction" items={tocItems} />
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              自己居住用の住宅には軽減税率が適用される場合があります。
-              適用条件や税率の詳細は<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7191.htm" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">国税庁のサイト</a>をご確認ください。
-            </p>
-
-            <SectionHeading id="example" items={tocItems} />
-            <p className="text-gray-700 mb-3 leading-relaxed">
-              例えば、4,000万円の新築建売住宅（土地2,000万円・建物2,000万円）をローン3,200万円で購入する場合の目安：
-            </p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <ul className="text-gray-700 space-y-2 text-sm">
-                <li>① <strong>土地移転登記</strong>：評価額1,400万円 × 1.5% = <strong>210,000円</strong></li>
-                <li>② <strong>建物保存登記</strong>：100㎡ × 107,000円 × 0.15% = <strong>16,000円</strong></li>
-                <li>③ <strong>抵当権設定</strong>：3,200万円 × 0.1% = <strong>32,000円</strong></li>
-                <li className="pt-2 border-t border-gray-200">
-                  <span className="font-semibold">合計：約258,000円</span>
-                </li>
-              </ul>
-            </div>
-
-            {relatedGlossary.length > 0 && (
-              <>
-                <SectionHeading id="glossary" items={tocItems} />
-                <ul className="space-y-2">
-                  {relatedGlossary.map((item) => (
-                    <li key={item.slug}>
-                      <Link
-                        href={`/glossary/${item.slug}`}
-                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                      >
-                        <span className="text-gray-400 mr-1">›</span>
-                        {item.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </section>
-
-          {/* 免責事項 */}
-          <ToolDisclaimer />
-
-          {/* 関連シミュレーター */}
-          <RelatedTools currentPath="/tools/registration-tax" />
-
-          {/* CTA */}
-          <div className="mt-16">
-            <SimulatorCTA />
-          </div>
-
-          {/* 会社概要・運営者 */}
-          <div className="mt-16">
-            <CompanyProfileCompact />
-          </div>
-        </article>
-      </main>
-
-      <LandingFooter />
-    </div>
+    <ToolPageLayout
+      title={PAGE_TITLE}
+      toolPath="/tools/registration-tax"
+      additionalContent={<RegistrationTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+    >
+      <RegistrationTaxSimulator />
+    </ToolPageLayout>
   )
 }

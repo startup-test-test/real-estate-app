@@ -5,7 +5,6 @@ import { Calculator, ChevronRight } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
-import { RelatedTools } from '@/components/tools/RelatedTools'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { TOOLS_CATEGORY_NAME } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
@@ -281,8 +280,6 @@ export function BrokerageGuide({ relatedGlossary = [] }: BrokerageGuideProps) {
           {/* 免責事項 */}
           <ToolDisclaimer />
 
-          {/* 関連シミュレーター */}
-          <RelatedTools currentPath="/tools/brokerage" />
 
           {/* 会社概要・運営者 */}
           <div className="mt-16">
