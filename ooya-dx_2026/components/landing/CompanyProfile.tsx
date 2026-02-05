@@ -18,7 +18,7 @@ const CompanyProfile: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-2 sm:gap-4">
                 <h3 className="text-sm font-semibold text-gray-600">会社名</h3>
                 <p className="text-base text-gray-900">
-                  <a href="https://www.ooya.tech/company" className="text-blue-600 hover:text-blue-800 underline">
+                  <a href="https://ooya.tech/company" className="text-blue-600 hover:text-blue-800 underline">
                     株式会社StartupMarketing
                   </a>
                 </p>

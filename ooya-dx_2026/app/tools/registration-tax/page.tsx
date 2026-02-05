@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       '不動産購入時の登録免許税を無料で計算。土地・建物の移転登記、新築の保存登記、抵当権設定登記に対応。',
     type: 'website',
     locale: 'ja_JP',
-    url: 'https://www.ooya.tech/tools/registration-tax',
+    url: 'https://ooya.tech/tools/registration-tax',
   },
   twitter: {
     card: 'summary_large_image',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       '不動産購入時の登録免許税を無料で計算。軽減税率も自動判定。',
   },
   alternates: {
-    canonical: 'https://www.ooya.tech/tools/registration-tax',
+    canonical: 'https://ooya.tech/tools/registration-tax',
   },
 }
 
@@ -43,7 +43,7 @@ const jsonLd = {
   name: '登録免許税シミュレーター',
   description:
     '不動産購入時の登録免許税を計算するシミュレーター。土地・建物の移転登記、保存登記、抵当権設定に対応。軽減税率も自動判定。',
-  url: 'https://www.ooya.tech/tools/registration-tax',
+  url: 'https://ooya.tech/tools/registration-tax',
   applicationCategory: 'FinanceApplication',
   operatingSystem: 'Web Browser',
   offers: {
@@ -54,7 +54,7 @@ const jsonLd = {
   creator: {
     '@type': 'Organization',
     name: '大家DX',
-    url: 'https://www.ooya.tech',
+    url: 'https://ooya.tech',
   },
 }
 
@@ -67,19 +67,19 @@ const breadcrumbJsonLd = {
       '@type': 'ListItem',
       position: 1,
       name: 'ホーム',
-      item: 'https://www.ooya.tech',
+      item: 'https://ooya.tech',
     },
     {
       '@type': 'ListItem',
       position: 2,
       name: '不動産・賃貸経営計算ツール',
-      item: 'https://www.ooya.tech/tools',
+      item: 'https://ooya.tech/tools',
     },
     {
       '@type': 'ListItem',
       position: 3,
       name: '登録免許税シミュレーター',
-      item: 'https://www.ooya.tech/tools/registration-tax',
+      item: 'https://ooya.tech/tools/registration-tax',
     },
   ],
 }

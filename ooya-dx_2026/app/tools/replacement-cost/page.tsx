@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: PAGE_DESCRIPTION,
   },
   alternates: {
-    canonical: 'https://www.ooya.tech/tools/replacement-cost',
+    canonical: 'https://ooya.tech/tools/replacement-cost',
   },
 }
 
@@ -50,7 +50,7 @@ const jsonLd = {
   author: {
     '@type': 'Organization',
     name: '大家DX',
-    url: 'https://www.ooya.tech',
+    url: 'https://ooya.tech',
   },
 }
 
@@ -62,19 +62,19 @@ const breadcrumbJsonLd = {
       '@type': 'ListItem',
       position: 1,
       name: 'トップ',
-      item: 'https://www.ooya.tech',
+      item: 'https://ooya.tech',
     },
     {
       '@type': 'ListItem',
       position: 2,
       name: '計算ツール',
-      item: 'https://www.ooya.tech/tools',
+      item: 'https://ooya.tech/tools',
     },
     {
       '@type': 'ListItem',
       position: 3,
       name: '再調達価格',
-      item: 'https://www.ooya.tech/tools/replacement-cost',
+      item: 'https://ooya.tech/tools/replacement-cost',
     },
   ],
 }
