@@ -11,6 +11,7 @@ const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
   title: '【テンプレート】シミュレーターを10秒で無料計算｜早見表付き',
+  robots: 'noindex, nofollow',
   description:
     'テンプレートの説明文。〇〇を入力するだけで、△△がすぐわかります。早見表付きで一目で確認。',
   keywords: [
