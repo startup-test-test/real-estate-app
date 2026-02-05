@@ -10,14 +10,6 @@ import { TOOLS_CATEGORY_NAME } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface BrokerageGuideProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // ページタイトル
 const PAGE_TITLE = '仲介手数料とは？計算方法・2024年法改正・支払いの仕組みを解説'
@@ -34,10 +26,9 @@ const tocItems: TocItem[] = [
   { id: 'type', title: '両手仲介と片手仲介', level: 3 },
   { id: 'free', title: '仲介手数料がかからないケース', level: 2 },
   { id: 'difference', title: '売買と賃貸の違い', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
-export function BrokerageGuide({ relatedGlossary = [] }: BrokerageGuideProps) {
+export function BrokerageGuide() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
@@ -239,24 +230,6 @@ export function BrokerageGuide({ relatedGlossary = [] }: BrokerageGuideProps) {
               <li><span className="font-medium">賃貸</span>：家賃の1ヶ月分が上限（貸主・借主合わせて）</li>
             </ul>
 
-            {relatedGlossary.length > 0 && (
-              <>
-                <SectionHeading id="glossary" items={tocItems} />
-                <ul className="space-y-2">
-                  {relatedGlossary.map((item) => (
-                    <li key={item.slug}>
-                      <Link
-                        href={`/glossary/${item.slug}`}
-                        className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                      >
-                        <span className="text-gray-400 mr-1">›</span>
-                        {item.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
           </section>
 
           {/* 計算機ページへのリンク（再掲） */}

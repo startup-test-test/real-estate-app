@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { CapRateCalculator } from './CapRateCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -93,8 +92,6 @@ const breadcrumbSchema = {
 }
 
 export default function CapRatePage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/cap-rate').map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -110,7 +107,7 @@ export default function CapRatePage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <CapRateCalculator relatedGlossary={relatedGlossary} />
+      <CapRateCalculator />
     </>
   )
 }

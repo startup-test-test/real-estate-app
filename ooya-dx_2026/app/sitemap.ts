@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
 import { getAllArticles } from '@/lib/mdx';
-import { getAllGlossaryTerms } from '@/lib/glossary';
 import fs from 'fs';
 import path from 'path';
 
@@ -55,15 +54,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  // 用語集ページ（自動検出）
-  const glossaryTerms = getAllGlossaryTerms();
-  const glossaryPages = glossaryTerms.map((term) => ({
-    url: `${BASE_URL}/glossary/${term.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }));
-
   // 静的ページ
   const staticPages = [
     {
@@ -80,12 +70,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${BASE_URL}/tools`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/glossary`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
@@ -173,5 +157,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...glossaryPages, ...articlePages];
+  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...articlePages];
 }

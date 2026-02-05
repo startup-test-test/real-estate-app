@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { Percent } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -17,28 +16,18 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'LTVの計算式', level: 3 },
   { id: 'reverse', title: '逆算ツール', level: 2 },
   { id: 'related-metrics', title: '関連指標との関係', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface LTVCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * LTV（借入比率）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function LTVCalculator({ relatedGlossary = [] }: LTVCalculatorProps) {
+export function LTVCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/ltv"
-      additionalContent={<LTVAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<LTVAdditionalContent />}
     >
       <LTVSimulator />
     </ToolPageLayout>
@@ -161,7 +150,7 @@ function LTVSimulator() {
 /**
  * LTVページ固有の追加コンテンツ
  */
-function LTVAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function LTVAdditionalContent() {
   const [reversePropertyPrice, setReversePropertyPrice] = useState<number>(0)
   const [targetLTV, setTargetLTV] = useState<number>(0)
   const [reverseEquityPropertyPrice, setReverseEquityPropertyPrice] = useState<number>(0)
@@ -291,24 +280,6 @@ function LTVAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
           </ul>
         </div>
 
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

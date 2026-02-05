@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -16,28 +15,18 @@ const tocItems: TocItem[] = [
   { id: 'about', title: 'キャッシュフロー（CF）とは', level: 2 },
   { id: 'formula', title: 'キャッシュフローの計算式', level: 3 },
   { id: 'cf-tree', title: 'キャッシュフローツリー', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface CFCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * キャッシュフローシミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function CFCalculator({ relatedGlossary = [] }: CFCalculatorProps) {
+export function CFCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/cf"
-      additionalContent={<CFAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<CFAdditionalContent />}
     >
       <CFSimulator />
     </ToolPageLayout>
@@ -208,7 +197,7 @@ function CFSimulator() {
 /**
  * CFページ固有の追加コンテンツ
  */
-function CFAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function CFAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -250,25 +239,6 @@ function CFAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIte
             <li><strong>ATCF</strong>：税引後キャッシュフロー（BTCFから税金を差し引いた額）</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

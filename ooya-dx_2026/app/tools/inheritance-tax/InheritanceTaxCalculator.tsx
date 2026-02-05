@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -12,15 +11,6 @@ import {
   INHERITANCE_TAX_QUICK_TABLE_NO_SPOUSE,
   formatManYen,
 } from '@/lib/calculators/inheritanceTax'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface InheritanceTaxCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // =================================================================
 // 早見表データ（3列：遺産総額・配偶者あり・配偶者なし）
@@ -40,7 +30,6 @@ const tocItems: TocItem[] = [
   { id: 'basic-deduction', title: '基礎控除の計算', level: 3 },
   { id: 'calculation', title: '相続税の計算方法', level: 3 },
   { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // シミュレーター本体
@@ -229,7 +218,7 @@ function InheritanceTaxSimulator() {
 }
 
 // 追加コンテンツ
-function InheritanceTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function InheritanceTaxAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -309,25 +298,6 @@ function InheritanceTaxAdditionalContent({ relatedGlossary }: { relatedGlossary:
             </tbody>
           </table>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* 参考リンク */}
@@ -360,12 +330,12 @@ function InheritanceTaxAdditionalContent({ relatedGlossary }: { relatedGlossary:
   )
 }
 
-export function InheritanceTaxCalculator({ relatedGlossary = [] }: InheritanceTaxCalculatorProps) {
+export function InheritanceTaxCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/inheritance-tax"
-      additionalContent={<InheritanceTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<InheritanceTaxAdditionalContent />}
     >
       <InheritanceTaxSimulator />
     </ToolPageLayout>

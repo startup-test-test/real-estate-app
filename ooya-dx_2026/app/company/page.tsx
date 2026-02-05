@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: '会社概要 | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingの会社概要。不動産テック事業「大家DX」の開発・運営、不動産業界向けシステム受託開発を行っています。',
+  alternates: {
+    canonical: '/company',
+  },
 };
 
 export default function CompanyPage() {
@@ -175,8 +178,6 @@ export default function CompanyPage() {
                 <li className="text-sm">
                   <span className="text-gray-500 font-medium">2024年10月：</span>
                   <span className="text-gray-900">
-                    <a href="https://omiya.keizai.biz/release/477943/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">大宮経済新聞</a>
-                    ・
                     <a href="https://saitama.publishing.3rd-in.co.jp/article/2aa1cd40-a89a-11f0-88f0-9ca3ba0a67df#gsc.tab=0" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">saitamaDays</a>
                     に掲載されました
                   </span>

@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { LTVCalculator } from './LTVCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -93,9 +92,6 @@ const breadcrumbSchema = {
 }
 
 export default function LTVPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/ltv')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -111,7 +107,7 @@ export default function LTVPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <LTVCalculator relatedGlossary={relatedGlossary} />
+      <LTVCalculator />
     </>
   )
 }

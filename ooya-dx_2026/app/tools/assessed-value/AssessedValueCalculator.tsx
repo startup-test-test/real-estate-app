@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
@@ -43,17 +42,7 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '積算評価（原価法）とは', level: 2 },
   { id: 'land-valuation', title: '土地の評価方法', level: 3 },
   { id: 'building-valuation', title: '建物の評価方法', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface Props {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // 早見表データ（構造別の法定耐用年数）
 const quickReferenceData = [
@@ -327,7 +316,7 @@ function AssessedValueSimulator() {
 // =================================================================
 // 追加コンテンツ部分
 // =================================================================
-function AssessedValueAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function AssessedValueAdditionalContent() {
   return (
     <>
       {/* 早見表 */}
@@ -386,25 +375,6 @@ function AssessedValueAdditionalContent({ relatedGlossary }: { relatedGlossary: 
         <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
           法定耐用年数を超えた建物（例：築25年の木造）は、積算評価上の建物価値はゼロとなります。
         </p>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )
@@ -413,12 +383,12 @@ function AssessedValueAdditionalContent({ relatedGlossary }: { relatedGlossary: 
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function AssessedValueCalculator({ relatedGlossary = [] }: Props) {
+export function AssessedValueCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/assessed-value"
-      additionalContent={<AssessedValueAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<AssessedValueAdditionalContent />}
     >
       <AssessedValueSimulator />
     </ToolPageLayout>

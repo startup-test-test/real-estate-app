@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { ROICalculator } from './ROICalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -93,10 +92,6 @@ const breadcrumbSchema = {
 }
 
 export default function ROIPage() {
-  // 関連用語を取得（用語側のrelatedToolsから逆引き）
-  const relatedGlossary = getGlossaryTermsByTool('/tools/roi')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -112,7 +107,7 @@ export default function ROIPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <ROICalculator relatedGlossary={relatedGlossary} />
+      <ROICalculator />
     </>
   )
 }

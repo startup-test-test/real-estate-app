@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
@@ -31,20 +30,7 @@ const tocItems: TocItem[] = [
   { id: 'noi', title: 'NOI（純営業収益）の計算', level: 3 },
   { id: 'cap-rate', title: 'キャップレートの目安', level: 3 },
   { id: 'example', title: '具体的な計算例', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-// =================================================================
-// 型定義
-// =================================================================
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface Props {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // =================================================================
 // シミュレーター部分
@@ -251,7 +237,7 @@ function IncomeCapitalizationSimulator() {
 // =================================================================
 // 追加コンテンツ部分
 // =================================================================
-function IncomeCapitalizationAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function IncomeCapitalizationAdditionalContent() {
   return (
     <>
       {/* 早見表 */}
@@ -356,24 +342,6 @@ function IncomeCapitalizationAdditionalContent({ relatedGlossary }: { relatedGlo
             <li>6. 収益価格：912万円 ÷ 5% = <span className="font-semibold">1億8,240万円</span></li>
           </ul>
         </div>
-
-        {/* 関連用語セクション */}
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <div className="flex flex-wrap gap-2">
-              {relatedGlossary.map((term) => (
-                <Link
-                  key={term.slug}
-                  href={`/glossary/${term.slug}`}
-                  className="inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors"
-                >
-                  {term.title}
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
       </section>
     </>
   )
@@ -382,12 +350,12 @@ function IncomeCapitalizationAdditionalContent({ relatedGlossary }: { relatedGlo
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function IncomeCapitalizationCalculator({ relatedGlossary = [] }: Props) {
+export function IncomeCapitalizationCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/income-capitalization"
-      additionalContent={<IncomeCapitalizationAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<IncomeCapitalizationAdditionalContent />}
     >
       <IncomeCapitalizationSimulator />
     </ToolPageLayout>

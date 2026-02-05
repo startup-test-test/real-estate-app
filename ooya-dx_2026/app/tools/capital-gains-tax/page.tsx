@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { CapitalGainsTaxCalculator } from './CapitalGainsTaxCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -93,9 +92,6 @@ const breadcrumbSchema = {
 }
 
 export default function CapitalGainsTaxPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/capital-gains-tax')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -111,7 +107,7 @@ export default function CapitalGainsTaxPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <CapitalGainsTaxCalculator relatedGlossary={relatedGlossary} />
+      <CapitalGainsTaxCalculator />
     </>
   )
 }

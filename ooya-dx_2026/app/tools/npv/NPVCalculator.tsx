@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -19,17 +18,7 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'NPVの計算式', level: 3 },
   { id: 'irr-comparison', title: 'IRRとの違い', level: 3 },
   { id: 'discount-rate', title: '割引率の設定', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface NPVCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // シミュレーター本体
 function NPVSimulator() {
@@ -316,7 +305,7 @@ function NPVSimulator() {
 }
 
 // 追加コンテンツ
-function NPVAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function NPVAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -378,36 +367,17 @@ function NPVAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
             <li><strong>機会費用</strong>：他の投資機会と比較した場合の期待収益率</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )
 }
 
-export function NPVCalculator({ relatedGlossary = [] }: NPVCalculatorProps) {
+export function NPVCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/npv"
-      additionalContent={<NPVAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<NPVAdditionalContent />}
     >
       <NPVSimulator />
     </ToolPageLayout>

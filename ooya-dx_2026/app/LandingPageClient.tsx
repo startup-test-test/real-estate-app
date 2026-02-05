@@ -17,22 +17,11 @@ interface Article {
   thumbnail?: string;
 }
 
-interface GlossaryTerm {
-  slug: string;
-  title: string;
-  shortTitle: string;
-  reading: string;
-  description: string;
-  category: string;
-  relatedTools?: string;
-}
-
 interface LandingPageProps {
   articles: Article[];
-  glossaryTerms: GlossaryTerm[];
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
   const router = useRouter();
 
   useEffect(() => {
@@ -253,58 +242,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
       {/* Media Section */}
       <BlogPosts articles={articles} />
 
-      {/* 用語集セクション */}
-      {glossaryTerms.length > 0 && (
-        <section id="glossary" className="py-16 sm:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Header */}
-            <div className="mb-12 sm:mb-16 text-center">
-              <p className="text-base sm:text-lg text-blue-600 font-semibold mb-2 sm:mb-5">GLOSSARY</p>
-              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-[#32373c] leading-tight">
-                賃貸経営用語集
-              </h2>
-              <p className="mt-4 text-gray-600 text-base sm:text-lg">
-                賃貸経営・不動産オーナーが知っておきたい専門用語をわかりやすく解説
-              </p>
-            </div>
-
-            {/* Terms Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {glossaryTerms.map((term) => (
-                <a
-                  key={term.slug}
-                  href={`/glossary/${term.slug}`}
-                  className="block bg-gray-50 rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl sm:text-2xl font-bold text-[#32373c] group-hover:text-blue-600 transition-colors">
-                      {term.shortTitle}
-                    </h3>
-                    {term.relatedTools && (
-                      <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded">
-                        計算ツール
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400 mb-2">読み：{term.reading}</p>
-                  <p className="text-sm text-gray-500 line-clamp-2">{term.description}</p>
-                </a>
-              ))}
-            </div>
-
-            {/* View All Button */}
-            <div className="mt-10 text-center">
-              <a
-                href="/glossary"
-                className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
-              >
-                すべての用語を見る
-              </a>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* テンプレートセクション */}
       <section id="templates" className="py-16 sm:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -418,11 +355,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
               ニュース
             </h2>
           </div>
-          <div className="bg-gray-50">
+          <div className="bg-white">
             <div className="space-y-0">
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
+                  <span className="inline-block w-20 px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium text-center">
                     メディア<br />掲載
                   </span>
                 </div>
@@ -463,7 +400,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
               </div>
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium whitespace-nowrap">
+                  <span className="inline-block w-20 px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium text-center">
                     掲載
                   </span>
                 </div>
@@ -471,15 +408,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
                   <p className="text-sm text-gray-500 mb-1">2024.10.14</p>
                   <div>
                     <span className="text-gray-900 text-base">
-                      <a
-                        href="https://omiya.keizai.biz/release/477943/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline"
-                      >
-                        大宮経済新聞
-                      </a>
-                      ・
                       <a
                         href="https://saitama.publishing.3rd-in.co.jp/article/2aa1cd40-a89a-11f0-88f0-9ca3ba0a67df#gsc.tab=0"
                         target="_blank"
@@ -495,7 +423,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
               </div>
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                  <span className="inline-block w-20 px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium text-center">
                     リリース
                   </span>
                 </div>
@@ -508,7 +436,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles, glossaryTerms }) =>
               </div>
               <div className="flex items-start space-x-4 py-6 border-b border-gray-200">
                 <div className="flex-shrink-0">
-                  <span className="inline-block px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium">
+                  <span className="inline-block w-20 px-3 py-1 border border-gray-300 text-gray-700 text-xs font-medium text-center">
                     リリース
                   </span>
                 </div>

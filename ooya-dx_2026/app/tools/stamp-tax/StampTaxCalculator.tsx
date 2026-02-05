@@ -1,18 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { StampTaxCalculatorCompact } from '@/components/calculators'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface StampTaxCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // =================================================================
 // 統合早見表データ
@@ -48,7 +38,6 @@ const tocItems: TocItem[] = [
   { id: 'documents', title: '不動産取引で必要な印紙', level: 3 },
   { id: 'reduction', title: '軽減措置について', level: 3 },
   { id: 'electronic', title: '電子契約と印紙税', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // シミュレーター本体
@@ -102,7 +91,7 @@ function StampTaxSimulator() {
 }
 
 // 追加コンテンツ
-function StampTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function StampTaxAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -160,24 +149,6 @@ function StampTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: Gloss
           詳細な取扱いについては、税務署等にご確認ください。
         </p>
 
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* 参考リンク */}
@@ -205,12 +176,12 @@ function StampTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: Gloss
   )
 }
 
-export function StampTaxCalculator({ relatedGlossary = [] }: StampTaxCalculatorProps) {
+export function StampTaxCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/stamp-tax"
-      additionalContent={<StampTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<StampTaxAdditionalContent />}
     >
       <StampTaxSimulator />
     </ToolPageLayout>

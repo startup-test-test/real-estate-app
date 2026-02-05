@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { RegistrationTaxCalculator } from './RegistrationTaxCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 export const metadata: Metadata = {
   title: '不動産の登録免許税 計算シミュレーション｜軽減税率対応',
@@ -85,9 +84,6 @@ const breadcrumbJsonLd = {
 }
 
 export default function RegistrationTaxPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/registration-tax')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       <script
@@ -98,7 +94,7 @@ export default function RegistrationTaxPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <RegistrationTaxCalculator relatedGlossary={relatedGlossary} />
+      <RegistrationTaxCalculator />
     </>
   )
 }

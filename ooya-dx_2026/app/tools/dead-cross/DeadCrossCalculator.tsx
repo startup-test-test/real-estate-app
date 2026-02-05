@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { AlertTriangle, TrendingUp, Calendar } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -12,15 +11,6 @@ import {
   BuildingStructure,
   formatManYen,
 } from '@/lib/calculators/dead-cross'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface DeadCrossCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産のデッドクロス発生時期 予測シミュレーション'
@@ -39,7 +29,6 @@ const structureOptions: { value: BuildingStructure; label: string; usefulLife: n
 const tocItems: TocItem[] = [
   { id: 'about', title: 'デッドクロスとは', level: 2 },
   { id: 'mechanism', title: 'デッドクロスが発生する仕組み', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
@@ -332,7 +321,7 @@ function DeadCrossSimulator() {
 // =================================================================
 // 追加コンテンツ部分
 // =================================================================
-function DeadCrossAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function DeadCrossAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -363,25 +352,6 @@ function DeadCrossAdditionalContent({ relatedGlossary }: { relatedGlossary: Glos
         <p className="text-sm sm:text-base text-gray-700 mb-4 leading-relaxed">
           元本返済額が減価償却費を上回ると、「経費にならないキャッシュアウト」が「経費になる非現金支出」を超えることになります。
         </p>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* 参考リンク */}
@@ -402,12 +372,12 @@ function DeadCrossAdditionalContent({ relatedGlossary }: { relatedGlossary: Glos
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function DeadCrossCalculator({ relatedGlossary = [] }: DeadCrossCalculatorProps) {
+export function DeadCrossCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/dead-cross"
-      additionalContent={<DeadCrossAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<DeadCrossAdditionalContent />}
     >
       <DeadCrossSimulator />
     </ToolPageLayout>

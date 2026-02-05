@@ -1,18 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { AcquisitionTaxCalculatorCompact } from '@/components/calculators'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface AcquisitionTaxCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // =================================================================
 // 早見表データ（3パターン比較）
@@ -54,7 +44,6 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法', level: 2 },
   { id: 'reduction', title: '軽減措置', level: 2 },
   { id: 'used', title: '中古住宅の築年数別控除額', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
@@ -85,7 +74,7 @@ function AcquisitionTaxSimulator() {
 // =================================================================
 // 追加コンテンツ部分
 // =================================================================
-function AcquisitionTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function AcquisitionTaxAdditionalContent() {
   return (
     <>
       {/* =================================================================
@@ -167,25 +156,6 @@ function AcquisitionTaxAdditionalContent({ relatedGlossary }: { relatedGlossary:
           新築住宅・中古住宅ともに、一定の要件を満たす場合は控除が適用される場合があります。
           床面積や用途などの条件は各都道府県により異なる場合がありますので、詳細は下記参考リンクをご確認ください。
         </p>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* =================================================================
@@ -250,12 +220,12 @@ function AcquisitionTaxAdditionalContent({ relatedGlossary }: { relatedGlossary:
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function AcquisitionTaxCalculator({ relatedGlossary = [] }: AcquisitionTaxCalculatorProps) {
+export function AcquisitionTaxCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/acquisition-tax"
-      additionalContent={<AcquisitionTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<AcquisitionTaxAdditionalContent />}
     >
       <AcquisitionTaxSimulator />
     </ToolPageLayout>

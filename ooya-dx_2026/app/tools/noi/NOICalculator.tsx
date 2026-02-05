@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { Info } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -16,28 +15,18 @@ const tocItems: TocItem[] = [
   { id: 'cashflow-tree', title: 'キャッシュフローツリー', level: 3 },
   { id: 'opex', title: '運営経費（OPEX）の内訳', level: 2 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface NOICalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * NOI（営業純収益）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function NOICalculator({ relatedGlossary = [] }: NOICalculatorProps) {
+export function NOICalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/noi"
-      additionalContent={<NOIAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<NOIAdditionalContent />}
     >
       <NOICalculatorCompact showTitle={true} />
     </ToolPageLayout>
@@ -47,7 +36,7 @@ export function NOICalculator({ relatedGlossary = [] }: NOICalculatorProps) {
 /**
  * NOIページ固有の追加コンテンツ
  */
-function NOIAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function NOIAdditionalContent() {
   return (
     <>
       {/* 早見表 */}
@@ -194,25 +183,6 @@ function NOIAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
             <li>・<strong>空室率・経費は変動します</strong>：将来の数値は保証されるものではありません</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

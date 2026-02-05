@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -18,28 +17,18 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'CCRの計算式', level: 3 },
   { id: 'leverage', title: 'レバレッジ効果とCCR', level: 2 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface CCRCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * CCR（自己資金配当率）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function CCRCalculator({ relatedGlossary = [] }: CCRCalculatorProps) {
+export function CCRCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/ccr"
-      additionalContent={<CCRAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<CCRAdditionalContent />}
     >
       <CCRSimulator />
     </ToolPageLayout>
@@ -311,7 +300,7 @@ function CCRSimulator() {
 /**
  * CCRページ固有の追加コンテンツ
  */
-function CCRAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function CCRAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -404,25 +393,6 @@ function CCRAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
             <li>・<strong>売却益は含まれません</strong>：CCRはインカムリターンのみを評価する指標です</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

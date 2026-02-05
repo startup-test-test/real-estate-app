@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { GiftTaxCalculator } from './GiftTaxCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -93,9 +92,6 @@ const breadcrumbSchema = {
 }
 
 export default function GiftTaxPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/gift-tax')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -111,7 +107,7 @@ export default function GiftTaxPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <GiftTaxCalculator relatedGlossary={relatedGlossary} />
+      <GiftTaxCalculator />
     </>
   )
 }

@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { CorporateTaxCalculator } from './CorporateTaxCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech'
 
@@ -90,9 +89,6 @@ const breadcrumbSchema = {
 }
 
 export default function CorporateTaxPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/corporate-tax')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -108,7 +104,7 @@ export default function CorporateTaxPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <CorporateTaxCalculator relatedGlossary={relatedGlossary} />
+      <CorporateTaxCalculator />
     </>
   )
 }

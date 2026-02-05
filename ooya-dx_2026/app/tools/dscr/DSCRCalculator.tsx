@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { Calculator } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -27,28 +26,18 @@ const quickReferenceData: QuickReferenceRow3Col[] = [
 const tocItems: TocItem[] = [
   { id: 'about', title: 'DSCRとは', level: 2 },
   { id: 'calculation', title: '計算方法', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface Props {
-  relatedGlossary: GlossaryItem[]
-}
 
 /**
  * DSCR（債務返済カバー率）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function DSCRCalculator({ relatedGlossary }: Props) {
+export function DSCRCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/dscr"
-      additionalContent={<DSCRAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<DSCRAdditionalContent />}
     >
       <DSCRSimulator />
     </ToolPageLayout>
@@ -238,7 +227,7 @@ function DSCRSimulator() {
 /**
  * DSCRページ固有の追加コンテンツ
  */
-function DSCRAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function DSCRAdditionalContent() {
   return (
     <>
       {/* 早見表 */}
@@ -277,25 +266,6 @@ function DSCRAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryI
           NOI（Net Operating Income）は、年間の賃料収入から空室損失と運営経費を差し引いた純営業収益です。
           ADS（Annual Debt Service）は、借入金の年間元利返済額です。
         </p>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

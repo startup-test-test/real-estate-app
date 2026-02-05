@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -17,17 +16,7 @@ const tocItems: TocItem[] = [
   { id: 'difference', title: '表面利回りと実質利回りの違い', level: 2 },
   { id: 'expenses', title: '経費に含まれる項目', level: 2 },
   { id: 'caution', title: '利回りを見る際の注意点', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface Props {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // 早見表データ
 const quickReferenceData: QuickReferenceRow[] = [
@@ -46,12 +35,12 @@ const quickReferenceData: QuickReferenceRow[] = [
  * 利回りシミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function YieldRateCalculator({ relatedGlossary = [] }: Props) {
+export function YieldRateCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/yield-rate"
-      additionalContent={<YieldRateAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<YieldRateAdditionalContent />}
     >
       <YieldRateCalculatorCompact showTitle={true} />
     </ToolPageLayout>
@@ -61,7 +50,7 @@ export function YieldRateCalculator({ relatedGlossary = [] }: Props) {
 /**
  * 利回りページ固有の追加コンテンツ
  */
-function YieldRateAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function YieldRateAdditionalContent() {
   return (
     <>
       {/* 早見表 */}
@@ -148,25 +137,6 @@ function YieldRateAdditionalContent({ relatedGlossary }: { relatedGlossary: Glos
           <li>将来の賃料下落や大規模修繕も考慮した収支計画が重要です</li>
           <li>出口（売却）戦略も含めたトータルリターン（IRR）での判断も有効です</li>
         </ul>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

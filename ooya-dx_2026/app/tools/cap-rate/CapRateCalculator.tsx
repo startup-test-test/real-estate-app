@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import { Calculator, AlertTriangle } from 'lucide-react'
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -17,28 +16,18 @@ const tocItems: TocItem[] = [
   { id: 'factors', title: 'キャップレートの決定要因', level: 2 },
   { id: 'market', title: '地域別・物件タイプ別の相場', level: 2 },
   { id: 'yield-gap', title: 'イールドギャップとは', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface CapRateCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * キャップレート（還元利回り）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function CapRateCalculator({ relatedGlossary = [] }: CapRateCalculatorProps) {
+export function CapRateCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/cap-rate"
-      additionalContent={<CapRateAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<CapRateAdditionalContent />}
     >
       <CapRateSimulator />
     </ToolPageLayout>
@@ -186,7 +175,7 @@ function CapRateSimulator() {
 /**
  * キャップレートページ固有の追加コンテンツ
  */
-function CapRateAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function CapRateAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -279,25 +268,6 @@ function CapRateAdditionalContent({ relatedGlossary }: { relatedGlossary: Glossa
             一方、マイナスの場合は「逆レバレッジ」状態となり、借入によって自己資本利回り（CCR）が悪化する可能性があります。
           </p>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

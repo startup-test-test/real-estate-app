@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -16,28 +15,18 @@ const tocItems: TocItem[] = [
   { id: 'about', title: 'IRR（内部収益率）とは', level: 2 },
   { id: 'difference', title: '利回りとIRRの違い', level: 3 },
   { id: 'caution', title: '計算上の注意点', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface IRRCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * IRR（内部収益率）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function IRRCalculator({ relatedGlossary = [] }: IRRCalculatorProps) {
+export function IRRCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/irr"
-      additionalContent={<IRRAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<IRRAdditionalContent />}
     >
       <IRRSimulator />
     </ToolPageLayout>
@@ -281,7 +270,7 @@ function IRRSimulator() {
 /**
  * IRRページ固有の追加コンテンツ
  */
-function IRRAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function IRRAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -315,25 +304,6 @@ function IRRAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
             <li>・<strong>減価償却・デッドクロス</strong>：税務上の損益と実際のキャッシュフローは異なる場合があります</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

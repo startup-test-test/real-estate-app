@@ -127,7 +127,6 @@ export const availableTools: NavigationItem[] = calculatorTools.filter(tool => t
 // メディア・その他
 export const otherLinks: NavigationItem[] = [
   { name: 'メディア', description: '不動産投資の基礎知識', href: '/media' },
-  { name: '用語集', description: '不動産用語の解説', href: '/glossary' },
   { name: '無料テンプレート', description: 'Excel・スプレッドシート', href: '/templates' },
 ];
 

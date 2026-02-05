@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { AssessedValueCalculator } from './AssessedValueCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -94,9 +93,6 @@ const breadcrumbSchema = {
 }
 
 export default function AssessedValuePage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/assessed-value')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -112,7 +108,7 @@ export default function AssessedValuePage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <AssessedValueCalculator relatedGlossary={relatedGlossary} />
+      <AssessedValueCalculator />
     </>
   )
 }

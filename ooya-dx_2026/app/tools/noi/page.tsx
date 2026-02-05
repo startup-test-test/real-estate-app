@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { NOICalculator } from './NOICalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 export const metadata: Metadata = {
   title: '賃貸経営のNOI（営業純収益） 計算シミュレーション｜経費率目安付き | OOYA.tech',
@@ -40,8 +39,5 @@ export const metadata: Metadata = {
 }
 
 export default function NOIPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/noi')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
-  return <NOICalculator relatedGlossary={relatedGlossary} />
+  return <NOICalculator />
 }

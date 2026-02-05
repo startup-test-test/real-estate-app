@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { YieldRateCalculator } from './YieldRateCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -91,9 +90,6 @@ const breadcrumbSchema = {
 }
 
 export default function YieldRatePage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/yield-rate')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -109,7 +105,7 @@ export default function YieldRatePage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <YieldRateCalculator relatedGlossary={relatedGlossary} />
+      <YieldRateCalculator />
     </>
   )
 }

@@ -10,7 +10,6 @@ import { Menu, X, ChevronDown, LogOut, User } from 'lucide-react';
 const NAV_LINKS = [
   { href: '/simulator', label: '賃貸経営シミュレーター' },
   { href: '/tools', label: '計算ツール' },
-  { href: '/glossary', label: '賃貸経営用語集' },
   { href: '/media', label: 'メディア' },
   { href: '/company', label: '会社概要' },
 ];

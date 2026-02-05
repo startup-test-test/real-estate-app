@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { NPVCalculator } from './NPVCalculator'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -93,9 +92,6 @@ const breadcrumbSchema = {
 }
 
 export default function NPVPage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/npv')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -111,7 +107,7 @@ export default function NPVPage() {
           __html: JSON.stringify(breadcrumbSchema)
         }}
       />
-      <NPVCalculator relatedGlossary={relatedGlossary} />
+      <NPVCalculator />
     </>
   )
 }

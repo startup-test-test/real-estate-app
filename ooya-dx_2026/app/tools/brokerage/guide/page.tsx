@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import { BrokerageGuide } from './BrokerageGuide'
-import { getGlossaryTermsByTool } from '@/lib/glossary'
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -96,9 +95,6 @@ const articleSchema = {
 }
 
 export default function BrokerageGuidePage() {
-  const relatedGlossary = getGlossaryTermsByTool('/tools/brokerage')
-    .map(term => ({ slug: term.slug, title: term.title }))
-
   return (
     <>
       {/* 構造化データ */}
@@ -114,7 +110,7 @@ export default function BrokerageGuidePage() {
           __html: JSON.stringify(articleSchema)
         }}
       />
-      <BrokerageGuide relatedGlossary={relatedGlossary} />
+      <BrokerageGuide />
     </>
   )
 }

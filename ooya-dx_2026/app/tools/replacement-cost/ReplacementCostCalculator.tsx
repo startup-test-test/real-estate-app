@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable } from '@/components/tools/QuickReferenceTable'
@@ -26,17 +25,7 @@ const tocItems: TocItem[] = [
   { id: 'about', title: '再調達価格（再調達原価）とは', level: 2 },
   { id: 'calculation', title: '計算方法', level: 3 },
   { id: 'unit-price', title: '構造・用途別の建築単価', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface Props {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // 早見表データ（構造別の法定耐用年数）
 const usefulLifeTableData = [
@@ -224,7 +213,7 @@ function ReplacementCostSimulator() {
 }
 
 // 追加コンテンツ
-function ReplacementCostAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function ReplacementCostAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -306,36 +295,17 @@ function ReplacementCostAdditionalContent({ relatedGlossary }: { relatedGlossary
         <p className="text-xs text-gray-500">
           ※ 単価は参考値です。実際の建築費用は立地・仕様・時期により異なります。
         </p>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )
 }
 
-export function ReplacementCostCalculator({ relatedGlossary = [] }: Props) {
+export function ReplacementCostCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/replacement-cost"
-      additionalContent={<ReplacementCostAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<ReplacementCostAdditionalContent />}
     >
       <ReplacementCostSimulator />
     </ToolPageLayout>

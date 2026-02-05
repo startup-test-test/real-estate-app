@@ -935,15 +935,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                   <div>
                     <span className="text-gray-900 text-base">
                       <a
-                        href="https://omiya.keizai.biz/release/477943/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline"
-                      >
-                        大宮経済新聞
-                      </a>
-                      ・
-                      <a
                         href="https://saitama.publishing.3rd-in.co.jp/article/2aa1cd40-a89a-11f0-88f0-9ca3ba0a67df#gsc.tab=0"
                         target="_blank"
                         rel="noopener noreferrer"

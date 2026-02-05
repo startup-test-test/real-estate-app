@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { Home, Info } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -10,15 +9,6 @@ import {
   calculateMortgageLoan,
   RepaymentMethod,
 } from '@/lib/calculators/mortgageLoan'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface MortgageLoanCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // ページタイトル
 const PAGE_TITLE = '住宅ローン 計算シミュレーション｜毎月返済額・総返済額'
@@ -30,19 +20,18 @@ const tocItems: TocItem[] = [
   { id: 'equal-pi', title: '元利均等返済', level: 3 },
   { id: 'equal-p', title: '元金均等返済', level: 3 },
   { id: 'bonus', title: 'ボーナス返済について', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 /**
  * 住宅ローンシミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function MortgageLoanCalculator({ relatedGlossary = [] }: MortgageLoanCalculatorProps) {
+export function MortgageLoanCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/mortgage-loan"
-      additionalContent={<MortgageLoanAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<MortgageLoanAdditionalContent />}
     >
       <MortgageLoanSimulator />
     </ToolPageLayout>
@@ -237,7 +226,7 @@ function MortgageLoanSimulator() {
 /**
  * 住宅ローンページ固有の追加コンテンツ
  */
-function MortgageLoanAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function MortgageLoanAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -386,24 +375,6 @@ function MortgageLoanAdditionalContent({ relatedGlossary }: { relatedGlossary: G
           ボーナス月（年2回）に追加で返済を行う方式です。
         </p>
 
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* 参考リンク */}

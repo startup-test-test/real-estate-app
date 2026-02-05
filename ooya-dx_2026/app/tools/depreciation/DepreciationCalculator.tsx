@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
@@ -14,15 +13,6 @@ import {
   USEFUL_LIFE_BY_STRUCTURE,
   formatManYen,
 } from '@/lib/calculators/depreciation'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface DepreciationCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // 建物構造の選択肢
 const structureOptions: { value: BuildingStructure; label: string; usefulLife: number }[] = [
@@ -56,19 +46,18 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法（定額法）', level: 3 },
   { id: 'used-asset', title: '中古資産の耐用年数（簡便法）', level: 3 },
   { id: 'example', title: '具体的な計算例', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 /**
  * 減価償却費シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function DepreciationCalculator({ relatedGlossary = [] }: DepreciationCalculatorProps) {
+export function DepreciationCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/depreciation"
-      additionalContent={<DepreciationAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<DepreciationAdditionalContent />}
     >
       <DepreciationSimulator />
     </ToolPageLayout>
@@ -277,7 +266,7 @@ function DepreciationSimulator() {
 /**
  * 減価償却費ページ固有の追加コンテンツ
  */
-function DepreciationAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function DepreciationAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -355,24 +344,6 @@ function DepreciationAdditionalContent({ relatedGlossary }: { relatedGlossary: G
           </ul>
         </div>
 
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
     </>

@@ -1,21 +1,11 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { calculateCorporateTaxTotal } from '@/lib/calculators/corporate-tax'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface CorporateTaxCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // 早見表データ
 const quickReferenceData: QuickReferenceRow[] = [
@@ -40,7 +30,6 @@ const tocItems: TocItem[] = [
   { id: 'structure', title: '法人税等の構成', level: 3 },
   { id: 'effective-rate', title: '実効税率について', level: 3 },
   { id: 'costs', title: '法人の維持コスト', level: 3 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // シミュレーター本体
@@ -214,7 +203,7 @@ function CorporateTaxSimulator() {
 }
 
 // 追加コンテンツ
-function CorporateTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function CorporateTaxAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -263,36 +252,17 @@ function CorporateTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: G
             <li><span className="font-medium">社会保険料</span>：役員報酬の約30%（法人・個人折半）</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )
 }
 
-export function CorporateTaxCalculator({ relatedGlossary = [] }: CorporateTaxCalculatorProps) {
+export function CorporateTaxCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/corporate-tax"
-      additionalContent={<CorporateTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<CorporateTaxAdditionalContent />}
     >
       <CorporateTaxSimulator />
     </ToolPageLayout>

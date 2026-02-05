@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { AlertTriangle } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -15,15 +14,6 @@ import {
   formatManYen,
 } from '@/lib/calculators/gift-tax'
 
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface GiftTaxCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
-
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '不動産の贈与税 計算シミュレーション｜早見表・特例対応'
 
@@ -36,7 +26,6 @@ const tocItems: TocItem[] = [
   { id: 'tax-rate', title: '税率表（速算表）', level: 3 },
   { id: 'example', title: '具体的な計算例', level: 3 },
   { id: 'special', title: '主な特例・控除制度', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 // =================================================================
@@ -195,7 +184,7 @@ function GiftTaxSimulator() {
 // =================================================================
 // 追加コンテンツ部分
 // =================================================================
-function GiftTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function GiftTaxAdditionalContent() {
   return (
     <>
       {/* 早見表（シミュレーター直下） */}
@@ -325,25 +314,6 @@ function GiftTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: Glossa
             ※具体的な適用判断は税理士等の専門家にご相談ください。
           </p>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* 参考リンク（エビデンス） */}
@@ -379,12 +349,12 @@ function GiftTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: Glossa
 // =================================================================
 // メインコンポーネント
 // =================================================================
-export function GiftTaxCalculator({ relatedGlossary = [] }: GiftTaxCalculatorProps) {
+export function GiftTaxCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/gift-tax"
-      additionalContent={<GiftTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<GiftTaxAdditionalContent />}
     >
       <GiftTaxSimulator />
     </ToolPageLayout>

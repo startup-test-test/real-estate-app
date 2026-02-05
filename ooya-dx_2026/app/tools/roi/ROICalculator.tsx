@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -17,28 +16,18 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'ROIの計算式', level: 3 },
   { id: 'related-metrics', title: '関連指標との違い', level: 3 },
   { id: 'usage', title: 'ROIの活用方法', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface ROICalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 /**
  * ROI（投資利益率）シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function ROICalculator({ relatedGlossary = [] }: ROICalculatorProps) {
+export function ROICalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/roi"
-      additionalContent={<ROIAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<ROIAdditionalContent />}
     >
       <ROISimulator />
     </ToolPageLayout>
@@ -251,7 +240,7 @@ function ROISimulator() {
 /**
  * ROIページ固有の追加コンテンツ
  */
-function ROIAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function ROIAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -305,25 +294,6 @@ function ROIAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
             <li><strong>融資条件の検討</strong>：借入額や金利を変えた場合のROIの変化を確認できます</li>
           </ul>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )

@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
@@ -11,15 +10,6 @@ import {
   QUICK_REFERENCE_TABLE,
   formatManYen,
 } from '@/lib/calculators/capitalGainsTax'
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface CapitalGainsTaxCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // 早見表データ
 const quickReferenceData: QuickReferenceRow[] = QUICK_REFERENCE_TABLE.map(row => ({
@@ -38,19 +28,18 @@ const tocItems: TocItem[] = [
   { id: 'calculation', title: '計算方法', level: 3 },
   { id: 'tax-rate', title: '税率表（参考）', level: 3 },
   { id: 'special', title: '主な特例・控除制度', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
 
 /**
  * 譲渡所得税シミュレーター
  * ToolPageLayoutを使用した2カラムレイアウト
  */
-export function CapitalGainsTaxCalculator({ relatedGlossary = [] }: CapitalGainsTaxCalculatorProps) {
+export function CapitalGainsTaxCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/capital-gains-tax"
-      additionalContent={<CapitalGainsTaxAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<CapitalGainsTaxAdditionalContent />}
     >
       <CapitalGainsTaxSimulator />
     </ToolPageLayout>
@@ -259,7 +248,7 @@ function CapitalGainsTaxSimulator() {
 /**
  * 譲渡所得税ページ固有の追加コンテンツ
  */
-function CapitalGainsTaxAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function CapitalGainsTaxAdditionalContent() {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -377,24 +366,6 @@ function CapitalGainsTaxAdditionalContent({ relatedGlossary }: { relatedGlossary
           </div>
         </div>
 
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
 
       {/* 参考リンク */}

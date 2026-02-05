@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import LandingPageClient from './LandingPageClient';
 import { getAllArticles } from '@/lib/mdx';
-import { getAllGlossaryTerms } from '@/lib/glossary';
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -75,7 +74,6 @@ const organizationJsonLd = {
 
 export default function HomePage() {
   const articles = getAllArticles().slice(0, 6); // 最新6件
-  const glossaryTerms = getAllGlossaryTerms().slice(0, 6); // 最新6件
 
   return (
     <>
@@ -88,7 +86,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
-        <LandingPageClient articles={articles} glossaryTerms={glossaryTerms} />
+        <LandingPageClient articles={articles} />
       </Suspense>
     </>
   );

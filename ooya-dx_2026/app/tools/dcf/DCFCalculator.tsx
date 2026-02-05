@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import { TrendingUp } from 'lucide-react'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
@@ -22,17 +21,7 @@ const tocItems: TocItem[] = [
   { id: 'formula', title: 'DCF法の計算式', level: 3 },
   { id: 'parameters', title: '主要パラメーター', level: 3 },
   { id: 'vs-direct', title: '直接還元法との違い', level: 2 },
-  { id: 'glossary', title: '関連用語', level: 2 },
 ]
-
-interface GlossaryItem {
-  slug: string
-  title: string
-}
-
-interface DCFCalculatorProps {
-  relatedGlossary?: GlossaryItem[]
-}
 
 // =================================================================
 // メインコンポーネント
@@ -328,7 +317,7 @@ function DCFSimulator() {
 }
 
 // 追加コンテンツ
-function DCFAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryItem[] }) {
+function DCFAdditionalContent() {
   return (
     <>
       {/* 目次 */}
@@ -415,36 +404,17 @@ function DCFAdditionalContent({ relatedGlossary }: { relatedGlossary: GlossaryIt
             </tbody>
           </table>
         </div>
-
-        {relatedGlossary.length > 0 && (
-          <>
-            <SectionHeading id="glossary" items={tocItems} />
-            <ul className="space-y-2">
-              {relatedGlossary.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/glossary/${item.slug}`}
-                    className="text-gray-700 hover:text-gray-900 hover:underline text-sm"
-                  >
-                    <span className="text-gray-400 mr-1">›</span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
       </section>
     </>
   )
 }
 
-export function DCFCalculator({ relatedGlossary = [] }: DCFCalculatorProps) {
+export function DCFCalculator() {
   return (
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/dcf"
-      additionalContent={<DCFAdditionalContent relatedGlossary={relatedGlossary} />}
+      additionalContent={<DCFAdditionalContent />}
     >
       <DCFSimulator />
     </ToolPageLayout>
