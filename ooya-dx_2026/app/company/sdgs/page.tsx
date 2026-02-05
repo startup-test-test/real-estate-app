@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: 'SDGsの達成に向けた取組み | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingのSDGsへの取り組み。さいたま市CS・SDGsパートナーズ、関西SDGsプラットフォームに参加しています。',
+  alternates: {
+    canonical: '/company/sdgs',
+  },
 };
 
 export default function SDGsPage() {

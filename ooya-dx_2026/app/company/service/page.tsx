@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: 'メニュー・料金 | 株式会社StartupMarketing',
   description: '業界歴14年目のプロのWebコンサルティングが、データ分析を元に事業・経営課題を発見して戦略支援致します。',
+  alternates: {
+    canonical: '/company/service',
+  },
 };
 
 export default function ServicePage() {

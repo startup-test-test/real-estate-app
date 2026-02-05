@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: '相互リンクページ | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingの相互リンクページ。提携企業・団体様のリンク集です。',
+  alternates: {
+    canonical: '/company/link',
+  },
 };
 
 export default function LinkPage() {

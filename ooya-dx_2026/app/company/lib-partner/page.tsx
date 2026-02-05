@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: 'リチウムイオン電池の火災防止啓発 | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingはリチウムイオン電池の火災防止に取り組んでいます。環境省LiBパートナーとして、適切な使用方法・廃棄方法の周知・啓発を行っています。',
+  alternates: {
+    canonical: '/company/lib-partner',
+  },
 };
 
 export default function LibPartnerPage() {

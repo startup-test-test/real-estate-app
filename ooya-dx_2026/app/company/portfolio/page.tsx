@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: '実績・得意領域 | 株式会社StartupMarketing',
   description: '独立5年目のWebディレクター・マーケッター。スタートアップ企業（BtoC）のWebコンサル・マーケティングオートメーション・グロースハック施策を得意領域としています。',
+  alternates: {
+    canonical: '/company/portfolio',
+  },
 };
 
 export default function PortfolioPage() {

@@ -2,7 +2,10 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'プライバシーポリシー | 大家DX',
-  description: '大家DXサービスのプライバシーポリシーについて'
+  description: '大家DXサービスのプライバシーポリシーについて',
+  alternates: {
+    canonical: '/legal/privacy',
+  },
 }
 
 export default function PrivacyPage() {

@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: 'パラスポーツ、スポーツへの取り組み | 株式会社StartupMarketing',
   description: 'TEAM BEYONDの「パラスポーツを通じて、みんなが個性を発揮できる未来を目指す」という取り組みに賛同します。',
+  alternates: {
+    canonical: '/company/teambeyond',
+  },
 };
 
 export default function TeamBeyondPage() {

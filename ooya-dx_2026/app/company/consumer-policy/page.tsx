@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: '消費者志向自主宣言ならびに運営ポリシー | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingの消費者志向自主宣言ならびに運営ポリシー。住環境における顧客満足度向上を最優先に掲げています。',
+  alternates: {
+    canonical: '/company/consumer-policy',
+  },
 };
 
 export default function ConsumerPolicyPage() {

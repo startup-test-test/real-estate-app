@@ -7,6 +7,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: 'CSR・健康経営 | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingのCSR活動・健康経営への取り組み。がん対策推進企業アクション、ポジティブ・オフに参加しています。',
+  alternates: {
+    canonical: '/company/csr',
+  },
 };
 
 export default function CSRPage() {

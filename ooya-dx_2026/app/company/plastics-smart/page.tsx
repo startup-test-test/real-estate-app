@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: 'プラスチック削減の取り組み | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingのプラスチックごみ削減への取り組み。マイボトル活用による「脱・使い捨て容器」を推進し、環境省プラスチック・スマートキャンペーンに参加しています。',
+  alternates: {
+    canonical: '/company/plastics-smart',
+  },
 };
 
 export default function PlasticsSmartPage() {

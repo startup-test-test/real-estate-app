@@ -8,6 +8,9 @@ import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 export const metadata: Metadata = {
   title: '気候変動への適応に向けた取り組み | 株式会社StartupMarketing',
   description: '株式会社StartupMarketingの気候変動適応への取り組み。リモートワーク推進、ペーパーレス化、マイボトル活用などを通じて、地球沸騰化時代に適応した働き方を実践しています。',
+  alternates: {
+    canonical: '/company/climate-adaptation',
+  },
 };
 
 export default function ClimateAdaptationPage() {
