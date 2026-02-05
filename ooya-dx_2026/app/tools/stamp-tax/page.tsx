@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '不動産売買契約書・建設工事請負契約書・領収書の印紙税を無料で概算計算。契約金額を入力するだけで税額がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/stamp-tax',
+  },
 }
 
 // 構造化データ（WebApplication）

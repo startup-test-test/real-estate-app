@@ -40,6 +40,9 @@ export const metadata: Metadata = {
     description: '賃貸経営のキャッシュフロー（CF）を無料で計算。キャッシュフローツリーで収支を可視化。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/cf',
+  },
 }
 
 // 構造化データ（WebApplication）

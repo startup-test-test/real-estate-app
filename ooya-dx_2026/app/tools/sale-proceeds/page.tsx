@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     description: '不動産売却時の最終手取り額を自動計算。仲介手数料、譲渡所得税、ローン残高を考慮した実際の手取り額がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/sale-proceeds',
+  },
 }
 
 // 構造化データ（WebApplication）

@@ -36,6 +36,7 @@ const websiteJsonLd = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: '大家DX',
   description: '賃貸経営のためのシミュレーションツール',
   // Google Search Console 認証は本番のみ（GoogleAnalytics.tsx で設定）

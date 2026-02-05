@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     description: 'DCF法（割引キャッシュフロー法）で不動産の収益価格を無料で概算計算。早見表付き。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/dcf',
+  },
 }
 
 // 構造化データ（WebApplication）

@@ -40,6 +40,9 @@ export const metadata: Metadata = {
     description: '賃貸経営の表面利回り・実質利回りを10秒で無料計算。物件価格と年間賃料を入力するだけで、グロス利回り・ネット利回りがすぐわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/yield-rate',
+  },
 }
 
 // 構造化データ（WebApplication）

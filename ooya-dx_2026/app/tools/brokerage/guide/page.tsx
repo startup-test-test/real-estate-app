@@ -38,6 +38,9 @@ export const metadata: Metadata = {
     description: '不動産売買の仲介手数料を徹底解説。計算方法、法改正、支払いタイミングなど。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/brokerage/guide',
+  },
 }
 
 // パンくずリスト構造化データ

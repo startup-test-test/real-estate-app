@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '相続税を無料で概算計算。遺産総額と相続人の人数を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/inheritance-tax',
+  },
 }
 
 // 構造化データ（WebApplication）

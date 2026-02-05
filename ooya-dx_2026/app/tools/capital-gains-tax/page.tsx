@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '不動産売却時の譲渡所得税を無料で概算計算。売却価格と取得費を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/capital-gains-tax',
+  },
 }
 
 // 構造化データ（WebApplication）

@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '不動産を贈与した際の贈与税を無料で概算計算。贈与金額を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/gift-tax',
+  },
 }
 
 // 構造化データ（WebApplication）

@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '賃貸経営のLTV（借入比率）を無料で計算。自己資金比率、自己資金額も同時に確認できます。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/ltv',
+  },
 }
 
 // 構造化データ（WebApplication）

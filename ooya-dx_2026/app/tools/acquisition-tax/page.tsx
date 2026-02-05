@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '不動産取得税を無料で概算計算。建物・土地の固定資産税評価額を入力するだけで税額の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/acquisition-tax',
+  },
 }
 
 // 構造化データ（WebApplication）

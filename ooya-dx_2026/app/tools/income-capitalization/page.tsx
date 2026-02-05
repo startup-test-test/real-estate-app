@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '収益還元法（直接還元法）による不動産の収益価格を無料で計算。年間賃料収入とキャップレートを入力するだけで、収益不動産の理論価格を算出できます。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/income-capitalization',
+  },
 }
 
 // 構造化データ（WebApplication）

@@ -40,6 +40,9 @@ export const metadata: Metadata = {
     description: 'デッドクロスの発生時期を無料で予測。黒字倒産リスクを事前に把握できます。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/dead-cross',
+  },
 }
 
 // 構造化データ（WebApplication）

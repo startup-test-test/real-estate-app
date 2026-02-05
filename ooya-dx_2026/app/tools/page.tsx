@@ -31,6 +31,9 @@ export const metadata: Metadata = {
     description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools',
+  },
 }
 
 // パンくずリスト構造化データ

@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '賃貸経営のIRR（内部収益率）を無料で計算。物件購入から売却までの収益性を時間価値を考慮して評価。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/irr',
+  },
 }
 
 // 構造化データ（WebApplication）

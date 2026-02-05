@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '賃貸経営の減価償却費を無料で計算。建物の取得価額・構造・築年数を入力するだけで年間償却費がすぐわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/depreciation',
+  },
 }
 
 // 構造化データ（WebApplication）

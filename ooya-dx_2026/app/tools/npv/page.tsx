@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '賃貸経営のNPV（正味現在価値）を無料で計算。DCF法に基づき、将来キャッシュフローの現在価値を算出。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/npv',
+  },
 }
 
 // 構造化データ（WebApplication）

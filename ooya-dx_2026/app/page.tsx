@@ -30,6 +30,9 @@ export const metadata: Metadata = {
     description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/',
+  },
 };
 
 // WebSite構造化データ

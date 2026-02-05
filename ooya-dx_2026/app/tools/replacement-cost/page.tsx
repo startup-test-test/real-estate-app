@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: PAGE_DESCRIPTION,
   },
   alternates: {
-    canonical: 'https://ooya.tech/tools/replacement-cost',
+    canonical: '/tools/replacement-cost',
   },
 }
 

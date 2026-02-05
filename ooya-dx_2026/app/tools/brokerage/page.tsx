@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     description: '不動産売買の仲介手数料を無料で計算。2024年法改正の800万円特例に対応した2026年最新版。売買価格を入力するだけで税込金額を自動計算。速算式・早見表付き。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/brokerage',
+  },
 }
 
 // 構造化データ（SoftwareApplication - Calculator）

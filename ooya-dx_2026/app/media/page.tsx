@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     description: '賃貸経営の基礎知識から実践的なノウハウまで。データドリブンな賃貸経営を支援する情報メディア。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/media',
+  },
 };
 
 // パンくずリスト構造化データ

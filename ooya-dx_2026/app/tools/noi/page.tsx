@@ -35,7 +35,7 @@ export const metadata: Metadata = {
       'NOI（営業純収益）を計算できる無料シミュレーター。GPI・EGI・OPEXの詳細内訳とキャッシュフローツリーで収益構造を可視化。',
   },
   alternates: {
-    canonical: 'https://ooya.tech/tools/noi',
+    canonical: '/tools/noi',
   },
 }
 

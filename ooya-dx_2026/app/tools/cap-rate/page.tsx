@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '不動産のキャップレート（還元利回り）を無料で計算。NOIと物件価格から利回りを算出。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/cap-rate',
+  },
 }
 
 // 構造化データ（WebApplication）

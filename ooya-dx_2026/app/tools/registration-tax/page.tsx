@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       '不動産購入時の登録免許税を無料で計算。軽減税率も自動判定。',
   },
   alternates: {
-    canonical: 'https://ooya.tech/tools/registration-tax',
+    canonical: '/tools/registration-tax',
   },
 }
 

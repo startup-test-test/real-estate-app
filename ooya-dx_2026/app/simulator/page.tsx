@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
     images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
+  alternates: {
+    canonical: '/simulator',
+  },
 };
 
 // パンくずリスト構造化データ

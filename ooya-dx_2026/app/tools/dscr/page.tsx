@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: 'DSCR（債務返済カバー率）を無料で計算。年間賃料収入と借入条件を入力するだけで、金融機関の融資審査における返済能力の目安がわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/dscr',
+  },
 }
 
 // 構造化データ（WebApplication）

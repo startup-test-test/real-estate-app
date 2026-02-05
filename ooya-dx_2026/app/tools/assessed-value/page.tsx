@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     description: '賃貸経営における積算評価（原価法）を無料で計算。路線価・建物構造・築年数から土地・建物の積算価格を算出。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/assessed-value',
+  },
 }
 
 // 構造化データ（WebApplication）

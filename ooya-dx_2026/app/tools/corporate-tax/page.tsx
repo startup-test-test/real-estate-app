@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     description: '不動産法人の法人税・住民税・事業税等を無料で計算。課税所得を入力するだけで税額と実効税率がすぐわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/corporate-tax',
+  },
 }
 
 // 構造化データ（WebApplication）

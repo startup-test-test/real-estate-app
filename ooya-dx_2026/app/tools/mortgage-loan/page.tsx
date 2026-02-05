@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '住宅ローンの毎月返済額・総返済額を無料で計算。借入額と金利を入力するだけで瞬時に計算。早見表付き。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/mortgage-loan',
+  },
 }
 
 // 構造化データ（WebApplication）

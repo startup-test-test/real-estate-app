@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     title: '賃貸経営用語集｜大家さんのための専門用語解説',
     description: '賃貸経営・不動産オーナーが知っておきたい専門用語をわかりやすく解説。',
   },
+  alternates: {
+    canonical: '/glossary',
+  },
 }
 
 // パンくずリスト構造化データ

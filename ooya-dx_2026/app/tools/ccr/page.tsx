@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       'CCR（自己資金配当率）を計算できる無料シミュレーター。自己資金に対するキャッシュフローの収益率を算出。',
   },
   alternates: {
-    canonical: 'https://ooya.tech/tools/ccr',
+    canonical: '/tools/ccr',
   },
 }
 

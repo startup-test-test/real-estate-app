@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     description: '賃貸経営のROI（投資利益率）を無料で計算。キャッシュフローROI、CCR、FCRを同時に算出。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
+  alternates: {
+    canonical: '/tools/roi',
+  },
 }
 
 // 構造化データ（WebApplication）
