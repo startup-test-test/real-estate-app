@@ -62,7 +62,27 @@ export default function TeamBeyondPage() {
           {/* 概要 */}
           <section className="mb-12">
             <p className="text-gray-700 leading-relaxed">
-              TEAM BEYONDの「パラスポーツを通じて、みんなが個性を発揮できる未来を目指す」という取り組みに賛同します。
+              <a
+                href="https://www.para-sports.tokyo/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                TEAM BEYOND
+              </a>
+              の「パラスポーツを通じて、みんなが個性を発揮できる未来を目指す」という取り組みに賛同します。
+            </p>
+            <p className="text-gray-700 leading-relaxed mt-4">
+              当社は
+              <a
+                href="https://www.para-sports.tokyo/member/group/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                TEAM BEYONDメンバー（団体）
+              </a>
+              として登録されています。
             </p>
           </section>
 

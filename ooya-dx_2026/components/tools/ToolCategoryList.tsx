@@ -100,18 +100,19 @@ export function ToolCategoryList({ mobile = false }: ToolCategoryListProps) {
                 <IconComponent className="h-5 w-5 text-primary-600" />
                 <p className="text-base font-bold text-gray-900">{category.category}</p>
               </div>
-              <div className={`space-y-1 ${mobile ? 'ml-6' : 'ml-6'}`}>
+              <div className={`space-y-0 ${mobile ? 'ml-6' : 'ml-6'}`}>
                 {category.tools.map((tool) => (
                   <Link
                     key={tool.href}
                     href={tool.href}
-                    className={`block text-sm text-gray-700 hover:text-primary-600 rounded-lg transition-colors ${
+                    className={`flex items-center justify-between text-sm text-gray-700 hover:text-primary-600 rounded-lg transition-colors ${
                       mobile
                         ? 'py-2 px-3 bg-gray-50 hover:bg-gray-100'
-                        : 'py-1.5 px-2 hover:bg-gray-50'
+                        : 'py-1 px-2 hover:bg-gray-50'
                     }`}
                   >
-                    {tool.title}
+                    <span>{tool.title}</span>
+                    <span className="text-gray-900 text-lg leading-none">›</span>
                   </Link>
                 ))}
               </div>

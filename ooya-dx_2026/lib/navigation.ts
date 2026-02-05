@@ -146,7 +146,7 @@ export const allCompanyPages: NavigationItem[] = [
   { name: '気候変動への対応', href: '/company/climate-adaptation', lastUpdated: '2026-01-15' },
   { name: 'プラスチックスマート', href: '/company/plastics-smart', lastUpdated: '2026-01-15' },
   { name: '消費者志向自主宣言', href: '/company/consumer-policy', lastUpdated: '2026-01-15' },
-  { name: 'チームビヨンド', href: '/company/teambeyond', lastUpdated: '2026-01-15' },
+  { name: 'チームビヨンド', href: '/company/teambeyond', lastUpdated: '2026-02-05' },
   { name: 'ライブラリパートナー', href: '/company/lib-partner', lastUpdated: '2026-01-15' },
   { name: 'リンク', href: '/company/link', lastUpdated: '2026-02-05' },
 ];
