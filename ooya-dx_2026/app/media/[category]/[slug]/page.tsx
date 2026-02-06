@@ -19,6 +19,9 @@ interface Props {
   }>;
 }
 
+// generateStaticParamsに含まれないパスは自動的に404を返す
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const paths = getAllArticlePaths();
   return paths.map((path) => ({
