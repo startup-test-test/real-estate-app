@@ -44,6 +44,15 @@ function checkBasicAuth(req: NextRequest): NextResponse | null {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const host = req.headers.get('host') || '';
+
+  // www → non-www リダイレクト（SEO正規化）
+  if (host.startsWith('www.')) {
+    const newHost = host.replace('www.', '');
+    const url = new URL(req.url);
+    url.host = newHost;
+    return NextResponse.redirect(url, 301);
+  }
 
   // Auth APIルートはBasic認証をスキップし、Authorizationヘッダーも除去
   if (pathname.startsWith("/api/auth/")) {
