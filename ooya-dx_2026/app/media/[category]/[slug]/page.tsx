@@ -34,9 +34,7 @@ export async function generateMetadata({ params }: Props) {
   const article = getArticleBySlug(category, slug);
 
   if (!article) {
-    return {
-      title: '記事が見つかりません',
-    };
+    notFound();
   }
 
   const url = `${BASE_URL}/media/${category}/${slug}`;
