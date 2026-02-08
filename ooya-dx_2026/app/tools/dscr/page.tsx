@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { DSCRCalculator } from './DSCRCalculator'
 
 const BASE_URL = 'https://ooya.tech';
@@ -46,66 +47,13 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ（WebApplication）
-const webApplicationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'DSCRシミュレーター',
-  description: 'DSCR（債務返済カバー率）を計算するツール。融資審査における返済能力の目安がわかります。ストレステスト機能付き。',
-  applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY'
-  },
-  provider: {
-    '@type': 'Organization',
-    name: '大家DX'
-  }
-}
-
-// パンくずリスト構造化データ
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'ホーム',
-      item: BASE_URL
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '不動産・賃貸経営計算ツール',
-      item: `${BASE_URL}/tools`
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: 'DSCRシミュレーター',
-      item: `${BASE_URL}/tools/dscr`
-    }
-  ]
-}
-
 export default function DSCRPage() {
   return (
     <>
-      {/* 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(webApplicationSchema)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema)
-        }}
+      <ToolStructuredData
+        name="DSCRシミュレーター"
+        description="DSCR（債務返済カバー率）を計算するツール。融資審査における返済能力の目安がわかります。ストレステスト機能付き。"
+        toolPath="/tools/dscr"
       />
       <DSCRCalculator />
     </>

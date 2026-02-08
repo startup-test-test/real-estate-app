@@ -11,6 +11,13 @@ const nextConfig = {
   trailingSlash: false, // URLの末尾スラッシュを統一（なしに統一）
   async redirects() {
     return [
+      // ===== シミュレーター URL移行（2026/02/08） =====
+      {
+        source: '/simulator',
+        destination: '/tools/simulator',
+        permanent: true,
+      },
+
       // ===== 古いURL構造からのリダイレクト =====
       {
         source: '/media/category/base/:path*',

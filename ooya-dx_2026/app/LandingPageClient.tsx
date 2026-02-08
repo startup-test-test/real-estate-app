@@ -34,7 +34,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
       id: 'simulator',
       title: '賃貸経営シミュレーター',
       description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。\n物件購入の意思決定をデータで支援します。',
-      href: '/simulator',
+      href: '/tools/simulator',
       buttonText: 'シミュレーションをする（完全無料）',
       mockup: (
         <img
@@ -95,7 +95,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                 </p>
                 <div className="mt-8">
                   <button
-                    onClick={() => router.push('/simulator')}
+                    onClick={() => router.push('/tools/simulator')}
                     className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     まずは無料でシミュレーションをする

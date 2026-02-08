@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { CapRateCalculator } from './CapRateCalculator'
 
 const BASE_URL = 'https://ooya.tech';
@@ -46,66 +47,13 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ（WebApplication）
-const webApplicationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'キャップレート（還元利回り）シミュレーター',
-  description: 'キャップレート（還元利回り）を計算するツール。NOIと物件価格から利回りを算出、物件価格の逆算も可能。',
-  applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY'
-  },
-  provider: {
-    '@type': 'Organization',
-    name: '大家DX'
-  }
-}
-
-// パンくずリスト構造化データ
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'ホーム',
-      item: BASE_URL
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '不動産・賃貸経営計算ツール',
-      item: `${BASE_URL}/tools`
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: 'キャップレート（還元利回り）シミュレーター',
-      item: `${BASE_URL}/tools/cap-rate`
-    }
-  ]
-}
-
 export default function CapRatePage() {
   return (
     <>
-      {/* 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(webApplicationSchema)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema)
-        }}
+      <ToolStructuredData
+        name="キャップレート（還元利回り）シミュレーター"
+        description="キャップレート（還元利回り）を計算するツール。NOIと物件価格から利回りを算出、物件価格の逆算も可能。"
+        toolPath="/tools/cap-rate"
       />
       <CapRateCalculator />
     </>

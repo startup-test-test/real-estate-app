@@ -31,7 +31,7 @@ export function SimulatorCTA() {
         {/* ボタン */}
         <div className="p-6 sm:p-8 text-center">
           <Link
-            href="/simulator"
+            href="/tools/simulator"
             className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 text-lg sm:text-xl"
           >
             無料でシミュレーションをする

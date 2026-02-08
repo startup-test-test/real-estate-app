@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { NOICalculator } from './NOICalculator'
 
 export const metadata: Metadata = {
@@ -39,5 +40,14 @@ export const metadata: Metadata = {
 }
 
 export default function NOIPage() {
-  return <NOICalculator />
+  return (
+    <>
+      <ToolStructuredData
+        name="NOI（営業純収益）シミュレーター"
+        description="NOI（Net Operating Income・営業純収益）を計算するツール。GPI・EGI・OPEXの詳細内訳を表示。"
+        toolPath="/tools/noi"
+      />
+      <NOICalculator />
+    </>
+  )
 }

@@ -38,7 +38,7 @@ export function ToolSidebarCTA({ mobile = false }: ToolSidebarCTAProps) {
         }
       </p>
       <Link
-        href="/simulator"
+        href="/tools/simulator"
         className={`inline-flex items-center justify-center w-full bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors ${
           mobile ? 'px-4 py-3' : 'px-4 py-2.5 text-sm'
         }`}

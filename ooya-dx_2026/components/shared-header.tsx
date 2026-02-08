@@ -8,7 +8,7 @@ import { Menu, X, ChevronDown, LogOut, User } from 'lucide-react';
 
 // 一般向けナビゲーションリンク
 const NAV_LINKS = [
-  { href: '/simulator', label: '賃貸経営シミュレーター' },
+  { href: '/tools/simulator', label: '賃貸経営シミュレーター' },
   { href: '/tools', label: '計算ツール' },
   { href: '/media', label: 'メディア' },
   { href: '/company', label: '会社概要' },
@@ -21,7 +21,7 @@ const MYPAGE_NAV_LINKS = [
 ];
 
 // ダッシュボード系のルート・独自ヘッダーを持つページ（グローバルヘッダーを非表示）
-const DASHBOARD_ROUTES = ['/mypage', '/mypage/revenue-simulator', '/dashboard', '/billing', '/mypage/guide', '/simulator'];
+const DASHBOARD_ROUTES = ['/mypage', '/mypage/revenue-simulator', '/dashboard', '/billing', '/mypage/guide', '/tools/simulator'];
 
 interface SharedHeaderProps {
   /** メディアページ用のロゴを使用するか */

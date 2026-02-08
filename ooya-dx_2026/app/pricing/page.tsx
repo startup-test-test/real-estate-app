@@ -143,7 +143,7 @@ const PremiumPlan: React.FC = () => {
           {/* CTAボタン */}
           <div className="text-center">
             <Link
-              href="/simulator"
+              href="/tools/simulator"
               className="inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
             >
               賃貸経営シミュレーターを使う

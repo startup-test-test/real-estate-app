@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { ReplacementCostCalculator } from './ReplacementCostCalculator'
 
 const PAGE_TITLE = '建物の再調達価格 計算シミュレーション｜構造・用途別の積算評価'
@@ -33,61 +34,13 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ（JSON-LD）
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: '再調達価格シミュレーター',
-  description: PAGE_DESCRIPTION,
-  applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY',
-  },
-  author: {
-    '@type': 'Organization',
-    name: '大家DX',
-    url: 'https://ooya.tech',
-  },
-}
-
-const breadcrumbJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'トップ',
-      item: 'https://ooya.tech',
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '計算ツール',
-      item: 'https://ooya.tech/tools',
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: '再調達価格',
-      item: 'https://ooya.tech/tools/replacement-cost',
-    },
-  ],
-}
-
 export default function ReplacementCostPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      <ToolStructuredData
+        name="再調達価格シミュレーター"
+        description={PAGE_DESCRIPTION}
+        toolPath="/tools/replacement-cost"
       />
       <ReplacementCostCalculator />
     </>

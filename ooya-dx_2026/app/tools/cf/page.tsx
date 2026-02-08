@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { CFCalculator } from './CFCalculator'
 
 const BASE_URL = 'https://ooya.tech';
@@ -44,66 +45,13 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ（WebApplication）
-const webApplicationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'キャッシュフロー（CF）シミュレーター',
-  description: '賃貸経営のキャッシュフローを計算するツール',
-  applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY'
-  },
-  provider: {
-    '@type': 'Organization',
-    name: '大家DX'
-  }
-}
-
-// パンくずリスト構造化データ
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'ホーム',
-      item: BASE_URL
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '不動産・賃貸経営計算ツール',
-      item: `${BASE_URL}/tools`
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: 'キャッシュフロー（CF）シミュレーター',
-      item: `${BASE_URL}/tools/cf`
-    }
-  ]
-}
-
 export default function CFPage() {
   return (
     <>
-      {/* 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(webApplicationSchema)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema)
-        }}
+      <ToolStructuredData
+        name="キャッシュフロー（CF）シミュレーター"
+        description="賃貸経営のキャッシュフローを計算するツール"
+        toolPath="/tools/cf"
       />
       <CFCalculator />
     </>

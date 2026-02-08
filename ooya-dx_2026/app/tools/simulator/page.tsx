@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: '賃貸経営シミュレーター | 大家DX',
     description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
-    url: `${BASE_URL}/simulator`,
+    url: `${BASE_URL}/tools/simulator`,
     siteName: '大家DX',
     type: 'website',
     images: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
   alternates: {
-    canonical: '/simulator',
+    canonical: '/tools/simulator',
   },
 };
 
@@ -48,8 +48,14 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
+      name: '計算ツール一覧',
+      item: `${BASE_URL}/tools`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
       name: '賃貸経営シミュレーター',
-      item: `${BASE_URL}/simulator`,
+      item: `${BASE_URL}/tools/simulator`,
     },
   ],
 };

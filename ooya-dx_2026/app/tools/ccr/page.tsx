@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { CCRCalculator } from './CCRCalculator'
 
 export const metadata: Metadata = {
@@ -38,5 +39,14 @@ export const metadata: Metadata = {
 }
 
 export default function CCRPage() {
-  return <CCRCalculator />
+  return (
+    <>
+      <ToolStructuredData
+        name="CCR（自己資金配当率）シミュレーター"
+        description="CCR（Cash on Cash Return・自己資金配当率）を計算するツール。レバレッジ効果も判定。"
+        toolPath="/tools/ccr"
+      />
+      <CCRCalculator />
+    </>
+  )
 }

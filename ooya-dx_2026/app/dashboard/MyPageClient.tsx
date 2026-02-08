@@ -729,7 +729,7 @@ const MyPage: React.FC = () => {
         {
           name: "賃貸経営シミュレーター",
           primary: true,
-          path: "/simulator",
+          path: "/tools/simulator",
         },
       ],
     },
@@ -928,7 +928,7 @@ const MyPage: React.FC = () => {
                                 return;
                               }
                               // シミュレーター（完全無料・無制限）
-                              if (action.path === "/simulator" || action.path === "/market-analysis") {
+                              if (action.path === "/tools/simulator" || action.path === "/market-analysis") {
                                 // 完全無料プランのため、制限チェックをスキップ
                                 router.push(action.path);
                               } else if (action.path !== "#") {
@@ -980,7 +980,7 @@ const MyPage: React.FC = () => {
                     <button
                       onClick={async () => {
                         // 完全無料プランのため、制限チェックをスキップ
-                        router.push("/simulator");
+                        router.push("/tools/simulator");
                       }}
                       className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
@@ -1082,7 +1082,7 @@ const MyPage: React.FC = () => {
                     <button
                       onClick={async () => {
                         // 完全無料プランのため、制限チェックをスキップ
-                        router.push("/simulator");
+                        router.push("/tools/simulator");
                       }}
                       className="inline-flex items-center px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >

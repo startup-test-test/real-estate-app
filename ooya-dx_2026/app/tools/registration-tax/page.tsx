@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { RegistrationTaxCalculator } from './RegistrationTaxCalculator'
 
 export const metadata: Metadata = {
@@ -35,64 +36,18 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: '登録免許税シミュレーター',
-  description:
-    '不動産購入時の登録免許税を計算するシミュレーター。土地・建物の移転登記、保存登記、抵当権設定に対応。軽減税率も自動判定。',
-  url: 'https://ooya.tech/tools/registration-tax',
-  applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web Browser',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY',
-  },
-  creator: {
-    '@type': 'Organization',
-    name: '大家DX',
-    url: 'https://ooya.tech',
-  },
-}
-
-// パンくずリスト構造化データ
-const breadcrumbJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'ホーム',
-      item: 'https://ooya.tech',
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '不動産・賃貸経営計算ツール',
-      item: 'https://ooya.tech/tools',
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: '登録免許税シミュレーター',
-      item: 'https://ooya.tech/tools/registration-tax',
-    },
-  ],
-}
-
 export default function RegistrationTaxPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      <ToolStructuredData
+        name="登録免許税シミュレーター"
+        description="不動産購入時の登録免許税を計算するシミュレーター。土地・建物の移転登記、保存登記、抵当権設定に対応。軽減税率も自動判定。"
+        toolPath="/tools/registration-tax"
+        featureList={[
+          '所有権移転登記・保存登記・抵当権設定に対応',
+          '軽減税率（長期優良住宅・低炭素住宅）自動判定',
+          '土地・建物の一括計算',
+        ]}
       />
       <RegistrationTaxCalculator />
     </>

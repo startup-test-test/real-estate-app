@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigation: Array<{ name: string; href: string; icon: any; badge?: string }> = [
     { name: 'マイページ', href: '/dashboard', icon: Home },
-    { name: '賃貸経営シミュレーター', href: '/simulator', icon: Calculator },
+    { name: '賃貸経営シミュレーター', href: '/tools/simulator', icon: Calculator },
   ];
 
   const supportNavigation = [

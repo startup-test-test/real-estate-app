@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData'
 import { DCFCalculator } from './DCFCalculator'
 
 const BASE_URL = 'https://ooya.tech';
@@ -47,66 +48,13 @@ export const metadata: Metadata = {
   },
 }
 
-// 構造化データ（WebApplication）
-const webApplicationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'DCF法シミュレーター',
-  description: 'DCF法（割引キャッシュフロー法）による不動産評価額の計算ツール',
-  applicationCategory: 'FinanceApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'JPY'
-  },
-  provider: {
-    '@type': 'Organization',
-    name: '大家DX'
-  }
-}
-
-// パンくずリスト構造化データ
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'ホーム',
-      item: BASE_URL
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '不動産・賃貸経営計算ツール',
-      item: `${BASE_URL}/tools`
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: 'DCF法シミュレーター',
-      item: `${BASE_URL}/tools/dcf`
-    }
-  ]
-}
-
 export default function DCFPage() {
   return (
     <>
-      {/* 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(webApplicationSchema)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema)
-        }}
+      <ToolStructuredData
+        name="DCF法シミュレーター"
+        description="DCF法（割引キャッシュフロー法）による不動産評価額の計算ツール"
+        toolPath="/tools/dcf"
       />
       <DCFCalculator />
     </>

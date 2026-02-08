@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
 
             {/* サービスリンク（2列） */}
             <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-              <Link href="/simulator" className="text-sm text-white/70 hover:text-white transition-colors">
+              <Link href="/tools/simulator" className="text-sm text-white/70 hover:text-white transition-colors">
                 賃貸経営シミュレーター
               </Link>
               <Link href="/guide" className="text-sm text-white/70 hover:text-white transition-colors">

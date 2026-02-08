@@ -286,7 +286,7 @@ export function ToolNameCalculator() {
               </p>
               <div className="text-center">
                 <Link
-                  href="/simulator"
+                  href="/tools/simulator"
                   className="inline-flex items-center justify-center h-12 px-8 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
                 >
                   収益シミュレーターを試す

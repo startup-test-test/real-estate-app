@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, ArrowRight } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { toolCategories } from '@/lib/navigation'
@@ -8,11 +8,11 @@ import { toolCategories } from '@/lib/navigation'
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '賃貸経営計算ツール一覧 | 大家DX',
-  description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
+  title: '不動産投資 計算ツール一覧｜利回り・税金・ローン【無料】 | 大家DX',
+  description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。2026年度最新税制対応。',
   openGraph: {
-    title: '賃貸経営計算ツール一覧 | 大家DX',
-    description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
+    title: '不動産投資 計算ツール一覧【無料】 | 大家DX',
+    description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。',
     url: `${BASE_URL}/tools`,
     siteName: '大家DX',
     type: 'website',
@@ -21,14 +21,14 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/images/media/hero-media.jpeg`,
         width: 1200,
         height: 630,
-        alt: '賃貸経営計算ツール一覧',
+        alt: '不動産投資 計算ツール一覧',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '賃貸経営計算ツール一覧 | 大家DX',
-    description: '不動産取引に必要な税金・費用を簡単計算。物件購入・収益分析、融資・ローン、税金、売却、リフォームなど、カテゴリ別に計算ツールをご用意。',
+    title: '不動産投資 計算ツール一覧【無料】 | 大家DX',
+    description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
   alternates: {
@@ -50,10 +50,49 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: '賃貸経営計算ツール',
+      name: '計算ツール一覧',
       item: `${BASE_URL}/tools`,
     },
   ],
+};
+
+// WebPage構造化データ（作成日・更新日）
+const webPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: '不動産投資 計算ツール一覧',
+  description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。',
+  url: `${BASE_URL}/tools`,
+  datePublished: '2026-01-15',
+  dateModified: '2026-02-08',
+  publisher: {
+    '@type': 'Organization',
+    name: '大家DX',
+    url: BASE_URL,
+    logo: `${BASE_URL}/img/logo_250709_2.png`,
+  },
+};
+
+// 表示対象のカテゴリ（利用可能なツールがあるもののみ）
+const visibleCategories = toolCategories.filter(
+  category => category.items.some(item => item.available)
+);
+
+// ItemList構造化データ
+const availableItems = visibleCategories.flatMap(c =>
+  c.items.filter(i => i.available && i.href !== '/tools/simulator')
+);
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '不動産投資 計算ツール一覧',
+  numberOfItems: availableItems.length,
+  itemListElement: availableItems.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    url: `${BASE_URL}${item.href}`,
+  })),
 };
 
 export default function ToolsPage() {
@@ -62,6 +101,14 @@ export default function ToolsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
       />
       <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
@@ -72,51 +119,122 @@ export default function ToolsPage() {
         <main className="flex-1 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             {/* パンくずリスト */}
-            <div className="relative mb-2 sm:mb-6">
+            <div className="relative mb-2 sm:mb-3">
               <nav className="flex items-center text-sm text-gray-500 overflow-x-auto scrollbar-hide whitespace-nowrap" aria-label="パンくずリスト">
                 <Link href="/" className="hover:text-primary-600 flex-shrink-0">
                   大家DX
                 </Link>
                 <ChevronRight className="h-4 w-4 mx-1 text-gray-400 flex-shrink-0" />
-                <span className="text-gray-900 flex-shrink-0">賃貸経営計算ツール</span>
+                <span className="text-gray-900 flex-shrink-0">計算ツール一覧</span>
               </nav>
             </div>
 
-            {/* ヘッダー */}
-            <div className="mb-6 sm:mb-12 text-center">
-              <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
-                賃貸経営計算ツール
+            {/* 日付 */}
+            <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+              <span>公開日：2026年1月15日</span>
+              <span>更新日：2026年2月8日</span>
+            </div>
+
+            {/* H1 + リードテキスト */}
+            <div className="mb-6 sm:mb-10 text-center">
+              <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+                不動産投資 計算ツール一覧
                 <span className="ml-2 sm:ml-3 inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full align-middle">
                   無料
                 </span>
               </h1>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg">
-                不動産取引に必要な税金・費用をかんたん計算。スマホでもPCでも使えます。
+              <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+                利回り・キャッシュフロー・IRRなどの収益分析から、
+                仲介手数料・譲渡所得税・印紙税などの税金計算まで。
+                賃貸経営に必要な計算ツールを無料で提供しています。
               </p>
             </div>
 
-            {/* カテゴリ別ツール一覧（navigation.tsから自動生成） */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {toolCategories.map((category) => (
-                <div key={category.id} className="bg-white rounded-xl p-6 shadow-sm">
-                  <h2 className="text-lg font-bold text-[#32373c] mb-3 pb-3 border-b border-gray-100">{category.title}</h2>
-                  <ul className="space-y-1">
-                    {category.items.map((item) => (
-                      <li key={item.href}>
-                        {item.available ? (
-                          <a href={item.href} className="text-gray-900 hover:text-gray-600 hover:underline">
-                            <span className="text-gray-400 mr-1">›</span>{item.name}
-                          </a>
-                        ) : (
-                          <span className="text-gray-400">
-                            <span className="mr-1">›</span>{item.name}（準備中）
-                          </span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+            {/* シミュレーターバナー */}
+            <Link
+              href="/tools/simulator"
+              className="block mb-6 sm:mb-8 p-4 sm:p-5 bg-white border border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-primary-600 font-semibold mb-1">総合シミュレーター</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">
+                    賃貸経営シミュレーター
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+                    IRR・CCR・DSCR、35年キャッシュフロー一括計算
+                  </p>
                 </div>
-              ))}
+                <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors flex-shrink-0" />
+              </div>
+            </Link>
+
+            {/* アンカーナビゲーション */}
+            <nav className="mb-6 sm:mb-8 overflow-x-auto scrollbar-hide" aria-label="カテゴリナビゲーション">
+              <div className="flex gap-2 sm:gap-3 whitespace-nowrap">
+                {visibleCategories.map((category) => (
+                  <a
+                    key={category.id}
+                    href={`#${category.id}`}
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-colors"
+                  >
+                    {category.title}
+                  </a>
+                ))}
+              </div>
+            </nav>
+
+            {/* カテゴリ別セクション */}
+            <div className="space-y-8 sm:space-y-12">
+              {visibleCategories.map((category) => {
+                // シミュレーターはバナーで表示するためカードから除外
+                const displayItems = category.items.filter(
+                  item => item.href !== '/tools/simulator'
+                );
+
+                return (
+                  <section key={category.id} id={category.id}>
+                    <div className="mb-4 sm:mb-5">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                        {category.title}
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {category.description}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                      {displayItems.map((item) => (
+                        item.available ? (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="block p-4 bg-white rounded-xl border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all group"
+                          >
+                            <p className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors text-sm sm:text-base">
+                              {item.name}
+                            </p>
+                            {item.description && (
+                              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                                {item.description}
+                              </p>
+                            )}
+                          </Link>
+                        ) : (
+                          <div
+                            key={item.href}
+                            className="block p-4 bg-gray-50 rounded-xl border border-gray-100"
+                          >
+                            <p className="font-bold text-gray-400 text-sm sm:text-base">
+                              {item.name}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">準備中</p>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
             </div>
           </div>
         </main>

@@ -25,47 +25,54 @@ export interface NavigationSection {
 
 // 賃貸経営シミュレーター
 export const simulatorLinks: NavigationItem[] = [
-  { name: '賃貸経営シミュレーター', description: 'IRR、CCR、DSCR、キャッシュフロー一括計算', href: '/simulator' },
+  { name: '賃貸経営シミュレーター', description: 'IRR、CCR、DSCR、キャッシュフロー一括計算', href: '/tools/simulator' },
 ];
 
 // カテゴリ別計算ツール
 export const toolCategories: ToolCategory[] = [
   {
-    id: 'investment-analysis',
-    title: '物件購入・収益分析',
-    description: '物件の収益性を多角的に分析',
+    id: 'profitability',
+    title: '収益性分析ツール',
+    description: '物件の投資効率を数値で判断するためのツール群です。',
     items: [
-      { name: '賃貸経営シミュレーター', description: 'IRR・CCR・DSCR、35年キャッシュフロー一括計算', href: '/simulator', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-30' },
+      { name: '賃貸経営シミュレーター', description: 'IRR・CCR・DSCR、35年キャッシュフロー一括計算', href: '/tools/simulator', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-30' },
+      { name: '表面利回り・実質利回り', description: '物件の利回りを計算', href: '/tools/yield-rate', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: 'ROI（投資利益率）', description: '投資効率をキャッシュフローで評価', href: '/tools/roi', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: 'IRR（内部収益率）', description: '投資の収益性を時間価値で評価', href: '/tools/irr', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: 'NPV（正味現在価値）', description: 'DCF法による投資価値の評価', href: '/tools/npv', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'ROI（投資利益率）', description: '投資効率をキャッシュフローで評価', href: '/tools/roi', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: '表面利回り・実質利回り', description: '物件の利回りを計算', href: '/tools/yield-rate', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: 'NOI（営業純収益）', description: '経費控除後の純収益を計算', href: '/tools/noi', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-20' },
+      { name: 'CF（キャッシュフロー）', description: '税引前・税引後CFを計算', href: '/tools/cf', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: 'CCR（自己資金配当率）', description: '自己資金に対する利回りを計算', href: '/tools/ccr', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: 'DSCR（債務返済カバー率）', description: '返済余力を計算', href: '/tools/dscr', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+    ],
+  },
+  {
+    id: 'valuation',
+    title: '不動産評価ツール',
+    description: '物件の適正価格を算出するための評価手法ツールです。',
+    items: [
+      { name: 'キャップレート（還元利回り）', description: '還元利回りを計算・物件価格を逆算', href: '/tools/cap-rate', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: '収益還元（直接還元法）', description: '直接還元法による不動産評価', href: '/tools/income-capitalization', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: 'DCF法（収益価格）', description: '割引キャッシュフロー法による不動産評価', href: '/tools/dcf', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: '積算評価', description: '土地・建物の積算価格を計算', href: '/tools/assessed-value', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: '再調達価格', description: '建物の再調達原価を計算', href: '/tools/replacement-cost', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: '収益還元（直接還元法）', description: '直接還元法による不動産評価', href: '/tools/income-capitalization', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'DSCR（債務返済カバー率）', description: '返済余力を計算', href: '/tools/dscr', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'CCR（自己資金配当率）', description: '自己資金に対する利回りを計算', href: '/tools/ccr', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'LTV（借入比率）', description: 'レバレッジの程度を把握', href: '/tools/ltv', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'NOI（営業純収益）', description: '経費控除後の純収益を計算', href: '/tools/noi', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-20' },
-      { name: 'CF（キャッシュフロー）', description: '税引前・税引後CFを計算', href: '/tools/cf', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'キャップレート（還元利回り）', description: '還元利回りを計算・物件価格を逆算', href: '/tools/cap-rate', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
     ],
   },
   {
     id: 'loan',
-    title: '融資・ローン',
-    description: 'ローン返済・借入シミュレーション',
+    title: '融資・ローン計算ツール',
+    description: '借入条件の試算とレバレッジ分析を行います。',
     items: [
       { name: '住宅ローン', description: '毎月返済額・総返済額を計算', href: '/tools/mortgage-loan', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: 'LTV（借入比率）', description: 'レバレッジの程度を把握', href: '/tools/ltv', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: '借入可能額', description: '年収倍率・返済比率から判定', href: '/tools/borrowing-capacity', available: false },
       { name: '繰上返済', description: '繰上返済のメリットを計算', href: '/tools/prepayment', available: false },
     ],
   },
   {
     id: 'tax',
-    title: '税金',
-    description: '不動産に関わる各種税金を計算',
+    title: '税金計算ツール',
+    description: '不動産の取得・保有・売却で発生する税金を計算します。',
     items: [
       { name: '不動産取得税', description: '不動産購入時の税金を計算', href: '/tools/acquisition-tax', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: '登録免許税', description: '登記にかかる税金を計算', href: '/tools/registration-tax', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
@@ -79,8 +86,8 @@ export const toolCategories: ToolCategory[] = [
   },
   {
     id: 'sale',
-    title: '売却',
-    description: '売却時の費用・税金を計算',
+    title: '売却シミュレーション',
+    description: '出口戦略に必要な手取り額・税金を試算します。',
     items: [
       { name: '仲介手数料', description: '売買価格から仲介手数料を計算', href: '/tools/brokerage', available: true, publishDate: '2026-01-15', lastUpdated: '2026-02-05' },
       { name: '譲渡所得税', description: '不動産売却時の税金を計算', href: '/tools/capital-gains-tax', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
