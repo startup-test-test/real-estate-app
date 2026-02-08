@@ -109,10 +109,6 @@ export function ToolStructuredData({
           name: '大家DX',
           url: BASE_URL,
         },
-        mainEntity: {
-          '@type': 'SoftwareApplication',
-          name,
-        },
       }
     : null
 
