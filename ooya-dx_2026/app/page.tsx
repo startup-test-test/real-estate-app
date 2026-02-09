@@ -6,11 +6,11 @@ import { getAllArticles } from '@/lib/mdx';
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '大家DX - 賃貸経営シミュレーション',
-  description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
+  title: '不動産投資クラウドソフトなら「大家DX」｜現役大家が開発',
+  description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。実務に基づいた精度の高いシミュレーションで、購入判断から出口戦略までをトータルにサポートする大家のためのプラットフォームです。',
   openGraph: {
-    title: '大家DX - 賃貸経営シミュレーション',
-    description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
+    title: '不動産投資クラウドソフトなら「大家DX」｜現役大家が開発',
+    description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。実務に基づいた精度の高いシミュレーションで、購入判断から出口戦略までをトータルにサポートする大家のためのプラットフォームです。',
     url: BASE_URL,
     siteName: '大家DX',
     type: 'website',
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/images/media/hero-media.jpeg`,
         width: 1200,
         height: 630,
-        alt: '大家DX - 賃貸経営シミュレーション',
+        alt: '不動産投資クラウドソフト「大家DX」',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '大家DX - 賃貸経営シミュレーション',
-    description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
+    title: '不動産投資クラウドソフトなら「大家DX」｜現役大家が開発',
+    description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。実務に基づいた精度の高いシミュレーションで、購入判断から出口戦略までをトータルにサポートする大家のためのプラットフォームです。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
   alternates: {
@@ -40,7 +40,7 @@ const websiteJsonLd = {
   '@type': 'WebSite',
   name: '大家DX',
   url: BASE_URL,
-  description: 'AI搭載の包括的賃貸経営プラットフォーム。収益シミュレーション、市場分析、経営判断をサポートします。',
+  description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。',
   potentialAction: {
     '@type': 'SearchAction',
     target: `${BASE_URL}/media?q={search_term_string}`,

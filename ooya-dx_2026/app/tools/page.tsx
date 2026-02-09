@@ -8,11 +8,11 @@ import { toolCategories } from '@/lib/navigation'
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '不動産投資 計算ツール一覧｜利回り・税金・ローン【無料】 | 大家DX',
-  description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。2026年度最新税制対応。',
+  title: '不動産投資の計算ツール一覧（全27種）｜現役大家が開発【完全無料】｜大家DX',
+  description: '利回り・収支分析・IRRから、仲介手数料・譲渡所得税・印紙税まで、不動産投資に必要な計算ツール全27種を完全網羅。2026年度最新税制に対応し、現役大家の実務目線で「本当に必要な計算」を1ページに集約。すべて無料で使い放題です。',
   openGraph: {
-    title: '不動産投資 計算ツール一覧【無料】 | 大家DX',
-    description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。',
+    title: '不動産投資の計算ツール一覧（全27種）｜現役大家が開発【完全無料】｜大家DX',
+    description: '利回り・収支分析・IRRから、仲介手数料・譲渡所得税・印紙税まで、不動産投資に必要な計算ツール全27種を完全網羅。2026年度最新税制に対応し、現役大家の実務目線で「本当に必要な計算」を1ページに集約。すべて無料で使い放題です。',
     url: `${BASE_URL}/tools`,
     siteName: '大家DX',
     type: 'website',
@@ -21,14 +21,14 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/images/media/hero-media.jpeg`,
         width: 1200,
         height: 630,
-        alt: '不動産投資 計算ツール一覧',
+        alt: '不動産投資の計算ツール一覧',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産投資 計算ツール一覧【無料】 | 大家DX',
-    description: '利回り・キャッシュフロー・IRRなどの収益分析から、仲介手数料・譲渡所得税・印紙税などの税金計算まで。賃貸経営に必要な計算ツールを全て無料で提供。',
+    title: '不動産投資の計算ツール一覧（全27種）｜現役大家が開発【完全無料】｜大家DX',
+    description: '利回り・収支分析・IRRから、仲介手数料・譲渡所得税・印紙税まで、不動産投資に必要な計算ツール全27種を完全網羅。2026年度最新税制に対応し、現役大家の実務目線で「本当に必要な計算」を1ページに集約。すべて無料で使い放題です。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
   alternates: {
@@ -138,10 +138,7 @@ export default function ToolsPage() {
             {/* H1 + リードテキスト */}
             <div className="mb-6 sm:mb-10 text-center">
               <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-                不動産投資 計算ツール一覧
-                <span className="ml-2 sm:ml-3 inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full align-middle">
-                  無料
-                </span>
+                不動産投資の計算ツール一覧（全27種・完全無料）
               </h1>
               <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
                 利回り・キャッシュフロー・IRRなどの収益分析から、

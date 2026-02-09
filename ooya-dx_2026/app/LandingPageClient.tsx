@@ -84,9 +84,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
               {/* Left: Text Content */}
               <div>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
-                  賃貸経営を、
+                  不動産投資
                   <br />
-                  もっとスマートに
+                  クラウドソフト
+                  <br />
+                  「大家DX」
                 </h1>
                 <p className="mt-6 text-lg sm:text-xl text-slate-700 leading-relaxed">
                   収益シミュレーション、計算ツール、専門メディア。

@@ -6,11 +6,11 @@ import { getAllArticles } from '@/lib/mdx';
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '賃貸経営シミュレーター | 大家DX',
-  description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
+  title: '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX',
+  description: '不動産投資の収支を無料で詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
   openGraph: {
-    title: '賃貸経営シミュレーター | 大家DX',
-    description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
+    title: '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX',
+    description: '不動産投資の収支を無料で詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
     url: `${BASE_URL}/tools/simulator`,
     siteName: '大家DX',
     type: 'website',
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/img/kakushin_img01.png`,
         width: 1200,
         height: 630,
-        alt: '賃貸経営シミュレーター',
+        alt: '不動産投資シミュレーション',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '賃貸経営シミュレーター | 大家DX',
-    description: '賃貸経営の収益性をシミュレーション。IRR、CCR、DSCR、35年キャッシュフローを一括計算。完全無料で利用可能。',
+    title: '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX',
+    description: '不動産投資の収支を無料で詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
     images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
   alternates: {

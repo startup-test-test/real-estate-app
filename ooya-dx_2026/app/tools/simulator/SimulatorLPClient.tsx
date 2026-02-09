@@ -44,7 +44,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.title = '賃貸経営のためのシミュレーション｜大家DX';
+    document.title = '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX';
   }, []);
 
   // ドロップダウン外クリックで閉じる
@@ -237,9 +237,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* 左側：メインコピー */}
             <div className="text-left">
-              <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6" style={{ lineHeight: '1.5' }}>
-                <span className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl block mb-2" style={{ fontSize: '90%' }}>賃貸経営のための</span>
-                <span className="block text-4xl sm:text-4xl md:text-5xl lg:text-6xl" style={{ lineHeight: '1.1' }}>シミュレーション</span>
+              <h1 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6" style={{ lineHeight: '1.4' }}>
+                不動産投資のシミュレーション
+                <br />
+                35年分の収支を一括計算
               </h1>
               <div className="text-base sm:text-xl md:text-2xl lg:text-3xl text-gray-900 mb-4 sm:mb-6">
                 <p className="mb-2 sm:mb-3 relative inline-block max-w-full">
