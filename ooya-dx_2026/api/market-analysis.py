@@ -74,15 +74,15 @@ class handler(BaseHTTPRequestHandler):
             deviation = ((user_unit_price - median_price) / median_price * 100) if median_price > 0 else 0
 
             if deviation < -20:
-                evaluation = "非常に割安"
+                evaluation = ""
             elif deviation < -10:
-                evaluation = "割安"
+                evaluation = ""
             elif deviation < 5:
-                evaluation = "適正価格"
+                evaluation = ""
             elif deviation < 15:
-                evaluation = "やや割高"
+                evaluation = ""
             else:
-                evaluation = "割高"
+                evaluation = ""
 
             result = {
                 "similar_properties": similar_properties,

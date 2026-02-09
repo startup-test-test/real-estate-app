@@ -53,7 +53,7 @@ export default function DCFPage() {
     <>
       <ToolStructuredData
         name="DCF法シミュレーター"
-        description="DCF法（割引キャッシュフロー法）による不動産評価額の計算ツール"
+        description="DCF法（割引キャッシュフロー法）による物件価格の計算ツール"
         toolPath="/tools/dcf"
       />
       <DCFCalculator />

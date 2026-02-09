@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     '建物評価',
     '積算評価',
     '建築単価',
-    '不動産評価',
+    '不動産価格計算',
     '担保評価',
   ],
   openGraph: {

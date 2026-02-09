@@ -48,12 +48,12 @@ export const toolCategories: ToolCategory[] = [
   },
   {
     id: 'valuation',
-    title: '不動産評価ツール',
-    description: '物件の適正価格を算出するための評価手法ツールです。',
+    title: '物件価格シミュレーション',
+    description: '物件の参考価格を算出するための計算ツールです。',
     items: [
       { name: 'キャップレート（還元利回り）', description: '還元利回りを計算・物件価格を逆算', href: '/tools/cap-rate', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: '収益還元（直接還元法）', description: '直接還元法による不動産評価', href: '/tools/income-capitalization', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-      { name: 'DCF法（収益価格）', description: '割引キャッシュフロー法による不動産評価', href: '/tools/dcf', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: '収益還元（直接還元法）', description: '直接還元法による価格計算', href: '/tools/income-capitalization', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+      { name: 'DCF法（収益価格）', description: '割引キャッシュフロー法による価格計算', href: '/tools/dcf', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: '積算評価', description: '土地・建物の積算価格を計算', href: '/tools/assessed-value', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
       { name: '再調達価格', description: '建物の再調達原価を計算', href: '/tools/replacement-cost', available: true, publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
     ],
