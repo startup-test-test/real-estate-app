@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'カテゴリが見つかりません' };
   }
 
-  const BASE_URL = 'https://ooya-dx2026.vercel.app';
+  const BASE_URL = 'https://ooya.tech';
 
   return {
     title: `${meta.title}｜大家DXジャーナル`,
