@@ -117,7 +117,7 @@ export default function MediaPage() {
 
           {/* 著者プロフィール */}
           <div className="py-8 border-b border-gray-100">
-            <Link href="/media/profile" className="group block">
+            <Link href="/profile" className="group block">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100 group-hover:ring-primary-200 transition-all">
                   <img

@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat'
 import { BrokerageGuide } from './BrokerageGuide'
 
 const BASE_URL = 'https://ooya.tech';
@@ -80,16 +81,8 @@ const articleSchema = {
   '@type': 'Article',
   headline: '仲介手数料とは？計算方法・2024年法改正・支払いの仕組みを解説',
   description: '不動産売買の仲介手数料を徹底解説。計算方法（速算式）、2024年7月の法改正、支払いタイミングなど。',
-  author: {
-    '@type': 'Organization',
-    name: '大家DX',
-    url: 'https://ooya.tech'
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: '大家DX',
-    url: 'https://ooya.tech'
-  },
+  author: articleAuthorRef,
+  publisher: articlePublisherRef,
   datePublished: '2024-07-01',
   dateModified: new Date().toISOString().split('T')[0],
 }

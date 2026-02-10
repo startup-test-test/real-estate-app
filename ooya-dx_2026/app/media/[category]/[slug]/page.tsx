@@ -10,6 +10,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { RelatedTools } from '@/components/tools/RelatedTools';
 import { ShareButtons } from '@/components/tools/ShareButtons';
+import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat';
 import Link from 'next/link';
 
 interface Props {
@@ -59,7 +60,7 @@ export async function generateMetadata({ params }: Props) {
       siteName: '大家DXジャーナル',
       type: 'article',
       publishedTime: article.date,
-      authors: ['大家DX'],
+      authors: ['Tetsuro Togo'],
       images: article.thumbnail
         ? [
             {
@@ -108,16 +109,8 @@ export default async function ArticlePage({ params }: Props) {
     image: article.thumbnail || undefined,
     datePublished: article.date,
     dateModified: article.date,
-    author: {
-      '@type': 'Organization',
-      name: '大家DX',
-      url: BASE_URL,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: '大家DX',
-      url: BASE_URL,
-    },
+    author: articleAuthorRef,
+    publisher: articlePublisherRef,
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': url,

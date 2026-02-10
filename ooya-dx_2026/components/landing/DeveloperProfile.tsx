@@ -19,7 +19,7 @@ const DeveloperProfile: React.FC = () => {
             <div className="flex-1 space-y-8 text-gray-700 leading-relaxed">
               <div>
                 <p className="text-lg">
-                  大家DX開発者の私自身、現役の不動産オーナーです。2025年9月時点で7戸の不動産を購入しており、その過程での数多くの失敗と成功が、この「大家DX」を開発する原点となりました。<a href="https://ooya.tech/media/profile/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">詳しい自己紹介と不動産投資の実績はこちら。</a>
+                  大家DX開発者の私自身、現役の不動産オーナーです。2025年9月時点で7戸の不動産を購入しており、その過程での数多くの失敗と成功が、この「大家DX」を開発する原点となりました。<a href="https://ooya.tech/profile" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">詳しい自己紹介と不動産投資の実績はこちら。</a>
                 </p>
               </div>
 

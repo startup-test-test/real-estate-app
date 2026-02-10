@@ -102,7 +102,7 @@ export function CompanyProfileCompact() {
               賃貸経営者向け高度シミュレーター「大家DX」を2025年8月リリース。
             </p>
             <Link
-              href="/media/profile"
+              href="/profile"
               className="inline-block text-sm text-blue-600 hover:text-blue-800 hover:underline mt-3"
             >
               詳しいプロフィールを見る →

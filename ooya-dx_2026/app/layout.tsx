@@ -11,11 +11,30 @@ const BASE_URL = 'https://ooya.tech';
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${BASE_URL}/company#organization`,
   name: '大家DX',
   url: BASE_URL,
   logo: `${BASE_URL}/img/logo_250709_2.png`,
-  description: '賃貸経営のためのシミュレーションツール・計算ツールを提供',
-  sameAs: [],
+  description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。実務に基づいた精度の高いシミュレーションで、購入判断から出口戦略までをトータルにサポートする大家のためのプラットフォームです。',
+  founder: {
+    '@type': 'Person',
+    '@id': `${BASE_URL}/profile#person`,
+    name: 'Tetsuro Togo',
+  },
+  sameAs: [
+    'https://startup-marketing.co.jp/',
+    'https://www.tokyo-cci.or.jp/shachonet/profile/2454.html',
+    'https://www.saitamadx.com/dx-partner/solution/348/',
+    'https://www.amatias.com/asp/navi.asp?s_code=S0006864',
+    'https://stib.jp/member/name-list/?s=StartupMarketing',
+    'https://www.city.saitama.lg.jp/006/007/002/008/p062519.html',
+    'https://www.freelance-jp.org/talents/12828',
+    'https://www.jutaku-s.com/newsp/id/0000064588',
+    'https://saitama.publishing.3rd-in.co.jp/article/2aa1cd40-a89a-11f0-88f0-9ca3ba0a67df',
+    'https://www.para-sports.tokyo/member/group/',
+    'https://adaptation-platform.nies.go.jp/everyone/campaign/',
+    'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=2010001212632',
+  ],
 };
 
 // 構造化データ: WebSite（サイト情報）
@@ -24,7 +43,7 @@ const websiteJsonLd = {
   '@type': 'WebSite',
   name: '大家DX',
   url: BASE_URL,
-  description: '賃貸経営のためのシミュレーションツール',
+  description: '不動産投資クラウドソフト「大家DX」',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -37,8 +56,8 @@ const websiteJsonLd = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: '大家DX',
-  description: '賃貸経営のためのシミュレーションツール',
+  title: '不動産投資クラウドソフトなら「大家DX」｜現役大家が開発',
+  description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。実務に基づいた精度の高いシミュレーションで、購入判断から出口戦略までをトータルにサポートする大家のためのプラットフォームです。',
   // Google Search Console 認証は本番のみ（GoogleAnalytics.tsx で設定）
   manifest: '/manifest.json',
   themeColor: '#1e40af',

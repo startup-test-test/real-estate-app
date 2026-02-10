@@ -11,6 +11,13 @@ const nextConfig = {
   trailingSlash: false, // URLの末尾スラッシュを統一（なしに統一）
   async redirects() {
     return [
+      // ===== プロフィールページ URL移行（2026/02/10） =====
+      {
+        source: '/media/profile',
+        destination: '/profile',
+        permanent: true,
+      },
+
       // ===== シミュレーター URL移行（2026/02/08） =====
       {
         source: '/simulator',

@@ -1,6 +1,7 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import { CompanyNav } from '@/components/company-nav';
+import { organizationDetailJsonLd } from '@/lib/eeat';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 export default function CompanyPage() {
   const companyInfo = [
     { label: '会社名', value: '株式会社StartupMarketing', hasMigrationNote: true },
+    { label: '法人番号', value: '2010001212632（国税庁 法人番号公表サイト）', url: 'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=2010001212632' },
     { label: '会社ロゴ', value: '', isLogo: true },
     { label: '事業内容', value: '不動産テック事業（大家DX）、Web制作・Webコンサルティング、不動産業界向けシステム受託開発' },
     { label: '代表者', value: '代表取締役 東後 哲郎（とうご てつろう）' },
@@ -33,6 +35,13 @@ export default function CompanyPage() {
   ];
 
   return (
+    <>
+      {/* Organization 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationDetailJsonLd) }}
+      />
+
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
 
@@ -243,7 +252,7 @@ export default function CompanyPage() {
                     開発×マーケ×不動産の掛け合わせで「大家DX」を開発。
                   </p>
                   <Link
-                    href="/media/profile"
+                    href="/profile"
                     className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
                   >
                     詳しいプロフィールを見る
@@ -298,5 +307,6 @@ export default function CompanyPage() {
 
       <LandingFooter />
     </div>
+    </>
   );
 }

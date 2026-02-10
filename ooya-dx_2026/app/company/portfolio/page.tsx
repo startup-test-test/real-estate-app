@@ -79,7 +79,7 @@ export default function PortfolioPage() {
                   <p className="text-gray-700 mb-1">代表取締役 / 東後哲郎（とうごてつろう）</p>
                   <p className="text-gray-600 mb-3">開発ディレクター（Webディレクター） / マーケッター / MA / デザイナー</p>
                   <Link
-                    href="/media/profile"
+                    href="/profile"
                     className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
                   >
                     詳しいプロフィールを見る

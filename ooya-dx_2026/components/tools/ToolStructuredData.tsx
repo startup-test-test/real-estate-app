@@ -1,3 +1,5 @@
+import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat'
+
 const BASE_URL = 'https://ooya.tech'
 
 interface FaqItem {
@@ -58,12 +60,8 @@ export function ToolStructuredData({
       price: '0',
       priceCurrency: 'JPY',
     },
-    provider: {
-      '@type': 'Organization',
-      name: '大家DX',
-      url: BASE_URL,
-      logo: `${BASE_URL}/img/logo_250709_2.png`,
-    },
+    author: articleAuthorRef,
+    provider: articlePublisherRef,
     ...(featureList && featureList.length > 0 && { featureList: featureList.join(', ') }),
     ...(image && { image: `${BASE_URL}${image}` }),
   }
@@ -104,11 +102,8 @@ export function ToolStructuredData({
         url: `${BASE_URL}${toolPath}`,
         datePublished,
         ...(dateModified && { dateModified }),
-        publisher: {
-          '@type': 'Organization',
-          name: '大家DX',
-          url: BASE_URL,
-        },
+        author: articleAuthorRef,
+        publisher: articlePublisherRef,
       }
     : null
 

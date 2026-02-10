@@ -114,7 +114,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // プロフィールページ
     {
-      url: `${BASE_URL}/media/profile`,
+      url: `${BASE_URL}/profile`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
