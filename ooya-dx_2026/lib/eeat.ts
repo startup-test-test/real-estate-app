@@ -18,9 +18,21 @@ export const personJsonLd = {
     '@id': `${BASE_URL}/company#organization`,
     name: '株式会社StartupMarketing',
   },
+  hasCredential: {
+    '@type': 'EducationalOccupationalCredential',
+    name: '古家再生プランナー',
+    url: `${BASE_URL}/docs/furuya-planner-certificate.pdf`,
+    credentialCategory: '認定資格',
+    recognizedBy: {
+      '@type': 'Organization',
+      name: '一般社団法人 全国古家再生推進協議会',
+      url: 'https://zenko-kyo.or.jp/',
+    },
+  },
   knowsAbout: [
     '不動産投資',
     '賃貸経営',
+    '古家再生',
     'Webマーケティング',
     '開発ディレクション',
     '不動産収支シミュレーション',

@@ -24,7 +24,7 @@ export default function CompanyPage() {
     { label: '設立', value: '2020年9月29日（2016年に個人事業主を開始、2020年に法人化）' },
     { label: '資本金', value: '990万円' },
     { label: '顧問弁護士', value: 'スタートビズ法律事務所（代表弁護士: 宮岡 遼 / 第一東京弁護士会）', url: 'https://it-lawyer.jp/' },
-    { label: '顧問税理士', value: '青山税理士法人' },
+    { label: '顧問税理士', value: '青山税理士法人', url: 'https://aoyamatax.jp/' },
     { label: '所在地', value: '〒330-9501 埼玉県さいたま市大宮区桜木町2丁目3番地 大宮マルイ7階\n（旧住所：〒104-0061 東京都中央区銀座1-22-11 銀座大竹ビジデンス 2F）' },
   ];
 
@@ -243,8 +243,12 @@ export default function CompanyPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-900 mb-1">東後 哲郎（とうご てつろう）</h3>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-gray-600 mb-1">
                     開発ディレクター / マーケッター / 不動産オーナー
+                  </p>
+                  <p className="text-sm text-gray-600 mb-3">
+                    <a href="https://zenko-kyo.or.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">古家再生プランナー</a>（一般社団法人 全国古家再生推進協議会）
+                    <a href="/docs/furuya-planner-certificate.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline ml-1">[認定証]</a>
                   </p>
                   <p className="text-gray-700 leading-relaxed mb-4">
                     福岡のデザイン学校卒業後、Webデザイナー・マーケッターとして15年以上の経験を持つ。

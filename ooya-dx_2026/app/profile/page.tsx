@@ -189,6 +189,20 @@ export default function ProfilePage() {
                   開発×マーケ×不動産の掛け合わせで、再生と収益改善に強み。大家向け高度シミュレーター「大家DX」を2025年8月リリース。
                 </p>
               </div>
+
+              {/* 保有資格 */}
+              <div className="mt-6">
+                <h3 className="text-base font-bold text-gray-900 mb-2">保有資格</h3>
+                <ul className="space-y-1 text-sm text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 mt-0.5">●</span>
+                    <span>
+                      古家再生プランナー（<a href="https://zenko-kyo.or.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">一般社団法人 全国古家再生推進協議会</a>）
+                      <a href="/docs/furuya-planner-certificate.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline ml-1">[認定証]</a>
+                    </span>
+                  </li>
+                </ul>
+              </div>
             </section>
 
             {/* 収益不動産の購入実績 */}
