@@ -43,11 +43,6 @@ export const metadata: Metadata = {
     description: 'テンプレートの説明文。〇〇を入力するだけで、△△がすぐわかります。',
     images: [`${BASE_URL}/images/media/hero-media.jpeg`],
   },
-  // 検索エンジンにインデックスさせない（デモページのため）
-  robots: {
-    index: false,
-    follow: false,
-  },
 }
 
 // 構造化データ（WebApplication）
