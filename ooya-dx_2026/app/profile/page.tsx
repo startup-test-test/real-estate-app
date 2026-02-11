@@ -5,11 +5,27 @@ import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { personJsonLd } from '@/lib/eeat';
 import Link from 'next/link';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata = {
   title: '自己紹介と不動産購入実績｜大家DX',
   description: '大家DX運営者のプロフィールと不動産購入実績。2025年9月時点で7戸購入、1戸売却、現在6戸保有。開発×マーケ×不動産の掛け合わせで、再生と収益改善に強み。',
   alternates: {
     canonical: '/profile',
+  },
+  openGraph: {
+    title: '自己紹介と不動産購入実績｜大家DX',
+    description: '大家DX運営者のプロフィールと不動産購入実績。2025年9月時点で7戸購入、1戸売却、現在6戸保有。',
+    url: `${BASE_URL}/profile`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '自己紹介と不動産購入実績｜大家DX',
+    description: '大家DX運営者のプロフィールと不動産購入実績。2025年9月時点で7戸購入、1戸売却、現在6戸保有。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

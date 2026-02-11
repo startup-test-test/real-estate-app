@@ -36,6 +36,12 @@ const organizationJsonLd = {
     'https://adaptation-platform.nies.go.jp/everyone/campaign/',
     'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=2010001212632',
   ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'ooya.tech2025@gmail.com',
+    contactType: 'customer service',
+    availableLanguage: 'Japanese',
+  },
 };
 
 // 構造化データ: WebSite（サイト情報）
@@ -45,14 +51,6 @@ const websiteJsonLd = {
   name: '大家DX',
   url: BASE_URL,
   description: '不動産投資クラウドソフト「大家DX」',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${BASE_URL}/search?q={search_term_string}`,
-    },
-    'query-input': 'required name=search_term_string',
-  },
 };
 
 export const metadata: Metadata = {

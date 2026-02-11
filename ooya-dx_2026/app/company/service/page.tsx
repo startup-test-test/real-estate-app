@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: 'メニュー・料金 | 株式会社StartupMarketing',
+  title: 'メニュー・料金 ｜株式会社StartupMarketing',
   description: '業界歴14年目のプロのWebコンサルティングが、データ分析を元に事業・経営課題を発見して戦略支援致します。',
   alternates: {
     canonical: '/company/service',
+  },
+  openGraph: {
+    title: 'メニュー・料金 ｜株式会社StartupMarketing',
+    description: '業界歴14年目のプロのWebコンサルティングが、データ分析を元に事業・経営課題を発見して戦略支援致します。',
+    url: `${BASE_URL}/company/service`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'メニュー・料金 ｜株式会社StartupMarketing',
+    description: '業界歴14年目のプロのWebコンサルティングが、データ分析を元に事業・経営課題を発見して戦略支援致します。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

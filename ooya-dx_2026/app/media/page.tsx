@@ -100,9 +100,9 @@ export default function MediaPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
             <div className="max-w-xl">
-              <p className="text-2xl sm:text-3xl md:text-4xl text-gray-900 whitespace-nowrap">
-                テック×不動産で、意思決定を数字で。
-              </p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl text-gray-900 whitespace-nowrap">
+                現役大家が語る、賃貸経営の基礎と実践
+              </h1>
               <p className="mt-3 text-base sm:text-lg text-gray-700 whitespace-nowrap">
                 現役大家が賃貸経営のシミュレーションをわかりやすく解説するメディア
               </p>

@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: '消費者志向自主宣言ならびに運営ポリシー | 株式会社StartupMarketing',
+  title: '消費者志向自主宣言ならびに運営ポリシー ｜株式会社StartupMarketing',
   description: '株式会社StartupMarketingの消費者志向自主宣言ならびに運営ポリシー。住環境における顧客満足度向上を最優先に掲げています。',
   alternates: {
     canonical: '/company/consumer-policy',
+  },
+  openGraph: {
+    title: '消費者志向自主宣言ならびに運営ポリシー ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingの消費者志向自主宣言ならびに運営ポリシー。住環境における顧客満足度向上を最優先に掲げています。',
+    url: `${BASE_URL}/company/consumer-policy`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '消費者志向自主宣言ならびに運営ポリシー ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingの消費者志向自主宣言ならびに運営ポリシー。住環境における顧客満足度向上を最優先に掲げています。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

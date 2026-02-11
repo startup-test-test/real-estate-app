@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: '【テンプレート】シミュレーターを10秒で無料計算｜早見表付き',
   description:
     'テンプレートの説明文。〇〇を入力するだけで、△△がすぐわかります。早見表付きで一目で確認。',
+  robots: {
+    index: false,
+    follow: false,
+  },
   keywords: [
     'キーワード1',
     'キーワード2',

@@ -34,60 +34,12 @@ export const metadata: Metadata = {
   },
 };
 
-// WebSite構造化データ
-const websiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: '大家DX',
-  url: BASE_URL,
-  description: '【完全無料】現役大家が開発した不動産投資クラウドツール。収支・利回り・税金など27種類の計算ソフトを全て無料で提供。',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${BASE_URL}/media?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
-};
-
-// Organization構造化データ
-const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: '大家DX',
-  url: BASE_URL,
-  logo: `${BASE_URL}/img/logo_250709_2.png`,
-  sameAs: [],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    email: 'ooya.tech2025@gmail.com',
-    contactType: 'customer service',
-    availableLanguage: 'Japanese',
-  },
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '桜木町2丁目3番地 大宮マルイ7階',
-    addressLocality: 'さいたま市大宮区',
-    addressRegion: '埼玉県',
-    postalCode: '330-9501',
-    addressCountry: 'JP',
-  },
-};
-
 export default function HomePage() {
   const articles = getAllArticles().slice(0, 6); // 最新6件
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
-      <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
-        <LandingPageClient articles={articles} />
-      </Suspense>
-    </>
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">読み込み中...</div>}>
+      <LandingPageClient articles={articles} />
+    </Suspense>
   );
 }

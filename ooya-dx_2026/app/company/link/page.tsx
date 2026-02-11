@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: '相互リンクページ | 株式会社StartupMarketing',
+  title: '相互リンクページ ｜株式会社StartupMarketing',
   description: '株式会社StartupMarketingの相互リンクページ。提携企業・団体様のリンク集です。',
   alternates: {
     canonical: '/company/link',
+  },
+  openGraph: {
+    title: '相互リンクページ ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingの相互リンクページ。提携企業・団体様のリンク集です。',
+    url: `${BASE_URL}/company/link`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '相互リンクページ ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingの相互リンクページ。提携企業・団体様のリンク集です。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

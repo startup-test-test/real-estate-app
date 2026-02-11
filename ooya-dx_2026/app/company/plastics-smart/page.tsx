@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: 'プラスチック削減の取り組み | 株式会社StartupMarketing',
+  title: 'プラスチック削減の取り組み ｜株式会社StartupMarketing',
   description: '株式会社StartupMarketingのプラスチックごみ削減への取り組み。マイボトル活用による「脱・使い捨て容器」を推進し、環境省プラスチック・スマートキャンペーンに参加しています。',
   alternates: {
     canonical: '/company/plastics-smart',
+  },
+  openGraph: {
+    title: 'プラスチック削減の取り組み ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingのプラスチックごみ削減への取り組み。マイボトル活用による「脱・使い捨て容器」を推進し、環境省プラスチック・スマートキャンペーンに参加しています。',
+    url: `${BASE_URL}/company/plastics-smart`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'プラスチック削減の取り組み ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingのプラスチックごみ削減への取り組み。マイボトル活用による「脱・使い捨て容器」を推進し、環境省プラスチック・スマートキャンペーンに参加しています。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

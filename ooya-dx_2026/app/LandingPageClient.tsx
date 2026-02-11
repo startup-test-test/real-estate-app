@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import BlogPosts from '@/components/landing/BlogPosts';
 import CompanyProfile from '@/components/landing/CompanyProfile';
@@ -23,10 +23,6 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
   const router = useRouter();
-
-  useEffect(() => {
-    document.title = '大家DX｜賃貸経営をもっとスマートに';
-  }, []);
 
   // サービス一覧データ
   const services = [

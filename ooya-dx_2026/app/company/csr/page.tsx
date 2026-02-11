@@ -4,11 +4,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: 'CSR・健康経営 | 株式会社StartupMarketing',
+  title: 'CSR・健康経営 ｜株式会社StartupMarketing',
   description: '株式会社StartupMarketingのCSR活動・健康経営への取り組み。がん対策推進企業アクション、ポジティブ・オフに参加しています。',
   alternates: {
     canonical: '/company/csr',
+  },
+  openGraph: {
+    title: 'CSR・健康経営 ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingのCSR活動・健康経営への取り組み。がん対策推進企業アクション、ポジティブ・オフに参加しています。',
+    url: `${BASE_URL}/company/csr`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CSR・健康経営 ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingのCSR活動・健康経営への取り組み。がん対策推進企業アクション、ポジティブ・オフに参加しています。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

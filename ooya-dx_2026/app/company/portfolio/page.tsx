@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: '実績・得意領域 | 株式会社StartupMarketing',
+  title: '実績・得意領域 ｜株式会社StartupMarketing',
   description: '独立5年目のWebディレクター・マーケッター。スタートアップ企業（BtoC）のWebコンサル・マーケティングオートメーション・グロースハック施策を得意領域としています。',
   alternates: {
     canonical: '/company/portfolio',
+  },
+  openGraph: {
+    title: '実績・得意領域 ｜株式会社StartupMarketing',
+    description: '独立5年目のWebディレクター・マーケッター。スタートアップ企業（BtoC）のWebコンサル・マーケティングオートメーション・グロースハック施策を得意領域としています。',
+    url: `${BASE_URL}/company/portfolio`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '実績・得意領域 ｜株式会社StartupMarketing',
+    description: '独立5年目のWebディレクター・マーケッター。スタートアップ企業（BtoC）のWebコンサル・マーケティングオートメーション・グロースハック施策を得意領域としています。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '利用規約 | 大家DX',
+  title: '利用規約｜大家DX',
   description: '大家DXサービスの利用規約について',
   alternates: {
     canonical: '/legal/terms',

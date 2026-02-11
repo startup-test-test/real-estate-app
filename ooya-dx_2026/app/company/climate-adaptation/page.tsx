@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: '気候変動への適応に向けた取り組み | 株式会社StartupMarketing',
+  title: '気候変動への適応に向けた取り組み ｜株式会社StartupMarketing',
   description: '株式会社StartupMarketingの気候変動適応への取り組み。リモートワーク推進、ペーパーレス化、マイボトル活用などを通じて、地球沸騰化時代に適応した働き方を実践しています。',
   alternates: {
     canonical: '/company/climate-adaptation',
+  },
+  openGraph: {
+    title: '気候変動への適応に向けた取り組み ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingの気候変動適応への取り組み。リモートワーク推進、ペーパーレス化、マイボトル活用などを通じて、地球沸騰化時代に適応した働き方を実践しています。',
+    url: `${BASE_URL}/company/climate-adaptation`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '気候変動への適応に向けた取り組み ｜株式会社StartupMarketing',
+    description: '株式会社StartupMarketingの気候変動適応への取り組み。リモートワーク推進、ペーパーレス化、マイボトル活用などを通じて、地球沸騰化時代に適応した働き方を実践しています。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 

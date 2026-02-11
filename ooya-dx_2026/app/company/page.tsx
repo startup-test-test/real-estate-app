@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
 export const metadata: Metadata = {
-  title: '会社概要 | 株式会社StartupMarketing',
+  title: '会社概要 ｜株式会社StartupMarketing',
   description: '株式会社StartupMarketingの会社概要。不動産テック事業「大家DX」の開発・運営、不動産業界向けシステム受託開発を行っています。',
   alternates: {
     canonical: '/company',

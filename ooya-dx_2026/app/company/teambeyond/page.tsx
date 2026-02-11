@@ -5,11 +5,27 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
 
+const BASE_URL = 'https://ooya.tech';
+
 export const metadata: Metadata = {
-  title: 'パラスポーツ、スポーツへの取り組み | 株式会社StartupMarketing',
+  title: 'パラスポーツ、スポーツへの取り組み ｜株式会社StartupMarketing',
   description: 'TEAM BEYONDの「パラスポーツを通じて、みんなが個性を発揮できる未来を目指す」という取り組みに賛同します。',
   alternates: {
     canonical: '/company/teambeyond',
+  },
+  openGraph: {
+    title: 'パラスポーツ、スポーツへの取り組み ｜株式会社StartupMarketing',
+    description: 'TEAM BEYONDの「パラスポーツを通じて、みんなが個性を発揮できる未来を目指す」という取り組みに賛同します。',
+    url: `${BASE_URL}/company/teambeyond`,
+    siteName: '大家DX',
+    type: 'website',
+    images: [{ url: `${BASE_URL}/img/kakushin_img01.png`, width: 998, height: 674, alt: '大家DX' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'パラスポーツ、スポーツへの取り組み ｜株式会社StartupMarketing',
+    description: 'TEAM BEYONDの「パラスポーツを通じて、みんなが個性を発揮できる未来を目指す」という取り組みに賛同します。',
+    images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
 };
 
