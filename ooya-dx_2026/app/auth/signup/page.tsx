@@ -139,6 +139,8 @@ export default function SignUpPage() {
             と
             <Link href="/legal/privacy" className="text-blue-600 hover:underline">プライバシーポリシー</Link>
             に同意したものとみなされます
+            <br />
+            当社からのサービスに関するメールの送信に同意したものとみなされます
           </p>
 
           {/* セパレーター */}
@@ -253,7 +255,7 @@ export default function SignUpPage() {
                 <Link href="/legal/terms" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>利用規約</Link>
                 および
                 <Link href="/legal/privacy" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>プライバシーポリシー</Link>
-                に同意する
+                に同意し、当社からのサービスに関するメール配信に同意する
               </span>
             </div>
 
