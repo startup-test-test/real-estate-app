@@ -38,6 +38,7 @@ export const personJsonLd = {
     '不動産収支シミュレーション',
   ],
   sameAs: [
+    'https://www.linkedin.com/in/tetsuro-togo-63aa7b216/',
     'https://x.com/tetsurotogo',
     'https://offers.jp/media/sidejob/workstyle/a_1862',
     'https://www.shibuyamov.com/interviews/webyour-times.html',
