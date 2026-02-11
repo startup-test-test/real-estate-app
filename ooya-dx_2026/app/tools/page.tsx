@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { ChevronRight, ArrowRight } from 'lucide-react'
+import { ChevronRight, ArrowRight, TrendingUp, Building, BarChart3, Receipt, Landmark, ShieldAlert, FileText, Banknote, Scale, Users } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { toolCategories } from '@/lib/navigation'
@@ -72,6 +72,21 @@ const webPageJsonLd = {
     logo: `${BASE_URL}/img/logo_250709_2.png`,
   },
 };
+
+// サブヘッダーアイコンマッピング
+const subHeaderIcons: Record<string, React.ReactNode> = {
+  '利回り・収支を調べたい': <TrendingUp className="h-5 w-5" />,
+  'この物件、いくらが妥当？': <Building className="h-5 w-5" />,
+  '収益性を数字で確認したい': <BarChart3 className="h-5 w-5" />,
+  '高度な投資分析をしたい': <TrendingUp className="h-5 w-5" />,
+  '購入時にかかる費用・税金を知りたい': <Receipt className="h-5 w-5" />,
+  '融資・ローンを調べたい': <Landmark className="h-5 w-5" />,
+  '将来のリスクに備えたい': <ShieldAlert className="h-5 w-5" />,
+  '毎年かかる税金・経費を把握したい': <FileText className="h-5 w-5" />,
+  '売ったらいくら残るか知りたい': <Banknote className="h-5 w-5" />,
+  '売却にかかる税金・費用を知りたい': <Scale className="h-5 w-5" />,
+  '家族に不動産を渡したい': <Users className="h-5 w-5" />,
+}
 
 // 表示対象のカテゴリ（利用可能なツールがあるもののみ）
 const visibleCategories = toolCategories.filter(
@@ -150,38 +165,23 @@ export default function ToolsPage() {
 
               {/* ライフサイクルフローナビゲーション */}
               <nav aria-label="投資フェーズナビゲーション">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   <a href="#entry" className="relative block p-3 sm:p-4 bg-white border border-blue-200 rounded-xl hover:border-primary-400 hover:shadow-md transition-all group">
                     <p className="text-[10px] sm:text-xs text-primary-600 font-semibold mb-1">STEP 1</p>
                     <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">購入検討</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">利回り・物件評価</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">利回り・評価・税金</p>
                     <ArrowRight className="hidden sm:block absolute right-[-14px] top-1/2 -translate-y-1/2 h-4 w-4 text-blue-300 z-10" />
                   </a>
                   <a href="#management" className="relative block p-3 sm:p-4 bg-white border border-blue-200 rounded-xl hover:border-primary-400 hover:shadow-md transition-all group">
                     <p className="text-[10px] sm:text-xs text-primary-600 font-semibold mb-1">STEP 2</p>
                     <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">保有・運営</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">CF管理・税金</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">収支・税金・リスク</p>
                     <ArrowRight className="hidden sm:block absolute right-[-14px] top-1/2 -translate-y-1/2 h-4 w-4 text-blue-300 z-10" />
                   </a>
-                  <a href="#exit" className="relative block p-3 sm:p-4 bg-white border border-blue-200 rounded-xl hover:border-primary-400 hover:shadow-md transition-all group">
+                  <a href="#exit" className="block p-3 sm:p-4 bg-white border border-blue-200 rounded-xl hover:border-primary-400 hover:shadow-md transition-all group">
                     <p className="text-[10px] sm:text-xs text-primary-600 font-semibold mb-1">STEP 3</p>
                     <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">売却・出口</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">譲渡所得・手取り額</p>
-                    <ArrowRight className="hidden sm:block absolute right-[-14px] top-1/2 -translate-y-1/2 h-4 w-4 text-blue-300 z-10" />
-                  </a>
-                  <a href="#tax" className="block p-3 sm:p-4 bg-white border border-blue-200 rounded-xl hover:border-primary-400 hover:shadow-md transition-all group">
-                    <p className="text-[10px] sm:text-xs text-primary-600 font-semibold mb-1">STEP 4</p>
-                    <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">税金・諸費用</p>
-                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">購入〜承継の税金</p>
-                  </a>
-                </div>
-                {/* カテゴリ補助ナビ */}
-                <div className="flex gap-2 sm:gap-3 mt-3 justify-center">
-                  <a href="#loan" className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-600 bg-white border border-blue-200 rounded-full hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-colors">
-                    融資・資金計画
-                  </a>
-                  <a href="#comprehensive" className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-600 bg-white border border-blue-200 rounded-full hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-colors">
-                    総合診断
+                    <p className="text-[10px] sm:text-xs text-gray-500 mt-1 leading-relaxed">手取り・税金・承継</p>
                   </a>
                 </div>
               </nav>
@@ -191,25 +191,6 @@ export default function ToolsPage() {
           {/* ツール一覧 */}
           <div className="bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10">
-
-            {/* シミュレーターバナー */}
-            <Link
-              href="/tools/simulator"
-              className="block mb-6 sm:mb-8 p-4 sm:p-5 bg-white border border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-md transition-all group"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-primary-600 font-semibold mb-1">総合シミュレーター</p>
-                  <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">
-                    賃貸経営シミュレーター
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
-                    IRR・CCR・DSCR、35年キャッシュフロー一括計算
-                  </p>
-                </div>
-                <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors flex-shrink-0" />
-              </div>
-            </Link>
 
             {/* カテゴリ別セクション */}
             <div className="space-y-8 sm:space-y-12">
@@ -222,10 +203,10 @@ export default function ToolsPage() {
                 return (
                   <section key={category.id} id={category.id}>
                     <div className="mb-4 sm:mb-5">
-                      <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                         {category.title}
                       </h2>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm sm:text-base text-gray-500 mt-1">
                         {category.description}
                       </p>
                     </div>
@@ -279,41 +260,42 @@ export default function ToolsPage() {
                       });
 
                       return (
-                        <div className="space-y-5 sm:space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                           {groups.map((group) => (
-                            <div key={group.header.name}>
-                              <div className="mb-3">
-                                <p className="text-sm sm:text-base font-bold text-gray-800">{group.header.name}</p>
+                            <div key={group.header.name} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                              <div className="px-4 pt-3 pb-2 border-b border-gray-100">
+                                <p className="text-base sm:text-lg font-bold text-gray-800 flex items-center gap-1.5">
+                                  {subHeaderIcons[group.header.name] && (
+                                    <span className="text-primary-500">{subHeaderIcons[group.header.name]}</span>
+                                  )}
+                                  {group.header.name}
+                                </p>
                                 {group.header.description && (
-                                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5">{group.header.description}</p>
+                                  <p className="text-xs sm:text-sm text-gray-700 mt-0.5 leading-relaxed">{group.header.description}</p>
                                 )}
                               </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                              <div className="divide-y divide-gray-50">
                                 {group.items.map((item) => (
                                   item.available ? (
                                     <Link
                                       key={item.href}
                                       href={item.href}
-                                      className="block p-4 bg-white rounded-xl border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all group"
+                                      className="flex items-center justify-between px-4 py-2.5 hover:bg-blue-50/50 transition-colors group"
                                     >
-                                      <p className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors text-sm sm:text-base">
-                                        {item.name}
-                                      </p>
-                                      {item.description && (
-                                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                                          {item.description}
-                                        </p>
-                                      )}
+                                      <span className="font-medium text-gray-900 group-hover:text-primary-700 transition-colors text-sm">
+                                        <span className="text-gray-400 mr-1.5">・</span>{item.name}
+                                      </span>
+                                      <ChevronRight className="h-5 w-5 text-gray-900 flex-shrink-0 ml-2" />
                                     </Link>
                                   ) : (
                                     <div
                                       key={item.href}
-                                      className="block p-4 bg-gray-50 rounded-xl border border-gray-100"
+                                      className="flex items-center px-4 py-2.5"
                                     >
-                                      <p className="font-bold text-gray-400 text-sm sm:text-base">
-                                        {item.name}
-                                      </p>
-                                      <p className="text-xs text-gray-400 mt-1">準備中</p>
+                                      <span className="font-medium text-gray-300 text-sm">
+                                        <span className="text-gray-200 mr-1.5">・</span>{item.name}
+                                      </span>
+                                      <span className="text-[10px] text-gray-300 ml-2 border border-gray-200 rounded px-1.5 py-0.5">準備中</span>
                                     </div>
                                   )
                                 ))}
@@ -327,6 +309,25 @@ export default function ToolsPage() {
                 );
               })}
             </div>
+
+            {/* 総合シミュレーターバナー */}
+            <Link
+              href="/tools/simulator"
+              className="block mt-8 sm:mt-12 p-4 sm:p-5 bg-white border border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-primary-600 font-semibold mb-1">総合シミュレーター</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">
+                    賃貸経営シミュレーター
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+                    IRR・CCR・DSCR、35年キャッシュフロー一括計算
+                  </p>
+                </div>
+                <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors flex-shrink-0" />
+              </div>
+            </Link>
           </div>
           </div>
         </main>
