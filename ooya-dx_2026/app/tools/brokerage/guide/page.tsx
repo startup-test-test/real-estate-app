@@ -84,7 +84,7 @@ const articleSchema = {
   author: articleAuthorRef,
   publisher: articlePublisherRef,
   datePublished: '2024-07-01',
-  dateModified: new Date().toISOString().split('T')[0],
+  dateModified: '2026-02-11',
 }
 
 export default function BrokerageGuidePage() {

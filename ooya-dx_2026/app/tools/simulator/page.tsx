@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
+import { ToolStructuredData } from '@/components/tools/ToolStructuredData';
 import SimulatorLPClient from './SimulatorLPClient';
 import { getAllArticles } from '@/lib/mdx';
 
@@ -65,6 +66,11 @@ export default function SimulatorLPPage() {
 
   return (
     <>
+      <ToolStructuredData
+        name="賃貸経営シミュレーター"
+        description="不動産投資の収支を詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。"
+        toolPath="/tools/simulator"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}

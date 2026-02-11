@@ -1,14 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 const Disclaimer: React.FC = () => {
-  useEffect(() => {
-    document.title = '免責事項 | 大家DX';
-  }, []);
-
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-8 px-4">
       <div className="max-w-4xl mx-auto">

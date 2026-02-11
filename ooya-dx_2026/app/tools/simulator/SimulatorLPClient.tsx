@@ -43,10 +43,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    document.title = '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX';
-  }, []);
-
   // ドロップダウン外クリックで閉じる
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Breadcrumb from '@/components/simulator/Breadcrumb';
@@ -10,10 +10,6 @@ import Breadcrumb from '@/components/simulator/Breadcrumb';
  * 現在は完全無料プランのみ提供中
  */
 const PremiumPlan: React.FC = () => {
-  useEffect(() => {
-    document.title = '有料プランについて | 大家DX';
-  }, []);
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="p-4 sm:p-6 lg:p-8">
