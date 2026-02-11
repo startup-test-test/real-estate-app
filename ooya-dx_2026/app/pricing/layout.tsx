@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { WebPageJsonLd } from '@/components/WebPageJsonLd'
 
 export const metadata: Metadata = {
   title: '有料プランについて｜大家DX',
@@ -13,5 +14,16 @@ export default function PricingLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <>
+      <WebPageJsonLd
+        name="有料プランについて"
+        description="大家DXの有料プランに関するお知らせ。現在、すべての機能を完全無料・無制限でご提供しております。"
+        path="/pricing"
+        datePublished="2026-01-15"
+        dateModified="2026-01-15"
+      />
+      {children}
+    </>
+  )
 }

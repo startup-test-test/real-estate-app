@@ -18,10 +18,13 @@ const Disclaimer: React.FC = () => {
         </Link>
 
         <div className="bg-white rounded-xl shadow-sm p-8">
+          <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+            <span>公開日：2025年8月11日</span>
+            <span>更新日：2026年1月15日</span>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-8">免責事項</h1>
 
           <div className="prose prose-gray max-w-none">
-            <p className="text-sm text-gray-600 mb-6">最終更新日: 2026年1月15日</p>
 
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">1. サービスのご利用について</h2>

@@ -1,5 +1,6 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
+import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
@@ -45,6 +46,14 @@ export default function CSRPage() {
   ];
 
   return (
+    <>
+      <WebPageJsonLd
+        name="CSR・健康経営"
+        description="株式会社StartupMarketingのCSR活動・健康経営への取り組み。がん対策推進企業アクション、ポジティブ・オフに参加しています。"
+        path="/company/csr"
+        datePublished="2026-01-15"
+        dateModified="2026-01-15"
+      />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
 
@@ -66,20 +75,16 @@ export default function CSRPage() {
             <span>CSR・健康経営</span>
           </nav>
 
-          {/* カテゴリー & 日付 */}
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-              会社情報
-            </span>
-            {(() => {
-              const pageInfo = getCompanyPageInfo('/company/csr');
-              return pageInfo?.lastUpdated ? (
-                <time className="text-xs text-gray-400">
-                  {formatToolDate(pageInfo.lastUpdated)}
-                </time>
-              ) : null;
-            })()}
-          </div>
+          {/* 日付 */}
+          {(() => {
+            const pageInfo = getCompanyPageInfo('/company/csr');
+            return pageInfo ? (
+              <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+                {pageInfo.publishDate && <span>公開日：{formatToolDate(pageInfo.publishDate)}</span>}
+                {pageInfo.lastUpdated && <span>更新日：{formatToolDate(pageInfo.lastUpdated)}</span>}
+              </div>
+            ) : null;
+          })()}
 
           {/* H1タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
@@ -196,5 +201,6 @@ export default function CSRPage() {
 
       <LandingFooter />
     </div>
+    </>
   );
 }

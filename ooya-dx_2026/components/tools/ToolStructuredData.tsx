@@ -1,4 +1,5 @@
 import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat'
+import { getToolInfo } from '@/lib/navigation'
 
 const BASE_URL = 'https://ooya.tech'
 
@@ -41,12 +42,17 @@ export function ToolStructuredData({
   name,
   description,
   toolPath,
-  datePublished,
-  dateModified,
+  datePublished: datePublishedProp,
+  dateModified: dateModifiedProp,
   faqItems,
   featureList,
   image,
 }: ToolStructuredDataProps) {
+  // navigation.tsから日付を自動取得（propsが未指定の場合）
+  const toolInfo = getToolInfo(toolPath)
+  const datePublished = datePublishedProp || toolInfo?.publishDate
+  const dateModified = dateModifiedProp || toolInfo?.lastUpdated
+
   // SoftwareApplication: Googleに「これは計算ツールである」と伝える
   const softwareApplicationSchema = {
     '@context': 'https://schema.org',

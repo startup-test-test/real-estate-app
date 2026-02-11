@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { WebPageJsonLd } from '@/components/WebPageJsonLd'
 
 export const metadata: Metadata = {
   title: '利用規約｜大家DX',
@@ -10,15 +11,22 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
+    <>
+      <WebPageJsonLd
+        name="利用規約"
+        description="大家DXサービスの利用規約について"
+        path="/legal/terms"
+        datePublished="2025-08-11"
+        dateModified="2026-02-05"
+      />
     <main className="mx-auto max-w-4xl px-6 pt-32 pb-10">
+      <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+        <span>公開日：2025年8月11日</span>
+        <span>更新日：2026年2月5日</span>
+      </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">利用規約</h1>
 
       <div className="prose prose-gray max-w-none space-y-6">
-        <section>
-          <p className="text-gray-600">
-            最終更新日: 2026年2月5日
-          </p>
-        </section>
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">第1条（本規約の適用）</h2>
@@ -381,5 +389,6 @@ export default function TermsPage() {
         </section>
       </div>
     </main>
+    </>
   )
 }

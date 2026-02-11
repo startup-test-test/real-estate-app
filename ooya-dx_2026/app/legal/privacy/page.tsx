@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { WebPageJsonLd } from '@/components/WebPageJsonLd'
 
 export const metadata: Metadata = {
   title: 'プライバシーポリシー｜大家DX',
@@ -10,7 +11,19 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
+    <>
+      <WebPageJsonLd
+        name="プライバシーポリシー"
+        description="大家DXサービスのプライバシーポリシーについて"
+        path="/legal/privacy"
+        datePublished="2025-08-11"
+        dateModified="2026-02-05"
+      />
     <main className="mx-auto max-w-4xl px-6 pt-32 pb-10">
+      <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+        <span>公開日：2025年8月11日</span>
+        <span>更新日：2026年2月5日</span>
+      </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">プライバシーポリシー</h1>
 
       <div className="prose prose-gray max-w-none space-y-6">
@@ -242,5 +255,6 @@ export default function PrivacyPage() {
         </section>
       </div>
     </main>
+    </>
   )
 }

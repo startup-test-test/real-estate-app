@@ -3,6 +3,7 @@ import { LandingFooter } from '@/components/landing-footer';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { personJsonLd } from '@/lib/eeat';
+import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 
 const BASE_URL = 'https://ooya.tech';
@@ -145,6 +146,13 @@ export default function ProfilePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
+      <WebPageJsonLd
+        name="自己紹介と不動産購入実績"
+        description="大家DX運営者のプロフィールと不動産購入実績。2025年9月時点で7戸購入、1戸売却、現在6戸保有。"
+        path="/profile"
+        datePublished="2026-01-15"
+        dateModified="2026-02-10"
+      />
 
       <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
@@ -162,6 +170,12 @@ export default function ProfilePage() {
               <span className="mx-2">&gt;</span>
               <span>自己紹介と不動産購入実績</span>
             </nav>
+
+            {/* 日付 */}
+            <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+              <span>公開日：2026年1月15日</span>
+              <span>更新日：2026年2月10日</span>
+            </div>
 
             {/* H1タイトル */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">

@@ -6,6 +6,7 @@ import { LandingFooter } from '@/components/landing-footer';
 import { MediaArticleList } from '@/components/media-article-list';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
+import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import { Home } from 'lucide-react';
 
 const BASE_URL = 'https://ooya.tech';
@@ -69,6 +70,13 @@ export default function MediaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      <WebPageJsonLd
+        name="大家DXジャーナル"
+        description="賃貸経営の基礎知識から実践的なノウハウまで。データドリブンな賃貸経営を支援する情報メディア。"
+        path="/media"
+        datePublished="2026-01-15"
+        dateModified="2026-02-10"
+      />
       <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />
 
@@ -89,6 +97,14 @@ export default function MediaPage() {
             </li>
           </ol>
         </nav>
+
+        {/* 日付 */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
+          <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+            <span>公開日：2026年1月15日</span>
+            <span>更新日：2026年2月10日</span>
+          </div>
+        </div>
 
       {/* メインビジュアル - 横幅いっぱい */}
       <div className="relative w-full h-[280px] sm:h-[360px] md:h-[420px]">

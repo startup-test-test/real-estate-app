@@ -150,24 +150,24 @@ export const otherLinks: NavigationItem[] = [
 
 // 会社関連（フッター表示用）
 export const companyLinks: NavigationItem[] = [
-  { name: '会社概要', href: '/company', lastUpdated: '2026-01-15' },
-  { name: '実績・得意領域', href: '/company/portfolio', lastUpdated: '2026-01-15' },
-  { name: 'メニュー・料金', href: '/company/service', lastUpdated: '2026-01-15' },
-  { name: 'プロフィール', href: '/profile', lastUpdated: '2026-02-10' },
-  { name: 'お問合わせ', href: '/company/contact', lastUpdated: '2026-01-15' },
+  { name: '会社概要', href: '/company', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: '実績・得意領域', href: '/company/portfolio', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'メニュー・料金', href: '/company/service', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'プロフィール', href: '/profile', publishDate: '2026-01-15', lastUpdated: '2026-02-10' },
+  { name: 'お問合わせ', href: '/company/contact', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
 ];
 
 // 会社関連ページ全て（日付管理用）
 export const allCompanyPages: NavigationItem[] = [
   ...companyLinks,
-  { name: 'CSR', href: '/company/csr', lastUpdated: '2026-01-15' },
-  { name: 'SDGs', href: '/company/sdgs', lastUpdated: '2026-01-15' },
-  { name: '気候変動への対応', href: '/company/climate-adaptation', lastUpdated: '2026-01-15' },
-  { name: 'プラスチックスマート', href: '/company/plastics-smart', lastUpdated: '2026-01-15' },
-  { name: '消費者志向自主宣言', href: '/company/consumer-policy', lastUpdated: '2026-01-15' },
-  { name: 'チームビヨンド', href: '/company/teambeyond', lastUpdated: '2026-02-05' },
-  { name: 'ライブラリパートナー', href: '/company/lib-partner', lastUpdated: '2026-01-15' },
-  { name: 'リンク', href: '/company/link', lastUpdated: '2026-02-05' },
+  { name: 'CSR', href: '/company/csr', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'SDGs', href: '/company/sdgs', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: '気候変動への対応', href: '/company/climate-adaptation', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'プラスチックスマート', href: '/company/plastics-smart', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: '消費者志向自主宣言', href: '/company/consumer-policy', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'チームビヨンド', href: '/company/teambeyond', publishDate: '2026-01-15', lastUpdated: '2026-02-05' },
+  { name: 'ライブラリパートナー', href: '/company/lib-partner', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'リンク', href: '/company/link', publishDate: '2026-01-15', lastUpdated: '2026-02-05' },
 ];
 
 // 会社ページ情報を取得するヘルパー関数
@@ -201,7 +201,30 @@ export const footerNavigation: NavigationSection[] = [
 // 法的リンク
 export const legalLinks: NavigationItem[] = [
   { name: '会社概要', href: '/company' },
-  { name: '利用規約', href: '/legal/terms' },
-  { name: '個人情報保護方針', href: '/legal/privacy' },
-  { name: '免責事項', href: '/disclaimer' },
+  { name: '利用規約', href: '/legal/terms', publishDate: '2025-08-11', lastUpdated: '2026-02-05' },
+  { name: '個人情報保護方針', href: '/legal/privacy', publishDate: '2025-08-11', lastUpdated: '2026-02-05' },
+  { name: '免責事項', href: '/disclaimer', publishDate: '2025-08-11', lastUpdated: '2026-01-15' },
 ];
+
+// その他公開ページ（日付管理用）
+export const otherPublicPages: NavigationItem[] = [
+  { name: 'よくある質問', href: '/faq', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: '料金プラン', href: '/pricing', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'お問い合わせ', href: '/contact', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'メディア', href: '/media', publishDate: '2026-01-15', lastUpdated: '2026-02-10' },
+];
+
+// 全公開ページの日付情報を取得するヘルパー関数
+export function getPageInfo(href: string): NavigationItem | undefined {
+  // ツールページ
+  const toolInfo = getToolInfo(href);
+  if (toolInfo) return toolInfo;
+  // 会社ページ
+  const companyInfo = getCompanyPageInfo(href);
+  if (companyInfo) return companyInfo;
+  // 法的ページ
+  const legalInfo = legalLinks.find(item => item.href === href);
+  if (legalInfo) return legalInfo;
+  // その他ページ
+  return otherPublicPages.find(item => item.href === href);
+}

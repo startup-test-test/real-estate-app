@@ -1,6 +1,7 @@
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import { CompanyNav } from '@/components/company-nav';
+import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
@@ -58,6 +59,14 @@ export default function LinkPage() {
   ];
 
   return (
+    <>
+      <WebPageJsonLd
+        name="相互リンクページ"
+        description="株式会社StartupMarketingの相互リンクページ。提携企業・団体様のリンク集です。"
+        path="/company/link"
+        datePublished="2026-01-15"
+        dateModified="2026-02-05"
+      />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
 
@@ -79,20 +88,16 @@ export default function LinkPage() {
             <span>相互リンク</span>
           </nav>
 
-          {/* カテゴリー & 日付 */}
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-              会社情報
-            </span>
-            {(() => {
-              const pageInfo = getCompanyPageInfo('/company/link');
-              return pageInfo?.lastUpdated ? (
-                <time className="text-xs text-gray-400">
-                  {formatToolDate(pageInfo.lastUpdated)}
-                </time>
-              ) : null;
-            })()}
-          </div>
+          {/* 日付 */}
+          {(() => {
+            const pageInfo = getCompanyPageInfo('/company/link');
+            return pageInfo ? (
+              <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+                {pageInfo.publishDate && <span>公開日：{formatToolDate(pageInfo.publishDate)}</span>}
+                {pageInfo.lastUpdated && <span>更新日：{formatToolDate(pageInfo.lastUpdated)}</span>}
+              </div>
+            ) : null;
+          })()}
 
           {/* H1タイトル */}
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
@@ -146,5 +151,6 @@ export default function LinkPage() {
 
       <LandingFooter />
     </div>
+    </>
   );
 }
