@@ -22,6 +22,7 @@ export default function ContactLayout({
         path="/contact"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: 'お問い合わせ', href: '/contact' }]}
       />
       {children}
     </>

@@ -22,6 +22,7 @@ export default function PricingLayout({
         path="/pricing"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '料金プラン', href: '/pricing' }]}
       />
       {children}
     </>

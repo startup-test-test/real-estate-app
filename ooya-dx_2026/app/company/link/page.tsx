@@ -66,6 +66,7 @@ export default function LinkPage() {
         path="/company/link"
         datePublished="2026-01-15"
         dateModified="2026-02-05"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: '相互リンク', href: '/company/link' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

@@ -18,6 +18,7 @@ export default function PrivacyPage() {
         path="/legal/privacy"
         datePublished="2025-08-11"
         dateModified="2026-02-05"
+        breadcrumbs={[{ name: 'プライバシーポリシー', href: '/legal/privacy' }]}
       />
     <main className="mx-auto max-w-4xl px-6 pt-32 pb-10">
       <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">

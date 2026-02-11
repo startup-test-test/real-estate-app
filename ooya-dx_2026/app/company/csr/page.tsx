@@ -53,6 +53,7 @@ export default function CSRPage() {
         path="/company/csr"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'CSR・健康経営', href: '/company/csr' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

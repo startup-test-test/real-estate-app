@@ -39,6 +39,7 @@ export default function PortfolioPage() {
         path="/company/portfolio"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: '実績・得意領域', href: '/company/portfolio' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

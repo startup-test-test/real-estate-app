@@ -76,6 +76,7 @@ export default function MediaPage() {
         path="/media"
         datePublished="2026-01-15"
         dateModified="2026-02-10"
+        breadcrumbs={[{ name: '大家DXジャーナル', href: '/media' }]}
       />
       <div className="min-h-screen bg-white flex flex-col">
         <LandingHeader />

@@ -18,6 +18,7 @@ export default function TermsPage() {
         path="/legal/terms"
         datePublished="2025-08-11"
         dateModified="2026-02-05"
+        breadcrumbs={[{ name: '利用規約', href: '/legal/terms' }]}
       />
     <main className="mx-auto max-w-4xl px-6 pt-32 pb-10">
       <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">

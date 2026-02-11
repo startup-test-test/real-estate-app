@@ -39,6 +39,7 @@ export default function ServicePage() {
         path="/company/service"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'メニュー・料金', href: '/company/service' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

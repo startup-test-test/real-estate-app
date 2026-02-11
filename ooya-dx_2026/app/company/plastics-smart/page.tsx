@@ -58,6 +58,7 @@ export default function PlasticsSmartPage() {
         path="/company/plastics-smart"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'プラスチック削減', href: '/company/plastics-smart' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

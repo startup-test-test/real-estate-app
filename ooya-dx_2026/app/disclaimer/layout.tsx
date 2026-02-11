@@ -22,6 +22,7 @@ export default function DisclaimerLayout({
         path="/disclaimer"
         datePublished="2025-08-11"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '免責事項', href: '/disclaimer' }]}
       />
       {children}
     </>

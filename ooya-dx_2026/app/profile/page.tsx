@@ -152,6 +152,7 @@ export default function ProfilePage() {
         path="/profile"
         datePublished="2026-01-15"
         dateModified="2026-02-10"
+        breadcrumbs={[{ name: 'プロフィール', href: '/profile' }]}
       />
 
       <div className="min-h-screen bg-white flex flex-col">

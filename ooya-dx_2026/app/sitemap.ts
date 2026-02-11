@@ -1,9 +1,17 @@
 import { MetadataRoute } from 'next';
 import { getAllArticles } from '@/lib/mdx';
+import { getToolInfo, getCompanyPageInfo, getPageInfo } from '@/lib/navigation';
 import fs from 'fs';
 import path from 'path';
 
 const BASE_URL = 'https://ooya.tech';
+
+// navigation.tsの日付またはフォールバックでDateオブジェクトを返す
+function getLastModDate(href: string): Date {
+  const info = getPageInfo(href);
+  if (info?.lastUpdated) return new Date(info.lastUpdated);
+  return new Date();
+}
 
 // /tools ディレクトリから自動的にページを検出
 function getToolSlugs(): string[] {
@@ -45,13 +53,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  // 計算ツールページ（自動検出）
+  // 計算ツールページ（自動検出 + navigation.tsの日付）
   const toolSlugs = getToolSlugs();
-  const toolPages = toolSlugs.map((slug) => ({
-    url: `${BASE_URL}/tools/${slug}`,
-    lastModified: new Date(),
+  const toolPages = toolSlugs.map((slug) => {
+    const toolInfo = getToolInfo(`/tools/${slug}`);
+    const lastModified = toolInfo?.lastUpdated ? new Date(toolInfo.lastUpdated) : new Date();
+    return {
+      url: `${BASE_URL}/tools/${slug}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.9,
+    };
+  });
+
+  // ネストされたツールページ（自動検出対象外）
+  const nestedToolPages = [
+    { path: '/tools/brokerage/guide', priority: 0.8 },
+    { path: '/tools/brokerage/standard', priority: 0.8 },
+  ].map((page) => ({
+    url: `${BASE_URL}${page.path}`,
+    lastModified: getLastModDate('/tools/brokerage'),
     changeFrequency: 'monthly' as const,
-    priority: 0.9,
+    priority: page.priority,
   }));
 
   // 静的ページ
@@ -64,7 +87,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${BASE_URL}/media`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/media'),
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
@@ -77,45 +100,45 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // お問い合わせ・FAQ・料金
     {
       url: `${BASE_URL}/contact`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/contact'),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
       url: `${BASE_URL}/faq`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/faq'),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
       url: `${BASE_URL}/pricing`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/pricing'),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
     // 法的ページ
     {
       url: `${BASE_URL}/legal/privacy`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/legal/privacy'),
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },
     {
       url: `${BASE_URL}/legal/terms`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/legal/terms'),
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },
     {
       url: `${BASE_URL}/disclaimer`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/disclaimer'),
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },
     // プロフィールページ
     {
       url: `${BASE_URL}/profile`,
-      lastModified: new Date(),
+      lastModified: getLastModDate('/profile'),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
@@ -135,12 +158,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { slug: '/lib-partner', priority: 0.5 },
     { slug: '/consumer-policy', priority: 0.5 },
     { slug: '/link', priority: 0.4 },      // リンク集
-  ].map((page) => ({
-    url: `${BASE_URL}/company${page.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: page.priority,
-  }));
+  ].map((page) => {
+    const href = `/company${page.slug}`;
+    const pageInfo = getCompanyPageInfo(href);
+    const lastModified = pageInfo?.lastUpdated ? new Date(pageInfo.lastUpdated) : new Date();
+    return {
+      url: `${BASE_URL}${href}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: page.priority,
+    };
+  });
 
   // メディアカテゴリページ（記事から動的に取得）
   const categories = new Set(articles.map((article) => article.categorySlug));
@@ -151,5 +179,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...articlePages];
+  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...nestedToolPages, ...articlePages];
 }

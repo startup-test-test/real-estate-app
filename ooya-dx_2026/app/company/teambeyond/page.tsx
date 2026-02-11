@@ -39,6 +39,7 @@ export default function TeamBeyondPage() {
         path="/company/teambeyond"
         datePublished="2026-01-15"
         dateModified="2026-02-05"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'Team Beyond', href: '/company/teambeyond' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

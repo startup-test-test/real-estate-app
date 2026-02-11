@@ -39,6 +39,7 @@ export default function ConsumerPolicyPage() {
         path="/company/consumer-policy"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: '消費者志向自主宣言', href: '/company/consumer-policy' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

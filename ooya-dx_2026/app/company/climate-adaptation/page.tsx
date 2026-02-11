@@ -67,6 +67,7 @@ export default function ClimateAdaptationPage() {
         path="/company/climate-adaptation"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: '気候変動への適応', href: '/company/climate-adaptation' }]}
       />
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />

@@ -22,6 +22,7 @@ export default function FAQLayout({
         path="/faq"
         datePublished="2026-01-15"
         dateModified="2026-01-15"
+        breadcrumbs={[{ name: 'よくある質問', href: '/faq' }]}
       />
       {children}
     </>
