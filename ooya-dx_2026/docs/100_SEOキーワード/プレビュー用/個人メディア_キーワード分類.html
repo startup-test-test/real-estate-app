@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>個人メディア キーワード分類ビューア</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; color: #1a1a1a; }
+  .header { background: #1e293b; color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 10; }
+  .header h1 { font-size: 16px; white-space: nowrap; }
+  .header .sub { font-size: 12px; color: #94a3b8; }
+  .header .updated { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 16px; }
+
+  /* Stats */
+  .stats { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .stat-card { background: #fff; border-radius: 6px; padding: 10px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); min-width: 120px; }
+  .stat-card .label { font-size: 11px; color: #64748b; }
+  .stat-card .value { font-size: 20px; font-weight: 700; }
+  .stat-card.total .value { color: #1e293b; }
+  .stat-card.exp .value { color: #ea580c; }
+  .stat-card.guide .value { color: #2563eb; }
+  .stat-card.delete .value { color: #9ca3af; }
+  .stat-card.vol .value { color: #16a34a; font-size: 16px; }
+
+  /* フィルター */
+  .filters { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-btn { padding: 4px 12px; border: 1px solid #d1d5db; border-radius: 20px; font-size: 11px; cursor: pointer; background: #fff; }
+  .filter-btn:hover { background: #f1f5f9; }
+  .filter-btn.active { background: #1e293b; color: #fff; border-color: #1e293b; }
+
+  /* トピックフィルター */
+  .topic-filters { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+  .topic-btn { padding: 3px 10px; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 10px; cursor: pointer; background: #fff; color: #475569; }
+  .topic-btn:hover { background: #f1f5f9; }
+  .topic-btn.active { background: #475569; color: #fff; border-color: #475569; }
+
+  /* 検索 */
+  .kw-search { margin-bottom: 12px; }
+  .kw-search input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; width: 300px; }
+
+  /* テーブル */
+  table { border-collapse: collapse; font-size: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); width: 100%; border-radius: 6px; overflow: hidden; }
+  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; position: sticky; top: 44px; white-space: nowrap; font-weight: 500; font-size: 11px; cursor: pointer; }
+  th:hover { background: #334155; }
+  th .sort-icon { font-size: 9px; margin-left: 4px; }
+  td { border-bottom: 1px solid #f1f5f9; padding: 6px 10px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; }
+  tr:hover { background: #f8fafc; }
+
+  /* 判定スタイル */
+  tr.row-exp { border-left: 3px solid #ea580c; }
+  tr.row-guide { border-left: 3px solid #2563eb; }
+  tr.row-delete { border-left: 3px solid #e5e7eb; opacity: 0.5; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+  .badge-exp { background: #fff7ed; color: #c2410c; }
+  .badge-guide { background: #dbeafe; color: #1e40af; }
+  .badge-delete { background: #f3f4f6; color: #9ca3af; }
+
+  .footer { padding: 8px; font-size: 11px; color: #94a3b8; }
+  .empty { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>個人メディア キーワード分類</h1>
+  <span class="sub">不動産投資 — 実体験ベース記事コンテンツ</span>
+  <span class="updated" id="updated"></span>
+</div>
+<div class="main" id="main">
+  <div class="empty">読み込み中...</div>
+</div>
+
+<script>
+let allData = [];
+let currentFilter = 'all';
+let currentTopic = 'all';
+let sortCol = -1;
+let sortAsc = true;
+
+async function loadData() {
+  try {
+    const basePath = decodeURIComponent(location.pathname).includes('/プレビュー用/')
+      ? '../個人メディアのキーワード分析/'
+      : '個人メディアのキーワード分析/';
+    const res = await fetch(basePath + encodeURIComponent('不動産投資_個人メディア_判定済み.tsv') + '?t=' + Date.now());
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r => r.split('\t'));
+    allData = rows;
+    render();
+    document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
+  } catch (e) {
+    document.getElementById('main').innerHTML = '<div class="empty">読み込みに失敗しました</div>';
+  }
+}
+
+function render() {
+  if (allData.length < 2) {
+    document.getElementById('main').innerHTML = '<div class="empty">データなし</div>';
+    return;
+  }
+  const header = allData[0];
+  const data = allData.slice(1).filter(r => r.length >= 6);
+
+  // Stats
+  let expCount = 0, guideCount = 0, deleteCount = 0;
+  let totalVol = 0, expVol = 0, guideVol = 0;
+  const topicMap = {};
+
+  data.forEach(r => {
+    const 判定 = (r[5] || '').trim();
+    const vol = parseInt(r[4]) || 0;
+    const topic = (r[8] || '').trim();
+    if (判定 === '体験記事') { expCount++; expVol += vol; }
+    else if (判定 === '解説記事') { guideCount++; guideVol += vol; }
+    else if (判定 === '削除') { deleteCount++; }
+    if (判定 !== '削除') totalVol += vol;
+    if (topic && 判定 !== '削除') {
+      topicMap[topic] = (topicMap[topic] || 0) + 1;
+    }
+  });
+
+  // Filter
+  let filtered = data;
+  if (currentFilter === 'exp') filtered = filtered.filter(r => (r[5]||'').trim() === '体験記事');
+  else if (currentFilter === 'guide') filtered = filtered.filter(r => (r[5]||'').trim() === '解説記事');
+  else if (currentFilter === 'delete') filtered = filtered.filter(r => (r[5]||'').trim() === '削除');
+
+  // Topic filter
+  if (currentTopic !== 'all') {
+    filtered = filtered.filter(r => (r[8]||'').trim() === currentTopic);
+  }
+
+  // Keyword search
+  const kwFilter = document.getElementById('kwSearch') ? document.getElementById('kwSearch').value : '';
+  if (kwFilter) {
+    filtered = filtered.filter(r => (r[2]||'').includes(kwFilter));
+  }
+
+  // Sort
+  if (sortCol >= 0) {
+    filtered.sort((a, b) => {
+      let va = (a[sortCol] || '').trim();
+      let vb = (b[sortCol] || '').trim();
+      // 数値ソート
+      if (sortCol === 3 || sortCol === 4) {
+        va = parseFloat(va) || 0;
+        vb = parseFloat(vb) || 0;
+        return sortAsc ? va - vb : vb - va;
+      }
+      return sortAsc ? va.localeCompare(vb, 'ja') : vb.localeCompare(va, 'ja');
+    });
+  }
+
+  let html = '';
+
+  // Stats
+  html += '<div class="stats">';
+  html += '<div class="stat-card total"><div class="label">合計キーワード</div><div class="value">' + data.length + '</div></div>';
+  html += '<div class="stat-card exp"><div class="label">体験記事</div><div class="value">' + expCount + '</div></div>';
+  html += '<div class="stat-card guide"><div class="label">解説記事</div><div class="value">' + guideCount + '</div></div>';
+  html += '<div class="stat-card delete"><div class="label">削除</div><div class="value">' + deleteCount + '</div></div>';
+  html += '<div class="stat-card vol"><div class="label">有効KW検索Vol合計</div><div class="value">' + totalVol.toLocaleString() + '</div></div>';
+  html += '</div>';
+
+  // Filters
+  html += '<div class="filters">';
+  html += '<div class="filter-btn' + (currentFilter==='all'?' active':'') + '" onclick="setFilter(\'all\')">すべて (' + data.length + ')</div>';
+  html += '<div class="filter-btn' + (currentFilter==='exp'?' active':'') + '" onclick="setFilter(\'exp\')">体験記事 (' + expCount + ')</div>';
+  html += '<div class="filter-btn' + (currentFilter==='guide'?' active':'') + '" onclick="setFilter(\'guide\')">解説記事 (' + guideCount + ')</div>';
+  html += '<div class="filter-btn' + (currentFilter==='delete'?' active':'') + '" onclick="setFilter(\'delete\')">削除 (' + deleteCount + ')</div>';
+  html += '</div>';
+
+  // Topic filters
+  const sortedTopics = Object.entries(topicMap).sort((a, b) => b[1] - a[1]);
+  if (sortedTopics.length > 0) {
+    html += '<div class="topic-filters">';
+    html += '<div class="topic-btn' + (currentTopic==='all'?' active':'') + '" onclick="setTopic(\'all\')">全トピック</div>';
+    sortedTopics.forEach(([topic, count]) => {
+      html += '<div class="topic-btn' + (currentTopic===topic?' active':'') + '" onclick="setTopic(\'' + topic.replace(/'/g, "\\'") + '\')">' + topic + ' (' + count + ')</div>';
+    });
+    html += '</div>';
+  }
+
+  // Search
+  html += '<div class="kw-search"><input type="text" id="kwSearch" placeholder="キーワード検索..." oninput="rerender()" value="' + (kwFilter||'') + '"></div>';
+
+  // Table
+  html += '<table><tr>';
+  header.forEach((h, i) => {
+    const icon = sortCol === i ? (sortAsc ? '▲' : '▼') : '';
+    html += '<th onclick="setSort(' + i + ')">' + h + '<span class="sort-icon">' + icon + '</span></th>';
+  });
+  html += '</tr>';
+
+  filtered.forEach(row => {
+    const 判定 = (row[5] || '').trim();
+    let cls = '';
+    if (判定 === '体験記事') cls = 'row-exp';
+    else if (判定 === '解説記事') cls = 'row-guide';
+    else if (判定 === '削除') cls = 'row-delete';
+
+    html += '<tr class="' + cls + '">';
+    row.forEach((cell, j) => {
+      cell = (cell||'').trim();
+      let display = cell.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+      // 判定列にバッジ
+      if (j === 5) {
+        if (cell === '体験記事') display = '<span class="badge badge-exp">' + display + '</span>';
+        else if (cell === '解説記事') display = '<span class="badge badge-guide">' + display + '</span>';
+        else if (cell === '削除') display = '<span class="badge badge-delete">' + display + '</span>';
+      }
+      // 月間検索数をフォーマット
+      if (j === 4 && !isNaN(cell) && cell !== '') {
+        display = Number(cell).toLocaleString();
+      }
+      html += '<td>' + display + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</table>';
+  html += '<div class="footer">表示: ' + filtered.length + '件 / ' + data.length + '件</div>';
+
+  document.getElementById('main').innerHTML = html;
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  rerender();
+}
+
+function setTopic(t) {
+  currentTopic = t;
+  rerender();
+}
+
+function setSort(col) {
+  if (sortCol === col) { sortAsc = !sortAsc; }
+  else { sortCol = col; sortAsc = true; }
+  rerender();
+}
+
+function rerender() {
+  if (allData.length > 0) render();
+}
+
+loadData();
+</script>
+</body>
+</html>

@@ -125,7 +125,7 @@ async function loadFile(rawFilename, el) {
   if (el) el.classList.add('active');
 
   try {
-    const basePath = location.pathname.includes('/プレビュー用/') ? '../キーワード分類/' : 'キーワード分類/';
+    const basePath = decodeURIComponent(location.pathname).includes('/プレビュー用/') ? '../キーワード分類/' : 'キーワード分類/';
     const res = await fetch(basePath + encodeURIComponent(filename) + '?t=' + Date.now());
     const text = await res.text();
     const rows = text.trim().split('\n').map(r => r.split('\t'));
