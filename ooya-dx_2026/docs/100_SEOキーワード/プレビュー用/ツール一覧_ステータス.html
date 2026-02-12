@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ツール一覧 ステータス</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 20px; background: #f5f5f5; }
+  h1 { font-size: 18px; color: #333; display: inline; }
+  .header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .updated { font-size: 12px; color: #6b7280; }
+  table { border-collapse: collapse; font-size: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  th { background: #2563eb; color: #fff; padding: 6px 10px; text-align: left; position: sticky; top: 0; white-space: nowrap; z-index: 1; }
+  td { border: 1px solid #e5e7eb; padding: 5px 8px; white-space: nowrap; max-width: 300px; overflow: hidden; text-overflow: ellipsis; }
+  tr:nth-child(even) { background: #f9fafb; }
+  tr:hover { background: #eff6ff; }
+  td a { color: #2563eb; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  .step1 { border-left: 3px solid #22c55e; }
+  .step2 { border-left: 3px solid #f59e0b; }
+  .step3 { border-left: 3px solid #ef4444; }
+  .other { border-left: 3px solid #8b5cf6; }
+  .prep { color: #9ca3af; font-style: italic; }
+  .dup { color: #fff; font-weight: bold; background: #dc2626; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>ツール一覧 ステータス（キーワード調査シート）</h1>
+  <span class="updated" id="updated"></span>
+</div>
+<div style="overflow-x:auto;">
+  <table id="table"><tr><td>読み込み中...</td></tr></table>
+</div>
+
+<script>
+async function loadTSV() {
+  try {
+    const res = await fetch('ツール一覧_ステータス.tsv?t=' + Date.now());
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r => r.split('\t'));
+
+    let html = '';
+    rows.forEach((row, i) => {
+      if (!row.some(c => c.trim())) return;
+      const tag = i === 0 ? 'th' : 'td';
+      let cls = '';
+      if (i > 0 && row[1]) {
+        if (row[1].includes('Step 1')) cls = 'step1';
+        else if (row[1].includes('Step 2')) cls = 'step2';
+        else if (row[1].includes('Step 3')) cls = 'step3';
+        else cls = 'other';
+      }
+      html += '<tr class="' + cls + '">';
+      row.forEach((cell, j) => {
+        cell = cell.trim();
+        let display = cell.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        if (i > 0 && cell.startsWith('http')) {
+          try {
+            const domain = new URL(cell).hostname.replace('www.','');
+            const short = domain.length > 3 ? domain.substring(0, 3) + '...' : domain;
+            display = '<a href="' + cell + '" target="_blank" title="' + cell + '">' + short + '</a>';
+          } catch(e) {
+            display = '<a href="' + cell + '" target="_blank">' + cell.substring(0,10) + '...</a>';
+          }
+        }
+        if (cell === '準備中') display = '<span class="prep">' + display + '</span>';
+        if (cell === '重複') display = '<span class="dup">' + display + '</span>';
+        html += '<' + tag + '>' + display + '</' + tag + '>';
+      });
+      html += '</tr>';
+    });
+
+    document.getElementById('table').innerHTML = html;
+    document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
+  } catch (e) {
+    document.getElementById('table').innerHTML = '<tr><td style="color:red">TSVの読み込みに失敗しました。HTTPサーバー経由でアクセスしてください。</td></tr>';
+  }
+}
+
+loadTSV();
+</script>
+</body>
+</html>
