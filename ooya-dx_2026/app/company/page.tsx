@@ -169,6 +169,10 @@ export default function CompanyPage() {
                   <span className="text-blue-500 mt-0.5">●</span>
                   <a href="https://www.freelance-jp.org/talents/12828" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">一般社団法人プロフェッショナル&パラレルキャリア・フリーランス協会</a>
                 </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-0.5">●</span>
+                  <a href="https://www.sysadmingroup.jp/sandoukigyo/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">システム管理者の会</a>
+                </li>
               </ul>
             </div>
           </section>
@@ -285,23 +289,51 @@ export default function CompanyPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
-                  <Link href="/company/consumer-policy" className="text-blue-600 hover:text-blue-800 hover:underline">消費者志向自主宣言ならびに運営ポリシー</Link>
+                  <span className="flex flex-wrap gap-x-1">
+                    <Link href="/company/consumer-policy" className="text-blue-600 hover:text-blue-800 hover:underline">消費者志向自主宣言ならびに運営ポリシー</Link>
+                    <span className="text-gray-500">/</span>
+                    <a href="https://www.caa.go.jp/policies/policy/consumer_partnerships/consumer_oriented_management/businesses" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">消費者庁</a>
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
-                  <Link href="/company/teambeyond" className="text-blue-600 hover:text-blue-800 hover:underline">Team Beyond参加</Link>
+                  <span className="flex flex-wrap gap-x-1">
+                    <Link href="/company/teambeyond" className="text-blue-600 hover:text-blue-800 hover:underline">Team Beyond参加</Link>
+                    <span className="text-gray-500">/</span>
+                    <a href="https://www.para-sports.tokyo/member/group/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">掲載サイト</a>
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
-                  <Link href="/company/plastics-smart" className="text-blue-600 hover:text-blue-800 hover:underline">プラスチック削減の取り組み</Link>
+                  <span className="flex flex-wrap gap-x-1">
+                    <Link href="/company/plastics-smart" className="text-blue-600 hover:text-blue-800 hover:underline">プラスチック削減の取り組み</Link>
+                    <span className="text-gray-500">/</span>
+                    <a href="https://plastics-smart.env.go.jp/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">掲載サイト</a>
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
-                  <Link href="/company/lib-partner" className="text-blue-600 hover:text-blue-800 hover:underline">リチウムイオン電池の火災防止啓発</Link>
+                  <span className="flex flex-wrap gap-x-1">
+                    <Link href="/company/lib-partner" className="text-blue-600 hover:text-blue-800 hover:underline">リチウムイオン電池の火災防止啓発</Link>
+                    <span className="text-gray-500">/</span>
+                    <a href="https://lithium.env.go.jp/recycle/waste/lithium_1/partner.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">掲載サイト</a>
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
-                  <Link href="/company/climate-adaptation" className="text-blue-600 hover:text-blue-800 hover:underline">気候変動への適応に向けた取り組み</Link>
+                  <span className="flex flex-wrap gap-x-1">
+                    <Link href="/company/climate-adaptation" className="text-blue-600 hover:text-blue-800 hover:underline">気候変動への適応に向けた取り組み</Link>
+                    <span className="text-gray-500">/</span>
+                    <a href="https://adaptation-platform.nies.go.jp/everyone/campaign/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">掲載サイト</a>
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 mt-0.5">●</span>
+                  <a href="https://sportinlife.go.jp/consortium/participant/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">Sport in Life プロジェクト参画</a>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-900 mt-0.5">●</span>
+                  <a href="https://uminohi.jp/partner/list.html?tab=2" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">海と日本PROJECT 推進パートナー</a>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-900 mt-0.5">●</span>
