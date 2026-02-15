@@ -6,7 +6,7 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; color: #1a1a1a; }
-  .header { background: #1e293b; color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 10; }
+  .header { background: #1e293b; color: #fff; padding: 8px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 20; height: 40px; }
   .header h1 { font-size: 16px; white-space: nowrap; }
   .header .sub { font-size: 12px; color: #94a3b8; }
   .header .updated { font-size: 11px; color: #94a3b8; margin-left: auto; }
@@ -23,6 +23,7 @@
   .stat-card.guide .value { color: #2563eb; }
   .stat-card.delete .value { color: #9ca3af; }
   .stat-card.vol .value { color: #16a34a; font-size: 16px; }
+  .stat-card.filtered .value { color: #7c3aed; }
 
   /* フィルター */
   .filters { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -36,13 +37,20 @@
   .topic-btn:hover { background: #f1f5f9; }
   .topic-btn.active { background: #475569; color: #fff; border-color: #475569; }
 
+  /* 数値フィルター */
+  .num-filters { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .num-filter-group { display: flex; align-items: center; gap: 6px; }
+  .num-filter-group .group-label { font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap; }
+  .num-filter-group select { padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 11px; background: #fff; cursor: pointer; }
+
   /* 検索 */
   .kw-search { margin-bottom: 12px; }
   .kw-search input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; width: 300px; }
 
   /* テーブル */
-  table { border-collapse: collapse; font-size: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); width: 100%; border-radius: 6px; overflow: hidden; }
-  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; position: sticky; top: 44px; white-space: nowrap; font-weight: 500; font-size: 11px; cursor: pointer; }
+  .table-wrap { border-radius: 6px; overflow: auto; max-height: calc(100vh - 42px); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  table { border-collapse: collapse; font-size: 12px; background: #fff; width: 100%; }
+  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; position: sticky; top: 0; z-index: 15; white-space: nowrap; font-weight: 500; font-size: 11px; cursor: pointer; }
   th:hover { background: #334155; }
   th .sort-icon { font-size: 9px; margin-left: 4px; }
   td { border-bottom: 1px solid #f1f5f9; padding: 6px 10px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; }
@@ -56,6 +64,11 @@
   .badge-exp { background: #fff7ed; color: #c2410c; }
   .badge-guide { background: #dbeafe; color: #1e40af; }
   .badge-delete { background: #f3f4f6; color: #9ca3af; }
+  .badge-target { background: #fef9c3; color: #a16207; font-size: 12px; }
+  .badge-review { background: #fee2e2; color: #dc2626; }
+  .filter-btn.review { border-color: #dc2626; color: #dc2626; }
+  .filter-btn.review.active { background: #dc2626; color: #fff; border-color: #dc2626; }
+  tr.row-review { background: #fef2f2; }
 
   .footer { padding: 8px; font-size: 11px; color: #94a3b8; }
   .empty { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
@@ -75,6 +88,10 @@
 let allData = [];
 let currentFilter = 'all';
 let currentTopic = 'all';
+let currentKdMax = 'all';
+let currentVolMin = 'all';
+let currentPageGroup = 'all';
+let currentCategory = 'all';
 let sortCol = -1;
 let sortAsc = true;
 
@@ -103,7 +120,7 @@ function render() {
   const data = allData.slice(1).filter(r => r.length >= 6);
 
   // Stats
-  let expCount = 0, guideCount = 0, deleteCount = 0;
+  let expCount = 0, guideCount = 0, deleteCount = 0, reviewCount = 0;
   let totalVol = 0, expVol = 0, guideVol = 0;
   const topicMap = {};
 
@@ -111,24 +128,57 @@ function render() {
     const 判定 = (r[5] || '').trim();
     const vol = parseInt(r[4]) || 0;
     const topic = (r[8] || '').trim();
+    const review = (r[10] || '').trim();
     if (判定 === '体験記事') { expCount++; expVol += vol; }
     else if (判定 === '解説記事') { guideCount++; guideVol += vol; }
     else if (判定 === '削除') { deleteCount++; }
+    if (review === '要確認') { reviewCount++; }
     if (判定 !== '削除') totalVol += vol;
     if (topic && 判定 !== '削除') {
       topicMap[topic] = (topicMap[topic] || 0) + 1;
     }
   });
 
-  // Filter
+  // Filter by 判定
   let filtered = data;
   if (currentFilter === 'exp') filtered = filtered.filter(r => (r[5]||'').trim() === '体験記事');
   else if (currentFilter === 'guide') filtered = filtered.filter(r => (r[5]||'').trim() === '解説記事');
   else if (currentFilter === 'delete') filtered = filtered.filter(r => (r[5]||'').trim() === '削除');
+  else if (currentFilter === 'review') filtered = filtered.filter(r => (r[10]||'').trim() === '要確認');
 
   // Topic filter
   if (currentTopic !== 'all') {
     filtered = filtered.filter(r => (r[8]||'').trim() === currentTopic);
+  }
+
+  // カテゴリフィルター
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(r => (r[13]||'').trim() === currentCategory);
+  }
+
+  // ページグループフィルター
+  if (currentPageGroup !== 'all') {
+    filtered = filtered.filter(r => (r[11]||'').trim() === currentPageGroup);
+  }
+
+  // SEO難易度フィルター
+  if (currentKdMax !== 'all') {
+    const maxKd = parseInt(currentKdMax);
+    filtered = filtered.filter(r => {
+      const kd = (r[3]||'').trim();
+      if (kd === 'N/A' || kd === '') return true;
+      const kdVal = parseInt(kd);
+      return !isNaN(kdVal) && kdVal <= maxKd;
+    });
+  }
+
+  // 月間検索数フィルター
+  if (currentVolMin !== 'all') {
+    const minVol = parseInt(currentVolMin);
+    filtered = filtered.filter(r => {
+      const vol = parseInt(r[4]) || 0;
+      return vol >= minVol;
+    });
   }
 
   // Keyword search
@@ -142,7 +192,6 @@ function render() {
     filtered.sort((a, b) => {
       let va = (a[sortCol] || '').trim();
       let vb = (b[sortCol] || '').trim();
-      // 数値ソート
       if (sortCol === 3 || sortCol === 4) {
         va = parseFloat(va) || 0;
         vb = parseFloat(vb) || 0;
@@ -161,14 +210,77 @@ function render() {
   html += '<div class="stat-card guide"><div class="label">解説記事</div><div class="value">' + guideCount + '</div></div>';
   html += '<div class="stat-card delete"><div class="label">削除</div><div class="value">' + deleteCount + '</div></div>';
   html += '<div class="stat-card vol"><div class="label">有効KW検索Vol合計</div><div class="value">' + totalVol.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card filtered"><div class="label">絞り込み結果</div><div class="value">' + filtered.length + '</div></div>';
   html += '</div>';
 
-  // Filters
+  // 判定フィルター
   html += '<div class="filters">';
   html += '<div class="filter-btn' + (currentFilter==='all'?' active':'') + '" onclick="setFilter(\'all\')">すべて (' + data.length + ')</div>';
   html += '<div class="filter-btn' + (currentFilter==='exp'?' active':'') + '" onclick="setFilter(\'exp\')">体験記事 (' + expCount + ')</div>';
   html += '<div class="filter-btn' + (currentFilter==='guide'?' active':'') + '" onclick="setFilter(\'guide\')">解説記事 (' + guideCount + ')</div>';
   html += '<div class="filter-btn' + (currentFilter==='delete'?' active':'') + '" onclick="setFilter(\'delete\')">削除 (' + deleteCount + ')</div>';
+  html += '<div class="filter-btn review' + (currentFilter==='review'?' active':'') + '" onclick="setFilter(\'review\')">要確認 (' + reviewCount + ')</div>';
+  html += '</div>';
+
+  // カテゴリ・SEO難易度・月間検索数フィルター
+  html += '<div class="num-filters">';
+
+  // カテゴリ
+  const catMap = {};
+  data.forEach(r => {
+    const cat = (r[13]||'').trim();
+    if (cat) catMap[cat] = (catMap[cat]||0) + 1;
+  });
+  const sortedCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">カテゴリ:</span>';
+  html += '<select onchange="setCategory(this.value)">';
+  html += '<option value="all"' + (currentCategory==='all'?' selected':'') + '>すべて</option>';
+  sortedCats.forEach(function([cat, cnt]) {
+    html += '<option value="' + cat.replace(/"/g,'&quot;') + '"' + (currentCategory===cat?' selected':'') + '>' + cat + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">SEO難易度:</span>';
+  html += '<select onchange="setKdMax(this.value)">';
+  html += '<option value="all"' + (currentKdMax==='all'?' selected':'') + '>すべて</option>';
+  html += '<option value="10"' + (currentKdMax==='10'?' selected':'') + '>10以下</option>';
+  html += '<option value="20"' + (currentKdMax==='20'?' selected':'') + '>20以下</option>';
+  html += '<option value="30"' + (currentKdMax==='30'?' selected':'') + '>30以下</option>';
+  html += '<option value="40"' + (currentKdMax==='40'?' selected':'') + '>40以下</option>';
+  html += '<option value="50"' + (currentKdMax==='50'?' selected':'') + '>50以下</option>';
+  html += '</select>';
+  html += '</div>';
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">月間検索数:</span>';
+  html += '<select onchange="setVolMin(this.value)">';
+  html += '<option value="all"' + (currentVolMin==='all'?' selected':'') + '>すべて</option>';
+  html += '<option value="10"' + (currentVolMin==='10'?' selected':'') + '>10以上</option>';
+  html += '<option value="50"' + (currentVolMin==='50'?' selected':'') + '>50以上</option>';
+  html += '<option value="100"' + (currentVolMin==='100'?' selected':'') + '>100以上</option>';
+  html += '<option value="500"' + (currentVolMin==='500'?' selected':'') + '>500以上</option>';
+  html += '<option value="1000"' + (currentVolMin==='1000'?' selected':'') + '>1,000以上</option>';
+  html += '<option value="5000"' + (currentVolMin==='5000'?' selected':'') + '>5,000以上</option>';
+  html += '</select>';
+  html += '</div>';
+  // ページグループフィルター
+  const pgMap = {};
+  data.forEach(r => {
+    const pg = (r[11]||'').trim();
+    if (pg) pgMap[pg] = (pgMap[pg]||0) + 1;
+  });
+  const sortedPgs = Object.entries(pgMap).sort((a, b) => b[1] - a[1]);
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">ページグループ:</span>';
+  html += '<select onchange="setPageGroup(this.value)">';
+  html += '<option value="all"' + (currentPageGroup==='all'?' selected':'') + '>すべて</option>';
+  sortedPgs.forEach(function([pg, cnt]) {
+    html += '<option value="' + pg.replace(/"/g,'&quot;') + '"' + (currentPageGroup===pg?' selected':'') + '>' + pg + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
   html += '</div>';
 
   // Topic filters
@@ -185,9 +297,13 @@ function render() {
   // Search
   html += '<div class="kw-search"><input type="text" id="kwSearch" placeholder="キーワード検索..." oninput="rerender()" value="' + (kwFilter||'') + '"></div>';
 
+  // 非表示列: ページ種類(7), トピック(8)はページグループに統合
+  const hideCols = [7, 8];
+
   // Table
-  html += '<table><tr>';
+  html += '<div class="table-wrap"><table><tr>';
   header.forEach((h, i) => {
+    if (hideCols.includes(i)) return;
     const icon = sortCol === i ? (sortAsc ? '▲' : '▼') : '';
     html += '<th onclick="setSort(' + i + ')">' + h + '<span class="sort-icon">' + icon + '</span></th>';
   });
@@ -195,13 +311,16 @@ function render() {
 
   filtered.forEach(row => {
     const 判定 = (row[5] || '').trim();
+    const review = (row[10] || '').trim();
     let cls = '';
-    if (判定 === '体験記事') cls = 'row-exp';
+    if (review === '要確認') cls = 'row-review';
+    else if (判定 === '体験記事') cls = 'row-exp';
     else if (判定 === '解説記事') cls = 'row-guide';
     else if (判定 === '削除') cls = 'row-delete';
 
     html += '<tr class="' + cls + '">';
     row.forEach((cell, j) => {
+      if (hideCols.includes(j)) return;
       cell = (cell||'').trim();
       let display = cell.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
@@ -215,11 +334,19 @@ function render() {
       if (j === 4 && !isNaN(cell) && cell !== '') {
         display = Number(cell).toLocaleString();
       }
+      // 狙い目列にバッジ
+      if (j === 9 && cell === '◎') {
+        display = '<span class="badge badge-target">◎</span>';
+      }
+      // 要確認列にバッジ
+      if (j === 10 && cell === '要確認') {
+        display = '<span class="badge badge-review">要確認</span>';
+      }
       html += '<td>' + display + '</td>';
     });
     html += '</tr>';
   });
-  html += '</table>';
+  html += '</table></div>';
   html += '<div class="footer">表示: ' + filtered.length + '件 / ' + data.length + '件</div>';
 
   document.getElementById('main').innerHTML = html;
@@ -232,6 +359,26 @@ function setFilter(f) {
 
 function setTopic(t) {
   currentTopic = t;
+  rerender();
+}
+
+function setKdMax(v) {
+  currentKdMax = v;
+  rerender();
+}
+
+function setVolMin(v) {
+  currentVolMin = v;
+  rerender();
+}
+
+function setPageGroup(v) {
+  currentPageGroup = v;
+  rerender();
+}
+
+function setCategory(v) {
+  currentCategory = v;
   rerender();
 }
 
