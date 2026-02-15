@@ -8,12 +8,6 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 .placeholder { background: #fef3c7; border: 1px dashed #f59e0b; padding: 2px 8px; border-radius: 4px; color: #92400e; font-size: 13px; }
-.new-section { position: relative; }
-.new-section::before { content: "NEW"; position: absolute; top: -8px; right: 0; background: #dc2626; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
-.moved-section { position: relative; }
-.moved-section::before { content: "移動"; position: absolute; top: -8px; right: 0; background: #2563eb; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
-.enhanced-section { position: relative; }
-.enhanced-section::before { content: "拡充"; position: absolute; top: -8px; right: 0; background: #16a34a; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
 .internal-link { display: block; background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 12px; border-radius: 6px; margin: 4px 0; font-size: 13px; color: #1d4ed8; text-decoration: none; }
 .internal-link:hover { background: #dbeafe; }
 .internal-link::before { content: "🔗 内部リンク → "; font-size: 11px; }
@@ -24,9 +18,6 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
 <!-- 凡例 -->
 <div style="position:fixed;top:0;left:0;right:0;z-index:50;background:#1f2937;color:#fff;padding:8px 16px;font-size:13px;display:flex;gap:16px;align-items:center;">
   <span style="font-weight:bold;">プロフィールページ あるべき姿（フォーマット）</span>
-  <span style="background:#dc2626;padding:2px 8px;border-radius:4px;font-size:11px;">NEW = 新規追加</span>
-  <span style="background:#16a34a;padding:2px 8px;border-radius:4px;font-size:11px;">拡充 = 既存を強化</span>
-  <span style="background:#2563eb;padding:2px 8px;border-radius:4px;font-size:11px;">移動 = 配置変更</span>
   <span style="background:#f59e0b;padding:2px 8px;border-radius:4px;font-size:11px;color:#333;">◯◯ = 要記入</span>
 </div>
 
@@ -54,7 +45,7 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
     </h1>
 
     <!-- ===== プロフィール概要（既存・微調整） ===== -->
-    <section class="mb-12 enhanced-section">
+    <section class="mb-12">
       <div class="flex flex-col sm:flex-row gap-6 items-start">
         <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
           <img src="https://ooya.tech/images/profile/profile.jpg" alt="東後 哲郎" class="w-full h-full object-cover">
@@ -109,19 +100,19 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
       </div>
     </section>
 
-    <!-- ===== 不動産購入実績（2026年2月）（NEW） ===== -->
-    <section class="mb-12 new-section">
+    <!-- ===== 不動産購入実績（2026年2月） ===== -->
+    <section class="mb-12">
       <h2 id="summary" class="text-xl font-bold text-gray-900 mb-6">不動産購入実績 <span class="text-sm font-normal text-gray-500">※ 2026年2月時点</span></h2>
 
       <div class="bg-gray-50 rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+        <table class="w-full text-base">
           <tbody>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 w-36 bg-gray-100 font-medium">総購入額</td><td class="py-3 px-4 text-gray-900">約1.8億円<span class="text-xs text-gray-900 ml-2">（収益 約6,000万円 / 自己居住 約1.3億円）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 w-40 bg-gray-100 font-medium">総購入額</td><td class="py-3 px-4 text-gray-900">約1.8億円<span class="text-sm text-gray-900 ml-2">（収益 約6,000万円 / 自己居住 約1.3億円）</span></td></tr>
             <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">家賃収入</td><td class="py-3 px-4 text-gray-900">500万円/年</td></tr>
             <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">不動産購入開始</td><td class="py-3 px-4 text-gray-900">2019年〜</td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">購入実績</td><td class="py-3 px-4 text-gray-900">7軒（1軒売却）<span class="text-xs text-gray-900 ml-2">マンション3回・戸建4回</span></td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">法人融資</td><td class="py-3 px-4 text-gray-900">6回<span class="text-xs text-gray-900 ml-2">（取引金融機関：3社（埼玉の信用金庫2社・日本政策金融公庫）</span></td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">自主管理</td><td class="py-3 px-4 text-gray-900">3件<span class="text-xs text-gray-900 ml-2">（マンション2件・戸建1件）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">購入実績</td><td class="py-3 px-4 text-gray-900">7軒（1軒売却）<span class="text-sm text-gray-900 ml-2">マンション3回・戸建4回</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">法人融資</td><td class="py-3 px-4 text-gray-900">6回<span class="text-sm text-gray-900 ml-2">（取引金融機関：3社（埼玉の信用金庫2社・日本政策金融公庫）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">自主管理</td><td class="py-3 px-4 text-gray-900">3件<span class="text-sm text-gray-900 ml-2">（マンション2件・戸建1件）</span></td></tr>
             <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">リフォーム回数</td><td class="py-3 px-4 text-gray-900">4回</td></tr>
             <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">投資エリア</td><td class="py-3 px-4 text-gray-900">埼玉県</td></tr>
             <tr><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">投資スタイル</td><td class="py-3 px-4 text-gray-900">築古再生＋マンションオーナーチェンジ</td></tr>
@@ -146,7 +137,7 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
     </nav>
 
     <!-- ===== 不動産購入の全記録 ===== -->
-    <section class="mb-12 enhanced-section">
+    <section class="mb-12">
       <h2 id="properties" class="text-xl font-bold text-gray-900 mb-6">不動産購入の全記録（7軒）</h2>
 
       <div class="space-y-8">
@@ -154,273 +145,230 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
         <!-- 1軒目：品川（自己居住→売却） -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            1軒目｜品川区 新築マンション（2019年）
-            <span class="ml-2 text-xs font-normal bg-green-100 text-green-800 px-2 py-0.5 rounded">自己居住→売却済</span>
+            2019年：1軒目｜初めての持ち家を品川区 新築マンションを住宅ローンで購入
+            <span class="ml-2 text-xs font-normal bg-green-100 text-green-800 px-2 py-0.5 rounded">自己居住</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「すべてはここから始まった」</p>
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-1.jpg" alt="品川区 新築マンション" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">新築2LDKマンション</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">62平米</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">住宅ローンにてフルローンで購入</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">売却損益</dt><dd class="text-gray-900"><span class="font-bold text-green-600">購入価格の155%で売却</span></dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">新築2LDKマンション</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">東京都品川区</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">62平米</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">住宅ローンにてフラット35Sでフルローンで購入</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">売却損益</dt><dd class="text-gray-900">購入価格の155%で売却</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong></p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
-                  品川シーサイド駅の徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。3年間住んで購入金額の155%で売却。（2025年現在約200%にまで上昇しておりました。。）双子の男の子が生まれて、広い家に住みたかったので、家族全員で都内から埼玉県のさいたま新都心に引っ越し。1棟目の値段が高く売れた事で、本格的に事業化しようと。不動産投資に関するスクールを3つ受け、書籍を100冊以上読んで、猛勉強しました。
+                  夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。3年間住んで購入金額の155%で売却。（2025年では購入価格から約200%にまで上昇しておりました。）不動産の構造を理解したく、勉強を開始を始めました。
                 </p>
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>売却した理由（詳細）:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>住宅ローンから投資ローンへの学び:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>この経験で学んだ教訓:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">不動産投資の初心者の勉強方法 / ファイナンシャルアカデミーに通う / 仲介手数料を50%にする</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">不動産投資の出口戦略｜売却タイミングの判断基準</a>
-          <a href="#" class="internal-link">不動産投資は儲かる？成功率と儲かる人の特徴</a>
         </div>
 
         <!-- 2軒目：春日部① -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            2軒目｜埼玉県東部 築古戸建（2023年）
+            2023年：2軒目｜初めての収益物件　埼玉県東部 築古戸建を現金で購入
             <span class="ml-2 text-xs font-normal bg-blue-100 text-blue-800 px-2 py-0.5 rounded">収益物件</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「まず1軒、やってみよう」</p>
+
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-2.png" alt="埼玉県東部 築古戸建" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築約50年の築古戸建</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">土地85.1㎡ / 建物75.4㎡</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">物件は現金で購入して、リフォームローンを日本政策金融公庫さんから5年融資</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">購入価格</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">リフォーム</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900"><span class="placeholder">表面◯% / 実質◯%</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">月額家賃</dt><dd class="text-gray-900"><span class="placeholder">◯万円</span></dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築約50年の築古戸建</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">埼玉県東部</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">75.4㎡</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">物件は現金で購入して、リフォームローンを日本政策金融公庫さんから5年融資</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900">10%</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong><br>スクールで学んだ知識を実践するため、少額で始められる築古戸建を選択。現金400万円で購入し、フルリフォームを自ら管理して実践経験を積みました。</p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
                   埼玉県東部に築50年の戸建の家を現金400万円で購入。フルリフォームをして、4ヶ月程でなんとか入居付け出来ました。ゴミ撤去業者に撤去業務をして頂き、内装を間取り変更からトイレ交換、床をクッションフロア、壁のクロスを全面張り替えなど全て行いました。
                 </p>
-
-                <!-- NEW: 深掘り -->
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>なぜこの物件を選んだか:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>購入後にわかったこと:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>この物件で学んだ教訓:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">不動産投資の始め方 / 融資・審査事情 / 戸建て不動産投資の始め方 / 利回り計算ツール</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">不動産投資の始め方｜初心者が最初にやるべき5ステップ</a>
-          <a href="#" class="internal-link">不動産投資の融資・審査事情｜通すためにやったこと</a>
-          <a href="#" class="internal-link">戸建て不動産投資の始め方｜少額から始める方法</a>
-          <a href="#" class="internal-link">利回り計算ツールでこの物件を再計算 →</a>
         </div>
 
         <!-- 3軒目：春日部② -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            3軒目｜埼玉県東部 築古戸建（2023年）
+            2023年：3軒目｜埼玉県東部 築古戸建を現金で購入
             <span class="ml-2 text-xs font-normal bg-blue-100 text-blue-800 px-2 py-0.5 rounded">収益物件</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「同じエリアで2軒目」</p>
+
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-3.png" alt="埼玉県東部 築古戸建" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築約50年の築古戸建</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">土地108.9㎡ / 建物55.4㎡</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">物件は現金で購入して、リフォームローンを埼玉縣信用金庫さんからにて10年融資</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">購入価格</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900"><span class="placeholder">表面◯% / 実質◯%</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">月額家賃</dt><dd class="text-gray-900"><span class="placeholder">◯万円</span></dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築約50年の築古戸建</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">埼玉県東部</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">55.4㎡</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">物件は現金で購入して、リフォームローンを埼玉縣信用金庫さんからにて10年融資</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900">10%</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong><br>1軒目と同じエリアで土地勘があったため、400万円から指値を入れて300万円で購入。同エリアに集中することで管理効率を高める狙いがありました。</p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
                   埼玉県東部の近いエリアにもう1戸、築50年の築古戸建を400万円から指値を入れて現金300万円で購入。こちらもフルリフォームして1ヶ月以内に入居付け出来ました。
                 </p>
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>なぜ同じエリアで2軒目を選んだか:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>1軒目との違い・改善点:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>この物件で学んだ教訓:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">物件探し・優良物件を見つける方法 / 初期費用・必要資金</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">不動産投資の物件探し｜優良物件を見つける方法</a>
-          <a href="#" class="internal-link">不動産投資の初期費用・必要資金｜予算別の投資プラン</a>
         </div>
 
         <!-- 4軒目：越谷 -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            4軒目｜越谷市 ファミリー区分マンション（2024年）
+            2024年：4軒目｜越谷市 ファミリー区分マンションをフルローンで購入
             <span class="ml-2 text-xs font-normal bg-blue-100 text-blue-800 px-2 py-0.5 rounded">収益物件</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「戸建てから区分へ」</p>
+
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-4.jpg" alt="越谷市 ファミリー区分マンション" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">ファミリー区分マンションをリースバックにて購入</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">57.59㎡（2LDK＋S）</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さん / 15年融資にてフルローン</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">購入価格</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900"><span class="placeholder">表面◯% / 実質◯%</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">管理費等</dt><dd class="text-gray-900"><span class="placeholder">◯万円/月</span></dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">ファミリー区分マンションをリースバックにて購入</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">越谷市</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">57.59㎡（2LDK＋S）</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さん / 15年融資にてフルローン</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900">10%</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong><br>築古戸建で現金を使ったため、融資を活用する方針に切り替え。割安なファミリー区分マンションをリースバックで購入し、フルローンで資金効率を重視しました。</p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
                   2戸目と3戸目で少し慣れてきた事と、現金を結構使ったので、出来るだけ融資を活用しようと、割安のファミリー区分マンションを見つけて、すぐに現場にいき、調査して、買付を入れました。
                 </p>
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>戸建てから区分に変えた理由:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>区分ならではの注意点:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>この物件で学んだ教訓:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">マンション投資のリアル / 頭金はいくら必要？フルローンは可能？</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">マンション・ワンルーム投資のリアル｜メリットと注意点</a>
-          <a href="#" class="internal-link">不動産投資の頭金はいくら必要？フルローンは可能？</a>
         </div>
 
         <!-- 5軒目：川越 -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            5軒目｜川越市 ファミリー区分マンション（2024年）
+            2024年：5軒目｜川越市 ファミリー区分マンションをフルローンで購入
             <span class="ml-2 text-xs font-normal bg-blue-100 text-blue-800 px-2 py-0.5 rounded">収益物件</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「区分2軒目で見えたこと」</p>
+
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-5.jpg" alt="川越市 ファミリー区分マンション" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">ファミリー区分マンションをオーナーチェンジで購入</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">48.07㎡（2LDK＋S）</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さん / 15年融資にてフルローン</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">購入価格</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900"><span class="placeholder">表面◯% / 実質◯%</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">管理費等</dt><dd class="text-gray-900"><span class="placeholder">◯万円/月</span></dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">ファミリー区分マンションをオーナーチェンジで購入</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">川越市</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">48.07㎡（2LDK＋S）</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さん / 15年融資にてフルローン</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900">10%</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong><br>割安なオーナーチェンジ物件を発見。リフォーム不要で購入後すぐに家賃収入が得られるため、手間をかけずにポートフォリオを拡大できると判断しました。</p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
                   こちらも割安のオーナーチェンジのファミリー区分マンションを見つけて、買付を入れました。オーナーチェンジは築古戸建と違ってリフォームなどもする事がないので、購入してそのままです。
                 </p>
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>3号との違い:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>この物件で学んだ教訓:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">ローン金利比較・低金利で借りるコツ / キャッシュフロー計算</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">不動産投資ローン金利比較｜低金利で借りるコツ</a>
-          <a href="#" class="internal-link">不動産投資のキャッシュフロー計算｜月々いくら残る？</a>
         </div>
 
         <!-- 6軒目：浦和 -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            6軒目｜さいたま市浦和区 戸建（2024年）
+            2024年：6軒目｜さいたま市浦和区 戸建をフルローンで購入
             <span class="ml-2 text-xs font-normal bg-blue-100 text-blue-800 px-2 py-0.5 rounded">収益物件</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「区分から、再び戸建てへ」</p>
+
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-6.png" alt="さいたま市浦和区 戸建" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築30年の戸建をフルローンで購入</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">土地98.71㎡ / 建物100㎡（4LDK＋S）</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さん / 15年フルローン + 日本政策金融公庫さんリフォーム5年</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">購入価格</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">リフォーム</dt><dd class="text-gray-900"><span class="placeholder">◯◯万円</span></dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900"><span class="placeholder">表面◯% / 実質◯%</span></dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築30年の戸建をフルローンで購入</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">さいたま市浦和区</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">100㎡（4LDK＋S）</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さん / 15年フルローン + 日本政策金融公庫さんリフォーム5年</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">利回り</dt><dd class="text-gray-900">10%</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong><br>浦和区で路線価割れの中古戸建が出たため、資産価値の高いエリアでの収益物件として購入。グループホームの福祉施設向け賃貸で安定運用を実現しました。</p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
                   浦和区にて路線価の中古戸建が出た為、購入。購入後の隣人トラブルが大変でしたが、グループホームの福祉施設用さんへの賃貸をしております。リフォームを4社程あいみつを行い、スプレッドシートにてリフォームの項目を徹底的に洗い出し良質なパートナーを見つける事が出来ました。
                 </p>
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>浦和エリアを選んだ理由:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>区分→戸建てに戻した理由:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>この物件で学んだ教訓:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">失敗談・経験した教訓 / 自主管理体験 / 返済比率の目安</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">不動産投資の失敗談｜私が経験した失敗と教訓</a>
-          <a href="#" class="internal-link">不動産投資の自主管理体験｜管理会社に頼らない賃貸経営</a>
-          <a href="#" class="internal-link">不動産投資の返済比率の目安｜理想は何%？</a>
         </div>
 
         <!-- 7軒目：大宮（自己居住） -->
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-3 leading-snug">
-            7軒目｜さいたま市大宮区 フルリノベ戸建（2025年）
+            2025年：7軒目｜さいたま市大宮区 フルリノベ戸建を住宅ローンで購入
             <span class="ml-2 text-xs font-normal bg-green-100 text-green-800 px-2 py-0.5 rounded">自己居住</span>
           </h3>
-          <p class="text-base text-blue-600 font-medium mb-3">「投資家目線で自宅を選ぶ」</p>
+
           <div class="bg-white border border-gray-200 overflow-hidden shadow-sm">
             <div class="flex flex-col md:flex-row">
               <div class="md:w-[280px] flex-shrink-0">
                 <div class="aspect-[4/3] bg-gray-100 overflow-hidden"><img src="https://ooya.tech/images/profile/property-7.jpg" alt="さいたま市大宮区 フルリノベ戸建" class="w-full h-full object-cover"></div>
               </div>
-              <div class="flex-1 p-5 sm:p-6">
-                <dl class="space-y-2 text-sm mb-4">
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築30年のフルリノベ戸建</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">面積</dt><dd class="text-gray-900">土地135㎡ / 建物158㎡（5LDK＋S＋屋上付き）</dd></div>
-                  <div class="flex"><dt class="text-gray-500 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さんから住宅ローンにてオーバーローンにて購入</dd></div>
+              <div class="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
+                <dl class="divide-y divide-gray-300 text-base mb-4">
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd class="text-gray-900">築30年のフルリノベ戸建</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd class="text-gray-900">さいたま市大宮区</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd class="text-gray-900">158㎡（5LDK＋S＋屋上付き）</dd></div>
+                  <div class="flex py-2"><dt class="text-gray-900 w-24 flex-shrink-0">融資</dt><dd class="text-gray-900">埼玉縣信用金庫さんから住宅ローンにてオーバーローンにて購入</dd></div>
                 </dl>
+                <p class="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong><br>土地の実勢価格が購入金額に近く、このエリアでこの広さの戸建・庭付き・駐車場2台はめったに出ないため、投資家目線で資産価値を見極めて即買付を入れました。</p>
                 <p class="text-base text-gray-700 leading-relaxed mb-4">
                   さいたま新都心駅に家族5人で、戸建賃貸で住んでおりましたが、今後を考え近辺で良い物件がないかなと1年程探しておりましたが、なかなか出なく、ある時にパッとSUUMOに掲載されて、土地実勢価格が購入金額に近しい事とこのエリアでこの広さの戸建と庭付き駐車場2台はなかった為、すぐに買付を入れました。その週で4名買付が入りましたが、なんとか無事に選ばれました。
                 </p>
                 <div class="border-t border-gray-100 pt-4 mt-4">
-                  <p class="text-xs font-bold text-gray-500 mb-2">▼ 追加すべき内容</p>
-                  <div class="space-y-2 text-sm">
-                    <p><strong>大宮エリアを選んだ理由:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>古家再生投資プランナーの知識をどう活かしたか:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                    <p><strong>投資家目線で自宅を選ぶメリット:</strong> <span class="placeholder">◯◯◯◯</span></p>
-                  </div>
+                  <p class="text-sm text-gray-400 mb-1">今後執筆予定：</p>
+                  <p class="text-sm text-gray-400">不動産投資のメリット・デメリット</p>
                 </div>
               </div>
             </div>
           </div>
-          <a href="#" class="internal-link mt-2">不動産投資のメリット・デメリット｜向いている人の特徴</a>
         </div>
 
       </div>
@@ -435,44 +383,25 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
         <p><strong>マーケッター × 開発者 × 現役大家。</strong>この3つが揃っているからこそ、作れるツールがある。それが<a href="https://ooya.tech/" class="text-blue-600 hover:underline">大家DX</a>です。</p>
       </div>
 
-      <a href="/about" class="internal-link mt-4">大家DXを作った理由を詳しく見る →</a>
     </section>
 
 
-    <!-- ===== 影響を受けた書籍（NEW） ===== -->
-    <section class="mb-12 new-section">
+    <!-- ===== 影響を受けた書籍 ===== -->
+    <section class="mb-12">
       <h2 id="books" class="text-xl font-bold text-gray-900 mb-6">影響を受けた書籍</h2>
 
       <p class="text-base text-gray-700 mb-4">不動産投資を始める前〜始めた後に読んだ本の中で、実際に行動が変わった本を紹介します。</p>
 
-      <div class="space-y-4">
-        <div class="bg-gray-50 rounded-xl p-5">
-          <h3 class="text-lg font-bold text-gray-900 mb-2">投資を始める決断をくれた本</h3>
-          <p class="text-base text-gray-700">『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著</p>
-          <p class="text-base text-gray-500 mt-1">→ <span class="placeholder">◯◯◯◯（この本のどの部分で行動が変わったか）</span></p>
-        </div>
-        <div class="bg-gray-50 rounded-xl p-5">
-          <h3 class="text-lg font-bold text-gray-900 mb-2">物件選びの考え方が変わった本</h3>
-          <p class="text-base text-gray-700">『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著</p>
-          <p class="text-base text-gray-500 mt-1">→ <span class="placeholder">◯◯◯◯</span></p>
-        </div>
-        <div class="bg-gray-50 rounded-xl p-5">
-          <h3 class="text-lg font-bold text-gray-900 mb-2">融資・財務の知識をくれた本</h3>
-          <p class="text-base text-gray-700">『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著</p>
-          <p class="text-base text-gray-500 mt-1">→ <span class="placeholder">◯◯◯◯</span></p>
-        </div>
-        <div class="bg-gray-50 rounded-xl p-5">
-          <h3 class="text-lg font-bold text-gray-900 mb-2">大家業の実務で助けられた本</h3>
-          <p class="text-base text-gray-700">『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著</p>
-          <p class="text-base text-gray-500 mt-1">→ <span class="placeholder">◯◯◯◯</span></p>
-        </div>
-      </div>
-
-      <a href="#" class="internal-link mt-4">不動産投資のおすすめ本ランキング｜初心者必読の10冊</a>
+      <ul class="space-y-3 text-base text-gray-700">
+        <li><strong>投資を始める決断をくれた本：</strong>『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著 → <span class="placeholder">◯◯◯◯</span></li>
+        <li><strong>物件選びの考え方が変わった本：</strong>『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著 → <span class="placeholder">◯◯◯◯</span></li>
+        <li><strong>融資・財務の知識をくれた本：</strong>『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著 → <span class="placeholder">◯◯◯◯</span></li>
+        <li><strong>大家業の実務で助けられた本：</strong>『<span class="placeholder">◯◯◯◯</span>』<span class="placeholder">◯◯◯◯</span> 著 → <span class="placeholder">◯◯◯◯</span></li>
+      </ul>
     </section>
 
     <!-- ===== Web業界での経歴（既存・下に移動） ===== -->
-    <section class="mb-12 moved-section">
+    <section class="mb-12">
       <h2 id="career" class="text-xl font-bold text-gray-900 mb-6">経歴・メディア出演</h2>
 
       <div class="bg-gray-50 rounded-xl p-5 sm:p-6 mb-6">
@@ -537,15 +466,15 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
         <ul class="space-y-1 text-base text-gray-700">
           <li class="flex items-start gap-2">
             <span class="text-blue-500 mt-0.5">●</span>
-            <span>埼玉県DXパートナー / 東京商工会議所 / さいたま商工会議所 / さいたま観光国際協会 / さいたま市CS・SDGsパートナーズ</span>
+            <span><a href="https://www.saitamadx.com/dx-partner/solution/348/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">埼玉県DXパートナー</a> / <a href="https://www.tokyo-cci.or.jp/shachonet/profile/2454.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">東京商工会議所</a> / <a href="https://www.amatias.com/asp/navi.asp?s_code=S0006864" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">さいたま商工会議所</a> / <a href="https://stib.jp/member/name-list/?s=StartupMarketing" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">さいたま観光国際協会</a> / <a href="https://www.city.saitama.lg.jp/006/007/002/008/p062519.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">さいたま市CS・SDGsパートナーズ</a></span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-blue-500 mt-0.5">●</span>
-            <span>一般社団法人プロフェッショナル&パラレルキャリア・フリーランス協会</span>
+            <span><a href="https://www.freelance-jp.org/talents/12828" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">一般社団法人プロフェッショナル&パラレルキャリア・フリーランス協会</a></span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-blue-500 mt-0.5">●</span>
-            <span>システム管理者の会</span>
+            <span><a href="https://www.sysadmingroup.jp/sandoukigyo/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">システム管理者の会</a></span>
           </li>
         </ul>
         <p class="text-base mt-3"><a href="/company" class="text-blue-600 underline">→ 会社概要を見る</a></p>
@@ -562,21 +491,6 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
         </p>
 
         <div class="mt-4 pt-4 border-t border-gray-200">
-          <p class="text-xs font-bold text-gray-500 mb-3">過去の取材実績</p>
-          <div class="space-y-2">
-            <div class="text-base">
-              <span class="text-gray-500">2024年1月</span>
-              <span class="ml-2">フジテレビ「イット！」— 不動産賃貸業の空き家再生についてインタビュー</span>
-            </div>
-            <div class="text-base">
-              <span class="text-gray-500">2020年5月</span>
-              <span class="ml-2">株式会社overflow — フリーランスWebディレクターのキャリアインタビュー</span>
-            </div>
-            <div class="text-base">
-              <span class="text-gray-500">2019年4月</span>
-              <span class="ml-2">渋谷ヒカリエ Creative Lounge MOV — インタビュー掲載</span>
-            </div>
-          </div>
         </div>
       </div>
     </section>
