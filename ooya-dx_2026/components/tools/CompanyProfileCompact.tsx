@@ -105,7 +105,7 @@ export function CompanyProfileCompact() {
               href="/profile"
               className="inline-block text-sm text-blue-600 hover:text-blue-800 hover:underline mt-3"
             >
-              詳しいプロフィールを見る →
+              詳しい自己紹介を見る →
             </Link>
           </div>
         </div>

@@ -7,7 +7,7 @@ const navItems = [
   { href: '/company', label: '会社概要' },
   { href: '/company/portfolio', label: '実績・得意領域' },
   { href: '/company/service', label: 'メニュー・料金' },
-  { href: '/profile', label: 'プロフィール' },
+  { href: '/profile', label: '自己紹介' },
   { href: '/media', label: 'ブログ' },
   { href: '/company/contact', label: 'お問合わせ' },
 ];

@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: '/tools', label: '計算ツール' },
   { href: '/media', label: 'メディア' },
   { href: '/company', label: '会社概要' },
+  { href: '/profile', label: '自己紹介' },
 ];
 
 // ログインユーザー向けナビゲーションリンク（マイページ系）

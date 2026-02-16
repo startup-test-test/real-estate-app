@@ -191,7 +191,7 @@ export default function ProfilePage() {
                 ホーム
               </Link>
               <span className="mx-2">&gt;</span>
-              <span>プロフィール</span>
+              <span>自己紹介</span>
             </nav>
 
             {/* 日付 */}
@@ -202,7 +202,7 @@ export default function ProfilePage() {
 
             {/* H1タイトル */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-8">
-              大家DX開発者のプロフィール | 不動産投資実績と経歴
+              大家DX開発者の自己紹介 | 不動産投資実績と経歴
             </h1>
 
             {/* 会社サブナビゲーション */}
@@ -211,7 +211,7 @@ export default function ProfilePage() {
                 <li><Link href="/company" className="text-blue-600 hover:text-blue-800 hover:underline">&gt; 会社概要</Link></li>
                 <li><Link href="/company/portfolio" className="text-blue-600 hover:text-blue-800 hover:underline">&gt; 実績・得意領域</Link></li>
                 <li><Link href="/company/service" className="text-blue-600 hover:text-blue-800 hover:underline">&gt; メニュー・料金</Link></li>
-                <li><span className="text-gray-900 font-medium">&gt; プロフィール</span></li>
+                <li><span className="text-gray-900 font-medium">&gt; 自己紹介</span></li>
                 <li><Link href="/media" className="text-blue-600 hover:text-blue-800 hover:underline">&gt; ブログ</Link></li>
                 <li><Link href="/company/contact" className="text-blue-600 hover:text-blue-800 hover:underline">&gt; お問合わせ</Link></li>
               </ul>

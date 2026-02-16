@@ -138,7 +138,7 @@ export const companyLinks: NavigationItem[] = [
   { name: '会社概要', href: '/company', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
   { name: '実績・得意領域', href: '/company/portfolio', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
   { name: 'メニュー・料金', href: '/company/service', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-  { name: 'プロフィール', href: '/profile', publishDate: '2026-01-15', lastUpdated: '2026-02-10' },
+  { name: '自己紹介', href: '/profile', publishDate: '2026-01-15', lastUpdated: '2026-02-16' },
   { name: 'お問合わせ', href: '/company/contact', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
 ];
 
