@@ -44,6 +44,18 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
       大家DX開発者のプロフィール | 不動産投資実績と経歴
     </h1>
 
+    <!-- ===== 会社サブナビゲーション ===== -->
+    <nav class="mb-8 bg-gray-50 rounded-xl p-4">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <li><a href="/company" class="text-blue-600 hover:text-blue-800 hover:underline">&gt; 会社概要</a></li>
+        <li><a href="/company/portfolio" class="text-blue-600 hover:text-blue-800 hover:underline">&gt; 実績・得意領域</a></li>
+        <li><a href="/company/service" class="text-blue-600 hover:text-blue-800 hover:underline">&gt; メニュー・料金</a></li>
+        <li><span class="text-gray-900 font-medium">&gt; プロフィール</span></li>
+        <li><a href="/media" class="text-blue-600 hover:text-blue-800 hover:underline">&gt; ブログ</a></li>
+        <li><a href="/company/contact" class="text-blue-600 hover:text-blue-800 hover:underline">&gt; お問合わせ</a></li>
+      </ul>
+    </nav>
+
     <!-- ===== プロフィール概要（既存・微調整） ===== -->
     <section class="mb-12">
       <div class="flex flex-col sm:flex-row gap-6 items-start">
@@ -86,12 +98,12 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
           </li>
         </ul>
         <h3 class="text-lg font-bold text-gray-900 mb-2 mt-4">受講した不動産投資スクール</h3>
-        <p class="text-base text-gray-700"><a href="https://zenko-kyo.or.jp/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">一般社団法人 全国古家再生推進協議会</a>（2023年2月〜） / <a href="https://www.f-academy.jp/school/fudo.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">ファイナンシャルアカデミー</a>（2022年11月〜） / <a href="https://www.yamori.co.jp/kateikyoshi" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">ヤモリの家庭教師</a>（2023年11月〜2025年12月まで 現在退会）</p>
+        <p class="text-base text-gray-700"><a href="https://zenko-kyo.or.jp/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">一般社団法人 全国古家再生推進協議会</a>（2023年2月〜） / <a href="https://www.f-academy.jp/school/fudo.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">ファイナンシャルアカデミー 不動産投資スクール</a>（2022年5月〜） / <a href="https://www.f-academy.jp/school/finance_strategy.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">ファイナンス戦略ゼミ</a>（2024年9月〜） / <a href="https://www.yamori.co.jp/kateikyoshi" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">ヤモリの家庭教師</a>（2023年12月〜2025年12月まで 現在退会）</p>
       </div>
 
       <h2 class="text-xl font-bold text-gray-900 mb-3 mt-8">経歴</h2>
       <div class="text-gray-700 text-base leading-relaxed">
-        <p>1987年生まれ。デザイン専門学校を卒業後、Webデザイナーとして5年間働き、東証一部上場のマーケティングに転職。3年経験した後、独立をしてフリーに。2020年にWeb制作会社・マーケティングの株式会社StartupMarketingを設立。受託だけでなく、安定した売上を作らないと、猛勉強をして、賃貸経営を2023年に開始。3年間の試行錯誤の賃貸経営の失敗や勉強内容を「大家DX」にて執筆・開発をしております。</p>
+        <p>1987年生まれ。デザイン専門学校を卒業後、Webデザイナーとして5年間働き、東証一部上場のマーケティングに転職。ECサイトや新規立ち上げ部署などを3年経験した後、独立をしてフリーに。2020年にWeb制作会社・マーケティング・データ分析の株式会社StartupMarketingを設立。受託だけでなく、安定的にストックビジネスを作らないと、猛勉強をして、賃貸経営を2023年に開始。2025年から週3日の働き方に変えて、3年間の試行錯誤の賃貸経営の失敗や勉強内容を「大家DX」にて執筆・開発に集中しております。</p>
       </div>
 
       <h2 id="origin" class="text-xl font-bold text-gray-900 mb-6 mt-8">1. 不動産投資を始めたきっかけ</h2>
@@ -102,20 +114,24 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
 
     <!-- ===== 不動産購入実績（2026年2月） ===== -->
     <section class="mb-12">
-      <h2 id="summary" class="text-xl font-bold text-gray-900 mb-6">不動産購入実績 <span class="text-sm font-normal text-gray-500">※ 2026年2月時点</span></h2>
-
-      <div class="bg-gray-50 rounded-xl overflow-hidden">
+      <div class="rounded-xl overflow-hidden border-2 border-blue-900">
         <table class="w-full text-base">
+          <thead>
+            <tr class="bg-blue-900">
+              <th colspan="2" class="py-4 px-4 text-white font-bold text-left text-xl">不動産購入実績 <span class="text-sm font-normal text-blue-200">※ 2026年2月時点</span></th>
+            </tr>
+          </thead>
           <tbody>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 w-40 bg-gray-100 font-medium">総購入額</td><td class="py-3 px-4 text-gray-900">約1.7億円<span class="text-sm text-gray-900 ml-2">（収益 約5,000万円 / 自己居住 約1.2億円）</span></td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">家賃収入</td><td class="py-3 px-4 text-gray-900">500万円/年</td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">不動産購入開始</td><td class="py-3 px-4 text-gray-900">2019年〜</td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">購入実績</td><td class="py-3 px-4 text-gray-900">7軒（1軒売却）<span class="text-sm text-gray-900 ml-2">マンション3回・戸建4回</span></td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">法人融資</td><td class="py-3 px-4 text-gray-900">6回<span class="text-sm text-gray-900 ml-2">（取引金融機関：3社（埼玉の信用金庫2社・日本政策金融公庫）</span></td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">自主管理</td><td class="py-3 px-4 text-gray-900">3件<span class="text-sm text-gray-900 ml-2">（マンション2件・戸建1件）</span></td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">リフォーム回数</td><td class="py-3 px-4 text-gray-900">4回</td></tr>
-            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">投資エリア</td><td class="py-3 px-4 text-gray-900">埼玉県</td></tr>
-            <tr><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">投資スタイル</td><td class="py-3 px-4 text-gray-900">築古再生＋マンションオーナーチェンジ</td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 w-40 bg-gray-100 font-medium">総購入額</td><td class="py-3 px-4 text-gray-900 text-lg">約1.7億円<span class="text-sm text-gray-900 ml-2">（収益 約5,000万円 / 自己居住 約1.2億円）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">家賃収入</td><td class="py-3 px-4 text-gray-900 text-lg">500万円/年</td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">入居率</td><td class="py-3 px-4 text-gray-900 text-lg">100%<span class="text-sm text-gray-900 ml-2">（2026年2月時点）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">不動産購入開始</td><td class="py-3 px-4 text-gray-900 text-lg">2019年〜</td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">購入実績</td><td class="py-3 px-4 text-gray-900 text-lg">7軒<span class="text-sm text-gray-900 ml-2">（マンション3軒・戸建4軒）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">法人融資</td><td class="py-3 px-4 text-gray-900 text-lg">6回<span class="text-sm text-gray-900 ml-2">（取引金融機関：3社（埼玉の信用金庫2社・日本政策金融公庫）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">自主管理</td><td class="py-3 px-4 text-gray-900 text-lg">3件<span class="text-sm text-gray-900 ml-2">（マンション2件・戸建1件）</span></td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">リフォーム回数</td><td class="py-3 px-4 text-gray-900 text-lg">4回</td></tr>
+            <tr class="border-b border-gray-200"><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">投資エリア</td><td class="py-3 px-4 text-gray-900 text-lg">埼玉県</td></tr>
+            <tr><td class="py-3 px-4 text-gray-900 bg-gray-100 font-medium">投資スタイル</td><td class="py-3 px-4 text-gray-900 text-lg">築古再生＋戸建の福祉施設＋マンションオーナーチェンジ</td></tr>
           </tbody>
         </table>
       </div>
@@ -378,8 +394,8 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
       <h2 id="ooya-tech" class="text-xl font-bold text-gray-900 mb-6">3. なぜ大家DXを作ったのか</h2>
 
       <div class="space-y-4 text-base text-gray-700 leading-relaxed">
-        <p>自分が不動産投資を始めたとき、利回りやローン返済の計算を毎回Excelで手作業していました。「これ、ツールにしたら他の大家さんも使えるのでは？」と思い、Web業界18年の経験を活かして自分で開発することにしました。</p>
-        <p><strong>マーケッター × 開発者 × 現役大家。</strong>この3つが揃っているからこそ、作れるツールがある。それが<a href="https://ooya.tech/" class="text-blue-600 hover:underline">大家DX</a>です。</p>
+        <p>私の本業はITで戦略・分析、AIを活用したりするデジタルマーケティングが主なのですが、不動産の業界は今でもFAXがあったり、電話であったり、アナログな事が多く、インターネット上のサービスも少ないので、自分が賃貸経営をする上で、クラウドで不動産関連のシミュレーションをしたり、物件管理を楽に出来ないかなと思い、「<a href="https://ooya.tech/" class="text-blue-600 hover:underline">大家DX</a>」のシミュレーションを開発しました。</p>
+        <p>今後も不動産賃貸経営の課題解決ツールや、私の実体験から得た経験を読み物として届けられればと思います。</p>
       </div>
 
     </section>
@@ -494,7 +510,7 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">1987年</span><span class="text-gray-900">宮崎県生まれ</span></div>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2000年</span><span class="text-gray-900">中学生時に趣味でサイト制作開始</span></div>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2007年</span><span class="text-gray-900">九州デザイン専門学校 総合デザイン学科 卒業</span></div>
-          <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2008年</span><span class="text-gray-900">化粧品メーカー販売促進クリエイティブ担当</span></div>
+          <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2008年</span><span class="text-gray-900">化粧品メーカー販売促進のデザイン担当</span></div>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2010年</span><span class="text-gray-900">イギリス・オーストラリア就業・インターン</span></div>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2012年</span><span class="text-gray-900">制作会社で大手メーカーデザイン担当</span></div>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2013年</span><span class="text-gray-900">東証一部上場企業マーケティング事業部</span></div>
@@ -503,6 +519,7 @@ nhttps://ooya.tech/profile<!DOCTYPE html>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2023年</span><span class="text-gray-900">不動産投資を開始（第1号物件購入）</span></div>
           <div class="flex gap-4 text-base"><span class="text-gray-500 font-medium w-20 flex-shrink-0">2025年</span><span class="text-gray-900">大家DXをリリース、7戸目購入</span></div>
         </div>
+        <p class="text-base mt-3"><a href="https://ooya.tech/company/portfolio" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">→ 実績・経歴の詳細はこちら</a></p>
       </div>
 
       <div class="mb-6">
