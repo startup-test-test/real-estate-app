@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ooya-dx アーキテクチャ概要</title>
+<style>
+  :root {
+    --primary: #0284c7;
+    --primary-light: #e0f2fe;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --green-50: #f0fdf4;
+    --green-600: #16a34a;
+    --yellow-50: #fefce8;
+    --yellow-600: #ca8a04;
+    --red-50: #fef2f2;
+    --red-600: #dc2626;
+    --blue-50: #eff6ff;
+    --blue-600: #2563eb;
+    --blue-900: #1e3a5f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Inter, "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+  h1 {
+    font-size: 28px; font-weight: 800; margin-bottom: 8px;
+    color: var(--gray-900); letter-spacing: -0.02em;
+  }
+  .subtitle { color: var(--gray-500); font-size: 14px; margin-bottom: 32px; }
+  h2 {
+    font-size: 20px; font-weight: 700; margin: 40px 0 16px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--primary);
+    color: var(--gray-800);
+  }
+  h3 { font-size: 16px; font-weight: 700; margin: 24px 0 12px; color: var(--gray-700); }
+  h4 { font-size: 14px; font-weight: 600; margin: 16px 0 8px; color: var(--gray-600); }
+
+  /* Navigation */
+  .toc { background: white; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; border: 1px solid var(--gray-200); }
+  .toc-title { font-size: 14px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
+  .toc a { color: var(--primary); text-decoration: none; font-size: 14px; padding: 4px 0; display: block; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Cards */
+  .card {
+    background: white; border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px; border: 1px solid var(--gray-200);
+  }
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 9999px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge-blue { background: var(--primary-light); color: var(--primary); }
+  .badge-green { background: var(--green-50); color: var(--green-600); }
+  .badge-yellow { background: var(--yellow-50); color: var(--yellow-600); }
+  .badge-red { background: var(--red-50); color: var(--red-600); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th {
+    background: var(--blue-900); color: white; padding: 8px 12px;
+    text-align: left; font-weight: 600; font-size: 12px; white-space: nowrap;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child { border-radius: 0 6px 0 0; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); }
+  tr:hover td { background: var(--gray-50); }
+  td code {
+    background: var(--gray-100); padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; font-family: "SF Mono", "Fira Code", monospace;
+  }
+
+  /* ASCII Diagrams */
+  .ascii-diagram {
+    background: var(--gray-900); color: #a5f3fc; border-radius: 10px;
+    padding: 20px; overflow-x: auto; margin: 12px 0;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 13px; line-height: 1.5;
+  }
+  .ascii-diagram .comment { color: var(--gray-400); }
+  .ascii-diagram .highlight { color: #fbbf24; }
+  .ascii-diagram .dim { color: #64748b; }
+
+  /* Stats Grid */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0; }
+  .stat-card {
+    background: white; border-radius: 10px; padding: 16px;
+    border: 1px solid var(--gray-200); text-align: center;
+  }
+  .stat-value { font-size: 32px; font-weight: 800; color: var(--primary); }
+  .stat-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+
+  /* Color Swatches */
+  .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin: 12px 0; }
+  .color-swatch {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    background: white; border-radius: 8px; border: 1px solid var(--gray-200); font-size: 13px;
+  }
+  .color-dot { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; border: 1px solid var(--gray-200); }
+
+  /* Responsive width visualization */
+  .width-bar-container { margin: 8px 0; }
+  .width-bar {
+    height: 28px; border-radius: 6px; display: flex; align-items: center;
+    padding: 0 10px; font-size: 12px; font-weight: 600; color: white;
+    background: var(--primary); margin: 4px 0; position: relative;
+  }
+  .width-bar-label { font-size: 12px; color: var(--gray-500); width: 80px; display: inline-block; }
+
+  /* Comparison layout */
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 768px) { .comparison { grid-template-columns: 1fr; } }
+
+  /* Tags */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 500; border: 1px solid var(--gray-200);
+    background: white; color: var(--gray-600);
+  }
+
+  /* Collapsible */
+  details { margin: 8px 0; }
+  summary {
+    cursor: pointer; padding: 8px 0; font-weight: 600; font-size: 14px;
+    color: var(--primary); list-style: none;
+  }
+  summary::before { content: "▸ "; }
+  details[open] summary::before { content: "▾ "; }
+
+  .done { text-decoration: line-through; color: var(--gray-400); }
+  .checkmark::before { content: "✅ "; }
+  .pending::before { content: "⬜ "; }
+
+  @media print {
+    body { background: white; }
+    .card { break-inside: avoid; border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>ooya-dx アーキテクチャ概要</h1>
+<p class="subtitle">最終更新：2026年2月17日 ｜ 全74ページ ｜ Next.js App Router</p>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-value">74</div><div class="stat-label">総ページ数</div></div>
+  <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">テンプレート種類</div></div>
+  <div class="stat-card"><div class="stat-value">26+</div><div class="stat-label">共通コンポーネント</div></div>
+  <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">layout.tsx ファイル</div></div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">目次</div>
+  <div class="toc-grid">
+    <a href="#templates">1. レイアウトテンプレート</a>
+    <a href="#layouts">2. layout.tsx 一覧</a>
+    <a href="#pages">3. 全ページ一覧（74p）</a>
+    <a href="#components">4. 共通コンポーネント</a>
+    <a href="#diagrams">5. HTML構造パターン</a>
+    <a href="#responsive">6. レスポンシブ仕様</a>
+    <a href="#widths">7. 横幅（コンテナ幅）</a>
+    <a href="#typography">8. 級数（フォントサイズ）</a>
+    <a href="#css">9. CSS設計ルール</a>
+    <a href="#inconsistencies">10. 不統一な箇所</a>
+    <a href="#todos">11. 共通化の優先候補</a>
+  </div>
+</div>
+
+<!-- ========== 1. TEMPLATES ========== -->
+<h2 id="templates">1. レイアウトテンプレート（4種類）</h2>
+
+<div class="card">
+<table>
+  <tr><th>テンプレート</th><th>用途</th><th>ページ数</th><th>状態</th></tr>
+  <tr>
+    <td><code>layout.tsx</code>（公開ページ共通）</td>
+    <td>company系・profile・legal・contact等</td>
+    <td><strong>19ページ</strong></td>
+    <td><span class="badge badge-green">✅ 共通化済</span></td>
+  </tr>
+  <tr>
+    <td><code>ToolPageLayout</code></td>
+    <td>ツール計算ページ用（2カラムLP型）</td>
+    <td>~27ページ</td>
+    <td><span class="badge badge-green">✅ 共通化済</span></td>
+  </tr>
+  <tr>
+    <td><code>DashboardLayout</code></td>
+    <td>ログイン後マイページ用（サイドバー）</td>
+    <td>~7ページ</td>
+    <td><span class="badge badge-green">✅ 共通化済</span></td>
+  </tr>
+  <tr>
+    <td><strong>コピペパターン（テンプレートなし）</strong></td>
+    <td>media系・トップページ等</td>
+    <td>~5ページ</td>
+    <td><span class="badge badge-yellow">要検討</span></td>
+  </tr>
+</table>
+</div>
+
+<h3>ToolPageLayout（<code>components/tools/ToolPageLayout.tsx</code>）</h3>
+<div class="ascii-diagram"><pre>LandingHeader
+HeaderSpacer
+main <span class="comment">(max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8)</span>
+  └─ grid <span class="comment">(lg:grid-cols-[1fr_300px] lg:gap-10)</span>
+       ├─ <span class="highlight">article</span>（左カラム）
+       │    ├─ ToolPageHeader <span class="comment">（パンくず・日付・執筆者）</span>
+       │    ├─ children <span class="comment">（計算機本体）</span>
+       │    ├─ CalculatorNote
+       │    ├─ ShareButtons
+       │    ├─ additionalContent
+       │    ├─ ToolDisclaimer
+       │    ├─ ToolMobileSidebar
+       │    └─ CompanyProfileCompact
+       └─ <span class="highlight">aside</span>（右カラム・PC only）
+            └─ ToolSidebar
+LandingFooter</pre></div>
+
+<h3>DashboardLayout（<code>components/dashboard/DashboardLayout.tsx</code>）</h3>
+<div class="ascii-diagram"><pre>固定サイドバー <span class="comment">(w-72・PC)</span> / ハンバーガーメニュー <span class="comment">(SP)</span>
+  ├─ ロゴ
+  ├─ ユーザーアバター
+  ├─ ナビゲーション
+  └─ 法務リンク
+メインコンテンツ <span class="comment">(lg:pl-72 pt-20 lg:pt-0)</span>
+  └─ children</pre></div>
+
+<h3>テンプレートサンプルURL</h3>
+<div class="card">
+<table>
+  <tr><th>テンプレート</th><th>サンプルURL</th><th>構造</th></tr>
+  <tr>
+    <td>layout.tsx（公開ページ共通）</td>
+    <td><a href="http://localhost:3002/layout-sample" target="_blank"><code>/layout-sample</code></a></td>
+    <td>シンプル1カラム</td>
+  </tr>
+  <tr>
+    <td>ToolPageLayout</td>
+    <td><a href="http://localhost:3002/tools/template-demo" target="_blank"><code>/tools/template-demo</code></a></td>
+    <td>2カラムLP型</td>
+  </tr>
+</table>
+</div>
+
+<h3>layout.tsx 共通パターン（公開ページ19ページ）</h3>
+<div class="ascii-diagram"><pre>LandingHeader
+HeaderSpacer
+main <span class="comment">(flex-1 overflow-x-hidden)</span>
+  └─ {children}   <span class="comment">← 各ページの article 要素のみ</span>
+LandingFooter</pre></div>
+
+<!-- ========== 2. LAYOUT.TSX ========== -->
+<h2 id="layouts">2. layout.tsx 一覧（7ファイル）</h2>
+
+<div class="card">
+<table>
+  <tr><th>#</th><th>ファイル</th><th>対象ページ数</th><th>状態</th></tr>
+  <tr><td>1</td><td><code>app/company/layout.tsx</code></td><td>12ページ</td><td><span class="badge badge-blue">新規作成</span></td></tr>
+  <tr><td>2</td><td><code>app/profile/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-blue">新規作成</span></td></tr>
+  <tr><td>3</td><td><code>app/contact/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
+  <tr><td>4</td><td><code>app/legal/layout.tsx</code></td><td>2ページ</td><td><span class="badge badge-blue">新規作成</span></td></tr>
+  <tr><td>5</td><td><code>app/disclaimer/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
+  <tr><td>6</td><td><code>app/pricing/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
+  <tr><td>7</td><td><code>app/faq/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
+</table>
+</div>
+
+<!-- ========== 3. PAGES ========== -->
+<h2 id="pages">3. 全ページ一覧（74ページ）</h2>
+
+<h3>公開ページ（ツール系）：30ページ</h3>
+<div class="card" style="overflow-x: auto;">
+<table>
+  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
+  <tr><td><code>/tools</code></td><td>layout.tsx</td><td>インライン</td><td>BreadcrumbList+WebPage</td><td>7xl</td></tr>
+  <tr><td><code>/tools/cf</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/brokerage</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/yield-rate</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/roi</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/noi</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/ccr</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/dscr</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/ltv</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/irr</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/npv</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/dcf</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/cap-rate</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/depreciation</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/dead-cross</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/mortgage-loan</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/corporate-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/income-capitalization</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/replacement-cost</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/acquisition-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/registration-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/stamp-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/capital-gains-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/gift-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/inheritance-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/sale-proceeds</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/assessed-value</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/simulator</code></td><td>カスタム</td><td>-</td><td>カスタム</td><td>-</td></tr>
+  <tr><td><code>/tools/purchase-offer</code></td><td>カスタム</td><td>-</td><td>-</td><td>-</td></tr>
+  <tr><td><code>/tools/brokerage/guide</code></td><td>layout.tsx</td><td>インライン</td><td>WebPageJsonLd</td><td>4xl</td></tr>
+</table>
+</div>
+
+<h3>公開ページ（会社系）：12ページ</h3>
+<div class="card" style="overflow-x: auto;">
+<table>
+  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th><th>CompanyNav</th></tr>
+  <tr><td><code>/company</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/portfolio</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/service</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/contact</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/csr</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/sdgs</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/link</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/lib-partner</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/teambeyond</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/climate-adaptation</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/plastics-smart</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/consumer-policy</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+</table>
+</div>
+
+<h3>公開ページ（メディア系）：3ページ</h3>
+<div class="card">
+<table>
+  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
+  <tr><td><code>/media</code></td><td><span class="badge badge-yellow">コピペ</span></td><td>アイコン(Home+/)</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/media/[category]</code></td><td><span class="badge badge-yellow">コピペ</span></td><td>テキスト(/)</td><td>-</td><td>7xl</td></tr>
+  <tr><td><code>/media/[category]/[slug]</code></td><td><span class="badge badge-yellow">コピペ</span></td><td>SVG(chevron)</td><td>Article+Breadcrumb</td><td>2xl</td></tr>
+</table>
+</div>
+
+<h3>公開ページ（その他）：10ページ</h3>
+<div class="card">
+<table>
+  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
+  <tr><td><code>/</code> (トップ)</td><td><span class="badge badge-yellow">コピペ</span></td><td>なし</td><td>ルートのみ</td><td>カスタム</td></tr>
+  <tr><td><code>/profile</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd+Person</td><td>7xl</td></tr>
+  <tr><td><code>/contact</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl→2xl</td></tr>
+  <tr><td><code>/pricing</code></td><td>layout.tsx</td><td>Breadcrumb</td><td>layout経由</td><td>4xl</td></tr>
+  <tr><td><code>/faq</code></td><td>layout.tsx</td><td>なし</td><td>FAQPage(layout)</td><td>4xl</td></tr>
+  <tr><td><code>/disclaimer</code></td><td>layout.tsx</td><td>パンくず統一</td><td>-</td><td>4xl</td></tr>
+  <tr><td><code>/legal/terms</code></td><td>layout.tsx</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/legal/privacy</code></td><td>layout.tsx</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/layout-sample</code></td><td>layout.tsx</td><td>-</td><td>-</td><td>7xl</td></tr>
+  <tr><td><code>/tools/template-demo</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+</table>
+</div>
+
+<h3>認証ページ：5ページ</h3>
+<div class="card">
+<table>
+  <tr><th>パス</th><th>テンプレート</th><th>max-w</th></tr>
+  <tr><td><code>/auth/signin</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
+  <tr><td><code>/auth/signup</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
+  <tr><td><code>/auth/forgot-password</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
+  <tr><td><code>/auth/email-verified</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
+  <tr><td><code>/auth/neon-password-reset</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
+</table>
+</div>
+
+<h3>マイページ：7ページ</h3>
+<div class="card">
+<table>
+  <tr><th>パス</th><th>テンプレート</th></tr>
+  <tr><td><code>/mypage</code></td><td>DashboardLayout</td></tr>
+  <tr><td><code>/mypage/cf-simulator</code></td><td>DashboardLayout</td></tr>
+  <tr><td><code>/mypage/cf-simulator/new</code></td><td>DashboardLayout</td></tr>
+  <tr><td><code>/mypage/cf-simulator/[id]</code></td><td>DashboardLayout</td></tr>
+  <tr><td><code>/mypage/revenue-simulator</code></td><td>DashboardLayout</td></tr>
+  <tr><td><code>/mypage/calculators</code></td><td>DashboardLayout</td></tr>
+  <tr><td><code>/mypage/guide</code></td><td>DashboardLayout</td></tr>
+</table>
+</div>
+
+<!-- ========== 4. COMPONENTS ========== -->
+<h2 id="components">4. 共通コンポーネント一覧</h2>
+
+<h3>ヘッダー・フッター</h3>
+<div class="card">
+<table>
+  <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
+  <tr><td>LandingHeader</td><td><code>components/landing-header.tsx</code></td><td>公開ページ共通ヘッダー</td></tr>
+  <tr><td>SharedHeader</td><td><code>components/shared-header.tsx</code></td><td>ルートレイアウト用（固定ヘッダー）</td></tr>
+  <tr><td>HeaderSpacer</td><td><code>components/HeaderSpacer.tsx</code></td><td>固定ヘッダー下の余白（共通）</td></tr>
+  <tr><td>LandingFooter</td><td><code>components/landing-footer.tsx</code></td><td>公開ページ共通フッター</td></tr>
+  <tr><td>Footer</td><td><code>components/footer.tsx</code></td><td>マイページ用フッター</td></tr>
+</table>
+</div>
+
+<h3>ナビゲーション</h3>
+<div class="card">
+<table>
+  <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
+  <tr><td>ToolsBreadcrumb</td><td><code>components/tools/ToolsBreadcrumb.tsx</code></td><td>ツールページ用パンくず</td></tr>
+  <tr><td>CompanyNav</td><td><code>components/company-nav.tsx</code></td><td>会社系ページ間ナビ</td></tr>
+  <tr><td>ToolCategoryList</td><td><code>components/tools/ToolCategoryList.tsx</code></td><td>ツール一覧カテゴリ表示</td></tr>
+</table>
+</div>
+
+<h3>ツール系（16コンポーネント）</h3>
+<div class="card">
+<table>
+  <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
+  <tr><td>ToolPageLayout</td><td><code>components/tools/ToolPageLayout.tsx</code></td><td>ツールページ共通レイアウト</td></tr>
+  <tr><td>ToolPageHeader</td><td><code>components/tools/ToolPageHeader.tsx</code></td><td>パンくず・日付・執筆者</td></tr>
+  <tr><td>ToolSidebar</td><td><code>components/tools/ToolSidebar.tsx</code></td><td>PC右サイドバー</td></tr>
+  <tr><td>ToolMobileSidebar</td><td><code>components/tools/ToolMobileSidebar.tsx</code></td><td>SPサイドバー</td></tr>
+  <tr><td>ToolDisclaimer</td><td><code>components/tools/ToolDisclaimer.tsx</code></td><td>免責事項</td></tr>
+  <tr><td>CalculatorNote</td><td><code>components/tools/CalculatorNote.tsx</code></td><td>計算注意書き</td></tr>
+  <tr><td>NumberInput</td><td><code>components/tools/NumberInput.tsx</code></td><td>数値入力フィールド</td></tr>
+  <tr><td>RadioGroup</td><td><code>components/tools/RadioGroup.tsx</code></td><td>ラジオボタン</td></tr>
+  <tr><td>ResultCard</td><td><code>components/tools/ResultCard.tsx</code></td><td>計算結果表示</td></tr>
+  <tr><td>FAQSection</td><td><code>components/tools/FAQSection.tsx</code></td><td>FAQ折りたたみ</td></tr>
+  <tr><td>QuickReferenceTable</td><td><code>components/tools/QuickReferenceTable.tsx</code></td><td>早見表</td></tr>
+  <tr><td>SimulatorCTA</td><td><code>components/tools/SimulatorCTA.tsx</code></td><td>シミュレーターCTA</td></tr>
+  <tr><td>CompanyProfileCompact</td><td><code>components/tools/CompanyProfileCompact.tsx</code></td><td>運営者プロフィール</td></tr>
+  <tr><td>RelatedTools</td><td><code>components/tools/RelatedTools.tsx</code></td><td>関連ツールリンク</td></tr>
+  <tr><td>ShareButtons</td><td><code>components/tools/ShareButtons.tsx</code></td><td>SNSシェアボタン</td></tr>
+  <tr><td>ToolStructuredData</td><td><code>components/tools/ToolStructuredData.tsx</code></td><td>ツールページ用JSON-LD</td></tr>
+</table>
+</div>
+
+<h3>構造化データ・メディア</h3>
+<div class="card">
+<table>
+  <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
+  <tr><td>WebPageJsonLd</td><td><code>components/WebPageJsonLd.tsx</code></td><td>一般ページ用JSON-LD</td></tr>
+  <tr><td>MediaArticleList</td><td><code>components/media-article-list.tsx</code></td><td>記事一覧表示</td></tr>
+  <tr><td>TableOfContents</td><td><code>components/table-of-contents.tsx</code></td><td>記事目次</td></tr>
+</table>
+</div>
+
+<!-- ========== 5. DIAGRAMS ========== -->
+<h2 id="diagrams">5. HTML構造パターン（ASCII図）</h2>
+
+<h3>パターンA: 公開ページ（layout.tsx型）- 19ページ</h3>
+<div class="ascii-diagram"><pre>+================================================================+
+| <span class="highlight">[A] Public Page</span> (company/profile/contact/legal/pricing/faq)     |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | LandingHeader  <span class="comment">(fixed, z-50, bg-white, border-b)</span>           | |
+| | py-2 sm:py-4 md:pt-8/pb-4  |  Logo h-7/sm:h-10  | Buttons| |
+| +------------------------------------------------------------+ |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | HeaderSpacer  <span class="comment">(h-[50px] sm:h-[76px] md:h-[55px])</span>          | |
+| +------------------------------------------------------------+ |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | &lt;main class="flex-1 overflow-x-hidden"&gt;                    | |
+| |                                                            | |
+| |   +------------------------------------------------------+ | |
+| |   | &lt;article&gt;  max-w-7xl  px-3/sm:6/lg:8  py-12         | | |
+| |   |                                                      | | |
+| |   |   [nav] パンくず  text-sm text-gray-500  mb-6        | | |
+| |   |     Home &gt; セクション &gt; 現在のページ                    | | |
+| |   |                                                      | | |
+| |   |   [div] 日付  text-xs text-gray-900  mb-2/sm:mb-4   | | |
+| |   |     公開日：YYYY年MM月DD日  更新日：YYYY年MM月DD日      | | |
+| |   |                                                      | | |
+| |   |   [h1] text-2xl sm:text-3xl font-bold  mb-8         | | |
+| |   |     ページタイトル                                     | | |
+| |   |                                                      | | |
+| |   |   [content] コンテンツ本文                             | | |
+| |   |     text-base text-gray-700 leading-relaxed          | | |
+| |   |                                                      | | |
+| |   |   [SimulatorCTA]  mt-16 pt-8 border-t               | | |
+| |   |   [CompanyProfileCompact]  mt-12                     | | |
+| |   +------------------------------------------------------+ | |
+| |                                                            | |
+| +------------------------------------------------------------+ |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | LandingFooter                                              | |
+| +------------------------------------------------------------+ |
++================================================================+
+
+<span class="comment">該当: company x12, profile, contact, legal x2, disclaimer, pricing, faq</span></pre></div>
+
+<h3>パターンB: ツールページ（ToolPageLayout）- 約27ページ</h3>
+<div class="ascii-diagram"><pre>+================================================================+
+| <span class="highlight">[B] Tool Page</span> (ToolPageLayout)                                 |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | LandingHeader                                              | |
+| +------------------------------------------------------------+ |
+| | HeaderSpacer                                               | |
+| +------------------------------------------------------------+ |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | &lt;main&gt;  max-w-7xl  px-3/sm:6/lg:8  py-4/sm:6/md:8        | |
+| |                                                            | |
+| |   PC: 2 columns                SP: 1 column               | |
+| |   lg:grid-cols-[1fr_300px]                                 | |
+| |                                                            | |
+| |   +----------------------------------+ +----------------+  | |
+| |   | &lt;article&gt; (Left Column)          | | &lt;aside&gt;        |  | |
+| |   |                                  | | (PC only)      |  | |
+| |   |  [ToolsBreadcrumb]              | |                |  | |
+| |   |    Home &gt; 計算ツール &gt; CF計算     | | ToolSidebar    |  | |
+| |   |                                  | |  - ツール一覧   |  | |
+| |   |  [ToolPageHeader]               | |  - CTA         |  | |
+| |   |    公開日 | 更新日 | 執筆者       | |  - RelatedTools|  | |
+| |   |                                  | |                |  | |
+| |   |  [h1] タイトル                   | |                |  | |
+| |   |                                  | |                |  | |
+| |   |  [Calculator] 計算機本体         | |                |  | |
+| |   |                                  | |                |  | |
+| |   |  [CalculatorNote]               | |                |  | |
+| |   |  [ShareButtons]                 | |                |  | |
+| |   |  [additionalContent]            | |                |  | |
+| |   |  [ToolDisclaimer]               | |                |  | |
+| |   |  [ToolMobileSidebar] (SP only)  | |                |  | |
+| |   |  [CompanyProfileCompact]        | |                |  | |
+| |   +----------------------------------+ +----------------+  | |
+| |                                                            | |
+| +------------------------------------------------------------+ |
+|                                                                |
+| +------------------------------------------------------------+ |
+| | LandingFooter                                              | |
+| +------------------------------------------------------------+ |
++================================================================+</pre></div>
+
+<h3>パターンC: マイページ（DashboardLayout）- 7ページ</h3>
+<div class="ascii-diagram"><pre>+================================================================+
+| <span class="highlight">[C] Dashboard Page</span> (DashboardLayout)                           |
+|                                                                |
+| +------------+ +--------------------------------------------+  |
+| | &lt;aside&gt;    | | &lt;main&gt;  lg:pl-72  pt-20/lg:pt-0            |  |
+| | fixed w-72 | |                                            |  |
+| | bg-white   | |   +--------------------------------------+ |  |
+| |            | |   | コンテンツ                              | |  |
+| | [Logo]     | |   |                                      | |  |
+| |            | |   | (各ページ固有の内容)                     | |  |
+| | [Avatar]   | |   |                                      | |  |
+| | ユーザー名  | |   +--------------------------------------+ |  |
+| |            | |                                            |  |
+| | [Nav]      | +--------------------------------------------+  |
+| |  マイページ |                                                |
+| |  CF        |  SP: サイドバーはハンバーガーメニューに格納         |
+| |  収支      |  +------------------------------------------+  |
+| |  計算機    |  | [Hamburger] [Logo]           [User Icon] |  |
+| |            |  +------------------------------------------+  |
+| | [Support]  |  | コンテンツ (フル幅)                         |  |
+| |  ガイド    |  +------------------------------------------+  |
+| |  お問合せ  |                                                |
+| |            |                                                |
+| | [Legal]    |                                                |
+| |  利用規約  |                                                |
+| |  プライバシー|                                               |
+| +------------+                                                |
++================================================================+</pre></div>
+
+<h3>パターンD: 認証ページ - 5ページ</h3>
+<div class="ascii-diagram"><pre>+================================================================+
+| <span class="highlight">[D] Auth Page</span>                                                  |
+|                                                                |
+|              +----------------------------+                    |
+|              | max-w-md                    |                    |
+|              | bg-white rounded-2xl        |                    |
+|              | shadow-lg p-8               |                    |
+|              |                            |                    |
+|              |   [Logo]                   |                    |
+|              |                            |                    |
+|              |   [Email Input]            |                    |
+|              |   [Password Input]         |                    |
+|              |                            |                    |
+|              |   [Login Button]           |                    |
+|              |   [Google OAuth]           |                    |
+|              |                            |                    |
+|              |   パスワードを忘れた方       |                    |
+|              |   新規登録はこちら           |                    |
+|              +----------------------------+                    |
+|                                                                |
+|           min-h-screen  items-center  justify-center           |
++================================================================+</pre></div>
+
+<!-- ========== 6. RESPONSIVE ========== -->
+<h2 id="responsive">6. レスポンシブ仕様</h2>
+
+<h3>SP vs PC レイアウト比較</h3>
+<div class="comparison">
+  <div class="card">
+    <h4>SP: 375px</h4>
+    <div class="ascii-diagram"><pre>コンテンツ幅 = 375 - 24 = <span class="highlight">351px</span>
+
++---------------------+
+| [Header] h-50px     |
+| Logo h-7 (28px)     |
+| py-2 (8px)          |
++---------------------+
+| px-3(12px) py-12    |
+|                     |
+| [パンくず] 14px      |
+| [日付] 12px         |
+| [H1] 24px           |
+|                     |
+| [Content] 16px      |
+| 幅=351px (1col)     |
+|                     |
+| [H2] 20px           |
+| [H3] 18px           |
+| [本文] 16px          |
+| [補足] 14px          |
+|                     |
+| [CTA]               |
+| [CompanyProfile]    |
++---------------------+
+| [Footer] 1col       |
++---------------------+</pre></div>
+  </div>
+  <div class="card">
+    <h4>PC: 1280px</h4>
+    <div class="ascii-diagram"><pre>コンテンツ幅 = max-w-7xl = <span class="highlight">1280px</span>
+
++----------------------------------------------+
+| [Header] h-55px (md)                         |
+| Logo h-10 (40px)  | pt-8 pb-4               |
++----------------------------------------------+
+| px-8(32px) py-12(48px)                       |
+|                                              |
+| [パンくず] 14px                                |
+| [日付] 12px  [執筆者icon+name]                |
+| [H1] 30px                                    |
+|                                              |
+| +-------------------------------+ +--------+ |
+| | [Content] 16px                | | Side   | |
+| | 幅 ≒ 948px (1fr)              | | bar    | |
+| |                               | | w=300  | |
+| | [H2] 20px                    | |        | |
+| | [H3] 18px                    | |        | |
+| +-------------------------------+ +--------+ |
+|           gap-10 (40px)                       |
+| [CTA]    [CompanyProfile]                    |
++----------------------------------------------+
+| [Footer] lg:grid-cols-5 gap-8               |
++----------------------------------------------+</pre></div>
+  </div>
+</div>
+
+<h3>Tailwind ブレークポイント</h3>
+<div class="card">
+<table>
+  <tr><th>プレフィックス</th><th>最小幅</th><th>想定デバイス</th><th>使用頻度</th></tr>
+  <tr><td>（なし）</td><td>0px〜</td><td>スマホ（iPhone SE〜）</td><td>デフォルト</td></tr>
+  <tr><td><code>sm:</code></td><td>640px〜</td><td>スマホ横・小タブレット</td><td><strong>最多</strong>（1074箇所）</td></tr>
+  <tr><td><code>md:</code></td><td>768px〜</td><td>タブレット（iPad）</td><td>中（188箇所）</td></tr>
+  <tr><td><code>lg:</code></td><td>1024px〜</td><td>PC・大タブレット</td><td>中（138箇所）</td></tr>
+  <tr><td><code>xl:</code></td><td>1280px〜</td><td>大画面PC</td><td>ほぼ未使用（2箇所）</td></tr>
+</table>
+</div>
+
+<!-- ========== 7. WIDTHS ========== -->
+<h2 id="widths">7. 横幅（コンテナ幅）</h2>
+
+<h3>max-width 一覧</h3>
+<div class="card">
+<table>
+  <tr><th>クラス</th><th>実際の幅</th><th>用途</th><th>該当ページ</th></tr>
+  <tr><td><code>max-w-7xl</code></td><td><strong>1280px</strong></td><td>メインコンテナ</td><td>ツール全27、company全12、media、profile、contact</td></tr>
+  <tr><td><code>max-w-6xl</code></td><td><strong>1152px</strong></td><td>一部コンポーネント内</td><td>-</td></tr>
+  <tr><td><code>max-w-4xl</code></td><td><strong>896px</strong></td><td>中幅ページ</td><td>pricing、faq、disclaimer、tools/brokerage/guide</td></tr>
+  <tr><td><code>max-w-3xl</code></td><td><strong>768px</strong></td><td>-</td><td>一部内部要素</td></tr>
+  <tr><td><code>max-w-2xl</code></td><td><strong>672px</strong></td><td>記事詳細・フォーム</td><td>media/[category]/[slug]、contact(フォーム部分)</td></tr>
+  <tr><td><code>max-w-xl</code></td><td><strong>576px</strong></td><td>-</td><td>一部内部要素</td></tr>
+  <tr><td><code>max-w-lg</code></td><td><strong>512px</strong></td><td>サイドバー・モーダル</td><td>-</td></tr>
+  <tr><td><code>max-w-md</code></td><td><strong>448px</strong></td><td>認証ページ</td><td>auth/signin、auth/signup 等5ページ</td></tr>
+</table>
+</div>
+
+<h3>各ブレークポイントでの実効コンテンツ幅</h3>
+<div class="comparison">
+  <div class="card">
+    <h4>max-w-7xl ページ（ツール・company等）</h4>
+    <div class="ascii-diagram"><pre>ビューポート   padding         実効コンテンツ幅
+─────────────────────────────────────────────
+  375px       px-3  (12px×2)    <span class="highlight">351px</span>
+  640px(sm)   px-6  (24px×2)    <span class="highlight">592px</span>
+  768px(md)   px-6  (24px×2)    <span class="highlight">720px</span>
+ 1024px(lg)   px-8  (32px×2)    <span class="highlight">960px</span>
+ 1280px(xl)   px-8  (32px×2)   <span class="highlight">1216px</span>
+ 1344px〜     px-8  (32px×2)   <span class="highlight">1280px</span>（頭打ち）</pre></div>
+  </div>
+  <div class="card">
+    <h4>max-w-2xl ページ（記事詳細）</h4>
+    <div class="ascii-diagram"><pre>ビューポート   padding         実効コンテンツ幅
+─────────────────────────────────────────────
+  375px       px-5  (20px×2)    <span class="highlight">335px</span>
+  640px(sm)   px-5  (20px×2)    <span class="highlight">600px</span>
+  672px〜     px-5  (20px×2)    <span class="highlight">632px</span>（頭打ち）</pre></div>
+  </div>
+</div>
+
+<div class="card">
+  <h4>ツールページ2カラム幅（lg以上）</h4>
+  <div class="ascii-diagram"><pre>max-w-7xl (1280px) の内部：
+├─ padding: px-8 = 32px × 2
+├─ 残り: <span class="highlight">1216px</span>
+├─ article (1fr)  ≒ <span class="highlight">876px</span>
+├─ gap-10         = <span class="highlight">40px</span>
+└─ aside (300px)  = <span class="highlight">300px</span></pre></div>
+</div>
+
+<!-- ========== 8. TYPOGRAPHY ========== -->
+<h2 id="typography">8. 級数（フォントサイズ）</h2>
+
+<div class="card">
+  <h4>フォント設定</h4>
+  <div class="ascii-diagram"><pre>font-family: Inter, "Noto Sans JP", ui-sans-serif, system-ui, sans-serif</pre></div>
+</div>
+
+<h3>Tailwindクラス → px換算</h3>
+<div class="card">
+<table>
+  <tr><th>クラス</th><th>サイズ</th><th>line-height</th><th>用途</th></tr>
+  <tr><td><code>text-xs</code></td><td><strong>12px</strong></td><td>16px</td><td>日付・メタ情報・ラベル</td></tr>
+  <tr><td><code>text-sm</code></td><td><strong>14px</strong></td><td>20px</td><td>パンくず・補足・フッター</td></tr>
+  <tr><td><code>text-base</code></td><td><strong>16px</strong></td><td>24px</td><td>本文・段落</td></tr>
+  <tr><td><code>text-lg</code></td><td><strong>18px</strong></td><td>28px</td><td>H3見出し</td></tr>
+  <tr><td><code>text-xl</code></td><td><strong>20px</strong></td><td>28px</td><td>H2見出し</td></tr>
+  <tr><td><code>text-2xl</code></td><td><strong>24px</strong></td><td>32px</td><td>H1（SP）</td></tr>
+  <tr><td><code>text-3xl</code></td><td><strong>30px</strong></td><td>36px</td><td>H1（PC）</td></tr>
+  <tr><td><code>text-4xl</code></td><td><strong>36px</strong></td><td>40px</td><td>H1（mediaのみ md:）</td></tr>
+</table>
+</div>
+
+<h3>ページ種別ごとの見出しサイズ</h3>
+<div class="card">
+<table>
+  <tr><th>ページ種別</th><th>H1（SP→PC）</th><th>H2</th><th>H3</th></tr>
+  <tr>
+    <td><strong>ツールページ</strong></td>
+    <td>20px → 24px → <strong>30px</strong><br><code>text-xl sm:text-2xl md:text-3xl</code></td>
+    <td>18px → <strong>20px</strong><br><code>text-lg sm:text-xl</code></td>
+    <td><strong>14px</strong> → 16px<br><code>text-sm sm:text-base</code></td>
+  </tr>
+  <tr>
+    <td><strong>company・profile</strong></td>
+    <td>24px → <strong>30px</strong><br><code>text-2xl sm:text-3xl</code></td>
+    <td><strong>20px</strong><br><code>text-xl</code></td>
+    <td><strong>18px</strong><br><code>text-lg</code></td>
+  </tr>
+  <tr>
+    <td><strong>media トップ</strong></td>
+    <td>24px → 30px → <strong>36px</strong><br><code>text-2xl sm:text-3xl md:text-4xl</code></td>
+    <td>18px → <strong>20px</strong><br><code>text-lg sm:text-xl</code></td>
+    <td><strong>18px</strong><br><code>text-lg</code></td>
+  </tr>
+  <tr>
+    <td><strong>media 記事詳細</strong></td>
+    <td>24px → <strong>30px</strong><br><code>text-2xl sm:text-3xl</code></td>
+    <td><strong>20px</strong><br><code>text-xl</code></td>
+    <td><strong>18px</strong><br><code>text-lg</code></td>
+  </tr>
+  <tr>
+    <td><strong>ランディング</strong></td>
+    <td><strong>30px</strong><br><code>text-3xl</code></td>
+    <td>18px → <strong>20px</strong><br><code>text-lg sm:text-xl</code></td>
+    <td><strong>18px</strong><br><code>text-lg</code></td>
+  </tr>
+</table>
+</div>
+
+<h3>本文・UIテキストサイズ</h3>
+<div class="card">
+<table>
+  <tr><th>要素</th><th>SP</th><th>PC</th><th>クラス</th></tr>
+  <tr><td>本文（段落）</td><td><strong>16px</strong></td><td><strong>16px</strong></td><td><code>text-base</code></td></tr>
+  <tr><td>補足テキスト</td><td><strong>14px</strong></td><td><strong>14px</strong></td><td><code>text-sm text-gray-600</code></td></tr>
+  <tr><td>パンくず</td><td><strong>14px</strong></td><td><strong>14px</strong></td><td><code>text-sm text-gray-500</code></td></tr>
+  <tr><td>日付・更新日</td><td><strong>12px</strong></td><td><strong>12px</strong></td><td><code>text-xs text-gray-900</code></td></tr>
+  <tr><td>執筆者名</td><td><strong>12px</strong></td><td><strong>12px</strong></td><td><code>text-xs</code></td></tr>
+  <tr><td>フッターリンク</td><td><strong>14px</strong></td><td><strong>14px</strong></td><td><code>text-sm text-gray-600</code></td></tr>
+  <tr><td>ボタン（CTA）</td><td><strong>14px</strong></td><td><strong>16px</strong></td><td><code>text-sm sm:text-base</code></td></tr>
+  <tr><td>計算結果</td><td><strong>14px</strong></td><td><strong>16px</strong></td><td><code>text-sm sm:text-base</code></td></tr>
+  <tr><td>入力ラベル</td><td><strong>14px</strong></td><td><strong>14px</strong></td><td><code>text-sm font-medium</code></td></tr>
+</table>
+</div>
+
+<!-- ========== 9. CSS ========== -->
+<h2 id="css">9. CSS設計ルール</h2>
+
+<h3>カラーパレット</h3>
+<div class="color-grid">
+  <div class="color-swatch"><div class="color-dot" style="background:#0f172a"></div><code>text-gray-900</code> メインテキスト</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#334155"></div><code>text-gray-700</code> サブテキスト</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#475569"></div><code>text-gray-600</code> 補足テキスト</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#64748b"></div><code>text-gray-500</code> 薄いテキスト</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#94a3b8"></div><code>text-gray-400</code> 最薄テキスト</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#0284c7"></div><code>text-primary-600</code> アクセント</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#2563eb"></div><code>text-blue-600</code> リンク</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#ffffff;border:1px solid #e2e8f0"></div><code>bg-white</code> ページ背景</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#f8fafc"></div><code>bg-gray-50</code> セクション背景</div>
+  <div class="color-swatch"><div class="color-dot" style="background:#1e3a5f"></div><code>bg-blue-900</code> テーブルヘッダー</div>
+</div>
+
+<h3>余白パターン</h3>
+<div class="card">
+<table>
+  <tr><th>要素間</th><th>SP</th><th>sm</th><th>md</th><th>lg</th></tr>
+  <tr><td><strong>ヘッダーpadding</strong></td><td>py-2 (8px)</td><td>py-4 (16px)</td><td>pt-8 pb-4 (32+16px)</td><td>同左</td></tr>
+  <tr><td><strong>コンテナ横padding</strong></td><td>px-3 (12px)</td><td>px-6 (24px)</td><td>同左</td><td>px-8 (32px)</td></tr>
+  <tr><td><strong>コンテナ縦padding (ツール)</strong></td><td>py-4 (16px)</td><td>py-6 (24px)</td><td>py-8 (32px)</td><td>同左</td></tr>
+  <tr><td><strong>コンテナ縦padding (company等)</strong></td><td>py-12 (48px)</td><td>同左</td><td>同左</td><td>同左</td></tr>
+  <tr><td><strong>セクション間</strong></td><td>mb-8 (32px)</td><td>同左</td><td>同左</td><td>同左</td></tr>
+  <tr><td><strong>見出し下</strong></td><td>mb-4 (16px)</td><td>mb-6 (24px)</td><td>同左</td><td>同左</td></tr>
+  <tr><td><strong>段落間</strong></td><td>mb-4 (16px)</td><td>同左</td><td>同左</td><td>同左</td></tr>
+  <tr><td><strong>2カラムgap</strong></td><td>-</td><td>-</td><td>-</td><td>gap-10 (40px)</td></tr>
+</table>
+</div>
+
+<h3>ヘッダー仕様</h3>
+<div class="card">
+<div class="ascii-diagram"><pre>position: fixed  |  top: 0  |  z-index: 50  |  bg-white  |  border-b
+├─ SP:  py-2 (8px)    → Logo h-7 (28px)   → ヘッダー高 ≒ <span class="highlight">44px</span>
+├─ sm:  py-4 (16px)   → Logo h-10 (40px)  → ヘッダー高 ≒ <span class="highlight">72px</span>
+└─ md:  pt-8 pb-4     → Logo h-10 (40px)  → ヘッダー高 ≒ <span class="highlight">72px</span> (padding非対称)
+
+HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
+</div>
+
+<h3>フッター仕様</h3>
+<div class="card">
+<div class="ascii-diagram"><pre>bg-gray-100  |  py-10 (40px)  |  max-w-7xl
+├─ SP:   grid-cols-1
+├─ md:   grid-cols-2   gap-8 (32px)
+└─ lg:   grid-cols-5   gap-8 (32px)</pre></div>
+</div>
+
+<h3>グリッドパターン</h3>
+<div class="card">
+<table>
+  <tr><th>用途</th><th>SP</th><th>md</th><th>lg</th></tr>
+  <tr><td>ツール2カラム</td><td>1列</td><td>1列</td><td><code>grid-cols-[1fr_300px]</code></td></tr>
+  <tr><td>フッター</td><td>1列</td><td>2列</td><td>5列</td></tr>
+  <tr><td>ツール一覧カード</td><td>1列</td><td>2〜3列</td><td>3〜4列</td></tr>
+  <tr><td>計算結果</td><td>2列（固定）</td><td>2列（固定）</td><td>2列（固定）</td></tr>
+</table>
+</div>
+
+<h3>カード・セクション</h3>
+<div class="card">
+<table>
+  <tr><th>用途</th><th>クラス</th></tr>
+  <tr><td>情報ボックス</td><td><code>bg-gray-50 rounded-xl p-5 sm:p-6</code></td></tr>
+  <tr><td>白カード</td><td><code>bg-white rounded-xl border border-gray-100</code></td></tr>
+  <tr><td>ホバー効果</td><td><code>hover:border-primary-300 hover:shadow-md transition-all</code></td></tr>
+</table>
+</div>
+
+<!-- ========== 10. INCONSISTENCIES ========== -->
+<h2 id="inconsistencies">10. 不統一な箇所（要整理）</h2>
+
+<h3>パンくず</h3>
+<div class="card">
+<table>
+  <tr><th>ページ種別</th><th>区切り文字</th><th>コンポーネント</th></tr>
+  <tr><td>ツール系</td><td>SVG chevron</td><td>ToolsBreadcrumb（共通）</td></tr>
+  <tr><td>company系</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>profile</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>contact</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>legal系</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>disclaimer</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>pricing</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>faq</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>media トップ</td><td>Homeアイコン + <code>/</code></td><td>インラインHTML（個別）</td></tr>
+  <tr><td>media カテゴリ</td><td><code>/</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>media 記事</td><td>SVG chevron</td><td>インラインHTML（個別）</td></tr>
+</table>
+</div>
+
+<h3>日付テキスト色</h3>
+<div class="card">
+<table>
+  <tr><th>ページ</th><th>色</th></tr>
+  <tr><td>profile・media トップ</td><td><code>text-gray-900</code></td></tr>
+  <tr><td>ツール（ToolPageHeader）</td><td><code>text-gray-900</code></td></tr>
+  <tr><td>ツールインデックス</td><td><code>text-gray-500</code></td></tr>
+  <tr><td>記事ページ</td><td><code>text-gray-400</code></td></tr>
+</table>
+</div>
+
+<h3>コンテンツ上余白（py）</h3>
+<div class="card">
+<table>
+  <tr><th>ページ種別</th><th>値</th></tr>
+  <tr><td>company系・profile・contact</td><td><code>py-12</code></td></tr>
+  <tr><td>ツール系（ToolPageLayout）</td><td><code>py-4 sm:py-6 md:py-8</code></td></tr>
+  <tr><td>pricing・faq</td><td><code>py-8 sm:py-12</code></td></tr>
+  <tr><td>media トップ</td><td>py指定なし（パンくずにpy-3）</td></tr>
+</table>
+</div>
+
+<!-- ========== 11. TODOS ========== -->
+<h2 id="todos">11. 共通化の優先候補</h2>
+
+<div class="card">
+<table>
+  <tr><th>優先度</th><th>対象</th><th>現状</th><th>あるべき姿</th><th>状態</th></tr>
+  <tr>
+    <td><strong>高</strong></td>
+    <td>公開ページレイアウト</td>
+    <td><span class="done">20ページでコピペ</span></td>
+    <td><code>layout.tsx</code> テンプレート</td>
+    <td><span class="badge badge-green">✅ 済</span></td>
+  </tr>
+  <tr>
+    <td><strong>高</strong></td>
+    <td>パンくず</td>
+    <td>5種類のインライン実装</td>
+    <td><code>Breadcrumb</code> 共通コンポーネント</td>
+    <td><span class="badge badge-red">未着手</span></td>
+  </tr>
+  <tr>
+    <td><strong>中</strong></td>
+    <td>日付・執筆者表示</td>
+    <td>ページごとに個別実装</td>
+    <td><code>PageMeta</code> 共通コンポーネント</td>
+    <td><span class="badge badge-red">未着手</span></td>
+  </tr>
+  <tr>
+    <td><strong>中</strong></td>
+    <td>タイポグラフィ</td>
+    <td>クラスは概ね統一だが色にブレ</td>
+    <td>CSS変数 or Tailwind設定</td>
+    <td><span class="badge badge-red">未着手</span></td>
+  </tr>
+  <tr>
+    <td><strong>低</strong></td>
+    <td>company系ナビ付きレイアウト</td>
+    <td><span class="done">CompanyNav手動配置</span></td>
+    <td>company用layout.tsx</td>
+    <td><span class="badge badge-green">✅ 済</span></td>
+  </tr>
+  <tr>
+    <td><strong>中</strong></td>
+    <td>media系テンプレート</td>
+    <td>3ページでコピペ状態</td>
+    <td>layout.tsx or 共通コンポーネント</td>
+    <td><span class="badge badge-yellow">要検討</span></td>
+  </tr>
+</table>
+</div>
+
+</div><!-- /.container -->
+
+<footer style="text-align:center; padding:24px; color:var(--gray-400); font-size:12px; border-top:1px solid var(--gray-200); margin-top:40px;">
+  ooya-dx Architecture Overview | Generated 2026-02-17 | Next.js App Router
+</footer>
+
+</body>
+</html>

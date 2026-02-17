@@ -19,6 +19,8 @@ interface ToolPageLayoutProps {
   toolPath: string
   /** 公開日（例: '2026年1月15日'） */
   publishDate?: string
+  /** 更新日（例: '2026年1月15日'） */
+  lastUpdated?: string
   /** メインコンテンツ（シミュレーター本体） */
   children: ReactNode
   /** 追加コンテンツ（早見表・説明・FAQ等） */
@@ -41,6 +43,7 @@ export function ToolPageLayout({
   title,
   toolPath,
   publishDate,
+  lastUpdated,
   children,
   additionalContent,
   showCalculatorNote = true,
@@ -56,7 +59,7 @@ export function ToolPageLayout({
       <HeaderSpacer />
 
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 pb-4 sm:pt-6 sm:pb-6 md:pt-14 md:pb-8">
           <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-10">
             {/* 左カラム（メインコンテンツ） */}
             <article>
@@ -64,6 +67,7 @@ export function ToolPageLayout({
                 title={title}
                 toolPath={toolPath}
                 publishDate={publishDate}
+                lastUpdated={lastUpdated}
               />
 
               {/* シミュレーター本体 */}

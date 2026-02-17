@@ -39,6 +39,8 @@ export function TemplateCalculator() {
     <ToolPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/template-demo"
+      publishDate="2026年1月15日"
+      lastUpdated="2026年1月15日"
       additionalContent={<TemplateAdditionalContent />}
     >
       <TemplateSimulator />
