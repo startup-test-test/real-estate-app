@@ -1,10 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { LandingHeader } from '@/components/landing-header';
-import { LandingFooter } from '@/components/landing-footer';
 import Link from 'next/link';
-import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -56,14 +53,8 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
-
-      {/* ヘッダー固定時のスペーサー */}
-      <HeaderSpacer />
-
-      <main className="flex-1">
-        <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+    <>
+      <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
           {/* パンくず */}
           <nav className="text-sm text-gray-500 mb-6">
             <Link href="/" className="hover:text-primary-600">
@@ -177,10 +168,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-        </article>
-      </main>
-
-      <LandingFooter />
-    </div>
+      </article>
+    </>
   );
 }

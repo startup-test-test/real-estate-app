@@ -1,12 +1,9 @@
-import { LandingHeader } from '@/components/landing-header';
-import { LandingFooter } from '@/components/landing-footer';
 import { CompanyNav } from '@/components/company-nav';
 import { organizationDetailJsonLd } from '@/lib/eeat';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
-import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 export const metadata: Metadata = {
   title: '会社概要 ｜株式会社StartupMarketing',
@@ -52,13 +49,6 @@ export default function CompanyPage() {
         breadcrumbs={[{ name: '会社概要', href: '/company' }]}
       />
 
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
-
-      {/* ヘッダー固定時のスペーサー */}
-      <HeaderSpacer />
-
-      <main className="flex-1">
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
           {/* パンくず */}
           <nav className="text-sm text-gray-500 mb-6">
@@ -345,10 +335,6 @@ export default function CompanyPage() {
           </section>
 
         </article>
-      </main>
-
-      <LandingFooter />
-    </div>
     </>
   );
 }

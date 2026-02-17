@@ -1,11 +1,9 @@
-import { LandingHeader } from '@/components/landing-header';
-import { LandingFooter } from '@/components/landing-footer';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { personJsonLd } from '@/lib/eeat';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
-import { HeaderSpacer } from '@/components/HeaderSpacer';
+
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -178,14 +176,7 @@ export default function ProfilePage() {
         breadcrumbs={[{ name: 'プロフィール', href: '/profile' }]}
       />
 
-      <div className="min-h-screen bg-white flex flex-col">
-        <LandingHeader />
-
-        {/* ヘッダー固定時のスペーサー */}
-        <HeaderSpacer />
-
-        <main className="flex-1">
-          <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+      <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
             {/* パンくず */}
             <nav className="text-sm text-gray-500 mb-6">
               <Link href="/" className="hover:text-primary-600">
@@ -506,7 +497,7 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <div className="text-base"><span className="text-gray-500 font-medium">2024年1月：</span><a href="/img/akiya.png" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></div>
                     <div className="mt-2">
-                      <img src="/img/akiya.png" alt="フジテレビ「イット！」出演時の様子" className="rounded-lg border border-gray-200 max-w-sm" />
+                      <img src="/img/akiya.png" alt="フジテレビ「イット！」出演時の様子" className="rounded-lg border border-gray-200 max-w-full sm:max-w-sm" />
                     </div>
                     <div className="text-base"><span className="text-gray-500 font-medium">2020年5月：</span><a href="https://offers.jp/media/sidejob/workstyle/a_1862" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">株式会社overflow「フリーランスWebディレクターのキャリアと案件の進め方」</a></div>
                     <div className="text-base"><span className="text-gray-500 font-medium">2019年4月：</span><a href="https://www.shibuyamov.com/interviews/webyour-times.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">渋谷ヒカリエ Creative Lounge MOV インタビュー</a></div>
@@ -564,11 +555,7 @@ export default function ProfilePage() {
             <div className="mt-12">
               <CompanyProfileCompact />
             </div>
-          </article>
-        </main>
-
-        <LandingFooter />
-      </div>
+      </article>
     </>
   );
 }

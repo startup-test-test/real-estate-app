@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   HelpCircle,
   Search,
@@ -122,14 +123,22 @@ const FAQ: React.FC = () => {
   })).filter(category => category.items.length > 0);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <HelpCircle className="h-8 w-8 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-900">よくある質問</h1>
-          </div>
+    <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+      {/* パンくず */}
+      <nav className="text-sm text-gray-500 mb-6">
+        <Link href="/" className="hover:text-primary-600">
+          ホーム
+        </Link>
+        <span className="mx-2">&gt;</span>
+        <span>よくある質問</span>
+      </nav>
+
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center mb-4">
+          <HelpCircle className="h-8 w-8 text-blue-600 mr-3" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">よくある質問</h1>
+        </div>
           <p className="text-lg text-gray-600">
             大家DXに関するよくある質問と回答をまとめました。お探しの情報が見つからない場合は、お気軽にサポートまでお問い合わせください。
           </p>
@@ -223,8 +232,7 @@ const FAQ: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </article>
   );
 };
 

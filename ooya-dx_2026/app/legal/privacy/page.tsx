@@ -20,7 +20,14 @@ export default function PrivacyPage() {
         dateModified="2026-02-05"
         breadcrumbs={[{ name: 'プライバシーポリシー', href: '/legal/privacy' }]}
       />
-    <main className="mx-auto max-w-4xl px-6 pt-32 pb-10">
+    <article className="mx-auto max-w-4xl px-6 py-12">
+      {/* パンくず */}
+      <nav className="text-sm text-gray-500 mb-6">
+        <a href="/" className="hover:text-primary-600">ホーム</a>
+        <span className="mx-2">&gt;</span>
+        <span>プライバシーポリシー</span>
+      </nav>
+
       <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
         <span>公開日：2025年8月11日</span>
         <span>更新日：2026年2月5日</span>
@@ -255,7 +262,7 @@ export default function PrivacyPage() {
           </p>
         </section>
       </div>
-    </main>
+    </article>
     </>
   )
 }

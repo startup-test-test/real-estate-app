@@ -1,11 +1,8 @@
-import { LandingHeader } from '@/components/landing-header';
-import { LandingFooter } from '@/components/landing-footer';
 import { CompanyNav } from '@/components/company-nav';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
-import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -103,13 +100,7 @@ export default function SDGsPage() {
         dateModified="2026-01-15"
         breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'SDGs', href: '/company/sdgs' }]}
       />
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
 
-      {/* ヘッダー固定時のスペーサー */}
-      <HeaderSpacer />
-
-      <main className="flex-1">
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
           {/* パンくず */}
           <nav className="text-sm text-gray-500 mb-6">
@@ -193,10 +184,6 @@ export default function SDGsPage() {
           </section>
 
         </article>
-      </main>
-
-      <LandingFooter />
-    </div>
     </>
   );
 }

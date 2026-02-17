@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import Breadcrumb from '@/components/simulator/Breadcrumb';
 
 /**
  * 有料プラン募集停止のお知らせページ
@@ -11,29 +10,21 @@ import Breadcrumb from '@/components/simulator/Breadcrumb';
  */
 const PremiumPlan: React.FC = () => {
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Breadcrumb - PC版のみ表示 */}
-          <div className="hidden md:block mb-4">
-            <Breadcrumb />
-          </div>
+    <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+      {/* パンくず */}
+      <nav className="text-sm text-gray-500 mb-6">
+        <Link href="/" className="hover:text-primary-600">
+          ホーム
+        </Link>
+        <span className="mx-2">&gt;</span>
+        <span>有料プランについて</span>
+      </nav>
 
-          {/* 戻るリンク - スマホ版のみ表示 */}
-          <div className="md:hidden mb-4">
-            <Link href="/mypage" className="inline-flex items-center text-blue-600 hover:text-blue-700">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              マイページに戻る
-            </Link>
-          </div>
-
-          {/* ページタイトル */}
-          <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">有料プランについて</h1>
-            <p className="text-gray-600 mt-2">
-              大家DXの有料プランに関するお知らせ
-            </p>
-          </div>
+      {/* ページタイトル */}
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">有料プランについて</h1>
+      <p className="text-gray-600 mb-8">
+        大家DXの有料プランに関するお知らせ
+      </p>
 
           {/* メインお知らせカード */}
           <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 mb-6">
@@ -147,10 +138,8 @@ const PremiumPlan: React.FC = () => {
             <p className="text-sm text-gray-600 mt-4">
               完全無料・無制限でご利用いただけます
             </p>
-          </div>
-        </div>
       </div>
-    </div>
+    </article>
   );
 };
 

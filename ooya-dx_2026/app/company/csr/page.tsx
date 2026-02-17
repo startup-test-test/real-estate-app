@@ -1,10 +1,7 @@
-import { LandingHeader } from '@/components/landing-header';
-import { LandingFooter } from '@/components/landing-footer';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
-import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -56,13 +53,7 @@ export default function CSRPage() {
         dateModified="2026-01-15"
         breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'CSR・健康経営', href: '/company/csr' }]}
       />
-    <div className="min-h-screen bg-white flex flex-col">
-      <LandingHeader />
 
-      {/* ヘッダー固定時のスペーサー */}
-      <HeaderSpacer />
-
-      <main className="flex-1">
         <article className="max-w-4xl mx-auto px-5 py-12">
           {/* パンくず */}
           <nav className="text-sm text-gray-500 mb-6">
@@ -199,10 +190,6 @@ export default function CSRPage() {
           </section>
 
         </article>
-      </main>
-
-      <LandingFooter />
-    </div>
     </>
   );
 }

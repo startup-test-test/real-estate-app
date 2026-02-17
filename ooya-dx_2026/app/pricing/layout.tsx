@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 import { WebPageJsonLd } from '@/components/WebPageJsonLd'
+import { LandingHeader } from '@/components/landing-header';
+import { LandingFooter } from '@/components/landing-footer';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 export const metadata: Metadata = {
   title: '有料プランについて｜大家DX',
@@ -24,7 +27,14 @@ export default function PricingLayout({
         dateModified="2026-01-15"
         breadcrumbs={[{ name: '料金プラン', href: '/pricing' }]}
       />
-      {children}
+      <div className="min-h-screen bg-white flex flex-col">
+        <LandingHeader />
+        <HeaderSpacer />
+        <main className="flex-1 overflow-x-hidden">
+          {children}
+        </main>
+        <LandingFooter />
+      </div>
     </>
   )
 }
