@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
@@ -32,11 +32,11 @@ const quickReferenceData: QuickReferenceRow[] = [
 ]
 
 // =================================================================
-// メインコンポーネント（ToolPageLayoutで2カラム構成）
+// メインコンポーネント（ContentPageLayoutで2カラム構成）
 // =================================================================
 export function TemplateCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/template-demo"
       publishDate="2026年1月15日"
@@ -44,7 +44,7 @@ export function TemplateCalculator() {
       additionalContent={<TemplateAdditionalContent />}
     >
       <TemplateSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 
@@ -142,7 +142,7 @@ function TemplateSimulator() {
 
 // =================================================================
 // 【変更箇所8】追加コンテンツ（早見表・解説・FAQ等）
-// ToolPageLayout の additionalContent に渡される
+// ContentPageLayout の additionalContent に渡される
 // =================================================================
 function TemplateAdditionalContent() {
   return (

@@ -201,9 +201,9 @@
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
-    <td><code>ToolPageLayout</code></td>
-    <td>ツール計算ページ用（2カラムLP型）</td>
-    <td>~27ページ</td>
+    <td><code>ContentPageLayout</code></td>
+    <td>ツール計算ページ＋メディア記事用（2カラムLP型）</td>
+    <td>~42ページ</td>
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
@@ -213,15 +213,15 @@
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
-    <td><strong>コピペパターン（テンプレートなし）</strong></td>
-    <td>media系・トップページ等</td>
-    <td>~5ページ</td>
-    <td><span class="badge badge-yellow">要検討</span></td>
+    <td><strong>独自LP（ページ固有レイアウト）</strong></td>
+    <td>media一覧・トップページ等</td>
+    <td>~3ページ</td>
+    <td><span class="badge badge-blue">独自設計</span></td>
   </tr>
 </table>
 </div>
 
-<h3>ToolPageLayout（<code>components/tools/ToolPageLayout.tsx</code>）</h3>
+<h3>ContentPageLayout（<code>components/tools/ContentPageLayout.tsx</code>）</h3>
 <div class="ascii-diagram"><pre>LandingHeader
 HeaderSpacer
 main <span class="comment">(max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8)</span>
@@ -258,7 +258,7 @@ LandingFooter</pre></div>
     <td>シンプル1カラム</td>
   </tr>
   <tr>
-    <td>ToolPageLayout</td>
+    <td>ContentPageLayout</td>
     <td><a href="http://localhost:3002/tools/template-demo" target="_blank"><code>/tools/template-demo</code></a></td>
     <td>2カラムLP型</td>
   </tr>
@@ -294,109 +294,137 @@ LandingFooter</pre></div>
 <h3>公開ページ（ツール系）：30ページ</h3>
 <div class="card" style="overflow-x: auto;">
 <table>
-  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
-  <tr><td><code>/tools</code></td><td>layout.tsx</td><td>インライン</td><td>BreadcrumbList+WebPage</td><td>7xl</td></tr>
-  <tr><td><code>/tools/cf</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/brokerage</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/yield-rate</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/roi</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/noi</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/ccr</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/dscr</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/ltv</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/irr</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/npv</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/dcf</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/cap-rate</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/depreciation</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/dead-cross</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/mortgage-loan</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/corporate-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/income-capitalization</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/replacement-cost</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/acquisition-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/registration-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/stamp-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/capital-gains-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/gift-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/inheritance-tax</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/sale-proceeds</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/assessed-value</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
-  <tr><td><code>/tools/simulator</code></td><td>カスタム</td><td>-</td><td>カスタム</td><td>-</td></tr>
-  <tr><td><code>/tools/purchase-offer</code></td><td>カスタム</td><td>-</td><td>-</td><td>-</td></tr>
-  <tr><td><code>/tools/brokerage/guide</code></td><td>layout.tsx</td><td>インライン</td><td>WebPageJsonLd</td><td>4xl</td></tr>
+  <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
+  <tr><td><code>/tools</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>BreadcrumbList+WebPage</td><td>7xl</td></tr>
+  <tr><td><code>/tools/cf</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/brokerage</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/yield-rate</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/roi</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/noi</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/ccr</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/dscr</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/ltv</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/irr</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/npv</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/dcf</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/cap-rate</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/depreciation</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/dead-cross</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/mortgage-loan</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/corporate-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/income-capitalization</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/replacement-cost</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/acquisition-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/registration-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/stamp-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/capital-gains-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/gift-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/inheritance-tax</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/sale-proceeds</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/assessed-value</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><td><code>/tools/simulator</code></td><td>カスタム</td><td>カスタム（SimulatorLP）</td><td>-</td><td>カスタム</td><td>-</td></tr>
+  <tr><td><code>/tools/purchase-offer</code></td><td>カスタム</td><td>SharedHeader</td><td>-</td><td>-</td><td>-</td></tr>
+  <tr><td><code>/tools/brokerage/guide</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>4xl</td></tr>
 </table>
 </div>
 
 <h3>公開ページ（会社系）：12ページ</h3>
 <div class="card" style="overflow-x: auto;">
 <table>
-  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th><th>CompanyNav</th></tr>
-  <tr><td><code>/company</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
-  <tr><td><code>/company/portfolio</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
-  <tr><td><code>/company/service</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
-  <tr><td><code>/company/contact</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/csr</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/sdgs</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/link</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/lib-partner</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/teambeyond</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/climate-adaptation</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/plastics-smart</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/consumer-policy</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th><th>CompanyNav</th></tr>
+  <tr><td><code>/company</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/portfolio</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/service</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/contact</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/csr</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/sdgs</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/link</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/lib-partner</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/teambeyond</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/climate-adaptation</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/plastics-smart</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/consumer-policy</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
 </table>
 </div>
 
-<h3>公開ページ（メディア系）：3ページ</h3>
+<h3>公開ページ（メディア系）：3テンプレート + 13記事</h3>
 <div class="card">
 <table>
-  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
-  <tr><td><code>/media</code></td><td><span class="badge badge-yellow">コピペ</span></td><td>アイコン(Home+/)</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/media/[category]</code></td><td><span class="badge badge-yellow">コピペ</span></td><td>テキスト(/)</td><td>-</td><td>7xl</td></tr>
-  <tr><td><code>/media/[category]/[slug]</code></td><td><span class="badge badge-yellow">コピペ</span></td><td>SVG(chevron)</td><td>Article+Breadcrumb</td><td>2xl</td></tr>
+  <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
+  <tr><td><code>/media</code></td><td><span class="badge badge-blue">独自LP</span></td><td>SharedHeader（メディアロゴ）</td><td>アイコン(Home+/)</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/media/[category]</code></td><td><span class="badge badge-green">ContentPageLayout</span></td><td>SharedHeader（メディアロゴ）</td><td>ToolsBreadcrumb</td><td>-</td><td>7xl</td></tr>
+  <tr><td><code>/media/[category]/[slug]</code></td><td><span class="badge badge-green">ContentPageLayout</span></td><td>SharedHeader（メディアロゴ）</td><td>ToolsBreadcrumb</td><td>Article+Breadcrumb</td><td>7xl</td></tr>
+</table>
+
+<h4>記事一覧（13記事）</h4>
+<table>
+  <tr><th>カテゴリ</th><th>パス</th><th>テンプレート</th><th>記事数</th></tr>
+  <tr>
+    <td rowspan="10"><strong>base</strong>（基礎知識）</td>
+    <td><a href="http://localhost:3002/media/base/accounting-software" target="_blank"><code>/media/base/accounting-software</code></a></td>
+    <td rowspan="10"><span class="badge badge-green">ContentPageLayout</span></td>
+    <td rowspan="10">10</td>
+  </tr>
+  <tr><td><a href="http://localhost:3002/media/base/end-user-real-estate" target="_blank"><code>/media/base/end-user-real-estate</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/bad-2ch" target="_blank"><code>/media/base/bad-2ch</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/estimate-simulation" target="_blank"><code>/media/base/estimate-simulation</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/neteitou_yabai" target="_blank"><code>/media/base/neteitou_yabai</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/excel-template" target="_blank"><code>/media/base/excel-template</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/failure-2ch" target="_blank"><code>/media/base/failure-2ch</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/profile-sheet-template" target="_blank"><code>/media/base/profile-sheet-template</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/rent-roll-template" target="_blank"><code>/media/base/rent-roll-template</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/base/spreadsheet" target="_blank"><code>/media/base/spreadsheet</code></a></td></tr>
+  <tr>
+    <td rowspan="3"><strong>kodate</strong>（戸建て）</td>
+    <td><a href="http://localhost:3002/media/kodate/zikoshikin" target="_blank"><code>/media/kodate/zikoshikin</code></a></td>
+    <td rowspan="3"><span class="badge badge-green">ContentPageLayout</span></td>
+    <td rowspan="3">3</td>
+  </tr>
+  <tr><td><a href="http://localhost:3002/media/kodate/reform" target="_blank"><code>/media/kodate/reform</code></a></td></tr>
+  <tr><td><a href="http://localhost:3002/media/kodate/kouko" target="_blank"><code>/media/kodate/kouko</code></a></td></tr>
 </table>
 </div>
 
 <h3>公開ページ（その他）：10ページ</h3>
 <div class="card">
 <table>
-  <tr><th>パス</th><th>テンプレート</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
-  <tr><td><code>/</code> (トップ)</td><td><span class="badge badge-yellow">コピペ</span></td><td>なし</td><td>ルートのみ</td><td>カスタム</td></tr>
-  <tr><td><code>/profile</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd+Person</td><td>7xl</td></tr>
-  <tr><td><code>/contact</code></td><td>layout.tsx</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl→2xl</td></tr>
-  <tr><td><code>/pricing</code></td><td>layout.tsx</td><td>Breadcrumb</td><td>layout経由</td><td>4xl</td></tr>
-  <tr><td><code>/faq</code></td><td>layout.tsx</td><td>なし</td><td>FAQPage(layout)</td><td>4xl</td></tr>
-  <tr><td><code>/disclaimer</code></td><td>layout.tsx</td><td>パンくず統一</td><td>-</td><td>4xl</td></tr>
-  <tr><td><code>/legal/terms</code></td><td>layout.tsx</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/legal/privacy</code></td><td>layout.tsx</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/layout-sample</code></td><td>layout.tsx</td><td>-</td><td>-</td><td>7xl</td></tr>
-  <tr><td><code>/tools/template-demo</code></td><td>ToolPageLayout</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
+  <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
+  <tr><td><code>/</code> (トップ)</td><td><span class="badge badge-blue">独自LP</span></td><td>SharedHeader</td><td>なし</td><td>ルートのみ</td><td>カスタム</td></tr>
+  <tr><td><code>/profile</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd+Person</td><td>7xl</td></tr>
+  <tr><td><code>/contact</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl→2xl</td></tr>
+  <tr><td><code>/pricing</code></td><td>layout.tsx</td><td>SharedHeader</td><td>Breadcrumb</td><td>layout経由</td><td>4xl</td></tr>
+  <tr><td><code>/faq</code></td><td>layout.tsx</td><td>SharedHeader</td><td>なし</td><td>FAQPage(layout)</td><td>4xl</td></tr>
+  <tr><td><code>/disclaimer</code></td><td>layout.tsx</td><td>SharedHeader</td><td>パンくず統一</td><td>-</td><td>4xl</td></tr>
+  <tr><td><code>/legal/terms</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/legal/privacy</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/layout-sample</code></td><td>layout.tsx</td><td>SharedHeader</td><td>-</td><td>-</td><td>7xl</td></tr>
+  <tr><td><code>/tools/template-demo</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
 </table>
 </div>
 
 <h3>認証ページ：5ページ</h3>
 <div class="card">
 <table>
-  <tr><th>パス</th><th>テンプレート</th><th>max-w</th></tr>
-  <tr><td><code>/auth/signin</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
-  <tr><td><code>/auth/signup</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
-  <tr><td><code>/auth/forgot-password</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
-  <tr><td><code>/auth/email-verified</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
-  <tr><td><code>/auth/neon-password-reset</code></td><td>カスタム（中央寄せ）</td><td>md</td></tr>
+  <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>max-w</th></tr>
+  <tr><td><code>/auth/signin</code></td><td>カスタム（中央寄せ）</td><td>なし</td><td>md</td></tr>
+  <tr><td><code>/auth/signup</code></td><td>カスタム（中央寄せ）</td><td>なし</td><td>md</td></tr>
+  <tr><td><code>/auth/forgot-password</code></td><td>カスタム（中央寄せ）</td><td>なし</td><td>md</td></tr>
+  <tr><td><code>/auth/email-verified</code></td><td>カスタム（中央寄せ）</td><td>なし</td><td>md</td></tr>
+  <tr><td><code>/auth/neon-password-reset</code></td><td>カスタム（中央寄せ）</td><td>なし</td><td>md</td></tr>
 </table>
 </div>
 
 <h3>マイページ：7ページ</h3>
 <div class="card">
 <table>
-  <tr><th>パス</th><th>テンプレート</th></tr>
-  <tr><td><code>/mypage</code></td><td>DashboardLayout</td></tr>
-  <tr><td><code>/mypage/cf-simulator</code></td><td>DashboardLayout</td></tr>
-  <tr><td><code>/mypage/cf-simulator/new</code></td><td>DashboardLayout</td></tr>
-  <tr><td><code>/mypage/cf-simulator/[id]</code></td><td>DashboardLayout</td></tr>
-  <tr><td><code>/mypage/revenue-simulator</code></td><td>DashboardLayout</td></tr>
-  <tr><td><code>/mypage/calculators</code></td><td>DashboardLayout</td></tr>
-  <tr><td><code>/mypage/guide</code></td><td>DashboardLayout</td></tr>
+  <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th></tr>
+  <tr><td><code>/mypage</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
+  <tr><td><code>/mypage/cf-simulator</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
+  <tr><td><code>/mypage/cf-simulator/new</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
+  <tr><td><code>/mypage/cf-simulator/[id]</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
+  <tr><td><code>/mypage/revenue-simulator</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
+  <tr><td><code>/mypage/calculators</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
+  <tr><td><code>/mypage/guide</code></td><td>DashboardLayout</td><td>DashboardLayout（サイドバー）</td></tr>
 </table>
 </div>
 
@@ -407,12 +435,44 @@ LandingFooter</pre></div>
 <div class="card">
 <table>
   <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
-  <tr><td>LandingHeader</td><td><code>components/landing-header.tsx</code></td><td>公開ページ共通ヘッダー</td></tr>
-  <tr><td>SharedHeader</td><td><code>components/shared-header.tsx</code></td><td>ルートレイアウト用（固定ヘッダー）</td></tr>
+  <tr><td>LandingHeader</td><td><code>components/landing-header.tsx</code></td><td>SharedHeaderの再エクスポート（後方互換）</td></tr>
+  <tr><td>SharedHeader</td><td><code>components/shared-header.tsx</code></td><td>公開ページ共通ヘッダー（実体）</td></tr>
   <tr><td>HeaderSpacer</td><td><code>components/HeaderSpacer.tsx</code></td><td>固定ヘッダー下の余白（共通）</td></tr>
   <tr><td>LandingFooter</td><td><code>components/landing-footer.tsx</code></td><td>公開ページ共通フッター</td></tr>
   <tr><td>Footer</td><td><code>components/footer.tsx</code></td><td>マイページ用フッター</td></tr>
 </table>
+
+<h4>SharedHeader の動作モード</h4>
+<table>
+  <tr><th>モード</th><th>条件</th><th>ロゴ</th><th>ナビリンク</th></tr>
+  <tr>
+    <td><strong>公開ページ</strong></td>
+    <td>デフォルト</td>
+    <td><code>/img/logo_250709_2.png</code> → <code>/</code></td>
+    <td>シミュレーター / 計算ツール / メディア / 会社概要 / 自己紹介</td>
+  </tr>
+  <tr>
+    <td><strong>メディアページ</strong></td>
+    <td><code>/media</code> 配下 or <code>useMediaLogo=true</code></td>
+    <td><code>/img/logo-media.png</code> → <code>/media</code></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td><strong>非表示</strong></td>
+    <td><code>/mypage</code>・<code>/tools/simulator</code> 等</td>
+    <td colspan="2">ヘッダー非表示（DashboardLayout側で独自ヘッダー）</td>
+  </tr>
+</table>
+
+<h4>非表示ルート一覧（DASHBOARD_ROUTES）</h4>
+<div class="tag-row">
+  <span class="tag">/mypage</span>
+  <span class="tag">/mypage/revenue-simulator</span>
+  <span class="tag">/dashboard</span>
+  <span class="tag">/billing</span>
+  <span class="tag">/mypage/guide</span>
+  <span class="tag">/tools/simulator</span>
+</div>
 </div>
 
 <h3>ナビゲーション</h3>
@@ -429,7 +489,7 @@ LandingFooter</pre></div>
 <div class="card">
 <table>
   <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
-  <tr><td>ToolPageLayout</td><td><code>components/tools/ToolPageLayout.tsx</code></td><td>ツールページ共通レイアウト</td></tr>
+  <tr><td>ContentPageLayout</td><td><code>components/tools/ContentPageLayout.tsx</code></td><td>ツールページ共通レイアウト</td></tr>
   <tr><td>ToolPageHeader</td><td><code>components/tools/ToolPageHeader.tsx</code></td><td>パンくず・日付・執筆者</td></tr>
   <tr><td>ToolSidebar</td><td><code>components/tools/ToolSidebar.tsx</code></td><td>PC右サイドバー</td></tr>
   <tr><td>ToolMobileSidebar</td><td><code>components/tools/ToolMobileSidebar.tsx</code></td><td>SPサイドバー</td></tr>
@@ -505,9 +565,9 @@ LandingFooter</pre></div>
 
 <span class="comment">該当: company x12, profile, contact, legal x2, disclaimer, pricing, faq</span></pre></div>
 
-<h3>パターンB: ツールページ（ToolPageLayout）- 約27ページ</h3>
+<h3>パターンB: ツールページ（ContentPageLayout）- 約27ページ</h3>
 <div class="ascii-diagram"><pre>+================================================================+
-| <span class="highlight">[B] Tool Page</span> (ToolPageLayout)                                 |
+| <span class="highlight">[B] Tool Page</span> (ContentPageLayout)                                 |
 |                                                                |
 | +------------------------------------------------------------+ |
 | | LandingHeader                                              | |
@@ -689,7 +749,7 @@ LandingFooter</pre></div>
   <tr><td><code>max-w-6xl</code></td><td><strong>1152px</strong></td><td>一部コンポーネント内</td><td>-</td></tr>
   <tr><td><code>max-w-4xl</code></td><td><strong>896px</strong></td><td>中幅ページ</td><td>pricing、faq、disclaimer、tools/brokerage/guide</td></tr>
   <tr><td><code>max-w-3xl</code></td><td><strong>768px</strong></td><td>-</td><td>一部内部要素</td></tr>
-  <tr><td><code>max-w-2xl</code></td><td><strong>672px</strong></td><td>記事詳細・フォーム</td><td>media/[category]/[slug]、contact(フォーム部分)</td></tr>
+  <tr><td><code>max-w-2xl</code></td><td><strong>672px</strong></td><td>フォーム</td><td>contact(フォーム部分)</td></tr>
   <tr><td><code>max-w-xl</code></td><td><strong>576px</strong></td><td>-</td><td>一部内部要素</td></tr>
   <tr><td><code>max-w-lg</code></td><td><strong>512px</strong></td><td>サイドバー・モーダル</td><td>-</td></tr>
   <tr><td><code>max-w-md</code></td><td><strong>448px</strong></td><td>認証ページ</td><td>auth/signin、auth/signup 等5ページ</td></tr>
@@ -841,10 +901,10 @@ LandingFooter</pre></div>
 <div class="card">
 <div class="ascii-diagram"><pre>position: fixed  |  top: 0  |  z-index: 50  |  bg-white  |  border-b
 ├─ SP:  py-2 (8px)    → Logo h-7 (28px)   → ヘッダー高 ≒ <span class="highlight">44px</span>
-├─ sm:  py-4 (16px)   → Logo h-10 (40px)  → ヘッダー高 ≒ <span class="highlight">72px</span>
-└─ md:  pt-8 pb-4     → Logo h-10 (40px)  → ヘッダー高 ≒ <span class="highlight">72px</span> (padding非対称)
+└─ sm:  py-4 (16px)   → Logo h-10 (40px)  → ヘッダー高 ≒ <span class="highlight">73px</span>
 
-HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
+HeaderSpacer: h-[44px] sm:h-[60px]
+ToolSidebar sticky: top-20 (80px)</pre></div>
 </div>
 
 <h3>フッター仕様</h3>
@@ -893,7 +953,7 @@ HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
   <tr><td>faq</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
   <tr><td>media トップ</td><td>Homeアイコン + <code>/</code></td><td>インラインHTML（個別）</td></tr>
   <tr><td>media カテゴリ</td><td><code>/</code> テキスト</td><td>インラインHTML（個別）</td></tr>
-  <tr><td>media 記事</td><td>SVG chevron</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>media 記事</td><td>SVG chevron</td><td>ToolsBreadcrumb（共通）</td></tr>
 </table>
 </div>
 
@@ -904,7 +964,7 @@ HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
   <tr><td>profile・media トップ</td><td><code>text-gray-900</code></td></tr>
   <tr><td>ツール（ToolPageHeader）</td><td><code>text-gray-900</code></td></tr>
   <tr><td>ツールインデックス</td><td><code>text-gray-500</code></td></tr>
-  <tr><td>記事ページ</td><td><code>text-gray-400</code></td></tr>
+  <tr><td>記事ページ</td><td><code>text-gray-900</code>（ToolPageHeader統一）</td></tr>
 </table>
 </div>
 
@@ -913,7 +973,7 @@ HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
 <table>
   <tr><th>ページ種別</th><th>値</th></tr>
   <tr><td>company系・profile・contact</td><td><code>py-12</code></td></tr>
-  <tr><td>ツール系（ToolPageLayout）</td><td><code>py-4 sm:py-6 md:py-8</code></td></tr>
+  <tr><td>ツール系（ContentPageLayout）</td><td><code>py-4 sm:py-6 md:py-8</code></td></tr>
   <tr><td>pricing・faq</td><td><code>py-8 sm:py-12</code></td></tr>
   <tr><td>media トップ</td><td>py指定なし（パンくずにpy-3）</td></tr>
 </table>
@@ -928,7 +988,7 @@ HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
   <tr>
     <td><strong>高</strong></td>
     <td>公開ページレイアウト</td>
-    <td><span class="done">20ページでコピペ</span></td>
+    <td><span class="done">20ページで独自レイアウト</span></td>
     <td><code>layout.tsx</code> テンプレート</td>
     <td><span class="badge badge-green">✅ 済</span></td>
   </tr>
@@ -963,9 +1023,9 @@ HeaderSpacer: h-[50px] sm:h-[76px] md:h-[55px]</pre></div>
   <tr>
     <td><strong>中</strong></td>
     <td>media系テンプレート</td>
-    <td>3ページでコピペ状態</td>
-    <td>layout.tsx or 共通コンポーネント</td>
-    <td><span class="badge badge-yellow">要検討</span></td>
+    <td><span class="done">記事13ページ＋カテゴリ2ページ→ContentPageLayout適用済</span><br>media一覧1ページは独自LP</td>
+    <td>残り1ページもlayout.tsx化</td>
+    <td><span class="badge badge-green">✅ ほぼ済</span></td>
   </tr>
 </table>
 </div>

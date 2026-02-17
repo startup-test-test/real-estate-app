@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import {
   calculateDCF,
   getTerminalCapRateGuideline,
@@ -411,12 +411,12 @@ function DCFAdditionalContent() {
 
 export function DCFCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/dcf"
       additionalContent={<DCFAdditionalContent />}
     >
       <DCFSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

@@ -85,12 +85,9 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
   return (
     <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-2 sm:py-4 md:pt-8 md:pb-4">
+        <div className="flex justify-between items-center py-2 sm:py-4">
           {/* ロゴ */}
-          <Link href={logoHref} className="block relative">
-            <span className="hidden md:block text-sm text-gray-900 absolute -top-5 left-0 whitespace-nowrap">
-              賃貸経営をもっとスマートに
-            </span>
+          <Link href={logoHref} className="block">
             <img
               src={logoSrc}
               alt={logoAlt}

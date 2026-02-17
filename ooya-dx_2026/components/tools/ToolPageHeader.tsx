@@ -13,18 +13,26 @@ interface ToolPageHeaderProps {
   publishDate?: string
   /** 更新日（例: '2026年1月15日'） */
   lastUpdated?: string
+  /** カテゴリ名（例: '不動産投資の基礎知識'） */
+  category?: string
+  /** カテゴリリンク先（例: '/media/base'） */
+  categoryHref?: string
 }
 
 /**
  * ツールページヘッダー
  * パンくず・日付・H1タイトルをまとめて表示
  */
-export function ToolPageHeader({ title, toolPath, publishDate, lastUpdated }: ToolPageHeaderProps) {
+export function ToolPageHeader({ title, toolPath, publishDate, lastUpdated, category, categoryHref }: ToolPageHeaderProps) {
   const toolInfo = getToolInfo(toolPath)
 
   // propsで渡された日付、またはnavigation configから取得
   const displayPublishDate = publishDate || (toolInfo?.publishDate ? formatToolDate(toolInfo.publishDate) : undefined)
   const displayLastUpdated = lastUpdated || (toolInfo?.lastUpdated ? formatToolDate(toolInfo.lastUpdated) : undefined)
+
+  // カテゴリ：明示的に渡されなければ「無料計算ツール」→ /tools をデフォルト表示
+  const displayCategory = category || '無料計算ツール'
+  const displayCategoryHref = categoryHref || '/tools'
 
   return (
     <>
@@ -44,6 +52,9 @@ export function ToolPageHeader({ title, toolPath, publishDate, lastUpdated }: To
             className="w-5 h-5 rounded-full object-cover"
           />
           <span>執筆者：東後 哲郎</span>
+        </Link>
+        <Link href={displayCategoryHref} className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded hover:bg-primary-100 transition-colors">
+          {displayCategory}
         </Link>
       </div>
 

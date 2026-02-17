@@ -1,6 +1,6 @@
 'use client'
 
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { YieldRateCalculatorCompact } from '@/components/calculators'
@@ -33,17 +33,17 @@ const quickReferenceData: QuickReferenceRow[] = [
 
 /**
  * 利回りシミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function YieldRateCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/yield-rate"
       additionalContent={<YieldRateAdditionalContent />}
     >
       <YieldRateCalculatorCompact showTitle={true} />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

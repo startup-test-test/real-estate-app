@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
@@ -352,12 +352,12 @@ function IncomeCapitalizationAdditionalContent() {
 // =================================================================
 export function IncomeCapitalizationCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/income-capitalization"
       additionalContent={<IncomeCapitalizationAdditionalContent />}
     >
       <IncomeCapitalizationSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

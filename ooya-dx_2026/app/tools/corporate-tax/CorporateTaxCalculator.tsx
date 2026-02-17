@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { calculateCorporateTaxTotal } from '@/lib/calculators/corporate-tax'
 
 // 早見表データ
@@ -259,12 +259,12 @@ function CorporateTaxAdditionalContent() {
 
 export function CorporateTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/corporate-tax"
       additionalContent={<CorporateTaxAdditionalContent />}
     >
       <CorporateTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

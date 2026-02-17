@@ -86,7 +86,7 @@ export default function MediaPage() {
         <HeaderSpacer />
 
         {/* パンくずリスト */}
-        <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 w-full">
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-14 pb-3 w-full">
           <ol className="flex items-center text-sm text-gray-500">
             <li className="flex items-center">
               <Link href="/" className="hover:text-gray-700 flex items-center">

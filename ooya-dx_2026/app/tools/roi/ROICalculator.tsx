@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { calculateROI } from '@/lib/calculators/roi'
@@ -20,17 +20,17 @@ const tocItems: TocItem[] = [
 
 /**
  * ROI（投資利益率）シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function ROICalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/roi"
       additionalContent={<ROIAdditionalContent />}
     >
       <ROISimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

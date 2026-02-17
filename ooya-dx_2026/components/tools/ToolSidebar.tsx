@@ -10,7 +10,7 @@ import { ToolSidebarCTA } from './ToolSidebarCTA'
 export function ToolSidebar() {
   return (
     <aside className="hidden lg:block">
-      <div className="sticky top-28 space-y-6">
+      <div className="sticky top-20 space-y-6">
         {/* 全計算ツール（カテゴリ別） */}
         <ToolCategoryList />
 

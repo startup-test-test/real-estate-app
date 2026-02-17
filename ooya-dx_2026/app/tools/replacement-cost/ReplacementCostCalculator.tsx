@@ -5,7 +5,7 @@ import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import {
   calculateReplacementCost,
   STRUCTURE_OPTIONS,
@@ -302,12 +302,12 @@ function ReplacementCostAdditionalContent() {
 
 export function ReplacementCostCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/replacement-cost"
       additionalContent={<ReplacementCostAdditionalContent />}
     >
       <ReplacementCostSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

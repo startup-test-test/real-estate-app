@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { calculateNPV } from '@/lib/calculators/npv'
 
 // ページタイトル（パンくず・h1で共通使用）
@@ -374,12 +374,12 @@ function NPVAdditionalContent() {
 
 export function NPVCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/npv"
       additionalContent={<NPVAdditionalContent />}
     >
       <NPVSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

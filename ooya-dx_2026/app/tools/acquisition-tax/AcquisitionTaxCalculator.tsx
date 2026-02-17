@@ -1,6 +1,6 @@
 'use client'
 
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { AcquisitionTaxCalculatorCompact } from '@/components/calculators'
 
@@ -222,12 +222,12 @@ function AcquisitionTaxAdditionalContent() {
 // =================================================================
 export function AcquisitionTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/acquisition-tax"
       additionalContent={<AcquisitionTaxAdditionalContent />}
     >
       <AcquisitionTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

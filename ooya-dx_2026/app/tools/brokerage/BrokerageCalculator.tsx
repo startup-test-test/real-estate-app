@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { BrokerageCalculatorCompact } from '@/components/calculators'
 
 // ページタイトル（パンくず・h1で共通使用）
@@ -25,14 +25,14 @@ const quickReferenceData = [
 
 export function BrokerageCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/brokerage"
       publishDate="2026年1月15日"
       additionalContent={<BrokerageAdditionalContent />}
     >
       <BrokerageCalculatorCompact showTitle={false} />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

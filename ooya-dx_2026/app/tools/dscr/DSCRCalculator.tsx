@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Calculator } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
@@ -30,17 +30,17 @@ const tocItems: TocItem[] = [
 
 /**
  * DSCR（債務返済カバー率）シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function DSCRCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/dscr"
       additionalContent={<DSCRAdditionalContent />}
     >
       <DSCRSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

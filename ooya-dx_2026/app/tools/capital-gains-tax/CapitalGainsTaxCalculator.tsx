@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -32,17 +32,17 @@ const tocItems: TocItem[] = [
 
 /**
  * 譲渡所得税シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function CapitalGainsTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/capital-gains-tax"
       additionalContent={<CapitalGainsTaxAdditionalContent />}
     >
       <CapitalGainsTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { calculateCCR, estimatePurchaseCosts } from '@/lib/calculators/ccr'
@@ -21,17 +21,17 @@ const tocItems: TocItem[] = [
 
 /**
  * CCR（自己資金配当率）シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function CCRCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/ccr"
       additionalContent={<CCRAdditionalContent />}
     >
       <CCRSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

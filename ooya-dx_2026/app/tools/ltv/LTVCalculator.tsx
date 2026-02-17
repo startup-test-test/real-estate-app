@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Percent } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { calculateLTV, calculateLoanFromLTV, calculateLTVFromEquity } from '@/lib/calculators/ltv'
@@ -20,17 +20,17 @@ const tocItems: TocItem[] = [
 
 /**
  * LTV（借入比率）シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function LTVCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/ltv"
       additionalContent={<LTVAdditionalContent />}
     >
       <LTVSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

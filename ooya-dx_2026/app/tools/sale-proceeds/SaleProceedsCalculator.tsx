@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -432,12 +432,12 @@ function SaleProceedsAdditionalContent() {
 // =================================================================
 export function SaleProceedsCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/sale-proceeds"
       additionalContent={<SaleProceedsAdditionalContent />}
     >
       <SaleProceedsSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

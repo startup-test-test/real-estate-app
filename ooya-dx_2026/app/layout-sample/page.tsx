@@ -31,7 +31,7 @@ export default function LayoutSamplePage() {
       <div className="text-base text-gray-700 leading-relaxed space-y-6">
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">このページの構造</h2>
-          <p>このページは <code className="bg-gray-100 px-2 py-0.5 rounded text-sm text-blue-700">layout.tsx</code> だけで表示しています。ToolPageLayout は使っていません。</p>
+          <p>このページは <code className="bg-gray-100 px-2 py-0.5 rounded text-sm text-blue-700">layout.tsx</code> だけで表示しています。ContentPageLayout は使っていません。</p>
         </section>
 
         <section className="mb-8">
@@ -58,7 +58,7 @@ export default function LayoutSamplePage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">比較ページ</h2>
           <ul className="list-disc pl-6 space-y-2">
             <li><Link href="/company" className="text-blue-600 hover:underline">/company</Link> — layout.tsx（同じ構造）</li>
-            <li><Link href="/tools/cf" className="text-blue-600 hover:underline">/tools/cf</Link> — ToolPageLayout（2カラム）</li>
+            <li><Link href="/tools/cf" className="text-blue-600 hover:underline">/tools/cf</Link> — ContentPageLayout（2カラム）</li>
             <li><Link href="/tools" className="text-blue-600 hover:underline">/tools</Link> — 個別配置（コピペ）</li>
           </ul>
         </section>

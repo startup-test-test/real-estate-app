@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import { AlertTriangle } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable3Col } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -351,12 +351,12 @@ function GiftTaxAdditionalContent() {
 // =================================================================
 export function GiftTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/gift-tax"
       additionalContent={<GiftTaxAdditionalContent />}
     >
       <GiftTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

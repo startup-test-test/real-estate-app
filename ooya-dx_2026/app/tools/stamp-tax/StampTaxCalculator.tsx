@@ -2,7 +2,7 @@
 
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { StampTaxCalculatorCompact } from '@/components/calculators'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 
 // =================================================================
 // 統合早見表データ
@@ -178,12 +178,12 @@ function StampTaxAdditionalContent() {
 
 export function StampTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/stamp-tax"
       additionalContent={<StampTaxAdditionalContent />}
     >
       <StampTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

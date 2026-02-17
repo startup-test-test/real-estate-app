@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable } from '@/components/tools/QuickReferenceTable'
@@ -385,12 +385,12 @@ function AssessedValueAdditionalContent() {
 // =================================================================
 export function AssessedValueCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/assessed-value"
       additionalContent={<AssessedValueAdditionalContent />}
     >
       <AssessedValueSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

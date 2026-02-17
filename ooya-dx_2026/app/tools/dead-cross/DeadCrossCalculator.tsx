@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react'
 import { AlertTriangle, TrendingUp, Calendar } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { ResultCard } from '@/components/tools/ResultCard'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -374,12 +374,12 @@ function DeadCrossAdditionalContent() {
 // =================================================================
 export function DeadCrossCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/dead-cross"
       additionalContent={<DeadCrossAdditionalContent />}
     >
       <DeadCrossSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

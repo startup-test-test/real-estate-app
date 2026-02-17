@@ -3,7 +3,7 @@
  */
 
 // レイアウト系
-export { ToolPageLayout } from './ToolPageLayout'
+export { ContentPageLayout } from './ContentPageLayout'
 export { ToolPageHeader } from './ToolPageHeader'
 export { ToolSidebar } from './ToolSidebar'
 export { ToolMobileSidebar } from './ToolMobileSidebar'

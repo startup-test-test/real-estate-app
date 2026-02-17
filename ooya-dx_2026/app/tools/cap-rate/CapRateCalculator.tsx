@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Calculator, AlertTriangle } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { calculateCapRate, calculateYieldGap } from '@/lib/calculators/cap-rate'
@@ -20,17 +20,17 @@ const tocItems: TocItem[] = [
 
 /**
  * キャップレート（還元利回り）シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function CapRateCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/cap-rate"
       additionalContent={<CapRateAdditionalContent />}
     >
       <CapRateSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

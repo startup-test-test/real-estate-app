@@ -1,4 +1,4 @@
-# ToolPageLayout 設計詳細
+# ContentPageLayout 設計詳細
 
 ## 概要
 
@@ -6,12 +6,12 @@
 
 ---
 
-## ToolPageLayout.tsx
+## ContentPageLayout.tsx
 
 ### Props
 
 ```typescript
-interface ToolPageLayoutProps {
+interface ContentPageLayoutProps {
   /** ページタイトル（H1・パンくず・OGP用） */
   title: string
 
@@ -32,13 +32,13 @@ interface ToolPageLayoutProps {
 ### 構造
 
 ```tsx
-export function ToolPageLayout({
+export function ContentPageLayout({
   title,
   toolPath,
   publishDate,
   children,
   additionalContent,
-}: ToolPageLayoutProps) {
+}: ContentPageLayoutProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
@@ -256,7 +256,7 @@ export function SimulatorCTA({ mobile = false }: SimulatorCTAProps) {
 // app/tools/yield/YieldCalculator.tsx
 export function YieldCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title="表面利回り・実質利回り計算シミュレーター"
       toolPath="/tools/yield"
       publishDate="2026-01-15"
@@ -269,7 +269,7 @@ export function YieldCalculator() {
       }
     >
       <YieldCalculatorCompact />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 ```

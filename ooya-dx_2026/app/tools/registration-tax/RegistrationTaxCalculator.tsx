@@ -1,6 +1,6 @@
 'use client'
 
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { RegistrationTaxCalculatorCompact } from '@/components/calculators'
@@ -127,12 +127,12 @@ function RegistrationTaxAdditionalContent() {
 // =================================================================
 export function RegistrationTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/registration-tax"
       additionalContent={<RegistrationTaxAdditionalContent />}
     >
       <RegistrationTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }

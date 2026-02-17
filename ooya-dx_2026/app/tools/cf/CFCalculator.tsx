@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { calculateCF } from '@/lib/calculators/cf'
@@ -19,17 +19,17 @@ const tocItems: TocItem[] = [
 
 /**
  * キャッシュフローシミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function CFCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/cf"
       additionalContent={<CFAdditionalContent />}
     >
       <CFSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

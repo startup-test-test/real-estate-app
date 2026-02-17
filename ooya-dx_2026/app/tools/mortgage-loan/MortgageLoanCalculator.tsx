@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Home, Info } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NumberInput } from '@/components/tools/NumberInput'
 import {
@@ -24,17 +24,17 @@ const tocItems: TocItem[] = [
 
 /**
  * 住宅ローンシミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function MortgageLoanCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/mortgage-loan"
       additionalContent={<MortgageLoanAdditionalContent />}
     >
       <MortgageLoanSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { Info } from 'lucide-react'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { NOICalculatorCompact } from '@/components/calculators'
 
@@ -19,17 +19,17 @@ const tocItems: TocItem[] = [
 
 /**
  * NOI（営業純収益）シミュレーター
- * ToolPageLayoutを使用した2カラムレイアウト
+ * ContentPageLayoutを使用した2カラムレイアウト
  */
 export function NOICalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/noi"
       additionalContent={<NOIAdditionalContent />}
     >
       <NOICalculatorCompact showTitle={true} />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
 

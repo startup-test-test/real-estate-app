@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { NumberInput } from '@/components/tools/NumberInput'
 import { QuickReferenceTable3Col, QuickReferenceRow3Col } from '@/components/tools/QuickReferenceTable'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
-import { ToolPageLayout } from '@/components/tools/ToolPageLayout'
+import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import {
   calculateInheritanceTax,
   INHERITANCE_TAX_QUICK_TABLE,
@@ -332,12 +332,12 @@ function InheritanceTaxAdditionalContent() {
 
 export function InheritanceTaxCalculator() {
   return (
-    <ToolPageLayout
+    <ContentPageLayout
       title={PAGE_TITLE}
       toolPath="/tools/inheritance-tax"
       additionalContent={<InheritanceTaxAdditionalContent />}
     >
       <InheritanceTaxSimulator />
-    </ToolPageLayout>
+    </ContentPageLayout>
   )
 }
