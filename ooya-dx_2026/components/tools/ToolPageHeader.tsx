@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { ToolsBreadcrumb } from './ToolsBreadcrumb'
 import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
@@ -27,12 +28,20 @@ export function ToolPageHeader({ title, toolPath, publishDate }: ToolPageHeaderP
       {/* パンくず */}
       <ToolsBreadcrumb currentPage={title} />
 
-      {/* 日付 */}
-      <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+      {/* 日付・執筆者 */}
+      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
         {displayPublishDate && <span>公開日：{displayPublishDate}</span>}
         {toolInfo?.lastUpdated && (
           <span>更新日：{formatToolDate(toolInfo.lastUpdated)}</span>
         )}
+        <Link href="/profile" className="flex items-center gap-1.5 hover:text-blue-600 transition-colors">
+          <img
+            src="/images/profile/profile.jpg"
+            alt="東後 哲郎"
+            className="w-5 h-5 rounded-full object-cover"
+          />
+          <span>執筆者：東後 哲郎</span>
+        </Link>
       </div>
 
       {/* H1タイトル */}

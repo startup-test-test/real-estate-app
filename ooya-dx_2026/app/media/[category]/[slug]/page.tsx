@@ -174,14 +174,22 @@ export default async function ArticlePage({ params }: Props) {
               <span className="text-gray-900">{article.category}</span>
             </nav>
 
-            {/* カテゴリー & 日付 */}
-            <div className="flex items-center gap-3 mb-4">
+            {/* カテゴリー & 日付 & 執筆者 */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
                 {article.category}
               </span>
               <time className="text-xs text-gray-400">
                 {formatDate(article.date)}
               </time>
+              <Link href="/profile" className="flex items-center gap-1.5 text-xs text-gray-900 hover:text-blue-600 transition-colors">
+                <img
+                  src="/images/profile/profile.jpg"
+                  alt="東後 哲郎"
+                  className="w-5 h-5 rounded-full object-cover"
+                />
+                <span>執筆者：東後 哲郎</span>
+              </Link>
             </div>
 
             {/* タイトル */}

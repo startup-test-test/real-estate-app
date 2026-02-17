@@ -139,22 +139,22 @@ export default function MediaPage() {
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100 group-hover:ring-primary-200 transition-all">
                   <img
                     src="/images/profile/profile.jpg"
-                    alt="Tetsuro Togo"
+                    alt="東後 哲郎"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
-                      Tetsuro Togo
+                      東後 哲郎
                     </h3>
                     <span className="text-xs text-gray-400">著者</span>
                   </div>
                   <p className="text-sm text-gray-600 mb-1">
-                    株式会社StartupMarketing 代表取締役
+                    株式会社StartupMarketing 代表取締役　1987年 宮崎生まれ
                   </p>
                   <p className="text-xs text-gray-500 line-clamp-2">
-                    2025年9月時点で7戸購入、1戸売却、現在6戸保有。開発×マーケ×不動産の掛け合わせで、再生と収益改善に強み。
+                    不動産購入実績（都内〜埼玉7軒 / 総購入額1.7億円 / 家賃収入500万円）｜大家DXの企画・開発者｜Web開発・マーケティング歴18年
                   </p>
                 </div>
                 <div className="hidden sm:flex items-center text-sm text-primary-600 group-hover:translate-x-1 transition-transform">
