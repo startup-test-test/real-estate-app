@@ -6,6 +6,7 @@ import { LandingFooter } from '@/components/landing-footer';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import type { Metadata } from 'next';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 interface Props {
   params: Promise<{ category: string }>;
@@ -87,7 +88,7 @@ export default async function CategoryPage({ params }: Props) {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <HeaderSpacer />
 
       {/* カテゴリヘッダー */}
       <div className="bg-gray-50 border-b border-gray-100">

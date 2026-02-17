@@ -10,6 +10,7 @@ import { ResultCard } from '@/components/tools/ResultCard'
 import { QuickReferenceTable, QuickReferenceRow } from '@/components/tools/QuickReferenceTable'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { ToolsBreadcrumb } from '@/components/tools/ToolsBreadcrumb'
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 // import { calculateXxx } from '@/lib/calculators/xxx'
 
 // =================================================================
@@ -52,7 +53,7 @@ export function TemplateCalculator() {
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
+        <HeaderSpacer />
 
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-4 sm:px-5 py-4 sm:py-6 md:py-8">

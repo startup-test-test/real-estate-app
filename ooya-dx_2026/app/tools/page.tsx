@@ -4,6 +4,7 @@ import { ChevronRight, ArrowRight, TrendingUp, Building, BarChart3, Receipt, Lan
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { toolCategories } from '@/lib/navigation'
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -129,7 +130,7 @@ export default function ToolsPage() {
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
+        <HeaderSpacer />
 
         <main className="flex-1">
           {/* メインビジュアル */}

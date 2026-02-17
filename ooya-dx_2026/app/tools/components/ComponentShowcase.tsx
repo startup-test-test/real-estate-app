@@ -10,6 +10,7 @@ import { ResultCard } from '@/components/tools/ResultCard'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { CalculatorNote } from '@/components/tools/CalculatorNote'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 // サンプルデータ
 const sampleQuickRef: QuickReferenceRow[] = [
@@ -40,7 +41,7 @@ export function ComponentShowcase() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <LandingHeader />
-      <div className="h-[52px] sm:h-[64px] md:h-[80px]"></div>
+      <HeaderSpacer />
 
       <main className="flex-1 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-12">

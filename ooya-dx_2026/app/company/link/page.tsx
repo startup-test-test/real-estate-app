@@ -5,6 +5,7 @@ import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -72,7 +73,7 @@ export default function LinkPage() {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <HeaderSpacer />
 
       <main className="flex-1">
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">

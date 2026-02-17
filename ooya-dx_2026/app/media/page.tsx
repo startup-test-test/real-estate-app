@@ -8,6 +8,7 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import { Home } from 'lucide-react';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -82,7 +83,7 @@ export default function MediaPage() {
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[72px] sm:h-[88px]"></div>
+        <HeaderSpacer />
 
         {/* パンくずリスト */}
         <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 w-full">

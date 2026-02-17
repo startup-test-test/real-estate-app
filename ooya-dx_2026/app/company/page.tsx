@@ -6,6 +6,7 @@ import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 export const metadata: Metadata = {
   title: '会社概要 ｜株式会社StartupMarketing',
@@ -55,7 +56,7 @@ export default function CompanyPage() {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <HeaderSpacer />
 
       <main className="flex-1">
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">

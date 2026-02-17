@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 import Link from 'next/link';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -59,7 +60,7 @@ export default function ContactPage() {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <HeaderSpacer />
 
       <main className="flex-1">
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">

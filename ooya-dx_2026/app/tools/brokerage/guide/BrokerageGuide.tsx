@@ -9,6 +9,7 @@ import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
 import { TOOLS_CATEGORY_NAME } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 
 // ページタイトル
@@ -34,7 +35,7 @@ export function BrokerageGuide() {
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[72px] sm:h-[88px]"></div>
+      <HeaderSpacer />
 
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">

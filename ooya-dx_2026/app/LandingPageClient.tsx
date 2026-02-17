@@ -7,6 +7,7 @@ import CompanyProfile from '@/components/landing/CompanyProfile';
 import { LandingFooter } from '@/components/landing-footer';
 import { SharedHeader } from '@/components/shared-header';
 import { toolCategories } from '@/lib/navigation';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 interface Article {
   slug: string;
   categorySlug: string;
@@ -62,7 +63,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
       <SharedHeader />
 
       {/* Spacer for fixed header */}
-      <div className="h-[72px] sm:h-[88px]" />
+      <HeaderSpacer />
 
       {/* Hero Section */}
       <section className="relative w-full min-h-[400px] sm:min-h-[480px] md:min-h-[560px]">

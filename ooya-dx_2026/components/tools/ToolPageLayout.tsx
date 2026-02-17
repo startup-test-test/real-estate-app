@@ -10,6 +10,7 @@ import { ToolDisclaimer } from './ToolDisclaimer'
 import { CompanyProfileCompact } from './CompanyProfileCompact'
 import { CalculatorNote } from './CalculatorNote'
 import { ShareButtons } from './ShareButtons'
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 interface ToolPageLayoutProps {
   /** ページタイトル（H1・パンくず用） */
@@ -52,7 +53,7 @@ export function ToolPageLayout({
       <LandingHeader />
 
       {/* ヘッダー固定時のスペーサー */}
-      <div className="h-[52px] sm:h-[64px] md:h-[80px]" />
+      <HeaderSpacer />
 
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">

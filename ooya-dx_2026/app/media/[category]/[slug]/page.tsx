@@ -12,6 +12,7 @@ import { RelatedTools } from '@/components/tools/RelatedTools';
 import { ShareButtons } from '@/components/tools/ShareButtons';
 import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat';
 import Link from 'next/link';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 interface Props {
   params: Promise<{
@@ -159,7 +160,7 @@ export default async function ArticlePage({ params }: Props) {
         <LandingHeader />
 
         {/* ヘッダー固定時のスペーサー */}
-        <div className="h-[72px] sm:h-[88px]"></div>
+        <HeaderSpacer />
 
         <main className="flex-1">
           <article className="max-w-2xl mx-auto px-5 py-12">

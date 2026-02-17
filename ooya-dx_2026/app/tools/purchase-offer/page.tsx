@@ -4,6 +4,7 @@ import React from 'react';
 import { SharedHeader } from '@/components/shared-header';
 import { LandingFooter } from '@/components/landing-footer';
 import PurchaseOfferGenerator from '@/components/tools/PurchaseOfferGenerator';
+import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 export default function PurchaseOfferPage() {
   return (
@@ -11,7 +12,7 @@ export default function PurchaseOfferPage() {
       <div className="print:hidden">
         <SharedHeader />
       </div>
-      <div className="h-[52px] sm:h-[64px] md:h-[80px] print:hidden" />
+      <div className="print:hidden"><HeaderSpacer /></div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-5 py-4 sm:py-6 md:py-8">
         <PurchaseOfferGenerator
