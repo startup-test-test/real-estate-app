@@ -1,8 +1,13 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { AlertCircle, Calculator, Download, BarChart3, Save, ArrowLeft } from 'lucide-react';
-import CFSimpleChart from '@/components/simulator/CFSimpleChart';
+
+const CFSimpleChart = dynamic(() => import('@/components/simulator/CFSimpleChart'), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-64 text-gray-500">チャート読み込み中...</div>,
+});
 import { SimulationResultData, CashFlowData } from '@/types/simulation';
 import { API_ENDPOINTS } from '@/lib/config/api';
 import { transformFormDataToApiData } from '@/lib/utils/dataTransform';

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 // TODO: 認証移行後に有効化
 // import { useSupabaseData } from "@/hooks/useSupabaseData";
@@ -32,8 +33,9 @@ import {
   sampleProperty,
   hasTutorialBeenCompleted
 } from "@/data/sampleProperty";
-// React 19対応: react-joyride 2.9.3で動作確認
-import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+// React 19対応: react-joyride 2.9.3で動作確認（dynamic import化）
+import type { CallBackProps, Step } from 'react-joyride';
+const Joyride = dynamic(() => import('react-joyride'), { ssr: false });
 
 const MyPage: React.FC = () => {
   const router = useRouter();
@@ -1450,7 +1452,7 @@ const MyPage: React.FC = () => {
         disableOverlayClose={false}
         callback={(data: CallBackProps) => {
           const { status } = data;
-          const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+          const finishedStatuses: string[] = ['finished', 'skipped'];
           
           if (finishedStatuses.includes(status)) {
             setRunTutorial(false);

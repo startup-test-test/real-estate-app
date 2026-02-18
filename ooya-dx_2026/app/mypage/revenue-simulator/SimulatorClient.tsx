@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import {
   CheckCircle,
   AlertCircle,
@@ -18,7 +19,10 @@ import { useSearchParams } from 'next/navigation';
 // import { useAuthContext } from '@/components/AuthProvider';
 // import { useUsageStatus } from '@/hooks/useUsageStatus';
 // 無料化対応: UpgradeModal, UsageStatusBar を削除
-import CashFlowChart from '@/components/simulator/CashFlowChart';
+const CashFlowChart = dynamic(() => import('@/components/simulator/CashFlowChart'), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-64 text-gray-500">チャート読み込み中...</div>,
+});
 import Tooltip from '@/components/simulator/Tooltip';
 import ErrorAlert from '@/components/simulator/ErrorMessage';
 import ErrorModal from '@/components/simulator/ErrorModal';
