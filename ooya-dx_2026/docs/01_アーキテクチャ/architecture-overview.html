@@ -512,7 +512,7 @@
 | Logo h-7 (28px)     |
 | py-2 (8px)          |
 +---------------------+
-| px-3(12px) py-12    |
+| px-3(12px) pt-4     |
 |                     |
 | [パンくず] 14px      |
 | [日付] 12px         |
@@ -540,7 +540,7 @@
 | [Header] h-55px (md)                         |
 | Logo h-10 (40px)  | pt-8 pb-4               |
 +----------------------------------------------+
-| px-8(32px) py-12(48px)                       |
+| px-8(32px) pt-8(32px)                        |
 |                                              |
 | [パンくず] 14px                                |
 | [日付] 12px  [執筆者icon+name]                |
@@ -724,7 +724,7 @@
   <tr><td><strong>ヘッダーpadding</strong></td><td>py-2 (8px)</td><td>py-4 (16px)</td><td>pt-8 pb-4 (32+16px)</td><td>同左</td></tr>
   <tr><td><strong>コンテナ横padding</strong></td><td>px-3 (12px)</td><td>px-6 (24px)</td><td>同左</td><td>px-8 (32px)</td></tr>
   <tr><td><strong>コンテナ縦padding (ツール)</strong></td><td>py-4 (16px)</td><td>py-6 (24px)</td><td>py-8 (32px)</td><td>同左</td></tr>
-  <tr><td><strong>コンテナ縦padding (company等)</strong></td><td>py-12 (48px)</td><td>同左</td><td>同左</td><td>同左</td></tr>
+  <tr><td><strong>コンテナ縦padding (company等)</strong></td><td>pt-4 pb-4 (16px)</td><td>pt-6 pb-6 (24px)</td><td>pt-8 pb-8 (32px)</td><td>同左</td></tr>
   <tr><td><strong>セクション間</strong></td><td>mb-8 (32px)</td><td>同左</td><td>同左</td><td>同左</td></tr>
   <tr><td><strong>見出し下</strong></td><td>mb-4 (16px)</td><td>mb-6 (24px)</td><td>同左</td><td>同左</td></tr>
   <tr><td><strong>段落間</strong></td><td>mb-4 (16px)</td><td>同左</td><td>同左</td><td>同左</td></tr>
@@ -784,13 +784,14 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
 <p>全ページの日付表示を <code>text-xs text-gray-900 mb-2 sm:mb-4</code> に統一。日付データは <code>lib/navigation.ts</code> の各config（<code>toolCategories</code>・<code>allCompanyPages</code>・<code>otherPublicPages</code>等）で一元管理し、<code>getPageInfo()</code> + <code>formatToolDate()</code> で表示。</p>
 </div>
 
-<h3>コンテンツ上余白（py）</h3>
+<h3>コンテンツ上余白（py） <span class="badge badge-green">✅ 統一済</span></h3>
 <div class="card">
 <table>
-  <tr><th>ページ種別</th><th>値</th></tr>
-  <tr><td>company系（pricing・faq含む）・profile</td><td><code>py-12</code></td></tr>
-  <tr><td>ツール系（ContentPageLayout）</td><td><code>py-4 sm:py-6 md:py-8</code></td></tr>
-  <tr><td>media トップ</td><td>py指定なし（パンくずにpy-3）</td></tr>
+  <tr><th>ページ種別</th><th>値</th><th>管理場所</th></tr>
+  <tr><td>company系（pricing・faq含む）・profile</td><td><code>pt-4 pb-4 sm:pt-6 sm:pb-6 md:pt-8 md:pb-8</code></td><td>CompanyPageLayout.tsx</td></tr>
+  <tr><td>ツール系（ContentPageLayout）</td><td><code>pt-4 pb-4 sm:pt-6 sm:pb-6 md:pt-8 md:pb-8</code></td><td>ContentPageLayout.tsx</td></tr>
+  <tr><td>BrokerageGuide</td><td><code>pt-4 pb-4 sm:pt-6 sm:pb-6 md:pt-8 md:pb-8</code></td><td>BrokerageGuide.tsx</td></tr>
+  <tr><td>media トップ</td><td>py指定なし（パンくずにpy-3）</td><td>個別</td></tr>
 </table>
 </div>
 
@@ -826,7 +827,7 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
     <td>タイポグラフィ</td>
     <td>クラスは概ね統一だが色にブレ</td>
     <td>CSS変数 or Tailwind設定</td>
-    <td><span class="badge badge-red">未着手</span></td>
+    <td><span class="badge badge-green">✅ 済</span></td>
   </tr>
   <tr>
     <td><strong>低</strong></td>

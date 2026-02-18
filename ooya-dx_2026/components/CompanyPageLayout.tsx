@@ -8,7 +8,9 @@ export function CompanyPageLayout({ children }: { children: React.ReactNode }) {
       <LandingHeader />
       <HeaderSpacer />
       <main className="flex-1 overflow-x-hidden">
-        {children}
+        <div className="pt-4 pb-4 sm:pt-6 sm:pb-6 md:pt-8 md:pb-8">
+          {children}
+        </div>
       </main>
       <LandingFooter />
     </div>

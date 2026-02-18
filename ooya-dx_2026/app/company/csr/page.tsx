@@ -55,7 +55,7 @@ export default function CSRPage() {
         breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'CSR・健康経営', href: '/company/csr' }]}
       />
 
-        <article className="max-w-4xl mx-auto px-5 py-12">
+        <article className="max-w-4xl mx-auto px-5">
           {/* パンくず */}
           <Breadcrumb items={[
             { label: '賃貸経営ツール 大家DX', href: '/' },

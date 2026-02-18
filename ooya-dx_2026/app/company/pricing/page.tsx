@@ -12,7 +12,7 @@ import { getPageInfo, formatToolDate } from '@/lib/navigation';
  */
 const PremiumPlan: React.FC = () => {
   return (
-    <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+    <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
       {/* パンくず */}
       <Breadcrumb items={[
         { label: '賃貸経営ツール 大家DX', href: '/' },

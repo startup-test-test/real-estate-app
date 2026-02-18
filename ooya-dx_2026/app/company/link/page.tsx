@@ -67,7 +67,7 @@ export default function LinkPage() {
         dateModified="2026-02-05"
         breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: '相互リンク', href: '/company/link' }]}
       />
-        <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+        <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           {/* パンくず */}
           <Breadcrumb items={[
             { label: '賃貸経営ツール 大家DX', href: '/' },

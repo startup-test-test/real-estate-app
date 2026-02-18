@@ -125,7 +125,7 @@ const FAQ: React.FC = () => {
   })).filter(category => category.items.length > 0);
 
   return (
-    <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+    <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
       {/* パンくず */}
       <Breadcrumb items={[
         { label: '賃貸経営ツール 大家DX', href: '/' },
@@ -149,7 +149,7 @@ const FAQ: React.FC = () => {
           <HelpCircle className="h-8 w-8 text-blue-600 mr-3" />
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">よくある質問</h1>
         </div>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-700">
             大家DXに関するよくある質問と回答をまとめました。お探しの情報が見つからない場合は、お気軽にサポートまでお問い合わせください。
           </p>
         </div>
@@ -206,7 +206,7 @@ const FAQ: React.FC = () => {
                         
                         {isOpen && (
                           <div className="px-6 pb-4">
-                            <p className="text-gray-600 leading-relaxed">{item.answer}</p>
+                            <p className="text-gray-700 leading-relaxed">{item.answer}</p>
                           </div>
                         )}
                       </div>
@@ -223,7 +223,7 @@ const FAQ: React.FC = () => {
           <div className="text-center mb-6">
             <MessageCircle className="h-12 w-12 text-blue-600 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">お探しの情報が見つかりませんか？</h2>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               サポートチームが迅速にお答えします。お気軽にお問い合わせください。
             </p>
           </div>

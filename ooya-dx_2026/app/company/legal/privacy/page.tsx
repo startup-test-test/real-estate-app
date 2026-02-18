@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         dateModified="2026-02-05"
         breadcrumbs={[{ name: 'プライバシーポリシー', href: '/company/legal/privacy' }]}
       />
-    <article className="mx-auto max-w-4xl px-6 py-12">
+    <article className="mx-auto max-w-4xl px-6">
       {/* パンくず */}
       <Breadcrumb items={[
         { label: '賃貸経営ツール 大家DX', href: '/' },

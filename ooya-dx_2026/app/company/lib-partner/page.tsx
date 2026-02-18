@@ -74,7 +74,7 @@ export default function LibPartnerPage() {
         dateModified="2026-01-15"
         breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'LiB Partner', href: '/company/lib-partner' }]}
       />
-        <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+        <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           {/* パンくず */}
           <Breadcrumb items={[
             { label: '賃貸経営ツール 大家DX', href: '/' },

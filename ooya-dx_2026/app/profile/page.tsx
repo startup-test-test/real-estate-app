@@ -177,7 +177,7 @@ export default function ProfilePage() {
         breadcrumbs={[{ name: 'プロフィール', href: '/profile' }]}
       />
 
-      <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+      <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             {/* パンくず */}
             <Breadcrumb items={[
               { label: '賃貸経営ツール 大家DX', href: '/' },
@@ -330,19 +330,19 @@ export default function ProfilePage() {
                         </div>
                         <div className="flex-1 pt-2 pb-5 px-5 sm:pt-2 sm:pb-6 sm:px-6">
                           <dl className="divide-y divide-gray-300 text-base mb-4">
-                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd className="text-gray-900">{property.type}</dd></div>
-                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd className="text-gray-900">{property.area}</dd></div>
-                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd className="text-gray-900">{property.building}</dd></div>
-                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">融資</dt><dd className="text-gray-900">{property.finance}</dd></div>
+                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">物件種類</dt><dd className="text-gray-700">{property.type}</dd></div>
+                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">エリア</dt><dd className="text-gray-700">{property.area}</dd></div>
+                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">建物面積</dt><dd className="text-gray-700">{property.building}</dd></div>
+                            <div className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">融資</dt><dd className="text-gray-700">{property.finance}</dd></div>
                             {property.extraFields.map((field, i) => (
-                              <div key={i} className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">{field.label}</dt><dd className="text-gray-900">{field.value}</dd></div>
+                              <div key={i} className="flex py-2"><dt className="text-gray-900 w-24 flex-shrink-0">{field.label}</dt><dd className="text-gray-700">{field.value}</dd></div>
                             ))}
                           </dl>
                           <p className="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong></p>
                           <p className="text-base text-gray-700 leading-relaxed mb-4">{property.reason}</p>
                           <div className="border-t border-gray-100 pt-4 mt-4">
-                            <p className="text-sm text-gray-400 mb-1">今後執筆予定：</p>
-                            <p className="text-sm text-gray-400">{property.futurePlans}</p>
+                            <p className="text-sm text-gray-500 mb-1">今後執筆予定：</p>
+                            <p className="text-sm text-gray-500">{property.futurePlans}</p>
                           </div>
                         </div>
                       </div>

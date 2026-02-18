@@ -40,7 +40,7 @@ export default function TeamBeyondPage() {
         dateModified="2026-02-05"
         breadcrumbs={[{ name: '会社概要', href: '/company' }, { name: 'Team Beyond', href: '/company/teambeyond' }]}
       />
-        <article className="max-w-4xl mx-auto px-5 py-12">
+        <article className="max-w-4xl mx-auto px-5">
           {/* パンくず */}
           <Breadcrumb items={[
             { label: '賃貸経営ツール 大家DX', href: '/' },
