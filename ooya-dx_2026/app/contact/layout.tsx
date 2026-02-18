@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { WebPageJsonLd } from '@/components/WebPageJsonLd'
-import { LandingHeader } from '@/components/landing-header';
-import { LandingFooter } from '@/components/landing-footer';
-import { HeaderSpacer } from '@/components/HeaderSpacer';
+import { CompanyPageLayout } from '@/components/CompanyPageLayout';
 
 export const metadata: Metadata = {
   title: 'お問い合わせ｜大家DX',
@@ -27,14 +25,7 @@ export default function ContactLayout({
         dateModified="2026-01-15"
         breadcrumbs={[{ name: 'お問い合わせ', href: '/contact' }]}
       />
-      <div className="min-h-screen bg-white flex flex-col">
-        <LandingHeader />
-        <HeaderSpacer />
-        <main className="flex-1 overflow-x-hidden">
-          {children}
-        </main>
-        <LandingFooter />
-      </div>
+      <CompanyPageLayout>{children}</CompanyPageLayout>
     </>
   )
 }

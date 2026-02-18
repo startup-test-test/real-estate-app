@@ -160,7 +160,7 @@
 <div class="container">
 
 <h1>ooya-dx アーキテクチャ概要</h1>
-<p class="subtitle">最終更新：2026年2月17日 ｜ 全74ページ ｜ Next.js App Router</p>
+<p class="subtitle">最終更新：2026年2月18日 ｜ 全74ページ ｜ Next.js App Router</p>
 
 <!-- Stats -->
 <div class="stats-grid">
@@ -175,7 +175,7 @@
   <div class="toc-title">目次</div>
   <div class="toc-grid">
     <a href="#templates">1. レイアウトテンプレート</a>
-    <a href="#layouts">2. layout.tsx 一覧</a>
+    <a href="#layouts">2. CompanyPageLayout 使用ファイル一覧</a>
     <a href="#pages">3. 全ページ一覧（74p）</a>
     <a href="#components">4. 共通コンポーネント</a>
     <a href="#diagrams">5. HTML構造パターン</a>
@@ -193,98 +193,54 @@
 
 <div class="card">
 <table>
-  <tr><th>テンプレート</th><th>用途</th><th>ページ数</th><th>状態</th></tr>
+  <tr><th>テンプレート</th><th>用途</th><th>ページ数</th><th>サンプルURL</th><th>状態</th></tr>
   <tr>
-    <td><code>layout.tsx</code>（公開ページ共通）</td>
-    <td>company系・profile・legal・contact等</td>
+    <td><code>CompanyPageLayout</code></td>
+    <td>company系・profile・legal・contact等（1カラム）</td>
     <td><strong>19ページ</strong></td>
+    <td><a href="http://localhost:3002/layout-sample" target="_blank"><code>/layout-sample</code></a></td>
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
     <td><code>ContentPageLayout</code></td>
     <td>ツール計算ページ＋メディア記事用（2カラムLP型）</td>
     <td>~42ページ</td>
+    <td><a href="http://localhost:3002/tools/template-demo" target="_blank"><code>/tools/template-demo</code></a></td>
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
     <td><code>DashboardLayout</code></td>
     <td>ログイン後マイページ用（サイドバー）</td>
     <td>~7ページ</td>
+    <td>-</td>
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
     <td><strong>独自LP（ページ固有レイアウト）</strong></td>
     <td>media一覧・トップページ等</td>
     <td>~3ページ</td>
+    <td>-</td>
     <td><span class="badge badge-blue">独自設計</span></td>
   </tr>
 </table>
 </div>
 
-<h3>ContentPageLayout（<code>components/tools/ContentPageLayout.tsx</code>）</h3>
-<div class="ascii-diagram"><pre>LandingHeader
-HeaderSpacer
-main <span class="comment">(max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8)</span>
-  └─ grid <span class="comment">(lg:grid-cols-[1fr_300px] lg:gap-10)</span>
-       ├─ <span class="highlight">article</span>（左カラム）
-       │    ├─ ToolPageHeader <span class="comment">（パンくず・日付・執筆者）</span>
-       │    ├─ children <span class="comment">（計算機本体）</span>
-       │    ├─ CalculatorNote
-       │    ├─ ShareButtons
-       │    ├─ additionalContent
-       │    ├─ ToolDisclaimer
-       │    ├─ ToolMobileSidebar
-       │    └─ CompanyProfileCompact
-       └─ <span class="highlight">aside</span>（右カラム・PC only）
-            └─ ToolSidebar
-LandingFooter</pre></div>
-
-<h3>DashboardLayout（<code>components/dashboard/DashboardLayout.tsx</code>）</h3>
-<div class="ascii-diagram"><pre>固定サイドバー <span class="comment">(w-72・PC)</span> / ハンバーガーメニュー <span class="comment">(SP)</span>
-  ├─ ロゴ
-  ├─ ユーザーアバター
-  ├─ ナビゲーション
-  └─ 法務リンク
-メインコンテンツ <span class="comment">(lg:pl-72 pt-20 lg:pt-0)</span>
-  └─ children</pre></div>
-
-<h3>テンプレートサンプルURL</h3>
-<div class="card">
-<table>
-  <tr><th>テンプレート</th><th>サンプルURL</th><th>構造</th></tr>
-  <tr>
-    <td>layout.tsx（公開ページ共通）</td>
-    <td><a href="http://localhost:3002/layout-sample" target="_blank"><code>/layout-sample</code></a></td>
-    <td>シンプル1カラム</td>
-  </tr>
-  <tr>
-    <td>ContentPageLayout</td>
-    <td><a href="http://localhost:3002/tools/template-demo" target="_blank"><code>/tools/template-demo</code></a></td>
-    <td>2カラムLP型</td>
-  </tr>
-</table>
-</div>
-
-<h3>layout.tsx 共通パターン（公開ページ19ページ）</h3>
-<div class="ascii-diagram"><pre>LandingHeader
-HeaderSpacer
-main <span class="comment">(flex-1 overflow-x-hidden)</span>
-  └─ {children}   <span class="comment">← 各ページの article 要素のみ</span>
-LandingFooter</pre></div>
 
 <!-- ========== 2. LAYOUT.TSX ========== -->
-<h2 id="layouts">2. layout.tsx 一覧（7ファイル）</h2>
+<h2 id="layouts">2. CompanyPageLayout 使用ファイル一覧（8ファイル）</h2>
+<p style="font-size:13px; color:var(--gray-500); margin-bottom:16px;">すべて <code>components/CompanyPageLayout.tsx</code> をimport。レイアウト変更は1ファイルで完結。</p>
 
 <div class="card">
 <table>
-  <tr><th>#</th><th>ファイル</th><th>対象ページ数</th><th>状態</th></tr>
-  <tr><td>1</td><td><code>app/company/layout.tsx</code></td><td>12ページ</td><td><span class="badge badge-blue">新規作成</span></td></tr>
-  <tr><td>2</td><td><code>app/profile/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-blue">新規作成</span></td></tr>
-  <tr><td>3</td><td><code>app/contact/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
-  <tr><td>4</td><td><code>app/legal/layout.tsx</code></td><td>2ページ</td><td><span class="badge badge-blue">新規作成</span></td></tr>
-  <tr><td>5</td><td><code>app/disclaimer/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
-  <tr><td>6</td><td><code>app/pricing/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
-  <tr><td>7</td><td><code>app/faq/layout.tsx</code></td><td>1ページ</td><td><span class="badge badge-green">既存修正</span></td></tr>
+  <tr><th>#</th><th>ファイル</th><th>対象ページ数</th><th>metadata / JSON-LD</th></tr>
+  <tr><td>1</td><td><code>app/company/layout.tsx</code></td><td>12ページ</td><td>-</td></tr>
+  <tr><td>2</td><td><code>app/profile/layout.tsx</code></td><td>1ページ</td><td>-</td></tr>
+  <tr><td>3</td><td><code>app/contact/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
+  <tr><td>4</td><td><code>app/legal/layout.tsx</code></td><td>2ページ</td><td>-</td></tr>
+  <tr><td>5</td><td><code>app/disclaimer/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
+  <tr><td>6</td><td><code>app/pricing/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
+  <tr><td>7</td><td><code>app/faq/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
+  <tr><td>8</td><td><code>app/layout-sample/layout.tsx</code></td><td>1ページ</td><td>-</td></tr>
 </table>
 </div>
 
@@ -295,7 +251,7 @@ LandingFooter</pre></div>
 <div class="card" style="overflow-x: auto;">
 <table>
   <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
-  <tr><td><code>/tools</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>BreadcrumbList+WebPage</td><td>7xl</td></tr>
+  <tr><td><code>/tools</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>BreadcrumbList+WebPage</td><td>7xl</td></tr>
   <tr><td><code>/tools/cf</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
   <tr><td><code>/tools/brokerage</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
   <tr><td><code>/tools/yield-rate</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
@@ -324,7 +280,7 @@ LandingFooter</pre></div>
   <tr><td><code>/tools/assessed-value</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
   <tr><td><code>/tools/simulator</code></td><td>カスタム</td><td>カスタム（SimulatorLP）</td><td>-</td><td>カスタム</td><td>-</td></tr>
   <tr><td><code>/tools/purchase-offer</code></td><td>カスタム</td><td>SharedHeader</td><td>-</td><td>-</td><td>-</td></tr>
-  <tr><td><code>/tools/brokerage/guide</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>4xl</td></tr>
+  <tr><td><code>/tools/brokerage/guide</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>4xl</td></tr>
 </table>
 </div>
 
@@ -332,18 +288,18 @@ LandingFooter</pre></div>
 <div class="card" style="overflow-x: auto;">
 <table>
   <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th><th>CompanyNav</th></tr>
-  <tr><td><code>/company</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
-  <tr><td><code>/company/portfolio</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
-  <tr><td><code>/company/service</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
-  <tr><td><code>/company/contact</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/csr</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/sdgs</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/link</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/lib-partner</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/teambeyond</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/climate-adaptation</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/plastics-smart</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
-  <tr><td><code>/company/consumer-policy</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/portfolio</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/service</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>あり</td></tr>
+  <tr><td><code>/company/contact</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/csr</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/sdgs</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/link</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/lib-partner</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/teambeyond</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/climate-adaptation</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/plastics-smart</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr><td><code>/company/consumer-policy</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
 </table>
 </div>
 
@@ -358,11 +314,13 @@ LandingFooter</pre></div>
 
 <h4>記事一覧（13記事）</h4>
 <table>
-  <tr><th>カテゴリ</th><th>パス</th><th>テンプレート</th><th>記事数</th></tr>
+  <tr><th>カテゴリ</th><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>構造化データ</th><th>記事数</th></tr>
   <tr>
     <td rowspan="10"><strong>base</strong>（基礎知識）</td>
     <td><a href="http://localhost:3002/media/base/accounting-software" target="_blank"><code>/media/base/accounting-software</code></a></td>
     <td rowspan="10"><span class="badge badge-green">ContentPageLayout</span></td>
+    <td rowspan="10">SharedHeader（メディアロゴ）</td>
+    <td rowspan="10">Article+BreadcrumbList</td>
     <td rowspan="10">10</td>
   </tr>
   <tr><td><a href="http://localhost:3002/media/base/end-user-real-estate" target="_blank"><code>/media/base/end-user-real-estate</code></a></td></tr>
@@ -378,6 +336,8 @@ LandingFooter</pre></div>
     <td rowspan="3"><strong>kodate</strong>（戸建て）</td>
     <td><a href="http://localhost:3002/media/kodate/zikoshikin" target="_blank"><code>/media/kodate/zikoshikin</code></a></td>
     <td rowspan="3"><span class="badge badge-green">ContentPageLayout</span></td>
+    <td rowspan="3">SharedHeader（メディアロゴ）</td>
+    <td rowspan="3">Article+BreadcrumbList</td>
     <td rowspan="3">3</td>
   </tr>
   <tr><td><a href="http://localhost:3002/media/kodate/reform" target="_blank"><code>/media/kodate/reform</code></a></td></tr>
@@ -390,14 +350,14 @@ LandingFooter</pre></div>
 <table>
   <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
   <tr><td><code>/</code> (トップ)</td><td><span class="badge badge-blue">独自LP</span></td><td>SharedHeader</td><td>なし</td><td>ルートのみ</td><td>カスタム</td></tr>
-  <tr><td><code>/profile</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd+Person</td><td>7xl</td></tr>
-  <tr><td><code>/contact</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl→2xl</td></tr>
-  <tr><td><code>/pricing</code></td><td>layout.tsx</td><td>SharedHeader</td><td>Breadcrumb</td><td>layout経由</td><td>4xl</td></tr>
-  <tr><td><code>/faq</code></td><td>layout.tsx</td><td>SharedHeader</td><td>なし</td><td>FAQPage(layout)</td><td>4xl</td></tr>
-  <tr><td><code>/disclaimer</code></td><td>layout.tsx</td><td>SharedHeader</td><td>パンくず統一</td><td>-</td><td>4xl</td></tr>
-  <tr><td><code>/legal/terms</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/legal/privacy</code></td><td>layout.tsx</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/layout-sample</code></td><td>layout.tsx</td><td>SharedHeader</td><td>-</td><td>-</td><td>7xl</td></tr>
+  <tr><td><code>/profile</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd+Person</td><td>7xl</td></tr>
+  <tr><td><code>/contact</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl→2xl</td></tr>
+  <tr><td><code>/pricing</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>Breadcrumb</td><td>layout経由</td><td>4xl</td></tr>
+  <tr><td><code>/faq</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>なし</td><td>FAQPage(layout)</td><td>4xl</td></tr>
+  <tr><td><code>/disclaimer</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>パンくず統一</td><td>-</td><td>4xl</td></tr>
+  <tr><td><code>/legal/terms</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/legal/privacy</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
+  <tr><td><code>/layout-sample</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>-</td><td>-</td><td>7xl</td></tr>
   <tr><td><code>/tools/template-demo</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
 </table>
 </div>
@@ -430,6 +390,16 @@ LandingFooter</pre></div>
 
 <!-- ========== 4. COMPONENTS ========== -->
 <h2 id="components">4. 共通コンポーネント一覧</h2>
+
+<h3>レイアウト</h3>
+<div class="card">
+<table>
+  <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
+  <tr><td>CompanyPageLayout</td><td><code>components/CompanyPageLayout.tsx</code></td><td>公開ページ共通レイアウト（1カラム・19ページ）</td></tr>
+  <tr><td>ContentPageLayout</td><td><code>components/tools/ContentPageLayout.tsx</code></td><td>ツール＋メディア共通レイアウト（2カラム）</td></tr>
+  <tr><td>DashboardLayout</td><td><code>components/dashboard/DashboardLayout.tsx</code></td><td>マイページ共通レイアウト（サイドバー）</td></tr>
+</table>
+</div>
 
 <h3>ヘッダー・フッター</h3>
 <div class="card">
@@ -521,7 +491,7 @@ LandingFooter</pre></div>
 <!-- ========== 5. DIAGRAMS ========== -->
 <h2 id="diagrams">5. HTML構造パターン（ASCII図）</h2>
 
-<h3>パターンA: 公開ページ（layout.tsx型）- 19ページ</h3>
+<h3>パターンA: 公開ページ（CompanyPageLayout）- 19ページ</h3>
 <div class="ascii-diagram"><pre>+================================================================+
 | <span class="highlight">[A] Public Page</span> (company/profile/contact/legal/pricing/faq)     |
 |                                                                |
@@ -989,7 +959,7 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
     <td><strong>高</strong></td>
     <td>公開ページレイアウト</td>
     <td><span class="done">20ページで独自レイアウト</span></td>
-    <td><code>layout.tsx</code> テンプレート</td>
+    <td><code>CompanyPageLayout</code> テンプレート</td>
     <td><span class="badge badge-green">✅ 済</span></td>
   </tr>
   <tr>
@@ -1017,14 +987,14 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
     <td><strong>低</strong></td>
     <td>company系ナビ付きレイアウト</td>
     <td><span class="done">CompanyNav手動配置</span></td>
-    <td>company用layout.tsx</td>
+    <td>CompanyPageLayout</td>
     <td><span class="badge badge-green">✅ 済</span></td>
   </tr>
   <tr>
     <td><strong>中</strong></td>
     <td>media系テンプレート</td>
     <td><span class="done">記事13ページ＋カテゴリ2ページ→ContentPageLayout適用済</span><br>media一覧1ページは独自LP</td>
-    <td>残り1ページもlayout.tsx化</td>
+    <td>残り1ページもCompanyPageLayout化</td>
     <td><span class="badge badge-green">✅ ほぼ済</span></td>
   </tr>
 </table>
@@ -1033,7 +1003,7 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
 </div><!-- /.container -->
 
 <footer style="text-align:center; padding:24px; color:var(--gray-400); font-size:12px; border-top:1px solid var(--gray-200); margin-top:40px;">
-  ooya-dx Architecture Overview | Generated 2026-02-17 | Next.js App Router
+  ooya-dx Architecture Overview | Generated 2026-02-18 | Next.js App Router
 </footer>
 
 </body>
