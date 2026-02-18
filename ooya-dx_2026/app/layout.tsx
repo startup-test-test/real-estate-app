@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
+import Script from 'next/script'
 import { Providers } from './providers'
 import { HeaderWrapper } from '@/components/header-wrapper'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
@@ -107,12 +108,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        {/* Ahrefs Web Analytics - 本番環境のみ */}
+        {/* Ahrefs Web Analytics - 本番環境のみ（遅延読み込み） */}
         {process.env.NODE_ENV === 'production' && (
-          <script
+          <Script
             src="https://analytics.ahrefs.com/analytics.js"
             data-key="/hlXktE60u9qqkU2yVH6cA"
-            async
+            strategy="lazyOnload"
           />
         )}
       </head>
