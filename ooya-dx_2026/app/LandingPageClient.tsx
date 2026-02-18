@@ -40,6 +40,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
           alt="賃貸経営シミュレーター"
           width={998}
           height={674}
+          sizes="(max-width: 768px) 100vw, 581px"
           className="w-full h-auto rounded-lg"
         />
       )
@@ -56,6 +57,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
           alt="買付申込書ジェネレーター"
           width={998}
           height={674}
+          sizes="(max-width: 768px) 100vw, 581px"
           className="w-full h-auto rounded-lg"
         />
       )
