@@ -22,7 +22,7 @@ export function ToolsBreadcrumb({ currentPage }: ToolsBreadcrumbProps) {
   return (
     <Breadcrumb
       items={[
-        { label: '賃貸経営ツール 大家DX', href: '/' },
+        { label: '大家DX', href: '/' },
         { label: TOOLS_CATEGORY_NAME, href: '/tools' },
         { label: currentPage },
       ]}

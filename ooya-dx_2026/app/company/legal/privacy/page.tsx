@@ -24,7 +24,7 @@ export default function PrivacyPage() {
     <article className="mx-auto max-w-4xl px-6">
       {/* パンくず */}
       <Breadcrumb items={[
-        { label: '賃貸経営ツール 大家DX', href: '/' },
+        { label: '大家DX', href: '/' },
         { label: 'プライバシーポリシー' },
       ]} />
 

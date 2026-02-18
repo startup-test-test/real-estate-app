@@ -88,7 +88,7 @@ export default function MediaPage() {
         {/* パンくずリスト */}
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-14 pb-3 w-full">
           <Breadcrumb items={[
-            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '大家DX', href: '/' },
             { label: '大家DXジャーナル' },
           ]} />
         </div>

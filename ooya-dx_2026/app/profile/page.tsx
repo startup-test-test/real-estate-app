@@ -181,7 +181,7 @@ export default function ProfilePage() {
       <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             {/* パンくず */}
             <Breadcrumb items={[
-              { label: '賃貸経営ツール 大家DX', href: '/' },
+              { label: '大家DX', href: '/' },
               { label: '自己紹介' },
             ]} />
 

@@ -62,7 +62,7 @@ export default function PlasticsSmartPage() {
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           {/* パンくず */}
           <Breadcrumb items={[
-            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '大家DX', href: '/' },
             { label: '会社概要', href: '/company' },
             { label: 'プラスチック削減の取り組み' },
           ]} />

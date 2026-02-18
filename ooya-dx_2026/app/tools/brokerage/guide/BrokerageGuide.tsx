@@ -43,7 +43,7 @@ export function BrokerageGuide() {
         <article className="max-w-2xl mx-auto px-5 pt-4 pb-4 sm:pt-6 sm:pb-6 md:pt-8 md:pb-8">
           {/* パンくず */}
           <Breadcrumb items={[
-            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '大家DX', href: '/' },
             { label: TOOLS_CATEGORY_NAME, href: '/tools' },
             { label: '仲介手数料シミュレーター', href: '/tools/brokerage' },
             { label: '解説' },

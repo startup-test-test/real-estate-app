@@ -9,7 +9,7 @@ const Disclaimer: React.FC = () => {
     <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
       {/* パンくず */}
       <Breadcrumb items={[
-        { label: '賃貸経営ツール 大家DX', href: '/' },
+        { label: '大家DX', href: '/' },
         { label: '免責事項' },
       ]} />
 

@@ -44,7 +44,7 @@ export default function PortfolioPage() {
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           {/* パンくず */}
           <Breadcrumb items={[
-            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '大家DX', href: '/' },
             { label: '会社概要', href: '/company' },
             { label: '実績・得意領域' },
           ]} />

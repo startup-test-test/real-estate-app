@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { ToolsBreadcrumb } from './ToolsBreadcrumb'
 import { getToolInfo, formatToolDate } from '@/lib/navigation'
 
@@ -37,7 +38,18 @@ export function ToolPageHeader({ title, toolPath, publishDate, lastUpdated, cate
   return (
     <>
       {/* パンくず */}
-      <ToolsBreadcrumb currentPage={title} />
+      {categoryHref?.startsWith('/media') ? (
+        <Breadcrumb
+          items={[
+            { label: '大家DX', href: '/' },
+            { label: '大家DXジャーナル', href: '/media' },
+            { label: category || '', href: categoryHref },
+            { label: title },
+          ]}
+        />
+      ) : (
+        <ToolsBreadcrumb currentPage={title} />
+      )}
 
       {/* 日付・執筆者 */}
       <div className="flex flex-wrap items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">

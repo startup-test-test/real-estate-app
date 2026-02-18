@@ -139,7 +139,7 @@ export default function ToolsPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-8 pb-6 sm:pb-8 md:pb-10">
               {/* パンくずリスト */}
               <Breadcrumb items={[
-                { label: '賃貸経営ツール 大家DX', href: '/' },
+                { label: '大家DX', href: '/' },
                 { label: '計算ツール一覧' },
               ]} />
 

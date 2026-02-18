@@ -43,7 +43,7 @@ export default function TeamBeyondPage() {
         <article className="max-w-4xl mx-auto px-5">
           {/* パンくず */}
           <Breadcrumb items={[
-            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '大家DX', href: '/' },
             { label: '会社概要', href: '/company' },
             { label: 'Team Beyond' },
           ]} />
