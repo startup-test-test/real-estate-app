@@ -1,19 +1,17 @@
 'use client';
 
 import React from 'react';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import Link from 'next/link';
 
 const Disclaimer: React.FC = () => {
   return (
     <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
       {/* パンくず */}
-      <nav className="text-sm text-gray-500 mb-6">
-        <Link href="/" className="hover:text-primary-600">
-          ホーム
-        </Link>
-        <span className="mx-2">&gt;</span>
-        <span>免責事項</span>
-      </nav>
+      <Breadcrumb items={[
+        { label: '賃貸経営ツール 大家DX', href: '/' },
+        { label: '免責事項' },
+      ]} />
 
       <div className="bg-white rounded-xl shadow-sm p-8">
         <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">

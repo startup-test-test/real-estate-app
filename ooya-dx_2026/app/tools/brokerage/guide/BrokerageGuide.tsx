@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { Calculator, ChevronRight } from 'lucide-react'
+import { Calculator } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer'
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { TOOLS_CATEGORY_NAME } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
@@ -40,21 +41,12 @@ export function BrokerageGuide() {
       <main className="flex-1">
         <article className="max-w-2xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <nav className="flex flex-wrap items-center text-sm text-gray-500 mb-6" aria-label="パンくずリスト">
-            <Link href="/" className="hover:text-primary-600">
-              ホーム
-            </Link>
-            <ChevronRight className="h-4 w-4 mx-1 text-gray-400" aria-hidden="true" />
-            <Link href="/tools" className="hover:text-primary-600">
-              {TOOLS_CATEGORY_NAME}
-            </Link>
-            <ChevronRight className="h-4 w-4 mx-1 text-gray-400" aria-hidden="true" />
-            <Link href="/tools/brokerage" className="hover:text-primary-600">
-              仲介手数料シミュレーター
-            </Link>
-            <ChevronRight className="h-4 w-4 mx-1 text-gray-400" aria-hidden="true" />
-            <span className="text-gray-900">解説</span>
-          </nav>
+          <Breadcrumb items={[
+            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: TOOLS_CATEGORY_NAME, href: '/tools' },
+            { label: '仲介手数料シミュレーター', href: '/tools/brokerage' },
+            { label: '解説' },
+          ]} />
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">

@@ -1,3 +1,4 @@
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -56,17 +57,11 @@ export default function CSRPage() {
 
         <article className="max-w-4xl mx-auto px-5 py-12">
           {/* パンくず */}
-          <nav className="text-sm text-gray-500 mb-6">
-            <Link href="/" className="hover:text-primary-600">
-              ホーム
-            </Link>
-            <span className="mx-2">&gt;</span>
-            <Link href="/company" className="hover:text-primary-600">
-              会社概要
-            </Link>
-            <span className="mx-2">&gt;</span>
-            <span>CSR・健康経営</span>
-          </nav>
+          <Breadcrumb items={[
+            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '会社概要', href: '/company' },
+            { label: 'CSR・健康経営' },
+          ]} />
 
           {/* 日付 */}
           {(() => {

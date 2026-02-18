@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { WebPageJsonLd } from '@/components/WebPageJsonLd'
 
 export const metadata: Metadata = {
@@ -22,11 +23,10 @@ export default function TermsPage() {
       />
     <article className="mx-auto max-w-4xl px-6 py-12">
       {/* パンくず */}
-      <nav className="text-sm text-gray-500 mb-6">
-        <a href="/" className="hover:text-primary-600">ホーム</a>
-        <span className="mx-2">&gt;</span>
-        <span>利用規約</span>
-      </nav>
+      <Breadcrumb items={[
+        { label: '賃貸経営ツール 大家DX', href: '/' },
+        { label: '利用規約' },
+      ]} />
 
       <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
         <span>公開日：2025年8月11日</span>

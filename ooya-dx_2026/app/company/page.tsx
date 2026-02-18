@@ -1,6 +1,7 @@
 import { CompanyNav } from '@/components/company-nav';
 import { organizationDetailJsonLd } from '@/lib/eeat';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
@@ -51,13 +52,10 @@ export default function CompanyPage() {
 
         <article className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
           {/* パンくず */}
-          <nav className="text-sm text-gray-500 mb-6">
-            <Link href="/" className="hover:text-primary-600">
-              ホーム
-            </Link>
-            <span className="mx-2">&gt;</span>
-            <span>会社概要</span>
-          </nav>
+          <Breadcrumb items={[
+            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '会社概要' },
+          ]} />
 
           {/* 日付 */}
           {(() => {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import Link from 'next/link';
 import {
   HelpCircle,
@@ -125,13 +126,10 @@ const FAQ: React.FC = () => {
   return (
     <article className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
       {/* パンくず */}
-      <nav className="text-sm text-gray-500 mb-6">
-        <Link href="/" className="hover:text-primary-600">
-          ホーム
-        </Link>
-        <span className="mx-2">&gt;</span>
-        <span>よくある質問</span>
-      </nav>
+      <Breadcrumb items={[
+        { label: '賃貸経営ツール 大家DX', href: '/' },
+        { label: 'よくある質問' },
+      ]} />
 
       {/* Header */}
       <div className="mb-8">

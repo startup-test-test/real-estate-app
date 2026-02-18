@@ -6,8 +6,8 @@ import { LandingFooter } from '@/components/landing-footer';
 import { MediaArticleList } from '@/components/media-article-list';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { CompanyProfileCompact } from '@/components/tools/CompanyProfileCompact';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
-import { Home } from 'lucide-react';
 import { HeaderSpacer } from '@/components/HeaderSpacer';
 
 const BASE_URL = 'https://ooya.tech';
@@ -86,19 +86,12 @@ export default function MediaPage() {
         <HeaderSpacer />
 
         {/* パンくずリスト */}
-        <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-14 pb-3 w-full">
-          <ol className="flex items-center text-sm text-gray-500">
-            <li className="flex items-center">
-              <Link href="/" className="hover:text-gray-700 flex items-center">
-                <Home className="h-4 w-4" />
-              </Link>
-            </li>
-            <li className="flex items-center">
-              <span className="mx-2">/</span>
-              <span className="text-gray-900">大家DXジャーナル</span>
-            </li>
-          </ol>
-        </nav>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-14 pb-3 w-full">
+          <Breadcrumb items={[
+            { label: '賃貸経営ツール 大家DX', href: '/' },
+            { label: '大家DXジャーナル' },
+          ]} />
+        </div>
 
         {/* 日付 */}
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">

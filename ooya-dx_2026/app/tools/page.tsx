@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ChevronRight, ArrowRight, TrendingUp, Building, BarChart3, Receipt, Landmark, ShieldAlert, FileText, Banknote, Scale, Users } from 'lucide-react'
 import { LandingHeader } from '@/components/landing-header'
 import { LandingFooter } from '@/components/landing-footer'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { toolCategories } from '@/lib/navigation'
 import { HeaderSpacer } from '@/components/HeaderSpacer';
 
@@ -137,15 +138,10 @@ export default function ToolsPage() {
           <div className="bg-gradient-to-b from-blue-50 to-blue-100/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-8 pb-6 sm:pb-8 md:pb-10">
               {/* パンくずリスト */}
-              <div className="relative mb-2 sm:mb-3">
-                <nav className="flex items-center text-sm text-gray-500 overflow-x-auto scrollbar-hide whitespace-nowrap" aria-label="パンくずリスト">
-                  <Link href="/" className="hover:text-primary-600 flex-shrink-0">
-                    大家DX
-                  </Link>
-                  <ChevronRight className="h-4 w-4 mx-1 text-gray-400 flex-shrink-0" />
-                  <span className="text-gray-900 flex-shrink-0">計算ツール一覧</span>
-                </nav>
-              </div>
+              <Breadcrumb items={[
+                { label: '賃貸経営ツール 大家DX', href: '/' },
+                { label: '計算ツール一覧' },
+              ]} />
 
               {/* 日付 */}
               <div className="flex items-center gap-3 text-xs text-gray-500 mb-4 sm:mb-6">
