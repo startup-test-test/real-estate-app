@@ -80,6 +80,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
           height={1282}
           sizes="100vw"
           priority
+          fetchPriority="high"
           style={{
             position: 'absolute',
             inset: 0,

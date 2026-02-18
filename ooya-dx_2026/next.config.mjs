@@ -9,6 +9,10 @@ const nextConfig = {
   reactStrictMode: true,
   turbopack: {},
   trailingSlash: false, // URLの末尾スラッシュを統一（なしに統一）
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['lucide-react'],
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
   },
