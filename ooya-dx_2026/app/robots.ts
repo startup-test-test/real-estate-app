@@ -13,7 +13,6 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',         // APIエンドポイント
           '/auth/',        // 認証関連
           '/_next/data/',   // Next.jsデータAPI（CSS/JSは許可）
-          '/test-error',   // テスト用エラーページ
         ],
       },
     ],

@@ -25,7 +25,6 @@ function getToolSlugs(): string[] {
         if (!entry.isDirectory()) return false;
         if (entry.name.startsWith('_')) return false;
         if (entry.name === 'components') return false;
-        if (entry.name === 'template-demo') return false;
         // page.tsxが存在するか確認
         const pagePath = path.join(toolsDir, entry.name, 'page.tsx');
         return fs.existsSync(pagePath);

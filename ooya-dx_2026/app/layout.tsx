@@ -1,9 +1,33 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import { Inter, Noto_Sans_JP, Noto_Serif_JP } from 'next/font/google'
 import { Providers } from './providers'
 import { HeaderWrapper } from '@/components/header-wrapper'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 // import { Footer } from '@/components/footer'
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const notoSansJP = Noto_Sans_JP({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-noto-sans-jp',
+  display: 'swap',
+  preload: false,
+})
+
+const notoSerifJP = Noto_Serif_JP({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-noto-serif-jp',
+  display: 'swap',
+  preload: false,
+})
 
 const BASE_URL = 'https://ooya.tech';
 
@@ -81,7 +105,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" suppressHydrationWarning>
+    <html lang="ja" className={`${inter.variable} ${notoSansJP.variable} ${notoSerifJP.variable}`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
