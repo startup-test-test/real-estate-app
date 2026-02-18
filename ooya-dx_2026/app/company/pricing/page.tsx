@@ -4,6 +4,7 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import Link from 'next/link';
+import { getPageInfo, formatToolDate } from '@/lib/navigation';
 
 /**
  * 有料プラン募集停止のお知らせページ
@@ -17,6 +18,17 @@ const PremiumPlan: React.FC = () => {
         { label: '賃貸経営ツール 大家DX', href: '/' },
         { label: '有料プランについて' },
       ]} />
+
+      {/* 日付 */}
+      {(() => {
+        const pageInfo = getPageInfo('/company/pricing');
+        return pageInfo ? (
+          <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+            {pageInfo.publishDate && <span>公開日：{formatToolDate(pageInfo.publishDate)}</span>}
+            {pageInfo.lastUpdated && <span>更新日：{formatToolDate(pageInfo.lastUpdated)}</span>}
+          </div>
+        ) : null;
+      })()}
 
       {/* ページタイトル */}
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">有料プランについて</h1>

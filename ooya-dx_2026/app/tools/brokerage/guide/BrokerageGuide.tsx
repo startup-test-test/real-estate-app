@@ -11,6 +11,7 @@ import { TOOLS_CATEGORY_NAME } from '@/components/tools/ToolsBreadcrumb'
 import { ShareButtons } from '@/components/tools/ShareButtons'
 import { TableOfContents, SectionHeading, TocItem } from '@/components/tools/TableOfContents'
 import { HeaderSpacer } from '@/components/HeaderSpacer';
+import { getPageInfo, formatToolDate } from '@/lib/navigation'
 
 
 // ページタイトル
@@ -47,6 +48,17 @@ export function BrokerageGuide() {
             { label: '仲介手数料シミュレーター', href: '/tools/brokerage' },
             { label: '解説' },
           ]} />
+
+          {/* 日付 */}
+          {(() => {
+            const pageInfo = getPageInfo('/tools/brokerage/guide');
+            return pageInfo ? (
+              <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+                {pageInfo.publishDate && <span>公開日：{formatToolDate(pageInfo.publishDate)}</span>}
+                {pageInfo.lastUpdated && <span>更新日：{formatToolDate(pageInfo.lastUpdated)}</span>}
+              </div>
+            ) : null;
+          })()}
 
           {/* カテゴリー */}
           <div className="flex items-center gap-3 mb-4">

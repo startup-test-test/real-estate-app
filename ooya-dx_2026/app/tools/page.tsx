@@ -144,7 +144,7 @@ export default function ToolsPage() {
               ]} />
 
               {/* 日付 */}
-              <div className="flex items-center gap-3 text-xs text-gray-500 mb-4 sm:mb-6">
+              <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
                 <span>公開日：2026年1月15日</span>
                 <span>更新日：2026年2月8日</span>
               </div>

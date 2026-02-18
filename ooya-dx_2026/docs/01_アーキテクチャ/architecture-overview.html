@@ -779,15 +779,9 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
 <p>全ページで <code>Breadcrumb</code> 共通コンポーネント（<code>components/Breadcrumb.tsx</code>）に統一。セパレータは lucide-react の ChevronRight アイコン、ホームラベルは「賃貸経営ツール 大家DX」、SP表示時は右フェードグラデーション付き。ツール系ページは <code>ToolsBreadcrumb</code>（Breadcrumbをラップ）を使用。</p>
 </div>
 
-<h3>日付テキスト色</h3>
+<h3>日付テキスト色 <span class="badge badge-green">✅ 統一済</span></h3>
 <div class="card">
-<table>
-  <tr><th>ページ</th><th>色</th></tr>
-  <tr><td>profile・media トップ</td><td><code>text-gray-900</code></td></tr>
-  <tr><td>ツール（ToolPageHeader）</td><td><code>text-gray-900</code></td></tr>
-  <tr><td>ツールインデックス</td><td><code>text-gray-500</code></td></tr>
-  <tr><td>記事ページ</td><td><code>text-gray-900</code>（ToolPageHeader統一）</td></tr>
-</table>
+<p>全ページの日付表示を <code>text-xs text-gray-900 mb-2 sm:mb-4</code> に統一。日付データは <code>lib/navigation.ts</code> の各config（<code>toolCategories</code>・<code>allCompanyPages</code>・<code>otherPublicPages</code>等）で一元管理し、<code>getPageInfo()</code> + <code>formatToolDate()</code> で表示。</p>
 </div>
 
 <h3>コンテンツ上余白（py）</h3>
@@ -823,9 +817,9 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
   <tr>
     <td><strong>中</strong></td>
     <td>日付・執筆者表示</td>
-    <td>ページごとに個別実装</td>
-    <td><code>PageMeta</code> 共通コンポーネント</td>
-    <td><span class="badge badge-red">未着手</span></td>
+    <td><span class="done">ページごとに個別実装</span></td>
+    <td>全ページ <code>text-xs text-gray-900 mb-2 sm:mb-4</code> に統一</td>
+    <td><span class="badge badge-green">✅ 済</span></td>
   </tr>
   <tr>
     <td><strong>中</strong></td>

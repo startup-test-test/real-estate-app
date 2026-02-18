@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import Link from 'next/link';
+import { getPageInfo, formatToolDate } from '@/lib/navigation';
 import {
   HelpCircle,
   Search,
@@ -130,6 +131,17 @@ const FAQ: React.FC = () => {
         { label: '賃貸経営ツール 大家DX', href: '/' },
         { label: 'よくある質問' },
       ]} />
+
+      {/* 日付 */}
+      {(() => {
+        const pageInfo = getPageInfo('/company/faq');
+        return pageInfo ? (
+          <div className="flex items-center gap-3 text-xs text-gray-900 mb-2 sm:mb-4">
+            {pageInfo.publishDate && <span>公開日：{formatToolDate(pageInfo.publishDate)}</span>}
+            {pageInfo.lastUpdated && <span>更新日：{formatToolDate(pageInfo.lastUpdated)}</span>}
+          </div>
+        ) : null;
+      })()}
 
       {/* Header */}
       <div className="mb-8">
