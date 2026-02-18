@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { CompanyNav } from '@/components/company-nav';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import { getCompanyPageInfo, formatToolDate } from '@/lib/navigation';
@@ -99,9 +98,6 @@ export default function CorporateContactPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             法人のお問合せ・受託開発・取材など
           </h1>
-
-          {/* ページナビゲーション */}
-          <CompanyNav />
 
           {/* 概要 */}
           <section className="mb-8">

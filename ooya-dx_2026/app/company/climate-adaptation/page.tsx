@@ -1,4 +1,3 @@
-import { CompanyNav } from '@/components/company-nav';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -96,9 +95,6 @@ export default function ClimateAdaptationPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             気候変動への適応に向けた取り組み
           </h1>
-
-          {/* ページナビゲーション */}
-          <CompanyNav />
 
           {/* #適応しようバッジ */}
           <div className="mb-8 flex items-center gap-4">

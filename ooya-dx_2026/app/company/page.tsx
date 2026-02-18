@@ -1,4 +1,3 @@
-import { CompanyNav } from '@/components/company-nav';
 import { organizationDetailJsonLd } from '@/lib/eeat';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
@@ -74,9 +73,6 @@ export default function CompanyPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             会社概要
           </h1>
-
-          {/* ページナビゲーション */}
-          <CompanyNav />
 
           {/* 会社紹介 */}
           <section className="mb-12">

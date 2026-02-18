@@ -1,4 +1,3 @@
-import { CompanyNav } from '@/components/company-nav';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -102,9 +101,6 @@ export default function LibPartnerPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             リチウムイオン電池の火災防止啓発
           </h1>
-
-          {/* ページナビゲーション */}
-          <CompanyNav />
 
           {/* LiBパートナーバッジ */}
           <div className="mb-8 flex items-center gap-4">

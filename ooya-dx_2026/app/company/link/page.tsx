@@ -1,4 +1,3 @@
-import { CompanyNav } from '@/components/company-nav';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -95,9 +94,6 @@ export default function LinkPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             相互リンクページ
           </h1>
-
-          {/* ページナビゲーション */}
-          <CompanyNav />
 
           {/* リンク一覧 */}
           <section className="mb-12">
