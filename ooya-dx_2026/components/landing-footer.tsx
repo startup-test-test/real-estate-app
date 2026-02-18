@@ -15,6 +15,7 @@ export function LandingFooter() {
               alt="大家DX ロゴ"
               width={251}
               height={73}
+              sizes="251px"
               className="h-8 w-auto mb-4"
               style={{ mixBlendMode: 'multiply' }}
             />

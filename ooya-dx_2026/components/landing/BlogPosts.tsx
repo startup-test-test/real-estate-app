@@ -70,6 +70,7 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ articles = [] }) => {
                     alt={article.title}
                     width={800}
                     height={450}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 389px"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (

@@ -127,6 +127,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                   alt="賃貸経営シミュレーター"
                   width={998}
                   height={674}
+                  sizes="(max-width: 1024px) 448px, 576px"
                   className="w-full h-auto max-w-md lg:max-w-lg xl:max-w-xl scale-[1.32]"
                 />
               </div>

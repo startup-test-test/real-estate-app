@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Home, AlertCircle } from 'lucide-react';
 
 const NotFound: React.FC = () => {
@@ -33,7 +34,7 @@ const NotFound: React.FC = () => {
         <div className="text-center">
           {/* ロゴ */}
           <div className="flex justify-center mb-4">
-            <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-16 w-auto" />
+            <Image src="/img/logo_250709_2.png" alt="大家DX ロゴ" width={251} height={73} sizes="251px" className="h-16 w-auto" />
           </div>
 
           <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />

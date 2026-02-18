@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/client';
 import {
@@ -109,7 +110,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
           <div className="flex justify-between items-center py-4 sm:py-6">
             <div className="flex items-center">
               <a href="/" className="block">
-                <img src="/img/logo_250709_2.png" alt="大家DX ロゴ" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" />
+                <Image src="/img/logo_250709_2.png" alt="大家DX ロゴ" width={251} height={73} sizes="251px" className="h-8 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity" style={{ mixBlendMode: 'multiply' }} />
               </a>
             </div>
             <div className="flex items-center space-x-6">
@@ -525,14 +526,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                 {/* ペルソナ画像 */}
                 <div className="mb-6 flex flex-col items-center">
                   <div className="w-40 h-32 mx-auto mb-5">
-                    <img 
-                      src={persona.image} 
+                    <Image
+                      src={persona.image}
                       alt="ペルソナ画像"
+                      width={160}
+                      height={128}
+                      sizes="160px"
                       className="w-full h-full object-contain"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGM0Y0RjYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjOUI5Qjk5Ij4KPHA+VXNlcjwvcD4KPC9zdmc+Cjwvc3ZnPgo=';
-                      }}
                     />
                   </div>
                 </div>

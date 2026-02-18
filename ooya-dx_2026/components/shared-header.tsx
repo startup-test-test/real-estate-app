@@ -94,6 +94,7 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
               alt={logoAlt}
               width={251}
               height={73}
+              sizes="251px"
               className="h-7 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity"
               style={{ mixBlendMode: 'multiply' }}
             />

@@ -29,6 +29,7 @@ export function ToolSidebarCTA({ mobile = false }: ToolSidebarCTAProps) {
         alt="不動産投資シミュレーター"
         width={mobile ? 400 : 300}
         height={mobile ? 200 : 150}
+        sizes={mobile ? "360px" : "270px"}
         className="w-[90%] h-auto rounded-lg mb-4 mx-auto"
       />
       <p className="text-sm text-gray-600 mb-4 leading-relaxed">
