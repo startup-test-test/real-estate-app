@@ -9,6 +9,9 @@ const nextConfig = {
   reactStrictMode: true,
   turbopack: {},
   trailingSlash: false, // URLの末尾スラッシュを統一（なしに統一）
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
   async redirects() {
     return [
       // ===== 公開ページ company配下統合（2026/02/18） =====

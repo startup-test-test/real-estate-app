@@ -89,7 +89,7 @@ export default function PlasticsSmartPage() {
           {/* メインビジュアル */}
           <div className="mb-8">
             <img
-              src="/img/plastics_smart_main.png"
+              src="/img/plastics_smart_main.jpg"
               alt="マイボトル活用によるプラスチック削減の取り組み"
               className="w-full max-w-2xl rounded-xl shadow-sm"
             />

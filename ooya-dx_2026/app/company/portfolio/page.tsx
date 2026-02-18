@@ -79,7 +79,7 @@ export default function PortfolioPage() {
               <div className="flex flex-col sm:flex-row gap-6 items-start">
                 <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">
                   <img
-                    src="/img/portfolio_profile.png"
+                    src="/img/portfolio_profile.jpg"
                     alt="東後哲郎"
                     className="w-full h-full object-cover"
                   />
@@ -121,7 +121,7 @@ export default function PortfolioPage() {
           <section className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">BtoC：冠婚・葬儀会社のMA（Marketing Automationの導入・戦略設計・実行</h2>
             <img
-              src="/img/portfolio_1.png"
+              src="/img/portfolio_1.jpg"
               alt="冠婚・葬儀会社MA案件"
               className="w-full rounded-lg mb-6"
             />
@@ -174,7 +174,7 @@ export default function PortfolioPage() {
           <section className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">BtoC：旅行会社のCVR改善の課題抽出〜戦略設計〜実行 / レポート設計</h2>
             <img
-              src="/img/portfolio_2.png"
+              src="/img/portfolio_2.jpg"
               alt="旅行会社CVR改善案件"
               className="w-full rounded-lg mb-6"
             />
@@ -227,7 +227,7 @@ export default function PortfolioPage() {
           <section className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">証券会社のPMO・Webコンサルティング（取締役・事業部長の相談役）</h2>
             <img
-              src="/img/portfolio_3.png"
+              src="/img/portfolio_3.jpg"
               alt="証券会社PMO案件"
               className="w-full rounded-lg mb-6"
             />
@@ -280,7 +280,7 @@ export default function PortfolioPage() {
           <section className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">大手銀行サイトのフルリニューアル</h2>
             <img
-              src="/img/portfolio_4.png"
+              src="/img/portfolio_4.jpg"
               alt="大手銀行フルリニューアル案件"
               className="w-full rounded-lg mb-6"
             />
@@ -333,7 +333,7 @@ export default function PortfolioPage() {
           <section className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">招待制融資・ビジネスローンのサイト設計 及び LP</h2>
             <img
-              src="/img/portfolio_5.png"
+              src="/img/portfolio_5.jpg"
               alt="招待制融資・ビジネスローン案件"
               className="w-full rounded-lg mb-6"
             />
@@ -383,7 +383,7 @@ export default function PortfolioPage() {
           <section className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">招待制融資・ビジネスローンのサイト設計 及び BtoC向け保険サイトのフルリニューアル</h2>
             <img
-              src="/img/portfolio_6.png"
+              src="/img/portfolio_6.jpg"
               alt="保険サイトフルリニューアル案件"
               className="w-full rounded-lg mb-6"
             />

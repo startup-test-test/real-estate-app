@@ -178,7 +178,7 @@ export default function ClimateAdaptationPage() {
                 </div>
                 <div className="sm:w-48 flex-shrink-0">
                   <img
-                    src="/img/plastics_smart_main.png"
+                    src="/img/plastics_smart_main.jpg"
                     alt="マイボトル活用"
                     className="w-full rounded-lg shadow-sm"
                   />

@@ -193,7 +193,7 @@ export default function CompanyPage() {
                   <span className="text-gray-500 font-medium">2024年1月：</span>
                   <span className="text-gray-900">
                     【フジテレビ様】フジテレビ「イット！」にて、不動産賃貸業の空き家再生にてインタビューされました（
-                    <a href="/img/akiya.png" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">放送画像</a>
+                    <a href="/img/akiya.jpg" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">放送画像</a>
                     ）
                   </span>
                 </li>

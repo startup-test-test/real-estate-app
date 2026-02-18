@@ -244,7 +244,7 @@ export default function ProfilePage() {
                 <ul className="space-y-1 text-base text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="text-blue-500 mt-0.5">●</span>
-                    <span><span className="text-gray-500">2024年1月：</span><a href="/img/akiya.png" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></span>
+                    <span><span className="text-gray-500">2024年1月：</span><a href="/img/akiya.jpg" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></span>
                   </li>
                 </ul>
                 <h3 className="text-lg font-bold text-gray-900 mb-2 mt-4">保有資格</h3>
@@ -493,9 +493,9 @@ export default function ProfilePage() {
                 <h3 className="text-lg font-bold text-gray-900 mb-3">メディア出演・執筆実績</h3>
                 <div className="bg-gray-50 rounded-xl p-5 sm:p-6">
                   <div className="space-y-4">
-                    <div className="text-base"><span className="text-gray-500 font-medium">2024年1月：</span><a href="/img/akiya.png" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></div>
+                    <div className="text-base"><span className="text-gray-500 font-medium">2024年1月：</span><a href="/img/akiya.jpg" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></div>
                     <div className="mt-2">
-                      <img src="/img/akiya.png" alt="フジテレビ「イット！」出演時の様子" className="rounded-lg border border-gray-200 max-w-full sm:max-w-sm" />
+                      <img src="/img/akiya.jpg" alt="フジテレビ「イット！」出演時の様子" className="rounded-lg border border-gray-200 max-w-full sm:max-w-sm" />
                     </div>
                     <div className="text-base"><span className="text-gray-500 font-medium">2020年5月：</span><a href="https://offers.jp/media/sidejob/workstyle/a_1862" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">株式会社overflow「フリーランスWebディレクターのキャリアと案件の進め方」</a></div>
                     <div className="text-base"><span className="text-gray-500 font-medium">2019年4月：</span><a href="https://www.shibuyamov.com/interviews/webyour-times.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">渋谷ヒカリエ Creative Lounge MOV インタビュー</a></div>
