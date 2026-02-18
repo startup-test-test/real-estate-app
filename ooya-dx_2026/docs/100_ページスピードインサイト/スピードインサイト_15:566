@@ -1,0 +1,295 @@
+2026/02/18 15:55:09 に作成したレポート
+https://ooya.tech/
+有効な URL を入力してください
+
+
+smartphone
+携帯電話
+
+computer
+デスクトップ
+
+実際のユーザーの環境で評価する
+データがありません
+
+パフォーマンスの問題を診断する
+57
+パフォーマンス
+91
+ユーザー補助
+100
+おすすめの方法
+100
+SEO
+57
+FCP
++0
+LCP
++0
+TBT
++30
+CLS
++25
+SI
++3
+パフォーマンス
+推定値のため変動する可能性があります。パフォーマンス スコアの計算は、これらの指標を基に行っています。計算ツールはこちら。
+0–49
+50–89
+90–100
+Final Screenshot
+
+指標
+ビューを開く
+First Contentful Paint
+7.6 秒
+Largest Contentful Paint
+9.7 秒
+Total Blocking Time
+40 ミリ秒
+Cumulative Layout Shift
+0.002
+Speed Index
+7.6 秒
+Captured at 2026年2月18日 15:55 JST
+Moto G Power のエミュレーション with Lighthouse 13.0.1
+1 ページのみのセッション
+最初のページ読み込み
+低速 4G スロットリング
+Using HeadlessChromium 144.0.7559.132 with lr
+ツリーマップを見る
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+次に関連する監査を表示:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+インサイト
+レンダリングをブロックしているリクエスト 推定される削減時間 4,810 ミリ秒
+リクエストがページの最初のレンダリングをブロックしているため、LCP が遅れる可能性があります。これらのネットワーク リクエストを遅らせるかインライン化すると、クリティカル パスから移動できます。LCPFCPスコアなし
+URL
+転送サイズ
+継続時間
+ooya.tech 自社
+52.7 KiB	2,100 ms
+…chunks/7cbfdf20ce8a7b98.css?dpl=dpl_4XL84…(ooya.tech)
+33.0 KiB
+1,200 ms
+…chunks/46077bd0b35a39eb.css?dpl=dpl_4XL84…(ooya.tech)
+18.3 KiB
+450 ms
+…chunks/44ad01f422861b8e.css?dpl=dpl_4XL84…(ooya.tech)
+1.4 KiB
+450 ms
+以前の JavaScript 推定される削減サイズ 14 KiB
+ポリフィルと変換を使用すると、従来のブラウザで新しい JavaScript 機能を使用できるようになります。ただし、その機能の多くは最新ブラウザでは必要ありません。従来のブラウザをサポートする必要がある場合を除き、Baseline の機能をトランスパイルしないように JavaScript ビルドプロセスを変更することを検討してください。ほとんどのサイトでトランスパイルせずに ES6+ コードをデプロイできる理由LCPFCPスコアなし
+URL
+不要なバイト
+ooya.tech 自社
+13.7 KiB
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…(ooya.tech)
+13.7 KiB
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:5107(ooya.tech)
+Array.prototype.at
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:4495(ooya.tech)
+Array.prototype.flat
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:4608(ooya.tech)
+Array.prototype.flatMap
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:4984(ooya.tech)
+Object.fromEntries
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:5242(ooya.tech)
+Object.hasOwn
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:4237(ooya.tech)
+String.prototype.trimEnd
+…chunks/e5ebd9515e628167.js?dpl=dpl_4XL84…:1:4152(ooya.tech)
+String.prototype.trimStart
+強制リフロー
+強制リフローは、DOM の状態の変更によってスタイルが無効化された後に JavaScript が幾何学的プロパティ（offsetWidth など）をクエリしたときに発生します。これにより、パフォーマンスが低下する可能性があります。詳しくは、強制リフローとその緩和策をご覧ください。スコアなし
+上位の関数呼び出し
+合計リフロー時間
+/gtag/js?id=G-Z2QBGBT7JP:821:135(www.googletagmanager.com)
+262 ms
+ソース
+合計リフロー時間
+/gtag/js?id=G-Z2QBGBT7JP:818:14(www.googletagmanager.com)
+262 ms
+[ソース不明]
+83 ms
+LCP リクエストの検出
+LCP 画像を HTML からすぐに検出できるようにし、遅延読み込みを回避して、LCP を最適化しますLCPスコアなし
+遅延読み込みが適用されていません
+「fetchpriority=high」を適用する必要があります
+リクエストは最初のドキュメントで検出可能です
+大家DX
+<img alt="大家DX" width="1920" height="1282" decoding="async" data-nimg="1" sizes="100vw" srcset="/_next/image?url=%2Fimages%2Fmedia%2Fhero-media.jpeg&amp;w=640&amp;q=75&amp;dpl=dpl_4X…" src="https://ooya.tech/_next/image?url=%2Fimages%2Fmedia%2Fhero-media.jpeg&amp;w=75…" style="color: transparent; position: absolute; inset: 0px; width: 100%;">
+ネットワークの依存関係ツリー
+チェーンの長さを縮小する、リソースのダウンロード サイズを抑える、不要なリソースのダウンロードを遅らせるなどしてページの読み込み速度を改善し、クリティカル リクエスト チェーンを回避してください。LCPスコアなし
+クリティカル パスの最大待ち時間: 1,479 ms
+最初の移動先
+https://ooya.tech - 334 ms, 13.96 KiB
+…chunks/46077bd0b35a39eb.css?dpl=dpl_4XL84…(ooya.tech) - 523 ms, 18.33 KiB
+…chunks/44ad01f422861b8e.css?dpl=dpl_4XL84…(ooya.tech) - 469 ms, 1.38 KiB
+…chunks/7cbfdf20ce8a7b98.css?dpl=dpl_4XL84…(ooya.tech) - 604 ms, 33.00 KiB
+…media/39be5119cc5a377c-s.1b12f11c.woff2(ooya.tech) - 1,479 ms, 74.65 KiB
+…media/789c311d2ee85bd0-s.655571ed.woff2(ooya.tech) - 1,473 ms, 68.06 KiB
+…media/b5e63d91af9b674d-s.b2fb5299.woff2(ooya.tech) - 1,479 ms, 22.49 KiB
+…media/f569da378cb7fcc0-s.017012de.woff2(ooya.tech) - 1,478 ms, 21.40 KiB
+…media/05a0d21a2cef6a7b-s.4150072f.woff2(ooya.tech) - 1,471 ms, 19.80 KiB
+…media/bbf203e5a0078d39-s.698d6d0a.woff2(ooya.tech) - 1,477 ms, 19.06 KiB
+…media/079b9e80725351e0-s.8a311f7b.woff2(ooya.tech) - 1,476 ms, 17.81 KiB
+…media/c15040384d76a4f4-s.9e5115cd.woff2(ooya.tech) - 1,478 ms, 17.09 KiB
+…media/23fbae5fe54b4090-s.7078bdbf.woff2(ooya.tech) - 1,475 ms, 18.19 KiB
+…media/b328eebf6b76f38b-s.d40e1435.woff2(ooya.tech) - 1,476 ms, 19.03 KiB
+…media/99fb62709cdb61a3-s.640048b0.woff2(ooya.tech) - 1,463 ms, 19.00 KiB
+…media/65521569a5d22bc8-s.fd510f24.woff2(ooya.tech) - 1,467 ms, 17.26 KiB
+…media/58bdc392c1e33013-s.f8adda31.woff2(ooya.tech) - 1,472 ms, 18.26 KiB
+…media/214d358abec750cb-s.d3a295a0.woff2(ooya.tech) - 1,468 ms, 17.40 KiB
+…media/b069a83635c161dc-s.e2bb452e.woff2(ooya.tech) - 1,470 ms, 17.13 KiB
+…media/b483e900f9641fa0-s.79b43a30.woff2(ooya.tech) - 1,465 ms, 17.66 KiB
+…media/0af9dd65d00c050e-s.199249f1.woff2(ooya.tech) - 1,474 ms, 19.39 KiB
+…media/6131a9320a0f0e00-s.1446559a.woff2(ooya.tech) - 1,475 ms, 20.23 KiB
+…media/683bb10d164e88ba-s.f0596e24.woff2(ooya.tech) - 1,472 ms, 15.93 KiB
+…media/679…a8bee3-s.3ec69b7b.woff2(ooya.tech) - 1,470 ms, 17.64 KiB
+…media/fd8028c2945c270c-s.69409a38.woff2(ooya.tech) - 1,464 ms, 16.83 KiB
+…media/a2a2f54707b7fb28-s.256e3fb4.woff2(ooya.tech) - 1,469 ms, 17.91 KiB
+…media/b3517b03b44a2923-s.3dabea50.woff2(ooya.tech) - 1,471 ms, 17.72 KiB
+…media/27c06af3613529b2-s.fb8fe018.woff2(ooya.tech) - 1,466 ms, 19.60 KiB
+…media/a1606c58a7561dba-s.fa7c54ca.woff2(ooya.tech) - 1,468 ms, 16.80 KiB
+…media/26cdd03f0e79a67c-s.d3407410.woff2(ooya.tech) - 1,466 ms, 18.65 KiB
+…media/ab48bfb9925fb09d-s.866f265c.woff2(ooya.tech) - 1,474 ms, 15.42 KiB
+…media/275ccf0c441a2836-s.29958141.woff2(ooya.tech) - 1,463 ms, 16.05 KiB
+…media/d8ea5540f28d37db-s.7f9656a5.woff2(ooya.tech) - 1,465 ms, 17.18 KiB
+…media/4f585ef944…-s.285daa66.woff2(ooya.tech) - 1,461 ms, 16.02 KiB
+…media/9d85bd9105499ad1-s.cba2a72e.woff2(ooya.tech) - 930 ms, 15.05 KiB
+…media/5f2b96e387cbd8be-s.63533263.woff2(ooya.tech) - 931 ms, 14.66 KiB
+…media/3df8c6b5cf30c80b-s.74a33d6b.woff2(ooya.tech) - 1,462 ms, 16.28 KiB
+…media/37f58264f669d8d0-s.437e10de.woff2(ooya.tech) - 1,032 ms, 16.61 KiB
+…media/9a90a47970b2d1ac-s.18b34b89.woff2(ooya.tech) - 931 ms, 12.05 KiB
+…media/b7ef28f941ece0f2-s.b0e4cef7.woff2(ooya.tech) - 1,477 ms, 18.50 KiB
+…media/84ba4a404…a-s.96db1614.woff2(ooya.tech) - 1,033 ms, 77.74 KiB
+事前接続したオリジン
+事前接続のヒントは、ブラウザがページの読み込みの早い段階で接続を確立できるようにして、そのオリジンに対する最初のリクエストの実行時間を短縮します。以下は、ページから事前接続したオリジンです。
+事前接続したオリジンはありません
+事前接続の候補
+最も重要なオリジンに事前接続のヒントを追加します。ヒントを追加するオリジンは 4 つ以下にすることをおすすめします。
+事前接続の候補となるオリジンは他にありません
+効率的なキャッシュ保存期間を使用する 推定される削減サイズ 2 KiB
+キャッシュの有効期間を長くすると、再訪問したユーザーへのページの読み込み速度を向上できます。詳細LCPFCPスコアなし
+リクエスト
+キャッシュの TTL
+転送サイズ
+ahrefs.com
+3 KiB
+/analytics.js(analytics.ahrefs.com)
+4h
+3 KiB
+画像配信を改善する 推定される削減サイズ 34 KiB
+画像のダウンロード時間を短縮すると、ページ読み込みの体感時間と LCP を改善できます。画像サイズの最適化に関する詳細LCPFCPスコアなし
+URL
+リソースのサイズ
+推定される削減サイズ
+ooya.tech 自社
+51.3 KiB	33.9 KiB
+賃貸経営シミュレーター
+<img alt="賃貸経営シミュレーター" loading="lazy" width="998" height="674" decoding="async" data-nimg="1" class="w-full h-auto rounded-lg" srcset="/_next/image?url=%2Fimg%2Fkakushin_img01.png&amp;w=1080&amp;q=75&amp;dpl=dpl_4XL84xooD…" src="/_next/image?url=%2Fimg%2Fkakushin_img01.png&amp;w=2048&amp;q=75&amp;dpl=dpl_4XL84xooD…" style="color: transparent;">
+/_next/image?url=…(ooya.tech)
+31.3 KiB
+20.7 KiB
+この画像ファイルは、表示サイズ（581x392）に必要なサイズ（998x674）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+20.7 KiB
+買付申込書ジェネレーター
+<img alt="買付申込書ジェネレーター" loading="lazy" width="998" height="674" decoding="async" data-nimg="1" class="w-full h-auto rounded-lg" srcset="/_next/image?url=%2Fimg%2Fkakushin_img02.png&amp;w=1080&amp;q=75&amp;dpl=dpl_4XL84xooD…" src="/_next/image?url=%2Fimg%2Fkakushin_img02.png&amp;w=2048&amp;q=75&amp;dpl=dpl_4XL84xooD…" style="color: transparent;">
+/_next/image?url=…(ooya.tech)
+20.0 KiB
+13.2 KiB
+この画像ファイルは、表示サイズ（581x392）に必要なサイズ（998x674）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+13.2 KiB
+レイアウト シフトの原因
+DOM サイズを最適化する
+LCP の内訳
+サードパーティ
+これらのインサイトは、Chrome DevTools のパフォーマンス パネルでも確認できます。詳しい情報を表示するには、トレースを記録してください。
+
+
+gemiinの
+見解
+レンダリングをブロックしているリクエスト 推定される削減時間 5,600 ミリ秒
+
+
+
+リクエストがページの最初のレンダリングをブロックしているため、LCP が遅れる可能性があります。これらのネットワーク リクエストを遅らせるかインライン化すると、クリティカル パスから移動できます。LCPFCPスコアなし
+
+URL
+
+転送サイズ
+
+継続時間
+
+ooya.tech 自社
+
+52.7 KiB2,370 ms…chunks/7cbfdf20ce8a7b98.css?dpl=dpl_4XL84…(ooya.tech)
+
+33.0 KiB
+
+1,350 ms
+
+…chunks/46077bd0b35a39eb.css?dpl=dpl_4XL84…(ooya.tech)
+
+18.3 KiB
+
+510 ms
+
+…chunks/44ad01f422861b8e.css?dpl=dpl_4XL84…(ooya.tech)
+
+1.4 KiB
+
+510 ms
+
+　ここが一番原因ですかね？？
+
+Gemini の回答
+はい、まさにそこが**「表示が始まらない最大のボトルネック」**です。
+
+推定削減時間が 5,600ミリ秒（5.6秒） というのは、パフォーマンス改善において「超巨大な壁」です。これがある限り、どんなに画像を軽くしても、ユーザーの画面には5秒以上「真っ白」または「崩れた状態」が続くことになります。
+
+なぜこれが起きているのか？（レンダリングブロックの正体）
+ブラウザはHTMLを読み込むとき、<link rel="stylesheet">（CSSファイル）を見つけると、**「このデザインを読み込み終わるまで、画面を描画してはいけない」**と判断して作業をストップします。これが「ブロック」です。
+
+今回の課題は以下の3点に集約されます：
+
+ネットワークの待ち時間（継続時間 2,370msなど）: CSSファイル自体は33KB程度と小さいのに、読み込みに2秒以上かかっています。サーバーの応答、あるいは接続の確立に時間がかかっています。
+
+ファイルが分割されすぎている: chunks/... というファイルが複数ありますが、これらが同時に「僕を読み終わるまで待って！」とブラウザを止めています。
+
+LCP（画像）との相乗悪影響: このCSSの読み込みが終わらないと、次のステップである「ヒーロー画像の表示」に移れないため、結果としてLCPが9.6秒という絶望的な数字になっています。
+
+どうやって解決し、90点を目指すか
+この「5.6秒」を削るための戦略は2つです。
+
+A. CSSのインライン化（Next.jsが自動でやるべき部分）
+本来Next.jsは、そのページに必要なCSSだけを抽出してHTMLに直接埋め込む（インライン化）機能を持っています。しかし、大規模なCSSフレームワークや、コンポーネントをまたいだ複雑なインポートがあると、このようにファイルが分かれてブロックの原因になります。
+
+B. 不要なCSSの分離
+トップページの最初の画面（ファーストビュー）に関係ないCSSを、後回しに読み込むように調整します。
+
+具体的に今から修正したいこと
+まずは、「CSSが原因で画像が止まる」のを防ぐため、HTMLの構造を整理します。
+
+LandingPageClient.tsx の最適化: * ヒーロー画像の読み込みを「CSSの完了を待たずに開始させる」ために、priority プロパティを付与します。
+
+インポートの整理: * 診断で「未使用のJavaScript/CSS」として指摘されていた 7186a204... などの巨大なチャンクが含まれないよう、トップページで使っていない重いライブラリ（シミュレーターの計算ロジックなど）があれば、それを dynamic import に切り替えます。
+
+まずは「レンダリングブロック」を解消するための第一歩として、ヒーロー画像とその周辺コードを「最優先・非ブロック」の書き方に修正してもよろしいでしょうか？ これだけで、5.6秒の待ち時間のうち数秒分は「画像読み込み」と並行して進められるようになります。

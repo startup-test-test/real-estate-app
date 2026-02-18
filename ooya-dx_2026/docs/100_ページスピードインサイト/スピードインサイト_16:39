@@ -1,0 +1,372 @@
+2026/02/18 16:44:09 に作成したレポート
+https://ooya.tech/
+有効な URL を入力してください
+
+
+smartphone
+携帯電話
+
+computer
+デスクトップ
+
+実際のユーザーの環境で評価する
+データがありません
+
+パフォーマンスの問題を診断する
+61
+パフォーマンス
+91
+ユーザー補助
+100
+おすすめの方法
+100
+SEO
+61
+FCP
++9
+LCP
++1
+TBT
++17
+CLS
++25
+SI
++9
+パフォーマンス
+推定値のため変動する可能性があります。パフォーマンス スコアの計算は、これらの指標を基に行っています。計算ツールはこちら。
+0–49
+50–89
+90–100
+Final Screenshot
+
+指標
+ビューを開く
+First Contentful Paint
+1.8 秒
+Largest Contentful Paint
+7.8 秒
+Total Blocking Time
+520 ミリ秒
+Cumulative Layout Shift
+0
+Speed Index
+3.1 秒
+Captured at 2026年2月18日 16:44 JST
+Moto G Power のエミュレーション with Lighthouse 13.0.1
+1 ページのみのセッション
+最初のページ読み込み
+低速 4G スロットリング
+Using HeadlessChromium 144.0.7559.132 with lr
+ツリーマップを見る
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+次に関連する監査を表示:
+
+All
+
+FCP
+
+LCP
+
+TBT
+インサイト
+レンダリングをブロックしているリクエスト 推定される削減時間 1,910 ミリ秒
+リクエストがページの最初のレンダリングをブロックしているため、LCP が遅れる可能性があります。これらのネットワーク リクエストを遅らせるかインライン化すると、クリティカル パスから移動できます。LCPFCPスコアなし
+URL
+転送サイズ
+継続時間
+ooya.tech 自社
+52.3 KiB	1,500 ms
+…chunks/7cbfdf20ce8a7b98.css?dpl=dpl_4rXJf…(ooya.tech)
+33.0 KiB
+750 ms
+…chunks/0211b887f974deb0.css?dpl=dpl_4rXJf…(ooya.tech)
+17.9 KiB
+300 ms
+…chunks/44ad01f422861b8e.css?dpl=dpl_4rXJf…(ooya.tech)
+1.4 KiB
+450 ms
+以前の JavaScript 推定される削減サイズ 14 KiB
+ポリフィルと変換を使用すると、従来のブラウザで新しい JavaScript 機能を使用できるようになります。ただし、その機能の多くは最新ブラウザでは必要ありません。従来のブラウザをサポートする必要がある場合を除き、Baseline の機能をトランスパイルしないように JavaScript ビルドプロセスを変更することを検討してください。ほとんどのサイトでトランスパイルせずに ES6+ コードをデプロイできる理由LCPFCPスコアなし
+URL
+不要なバイト
+ooya.tech 自社
+13.7 KiB
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…(ooya.tech)
+13.7 KiB
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:5107(ooya.tech)
+Array.prototype.at
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:4495(ooya.tech)
+Array.prototype.flat
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:4608(ooya.tech)
+Array.prototype.flatMap
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:4984(ooya.tech)
+Object.fromEntries
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:5242(ooya.tech)
+Object.hasOwn
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:4237(ooya.tech)
+String.prototype.trimEnd
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…:1:4152(ooya.tech)
+String.prototype.trimStart
+強制リフロー
+強制リフローは、DOM の状態の変更によってスタイルが無効化された後に JavaScript が幾何学的プロパティ（offsetWidth など）をクエリしたときに発生します。これにより、パフォーマンスが低下する可能性があります。詳しくは、強制リフローとその緩和策をご覧ください。スコアなし
+ソース
+合計リフロー時間
+[ソース不明]
+108 ms
+ネットワークの依存関係ツリー
+チェーンの長さを縮小する、リソースのダウンロード サイズを抑える、不要なリソースのダウンロードを遅らせるなどしてページの読み込み速度を改善し、クリティカル リクエスト チェーンを回避してください。LCPスコアなし
+クリティカル パスの最大待ち時間: 1,536 ms
+最初の移動先
+https://ooya.tech - 78 ms, 14.02 KiB
+…chunks/0211b887f974deb0.css?dpl=dpl_4rXJf…(ooya.tech) - 115 ms, 17.88 KiB
+…chunks/44ad01f422861b8e.css?dpl=dpl_4rXJf…(ooya.tech) - 96 ms, 1.38 KiB
+…chunks/7cbfdf20ce8a7b98.css?dpl=dpl_4rXJf…(ooya.tech) - 156 ms, 33.00 KiB
+…media/789c311d2ee85bd0-s.655571ed.woff2(ooya.tech) - 1,532 ms, 68.07 KiB
+…media/b5e63d91af9b674d-s.b2fb5299.woff2(ooya.tech) - 1,535 ms, 22.50 KiB
+…media/f569da378cb7fcc0-s.017012de.woff2(ooya.tech) - 1,535 ms, 21.40 KiB
+…media/05a0d21a2cef6a7b-s.4150072f.woff2(ooya.tech) - 1,526 ms, 19.80 KiB
+…media/bbf203e5a0078d39-s.698d6d0a.woff2(ooya.tech) - 1,528 ms, 19.06 KiB
+…media/079b9e80725351e0-s.8a311f7b.woff2(ooya.tech) - 1,533 ms, 17.82 KiB
+…media/c15040384d76a4f4-s.9e5115cd.woff2(ooya.tech) - 1,536 ms, 17.10 KiB
+…media/23fbae5fe54b4090-s.7078bdbf.woff2(ooya.tech) - 1,532 ms, 18.19 KiB
+…media/b328eebf6b76f38b-s.d40e1435.woff2(ooya.tech) - 1,531 ms, 19.03 KiB
+…media/99fb62709cdb61a3-s.640048b0.woff2(ooya.tech) - 1,520 ms, 19.00 KiB
+…media/65521569a5d22bc8-s.fd510f24.woff2(ooya.tech) - 1,521 ms, 17.26 KiB
+…media/58bdc392c1e33013-s.f8adda31.woff2(ooya.tech) - 1,527 ms, 18.26 KiB
+…media/214d358abec750cb-s.d3a295a0.woff2(ooya.tech) - 1,524 ms, 17.40 KiB
+…media/b069a83635c161dc-s.e2bb452e.woff2(ooya.tech) - 1,525 ms, 17.13 KiB
+…media/b483e900f9641fa0-s.79b43a30.woff2(ooya.tech) - 1,520 ms, 17.66 KiB
+…media/0af9dd65d00c050e-s.199249f1.woff2(ooya.tech) - 1,530 ms, 19.39 KiB
+…media/6131a9320a0f0e00-s.1446559a.woff2(ooya.tech) - 1,527 ms, 20.23 KiB
+…media/683bb10d164e88ba-s.f0596e24.woff2(ooya.tech) - 1,529 ms, 15.93 KiB
+…media/679…a8bee3-s.3ec69b7b.woff2(ooya.tech) - 1,526 ms, 17.64 KiB
+…media/fd8028c2945c270c-s.69409a38.woff2(ooya.tech) - 1,519 ms, 16.83 KiB
+…media/a2a2f54707b7fb28-s.256e3fb4.woff2(ooya.tech) - 1,524 ms, 17.91 KiB
+…media/b3517b03b44a2923-s.3dabea50.woff2(ooya.tech) - 1,528 ms, 17.73 KiB
+…media/27c06af3613529b2-s.fb8fe018.woff2(ooya.tech) - 1,522 ms, 19.60 KiB
+…media/a1606c58a7561dba-s.fa7c54ca.woff2(ooya.tech) - 1,522 ms, 16.80 KiB
+…media/26cdd03f0e79a67c-s.d3407410.woff2(ooya.tech) - 1,516 ms, 18.65 KiB
+…media/ab48bfb9925fb09d-s.866f265c.woff2(ooya.tech) - 1,530 ms, 15.42 KiB
+…media/275ccf0c441a2836-s.29958141.woff2(ooya.tech) - 1,518 ms, 16.05 KiB
+…media/d8ea5540f28d37db-s.7f9656a5.woff2(ooya.tech) - 1,519 ms, 17.18 KiB
+…media/4f585ef944…-s.285daa66.woff2(ooya.tech) - 1,516 ms, 16.03 KiB
+…media/9d85bd9105499ad1-s.cba2a72e.woff2(ooya.tech) - 227 ms, 15.05 KiB
+…media/5f2b96e387cbd8be-s.63533263.woff2(ooya.tech) - 238 ms, 14.66 KiB
+…media/3df8c6b5cf30c80b-s.74a33d6b.woff2(ooya.tech) - 1,517 ms, 16.28 KiB
+…media/37f58264f669d8d0-s.437e10de.woff2(ooya.tech) - 246 ms, 16.62 KiB
+…media/9a90a47970b2d1ac-s.18b34b89.woff2(ooya.tech) - 237 ms, 12.05 KiB
+…media/b7ef28f941ece0f2-s.b0e4cef7.woff2(ooya.tech) - 1,534 ms, 18.50 KiB
+…media/84ba4a404…a-s.96db1614.woff2(ooya.tech) - 245 ms, 77.75 KiB
+…media/39be5119cc5a377c-s.1b12f11c.woff2(ooya.tech) - 1,536 ms, 74.66 KiB
+事前接続したオリジン
+事前接続のヒントは、ブラウザがページの読み込みの早い段階で接続を確立できるようにして、そのオリジンに対する最初のリクエストの実行時間を短縮します。以下は、ページから事前接続したオリジンです。
+事前接続したオリジンはありません
+事前接続の候補
+最も重要なオリジンに事前接続のヒントを追加します。ヒントを追加するオリジンは 4 つ以下にすることをおすすめします。
+事前接続の候補となるオリジンは他にありません
+効率的なキャッシュ保存期間を使用する 推定される削減サイズ 2 KiB
+キャッシュの有効期間を長くすると、再訪問したユーザーへのページの読み込み速度を向上できます。詳細LCPFCPスコアなし
+リクエスト
+キャッシュの TTL
+転送サイズ
+ahrefs.com
+3 KiB
+/analytics.js(analytics.ahrefs.com)
+4h
+3 KiB
+DOM サイズを最適化する
+LCP の内訳
+サードパーティ
+これらのインサイトは、Chrome DevTools のパフォーマンス パネルでも確認できます。詳しい情報を表示するには、トレースを記録してください。
+診断
+使用していない JavaScript の削減 推定される削減サイズ 233 KiB
+使用していない JavaScript を削除して、必要になるまでスクリプトの読み込みを遅らせると、ネットワークの通信量を減らすことができます。使用していない JavaScript を削除する方法の詳細LCPFCPスコアなし
+URL
+転送サイズ
+推定される削減サイズ
+ooya.tech 自社
+281.4 KiB	173.5 KiB
+…chunks/7186a204b944b278.js?dpl=dpl_4rXJf…(ooya.tech)
+116.8 KiB
+90.4 KiB
+…chunks/656bcc4da31b3e84.js?dpl=dpl_4rXJf…(ooya.tech)
+95.2 KiB
+58.9 KiB
+…chunks/e5ebd9515e628167.js?dpl=dpl_4rXJf…(ooya.tech)
+69.5 KiB
+24.2 KiB
+Google Tag Manager tag-manager 
+146.7 KiB	60.0 KiB
+/gtag/js?id=G-Z2QBGBT7JP(www.googletagmanager.com)
+146.7 KiB
+60.0 KiB
+使用していない CSS の削減 推定される削減サイズ 32 KiB
+スタイルシートから使用していないルールを削除して、スクロールせずに見える範囲のコンテンツで使用されていない CSS の読み込みを遅らせると、ネットワークの通信量を減らすことができます。未使用の CSS を削減する方法の詳細LCPFCPスコアなし
+URL
+転送サイズ
+推定される削減サイズ
+ooya.tech 自社
+32.3 KiB	32.3 KiB
+…chunks/7cbfdf20ce8a7b98.css?dpl=dpl_4rXJf…(ooya.tech)
+32.3 KiB
+32.3 KiB
+メインスレッドでタスクが長時間実行されないようにしてください 長時間実行されているタスクが 7 件見つかりました
+アプリケーションのパフォーマンスに関する詳細。これらの数値は、パフォーマンス スコアには直接影響しません。
+合格した監査 (16)
+
+
+2026/02/18 16:44:09 に作成したレポート
+https://ooya.tech/
+有効な URL を入力してください
+
+
+smartphone
+携帯電話
+
+computer
+デスクトップ
+
+実際のユーザーの環境で評価する
+データがありません
+
+パフォーマンスの問題を診断する
+96
+パフォーマンス
+96
+ユーザー補助
+100
+おすすめの方法
+100
+SEO
+96
+FCP
++10
+LCP
++21
+TBT
++30
+CLS
++25
+SI
++10
+パフォーマンス
+推定値のため変動する可能性があります。パフォーマンス スコアの計算は、これらの指標を基に行っています。計算ツールはこちら。
+0–49
+50–89
+90–100
+Final Screenshot
+
+指標
+ビューを開く
+First Contentful Paint
+0.3 秒
+Largest Contentful Paint
+1.5 秒
+Total Blocking Time
+40 ミリ秒
+Cumulative Layout Shift
+0.002
+Speed Index
+0.6 秒
+Captured at 2026年2月18日 16:44 JST
+デスクトップのエミュレーション with Lighthouse 13.0.1
+1 ページのみのセッション
+最初のページ読み込み
+カスタム スロットリング
+Using HeadlessChromium 144.0.7559.132 with lr
+ツリーマップを見る
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+次に関連する監査を表示:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+インサイト
+画像配信を改善する 推定される削減サイズ 150 KiB
+画像のダウンロード時間を短縮すると、ページ読み込みの体感時間と LCP を改善できます。画像サイズの最適化に関する詳細LCPFCPスコアなし
+URL
+リソースのサイズ
+推定される削減サイズ
+ooya.tech 自社
+288.5 KiB	149.5 KiB
+実需とは不動産の何を指す？初心者にもわかる"実需"と"投資用"の違いと考え方
+<img alt="実需とは不動産の何を指す？初心者にもわかる&quot;実需&quot;と&quot;投資用&quot;の違いと考え方" loading="lazy" width="800" height="450" decoding="async" data-nimg="1" class="w-full h-full object-cover group-hover:scale-105 transition-transform dura…" srcset="/_next/image?url=%2Fimages%2Fmedia%2Fthumbnails%2Fphil-hearing-IYfp2Ixe9nM…" src="https://ooya.tech/_next/image?url=%2Fimages%2Fmedia%2Fthumbnails%2Fphil-he…" style="color: transparent;">
+/_next/image?url=…(ooya.tech)
+83.7 KiB
+67.2 KiB
+画像の圧縮係数を増やすと、この画像のダウンロード サイズが改善する可能性があります。
+25.1 KiB
+この画像ファイルは、表示サイズ（389x260）に必要なサイズ（800x450）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+60.1 KiB
+大家DX
+<img alt="大家DX" fetchpriority="high" width="1920" height="1282" decoding="async" data-nimg="1" sizes="100vw" srcset="/_next/image?url=%2Fimages%2Fmedia%2Fhero-media.jpeg&amp;w=640&amp;q=75&amp;dpl=dpl_4r…" src="https://ooya.tech/_next/image?url=%2Fimages%2Fmedia%2Fhero-media.jpeg&amp;w=19…" style="color: transparent; position: absolute; inset: 0px; width: 100%;">
+/_next/image?url=…(ooya.tech)
+129.5 KiB
+29.8 KiB
+この画像ファイルは、表示サイズ（1335x891）に必要なサイズ（1920x805）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+29.8 KiB
+賃貸経営シミュレーター
+<img alt="賃貸経営シミュレーター" loading="lazy" width="998" height="674" decoding="async" data-nimg="1" class="w-full h-auto max-w-md lg:max-w-lg xl:max-w-xl scale-[1.32]" srcset="/_next/image?url=%2Fimg%2Fkakushin_img01.png&amp;w=1080&amp;q=75&amp;dpl=dpl_4rXJfExAY…" src="https://ooya.tech/_next/image?url=%2Fimg%2Fkakushin_img01.png&amp;w=1080&amp;q=75&amp;…" style="color: transparent;">
+/_next/image?url=…(ooya.tech)
+31.3 KiB
+20.9 KiB
+この画像ファイルは、表示サイズ（576x389）に必要なサイズ（998x674）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+20.9 KiB
+「不動産投資 やめとけ」は本当？2chの声と現実のギャップを検証
+<img alt="「不動産投資 やめとけ」は本当？2chの声と現実のギャップを検証" loading="lazy" width="800" height="450" decoding="async" data-nimg="1" class="w-full h-full object-cover group-hover:scale-105 transition-transform dura…" srcset="/_next/image?url=%2Fimages%2Fmedia%2Fthumbnails%2Fkenny-eliason-kdwahpWYfQ…" src="https://ooya.tech/_next/image?url=%2Fimages%2Fmedia%2Fthumbnails%2Fkenny-e…" style="color: transparent;">
+/_next/image?url=…(ooya.tech)
+24.6 KiB
+17.7 KiB
+この画像ファイルは、表示サイズ（389x259）に必要なサイズ（800x449）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+17.7 KiB
+アパート経営の見積もりシミュレーションのやり方｜初期費用から収益まで解説
+<img alt="アパート経営の見積もりシミュレーションのやり方｜初期費用から収益まで解説" loading="lazy" width="800" height="450" decoding="async" data-nimg="1" class="w-full h-full object-cover group-hover:scale-105 transition-transform dura…" srcset="/_next/image?url=%2Fimages%2Fmedia%2Fthumbnails%2Faustin-distel-EMPZ7yRZoG…" src="https://ooya.tech/_next/image?url=%2Fimages%2Fmedia%2Fthumbnails%2Faustin-…" style="color: transparent;">
+/_next/image?url=…(ooya.tech)
+19.5 KiB
+14.0 KiB
+この画像ファイルは、表示サイズ（389x259）に必要なサイズ（800x449）より大きくなっています。画像のダウンロード サイズを小さくするには、レスポンシブ画像を使用します。
+14.0 KiB
+以前の JavaScript 推定される削減サイズ 14 KiB
+レンダリングをブロックしているリクエスト 推定される削減時間 220 ミリ秒
+強制リフロー
+ネットワークの依存関係ツリー
+効率的なキャッシュ保存期間を使用する 推定される削減サイズ 2 KiB
+レイアウト シフトの原因
+DOM サイズを最適化する
+LCP の内訳
+サードパーティ
+これらのインサイトは、Chrome DevTools のパフォーマンス パネルでも確認できます。詳しい情報を表示するには、トレースを記録してください。
+診断
+使用していない JavaScript の削減 推定される削減サイズ 234 KiB
+使用していない CSS の削減 推定される削減サイズ 32 KiB
+過大なネットワーク ペイロードの回避 合計サイズは 3,409 KiB でした
+メインスレッドでタスクが長時間実行されないようにしてください 長時間実行されているタスクが 4 件見つかりました
+アプリケーションのパフォーマンスに関する詳細。これらの数値は、パフォーマンス スコアには直接影響しません。
+合格した監査 (13)
+表示
+96
+ユーザー補助
+これらのチェックにより、ウェブアプリのユーザー補助機能の改善点が明確になります。ただし、自動的に検出できる問題は一部に過ぎず、ウェブアプリのユーザー補助機能に問題がないことが保証されたわけではないため、手動テストも実施することをおすすめします。
+コントラスト
+け
+

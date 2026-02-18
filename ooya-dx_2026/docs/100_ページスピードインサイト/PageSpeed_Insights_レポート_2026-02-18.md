@@ -165,3 +165,65 @@
 | **中** | コード分割・遅延読み込み | TBT/SI改善 |
 | **低** | CSS最小化 | 28KiB削減 |
 | **低** | レガシーJS対応 | 14KiB削減 |
+
+---
+
+## 本日の改善結果（2026-02-18）
+
+### スコア比較
+
+| デバイス | 開始時 (13:43) | 最終 (16:44) | 改善幅 |
+|---|---|---|---|
+| **モバイル (SP)** | 53点 | 61点 | **+8点** |
+| **デスクトップ (PC)** | 76点 | 96点 | **+20点** |
+
+### モバイル指標の推移
+
+| 指標 | 開始時 (13:43) | 最終 (16:44) | 改善 |
+|---|---|---|---|
+| FCP | 9.5s | 1.8s | **-7.7s (-81%)** |
+| LCP | 21.2s | 7.8s | **-13.4s (-63%)** |
+| TBT | 180ms | 520ms | +340ms |
+| CLS | 0.002 | 0 | 改善 |
+| SI | 15.4s | 3.1s | **-12.3s (-80%)** |
+| レンダリングブロック | 7,690ms | 1,910ms | **-5,780ms (-75%)** |
+| 画像改善余地 | 3,585 KiB | 0 KiB | **解消** |
+| 未使用CSS | 267 KiB | 32 KiB | **-235 KiB (-88%)** |
+
+### デスクトップ指標の推移
+
+| 指標 | 開始時 (13:43) | 最終 (16:44) | 改善 |
+|---|---|---|---|
+| FCP | 1.3s | 0.3s | **-1.0s (-77%)** |
+| LCP | 3.0s | 1.5s | **-1.5s (-50%)** |
+| TBT | 70ms | 40ms | **-30ms (-43%)** |
+| CLS | 0.002 | 0.002 | ±0 |
+| SI | 2.2s | 0.6s | **-1.6s (-73%)** |
+| 画像改善余地 | 3,641 KiB | 150 KiB | **-3,491 KiB (-96%)** |
+
+### 実施した施策
+
+| # | 施策 | 対象ファイル | 効果 |
+|---|---|---|---|
+| 1 | 全ページ `<img>` → `<Image>` 移行 | SimulatorLPClient, profile/page, not-found | WebP自動変換・レスポンシブ画像配信 |
+| 2 | 全 `<Image>` に `sizes` 属性追加 | shared-header, landing-footer, BlogPosts, ToolSidebarCTA, LandingPageClient | 適切なサイズの画像配信 |
+| 3 | Hero画像に `fetchPriority="high"` 追加 | LandingPageClient | LCP改善 |
+| 4 | Google Analytics `lazyOnload` 化 | GoogleAnalytics.tsx | FCP大幅改善（レンダリングブロック解消） |
+| 5 | 印刷CSS分離（globals.css → print.css） | globals.css, SimulatorClient.tsx | CSSバンドル138行軽量化 |
+| 6 | `optimizePackageImports` 追加 | next.config.mjs | lucide-react ツリーシェイキング |
+| 7 | kakushin画像 `sizes` 指定 | LandingPageClient | 画像転送量削減 |
+
+### 試行して取り消した施策
+
+| 施策 | 理由 |
+|---|---|
+| `experimental.optimizeCss: true`（critters） | デスクトップTBTが70→270msに悪化（スコア98→87）。Tailwind CSS v4との相性問題 |
+
+### 対応不可と判断した項目
+
+| 項目 | 理由 |
+|---|---|
+| レンダリングブロックCSS (1,910ms) | Tailwind CSS v4 + Next.jsの構造上、CSSチャンクの分離は不可 |
+| 以前のJavaScript (14 KiB) | Next.jsフレームワークのポリフィル。browserslist設定済みでも残る |
+| 未使用JS (233 KiB) | react-dom, Next.jsランタイム, ポリフィル等のフレームワークコード |
+| 未使用CSS (32 KiB) | Tailwind v4のユーティリティCSS。ページ単位のパージは不可 |
