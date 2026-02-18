@@ -111,7 +111,7 @@ export default function Error({
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-500">
-          お問い合わせ: <a href="/contact" className="text-blue-600 hover:underline">お問い合わせフォーム</a>
+          お問い合わせ: <a href="/company/contact" className="text-blue-600 hover:underline">お問い合わせフォーム</a>
         </p>
       </div>
     </div>

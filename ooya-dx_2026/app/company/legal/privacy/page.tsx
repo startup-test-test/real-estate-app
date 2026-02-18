@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'プライバシーポリシー｜大家DX',
   description: '大家DXサービスのプライバシーポリシーについて',
   alternates: {
-    canonical: '/legal/privacy',
+    canonical: '/company/legal/privacy',
   },
 }
 
@@ -15,10 +15,10 @@ export default function PrivacyPage() {
       <WebPageJsonLd
         name="プライバシーポリシー"
         description="大家DXサービスのプライバシーポリシーについて"
-        path="/legal/privacy"
+        path="/company/legal/privacy"
         datePublished="2025-08-11"
         dateModified="2026-02-05"
-        breadcrumbs={[{ name: 'プライバシーポリシー', href: '/legal/privacy' }]}
+        breadcrumbs={[{ name: 'プライバシーポリシー', href: '/company/legal/privacy' }]}
       />
     <article className="mx-auto max-w-4xl px-6 py-12">
       {/* パンくず */}
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
               <li>提供の手段・方法：Resend, Inc.の提供するAPIを利用して送信します</li>
               <li>利用目的：お問い合わせ受付確認メール、システム通知メールの送信のために当社で利用します</li>
               <li>第三者提供の有無：無（法的要請、サービス提供に必要な場合を除く）</li>
-              <li>プライバシーポリシー：<a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://resend.com/legal/privacy-policy</a></li>
+              <li>プライバシーポリシー：<a href="https://resend.com/company/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://resend.com/company/legal/privacy-policy</a></li>
             </ul>
           </div>
 

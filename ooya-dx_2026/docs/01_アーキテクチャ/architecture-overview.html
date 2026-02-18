@@ -167,7 +167,7 @@
   <div class="stat-card"><div class="stat-value">74</div><div class="stat-label">総ページ数</div></div>
   <div class="stat-card"><div class="stat-value">4</div><div class="stat-label">テンプレート種類</div></div>
   <div class="stat-card"><div class="stat-value">26+</div><div class="stat-label">共通コンポーネント</div></div>
-  <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">layout.tsx ファイル</div></div>
+  <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">layout.tsx ファイル</div></div>
 </div>
 
 <!-- TOC -->
@@ -196,9 +196,9 @@
   <tr><th>テンプレート</th><th>用途</th><th>ページ数</th><th>サンプルURL</th><th>状態</th></tr>
   <tr>
     <td><code>CompanyPageLayout</code></td>
-    <td>company系・profile・legal・contact等（1カラム）</td>
-    <td><strong>19ページ</strong></td>
-    <td><a href="http://localhost:3002/layout-sample" target="_blank"><code>/layout-sample</code></a></td>
+    <td>company系・profile等（1カラム）</td>
+    <td><strong>20ページ</strong></td>
+    <td><a href="http://localhost:3002/company/layout-sample" target="_blank"><code>/company/layout-sample</code></a></td>
     <td><span class="badge badge-green">✅ 共通化済</span></td>
   </tr>
   <tr>
@@ -227,21 +227,16 @@
 
 
 <!-- ========== 2. LAYOUT.TSX ========== -->
-<h2 id="layouts">2. CompanyPageLayout 使用ファイル一覧（8ファイル）</h2>
-<p style="font-size:13px; color:var(--gray-500); margin-bottom:16px;">すべて <code>components/CompanyPageLayout.tsx</code> をimport。レイアウト変更は1ファイルで完結。</p>
+<h2 id="layouts">2. CompanyPageLayout 使用ファイル一覧（2ファイル）</h2>
+<p style="font-size:13px; color:var(--gray-500); margin-bottom:16px;"><code>components/CompanyPageLayout.tsx</code> をimportする layout.tsx は2ファイルのみ。公開ページのレイアウト変更は1コンポーネントで完結。</p>
 
 <div class="card">
 <table>
-  <tr><th>#</th><th>ファイル</th><th>対象ページ数</th><th>metadata / JSON-LD</th></tr>
-  <tr><td>1</td><td><code>app/company/layout.tsx</code></td><td>12ページ</td><td>-</td></tr>
-  <tr><td>2</td><td><code>app/profile/layout.tsx</code></td><td>1ページ</td><td>-</td></tr>
-  <tr><td>3</td><td><code>app/contact/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
-  <tr><td>4</td><td><code>app/legal/layout.tsx</code></td><td>2ページ</td><td>-</td></tr>
-  <tr><td>5</td><td><code>app/disclaimer/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
-  <tr><td>6</td><td><code>app/pricing/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
-  <tr><td>7</td><td><code>app/faq/layout.tsx</code></td><td>1ページ</td><td>Metadata + WebPageJsonLd</td></tr>
-  <tr><td>8</td><td><code>app/layout-sample/layout.tsx</code></td><td>1ページ</td><td>-</td></tr>
+  <tr><th>#</th><th>ファイル</th><th>対象ページ数</th><th>備考</th></tr>
+  <tr><td>1</td><td><code>app/company/layout.tsx</code></td><td>18ページ</td><td>company配下全ページ（legal, disclaimer, pricing, faq, layout-sample含む）</td></tr>
+  <tr><td>2</td><td><code>app/profile/layout.tsx</code></td><td>1ページ</td><td>E-E-A-T観点でルート直下に配置</td></tr>
 </table>
+<p style="font-size:12px; color:var(--gray-500); margin-top:8px;">※ company/disclaimer, company/pricing, company/faq にも layout.tsx があるが、metadata + JSON-LD 定義のみ（CompanyPageLayout は親から継承）</p>
 </div>
 
 <!-- ========== 3. PAGES ========== -->
@@ -284,7 +279,7 @@
 </table>
 </div>
 
-<h3>公開ページ（会社系）：12ページ</h3>
+<h3>公開ページ（会社系）：19ページ</h3>
 <div class="card" style="overflow-x: auto;">
 <table>
   <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th><th>CompanyNav</th></tr>
@@ -300,7 +295,14 @@
   <tr><td><code>/company/climate-adaptation</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
   <tr><td><code>/company/plastics-smart</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
   <tr><td><code>/company/consumer-policy</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr style="background:var(--green-50);"><td><code>/company/legal/terms</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr style="background:var(--green-50);"><td><code>/company/legal/privacy</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td><td>-</td></tr>
+  <tr style="background:var(--green-50);"><td><code>/company/disclaimer</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>パンくず統一</td><td>WebPageJsonLd(layout)</td><td>4xl</td><td>-</td></tr>
+  <tr style="background:var(--green-50);"><td><code>/company/pricing</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>Breadcrumb</td><td>WebPageJsonLd(layout)</td><td>4xl</td><td>-</td></tr>
+  <tr style="background:var(--green-50);"><td><code>/company/faq</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>なし</td><td>WebPageJsonLd(layout)</td><td>4xl</td><td>-</td></tr>
+  <tr style="background:var(--green-50);"><td><code>/company/layout-sample</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>-</td><td>-</td><td>7xl</td><td>-</td></tr>
 </table>
+<p style="font-size:12px; color:var(--gray-500); margin-top:8px;">緑行：2026/02/18 に company 配下へ統合（旧URLは301リダイレクト）</p>
 </div>
 
 <h3>公開ページ（メディア系）：3テンプレート + 13記事</h3>
@@ -345,21 +347,15 @@
 </table>
 </div>
 
-<h3>公開ページ（その他）：10ページ</h3>
+<h3>公開ページ（その他）：4ページ</h3>
 <div class="card">
 <table>
   <tr><th>パス</th><th>テンプレート</th><th>ヘッダー</th><th>パンくず</th><th>構造化データ</th><th>max-w</th></tr>
   <tr><td><code>/</code> (トップ)</td><td><span class="badge badge-blue">独自LP</span></td><td>SharedHeader</td><td>なし</td><td>ルートのみ</td><td>カスタム</td></tr>
   <tr><td><code>/profile</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd+Person</td><td>7xl</td></tr>
-  <tr><td><code>/contact</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン(&gt;)</td><td>WebPageJsonLd</td><td>7xl→2xl</td></tr>
-  <tr><td><code>/pricing</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>Breadcrumb</td><td>layout経由</td><td>4xl</td></tr>
-  <tr><td><code>/faq</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>なし</td><td>FAQPage(layout)</td><td>4xl</td></tr>
-  <tr><td><code>/disclaimer</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>パンくず統一</td><td>-</td><td>4xl</td></tr>
-  <tr><td><code>/legal/terms</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/legal/privacy</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>インライン</td><td>WebPageJsonLd</td><td>7xl</td></tr>
-  <tr><td><code>/layout-sample</code></td><td>CompanyPageLayout</td><td>SharedHeader</td><td>-</td><td>-</td><td>7xl</td></tr>
   <tr><td><code>/tools/template-demo</code></td><td>ContentPageLayout</td><td>SharedHeader</td><td>ToolsBreadcrumb</td><td>ToolStructuredData</td><td>7xl</td></tr>
 </table>
+<p style="font-size:12px; color:var(--gray-500); margin-top:8px;">※ /contact, /legal/*, /disclaimer, /pricing, /faq, /layout-sample は company 配下に統合済（旧URLは301リダイレクト）</p>
 </div>
 
 <h3>認証ページ：5ページ</h3>
@@ -395,7 +391,7 @@
 <div class="card">
 <table>
   <tr><th>コンポーネント</th><th>ファイル</th><th>用途</th></tr>
-  <tr><td>CompanyPageLayout</td><td><code>components/CompanyPageLayout.tsx</code></td><td>公開ページ共通レイアウト（1カラム・19ページ）</td></tr>
+  <tr><td>CompanyPageLayout</td><td><code>components/CompanyPageLayout.tsx</code></td><td>公開ページ共通レイアウト（1カラム・20ページ）</td></tr>
   <tr><td>ContentPageLayout</td><td><code>components/tools/ContentPageLayout.tsx</code></td><td>ツール＋メディア共通レイアウト（2カラム）</td></tr>
   <tr><td>DashboardLayout</td><td><code>components/dashboard/DashboardLayout.tsx</code></td><td>マイページ共通レイアウト（サイドバー）</td></tr>
 </table>
@@ -491,7 +487,7 @@
 <!-- ========== 5. DIAGRAMS ========== -->
 <h2 id="diagrams">5. HTML構造パターン（ASCII図）</h2>
 
-<h3>パターンA: 公開ページ（CompanyPageLayout）- 19ページ</h3>
+<h3>パターンA: 公開ページ（CompanyPageLayout）- 20ページ</h3>
 <div class="ascii-diagram"><pre>+================================================================+
 | <span class="highlight">[A] Public Page</span> (company/profile/contact/legal/pricing/faq)     |
 |                                                                |
@@ -533,7 +529,7 @@
 | +------------------------------------------------------------+ |
 +================================================================+
 
-<span class="comment">該当: company x12, profile, contact, legal x2, disclaimer, pricing, faq</span></pre></div>
+<span class="comment">該当: company x19 (legal, disclaimer, pricing, faq, layout-sample含む), profile</span></pre></div>
 
 <h3>パターンB: ツールページ（ContentPageLayout）- 約27ページ</h3>
 <div class="ascii-diagram"><pre>+================================================================+
@@ -715,11 +711,11 @@
 <div class="card">
 <table>
   <tr><th>クラス</th><th>実際の幅</th><th>用途</th><th>該当ページ</th></tr>
-  <tr><td><code>max-w-7xl</code></td><td><strong>1280px</strong></td><td>メインコンテナ</td><td>ツール全27、company全12、media、profile、contact</td></tr>
+  <tr><td><code>max-w-7xl</code></td><td><strong>1280px</strong></td><td>メインコンテナ</td><td>ツール全27、company全19、media、profile</td></tr>
   <tr><td><code>max-w-6xl</code></td><td><strong>1152px</strong></td><td>一部コンポーネント内</td><td>-</td></tr>
-  <tr><td><code>max-w-4xl</code></td><td><strong>896px</strong></td><td>中幅ページ</td><td>pricing、faq、disclaimer、tools/brokerage/guide</td></tr>
+  <tr><td><code>max-w-4xl</code></td><td><strong>896px</strong></td><td>中幅ページ</td><td>company/pricing、company/faq、company/disclaimer、tools/brokerage/guide</td></tr>
   <tr><td><code>max-w-3xl</code></td><td><strong>768px</strong></td><td>-</td><td>一部内部要素</td></tr>
-  <tr><td><code>max-w-2xl</code></td><td><strong>672px</strong></td><td>フォーム</td><td>contact(フォーム部分)</td></tr>
+  <tr><td><code>max-w-2xl</code></td><td><strong>672px</strong></td><td>フォーム</td><td>company/contact(フォーム部分)</td></tr>
   <tr><td><code>max-w-xl</code></td><td><strong>576px</strong></td><td>-</td><td>一部内部要素</td></tr>
   <tr><td><code>max-w-lg</code></td><td><strong>512px</strong></td><td>サイドバー・モーダル</td><td>-</td></tr>
   <tr><td><code>max-w-md</code></td><td><strong>448px</strong></td><td>認証ページ</td><td>auth/signin、auth/signup 等5ページ</td></tr>
@@ -916,11 +912,11 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
   <tr><td>ツール系</td><td>SVG chevron</td><td>ToolsBreadcrumb（共通）</td></tr>
   <tr><td>company系</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
   <tr><td>profile</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
-  <tr><td>contact</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
-  <tr><td>legal系</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
-  <tr><td>disclaimer</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
-  <tr><td>pricing</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
-  <tr><td>faq</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>company/contact</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>company/legal系</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>company/disclaimer</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>company/pricing</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
+  <tr><td>company/faq</td><td><code>&gt;</code> テキスト</td><td>インラインHTML（個別）</td></tr>
   <tr><td>media トップ</td><td>Homeアイコン + <code>/</code></td><td>インラインHTML（個別）</td></tr>
   <tr><td>media カテゴリ</td><td><code>/</code> テキスト</td><td>インラインHTML（個別）</td></tr>
   <tr><td>media 記事</td><td>SVG chevron</td><td>ToolsBreadcrumb（共通）</td></tr>
@@ -942,9 +938,8 @@ ToolSidebar sticky: top-20 (80px)</pre></div>
 <div class="card">
 <table>
   <tr><th>ページ種別</th><th>値</th></tr>
-  <tr><td>company系・profile・contact</td><td><code>py-12</code></td></tr>
+  <tr><td>company系（pricing・faq含む）・profile</td><td><code>py-12</code></td></tr>
   <tr><td>ツール系（ContentPageLayout）</td><td><code>py-4 sm:py-6 md:py-8</code></td></tr>
-  <tr><td>pricing・faq</td><td><code>py-8 sm:py-12</code></td></tr>
   <tr><td>media トップ</td><td>py指定なし（パンくずにpy-3）</td></tr>
 </table>
 </div>

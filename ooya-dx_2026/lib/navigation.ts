@@ -186,16 +186,16 @@ export const footerNavigation: NavigationSection[] = [
 // 法的リンク
 export const legalLinks: NavigationItem[] = [
   { name: '会社概要', href: '/company' },
-  { name: '利用規約', href: '/legal/terms', publishDate: '2025-08-11', lastUpdated: '2026-02-05' },
-  { name: '個人情報保護方針', href: '/legal/privacy', publishDate: '2025-08-11', lastUpdated: '2026-02-05' },
-  { name: '免責事項', href: '/disclaimer', publishDate: '2025-08-11', lastUpdated: '2026-01-15' },
+  { name: '利用規約', href: '/company/legal/terms', publishDate: '2025-08-11', lastUpdated: '2026-02-05' },
+  { name: '個人情報保護方針', href: '/company/legal/privacy', publishDate: '2025-08-11', lastUpdated: '2026-02-05' },
+  { name: '免責事項', href: '/company/disclaimer', publishDate: '2025-08-11', lastUpdated: '2026-01-15' },
 ];
 
 // その他公開ページ（日付管理用）
 export const otherPublicPages: NavigationItem[] = [
-  { name: 'よくある質問', href: '/faq', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-  { name: '料金プラン', href: '/pricing', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
-  { name: 'お問い合わせ', href: '/contact', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'よくある質問', href: '/company/faq', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: '料金プラン', href: '/company/pricing', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
+  { name: 'お問い合わせ', href: '/company/contact', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
   { name: 'メディア', href: '/media', publishDate: '2026-01-15', lastUpdated: '2026-02-10' },
 ];
 

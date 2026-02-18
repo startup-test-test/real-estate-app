@@ -135,9 +135,9 @@ export default function SignUpPage() {
           {/* Google同意文言 */}
           <p className="text-xs text-gray-500 text-center mt-3">
             Googleアカウントで新規登録することで<br />
-            <Link href="/legal/terms" className="text-blue-600 hover:underline">利用規約</Link>
+            <Link href="/company/legal/terms" className="text-blue-600 hover:underline">利用規約</Link>
             と
-            <Link href="/legal/privacy" className="text-blue-600 hover:underline">プライバシーポリシー</Link>
+            <Link href="/company/legal/privacy" className="text-blue-600 hover:underline">プライバシーポリシー</Link>
             に同意したものとみなされます
             <br />
             当社からのサービスに関するメールの送信に同意したものとみなされます
@@ -252,9 +252,9 @@ export default function SignUpPage() {
                 style={{ color: '#4b5563' }}
                 onClick={() => setAgreeTerms(!agreeTerms)}
               >
-                <Link href="/legal/terms" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>利用規約</Link>
+                <Link href="/company/legal/terms" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>利用規約</Link>
                 および
-                <Link href="/legal/privacy" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>プライバシーポリシー</Link>
+                <Link href="/company/legal/privacy" className="text-blue-600 hover:underline" onClick={(e) => e.stopPropagation()}>プライバシーポリシー</Link>
                 に同意し、当社からのサービスに関するメール配信に同意する
               </span>
             </div>

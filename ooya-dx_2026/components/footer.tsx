@@ -14,13 +14,13 @@ export function Footer() {
           
           {/* リンク */}
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <Link href="/legal/terms" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/company/legal/terms" className="text-gray-400 hover:text-white transition-colors">
               利用規約
             </Link>
-            <Link href="/legal/privacy" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/company/legal/privacy" className="text-gray-400 hover:text-white transition-colors">
               プライバシーポリシー
             </Link>
-            <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/company/contact" className="text-gray-400 hover:text-white transition-colors">
               お問い合わせ
             </Link>
           </div>

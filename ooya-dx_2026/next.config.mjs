@@ -11,6 +11,33 @@ const nextConfig = {
   trailingSlash: false, // URLの末尾スラッシュを統一（なしに統一）
   async redirects() {
     return [
+      // ===== 公開ページ company配下統合（2026/02/18） =====
+      {
+        source: '/contact',
+        destination: '/company/contact',
+        permanent: true,
+      },
+      {
+        source: '/legal/:path*',
+        destination: '/company/legal/:path*',
+        permanent: true,
+      },
+      {
+        source: '/disclaimer',
+        destination: '/company/disclaimer',
+        permanent: true,
+      },
+      {
+        source: '/pricing',
+        destination: '/company/pricing',
+        permanent: true,
+      },
+      {
+        source: '/faq',
+        destination: '/company/faq',
+        permanent: true,
+      },
+
       // ===== プロフィールページ URL移行（2026/02/10） =====
       {
         source: '/media/profile',

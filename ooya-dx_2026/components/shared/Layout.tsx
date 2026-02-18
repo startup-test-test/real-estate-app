@@ -234,7 +234,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 個人情報取り扱いについて
               </Link>
               <Link
-                href="/disclaimer"
+                href="/company/disclaimer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
               >
                 免責事項

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: '利用規約｜大家DX',
   description: '大家DXサービスの利用規約について',
   alternates: {
-    canonical: '/legal/terms',
+    canonical: '/company/legal/terms',
   },
 }
 
@@ -15,10 +15,10 @@ export default function TermsPage() {
       <WebPageJsonLd
         name="利用規約"
         description="大家DXサービスの利用規約について"
-        path="/legal/terms"
+        path="/company/legal/terms"
         datePublished="2025-08-11"
         dateModified="2026-02-05"
-        breadcrumbs={[{ name: '利用規約', href: '/legal/terms' }]}
+        breadcrumbs={[{ name: '利用規約', href: '/company/legal/terms' }]}
       />
     <article className="mx-auto max-w-4xl px-6 py-12">
       {/* パンくず */}

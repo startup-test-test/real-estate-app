@@ -37,8 +37,8 @@ const BackButton: React.FC<BackButtonProps> = ({
     if (path.includes('/transaction-search')) return '一覧に戻る';
     if (path.includes('/market-analysis')) return '一覧に戻る';
     if (path.includes('/guide')) return '一覧に戻る';
-    if (path.includes('/faq')) return '一覧に戻る';
-    if (path.includes('/pricing')) return '一覧に戻る';
+    if (path.includes('/company/faq')) return '一覧に戻る';
+    if (path.includes('/company/pricing')) return '一覧に戻る';
 
     return '戻る';
   };

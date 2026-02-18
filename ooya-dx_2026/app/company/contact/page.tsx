@@ -203,7 +203,7 @@ export default function CorporateContactPage() {
                     className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="agree" className="text-sm text-gray-700">
-                    <Link href="/legal/privacy" className="text-blue-600 hover:underline">個人情報保護方針</Link>に同意して送信する
+                    <Link href="/company/legal/privacy" className="text-blue-600 hover:underline">個人情報保護方針</Link>に同意して送信する
                   </label>
                 </div>
 

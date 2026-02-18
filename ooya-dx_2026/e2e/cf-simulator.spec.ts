@@ -231,13 +231,13 @@ test.describe('新規登録ページ', () => {
 // =================================================================
 test.describe('法的ページ', () => {
   test('利用規約ページが表示される', async ({ page }) => {
-    await page.goto('/legal/terms');
+    await page.goto('/company/legal/terms');
 
     await expect(page.getByRole('heading', { name: /利用規約/ })).toBeVisible();
   });
 
   test('プライバシーポリシーページが表示される', async ({ page }) => {
-    await page.goto('/legal/privacy');
+    await page.goto('/company/legal/privacy');
 
     await expect(page.getByRole('heading', { name: /プライバシーポリシー/ })).toBeVisible();
   });

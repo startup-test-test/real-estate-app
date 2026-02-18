@@ -88,7 +88,7 @@ export default function HelpButton({ onStartTutorial, showPulse = false }: HelpB
 
             {/* お問い合わせ */}
             <Link
-              href="/contact"
+              href="/company/contact"
               onClick={() => setIsOpen(false)}
               className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >

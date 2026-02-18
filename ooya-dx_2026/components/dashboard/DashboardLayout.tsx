@@ -93,7 +93,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const supportNavigation = [
     { name: 'ご利用ガイド・よくある質問', href: '/mypage/guide', icon: BookOpen },
-    { name: 'お問い合わせ', href: '/contact', icon: Mail },
+    { name: 'お問い合わせ', href: '/company/contact', icon: Mail },
   ]
 
   const isActive = (href: string) => {
@@ -313,7 +313,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="p-4 border-t border-gray-200">
             <div className="space-y-2 mb-4 px-2">
               <a
-                href="/legal/terms"
+                href="/company/legal/terms"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
@@ -321,7 +321,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 利用規約
               </a>
               <a
-                href="/legal/privacy"
+                href="/company/legal/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"
@@ -329,7 +329,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 個人情報取り扱いについて
               </a>
               <a
-                href="/disclaimer"
+                href="/company/disclaimer"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-xs text-gray-500 hover:text-gray-700 transition-colors"

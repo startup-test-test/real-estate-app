@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
               <Link href="/guide" className="text-sm text-white/70 hover:text-white transition-colors">
                 ご利用ガイド
               </Link>
-              <Link href="/faq" className="text-sm text-white/70 hover:text-white transition-colors">
+              <Link href="/company/faq" className="text-sm text-white/70 hover:text-white transition-colors">
                 よくある質問
               </Link>
             </div>
@@ -36,13 +36,13 @@ const Footer: React.FC = () => {
           {/* 右側：法的文書リンクとコピーライト */}
           <div className="text-xs space-y-2">
             <div className="flex flex-wrap gap-x-4 gap-y-1">
-              <Link href="/terms" className="text-white/70 hover:text-white transition-colors">
+              <Link href="/company/legal/terms" className="text-white/70 hover:text-white transition-colors">
                 利用規約
               </Link>
-              <Link href="/privacy" className="text-white/70 hover:text-white transition-colors">
+              <Link href="/company/legal/privacy" className="text-white/70 hover:text-white transition-colors">
                 プライバシーポリシー
               </Link>
-              <Link href="/disclaimer" className="text-white/70 hover:text-white transition-colors">
+              <Link href="/company/disclaimer" className="text-white/70 hover:text-white transition-colors">
                 免責事項
               </Link>
             </div>

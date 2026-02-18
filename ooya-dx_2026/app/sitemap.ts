@@ -97,41 +97,35 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     },
-    // お問い合わせ・FAQ・料金
+    // FAQ・料金（company配下に統合済）※ /company/contact は companyPages で生成
     {
-      url: `${BASE_URL}/contact`,
-      lastModified: getLastModDate('/contact'),
+      url: `${BASE_URL}/company/faq`,
+      lastModified: getLastModDate('/company/faq'),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
-      url: `${BASE_URL}/faq`,
-      lastModified: getLastModDate('/faq'),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/pricing`,
-      lastModified: getLastModDate('/pricing'),
+      url: `${BASE_URL}/company/pricing`,
+      lastModified: getLastModDate('/company/pricing'),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
-    // 法的ページ
+    // 法的ページ（company配下に統合済）
     {
-      url: `${BASE_URL}/legal/privacy`,
-      lastModified: getLastModDate('/legal/privacy'),
+      url: `${BASE_URL}/company/legal/privacy`,
+      lastModified: getLastModDate('/company/legal/privacy'),
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },
     {
-      url: `${BASE_URL}/legal/terms`,
-      lastModified: getLastModDate('/legal/terms'),
+      url: `${BASE_URL}/company/legal/terms`,
+      lastModified: getLastModDate('/company/legal/terms'),
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },
     {
-      url: `${BASE_URL}/disclaimer`,
-      lastModified: getLastModDate('/disclaimer'),
+      url: `${BASE_URL}/company/disclaimer`,
+      lastModified: getLastModDate('/company/disclaimer'),
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },

@@ -35,10 +35,10 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
     //   breadcrumbs.push({ name: '公示地価検索', path: '/land-prices', current: true });
     } else if (path.includes('/guide')) {
       breadcrumbs.push({ name: 'ユーザーガイド', path: '/guide', current: true });
-    } else if (path.includes('/faq')) {
-      breadcrumbs.push({ name: 'FAQ', path: '/faq', current: true });
-    } else if (path.includes('/pricing')) {
-      breadcrumbs.push({ name: '有料プラン', path: '/pricing', current: true });
+    } else if (path.includes('/company/faq')) {
+      breadcrumbs.push({ name: 'FAQ', path: '/company/faq', current: true });
+    } else if (path.includes('/company/pricing')) {
+      breadcrumbs.push({ name: '有料プラン', path: '/company/pricing', current: true });
     } else if (path.includes('/property-detail')) {
       breadcrumbs.push({ name: '物件詳細', path: path, current: true });
     } else if (path === '/dashboard') {
