@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter, Noto_Sans_JP, Noto_Serif_JP } from 'next/font/google'
+import { Inter, Noto_Sans_JP } from 'next/font/google'
 import { Providers } from './providers'
 import { HeaderWrapper } from '@/components/header-wrapper'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
@@ -8,23 +8,15 @@ import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 })
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-noto-sans-jp',
-  display: 'swap',
-  preload: false,
-})
-
-const notoSerifJP = Noto_Serif_JP({
-  subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-noto-serif-jp',
+  variable: '--font-noto-sans-jp',
   display: 'swap',
   preload: false,
 })
@@ -105,7 +97,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={`${inter.variable} ${notoSansJP.variable} ${notoSerifJP.variable}`} suppressHydrationWarning>
+    <html lang="ja" className={`${inter.variable} ${notoSansJP.variable}`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"

@@ -37,7 +37,7 @@ export function CalculatorMainResult({
         {label}
       </span>
       <div className="text-right">
-        <span className="text-2xl sm:text-5xl font-extrabold text-blue-700 whitespace-nowrap">
+        <span className="text-2xl sm:text-5xl font-bold text-blue-700 whitespace-nowrap">
           {formatValue(value)}{unit}
         </span>
         {showYen && unit === '万円' && (

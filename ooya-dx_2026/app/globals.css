@@ -8,7 +8,6 @@
 /* カスタムテーマ設定 */
 @theme {
   --font-sans: var(--font-inter), var(--font-noto-sans-jp), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-noto-serif-jp), ui-serif, Georgia, serif;
 
   /* Primary colors */
   --color-primary-50: #f0f9ff;

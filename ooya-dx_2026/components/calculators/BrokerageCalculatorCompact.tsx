@@ -204,7 +204,7 @@ https://ooya.tech/tools/brokerage?price=${priceInMan}`
               合計（税込）
             </span>
             <div className="text-right">
-              <span className="text-2xl sm:text-5xl font-extrabold text-blue-700 whitespace-nowrap">
+              <span className="text-2xl sm:text-5xl font-bold text-blue-700 whitespace-nowrap">
                 {(result.total / 10000).toLocaleString('ja-JP')}万円
               </span>
               <span className="block text-xs sm:text-lg text-gray-700">

@@ -37,7 +37,7 @@ const NotFound: React.FC = () => {
           </div>
 
           <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
             404 - ページが見つかりません
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
