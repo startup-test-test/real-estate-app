@@ -1,3 +1,4 @@
+import { CompanyNav } from '@/components/company-nav';
 import { WebPageJsonLd } from '@/components/WebPageJsonLd';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -67,6 +68,9 @@ export default function ConsumerPolicyPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-4">
             消費者志向自主宣言ならびに運営ポリシー
           </h1>
+
+          {/* ページナビゲーション */}
+          <CompanyNav />
 
           {/* 理念 */}
           <section className="mb-12">
