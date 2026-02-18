@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface Article {
@@ -64,9 +65,11 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ articles = [] }) => {
               {/* サムネイル */}
               <div className="aspect-video overflow-hidden bg-gray-200">
                 {article.thumbnail ? (
-                  <img
+                  <Image
                     src={article.thumbnail}
                     alt={article.title}
+                    width={800}
+                    height={450}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (

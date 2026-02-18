@@ -103,6 +103,6 @@ export const config = {
      * - img (public images)
      * - icons (PWA icons)
      */
-    "/((?!_next/static|_next/image|favicon.ico|img/|icons/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|img/|images/|icons/).*)",
   ],
 };

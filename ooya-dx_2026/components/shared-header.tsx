@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/auth/client';
@@ -88,9 +89,11 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
         <div className="flex justify-between items-center py-2 sm:py-4">
           {/* ロゴ */}
           <Link href={logoHref} className="block">
-            <img
+            <Image
               src={logoSrc}
               alt={logoAlt}
+              width={251}
+              height={73}
               className="h-7 sm:h-10 w-auto cursor-pointer hover:opacity-80 transition-opacity"
               style={{ mixBlendMode: 'multiply' }}
             />

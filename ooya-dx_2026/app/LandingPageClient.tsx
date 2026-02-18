@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import BlogPosts from '@/components/landing/BlogPosts';
 import CompanyProfile from '@/components/landing/CompanyProfile';
@@ -34,9 +35,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
       href: '/tools/simulator',
       buttonText: 'シミュレーションをする（完全無料）',
       mockup: (
-        <img
+        <Image
           src="/img/kakushin_img01.png"
           alt="賃貸経営シミュレーター"
+          width={998}
+          height={674}
           className="w-full h-auto rounded-lg"
         />
       )
@@ -48,9 +51,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
       href: '/tools/purchase-offer',
       buttonText: '買付申込書を作成する（完全無料）',
       mockup: (
-        <img
+        <Image
           src="/img/kakushin_img02.png"
           alt="買付申込書ジェネレーター"
+          width={998}
+          height={674}
           className="w-full h-auto rounded-lg"
         />
       )
@@ -68,10 +73,20 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
       {/* Hero Section */}
       <section className="relative w-full min-h-[400px] sm:min-h-[480px] md:min-h-[560px]">
         {/* Background Image */}
-        <img
+        <Image
           src="/images/media/hero-media.jpeg"
           alt="大家DX"
-          className="absolute inset-0 w-full h-full object-cover"
+          width={1920}
+          height={1282}
+          sizes="100vw"
+          priority
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
         />
 
         {/* Content Overlay */}
@@ -104,9 +119,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
 
               {/* Right: Product Image */}
               <div className="hidden md:flex justify-center items-center">
-                <img
+                <Image
                   src="/img/kakushin_img01.png"
                   alt="賃貸経営シミュレーター"
+                  width={998}
+                  height={674}
                   className="w-full h-auto max-w-md lg:max-w-lg xl:max-w-xl scale-[1.32]"
                 />
               </div>

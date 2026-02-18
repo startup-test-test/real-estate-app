@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { footerNavigation, legalLinks } from '@/lib/navigation';
 
 export function LandingFooter() {
@@ -9,9 +10,11 @@ export function LandingFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* 会社情報セクション */}
           <div className="lg:col-span-1">
-            <img
+            <Image
               src="/img/logo_250709_2.png"
               alt="大家DX ロゴ"
+              width={251}
+              height={73}
               className="h-8 w-auto mb-4"
               style={{ mixBlendMode: 'multiply' }}
             />
