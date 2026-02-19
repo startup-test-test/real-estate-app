@@ -145,14 +145,14 @@ const STEP_MAP = {
 let allRows = []; // [{kw, kd, vol, 判定, 検索意図, ページ種類, トピック, カテゴリ, toolPath, step, ...original}]
 let serpData = {};
 let ahrefsKdMap = {};
-let currentFilter = 'all';
+let currentFilter = 'no-delete';
 let currentCategory = 'all';
 let currentPageGroup = 'all';
 let currentKanten = 'all';
 let currentTopical = 'all';
 let currentToolStatus = 'all';
 let currentKdMax = 'all';
-let currentVolMin = 'all';
+let currentVolMin = '100';
 let currentDr40Set = new Set();
 let sortCol = -1;
 let sortAsc = true;
@@ -172,17 +172,21 @@ async function loadAllFiles() {
       const res = await fetch(encodeURIComponent(file) + '?t=' + Date.now());
       const text = await res.text();
       const rows = text.trim().split('\n').map(r => r.split('\t'));
+      const hdr = rows[0] || [];
+      const cm = {};
+      hdr.forEach((h, idx) => { cm[h.trim()] = idx; });
+      const g = (r, n) => { const idx = cm[n]; return idx !== undefined && idx < r.length ? (r[idx]||'').trim() : ''; };
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
         if (r.length < 6) continue;
         allRows.push({
-          no: r[0], kubun: r[1], kw: (r[2]||'').trim(), kd: (r[3]||'').trim(),
-          vol: parseInt(r[4]) || 0, hantei: (r[5]||'').trim(),
-          intent: (r[6]||'').trim(), pageType: (r[7]||'').trim(), topic: (r[8]||'').trim(),
-          pageGroup: (r[9]||'').trim(), articleTitle: (r[10]||'').trim(),
-          kanten: (r[11]||'').trim(),
-          topical: (r[12]||'').trim(),
-          pageRole: (r[13]||'').trim(),
+          no: g(r,'No'), kubun: g(r,'区分'), kw: g(r,'キーワード'), kd: g(r,'SEO難易度'),
+          vol: parseInt(g(r,'月間検索数')) || 0, hantei: g(r,'判定'),
+          intent: g(r,'検索意図'), need: g(r,'解決ニーズ'),
+          theme: g(r,'テーマ'), direction: g(r,'記事の方向性'),
+          pageType: g(r,'ページ種類'), topic: g(r,'トピック'),
+          pageGroup: g(r,'ページグループ'), articleTitle: g(r,'想定ページタイトル'),
+          kanten: g(r,'観点'), topical: g(r,'トピカル貢献'), pageRole: g(r,'ページ役割'),
           category: catName, toolPath: toolPath, step: step
         });
       }
@@ -215,6 +219,8 @@ async function loadAllFiles() {
   }
   if (status) status.textContent = 'SERPデータ読込完了';
 
+  computeMainKeywords();
+  computeH2();
   render();
   document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
 }
@@ -302,10 +308,15 @@ function render() {
       else if (sortKey === 'kw') { return sortAsc ? a.kw.localeCompare(b.kw, 'ja') : b.kw.localeCompare(a.kw, 'ja'); }
       else if (sortKey === 'hantei') { return sortAsc ? a.hantei.localeCompare(b.hantei, 'ja') : b.hantei.localeCompare(a.hantei, 'ja'); }
       else if (sortKey === 'category') { return sortAsc ? a.category.localeCompare(b.category, 'ja') : b.category.localeCompare(a.category, 'ja'); }
+      else if (sortKey === 'mainKw') { return sortAsc ? (a.mainKw||'').localeCompare(b.mainKw||'', 'ja') : (b.mainKw||'').localeCompare(a.mainKw||'', 'ja'); }
+      else if (sortKey === 'subKw') { return sortAsc ? (a.subKw||'').localeCompare(b.subKw||'', 'ja') : (b.subKw||'').localeCompare(a.subKw||'', 'ja'); }
       else if (sortKey === 'pageGroup') { return sortAsc ? (a.pageGroup||'').localeCompare(b.pageGroup||'', 'ja') : (b.pageGroup||'').localeCompare(a.pageGroup||'', 'ja'); }
       else if (sortKey === 'kanten') { return sortAsc ? (a.kanten||'').localeCompare(b.kanten||'', 'ja') : (b.kanten||'').localeCompare(a.kanten||'', 'ja'); }
       else if (sortKey === 'topical') { return sortAsc ? (a.topical||'').localeCompare(b.topical||'', 'ja') : (b.topical||'').localeCompare(a.topical||'', 'ja'); }
       else if (sortKey === 'pageRole') { return sortAsc ? (a.pageRole||'').localeCompare(b.pageRole||'', 'ja') : (b.pageRole||'').localeCompare(a.pageRole||'', 'ja'); }
+      else if (sortKey === 'articleTitle') { return sortAsc ? (a.articleTitle||'').localeCompare(b.articleTitle||'', 'ja') : (b.articleTitle||'').localeCompare(a.articleTitle||'', 'ja'); }
+      else if (sortKey === 'need') { return sortAsc ? (a.need||'').localeCompare(b.need||'', 'ja') : (b.need||'').localeCompare(a.need||'', 'ja'); }
+      else if (sortKey === 'h2') { return sortAsc ? (a.h2||'').localeCompare(b.h2||'', 'ja') : (b.h2||'').localeCompare(a.h2||'', 'ja'); }
       else if (sortKey === 'dr40cnt') {
         va = getDr40Count(a); vb = getDr40Count(b);
       } else if (sortKey === 'estsess') {
@@ -477,13 +488,16 @@ function render() {
   html += '<div class="table-wrap"><table><tr>';
   const mainHeaders = [
     {key:'category', label:'カテゴリ'}, {key:'kw', label:'キーワード'},
+    {key:'mainKw', label:'メインKW'}, {key:'subKw', label:'サブKW'},
     {key:'kd', label:'SEO難易度'}, {key:'vol', label:'月間検索数'},
     {key:'hantei', label:'判定'}, {key:'intent', label:'検索意図'},
-    {key:'nerai', label:'狙い目'}, {key:'review', label:'要確認'},
-    {key:'pageGroup', label:'ページグループ'}, {key:'kanten', label:'観点'},
+    {key:'need', label:'解決ニーズ'},
+    {key:'pageGroup', label:'ページグループ'},
+    {key:'kanten', label:'観点'},
     {key:'topical', label:'トピカル貢献'},
     {key:'pageRole', label:'ページ役割'},
-    {key:'articleTitle', label:'想定記事タイトル'}
+    {key:'articleTitle', label:'想定記事タイトル(h1)'},
+    {key:'h2', label:'想定h2'}
   ];
   mainHeaders.forEach(h => {
     const icon = sortCol === h.key ? (sortAsc ? '▲' : '▼') : '';
@@ -514,6 +528,10 @@ function render() {
     html += '<td>' + catLabel + '</td>';
     // キーワード
     html += '<td>' + esc(r.kw) + '</td>';
+    // メインKW
+    html += '<td style="font-size:11px;white-space:nowrap">' + (r.mainKw ? esc(r.mainKw) : '<span style="color:#ccc">—</span>') + '</td>';
+    // サブKW
+    html += '<td style="font-size:11px">' + (r.subKw ? '<span style="color:#7c3aed;font-weight:600">' + esc(r.subKw) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
     // SEO難易度
     const kdVal = parseInt(r.kd);
     let kdDisplay = esc(r.kd);
@@ -532,10 +550,8 @@ function render() {
     html += '<td>' + hBadge + '</td>';
     // 検索意図
     html += '<td style="font-size:10px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + esc(r.intent) + '">' + esc(r.intent) + '</td>';
-    // 狙い目（空 — 後で入力）
-    html += '<td style="text-align:center;color:#ccc">—</td>';
-    // 要確認（空 — 後で入力）
-    html += '<td style="text-align:center;color:#ccc">—</td>';
+    // 解決ニーズ
+    html += '<td style="font-size:10px;max-width:250px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + esc(r.need||'') + '">' + (r.need ? '<span style="color:#0f766e">' + esc(r.need) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
     // ページグループ
     const pgLabel = r.pageGroup || r.pageType;
     html += '<td style="font-size:10px">' + (pgLabel ? '<span style="background:#f3e8ff;color:#7c3aed;padding:1px 6px;border-radius:3px;font-size:9px">' + esc(pgLabel) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
@@ -549,8 +565,10 @@ function render() {
     // ページ役割
     const roleColors = {'ピラーページ':'background:#fef3c7;color:#92400e;font-weight:700','計算ツール':'background:#dcfce7;color:#166534;font-weight:700','解説記事':'background:#dbeafe;color:#1e40af'};
     html += '<td style="font-size:10px;text-align:center">' + (r.pageRole ? '<span style="' + (roleColors[r.pageRole]||'') + ';padding:1px 6px;border-radius:3px;font-size:9px">' + esc(r.pageRole) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
-    // 想定記事タイトル
+    // 想定記事タイトル(h1)
     html += '<td style="font-size:10px">' + (r.articleTitle ? esc(r.articleTitle) : '<span style="color:#ccc">—</span>') + '</td>';
+    // 想定h2
+    html += '<td style="font-size:10px;max-width:250px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + esc(r.h2||'') + '">' + (r.h2 ? '<span style="color:#b45309;font-weight:600">' + esc(r.h2) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
 
     // 狙い目2（空 — 後で算出）
     html += '<td style="text-align:center;color:#ccc">—</td>';
@@ -603,6 +621,74 @@ function render() {
   html += '<div class="footer">' + footerText + '</div>';
 
   document.getElementById('main').innerHTML = html;
+}
+
+// メインKW・サブKW算出
+function computeMainKeywords() {
+  // グループキーを決定: ページグループ → 想定ページタイトル → カテゴリ の優先順
+  function getGroupKey(r) {
+    if (r.pageGroup) return 'pg:' + r.pageGroup;
+    if (r.articleTitle) return 'at:' + r.articleTitle;
+    return 'cat:' + r.category;
+  }
+
+  // 非削除行をグループ化
+  const groups = {};
+  allRows.forEach(r => {
+    if (r.hantei === '削除') return;
+    const key = getGroupKey(r);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+
+  // 各グループで最大volのキーワードをメインKWに
+  const mainKwMap = {};
+  Object.entries(groups).forEach(([key, rows]) => {
+    let best = rows[0];
+    rows.forEach(r => { if (r.vol > best.vol) best = r; });
+    mainKwMap[key] = best.kw;
+  });
+
+  // 各行にmainKw・subKwを設定
+  allRows.forEach(r => {
+    if (r.hantei === '削除') { r.mainKw = ''; r.subKw = ''; return; }
+    const key = getGroupKey(r);
+    r.mainKw = mainKwMap[key] || '';
+    if (!r.mainKw || r.kw === r.mainKw) { r.subKw = ''; return; }
+
+    // サブKW: キーワードの単語からメインKWの単語を除いた残り
+    const kwTokens = r.kw.split(/\s+/);
+    const mainTokens = new Set(r.mainKw.split(/\s+/));
+    const sub = kwTokens.filter(w => !mainTokens.has(w));
+    r.subKw = sub.length > 0 ? sub.join(' ') : '';
+  });
+}
+
+// h2算出: サブKWがh1タイトルに含まれないキーワードのh2見出しを生成
+function computeH2() {
+  allRows.forEach(r => {
+    r.h2 = '';
+    if (r.hantei === '削除' || !r.articleTitle) return;
+    // メインKW自体はh1で対応
+    if (!r.subKw) return;
+
+    // タイトルを正規化して比較
+    const titleNorm = r.articleTitle.replace(/[？！｜・、。「」（）()％%]/g, ' ').toLowerCase();
+    const subTokens = r.subKw.split(/\s+/);
+    const notInTitle = subTokens.filter(t => {
+      const tl = t.toLowerCase();
+      return !titleNorm.includes(tl);
+    });
+
+    if (notInTitle.length === 0) return;
+
+    // h2候補: 解決ニーズがあればそれを使用、なければサブKWから生成
+    if (r.need) {
+      r.h2 = r.need;
+    } else {
+      r.h2 = notInTitle.join(' ');
+    }
+  });
 }
 
 // Helpers

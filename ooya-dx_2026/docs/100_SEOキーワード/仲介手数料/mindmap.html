@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>仲介手数料 コンテンツマインドマップ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; overflow: hidden; }
+
+  .toolbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,23,42,0.95); backdrop-filter: blur(8px);
+    padding: 8px 20px; display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .toolbar h1 { font-size: 15px; color: #f8fafc; font-weight: 600; }
+  .toolbar .stats { font-size: 11px; color: #94a3b8; margin-left: auto; }
+  .toolbar button {
+    padding: 4px 12px; border: 1px solid #334155; border-radius: 6px;
+    background: #1e293b; color: #e2e8f0; font-size: 11px; cursor: pointer;
+  }
+  .toolbar button:hover { background: #334155; }
+
+  #canvas { width: 100vw; height: 100vh; cursor: grab; position: relative; }
+  #canvas:active { cursor: grabbing; }
+
+  #inner { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+
+  svg { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
+
+  .node-center {
+    position: absolute;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: #fff; font-size: 20px; font-weight: 800;
+    padding: 20px 32px; border-radius: 20px;
+    box-shadow: 0 0 40px rgba(124,58,237,0.4);
+    white-space: nowrap; user-select: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .page-card {
+    background: #1e293b; border: 2px solid; border-radius: 12px;
+    padding: 10px 16px; color: #f1f5f9; font-size: 13px; font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); white-space: nowrap; user-select: none;
+    transform: translate(-50%, -50%);
+    position: absolute; left: 0; top: 0;
+  }
+  .page-card .vol { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+  .page-card .vol b { color: #22d3ee; font-weight: 700; }
+  .page-card .type-badge {
+    display: inline-block; font-size: 9px; padding: 1px 6px;
+    border-radius: 4px; margin-right: 4px; font-weight: 600;
+  }
+
+  .kw-grid {
+    position: absolute; display: flex; gap: 4px;
+  }
+  .kw-col {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .kw-item {
+    background: rgba(30,41,59,0.9); border: 1px solid #475569;
+    color: #cbd5e1; font-size: 9px; padding: 2px 8px;
+    border-radius: 5px; white-space: nowrap; user-select: none;
+  }
+  .kw-item .kw-vol { color: #67e8f9; font-weight: 600; margin-left: 5px; }
+
+  .legend {
+    position: fixed; bottom: 16px; left: 16px; z-index: 100;
+    background: rgba(15,23,42,0.95); border: 1px solid #1e293b;
+    border-radius: 8px; padding: 12px 16px; font-size: 11px; color: #94a3b8;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>仲介手数料 コンテンツマインドマップ</h1>
+  <button onclick="zoomIn()">＋ 拡大</button>
+  <button onclick="zoomOut()">－ 縮小</button>
+  <button onclick="fitAll()">全体表示</button>
+  <button onclick="resetView()">リセット</button>
+  <button onclick="toggleKw()">サブKW表示/非表示</button>
+  <span class="stats" id="zoomLevel">100%</span>
+  <span class="stats">11ページ / 130 KW（100vol以上） / 145,490 vol/月</span>
+</div>
+
+<div id="canvas">
+  <div id="inner"></div>
+</div>
+
+<div class="legend">
+  <div style="font-weight:600;margin-bottom:6px;color:#e2e8f0">ページ種類</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> ピラーページ</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> 解説記事</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> 計算ツール</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div> ハウツー</div>
+  <div style="margin-top:8px;font-size:10px;color:#64748b">ドラッグで移動 / スクロールでズーム</div>
+</div>
+
+<script>
+const PAGES = [
+  {
+    id: 1, name: '計算ツール（既存）', type: '計算ツール', vol: 9930, kwCnt: 6, color: '#22c55e',
+    mainKw: '仲介手数料 計算', mainVol: 5400,
+    kws: [
+      ['計算', 5400], ['計算 不動産', 1900], ['不動産 計算', 1900],
+      ['計算方法', 260], ['計算 シミュレーション', 260], ['計算式', 210],
+    ]
+  },
+  {
+    id: 2, name: '基礎知識ピラー', type: 'ピラーページ', vol: 24450, kwCnt: 11, color: '#8b5cf6',
+    mainKw: '仲介手数料', mainVol: 18100,
+    kws: [
+      ['仲介手数料', 18100], ['とは（原形）', 2400], ['とは', 2400],
+      ['なし', 480], ['いつ払う', 170], ['売主', 170],
+      ['請求書', 170], ['領収書', 170], ['売主 買主 両方', 140],
+      ['領収書 印紙', 140], ['両手', 110],
+    ]
+  },
+  {
+    id: 3, name: '不動産売買ガイド', type: '解説記事', vol: 29940, kwCnt: 15, color: '#f59e0b',
+    mainKw: '仲介手数料 不動産', mainVol: 14800,
+    kws: [
+      ['不動産', 14800], ['不動産売買', 3600], ['売買 不動産', 3600], ['売買', 1600],
+      ['土地売買', 1300], ['中古マンション', 1000], ['不動産屋', 880], ['マンション売却', 720],
+      ['マンション', 590], ['なし 不動産', 480], ['建売', 390], ['中古住宅', 320],
+      ['土地', 260], ['マンション購入', 260], ['売却', 140],
+    ]
+  },
+  {
+    id: 4, name: '賃貸ガイド', type: '解説記事', vol: 21360, kwCnt: 19, color: '#10b981',
+    mainKw: '仲介手数料 賃貸', mainVol: 5400,
+    kws: [
+      ['賃貸', 5400], ['とは 賃貸', 5400], ['不動産 賃貸', 1600], ['上限 賃貸', 1600],
+      ['相場 賃貸', 1300], ['賃貸 上限', 1300], ['賃貸 相場', 1300], ['駐車場', 590],
+      ['なし 賃貸', 590], ['賃貸 交渉', 480], ['計算 賃貸', 260], ['賃貸 計算', 260],
+      ['礼金 違い', 260], ['0.5ヶ月', 210], ['アパート', 210], ['家賃', 210],
+      ['0.55ヶ月', 140], ['1ヶ月', 140], ['共益費', 110],
+    ]
+  },
+  {
+    id: 5, name: '相場ガイド', type: '解説記事', vol: 14550, kwCnt: 11, color: '#06b6d4',
+    mainKw: '仲介手数料 相場', mainVol: 9900,
+    kws: [
+      ['相場', 9900], ['不動産 相場', 2900], ['いくら', 320], ['相場 売買', 260],
+      ['相場 土地', 260], ['アパート 相場', 210], ['平均', 170], ['相場 中古マンション', 140],
+      ['相場 戸建て', 140], ['最低金額', 140], ['相場 中古住宅', 110],
+    ]
+  },
+  {
+    id: 6, name: '無料の仕組み', type: '解説記事', vol: 26370, kwCnt: 25, color: '#f43f5e',
+    mainKw: '仲介手数料無料', mainVol: 4400,
+    kws: [
+      ['無料（原形）', 4400], ['無料', 4400], ['安い 不動産', 1900], ['無料 賃貸（原形）', 1900],
+      ['不動産 安い', 1900], ['賃貸 無料', 1900], ['無料 賃貸', 1900],
+      ['無料 不動産（原形）', 1300], ['無料 不動産', 1300], ['無料 からくり', 880],
+      ['無料 中古マンション', 720], ['無料 なぜ（原形）', 480], ['無料 デメリット（原形）', 480],
+      ['無料 なぜ', 480], ['無料 デメリット', 480], ['無料 不動産屋', 390],
+      ['安い', 260], ['賃貸 安い', 210], ['安い 不動産屋', 210], ['安い 賃貸', 210],
+      ['0円', 170], ['無料 サイト', 140], ['ゼロ', 140],
+      ['安い 不動産 賃貸', 110], ['なしにする方法', 110],
+    ]
+  },
+  {
+    id: 7, name: '交渉・値引き', type: 'ハウツー', vol: 8390, kwCnt: 14, color: '#ec4899',
+    mainKw: '仲介手数料 交渉', mainVol: 3600,
+    kws: [
+      ['交渉', 3600], ['値切る客', 1000], ['値切る', 880], ['値切れる', 880],
+      ['半額', 480], ['半額 不動産', 320], ['交渉 例文', 210], ['値引き', 210],
+      ['交渉 言い方', 140], ['払いたくない', 140], ['安くする方法', 140],
+      ['安くする', 140], ['割引', 140], ['値引き交渉', 110],
+    ]
+  },
+  {
+    id: 8, name: '上限・法律・法改正', type: '解説記事', vol: 4600, kwCnt: 10, color: '#ef4444',
+    mainKw: '仲介手数料 上限', mainVol: 1300,
+    kws: [
+      ['上限', 1300], ['1ヶ月 違法', 1300], ['宅建業法', 480], ['法律', 390],
+      ['400万円以下 改正', 320], ['800万円以下 改正', 210], ['宅建', 210],
+      ['改正', 170], ['改定', 110], ['法律 上限', 110],
+    ]
+  },
+  {
+    id: 9, name: '会計・勘定科目', type: '解説記事', vol: 2370, kwCnt: 6, color: '#84cc16',
+    mainKw: '仲介手数料 勘定科目', mainVol: 1600,
+    kws: [
+      ['勘定科目', 1600], ['仕訳', 210], ['取得価額', 170],
+      ['科目', 140], ['経費', 140], ['勘定科目 20万円以上', 110],
+    ]
+  },
+  {
+    id: 10, name: '消費税', type: '解説記事', vol: 1690, kwCnt: 5, color: '#a855f7',
+    mainKw: '仲介手数料 消費税', mainVol: 880,
+    kws: [
+      ['消費税', 880], ['不動産 消費税', 260], ['消費税 土地', 210],
+      ['税金', 170], ['税', 170],
+    ]
+  },
+  {
+    id: 11, name: '金額別・具体例', type: '解説記事', vol: 1840, kwCnt: 8, color: '#fb923c',
+    mainKw: '仲介手数料 800万円以下', mainVol: 720,
+    kws: [
+      ['800万円以下', 720], ['33万円', 260], ['高い', 210], ['住宅ローン', 210],
+      ['0', 110], ['30万円', 110], ['高すぎる', 110], ['ローンに組み込む', 110],
+    ]
+  },
+];
+
+let offsetX = 0, offsetY = 0, scale = 1;
+let dragging = false, dragStartX = 0, dragStartY = 0;
+let showKw = true;
+
+const canvas = document.getElementById('canvas');
+const inner = document.getElementById('inner');
+
+function toggleKw() {
+  showKw = !showKw;
+  document.querySelectorAll('.kw-grid, .line-kw').forEach(el => {
+    el.style.display = showKw ? '' : 'none';
+  });
+}
+
+function resetView() {
+  offsetX = 0; offsetY = 0; scale = 1;
+  updateZoomLabel();
+  applyTransform();
+}
+
+function zoomTo(newScale) {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const cx = W / 2, cy = H / 2;
+  const prevScale = scale;
+  scale = Math.max(0.05, Math.min(4, newScale));
+  offsetX = cx - (cx - offsetX) * (scale / prevScale);
+  offsetY = cy - (cy - offsetY) * (scale / prevScale);
+  updateZoomLabel();
+  applyTransform();
+}
+
+function zoomIn() { zoomTo(scale * 1.3); }
+function zoomOut() { zoomTo(scale / 1.3); }
+
+function fitAll() {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const pageRadius = 500;
+  const kwOffset = 200;
+  const totalRadius = pageRadius + kwOffset + 400;
+  const fitScale = Math.min(W, H) / (totalRadius * 2.2);
+  scale = Math.max(0.05, Math.min(2, fitScale));
+  offsetX = 0; offsetY = 0;
+  updateZoomLabel();
+  applyTransform();
+}
+
+function updateZoomLabel() {
+  const el = document.getElementById('zoomLevel');
+  if (el) el.textContent = Math.round(scale * 100) + '%';
+}
+
+function applyTransform() {
+  inner.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+}
+
+canvas.addEventListener('mousedown', e => {
+  if (e.target.closest('.page-card, .kw-item')) return;
+  dragging = true;
+  dragStartX = e.clientX - offsetX;
+  dragStartY = e.clientY - offsetY;
+});
+canvas.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  offsetX = e.clientX - dragStartX;
+  offsetY = e.clientY - dragStartY;
+  applyTransform();
+});
+canvas.addEventListener('mouseup', () => { dragging = false; });
+canvas.addEventListener('mouseleave', () => { dragging = false; });
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const prevScale = scale;
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  scale = Math.max(0.05, Math.min(4, scale * delta));
+  offsetX = mx - (mx - offsetX) * (scale / prevScale);
+  offsetY = my - (my - offsetY) * (scale / prevScale);
+  updateZoomLabel();
+  applyTransform();
+}, { passive: false });
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const cx = W / 2;
+  const cy = H / 2;
+
+  const pageRadius = 500;
+  const kwOffset = 200;
+  const positions = [];
+
+  PAGES.forEach((p, i) => {
+    const angle = (i / PAGES.length) * Math.PI * 2 - Math.PI / 2;
+    positions.push({
+      x: cx + Math.cos(angle) * pageRadius,
+      y: cy + Math.sin(angle) * pageRadius,
+      angle: angle,
+    });
+  });
+
+  // SVG lines
+  let svg = `<svg style="width:${W * 3}px;height:${H * 3}px;position:absolute;left:${-W}px;top:${-H}px" xmlns="http://www.w3.org/2000/svg">`;
+  const svgOx = W;
+  const svgOy = H;
+
+  PAGES.forEach((p, i) => {
+    const pos = positions[i];
+    svg += `<line x1="${cx + svgOx}" y1="${cy + svgOy}" x2="${pos.x + svgOx}" y2="${pos.y + svgOy}" stroke="${p.color}" stroke-width="2.5" opacity="0.4"/>`;
+    const kwListX = pos.x + Math.cos(pos.angle) * kwOffset;
+    const kwListY = pos.y + Math.sin(pos.angle) * kwOffset;
+    svg += `<line class="line-kw" x1="${pos.x + svgOx}" y1="${pos.y + svgOy}" x2="${kwListX + svgOx}" y2="${kwListY + svgOy}" stroke="${p.color}" stroke-width="1.5" opacity="0.25" stroke-dasharray="4,3"/>`;
+  });
+
+  svg += '</svg>';
+
+  let html = svg;
+  html += `<div class="node-center" style="left:${cx}px;top:${cy}px">仲介手数料</div>`;
+
+  PAGES.forEach((p, i) => {
+    const pos = positions[i];
+
+    // Page card
+    html += `<div class="page-card" style="left:${pos.x}px;top:${pos.y}px;border-color:${p.color}">`;
+    html += `<span class="type-badge" style="background:${p.color};color:${getBadgeText(p.color)}">${esc(p.type)}</span>${esc(p.name)}`;
+    html += `<div class="vol"><b>${p.vol.toLocaleString()}</b> vol/月 &nbsp;|&nbsp; ${p.kwCnt}KW &nbsp;|&nbsp; ${esc(p.mainKw)} (${p.mainVol.toLocaleString()})</div>`;
+    html += '</div>';
+
+    // KW grid - multi column for large lists
+    const kwListX = pos.x + Math.cos(pos.angle) * kwOffset;
+    const kwListY = pos.y + Math.sin(pos.angle) * kwOffset;
+
+    const deg = pos.angle * 180 / Math.PI;
+    let transformX = 'translateX(-50%)';
+    if (deg > -60 && deg < 60) transformX = 'translateX(0)';
+    else if (deg > 120 || deg < -120) transformX = 'translateX(-100%)';
+
+    // Determine columns: 1 col per 30 items, max 8 cols
+    const colSize = 30;
+    const numCols = Math.min(8, Math.max(1, Math.ceil(p.kws.length / colSize)));
+    const gridHeight = Math.min(p.kws.length, colSize) * 18;
+
+    html += `<div class="kw-grid" style="left:${kwListX}px;top:${kwListY - gridHeight/2}px;transform:${transformX}">`;
+
+    for (let c = 0; c < numCols; c++) {
+      const start = c * colSize;
+      const end = Math.min(start + colSize, p.kws.length);
+      html += '<div class="kw-col">';
+      for (let j = start; j < end; j++) {
+        const kw = p.kws[j];
+        html += `<div class="kw-item" style="border-color:${p.color}40">`;
+        html += `${esc(kw[0])} <span class="kw-vol">${kw[1].toLocaleString()}</span>`;
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  inner.innerHTML = html;
+}
+
+function getBadgeText(bg) {
+  const dark = ['#8b5cf6','#f43f5e','#10b981','#ec4899','#ef4444','#64748b','#a855f7'];
+  return dark.includes(bg) ? '#fff' : '#000';
+}
+
+render();
+window.addEventListener('resize', render);
+</script>
+</body>
+</html>

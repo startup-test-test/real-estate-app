@@ -1,186 +1,144 @@
 #!/usr/bin/env python3
-"""必須ページグループに想定記事タイトルを自動生成して入れるスクリプト。"""
-import glob, os, re
+"""補足キーワードに想定ページタイトルを割り当てるスクリプト
 
-TSV_DIR = os.path.dirname(os.path.abspath(__file__))
-files = sorted(glob.glob(os.path.join(TSV_DIR, '*_判定済み.tsv')))
+サイト設計.md の11ページ構成に基づき、ページグループ・キーワード内容から
+適切な想定ページタイトルを設定する。
+"""
+import re
 
-# ページグループ名のパターン → タイトルテンプレート
-# {cat} = カテゴリ名
-TITLE_PATTERNS = [
-    # 計算
-    (r'計算$', '{cat}の計算方法・シミュレーション'),
-    # 基礎解説（メイン）
-    (r'^[^_]+基礎解説$', '{cat}とは？仕組み・意味をわかりやすく解説'),
-    # 基礎解説（サブ）
-    (r'_基礎解説$', '{cat}の基礎知識まとめ'),
-    # 相場
-    (r'相場', '{cat}の相場はいくら？金額目安一覧'),
-    # 不動産売買
-    (r'不動産売買', '{cat}は不動産売買でいくら？売買時の注意点'),
-    # 不動産特化
-    (r'不動産特化', '{cat}と不動産投資の関係を解説'),
-    # 上限
-    (r'上限', '{cat}の上限はいくら？法律の規定を解説'),
-    # 法律・規制
-    (r'法律|規制|ルール|制度', '{cat}に関する法律・ルールを解説'),
-    # 税率
-    (r'税率', '{cat}の税率一覧と計算方法'),
-    # 控除・軽減
-    (r'控除|軽減', '{cat}の控除・軽減措置まとめ'),
-    # 申告
-    (r'申告', '{cat}の確定申告・届出の方法と必要書類'),
-    # 利回り
-    (r'利回り', '{cat}と利回りの関係・目安を解説'),
-    # 目安・相場
-    (r'目安', '{cat}の目安・相場はどのくらい？'),
-    # 比較
-    (r'比較|vs', '{cat}の比較・違いをわかりやすく解説'),
-    # 手法比較
-    (r'手法比較', '{cat}と他の評価手法の違いを比較'),
-    # 不動産融資
-    (r'融資', '{cat}と不動産融資の関係を解説'),
-    # 評価額
-    (r'評価額', '{cat}の評価額の調べ方・計算方法'),
-    # 構造別
-    (r'構造別|単価', '{cat}の構造別単価一覧'),
-    # 公式基準
-    (r'公式|基準', '{cat}の公式基準・算出根拠'),
-    # NPV法
-    (r'NPV法', 'NPV法（正味現在価値法）とは？投資判断への活用'),
-    # 指標比較
-    (r'指標比較', '{cat}と他の投資指標の違い・使い分け'),
-    # 投資判断
-    (r'投資判断', '{cat}を使った投資判断の方法'),
-    # 不動産CF
-    (r'不動産CF', '不動産投資のキャッシュフロー計算と管理'),
-    # 具体例
-    (r'具体例|ケース', '{cat}の具体例・計算シミュレーション'),
-    # 場所別
-    (r'場所別', '{cat}の場所別・部位別の費用目安'),
-    # 支払い時期
-    (r'支払い時期|時期', '{cat}はいつ払う？支払い時期と方法'),
-    # 物件タイプ別
-    (r'物件タイプ', '{cat}の物件タイプ別の計算・比較'),
-    # 非課税
-    (r'非課税', '{cat}が非課税になるケースまとめ'),
-    # 会計処理
-    (r'会計処理|勘定科目', '{cat}の仕訳・勘定科目と会計処理'),
-    # 還元利回り
-    (r'還元利回り', '還元利回りとは？{cat}での使い方'),
-    # 耐用年数
-    (r'耐用年数', '{cat}の耐用年数一覧と計算方法'),
-    # 償却方法
-    (r'償却方法', '{cat}の定額法・定率法の違いと選び方'),
-    # 不動産
-    (r'_不動産$', '{cat}と不動産の関係を解説'),
-    # 登記タイプ別
-    (r'登記', '{cat}の登記タイプ別の税額一覧'),
-    # 相続
-    (r'相続', '{cat}の相続時の計算・手続き'),
-    # 不動産評価
-    (r'不動産評価', '{cat}の不動産評価方法を解説'),
-    # 金額別
-    (r'金額別|金額', '{cat}の金額別一覧・早見表'),
-    # 節税
-    (r'節税', '{cat}を活用した節税対策'),
-    # 賞与
-    (r'賞与', '賞与（ボーナス）の{cat}計算方法'),
-    # 確定申告
-    (r'確定申告', '{cat}の確定申告のやり方ガイド'),
-    # 火災保険
-    (r'火災保険', '{cat}と火災保険の関係'),
-    # 補助金
-    (r'補助金', '{cat}に使える補助金・助成金まとめ'),
-    # 住宅ローン連携
-    (r'住宅ローン', '{cat}と住宅ローンの関係'),
-    # 年収別
-    (r'年収別', '{cat}の年収別シミュレーション'),
-    # 一覧表
-    (r'一覧', '{cat}の一覧表・早見表'),
-    # 契約書
-    (r'契約書', '{cat}と契約書の関係・注意点'),
-    # 領収書
-    (r'領収書', '{cat}の領収書の書き方・取り扱い'),
-    # 不動産取引
-    (r'不動産取引', '{cat}の不動産取引での計算・注意点'),
-    # 納付方法
-    (r'納付方法|支払い方法', '{cat}の納付方法・支払い方法'),
-    # メリデメ
-    (r'メリデメ', '{cat}のメリット・デメリットを解説'),
-    # タイミング
-    (r'タイミング', '{cat}のベストタイミングはいつ？'),
-    # リスク
-    (r'リスク', '{cat}のリスクと対策を解説'),
-    # ローン
-    (r'ローン', '{cat}とローンの関係・活用法'),
-    # 不動産投資
-    (r'不動産投資$', '{cat}の不動産投資での活用法'),
-]
+FILEPATH = '/Users/tetzlow/real-estate-app/ooya-dx_2026/docs/100_SEOキーワード/キーワード分類/仲介手数料_判定済み.tsv'
 
-def generate_title(cat, pg):
-    """ページグループ名からタイトルを生成"""
-    # カテゴリ名を除去してパターン部分を取得
-    pg_suffix = pg.replace(cat, '').strip('_')
+# サイト設計.md の11ページ → 想定ページタイトル
+TITLES = {
+    'calc':    '仲介手数料 計算ツール',
+    'pillar':  '仲介手数料とは？仕組み・計算・相場を完全ガイド',
+    'realestate': '不動産売買の仲介手数料はいくら？マンション・戸建・土地の計算方法',
+    'rental':  '賃貸の仲介手数料はいくら？相場・上限・交渉・無料物件の見つけ方',
+    'free':    '仲介手数料無料の仕組みとからくり｜メリット・デメリットを解説',
+    'market':  '仲介手数料の相場はいくら？売買価格帯別の金額一覧',
+    'nego':    '仲介手数料の交渉・値引き方法｜成功する言い方・タイミング',
+    'legal':   '仲介手数料の上限はいくら？宅建業法の規定と2024年改正',
+    'acct':    '仲介手数料の勘定科目・仕訳｜個人事業主・法人の経費処理',
+    'tax':     '仲介手数料に消費税はかかる？土地・建物の計算方法',
+    'price':   '仲介手数料の具体例｜800万円・400万円・3000万円の計算',
+}
 
-    for pattern, template in TITLE_PATTERNS:
-        if re.search(pattern, pg) or re.search(pattern, pg_suffix):
-            return template.replace('{cat}', cat)
+# ページグループ → ページキー のマッピング
+PG_MAP = {
+    '仲介手数料_基礎解説': 'pillar',
+    '仲介手数料_計算ツール': 'calc',
+    '仲介手数料計算': 'calc',
+    '仲介手数料_不動産売買': 'realestate',
+    '仲介手数料賃貸': 'rental',
+    '仲介手数料_交渉ガイド': 'nego',
+    '仲介手数料_相場': 'market',
+    '仲介手数料_法律・規制': 'legal',
+    '仲介手数料_法改正': 'legal',
+    '仲介手数料_会計処理': 'acct',
+    '仲介手数料_消費税解説': 'tax',
+    '仲介手数料_金額別': 'price',
+    '仲介手数料_具体例・ケース': 'price',
+    '仲介手数料住宅': 'realestate',
+    '仲介手数料_期間別': 'pillar',
+}
 
-    # マッチしない場合はデフォルト
-    if pg_suffix:
-        return f'{cat}の{pg_suffix}を解説'
-    return f'{cat}を徹底解説'
+# 仲介手数料値引き → キーワード内容で ⑤無料 or ⑦交渉 に振り分け
+NEGO_RE = re.compile(r'交渉|値引き|値切|安くする|半額|言い方|タイミング|仕方')
+FREE_RE = re.compile(r'無料|からくり|なぜ|デメリット|安い|なし')
 
-total_updated = 0
-total_files = 0
 
-for fpath in files:
-    cat = os.path.basename(fpath).replace('_判定済み.tsv', '')
+def classify_nebiki(kw):
+    """値引きグループのキーワードを無料 or 交渉に振り分け"""
+    if NEGO_RE.search(kw):
+        return 'nego'
+    if FREE_RE.search(kw):
+        return 'free'
+    return 'free'
 
-    with open(fpath, 'r', encoding='utf-8') as f:
+
+def get_title_for_row(kw, pg):
+    """キーワードとページグループから想定ページタイトルを決定"""
+    # 値引きグループは特別処理
+    if pg == '仲介手数料値引き':
+        key = classify_nebiki(kw)
+        return TITLES[key]
+
+    # ページグループから直接マッピング
+    if pg in PG_MAP:
+        key = PG_MAP[pg]
+        return TITLES[key]
+
+    # キーワード内容からフォールバック
+    if re.search(r'賃貸', kw):
+        return TITLES['rental']
+    if re.search(r'計算|シミュレーション', kw):
+        return TITLES['calc']
+    if re.search(r'無料|安い|なし', kw):
+        return TITLES['free']
+    if re.search(r'交渉|値引|値切|半額', kw):
+        return TITLES['nego']
+    if re.search(r'相場|いくら|平均', kw):
+        return TITLES['market']
+    if re.search(r'上限|法律|宅建|違法|法改正|改正|改定', kw):
+        return TITLES['legal']
+    if re.search(r'勘定科目|仕訳|経費|科目', kw):
+        return TITLES['acct']
+    if re.search(r'消費税|税金|税込|課税', kw):
+        return TITLES['tax']
+    if re.search(r'万円|パーセント|高い|高すぎ', kw):
+        return TITLES['price']
+    if re.search(r'不動産|売買|マンション|土地|戸建|建売', kw):
+        return TITLES['realestate']
+
+    # 最終フォールバック: ピラーページ
+    return TITLES['pillar']
+
+
+def main():
+    with open(FILEPATH, 'r', encoding='utf-8') as f:
         lines = f.readlines()
-    if not lines:
-        continue
 
-    # まずページグループごとのトピカル貢献を集計
-    pg_topical = {}
+    header = lines[0].strip().split('\t')
+    idx = {name: i for i, name in enumerate(header)}
+
+    kw_i = idx['キーワード']
+    title_i = idx['想定ページタイトル']
+    hantei_i = idx['判定']
+    pg_i = idx['ページグループ']
+
+    count = 0
+    by_title = {}
+    new_lines = [lines[0]]
+
     for line in lines[1:]:
         cols = line.strip().split('\t')
-        if len(cols) < 13: continue
-        pg = cols[9].strip()
-        topical = cols[12].strip()
-        if pg and topical:
-            pg_topical[pg] = topical
-
-    # 必須グループにタイトルを生成
-    pg_titles = {}
-    for pg, topical in pg_topical.items():
-        if topical == '必須':
-            pg_titles[pg] = generate_title(cat, pg)
-
-    # TSVを更新
-    new_lines = [lines[0].rstrip('\n')]
-    for line in lines[1:]:
-        cols = line.rstrip('\n').split('\t')
-        while len(cols) < 13:
+        # 列数が足りない場合はパディング
+        while len(cols) <= title_i:
             cols.append('')
 
-        pg = cols[9].strip()
-        if pg in pg_titles and not cols[10].strip():
-            cols[10] = pg_titles[pg]
-            total_updated += 1
+        hantei = cols[hantei_i]
+        current_title = cols[title_i]
+        kw = cols[kw_i]
+        pg = cols[pg_i] if pg_i < len(cols) else ''
 
-        new_lines.append('\t'.join(cols))
+        # 削除でない & タイトルが空の場合のみ処理
+        if hantei != '削除' and not current_title.strip():
+            title = get_title_for_row(kw, pg)
+            if title:
+                cols[title_i] = title
+                count += 1
+                by_title[title] = by_title.get(title, 0) + 1
 
-    with open(fpath, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(new_lines) + '\n')
-    total_files += 1
+        new_lines.append('\t'.join(cols) + '\n')
 
-    # 表示
-    if pg_titles:
-        print(f'\n=== {cat} ===')
-        for pg, title in sorted(pg_titles.items(), key=lambda x: x[0]):
-            print(f'  {pg} → {title}')
+    with open(FILEPATH, 'w', encoding='utf-8') as f:
+        f.writelines(new_lines)
 
-print(f'\n合計: {total_files}ファイル, {total_updated}行にタイトル追加')
+    print(f'想定ページタイトルを {count}件 に割り当て完了\n')
+    print('割り当て内訳:')
+    for title, cnt in sorted(by_title.items(), key=lambda x: -x[1]):
+        print(f'  {cnt:3d}件  {title}')
+
+
+if __name__ == '__main__':
+    main()
