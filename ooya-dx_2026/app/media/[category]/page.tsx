@@ -22,6 +22,12 @@ const categoryMeta: Record<string, { title: string; description: string; publish
     publishDate: '2025-04-22',
     lastUpdated: '2026-02-17',
   },
+  brokerage: {
+    title: '仲介手数料',
+    description: '不動産売買・賃貸の仲介手数料を徹底解説。計算方法、相場、上限の法律、消費税、支払い時期まで網羅。無料シミュレーターで今すぐ計算。',
+    publishDate: '2026-02-19',
+    lastUpdated: '2026-02-19',
+  },
 };
 
 export async function generateStaticParams() {

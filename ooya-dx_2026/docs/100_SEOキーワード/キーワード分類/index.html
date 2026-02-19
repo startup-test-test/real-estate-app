@@ -2,34 +2,29 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>キーワード分類ビューア</title>
+<title>ツールキーワード分類ビューア</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; color: #1a1a1a; }
-  .header { background: #1e293b; color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 10; }
+  .header { background: #1e293b; color: #fff; padding: 8px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 20; height: 40px; }
   .header h1 { font-size: 16px; white-space: nowrap; }
+  .header .sub { font-size: 12px; color: #94a3b8; }
   .header .updated { font-size: 11px; color: #94a3b8; margin-left: auto; }
-  .container { display: flex; height: calc(100vh - 44px); }
 
-  /* サイドバー */
-  .sidebar { width: 280px; min-width: 280px; background: #fff; border-right: 1px solid #e2e8f0; overflow-y: auto; padding: 8px 0; }
-  .sidebar-item { padding: 8px 14px; cursor: pointer; font-size: 12px; border-left: 3px solid transparent; display: flex; justify-content: space-between; align-items: center; }
-  .sidebar-item:hover { background: #f1f5f9; }
-  .sidebar-item.active { background: #eff6ff; border-left-color: #2563eb; font-weight: 600; }
-  .sidebar-item .count { font-size: 10px; color: #94a3b8; }
-  .sidebar-search { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
-  .sidebar-search input { width: 100%; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; }
+  .main { max-width: 100%; margin: 0 auto; padding: 16px; }
 
-  /* メインコンテンツ */
-  .main { flex: 1; overflow: auto; padding: 16px; }
+  /* Stats */
   .stats { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
   .stat-card { background: #fff; border-radius: 6px; padding: 10px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); min-width: 120px; }
   .stat-card .label { font-size: 11px; color: #64748b; }
   .stat-card .value { font-size: 20px; font-weight: 700; }
+  .stat-card.total .value { color: #1e293b; }
   .stat-card.calc .value { color: #16a34a; }
   .stat-card.article .value { color: #2563eb; }
   .stat-card.delete .value { color: #9ca3af; }
-  .stat-card.total .value { color: #1e293b; }
+  .stat-card.vol .value { color: #16a34a; font-size: 16px; }
+  .stat-card.filtered .value { color: #7c3aed; }
+  .stat-card.fvol .value { color: #ea580c; font-size: 16px; }
 
   /* フィルター */
   .filters { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -37,9 +32,28 @@
   .filter-btn:hover { background: #f1f5f9; }
   .filter-btn.active { background: #1e293b; color: #fff; border-color: #1e293b; }
 
+  /* トピックフィルター */
+  .topic-filters { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+  .topic-btn { padding: 3px 10px; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 10px; cursor: pointer; background: #fff; color: #475569; }
+  .topic-btn:hover { background: #f1f5f9; }
+  .topic-btn.active { background: #475569; color: #fff; border-color: #475569; }
+
+  /* 数値フィルター */
+  .num-filters { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .num-filter-group { display: flex; align-items: center; gap: 6px; }
+  .num-filter-group .group-label { font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap; }
+  .num-filter-group select { padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 11px; background: #fff; cursor: pointer; }
+
+  /* 検索 */
+  .kw-search { margin-bottom: 12px; }
+  .kw-search input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; width: 300px; }
+
   /* テーブル */
-  table { border-collapse: collapse; font-size: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); width: 100%; border-radius: 6px; overflow: hidden; }
-  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; position: sticky; top: 0; white-space: nowrap; font-weight: 500; font-size: 11px; }
+  .table-wrap { border-radius: 6px; overflow: auto; max-height: calc(100vh - 42px); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  table { border-collapse: collapse; font-size: 12px; background: #fff; width: 100%; }
+  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; position: sticky; top: 0; z-index: 15; white-space: nowrap; font-weight: 500; font-size: 11px; cursor: pointer; }
+  th:hover { background: #334155; }
+  th .sort-icon { font-size: 9px; margin-left: 4px; }
   td { border-bottom: 1px solid #f1f5f9; padding: 6px 10px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; }
   tr:hover { background: #f8fafc; }
 
@@ -52,196 +66,599 @@
   .badge-article { background: #dbeafe; color: #1e40af; }
   .badge-delete { background: #f3f4f6; color: #9ca3af; }
 
+  /* SERP列 */
+  .serp-cell { font-size: 10px; line-height: 1.4; white-space: nowrap; max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+  .serp-cell a { color: #2563eb; text-decoration: none; }
+  .serp-cell a:hover { text-decoration: underline; }
+  .serp-cell .dr { display: inline-block; background: #f1f5f9; color: #475569; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 600; margin-left: 2px; }
+  .serp-cell .dr.high { background: #fee2e2; color: #dc2626; }
+  .serp-cell .dr.mid { background: #fef3c7; color: #a16207; }
+  .serp-cell .dr.low { background: #d1fae5; color: #059669; }
+  th.serp-th { background: #334155; font-size: 10px; }
+  th.ahrefs-th { background: #7c3aed; font-size: 10px; width: 40px; text-align: center; }
+  th.nerai2-th { background: #d97706; font-size: 10px; text-align: center; }
+  .ahrefs-kd { font-weight: 700; font-size: 11px; }
+  .ahrefs-kd.easy { color: #059669; }
+  .ahrefs-kd.medium { color: #a16207; }
+  .ahrefs-kd.hard { color: #dc2626; }
+
+  .footer { padding: 8px; font-size: 11px; color: #94a3b8; }
   .empty { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
-  .kw-search { margin-bottom: 12px; }
-  .kw-search input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; width: 300px; }
+  .loading-bar { background: #e2e8f0; border-radius: 4px; height: 6px; margin: 8px 0; overflow: hidden; }
+  .loading-bar .fill { background: #2563eb; height: 100%; transition: width 0.3s; }
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>キーワード分類ビューア</h1>
+  <h1>ツールキーワード分類</h1>
+  <span class="sub">ooya.tech/tools — 全ツールキーワード統合ビュー</span>
   <span class="updated" id="updated"></span>
 </div>
-<div class="container">
-  <div class="sidebar">
-    <div class="sidebar-search">
-      <input type="text" id="fileSearch" placeholder="ファイル検索..." oninput="filterFiles()">
-    </div>
-    <div id="fileList"></div>
-  </div>
-  <div class="main" id="main">
-    <div class="empty">左のリストからファイルを選択してください</div>
-  </div>
+<div class="main" id="main">
+  <div class="empty">読み込み中...<div class="loading-bar"><div class="fill" id="loadbar" style="width:0%"></div></div><div id="loadstatus" style="font-size:11px;margin-top:8px"></div></div>
 </div>
 
 <script>
-let allFiles = [];
-let currentData = [];
+// --- 全TSVファイルリスト ---
+const ALL_FILES = [
+  'DCF法_判定済み.tsv','DSCR_判定済み.tsv','IRR_判定済み.tsv','NOI_判定済み.tsv','NPV_判定済み.tsv',
+  'キャッシュフロー_判定済み.tsv','デッドクロス_判定済み.tsv','リフォームローン_判定済み.tsv','リフォーム費用_判定済み.tsv',
+  '印紙税_判定済み.tsv','繰上返済_判定済み.tsv','建物消費税_判定済み.tsv','減価償却_判定済み.tsv',
+  '個人事業税_判定済み.tsv','固定資産税_判定済み.tsv','固定資産税精算金_判定済み.tsv',
+  '再調達価格_判定済み.tsv','自己資金配当率_判定済み.tsv','実質利回り_判定済み.tsv',
+  '借入可能額_判定済み.tsv','借入比率_判定済み.tsv','収益還元_判定済み.tsv',
+  '住宅ローン_判定済み.tsv','住民税_判定済み.tsv','所得税_判定済み.tsv','譲渡所得税_判定済み.tsv',
+  '正味現在価値_判定済み.tsv','積算評価_判定済み.tsv','相続税_判定済み.tsv','贈与税_判定済み.tsv',
+  '仲介手数料_判定済み.tsv','登録免許税_判定済み.tsv','投資利益率_判定済み.tsv','内部収益率_判定済み.tsv',
+  '売却_判定済み.tsv','表面利回り_判定済み.tsv','不動産取得税_判定済み.tsv','不動産投資_判定済み.tsv',
+  '不動産投資計算_判定済み.tsv','不動産売却_判定済み.tsv','法人税_判定済み.tsv'
+];
+
+// サイト公開ツールのマッピング
+const TOOL_PATH_MAP = {
+  '表面利回り': '/tools/yield-rate', '実質利回り': '/tools/yield-rate',
+  'キャッシュフロー': '/tools/cf', '収益還元': '/tools/income-capitalization',
+  'DCF法': '/tools/dcf', '積算評価': '/tools/assessed-value', '再調達価格': '/tools/replacement-cost',
+  '仲介手数料': '/tools/brokerage', '不動産取得税': '/tools/acquisition-tax',
+  '登録免許税': '/tools/registration-tax', '印紙税': '/tools/stamp-tax',
+  '住宅ローン': '/tools/mortgage-loan', '借入比率': '/tools/ltv',
+  'DSCR': '/tools/dscr', 'NOI': '/tools/noi', '投資利益率': '/tools/roi',
+  '自己資金配当率': '/tools/ccr', 'IRR': '/tools/irr', '内部収益率': '/tools/irr',
+  'NPV': '/tools/npv', '正味現在価値': '/tools/npv',
+  'デッドクロス': '/tools/dead-cross', '減価償却': '/tools/depreciation', '法人税': '/tools/corporate-tax',
+  '売却': '/tools/sale-proceeds', '譲渡所得税': '/tools/capital-gains-tax',
+  '贈与税': '/tools/gift-tax', '相続税': '/tools/inheritance-tax'
+};
+
+// ステップ分類
+const STEP_MAP = {
+  '表面利回り': 'Step1', '実質利回り': 'Step1', 'キャッシュフロー': 'Step1',
+  '収益還元': 'Step1', 'DCF法': 'Step1', '積算評価': 'Step1', '再調達価格': 'Step1',
+  '仲介手数料': 'Step1', '不動産取得税': 'Step1', '登録免許税': 'Step1', '印紙税': 'Step1',
+  '住宅ローン': 'Step1', '借入比率': 'Step1', 'DSCR': 'Step1', 'NOI': 'Step1',
+  '投資利益率': 'Step1', '自己資金配当率': 'Step1', 'IRR': 'Step1', '内部収益率': 'Step1',
+  'NPV': 'Step1', '正味現在価値': 'Step1',
+  'デッドクロス': 'Step2', '減価償却': 'Step2', '法人税': 'Step2',
+  '売却': 'Step3', '譲渡所得税': 'Step3', '贈与税': 'Step3', '相続税': 'Step3'
+};
+
+let allRows = []; // [{kw, kd, vol, 判定, 検索意図, ページ種類, トピック, カテゴリ, toolPath, step, ...original}]
+let serpData = {};
+let ahrefsKdMap = {};
 let currentFilter = 'all';
+let currentCategory = 'all';
+let currentPageGroup = 'all';
+let currentKanten = 'all';
+let currentTopical = 'all';
+let currentToolStatus = 'all';
+let currentKdMax = 'all';
+let currentVolMin = 'all';
+let currentDr40Set = new Set();
+let sortCol = -1;
+let sortAsc = true;
 
-function loadFileList() {
-  allFiles = [
-    'DCF法_判定済み.tsv','DSCR_判定済み.tsv','IRR_判定済み.tsv','NOI_判定済み.tsv','NPV_判定済み.tsv',
-    'キャッシュフロー_判定済み.tsv','デッドクロス_判定済み.tsv','リフォームローン_判定済み.tsv','リフォーム費用_判定済み.tsv',
-    '印紙税_判定済み.tsv','繰上返済_判定済み.tsv','建物消費税_判定済み.tsv','減価償却_判定済み.tsv',
-    '個人事業税_判定済み.tsv','固定資産税_判定済み.tsv','固定資産税精算金_判定済み.tsv',
-    '再調達価格_判定済み.tsv','自己資金配当率_判定済み.tsv','実質利回り_判定済み.tsv',
-    '借入可能額_判定済み.tsv','借入比率_判定済み.tsv','収益還元_判定済み.tsv',
-    '住宅ローン_判定済み.tsv','住民税_判定済み.tsv','所得税_判定済み.tsv','譲渡所得税_判定済み.tsv',
-    '正味現在価値_判定済み.tsv','積算評価_判定済み.tsv','相続税_判定済み.tsv','贈与税_判定済み.tsv',
-    '仲介手数料_判定済み.tsv','登録免許税_判定済み.tsv','投資利益率_判定済み.tsv','内部収益率_判定済み.tsv',
-    '売却_判定済み.tsv','表面利回り_判定済み.tsv','不動産取得税_判定済み.tsv','不動産投資_判定済み.tsv',
-    '不動産投資計算_判定済み.tsv','不動産売却_判定済み.tsv','法人税_判定済み.tsv'
-  ];
-  allFiles.sort((a, b) => a.localeCompare(b, 'ja'));
-  renderFileList();
-}
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function renderFileList(filter = '') {
-  const container = document.getElementById('fileList');
-  let html = '';
-  allFiles.forEach((f, idx) => {
-    const name = f.replace('_判定済み.tsv', '');
-    if (filter && !name.includes(filter)) return;
-    html += '<div class="sidebar-item" data-idx="' + idx + '" onclick="loadFileByIdx(' + idx + ', this)" title="' + name + '">' +
-            '<span>' + name + '</span>' +
-            '</div>';
-  });
-  container.innerHTML = html || '<div style="padding:12px;color:#94a3b8;font-size:12px">該当なし</div>';
-}
+async function loadAllFiles() {
+  let loaded = 0;
+  const bar = document.getElementById('loadbar');
+  const status = document.getElementById('loadstatus');
 
-function loadFileByIdx(idx, el) {
-  loadFile(allFiles[idx], el);
-}
-
-function filterFiles() {
-  renderFileList(document.getElementById('fileSearch').value);
-}
-
-async function loadFile(rawFilename, el) {
-  const filename = rawFilename;
-  // Active state
-  document.querySelectorAll('.sidebar-item').forEach(e => e.classList.remove('active'));
-  if (el) el.classList.add('active');
-
-  try {
-    const res = await fetch(encodeURIComponent(filename) + '?t=' + Date.now());
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(r => r.split('\t'));
-    currentData = rows;
-    currentFilter = 'all';
-    currentFilename = filename;
-    renderTable(rows, filename);
-    document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
-  } catch (e) {
-    document.getElementById('main').innerHTML = '<div class="empty">読み込みに失敗しました: ' + filename + '</div>';
+  for (const file of ALL_FILES) {
+    const catName = file.replace('_判定済み.tsv', '');
+    const toolPath = TOOL_PATH_MAP[catName] || '';
+    const step = STEP_MAP[catName] || '';
+    try {
+      const res = await fetch(encodeURIComponent(file) + '?t=' + Date.now());
+      const text = await res.text();
+      const rows = text.trim().split('\n').map(r => r.split('\t'));
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (r.length < 6) continue;
+        allRows.push({
+          no: r[0], kubun: r[1], kw: (r[2]||'').trim(), kd: (r[3]||'').trim(),
+          vol: parseInt(r[4]) || 0, hantei: (r[5]||'').trim(),
+          intent: (r[6]||'').trim(), pageType: (r[7]||'').trim(), topic: (r[8]||'').trim(),
+          pageGroup: (r[9]||'').trim(), articleTitle: (r[10]||'').trim(),
+          kanten: (r[11]||'').trim(),
+          topical: (r[12]||'').trim(),
+          pageRole: (r[13]||'').trim(),
+          category: catName, toolPath: toolPath, step: step
+        });
+      }
+    } catch (e) { /* skip */ }
+    loaded++;
+    if (bar) bar.style.width = Math.round(loaded / ALL_FILES.length * 100) + '%';
+    if (status) status.textContent = loaded + ' / ' + ALL_FILES.length + ' ファイル読込中...';
   }
+
+  // Ahrefs SERPデータ読み込み
+  const SERP_FILES = [
+    'serp_仲介手数料.js'
+  ];
+  for (const sf of SERP_FILES) {
+    try {
+      const res = await fetch(encodeURIComponent(sf) + '?t=' + Date.now());
+      const text = await res.text();
+      // JSファイルからデータを抽出
+      const serpMatch = text.match(/const SERP_[^\s]+ = ({[\s\S]*?});/);
+      const kdMatch = text.match(/const AHREFS_KD_[^\s]+ = ({[\s\S]*?});/);
+      if (serpMatch) {
+        const sd = JSON.parse(serpMatch[1]);
+        Object.entries(sd).forEach(([kw, entries]) => { serpData[kw] = entries; });
+      }
+      if (kdMatch) {
+        const kd = JSON.parse(kdMatch[1]);
+        Object.entries(kd).forEach(([kw, val]) => { ahrefsKdMap[kw] = val; });
+      }
+    } catch (e) { /* SERP file not found, skip */ }
+  }
+  if (status) status.textContent = 'SERPデータ読込完了';
+
+  render();
+  document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
 }
 
-function renderTable(rows, filename) {
-  if (rows.length < 2) {
+function render() {
+  const data = allRows;
+  if (data.length === 0) {
     document.getElementById('main').innerHTML = '<div class="empty">データなし</div>';
     return;
   }
-  const header = rows[0];
-  const data = rows.slice(1).filter(r => r.length >= 6);
-  const name = decodeURIComponent(filename).replace('_判定済み.tsv', '');
 
   // Stats
   let calcCount = 0, articleCount = 0, deleteCount = 0;
-  let totalVol = 0, calcVol = 0;
+  let totalVol = 0;
+  const catMap = {};
   data.forEach(r => {
-    const 判定 = (r[5] || '').trim();
-    const vol = parseInt(r[4]) || 0;
-    if (判定 === '計算ページ') { calcCount++; calcVol += vol; }
-    else if (判定 === '記事') { articleCount++; }
-    else if (判定 === '削除') { deleteCount++; }
-    if (判定 !== '削除') totalVol += vol;
+    if (r.hantei === '計算ページ') { calcCount++; }
+    else if (r.hantei === '記事') { articleCount++; }
+    else if (r.hantei === '削除') { deleteCount++; }
+    if (r.hantei !== '削除') totalVol += r.vol;
+    catMap[r.category] = (catMap[r.category] || 0) + 1;
   });
 
-  // Filter data
+  // Filter
   let filtered = data;
-  if (currentFilter === 'calc') filtered = data.filter(r => (r[5]||'').trim() === '計算ページ');
-  else if (currentFilter === 'article') filtered = data.filter(r => (r[5]||'').trim() === '記事');
-  else if (currentFilter === 'delete') filtered = data.filter(r => (r[5]||'').trim() === '削除');
+  if (currentFilter === 'calc') filtered = filtered.filter(r => r.hantei === '計算ページ');
+  else if (currentFilter === 'article') filtered = filtered.filter(r => r.hantei === '記事');
+  else if (currentFilter === 'delete') filtered = filtered.filter(r => r.hantei === '削除');
+  else if (currentFilter === 'no-delete') filtered = filtered.filter(r => r.hantei !== '削除');
 
-  // Keyword filter
-  const kwFilter = document.getElementById('kwSearch') ? document.getElementById('kwSearch').value : '';
-  if (kwFilter) {
-    filtered = filtered.filter(r => (r[2]||'').includes(kwFilter));
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(r => r.category === currentCategory);
+  }
+  // 観点フィルター
+  if (currentKanten !== 'all') {
+    filtered = filtered.filter(r => r.kanten === currentKanten);
+  }
+  // トピカル貢献フィルター
+  if (currentTopical !== 'all') {
+    filtered = filtered.filter(r => r.topical === currentTopical);
+  }
+  // ページグループドロップダウン用（フィルタ前のデータ）
+  const pgFilterBase = filtered.slice();
+  if (currentPageGroup !== 'all') {
+    filtered = filtered.filter(r => r.pageGroup === currentPageGroup);
+  }
+  if (currentToolStatus !== 'all') {
+    if (currentToolStatus === 'published') filtered = filtered.filter(r => r.toolPath !== '');
+    else if (currentToolStatus === 'notool') filtered = filtered.filter(r => r.toolPath === '' && r.step === '');
+    else if (currentToolStatus === 'general') filtered = filtered.filter(r => r.category === '不動産投資' || r.category === '不動産投資計算' || r.category === '不動産売却');
+  }
+  if (currentVolMin !== 'all') {
+    filtered = filtered.filter(r => r.vol >= parseInt(currentVolMin));
+  }
+  if (currentKdMax !== 'all') {
+    const maxKd = parseInt(currentKdMax);
+    filtered = filtered.filter(r => {
+      if (r.kd === '' || r.kd === 'N/A') return true;
+      const v = parseInt(r.kd);
+      return !isNaN(v) && v <= maxKd;
+    });
+  }
+  if (currentDr40Set.size > 0) {
+    filtered = filtered.filter(r => {
+      const entries = serpData[r.kw] || [];
+      let cnt = 0;
+      entries.forEach(e => { const d = parseInt(e.dr); if (!isNaN(d) && d < 40) cnt++; });
+      return currentDr40Set.has(cnt);
+    });
   }
 
+  const kwFilter = document.getElementById('kwSearch') ? document.getElementById('kwSearch').value : '';
+  if (kwFilter) {
+    const q = kwFilter.toLowerCase();
+    filtered = filtered.filter(r => r.kw.toLowerCase().includes(q) || r.category.toLowerCase().includes(q));
+  }
+
+  // Sort
+  if (sortCol !== -1) {
+    const sortKey = sortCol;
+    filtered.sort((a, b) => {
+      let va, vb;
+      if (sortKey === 'vol') { va = a.vol; vb = b.vol; }
+      else if (sortKey === 'kd') { va = parseInt(a.kd) || 999; vb = parseInt(b.kd) || 999; }
+      else if (sortKey === 'kw') { return sortAsc ? a.kw.localeCompare(b.kw, 'ja') : b.kw.localeCompare(a.kw, 'ja'); }
+      else if (sortKey === 'hantei') { return sortAsc ? a.hantei.localeCompare(b.hantei, 'ja') : b.hantei.localeCompare(a.hantei, 'ja'); }
+      else if (sortKey === 'category') { return sortAsc ? a.category.localeCompare(b.category, 'ja') : b.category.localeCompare(a.category, 'ja'); }
+      else if (sortKey === 'pageGroup') { return sortAsc ? (a.pageGroup||'').localeCompare(b.pageGroup||'', 'ja') : (b.pageGroup||'').localeCompare(a.pageGroup||'', 'ja'); }
+      else if (sortKey === 'kanten') { return sortAsc ? (a.kanten||'').localeCompare(b.kanten||'', 'ja') : (b.kanten||'').localeCompare(a.kanten||'', 'ja'); }
+      else if (sortKey === 'topical') { return sortAsc ? (a.topical||'').localeCompare(b.topical||'', 'ja') : (b.topical||'').localeCompare(a.topical||'', 'ja'); }
+      else if (sortKey === 'pageRole') { return sortAsc ? (a.pageRole||'').localeCompare(b.pageRole||'', 'ja') : (b.pageRole||'').localeCompare(a.pageRole||'', 'ja'); }
+      else if (sortKey === 'dr40cnt') {
+        va = getDr40Count(a); vb = getDr40Count(b);
+      } else if (sortKey === 'estsess') {
+        va = getEstSession(a); vb = getEstSession(b);
+      } else { return 0; }
+      if (va === undefined) return 0;
+      return sortAsc ? va - vb : vb - va;
+    });
+  }
+
+  // Filtered vol
+  let filteredVol = 0;
+  filtered.forEach(r => { filteredVol += r.vol; });
+
   let html = '';
-  // Stats
+
+  // Stats cards
   html += '<div class="stats">';
-  html += '<div class="stat-card total"><div class="label">合計キーワード</div><div class="value">' + data.length + '</div></div>';
-  html += '<div class="stat-card calc"><div class="label">計算ページ</div><div class="value">' + calcCount + '</div></div>';
-  html += '<div class="stat-card article"><div class="label">記事</div><div class="value">' + articleCount + '</div></div>';
-  html += '<div class="stat-card delete"><div class="label">削除</div><div class="value">' + deleteCount + '</div></div>';
+  html += '<div class="stat-card total"><div class="label">合計キーワード</div><div class="value">' + data.length.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card calc"><div class="label">計算ページ</div><div class="value">' + calcCount.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card article"><div class="label">記事</div><div class="value">' + articleCount.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card delete"><div class="label">削除</div><div class="value">' + deleteCount.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card vol"><div class="label">有効KW Vol合計</div><div class="value">' + totalVol.toLocaleString() + '</div></div>';
+  // ページグループ数（非空のユニーク数）
+  const pgSet = new Set();
+  filtered.forEach(r => { if (r.pageGroup) pgSet.add(r.pageGroup); });
+  html += '<div class="stat-card filtered"><div class="label">絞り込み結果</div><div class="value">' + filtered.length.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card fvol"><div class="label">絞り込みVol合計</div><div class="value">' + filteredVol.toLocaleString() + '</div></div>';
+  html += '<div class="stat-card" style="border-left:3px solid #8b5cf6"><div class="label">ページグループ数</div><div class="value" style="color:#8b5cf6">' + pgSet.size.toLocaleString() + '</div></div>';
   html += '</div>';
 
-  // Filters
+  // 判定フィルター
   html += '<div class="filters">';
-  html += '<div class="filter-btn' + (currentFilter==='all'?' active':'') + '" onclick="setFilter(\'all\')">すべて (' + data.length + ')</div>';
-  html += '<div class="filter-btn' + (currentFilter==='calc'?' active':'') + '" onclick="setFilter(\'calc\')">計算ページ (' + calcCount + ')</div>';
-  html += '<div class="filter-btn' + (currentFilter==='article'?' active':'') + '" onclick="setFilter(\'article\')">記事 (' + articleCount + ')</div>';
-  html += '<div class="filter-btn' + (currentFilter==='delete'?' active':'') + '" onclick="setFilter(\'delete\')">削除 (' + deleteCount + ')</div>';
+  html += btn('all', 'すべて (' + data.length.toLocaleString() + ')', currentFilter, 'setFilter');
+  html += btn('no-delete', '削除以外 (' + (calcCount + articleCount).toLocaleString() + ')', currentFilter, 'setFilter');
+  html += btn('calc', '計算ページ (' + calcCount.toLocaleString() + ')', currentFilter, 'setFilter');
+  html += btn('article', '記事 (' + articleCount.toLocaleString() + ')', currentFilter, 'setFilter');
+  html += btn('delete', '削除 (' + deleteCount.toLocaleString() + ')', currentFilter, 'setFilter');
   html += '</div>';
 
-  // Keyword search
-  html += '<div class="kw-search"><input type="text" id="kwSearch" placeholder="キーワード検索..." oninput="rerender()" value="' + (kwFilter||'') + '"></div>';
+  // 数値フィルター
+  html += '<div class="num-filters">';
 
-  // Table
-  html += '<table><tr>';
-  header.forEach(h => { html += '<th>' + h + '</th>'; });
+  // カテゴリ（ソースファイル）
+  const sortedCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">カテゴリ:</span>';
+  html += '<select onchange="setCategory(this.value)">';
+  html += '<option value="all"' + (currentCategory==='all'?' selected':'') + '>すべて (' + data.length.toLocaleString() + ')</option>';
+  sortedCats.forEach(([cat, cnt]) => {
+    const path = TOOL_PATH_MAP[cat] || '';
+    const prefix = path ? '' : '(未作成) ';
+    html += '<option value="' + esc(cat) + '"' + (currentCategory===cat?' selected':'') + '>' + prefix + cat + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // ページグループ（フィルタ前のベースから構築）
+  const pgMap = {};
+  pgFilterBase.forEach(r => { if (r.pageGroup) pgMap[r.pageGroup] = (pgMap[r.pageGroup] || 0) + 1; });
+  const sortedPGs = Object.entries(pgMap).sort((a, b) => b[1] - a[1]);
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">ページグループ:</span>';
+  html += '<select onchange="setPageGroup(this.value)">';
+  html += '<option value="all"' + (currentPageGroup==='all'?' selected':'') + '>すべて (' + sortedPGs.length + 'グループ)</option>';
+  sortedPGs.forEach(([pg, cnt]) => {
+    html += '<option value="' + esc(pg) + '"' + (currentPageGroup===pg?' selected':'') + '>' + esc(pg) + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // 観点フィルター
+  const kantenMap = {};
+  filtered.forEach(r => { if (r.kanten) kantenMap[r.kanten] = (kantenMap[r.kanten] || 0) + 1; });
+  const kantenOrder = ['ツール集客', '権威構築', 'CV誘導', '対象外'];
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">観点:</span>';
+  html += '<select onchange="setKanten(this.value)">';
+  html += '<option value="all"' + (currentKanten==='all'?' selected':'') + '>すべて</option>';
+  kantenOrder.forEach(k => {
+    const cnt = kantenMap[k] || 0;
+    if (cnt > 0) html += '<option value="' + esc(k) + '"' + (currentKanten===k?' selected':'') + '>' + esc(k) + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // トピカル貢献フィルター
+  const topicalMap = {};
+  filtered.forEach(r => { if (r.topical) topicalMap[r.topical] = (topicalMap[r.topical] || 0) + 1; });
+  const topicalOrder = ['必須', '補足', '不要'];
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">トピカル貢献:</span>';
+  html += '<select onchange="setTopical(this.value)">';
+  html += '<option value="all"' + (currentTopical==='all'?' selected':'') + '>すべて</option>';
+  topicalOrder.forEach(k => {
+    const cnt = topicalMap[k] || 0;
+    if (cnt > 0) html += '<option value="' + esc(k) + '"' + (currentTopical===k?' selected':'') + '>' + esc(k) + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // ツール状態
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">ツール状態:</span>';
+  html += '<select onchange="setToolStatus(this.value)">';
+  html += '<option value="all"' + (currentToolStatus==='all'?' selected':'') + '>すべて</option>';
+  html += '<option value="published"' + (currentToolStatus==='published'?' selected':'') + '>サイト公開中</option>';
+  html += '<option value="notool"' + (currentToolStatus==='notool'?' selected':'') + '>ツール未作成</option>';
+  html += '<option value="general"' + (currentToolStatus==='general'?' selected':'') + '>横断KW</option>';
+  html += '</select>';
+  html += '</div>';
+
+  // DR40未満数
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">DR40未満数:</span>';
+  html += '<div class="filter-btn' + (currentDr40Set.size===0?' active':'') + '" onclick="setDr40(\'all\')" style="font-size:10px;padding:3px 8px">ALL</div>';
+  for (let i = 0; i <= 7; i++) {
+    html += '<div class="filter-btn' + (currentDr40Set.has(i)?' active':'') + '" onclick="setDr40(' + i + ')" style="font-size:10px;padding:3px 8px;min-width:24px;text-align:center">' + i + '</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">SEO難易度:</span>';
+  html += '<select onchange="setKdMax(this.value)">';
+  html += opt('all', 'すべて', currentKdMax);
+  html += opt('10', '10以下', currentKdMax);
+  html += opt('20', '20以下', currentKdMax);
+  html += opt('30', '30以下', currentKdMax);
+  html += opt('50', '50以下', currentKdMax);
+  html += '</select>';
+  html += '</div>';
+
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">月間検索数:</span>';
+  html += '<select onchange="setVolMin(this.value)">';
+  html += opt('all', 'すべて', currentVolMin);
+  html += opt('50', '50以上', currentVolMin);
+  html += opt('100', '100以上', currentVolMin);
+  html += opt('500', '500以上', currentVolMin);
+  html += opt('1000', '1,000以上', currentVolMin);
+  html += opt('5000', '5,000以上', currentVolMin);
+  html += opt('10000', '10,000以上', currentVolMin);
+  html += '</select>';
+  html += '</div>';
+
+  html += '</div>';
+
+  // カテゴリ トピックボタン
+  const topicMap = {};
+  data.forEach(r => {
+    if (r.hantei !== '削除' && r.category) {
+      const key = r.toolPath ? r.category : '(未作成) ' + r.category;
+      topicMap[key] = (topicMap[key] || 0) + 1;
+    }
+  });
+  const sortedTopics = Object.entries(topicMap).sort((a, b) => b[1] - a[1]);
+  html += '<div class="topic-filters">';
+  html += '<div class="topic-btn' + (currentCategory==='all'?' active':'') + '" onclick="setCategory(\'all\')">全カテゴリ</div>';
+  sortedTopics.forEach(([topic, count]) => {
+    const cat = topic.replace('(未作成) ', '');
+    html += '<div class="topic-btn' + (currentCategory===cat?' active':'') + '" onclick="setCategory(\'' + esc(cat).replace(/'/g,"\\'") + '\')">' + esc(topic) + ' (' + count + ')</div>';
+  });
+  html += '</div>';
+
+  // Search
+  html += '<div class="kw-search"><input type="text" id="kwSearch" placeholder="キーワード・カテゴリ検索..." oninput="rerender()" value="' + esc(kwFilter) + '"></div>';
+
+  // Table — 個人メディアビューアと同じ列構成
+  html += '<div class="table-wrap"><table><tr>';
+  const mainHeaders = [
+    {key:'category', label:'カテゴリ'}, {key:'kw', label:'キーワード'},
+    {key:'kd', label:'SEO難易度'}, {key:'vol', label:'月間検索数'},
+    {key:'hantei', label:'判定'}, {key:'intent', label:'検索意図'},
+    {key:'nerai', label:'狙い目'}, {key:'review', label:'要確認'},
+    {key:'pageGroup', label:'ページグループ'}, {key:'kanten', label:'観点'},
+    {key:'topical', label:'トピカル貢献'},
+    {key:'pageRole', label:'ページ役割'},
+    {key:'articleTitle', label:'想定記事タイトル'}
+  ];
+  mainHeaders.forEach(h => {
+    const icon = sortCol === h.key ? (sortAsc ? '▲' : '▼') : '';
+    html += '<th onclick="setSort(\'' + h.key + '\')">' + h.label + '<span class="sort-icon">' + icon + '</span></th>';
+  });
+  // 狙い目2 + DR分析 + Ahrefs KD + SERP Top10（常に表示）
+  html += '<th class="nerai2-th">狙い目2</th>';
+  html += '<th class="nerai2-th" onclick="setSort(\'dr40cnt\')">DR40未満数<span class="sort-icon">' + (sortCol==='dr40cnt'?(sortAsc?'▲':'▼'):'') + '</span></th>';
+  html += '<th class="nerai2-th" onclick="setSort(\'estsess\')">仮セッション<span class="sort-icon">' + (sortCol==='estsess'?(sortAsc?'▲':'▼'):'') + '</span></th>';
+  html += '<th class="ahrefs-th">Ahrefs KD</th>';
+  for (let p = 1; p <= 10; p++) { html += '<th class="serp-th">' + p + '位</th>'; }
   html += '</tr>';
 
-  filtered.forEach(row => {
-    const 判定 = (row[5] || '').trim();
+  // Limit display for performance
+  const MAX_DISPLAY = 2000;
+  const displayRows = filtered.slice(0, MAX_DISPLAY);
+
+  displayRows.forEach(r => {
     let cls = '';
-    if (判定 === '計算ページ') cls = 'row-calc';
-    else if (判定 === '記事') cls = 'row-article';
-    else if (判定 === '削除') cls = 'row-delete';
+    if (r.hantei === '計算ページ') cls = 'row-calc';
+    else if (r.hantei === '記事') cls = 'row-article';
+    else if (r.hantei === '削除') cls = 'row-delete';
 
     html += '<tr class="' + cls + '">';
-    row.forEach((cell, j) => {
-      cell = (cell||'').trim();
-      let display = cell.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-      // 判定列にバッジ
-      if (j === 5) {
-        if (cell === '計算ページ') display = '<span class="badge badge-calc">' + display + '</span>';
-        else if (cell === '記事') display = '<span class="badge badge-article">' + display + '</span>';
-        else if (cell === '削除') display = '<span class="badge badge-delete">' + display + '</span>';
+    // カテゴリ
+    const catLabel = r.toolPath ? '<a href="https://ooya.tech' + r.toolPath + '" target="_blank" style="color:#2563eb;text-decoration:none;font-size:11px">' + esc(r.category) + '</a>' : '<span style="color:#94a3b8;font-size:11px">' + esc(r.category) + '</span>';
+    html += '<td>' + catLabel + '</td>';
+    // キーワード
+    html += '<td>' + esc(r.kw) + '</td>';
+    // SEO難易度
+    const kdVal = parseInt(r.kd);
+    let kdDisplay = esc(r.kd);
+    if (!isNaN(kdVal)) {
+      const kcls = kdVal <= 10 ? 'easy' : kdVal <= 30 ? 'medium' : 'hard';
+      kdDisplay = '<span class="ahrefs-kd ' + kcls + '">' + kdVal + '</span>';
+    }
+    html += '<td>' + kdDisplay + '</td>';
+    // 月間検索数
+    html += '<td style="text-align:right">' + (r.vol > 0 ? r.vol.toLocaleString() : '—') + '</td>';
+    // 判定
+    let hBadge = esc(r.hantei);
+    if (r.hantei === '計算ページ') hBadge = '<span class="badge badge-calc">' + hBadge + '</span>';
+    else if (r.hantei === '記事') hBadge = '<span class="badge badge-article">' + hBadge + '</span>';
+    else if (r.hantei === '削除') hBadge = '<span class="badge badge-delete">' + hBadge + '</span>';
+    html += '<td>' + hBadge + '</td>';
+    // 検索意図
+    html += '<td style="font-size:10px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + esc(r.intent) + '">' + esc(r.intent) + '</td>';
+    // 狙い目（空 — 後で入力）
+    html += '<td style="text-align:center;color:#ccc">—</td>';
+    // 要確認（空 — 後で入力）
+    html += '<td style="text-align:center;color:#ccc">—</td>';
+    // ページグループ
+    const pgLabel = r.pageGroup || r.pageType;
+    html += '<td style="font-size:10px">' + (pgLabel ? '<span style="background:#f3e8ff;color:#7c3aed;padding:1px 6px;border-radius:3px;font-size:9px">' + esc(pgLabel) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
+    // 観点
+    const kantenColors = {'ツール集客':'background:#dcfce7;color:#166534','権威構築':'background:#dbeafe;color:#1e40af','CV誘導':'background:#fef3c7;color:#a16207','対象外':'background:#f3f4f6;color:#9ca3af'};
+    const kStyle = kantenColors[r.kanten] || '';
+    html += '<td style="font-size:10px">' + (r.kanten ? '<span style="' + kStyle + ';padding:1px 6px;border-radius:3px;font-size:9px;font-weight:600">' + esc(r.kanten) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
+    // トピカル貢献
+    const topColors = {'必須':'color:#166534;font-weight:700','補足':'color:#a16207','不要':'color:#9ca3af'};
+    html += '<td style="font-size:10px;text-align:center;' + (topColors[r.topical]||'') + '">' + (r.topical || '—') + '</td>';
+    // ページ役割
+    const roleColors = {'ピラーページ':'background:#fef3c7;color:#92400e;font-weight:700','計算ツール':'background:#dcfce7;color:#166534;font-weight:700','解説記事':'background:#dbeafe;color:#1e40af'};
+    html += '<td style="font-size:10px;text-align:center">' + (r.pageRole ? '<span style="' + (roleColors[r.pageRole]||'') + ';padding:1px 6px;border-radius:3px;font-size:9px">' + esc(r.pageRole) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
+    // 想定記事タイトル
+    html += '<td style="font-size:10px">' + (r.articleTitle ? esc(r.articleTitle) : '<span style="color:#ccc">—</span>') + '</td>';
+
+    // 狙い目2（空 — 後で算出）
+    html += '<td style="text-align:center;color:#ccc">—</td>';
+
+    // DR40未満数
+    const entries = serpData[r.kw] || [];
+    let dr40count = 0;
+    entries.forEach(e => { const d = parseInt(e.dr); if (!isNaN(d) && d < 40) dr40count++; });
+    if (entries.length > 0) {
+      html += '<td style="text-align:center;font-weight:700;color:' + (dr40count >= 5 ? '#059669' : dr40count >= 3 ? '#d97706' : '#6b7280') + '">' + dr40count + '</td>';
+    } else {
+      html += '<td style="text-align:center;color:#ccc">—</td>';
+    }
+
+    // 仮セッション
+    const est = getEstSession(r);
+    if (entries.length > 0) {
+      html += '<td style="text-align:right;font-weight:700;color:' + (est >= 100 ? '#059669' : est >= 20 ? '#d97706' : '#6b7280') + '">' + (est > 0 ? est.toLocaleString() : '—') + '</td>';
+    } else {
+      html += '<td style="text-align:center;color:#ccc">—</td>';
+    }
+
+    // Ahrefs KD
+    const akd = ahrefsKdMap[r.kw] || '';
+    let akdCls = '';
+    const akdVal = parseInt(akd);
+    if (!isNaN(akdVal)) { akdCls = akdVal <= 20 ? ' easy' : akdVal <= 40 ? ' medium' : ' hard'; }
+    html += '<td><span class="ahrefs-kd' + akdCls + '">' + (akd || '—') + '</span></td>';
+
+    // SERP 1位〜10位
+    const posMap = {};
+    entries.forEach(e => { posMap[e.pos] = e; });
+    for (let p = 1; p <= 10; p++) {
+      const e = posMap[p];
+      if (e) {
+        const sd = e.domain.length > 5 ? e.domain.substring(0,5) + '..' : e.domain;
+        html += '<td class="serp-cell"><a href="' + e.url.replace(/"/g,'&quot;') + '" target="_blank" title="' + esc(e.domain) + '">' + esc(sd) + '</a><span class="dr' + drClass(e.dr) + '">' + esc(e.dr) + '</span></td>';
+      } else {
+        html += '<td class="serp-cell" style="color:#ccc">—</td>';
       }
-      // 月間検索数をフォーマット
-      if (j === 4 && !isNaN(cell) && cell !== '') {
-        display = Number(cell).toLocaleString();
-      }
-      html += '<td>' + display + '</td>';
-    });
+    }
+
     html += '</tr>';
   });
-  html += '</table>';
-  html += '<div style="padding:8px;font-size:11px;color:#94a3b8">表示: ' + filtered.length + '件 / ' + data.length + '件</div>';
+  html += '</table></div>';
+
+  let footerText = '表示: ' + displayRows.length.toLocaleString() + '件';
+  if (filtered.length > MAX_DISPLAY) footerText += ' (全' + filtered.length.toLocaleString() + '件中、最初の' + MAX_DISPLAY + '件を表示)';
+  footerText += ' / 総' + data.length.toLocaleString() + '件';
+  html += '<div class="footer">' + footerText + '</div>';
 
   document.getElementById('main').innerHTML = html;
 }
 
-function setFilter(f) {
-  currentFilter = f;
+// Helpers
+const CTR_BY_POS = [0, 0.276, 0.158, 0.110, 0.084, 0.063, 0.049, 0.039, 0.028, 0.024, 0.022];
+
+function getDr40Count(r) {
+  const entries = serpData[r.kw] || [];
+  let cnt = 0;
+  entries.forEach(e => { const d = parseInt(e.dr); if (!isNaN(d) && d < 40) cnt++; });
+  return cnt;
+}
+
+function getEstSession(r) {
+  const entries = serpData[r.kw] || [];
+  let bestPos = 99;
+  entries.forEach(e => { const d = parseInt(e.dr); if (!isNaN(d) && d < 40 && e.pos < bestPos) bestPos = e.pos; });
+  if (bestPos > 10 || r.vol === 0) return 0;
+  return Math.round(r.vol * (CTR_BY_POS[bestPos] || 0.02));
+}
+
+function drClass(dr) {
+  const v = parseInt(dr);
+  if (isNaN(v)) return '';
+  if (v >= 60) return ' high';
+  if (v >= 30) return ' mid';
+  return ' low';
+}
+
+function btn(val, label, current, fn) {
+  return '<div class="filter-btn' + (current===val?' active':'') + '" onclick="' + fn + '(\'' + val + '\')">' + label + '</div>';
+}
+function opt(val, label, current) {
+  return '<option value="' + val + '"' + (current===val?' selected':'') + '>' + label + '</option>';
+}
+
+function setFilter(f) { currentFilter = f; rerender(); }
+function setCategory(v) { currentCategory = v; currentPageGroup = 'all'; rerender(); }
+function setPageGroup(v) { currentPageGroup = v; rerender(); }
+function setKanten(v) { currentKanten = v; rerender(); }
+function setTopical(v) { currentTopical = v; rerender(); }
+function setToolStatus(v) { currentToolStatus = v; rerender(); }
+function setKdMax(v) { currentKdMax = v; rerender(); }
+function setVolMin(v) { currentVolMin = v; rerender(); }
+function setDr40(v) {
+  if (v === 'all') { currentDr40Set.clear(); }
+  else { if (currentDr40Set.has(v)) currentDr40Set.delete(v); else currentDr40Set.add(v); }
   rerender();
 }
-
-let currentFilename = '';
-
-function rerender() {
-  if (currentData.length > 0 && currentFilename) {
-    renderTable(currentData, currentFilename);
-  }
+function setSort(col) {
+  if (sortCol === col) { sortAsc = !sortAsc; }
+  else { sortCol = col; sortAsc = true; }
+  rerender();
 }
+function rerender() { if (allRows.length > 0) render(); }
 
-loadFileList();
+loadAllFiles();
 </script>
 </body>
 </html>

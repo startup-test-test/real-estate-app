@@ -4,80 +4,402 @@
 <meta charset="utf-8">
 <title>ツール一覧 ステータス</title>
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 20px; background: #f5f5f5; }
-  h1 { font-size: 18px; color: #333; display: inline; }
-  .header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-  .updated { font-size: 12px; color: #6b7280; }
-  table { border-collapse: collapse; font-size: 12px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
-  th { background: #2563eb; color: #fff; padding: 6px 10px; text-align: left; position: sticky; top: 0; white-space: nowrap; z-index: 1; }
-  td { border: 1px solid #e5e7eb; padding: 5px 8px; white-space: nowrap; max-width: 300px; overflow: hidden; text-overflow: ellipsis; }
-  tr:nth-child(even) { background: #f9fafb; }
-  tr:hover { background: #eff6ff; }
-  td a { color: #2563eb; text-decoration: none; }
-  td a:hover { text-decoration: underline; }
-  .step1 { border-left: 3px solid #22c55e; }
-  .step2 { border-left: 3px solid #f59e0b; }
-  .step3 { border-left: 3px solid #ef4444; }
-  .other { border-left: 3px solid #8b5cf6; }
-  .prep { color: #9ca3af; font-style: italic; }
-  .dup { color: #fff; font-weight: bold; background: #dc2626; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; color: #1a1a1a; }
+  .header { background: #1e293b; color: #fff; padding: 8px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 20; height: 40px; }
+  .header h1 { font-size: 16px; white-space: nowrap; }
+  .header .sub { font-size: 12px; color: #94a3b8; }
+  .header .updated { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+  .main { max-width: 100%; margin: 0 auto; padding: 16px; }
+
+  /* Stats */
+  .stats { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .stat-card { background: #fff; border-radius: 6px; padding: 10px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); min-width: 120px; }
+  .stat-card .label { font-size: 11px; color: #64748b; }
+  .stat-card .value { font-size: 20px; font-weight: 700; }
+  .stat-card.total .value { color: #1e293b; }
+  .stat-card.step1 .value { color: #22c55e; }
+  .stat-card.step2 .value { color: #f59e0b; }
+  .stat-card.step3 .value { color: #ef4444; }
+  .stat-card.published .value { color: #2563eb; }
+  .stat-card.filtered .value { color: #7c3aed; }
+
+  /* フィルター */
+  .filters { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-btn { padding: 4px 12px; border: 1px solid #d1d5db; border-radius: 20px; font-size: 11px; cursor: pointer; background: #fff; }
+  .filter-btn:hover { background: #f1f5f9; }
+  .filter-btn.active { background: #1e293b; color: #fff; border-color: #1e293b; }
+
+  /* 数値フィルター */
+  .num-filters { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .num-filter-group { display: flex; align-items: center; gap: 6px; }
+  .num-filter-group .group-label { font-size: 11px; font-weight: 600; color: #475569; white-space: nowrap; }
+  .num-filter-group select { padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 11px; background: #fff; cursor: pointer; }
+
+  /* 検索 */
+  .kw-search { margin-bottom: 12px; }
+  .kw-search input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; width: 300px; }
+
+  /* テーブル */
+  .table-wrap { border-radius: 6px; overflow: auto; max-height: calc(100vh - 42px); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  table { border-collapse: collapse; font-size: 12px; background: #fff; width: 100%; }
+  th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; position: sticky; top: 0; z-index: 15; white-space: nowrap; font-weight: 500; font-size: 11px; cursor: pointer; }
+  th:hover { background: #334155; }
+  th .sort-icon { font-size: 9px; margin-left: 4px; }
+  td { border-bottom: 1px solid #f1f5f9; padding: 6px 10px; max-width: 400px; overflow: hidden; text-overflow: ellipsis; }
+  tr:hover { background: #f8fafc; }
+
+  /* Step色分け */
+  tr.row-step1 { border-left: 3px solid #22c55e; }
+  tr.row-step2 { border-left: 3px solid #f59e0b; }
+  tr.row-step3 { border-left: 3px solid #ef4444; }
+  tr.row-other { border-left: 3px solid #8b5cf6; }
+  tr.row-dup { opacity: 0.4; }
+
+  /* バッジ */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+  .badge-step1 { background: #dcfce7; color: #166534; }
+  .badge-step2 { background: #fef3c7; color: #92400e; }
+  .badge-step3 { background: #fee2e2; color: #991b1b; }
+  .badge-other { background: #ede9fe; color: #5b21b6; }
+  .badge-published { background: #dbeafe; color: #1e40af; }
+  .badge-prep { background: #f3f4f6; color: #9ca3af; font-style: italic; }
+  .badge-dup { background: #dc2626; color: #fff; }
+
+  /* SERP列 */
+  .serp-cell { font-size: 10px; line-height: 1.4; white-space: nowrap; max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+  .serp-cell a { color: #2563eb; text-decoration: none; }
+  .serp-cell a:hover { text-decoration: underline; }
+  .serp-cell .dr { display: inline-block; background: #f1f5f9; color: #475569; padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 600; margin-left: 2px; }
+  .serp-cell .dr.high { background: #fee2e2; color: #dc2626; }
+  .serp-cell .dr.mid { background: #fef3c7; color: #a16207; }
+  .serp-cell .dr.low { background: #d1fae5; color: #059669; }
+  .serp-cell .type-tag { display: inline-block; background: #f0f9ff; color: #0369a1; padding: 1px 4px; border-radius: 2px; font-size: 8px; margin-left: 2px; }
+  th.serp-th { background: #334155; font-size: 10px; }
+
+  /* KD */
+  .kd { font-weight: 700; font-size: 11px; }
+  .kd.easy { color: #059669; }
+  .kd.medium { color: #a16207; }
+  .kd.hard { color: #dc2626; }
+
+  .footer { padding: 8px; font-size: 11px; color: #94a3b8; }
+  .empty { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>ツール一覧 ステータス（キーワード調査シート）</h1>
+  <h1>ツール一覧 ステータス</h1>
+  <span class="sub">キーワード調査シート — SERP競合分析</span>
   <span class="updated" id="updated"></span>
 </div>
-<div style="overflow-x:auto;">
-  <table id="table"><tr><td>読み込み中...</td></tr></table>
+<div class="main" id="main">
+  <div class="empty">読み込み中...</div>
 </div>
 
 <script>
-async function loadTSV() {
+let allData = [];
+let currentStep = 'all';
+let currentStatus = 'all';
+let currentKdMax = 'all';
+let currentVolMin = 'all';
+let sortCol = -1;
+let sortAsc = true;
+
+// メイン列インデックス
+const COL = { no:0, step:1, category:2, tool:3, path:4, dup:5, keyword:6, kd:7, vol:8 };
+const SERP_START = 9; // 9列目からSERP（URL, DR, 種別 × 10）
+
+function getStepKey(stepText) {
+  if (stepText.includes('Step 1')) return 'step1';
+  if (stepText.includes('Step 2')) return 'step2';
+  if (stepText.includes('Step 3')) return 'step3';
+  return 'other';
+}
+
+function getStatusLabel(row) {
+  const dup = (row[COL.dup]||'').trim();
+  if (dup === '重複') return 'dup';
+  const path = (row[COL.path]||'').trim();
+  if (path === '準備中') return 'prep';
+  if (path.startsWith('/tools/')) return 'published';
+  return 'unknown';
+}
+
+async function loadData() {
   try {
-    const res = await fetch('ツール一覧_ステータス.tsv?t=' + Date.now());
+    const res = await fetch(encodeURIComponent('ツール一覧_ステータス.tsv') + '?t=' + Date.now());
     const text = await res.text();
     const rows = text.trim().split('\n').map(r => r.split('\t'));
-
-    let html = '';
-    rows.forEach((row, i) => {
-      if (!row.some(c => c.trim())) return;
-      const tag = i === 0 ? 'th' : 'td';
-      let cls = '';
-      if (i > 0 && row[1]) {
-        if (row[1].includes('Step 1')) cls = 'step1';
-        else if (row[1].includes('Step 2')) cls = 'step2';
-        else if (row[1].includes('Step 3')) cls = 'step3';
-        else cls = 'other';
-      }
-      html += '<tr class="' + cls + '">';
-      row.forEach((cell, j) => {
-        cell = cell.trim();
-        let display = cell.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        if (i > 0 && cell.startsWith('http')) {
-          try {
-            const domain = new URL(cell).hostname.replace('www.','');
-            const short = domain.length > 3 ? domain.substring(0, 3) + '...' : domain;
-            display = '<a href="' + cell + '" target="_blank" title="' + cell + '">' + short + '</a>';
-          } catch(e) {
-            display = '<a href="' + cell + '" target="_blank">' + cell.substring(0,10) + '...</a>';
-          }
-        }
-        if (cell === '準備中') display = '<span class="prep">' + display + '</span>';
-        if (cell === '重複') display = '<span class="dup">' + display + '</span>';
-        html += '<' + tag + '>' + display + '</' + tag + '>';
-      });
-      html += '</tr>';
-    });
-
-    document.getElementById('table').innerHTML = html;
+    allData = rows;
+    render();
     document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
   } catch (e) {
-    document.getElementById('table').innerHTML = '<tr><td style="color:red">TSVの読み込みに失敗しました。HTTPサーバー経由でアクセスしてください。</td></tr>';
+    document.getElementById('main').innerHTML = '<div class="empty">読み込みに失敗しました</div>';
   }
 }
 
-loadTSV();
+function render() {
+  if (allData.length < 2) {
+    document.getElementById('main').innerHTML = '<div class="empty">データなし</div>';
+    return;
+  }
+  const data = allData.slice(1).filter(r => r.length >= 6 && r.some(c => c.trim()));
+
+  // Stats
+  let step1 = 0, step2 = 0, step3 = 0, otherStep = 0;
+  let published = 0, prep = 0, dup = 0;
+  data.forEach(r => {
+    const sk = getStepKey((r[COL.step]||''));
+    if (sk === 'step1') step1++;
+    else if (sk === 'step2') step2++;
+    else if (sk === 'step3') step3++;
+    else otherStep++;
+    const st = getStatusLabel(r);
+    if (st === 'published') published++;
+    else if (st === 'prep') prep++;
+    else if (st === 'dup') dup++;
+  });
+
+  // Filter
+  let filtered = data;
+  if (currentStep !== 'all') {
+    filtered = filtered.filter(r => getStepKey((r[COL.step]||'')) === currentStep);
+  }
+  if (currentStatus !== 'all') {
+    filtered = filtered.filter(r => getStatusLabel(r) === currentStatus);
+  }
+  if (currentKdMax !== 'all') {
+    const maxKd = parseInt(currentKdMax);
+    filtered = filtered.filter(r => {
+      const kd = (r[COL.kd]||'').trim();
+      if (kd === '' || kd === 'N/A') return true;
+      const v = parseInt(kd);
+      return !isNaN(v) && v <= maxKd;
+    });
+  }
+  if (currentVolMin !== 'all') {
+    const minVol = parseInt(currentVolMin);
+    filtered = filtered.filter(r => {
+      const vol = parseInt(r[COL.vol]) || 0;
+      return vol >= minVol;
+    });
+  }
+  const kwFilter = document.getElementById('kwSearch') ? document.getElementById('kwSearch').value : '';
+  if (kwFilter) {
+    const q = kwFilter.toLowerCase();
+    filtered = filtered.filter(r =>
+      (r[COL.tool]||'').toLowerCase().includes(q) ||
+      (r[COL.keyword]||'').toLowerCase().includes(q) ||
+      (r[COL.category]||'').toLowerCase().includes(q)
+    );
+  }
+
+  // Sort
+  if (sortCol !== -1 && sortCol >= 0) {
+    filtered.sort((a, b) => {
+      let va = (a[sortCol]||'').trim();
+      let vb = (b[sortCol]||'').trim();
+      if (sortCol === COL.kd || sortCol === COL.vol || sortCol === COL.no) {
+        va = parseFloat(va) || 0;
+        vb = parseFloat(vb) || 0;
+        return sortAsc ? va - vb : vb - va;
+      }
+      return sortAsc ? va.localeCompare(vb, 'ja') : vb.localeCompare(va, 'ja');
+    });
+  }
+
+  let html = '';
+
+  // Stats cards
+  html += '<div class="stats">';
+  html += '<div class="stat-card total"><div class="label">合計ツール</div><div class="value">' + data.length + '</div></div>';
+  html += '<div class="stat-card step1"><div class="label">Step 1：購入検討</div><div class="value">' + step1 + '</div></div>';
+  html += '<div class="stat-card step2"><div class="label">Step 2：運営・節税</div><div class="value">' + step2 + '</div></div>';
+  html += '<div class="stat-card step3"><div class="label">Step 3：出口・売却</div><div class="value">' + step3 + '</div></div>';
+  html += '<div class="stat-card published"><div class="label">公開済み</div><div class="value">' + published + '</div></div>';
+  html += '<div class="stat-card filtered"><div class="label">絞り込み結果</div><div class="value">' + filtered.length + '</div></div>';
+  html += '</div>';
+
+  // Step filters
+  html += '<div class="filters">';
+  html += btn('all', 'すべて (' + data.length + ')', currentStep, 'setStep');
+  html += btn('step1', 'Step 1：購入検討 (' + step1 + ')', currentStep, 'setStep');
+  html += btn('step2', 'Step 2：運営・節税 (' + step2 + ')', currentStep, 'setStep');
+  html += btn('step3', 'Step 3：出口・売却 (' + step3 + ')', currentStep, 'setStep');
+  if (otherStep > 0) html += btn('other', '別枠 (' + otherStep + ')', currentStep, 'setStep');
+  html += '</div>';
+
+  // Status + numeric filters
+  html += '<div class="num-filters">';
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">ステータス:</span>';
+  html += '<select onchange="setStatus(this.value)">';
+  html += opt('all', 'すべて', currentStatus);
+  html += opt('published', '公開済み (' + published + ')', currentStatus);
+  html += opt('prep', '準備中 (' + prep + ')', currentStatus);
+  html += opt('dup', '重複 (' + dup + ')', currentStatus);
+  html += '</select>';
+  html += '</div>';
+
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">KD難易度:</span>';
+  html += '<select onchange="setKdMax(this.value)">';
+  html += opt('all', 'すべて', currentKdMax);
+  html += opt('10', '10以下', currentKdMax);
+  html += opt('20', '20以下', currentKdMax);
+  html += opt('30', '30以下', currentKdMax);
+  html += opt('40', '40以下', currentKdMax);
+  html += opt('50', '50以下', currentKdMax);
+  html += '</select>';
+  html += '</div>';
+
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">月間検索数:</span>';
+  html += '<select onchange="setVolMin(this.value)">';
+  html += opt('all', 'すべて', currentVolMin);
+  html += opt('50', '50以上', currentVolMin);
+  html += opt('100', '100以上', currentVolMin);
+  html += opt('500', '500以上', currentVolMin);
+  html += opt('1000', '1,000以上', currentVolMin);
+  html += opt('5000', '5,000以上', currentVolMin);
+  html += '</select>';
+  html += '</div>';
+  html += '</div>';
+
+  // Search
+  html += '<div class="kw-search"><input type="text" id="kwSearch" placeholder="ツール名・キーワード検索..." oninput="rerender()" value="' + esc(kwFilter) + '"></div>';
+
+  // Table
+  const mainHeaders = ['No', 'Step', 'カテゴリ', 'ツール名', 'パス', '重複', '狙いたいKW', 'KD', '月間Vol'];
+  html += '<div class="table-wrap"><table><tr>';
+  mainHeaders.forEach((h, i) => {
+    const icon = sortCol === i ? (sortAsc ? '▲' : '▼') : '';
+    html += '<th onclick="setSort(' + i + ')">' + h + '<span class="sort-icon">' + icon + '</span></th>';
+  });
+  for (let p = 1; p <= 10; p++) {
+    html += '<th class="serp-th">' + p + '位</th>';
+  }
+  html += '</tr>';
+
+  filtered.forEach(row => {
+    const sk = getStepKey((row[COL.step]||''));
+    const st = getStatusLabel(row);
+    let cls = 'row-' + sk;
+    if (st === 'dup') cls += ' row-dup';
+
+    html += '<tr class="' + cls + '">';
+    for (let j = 0; j <= COL.vol; j++) {
+      let cell = (row[j]||'').trim();
+      let display = esc(cell);
+
+      if (j === COL.step) {
+        // Stepバッジ
+        const badge = sk === 'step1' ? 'badge-step1' : sk === 'step2' ? 'badge-step2' : sk === 'step3' ? 'badge-step3' : 'badge-other';
+        const short = cell.replace(/：.*/, '');
+        display = '<span class="badge ' + badge + '">' + esc(short) + '</span>';
+      } else if (j === COL.path) {
+        if (cell === '準備中') {
+          display = '<span class="badge badge-prep">準備中</span>';
+        } else if (cell.startsWith('/tools/')) {
+          display = '<span class="badge badge-published">' + esc(cell) + '</span>';
+        }
+      } else if (j === COL.dup && cell === '重複') {
+        display = '<span class="badge badge-dup">重複</span>';
+      } else if (j === COL.kd) {
+        const v = parseInt(cell);
+        if (!isNaN(v)) {
+          const kcls = v <= 10 ? ' easy' : v <= 30 ? ' medium' : ' hard';
+          display = '<span class="kd' + kcls + '">' + v + '</span>';
+        }
+      } else if (j === COL.vol) {
+        const v = parseInt(cell);
+        if (!isNaN(v) && cell !== '') {
+          display = v.toLocaleString();
+        }
+      }
+      html += '<td>' + display + '</td>';
+    }
+
+    // SERP Top10
+    for (let p = 0; p < 10; p++) {
+      const base = SERP_START + p * 3;
+      const urlOrDomain = (row[base]||'').trim();
+      const dr = (row[base + 1]||'').trim();
+      const type = (row[base + 2]||'').trim();
+
+      if (!urlOrDomain || urlOrDomain === 'PAA' || urlOrDomain === 'AI Overview') {
+        // SERP feature
+        if (urlOrDomain) {
+          html += '<td class="serp-cell" style="color:#9ca3af;font-style:italic">' + esc(urlOrDomain) + '</td>';
+        } else {
+          html += '<td class="serp-cell" style="color:#ccc">—</td>';
+        }
+      } else {
+        let domain = urlOrDomain;
+        try {
+          if (urlOrDomain.startsWith('http')) {
+            domain = new URL(urlOrDomain).hostname.replace(/^www\./, '');
+          }
+        } catch(e) {}
+        const shortDomain = domain.length > 12 ? domain.substring(0, 12) + '…' : domain;
+        const drCls = drClass(dr);
+        let serpHtml = '';
+        if (urlOrDomain.startsWith('http')) {
+          serpHtml += '<a href="' + urlOrDomain.replace(/"/g,'&quot;') + '" target="_blank" title="' + esc(domain) + '">' + esc(shortDomain) + '</a>';
+        } else {
+          serpHtml += esc(shortDomain);
+        }
+        if (dr && dr !== '-') {
+          serpHtml += '<span class="dr' + drCls + '">' + esc(dr) + '</span>';
+        }
+        if (type && type !== '-') {
+          serpHtml += '<span class="type-tag">' + esc(type) + '</span>';
+        }
+        html += '<td class="serp-cell">' + serpHtml + '</td>';
+      }
+    }
+    html += '</tr>';
+  });
+
+  html += '</table></div>';
+  html += '<div class="footer">表示: ' + filtered.length + '件 / ' + data.length + '件</div>';
+  document.getElementById('main').innerHTML = html;
+}
+
+function drClass(dr) {
+  const v = parseInt(dr);
+  if (isNaN(v)) return '';
+  if (v >= 60) return ' high';
+  if (v >= 30) return ' mid';
+  return ' low';
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function btn(val, label, current, fn) {
+  return '<div class="filter-btn' + (current===val?' active':'') + '" onclick="' + fn + '(\'' + val + '\')">' + label + '</div>';
+}
+
+function opt(val, label, current) {
+  return '<option value="' + val + '"' + (current===val?' selected':'') + '>' + label + '</option>';
+}
+
+function setStep(v) { currentStep = v; rerender(); }
+function setStatus(v) { currentStatus = v; rerender(); }
+function setKdMax(v) { currentKdMax = v; rerender(); }
+function setVolMin(v) { currentVolMin = v; rerender(); }
+function setSort(col) {
+  if (sortCol === col) { sortAsc = !sortAsc; }
+  else { sortCol = col; sortAsc = true; }
+  rerender();
+}
+function rerender() { if (allData.length > 0) render(); }
+
+loadData();
 </script>
 </body>
 </html>
