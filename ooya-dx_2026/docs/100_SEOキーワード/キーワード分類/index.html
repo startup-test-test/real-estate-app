@@ -148,6 +148,7 @@ let ahrefsKdMap = {};
 let currentFilter = 'no-delete';
 let currentCategory = 'all';
 let currentPageGroup = 'all';
+let currentArticleTitle = 'all';
 let currentKanten = 'all';
 let currentTopical = 'all';
 let currentToolStatus = 'all';
@@ -267,6 +268,11 @@ function render() {
   if (currentPageGroup !== 'all') {
     filtered = filtered.filter(r => r.pageGroup === currentPageGroup);
   }
+  // 想定記事タイトルフィルター
+  const atFilterBase = filtered.slice();
+  if (currentArticleTitle !== 'all') {
+    filtered = filtered.filter(r => r.articleTitle === currentArticleTitle);
+  }
   if (currentToolStatus !== 'all') {
     if (currentToolStatus === 'published') filtered = filtered.filter(r => r.toolPath !== '');
     else if (currentToolStatus === 'notool') filtered = filtered.filter(r => r.toolPath === '' && r.step === '');
@@ -384,6 +390,28 @@ function render() {
   html += '<option value="all"' + (currentPageGroup==='all'?' selected':'') + '>すべて (' + sortedPGs.length + 'グループ)</option>';
   sortedPGs.forEach(([pg, cnt]) => {
     html += '<option value="' + esc(pg) + '"' + (currentPageGroup===pg?' selected':'') + '>' + esc(pg) + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // 想定記事タイトルフィルター
+  const atMap = {};
+  const atVolMap = {};
+  atFilterBase.forEach(r => {
+    if (r.articleTitle) {
+      atMap[r.articleTitle] = (atMap[r.articleTitle] || 0) + 1;
+      atVolMap[r.articleTitle] = (atVolMap[r.articleTitle] || 0) + r.vol;
+    }
+  });
+  const sortedATs = Object.entries(atMap).sort((a, b) => (atVolMap[b[0]] || 0) - (atVolMap[a[0]] || 0));
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">想定記事:</span>';
+  html += '<select onchange="setArticleTitle(this.value)" style="max-width:400px">';
+  html += '<option value="all"' + (currentArticleTitle==='all'?' selected':'') + '>すべて (' + sortedATs.length + '記事)</option>';
+  sortedATs.forEach(([at, cnt]) => {
+    const vol = (atVolMap[at] || 0).toLocaleString();
+    const short = at.length > 35 ? at.substring(0, 35) + '…' : at;
+    html += '<option value="' + esc(at) + '"' + (currentArticleTitle===at?' selected':'') + '>' + esc(short) + ' (' + cnt + 'KW / ' + vol + 'vol)</option>';
   });
   html += '</select>';
   html += '</div>';
@@ -682,12 +710,8 @@ function computeH2() {
 
     if (notInTitle.length === 0) return;
 
-    // h2候補: 解決ニーズがあればそれを使用、なければサブKWから生成
-    if (r.need) {
-      r.h2 = r.need;
-    } else {
-      r.h2 = notInTitle.join(' ');
-    }
+    // h2候補: タイトルに含まれないサブKWトークンをそのまま使用
+    r.h2 = notInTitle.join(' ');
   });
 }
 
@@ -726,7 +750,8 @@ function opt(val, label, current) {
 
 function setFilter(f) { currentFilter = f; rerender(); }
 function setCategory(v) { currentCategory = v; currentPageGroup = 'all'; rerender(); }
-function setPageGroup(v) { currentPageGroup = v; rerender(); }
+function setPageGroup(v) { currentPageGroup = v; currentArticleTitle = 'all'; rerender(); }
+function setArticleTitle(v) { currentArticleTitle = v; rerender(); }
 function setKanten(v) { currentKanten = v; rerender(); }
 function setTopical(v) { currentTopical = v; rerender(); }
 function setToolStatus(v) { currentToolStatus = v; rerender(); }
