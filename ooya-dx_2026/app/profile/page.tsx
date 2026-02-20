@@ -45,10 +45,10 @@ export default function ProfilePage() {
       building: '62平米',
       finance: '住宅ローンにてフラット35Sでフルローンで購入',
       extraFields: [
-        { label: '売却損益', value: '購入価格の155%で売却' },
+        { label: '売却損益', value: '5,530万円で購入 → 8,130万円で売却（手残り：2,909万円）' },
       ],
-      reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。3年間住んで購入金額の155%で売却。（2025年では購入価格から約200%にまで上昇しておりました。）不動産の構造を理解したく、勉強を開始を始めました。',
-      futurePlans: '不動産投資の初心者の勉強方法 / ファイナンシャルアカデミーに通う / 仲介手数料を50%にする',
+      reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。4年間住んで5,530万円の物件を8,130万円（購入価格の約147%）で売却。売却価格8,130万円 − 残債5,130万円 − 仲介手数料91万円 = 手残り2,909万円。（2025年では購入価格から約200%にまで上昇しておりました。）この経験から不動産の構造を理解したく、勉強を開始しました。',
+      futurePlans: '不動産投資の初心者の勉強方法 / ファイナンシャルアカデミーに通う / 仲介手数料を50%にする / 居住用財産の3,000万円特別控除',
       image: '/images/profile/property-1.jpg',
     },
     {
@@ -281,6 +281,7 @@ export default function ProfilePage() {
                   </thead>
                   <tbody>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 w-40 bg-gray-100 font-medium">総購入額</td><td className="py-3 px-4 text-gray-900 text-lg">約1.7億円<span className="text-sm text-gray-900 ml-2">（収益 約5,000万円 / 自己居住 約1.2億円）</span></td></tr>
+                    <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">自宅売却益</td><td className="py-3 px-4 text-gray-900 text-lg">2,909万円<span className="text-sm text-gray-900 ml-2">（居住用財産の売却）</span></td></tr>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">家賃収入</td><td className="py-3 px-4 text-gray-900 text-lg">500万円/年</td></tr>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">入居率</td><td className="py-3 px-4 text-gray-900 text-lg">100%<span className="text-sm text-gray-900 ml-2">（2026年2月時点）</span></td></tr>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">不動産購入開始</td><td className="py-3 px-4 text-gray-900 text-lg">2019年〜</td></tr>

@@ -152,6 +152,7 @@ let currentArticleTitle = 'all';
 let currentKanten = 'all';
 let currentTopical = 'all';
 let currentToolStatus = 'all';
+let currentUserTarget = 'all';
 let currentKdMax = 'all';
 let currentVolMin = '100';
 let currentDr40Set = new Set();
@@ -222,6 +223,7 @@ async function loadAllFiles() {
 
   computeMainKeywords();
   computeH2();
+  computeUserTarget();
   render();
   document.getElementById('updated').textContent = '最終読込: ' + new Date().toLocaleString('ja-JP');
 }
@@ -278,6 +280,9 @@ function render() {
     else if (currentToolStatus === 'notool') filtered = filtered.filter(r => r.toolPath === '' && r.step === '');
     else if (currentToolStatus === 'general') filtered = filtered.filter(r => r.category === '不動産投資' || r.category === '不動産投資計算' || r.category === '不動産売却');
   }
+  if (currentUserTarget !== 'all') {
+    filtered = filtered.filter(r => r.userTarget === currentUserTarget);
+  }
   if (currentVolMin !== 'all') {
     filtered = filtered.filter(r => r.vol >= parseInt(currentVolMin));
   }
@@ -312,6 +317,7 @@ function render() {
       if (sortKey === 'vol') { va = a.vol; vb = b.vol; }
       else if (sortKey === 'kd') { va = parseInt(a.kd) || 999; vb = parseInt(b.kd) || 999; }
       else if (sortKey === 'kw') { return sortAsc ? a.kw.localeCompare(b.kw, 'ja') : b.kw.localeCompare(a.kw, 'ja'); }
+      else if (sortKey === 'userTarget') { return sortAsc ? (a.userTarget||'').localeCompare(b.userTarget||'', 'ja') : (b.userTarget||'').localeCompare(a.userTarget||'', 'ja'); }
       else if (sortKey === 'hantei') { return sortAsc ? a.hantei.localeCompare(b.hantei, 'ja') : b.hantei.localeCompare(a.hantei, 'ja'); }
       else if (sortKey === 'category') { return sortAsc ? a.category.localeCompare(b.category, 'ja') : b.category.localeCompare(a.category, 'ja'); }
       else if (sortKey === 'mainKw') { return sortAsc ? (a.mainKw||'').localeCompare(b.mainKw||'', 'ja') : (b.mainKw||'').localeCompare(a.mainKw||'', 'ja'); }
@@ -457,6 +463,21 @@ function render() {
   html += '</select>';
   html += '</div>';
 
+  // ユーザー対象
+  const utMap = {};
+  filtered.forEach(r => { if (r.userTarget) utMap[r.userTarget] = (utMap[r.userTarget] || 0) + 1; });
+  const utOrder = ['購入者', '投資家', 'オーナー', '売却検討者', '賃借人', '相続・贈与', '不動産業者'];
+  html += '<div class="num-filter-group">';
+  html += '<span class="group-label">ユーザー対象:</span>';
+  html += '<select onchange="setUserTarget(this.value)">';
+  html += '<option value="all"' + (currentUserTarget==='all'?' selected':'') + '>すべて</option>';
+  utOrder.forEach(k => {
+    const cnt = utMap[k] || 0;
+    if (cnt > 0) html += '<option value="' + esc(k) + '"' + (currentUserTarget===k?' selected':'') + '>' + esc(k) + ' (' + cnt + ')</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
   // DR40未満数
   html += '<div class="num-filter-group">';
   html += '<span class="group-label">DR40未満数:</span>';
@@ -518,7 +539,7 @@ function render() {
     {key:'category', label:'カテゴリ'}, {key:'kw', label:'キーワード'},
     {key:'mainKw', label:'メインKW'}, {key:'subKw', label:'サブKW'},
     {key:'kd', label:'SEO難易度'}, {key:'vol', label:'月間検索数'},
-    {key:'hantei', label:'判定'}, {key:'intent', label:'検索意図'},
+    {key:'hantei', label:'判定'}, {key:'userTarget', label:'ユーザー対象'}, {key:'intent', label:'検索意図'},
     {key:'need', label:'解決ニーズ'},
     {key:'pageGroup', label:'ページグループ'},
     {key:'kanten', label:'観点'},
@@ -576,6 +597,10 @@ function render() {
     else if (r.hantei === '記事') hBadge = '<span class="badge badge-article">' + hBadge + '</span>';
     else if (r.hantei === '削除') hBadge = '<span class="badge badge-delete">' + hBadge + '</span>';
     html += '<td>' + hBadge + '</td>';
+    // ユーザー対象
+    const utColors = {'購入者':'background:#dbeafe;color:#1e40af','投資家':'background:#dcfce7;color:#166534','オーナー':'background:#fef3c7;color:#92400e','売却検討者':'background:#fee2e2;color:#991b1b','賃借人':'background:#e0e7ff;color:#3730a3','相続・贈与':'background:#fae8ff;color:#86198f','不動産業者':'background:#f1f5f9;color:#475569'};
+    const utStyle = utColors[r.userTarget] || '';
+    html += '<td style="font-size:10px">' + (r.userTarget ? '<span style="' + utStyle + ';padding:1px 6px;border-radius:3px;font-size:9px;font-weight:600;white-space:nowrap">' + esc(r.userTarget) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
     // 検索意図
     html += '<td style="font-size:10px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + esc(r.intent) + '">' + esc(r.intent) + '</td>';
     // 解決ニーズ
@@ -692,26 +717,70 @@ function computeMainKeywords() {
   });
 }
 
-// h2算出: サブKWがh1タイトルに含まれないキーワードのh2見出しを生成
+// h2算出: サブKWがあればそれをH2に、メインKW自身はタイトルとの差分をH2に
 function computeH2() {
   allRows.forEach(r => {
     r.h2 = '';
     if (r.hantei === '削除' || !r.articleTitle) return;
-    // メインKW自体はh1で対応
-    if (!r.subKw) return;
 
-    // タイトルを正規化して比較
+    // サブKWがある場合 → メインKWとの差分トークンをそのままH2候補にする
+    // （タイトルに含まれていても、記事内でH2セクションとして扱うべき）
+    if (r.subKw) {
+      r.h2 = r.subKw;
+      return;
+    }
+
+    // メインKW自身（subKw空）→ タイトルに含まれないトークンをH2候補に
     const titleNorm = r.articleTitle.replace(/[？！｜・、。「」（）()％%]/g, ' ').toLowerCase();
-    const subTokens = r.subKw.split(/\s+/);
-    const notInTitle = subTokens.filter(t => {
-      const tl = t.toLowerCase();
-      return !titleNorm.includes(tl);
-    });
+    const kwTokens = r.kw.split(/\s+/);
+    const notInTitle = kwTokens.filter(t => !titleNorm.includes(t.toLowerCase()));
+    if (notInTitle.length > 0) {
+      r.h2 = notInTitle.join(' ');
+    }
+  });
+}
 
-    if (notInTitle.length === 0) return;
+// ユーザー対象算出（立場ベース7分類）
+function computeUserTarget() {
+  // カテゴリ → デフォルトユーザー対象
+  const CAT_DEFAULT = {
+    '表面利回り':'投資家','実質利回り':'投資家','キャッシュフロー':'投資家',
+    '収益還元':'投資家','DCF法':'投資家','積算評価':'投資家','再調達価格':'投資家',
+    'NOI':'投資家','IRR':'投資家','内部収益率':'投資家','NPV':'投資家','正味現在価値':'投資家',
+    '投資利益率':'投資家','自己資金配当率':'投資家','DSCR':'投資家','借入比率':'投資家',
+    '不動産投資':'投資家','不動産投資計算':'投資家',
+    '仲介手数料':'購入者','不動産取得税':'購入者','登録免許税':'購入者',
+    '印紙税':'購入者','住宅ローン':'購入者','借入可能額':'購入者',
+    '建物消費税':'購入者','固定資産税精算金':'購入者',
+    '減価償却':'オーナー','法人税':'オーナー','個人事業税':'オーナー',
+    '所得税':'オーナー','住民税':'オーナー','固定資産税':'オーナー',
+    'デッドクロス':'オーナー','リフォームローン':'オーナー','リフォーム費用':'オーナー','繰上返済':'オーナー',
+    '売却':'売却検討者','不動産売却':'売却検討者','譲渡所得税':'売却検討者',
+    '相続税':'相続・贈与','贈与税':'相続・贈与'
+  };
 
-    // h2候補: タイトルに含まれないサブKWトークンをそのまま使用
-    r.h2 = notInTitle.join(' ');
+  // キーワードパターン → 上書きルール（優先順で判定、上が優先）
+  const KW_RULES = [
+    // 不動産業者（発行・実務・資格系）
+    { test: kw => /請求書|領収書|媒介契約|重要事項説明|重説|宅建|報酬規程|報酬額表|広告費|AD\b/.test(kw), target: '不動産業者' },
+    { test: kw => /賃貸|家賃|敷金|礼金/.test(kw), target: '賃借人' },
+    { test: kw => /相続|贈与|生前/.test(kw), target: '相続・贈与' },
+    { test: kw => /売却|譲渡/.test(kw), target: '売却検討者' },
+    { test: kw => /勘定科目|仕訳|経費|確定申告|法人化|法人成り|青色申告/.test(kw), target: 'オーナー' },
+    { test: kw => /利回り|キャッシュフロー|IRR|DCF|NOI|NPV|DSCR|投資/.test(kw), target: '投資家' },
+    { test: kw => /住宅ローン|マイホーム|マンション購入|戸建て|新築|中古マンション|控除/.test(kw), target: '購入者' },
+  ];
+
+  allRows.forEach(r => {
+    if (r.hantei === '削除') { r.userTarget = ''; return; }
+
+    // まずキーワードパターンで判定
+    for (const rule of KW_RULES) {
+      if (rule.test(r.kw)) { r.userTarget = rule.target; return; }
+    }
+
+    // パターンに一致しなければカテゴリデフォルト
+    r.userTarget = CAT_DEFAULT[r.category] || '';
   });
 }
 
@@ -755,6 +824,7 @@ function setArticleTitle(v) { currentArticleTitle = v; rerender(); }
 function setKanten(v) { currentKanten = v; rerender(); }
 function setTopical(v) { currentTopical = v; rerender(); }
 function setToolStatus(v) { currentToolStatus = v; rerender(); }
+function setUserTarget(v) { currentUserTarget = v; rerender(); }
 function setKdMax(v) { currentKdMax = v; rerender(); }
 function setVolMin(v) { currentVolMin = v; rerender(); }
 function setDr40(v) {
