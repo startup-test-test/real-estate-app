@@ -17,8 +17,8 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
-    // Markdownからh2とh3を抽出
-    const headingRegex = /^(#{2,3})\s+(.+)$/gm;
+    // Markdownからh2のみ抽出
+    const headingRegex = /^(#{2})\s+(.+)$/gm;
     const items: TocItem[] = [];
     let match;
 
@@ -48,8 +48,8 @@ export function TableOfContents({ content }: TableOfContentsProps) {
       { rootMargin: '-80px 0px -80% 0px' }
     );
 
-    // h2とh3を監視
-    const headings = document.querySelectorAll('article h2, article h3');
+    // h2のみ監視
+    const headings = document.querySelectorAll('article h2');
     headings.forEach((heading) => observer.observe(heading));
 
     return () => observer.disconnect();

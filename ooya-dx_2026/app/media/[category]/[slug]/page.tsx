@@ -9,6 +9,9 @@ import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
 import { RelatedTools } from '@/components/tools/RelatedTools';
 import { ShareButtons } from '@/components/tools/ShareButtons';
 import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat';
+import { QuestionBox } from '@/components/media/QuestionBox';
+import { SummaryBox } from '@/components/media/SummaryBox';
+import { CTALink } from '@/components/media/CTALink';
 import Link from 'next/link';
 
 interface Props {
@@ -199,7 +202,7 @@ export default async function ArticlePage({ params }: Props) {
       >
         {/* メインビジュアル */}
         {article.thumbnail ? (
-          <div className="aspect-video bg-gray-100 mb-4 overflow-hidden">
+          <div className="h-[350px] bg-gray-100 mb-4 overflow-hidden">
             <img
               src={article.thumbnail}
               alt={article.title}
@@ -207,7 +210,7 @@ export default async function ArticlePage({ params }: Props) {
             />
           </div>
         ) : (
-          <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 mb-4 flex items-center justify-center">
+          <div className="h-[350px] bg-gradient-to-br from-gray-100 to-gray-200 mb-4 flex items-center justify-center">
             <span className="text-gray-400 text-sm">No Image</span>
           </div>
         )}
@@ -217,34 +220,62 @@ export default async function ArticlePage({ params }: Props) {
           <ShareButtons title={article.title} url={url} />
         </div>
 
-        {/* 目次 */}
-        <TableOfContents content={article.content} />
+        {/* リード文（最初のH2より前の部分） */}
+        {(() => {
+          const firstH2Index = article.content.search(/^## /m);
+          const leadContent = firstH2Index > 0 ? article.content.slice(0, firstH2Index).trim() : '';
+          const bodyContent = firstH2Index > 0 ? article.content.slice(firstH2Index) : article.content;
 
-        {/* 本文 */}
-        <div className="article-body prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-lg prose-h2:mt-14 prose-h2:mb-5 prose-h2:bg-primary-950 prose-h2:text-white prose-h2:px-5 prose-h2:py-3 prose-h3:text-base prose-h3:mt-8 prose-h3:mb-3 prose-h3:border-l-4 prose-h3:border-primary-950 prose-h3:pl-3 prose-h3:py-1 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50">
-          <MDXRemote
-            source={article.content}
-            options={{
-              mdxOptions: {
-                remarkPlugins: [remarkGfm],
-                rehypePlugins: [rehypeSlug],
-              },
-            }}
-            components={{
-              a: ({ href, children, ...props }) => {
-                const isExternal = href?.startsWith('http') || href?.startsWith('https');
-                if (isExternal) {
-                  return (
-                    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
-                      {children}
-                    </a>
-                  );
-                }
-                return <Link href={href || '#'} {...props}>{children}</Link>;
-              },
-            }}
-          />
-        </div>
+          const mdxComponents = {
+            a: ({ href, children, ...props }: React.ComponentProps<'a'>) => {
+              const isExternal = href?.startsWith('http') || href?.startsWith('https');
+              if (isExternal) {
+                return (
+                  <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+                    {children}
+                  </a>
+                );
+              }
+              return <Link href={href || '#'} {...props}>{children}</Link>;
+            },
+            QuestionBox,
+            SummaryBox,
+            CTALink,
+          };
+
+          const mdxOptions = {
+            mdxOptions: {
+              remarkPlugins: [remarkGfm],
+              rehypePlugins: [rehypeSlug],
+            },
+          };
+
+          return (
+            <>
+              {leadContent && (
+                <div className="prose prose-lg prose-gray max-w-none prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base mb-8">
+                  <MDXRemote
+                    source={leadContent}
+                    options={mdxOptions}
+                    components={mdxComponents}
+                  />
+                </div>
+              )}
+
+              {/* 目次 */}
+              <TableOfContents content={bodyContent} />
+
+              {/* 本文 */}
+              <div className="article-body prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-lg prose-h2:mt-14 prose-h2:mb-5 prose-h2:bg-primary-950 prose-h2:text-white prose-h2:px-5 prose-h2:py-3 prose-h3:text-base prose-h3:mt-8 prose-h3:mb-3 prose-h3:border-l-4 prose-h3:border-primary-950 prose-h3:pl-3 prose-h3:py-1 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50 [&_strong]:bg-[linear-gradient(transparent_60%,#fef08a_60%)] [&_a_strong]:bg-none">
+                <MDXRemote
+                  source={bodyContent}
+                  options={mdxOptions}
+                  components={mdxComponents}
+                />
+              </div>
+            </>
+          );
+        })()}
       </ContentPageLayout>
     </>
   );

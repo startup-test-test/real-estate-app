@@ -126,6 +126,14 @@
   .sd-badge.st-writing { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
   .sd-badge.st-review { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
   .sd-badge.st-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .sd-badge.st-deleted { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+  .page-item.deleted { opacity: 0.5; }
+  .page-item.deleted .name { text-decoration: line-through; color: #94a3b8; }
+  .deleted-notice { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+  .deleted-notice .dn-title { font-size: 14px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
+  .deleted-notice .dn-reason { font-size: 12px; color: #475569; line-height: 1.8; }
+  .deleted-notice .dn-reason li { margin: 4px 0; }
 
   .empty { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
   .loading-bar { background: #e2e8f0; border-radius: 4px; height: 6px; margin: 8px auto; width: 200px; overflow: hidden; }
@@ -170,7 +178,7 @@ const PAGES = [
       { title: '仲介手数料の計算方法', match: [], desc: '速算式の紹介（200字程度の要約）', linkTo: 'calc', linkLabel: '① 計算ツールで自動計算' },
       { title: '不動産売買の仲介手数料', match: ['売主'], desc: '売買時の仕組みを要約', linkTo: 'realestate', linkLabel: '③ 不動産売買ガイドで詳しく' },
       { title: '賃貸の仲介手数料', match: [], desc: '賃貸での相場・仕組みを要約', linkTo: 'rental', linkLabel: '④ 賃貸ガイドで詳しく' },
-      { title: '仲介手数料無料の仕組み', match: [], desc: 'なぜ無料にできるのか？を要約', linkTo: 'free', linkLabel: '⑤ 無料の仕組みで詳しく' },
+      { title: '仲介手数料無料の仕組み', match: [], desc: '⑤ 無料ページは削除済み。ピラー内で簡潔に触れるのみ' },
       { title: '仲介手数料の相場', match: [], desc: '価格帯別の相場を要約', linkTo: 'market', linkLabel: '⑥ 相場ガイドで詳しく' },
       { title: '交渉・値引きはできる？', match: [], desc: '交渉の実態を要約', linkTo: 'nego', linkLabel: '⑦ 交渉・値引きで詳しく' },
       { title: '上限（宅建業法）と法改正', match: [], desc: '法律で決まっている上限を要約', linkTo: 'legal', linkLabel: '⑧ 上限・法律で詳しく' },
@@ -210,7 +218,14 @@ const PAGES = [
   },
   {
     id: 'free', num: '⑤', name: '無料の仕組み', url: '/media/brokerage/free/',
-    group: '仲介手数料値引き', status: '新規', defaultStatus: 'レビュー中',
+    group: '仲介手数料値引き', status: '削除済み', defaultStatus: '削除済み',
+    deleted: true,
+    deletedReason: [
+      '筆者の実体験に基づかない — 仲介手数料「無料」の会社は実際に見たことがなく、E-E-A-Tの観点で信頼性を担保できない（半額は存在するが無料は未確認）',
+      '記事内容に根拠の薄い主張が多い — 囲い込みリスク、追加費用請求など、裏付けなしに不安を煽る内容',
+      '検索ユーザーの質が低い — 「無料」を求めるユーザーはコンバージョンにつながりにくく、ビジネス価値が低い',
+      '著者のポリシーと矛盾 — 仲介手数料は値切らない方がいいという立場と、無料を推奨する記事は方向性が合わない',
+    ],
     h2defs: [
       { title: '仲介手数料無料の仕組み（からくり）', match: ['無料', 'からくり', '0円', 'ゼロ', '0'], desc: '売主からの手数料で成立、両手取引の活用' },
       { title: 'なぜ無料にできるのか', match: ['なぜ', '0円 なぜ'], desc: 'ビジネスモデルの解説' },
@@ -244,11 +259,11 @@ const PAGES = [
       { title: '値切る客を不動産会社はどう見ている？', match: ['値切る客'], desc: '業界側の本音と、交渉で嫌われないコツ' },
       { title: '交渉のベストタイミング', match: ['タイミング'], desc: '媒介契約の前が最適' },
       { title: '交渉の言い方・例文', match: ['言い方', '例文', '値切り方'], desc: '具体的な交渉フレーズ' },
-      { title: '仲介手数料を安くする方法', match: ['安くする', '安くする方法', '抑える', 'かからない', '払いたくない'], desc: '交渉以外: 直売、無料会社 → ⑤無料' },
+      { title: '仲介手数料を安くする方法', match: ['安くする', '安くする方法', '抑える', 'かからない', '払いたくない'], desc: '交渉以外: 半額会社の利用、相見積もり' },
       { title: '半額にする方法', match: ['半額'], desc: '現実的な方法' },
       { title: '値引き・割引の実態', match: ['値引き', '値下げ', '割引'], desc: '実際にどこまで下がるか' },
     ],
-    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['⑤ 無料'] }
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: [] }
   },
   {
     id: 'legal', num: '⑧', name: '上限・法律・法改正', url: '/media/brokerage/legal-limit/',
@@ -306,8 +321,8 @@ let currentPageId = 'pillar';
 
 // ─── ステータス管理 ───
 const STATUS_CYCLE = ['未着手', '執筆中', 'レビュー中', '公開済み'];
-const STATUS_CLASS = { '未着手': 'st-todo', '執筆中': 'st-writing', 'レビュー中': 'st-review', '公開済み': 'st-done' };
-const STATUS_COLOR = { '未着手': '#e2e8f0', '執筆中': '#3b82f6', 'レビュー中': '#f59e0b', '公開済み': '#059669' };
+const STATUS_CLASS = { '未着手': 'st-todo', '執筆中': 'st-writing', 'レビュー中': 'st-review', '公開済み': 'st-done', '削除済み': 'st-deleted' };
+const STATUS_COLOR = { '未着手': '#e2e8f0', '執筆中': '#3b82f6', 'レビュー中': '#f59e0b', '公開済み': '#059669', '削除済み': '#dc2626' };
 
 function loadStatuses() {
   try {
@@ -345,18 +360,19 @@ function cycleStatus(pageId) {
 
 function renderStatusDashboard() {
   const statuses = loadStatuses();
-  const counts = { '未着手': 0, '執筆中': 0, 'レビュー中': 0, '公開済み': 0 };
-  PAGES.forEach(p => { counts[statuses[p.id] || '未着手']++; });
+  const counts = { '未着手': 0, '執筆中': 0, 'レビュー中': 0, '公開済み': 0, '削除済み': 0 };
+  PAGES.forEach(p => { counts[statuses[p.id] || (p.deleted ? '削除済み' : '未着手')]++; });
   const total = PAGES.length;
+  const activeTotal = total - counts['削除済み'];
 
   let html = '<div class="sd-title">進捗ダッシュボード <span style="font-size:9px;color:#94a3b8;cursor:pointer;margin-left:auto" onclick="if(confirm(\'ステータスをリセットしますか？\')){localStorage.removeItem(\'cp_statuses\');renderStatusDashboard();renderSidebar();renderPage(currentPageId);}">リセット</span></div>';
 
-  // プログレスバー
+  // プログレスバー（削除済みを除外）
   html += '<div class="sd-progress">';
-  html += '<div class="seg seg-done" style="width:' + (counts['公開済み']/total*100) + '%"></div>';
-  html += '<div class="seg seg-review" style="width:' + (counts['レビュー中']/total*100) + '%"></div>';
-  html += '<div class="seg seg-writing" style="width:' + (counts['執筆中']/total*100) + '%"></div>';
-  html += '<div class="seg seg-todo" style="width:' + (counts['未着手']/total*100) + '%"></div>';
+  html += '<div class="seg seg-done" style="width:' + (activeTotal > 0 ? counts['公開済み']/activeTotal*100 : 0) + '%"></div>';
+  html += '<div class="seg seg-review" style="width:' + (activeTotal > 0 ? counts['レビュー中']/activeTotal*100 : 0) + '%"></div>';
+  html += '<div class="seg seg-writing" style="width:' + (activeTotal > 0 ? counts['執筆中']/activeTotal*100 : 0) + '%"></div>';
+  html += '<div class="seg seg-todo" style="width:' + (activeTotal > 0 ? counts['未着手']/activeTotal*100 : 0) + '%"></div>';
   html += '</div>';
 
   // 凡例
@@ -365,6 +381,7 @@ function renderStatusDashboard() {
   html += '<span><span class="dot" style="background:#f59e0b"></span>レビュー ' + counts['レビュー中'] + '</span>';
   html += '<span><span class="dot" style="background:#3b82f6"></span>執筆中 ' + counts['執筆中'] + '</span>';
   html += '<span><span class="dot" style="background:#e2e8f0"></span>未着手 ' + counts['未着手'] + '</span>';
+  if (counts['削除済み'] > 0) html += '<span><span class="dot" style="background:#dc2626"></span>削除 ' + counts['削除済み'] + '</span>';
   html += '</div>';
 
   // ページ別ステータス表
@@ -493,8 +510,9 @@ function renderSidebar() {
     const coverCls = result.coverRate >= 95 ? 'ok' : result.coverRate >= 80 ? 'warn' : 'bad';
     const coverIcon = result.coverRate >= 95 ? '✅' : result.coverRate >= 80 ? '⚠️' : '❌';
     const active = p.id === currentPageId ? ' active' : '';
+    const deletedCls = p.deleted ? ' deleted' : '';
 
-    html += '<div class="page-item' + active + '" onclick="selectPage(\'' + p.id + '\')">';
+    html += '<div class="page-item' + active + deletedCls + '" onclick="selectPage(\'' + p.id + '\')">';
     const pSt = getStatus(p.id);
     const pStCls = STATUS_CLASS[pSt];
     html += '<div class="num">' + p.num + ' <span class="sd-badge ' + pStCls + '" style="font-size:8px;padding:0px 5px">' + pSt + '</span></div>';
@@ -531,6 +549,15 @@ function renderPage(pageId) {
   html += '<span>月間Vol: <span class="val">' + result.totalVol.toLocaleString() + '</span></span>';
   html += '<span>カバー率: <span class="val">' + result.coverRate + '%</span></span>';
   html += '</div></div>';
+
+  // 削除済み通知
+  if (page.deleted && page.deletedReason) {
+    html += '<div class="deleted-notice">';
+    html += '<div class="dn-title">🗑 このページは削除されました</div>';
+    html += '<div class="dn-reason"><ul>';
+    page.deletedReason.forEach(r => { html += '<li>' + esc(r) + '</li>'; });
+    html += '</ul></div></div>';
+  }
 
   // H1
   const h1Title = result.rows.length > 0 ? (result.rows[0].articleTitle || page.name) : page.name;
@@ -647,15 +674,18 @@ function renderPage(pageId) {
 
 function updateTopStats() {
   let totalKw = 0, totalVol = 0, totalAssigned = 0;
-  PAGES.forEach(p => {
+  const activePages = PAGES.filter(p => !p.deleted);
+  activePages.forEach(p => {
     const r = assignKeywords(p);
     totalKw += r.totalKw;
     totalVol += r.totalVol;
     totalAssigned += r.assignedKw;
   });
   const rate = totalKw > 0 ? Math.round(totalAssigned / totalKw * 100) : 100;
-  document.getElementById('topStats').textContent =
-    PAGES.length + 'ページ / ' + totalKw.toLocaleString() + 'KW / ' + totalVol.toLocaleString() + 'vol / カバー率: ' + rate + '%';
+  const deletedCount = PAGES.length - activePages.length;
+  let statsText = activePages.length + 'ページ / ' + totalKw.toLocaleString() + 'KW / ' + totalVol.toLocaleString() + 'vol / カバー率: ' + rate + '%';
+  if (deletedCount > 0) statsText += ' （削除: ' + deletedCount + '）';
+  document.getElementById('topStats').textContent = statsText;
 }
 
 function selectPage(id) {
