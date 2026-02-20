@@ -115,6 +115,22 @@ export default async function ArticlePage({ params }: Props) {
     },
   };
 
+  // FAQPage構造化データ（LLMO + Google リッチリザルト対応）
+  const faqJsonLd = article.faq?.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: article.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.answer,
+          },
+        })),
+      }
+    : null;
+
   // パンくずリスト構造化データ
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -152,6 +168,12 @@ export default async function ArticlePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <ContentPageLayout
         title={article.title}
@@ -199,7 +221,7 @@ export default async function ArticlePage({ params }: Props) {
         <TableOfContents content={article.content} />
 
         {/* 本文 */}
-        <div className="prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50">
+        <div className="article-body prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-lg prose-h2:mt-14 prose-h2:mb-5 prose-h2:bg-primary-950 prose-h2:text-white prose-h2:px-5 prose-h2:py-3 prose-h3:text-base prose-h3:mt-8 prose-h3:mb-3 prose-h3:border-l-4 prose-h3:border-primary-950 prose-h3:pl-3 prose-h3:py-1 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50">
           <MDXRemote
             source={article.content}
             options={{

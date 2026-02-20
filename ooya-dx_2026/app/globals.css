@@ -112,6 +112,17 @@
   }
 }
 
+/* 記事H2の自動番号 */
+.article-body {
+  counter-reset: h2-counter;
+}
+.article-body h2 {
+  counter-increment: h2-counter;
+}
+.article-body h2::before {
+  content: counter(h2-counter) ". ";
+}
+
 @layer utilities {
   /* スクロールバー非表示（横スクロール用） */
   .scrollbar-hide {

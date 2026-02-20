@@ -4,6 +4,11 @@ import matter from 'gray-matter';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content/media');
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface ArticleMeta {
   slug: string;
   categorySlug: string;
@@ -12,6 +17,7 @@ export interface ArticleMeta {
   date: string;
   category: string;
   thumbnail?: string;
+  faq?: FAQItem[];
 }
 
 export interface Article extends ArticleMeta {
@@ -49,6 +55,7 @@ export function getAllArticles(): ArticleMeta[] {
         date: data.date || '',
         category: data.category || '',
         thumbnail: data.thumbnail || undefined,
+        faq: Array.isArray(data.faq) ? data.faq : undefined,
       });
     }
   }
@@ -75,6 +82,7 @@ export function getArticleBySlug(categorySlug: string, slug: string): Article | 
     date: data.date || '',
     category: data.category || '',
     thumbnail: data.thumbnail || undefined,
+    faq: Array.isArray(data.faq) ? data.faq : undefined,
     content,
   };
 }

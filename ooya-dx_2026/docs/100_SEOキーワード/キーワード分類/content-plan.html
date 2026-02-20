@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>仲介手数料 コンテンツ設計書</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #1a1a1a; display: flex; flex-direction: column; height: 100vh; }
+
+  .topbar { background: #1e293b; color: #fff; padding: 8px 20px; display: flex; align-items: center; gap: 16px; height: 44px; flex-shrink: 0; }
+  .topbar h1 { font-size: 15px; white-space: nowrap; }
+  .topbar .stats { font-size: 11px; color: #94a3b8; }
+  .topbar .link { font-size: 11px; color: #60a5fa; text-decoration: none; margin-left: auto; }
+  .topbar .link:hover { text-decoration: underline; }
+
+  .layout { display: flex; flex: 1; overflow: hidden; }
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: #fff; border-right: 1px solid #e2e8f0; overflow-y: auto; flex-shrink: 0; }
+  .sidebar-title { font-size: 11px; font-weight: 700; color: #64748b; padding: 12px 14px 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .page-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+  .page-item:hover { background: #f8fafc; }
+  .page-item.active { background: #eff6ff; border-left: 3px solid #2563eb; }
+  .page-item .num { font-size: 10px; color: #94a3b8; }
+  .page-item .name { font-size: 13px; font-weight: 600; color: #1e293b; margin: 2px 0; }
+  .page-item .meta { font-size: 10px; color: #64748b; display: flex; gap: 8px; }
+  .page-item .cover { font-size: 10px; font-weight: 700; }
+  .page-item .cover.ok { color: #059669; }
+  .page-item .cover.warn { color: #d97706; }
+  .page-item .cover.bad { color: #dc2626; }
+
+  .sidebar-section { padding: 12px 14px; border-top: 2px solid #e2e8f0; }
+  .sidebar-section .label { font-size: 10px; font-weight: 700; color: #64748b; margin-bottom: 6px; }
+  .cover-row { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 0; }
+  .cover-row .pname { color: #475569; }
+
+  /* Main content */
+  .main { flex: 1; overflow-y: auto; padding: 24px 32px; }
+  .page-header { margin-bottom: 20px; }
+  .page-header .num-label { font-size: 12px; color: #64748b; font-weight: 600; }
+  .page-header .title { font-size: 22px; font-weight: 700; color: #1e293b; margin: 4px 0; }
+  .page-header .url { font-size: 12px; color: #2563eb; text-decoration: none; }
+  .page-header .url:hover { text-decoration: underline; }
+  .page-header .page-meta { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #475569; }
+  .page-header .page-meta .val { font-weight: 700; }
+
+  .h1-bar { background: #1e293b; color: #fff; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; }
+  .h1-bar .h1-label { font-size: 10px; color: #94a3b8; font-weight: 600; }
+  .h1-bar .h1-title { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .h1-bar .h1-kw { font-size: 11px; color: #60a5fa; margin-top: 4px; }
+
+  .h2-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+  .h2-card .h2-header { background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; }
+  .h2-card .h2-tag { background: #2563eb; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .h2-card .h2-title { font-size: 14px; font-weight: 700; color: #1e293b; flex: 1; }
+  .h2-card .h2-stats { font-size: 10px; color: #64748b; white-space: nowrap; }
+  .h2-card .h2-body { padding: 12px 16px; }
+  .h2-card .h2-desc { font-size: 12px; color: #475569; margin-bottom: 8px; line-height: 1.6; }
+
+  .kw-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kw-chip { display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+  .kw-chip .kw-name { color: #1e293b; font-weight: 500; }
+  .kw-chip .kw-vol { color: #64748b; font-size: 10px; }
+  .kw-chip.main-kw { background: #dbeafe; border-color: #93c5fd; }
+  .kw-chip.main-kw .kw-name { color: #1e40af; font-weight: 700; }
+
+  .h3-section { margin: 8px 0 8px 20px; padding: 8px 12px; border-left: 2px solid #e2e8f0; }
+  .h3-title { font-size: 12px; font-weight: 700; color: #475569; }
+  .h3-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  .link-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9; }
+  .link-item { font-size: 11px; color: #2563eb; margin: 2px 0; }
+  .link-item .arrow { color: #94a3b8; }
+
+  /* リンク先バッジ */
+  .h2-link-badge { display: inline-flex; align-items: center; gap: 4px; background: #dcfce7; border: 1px solid #86efac; color: #166534; font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 12px; margin-left: 8px; white-space: nowrap; }
+  .h2-link-badge.incoming { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+
+  /* リンクマップ */
+  .link-map { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px; padding: 16px; }
+  .link-map .lm-title { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 12px; }
+  .link-map .lm-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+  .link-map .lm-row:last-child { border-bottom: none; }
+  .link-map .lm-h2 { flex: 1; color: #475569; font-weight: 500; }
+  .link-map .lm-arrow { color: #2563eb; font-weight: 700; font-size: 14px; }
+  .link-map .lm-dest { background: #eff6ff; border: 1px solid #bfdbfe; padding: 3px 10px; border-radius: 6px; color: #1e40af; font-weight: 600; cursor: pointer; }
+  .link-map .lm-dest:hover { background: #dbeafe; }
+
+  /* Unassigned warning */
+  .unassigned { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .unassigned .ua-title { font-size: 12px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
+  .unassigned .kw-chip { background: #fee2e2; border-color: #fca5a5; }
+
+  /* Footer stats */
+  .page-footer { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 8px; }
+  .page-footer .footer-title { font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+  .page-footer .footer-stats { display: flex; gap: 24px; font-size: 12px; }
+  .page-footer .footer-stats .val { font-weight: 700; }
+  .page-footer .kw-link { font-size: 11px; color: #2563eb; text-decoration: none; margin-top: 8px; display: inline-block; }
+  .page-footer .kw-link:hover { text-decoration: underline; }
+
+  .internal-links { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-top: 16px; }
+  .internal-links .il-title { font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 8px; }
+  .internal-links .il-item { font-size: 11px; color: #475569; margin: 3px 0; }
+  .internal-links .il-item .il-dir { color: #059669; font-weight: 600; }
+
+  /* ステータスダッシュボード */
+  .status-dashboard { padding: 12px 14px; border-bottom: 2px solid #e2e8f0; background: #fafbfc; }
+  .status-dashboard .sd-title { font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .status-dashboard .sd-progress { background: #e2e8f0; border-radius: 4px; height: 8px; margin-bottom: 10px; overflow: hidden; display: flex; }
+  .status-dashboard .sd-progress .seg { height: 100%; transition: width 0.3s; }
+  .status-dashboard .sd-progress .seg-done { background: #059669; }
+  .status-dashboard .sd-progress .seg-review { background: #f59e0b; }
+  .status-dashboard .sd-progress .seg-writing { background: #3b82f6; }
+  .status-dashboard .sd-progress .seg-todo { background: #e2e8f0; }
+  .status-dashboard .sd-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 10px; color: #64748b; margin-bottom: 8px; }
+  .status-dashboard .sd-legend span { display: flex; align-items: center; gap: 3px; }
+  .status-dashboard .sd-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .sd-table { width: 100%; }
+  .sd-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 11px; }
+  .sd-row .sd-num { color: #94a3b8; width: 18px; flex-shrink: 0; }
+  .sd-row .sd-name { flex: 1; color: #1e293b; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sd-badge { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; cursor: pointer; user-select: none; transition: all 0.15s; white-space: nowrap; }
+  .sd-badge:hover { filter: brightness(0.9); }
+  .sd-badge.st-todo { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+  .sd-badge.st-writing { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+  .sd-badge.st-review { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .sd-badge.st-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+
+  .empty { text-align: center; padding: 60px; color: #94a3b8; font-size: 14px; }
+  .loading-bar { background: #e2e8f0; border-radius: 4px; height: 6px; margin: 8px auto; width: 200px; overflow: hidden; }
+  .loading-bar .fill { background: #2563eb; height: 100%; transition: width 0.3s; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>仲介手数料 コンテンツ設計書</h1>
+  <span class="stats" id="topStats">読み込み中...</span>
+  <a class="link" href="index.html" target="_blank">📊 キーワードマップを開く</a>
+</div>
+<div class="layout">
+  <div class="sidebar" id="sidebar">
+    <div id="statusDashboard" class="status-dashboard"></div>
+    <div class="sidebar-title">📄 ページ一覧</div>
+    <div id="pageList"></div>
+    <div class="sidebar-section" id="coverSummary"></div>
+  </div>
+  <div class="main" id="main">
+    <div class="empty">読み込み中...<div class="loading-bar"><div class="fill" id="loadbar" style="width:0%"></div></div></div>
+  </div>
+</div>
+
+<script>
+// ─── ページ定義（サイト設計 v2 に対応）───
+const PAGES = [
+  {
+    id: 'calc', num: '①', name: '計算ツール', url: '/tools/brokerage/',
+    group: '仲介手数料計算', status: '既存', defaultStatus: '公開済み',
+    h2defs: [
+      { title: '仲介手数料の計算方法（速算式）', match: ['計算', '計算方法', '計算式', 'シミュレーション'], desc: '速算式: (売買価格×3%+6万円)×消費税' },
+      { title: '物件価格別の計算結果', match: ['400万円以下', '消費税'], desc: '自動計算フォームで結果表示' },
+    ],
+    links: { cta: null, parent: '② ピラー', children: [] }
+  },
+  {
+    id: 'pillar', num: '②', name: 'ピラーページ', url: '/media/brokerage/guide/',
+    group: '仲介手数料_基礎解説', status: '作成済', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料とは？わかりやすく解説', match: ['とは', '簡単に'], desc: 'そもそも仲介手数料とは何か？仕組みと基本を解説' },
+      { title: '仲介手数料の計算方法', match: [], desc: '速算式の紹介（200字程度の要約）', linkTo: 'calc', linkLabel: '① 計算ツールで自動計算' },
+      { title: '不動産売買の仲介手数料', match: ['売主'], desc: '売買時の仕組みを要約', linkTo: 'realestate', linkLabel: '③ 不動産売買ガイドで詳しく' },
+      { title: '賃貸の仲介手数料', match: [], desc: '賃貸での相場・仕組みを要約', linkTo: 'rental', linkLabel: '④ 賃貸ガイドで詳しく' },
+      { title: '仲介手数料無料の仕組み', match: [], desc: 'なぜ無料にできるのか？を要約', linkTo: 'free', linkLabel: '⑤ 無料の仕組みで詳しく' },
+      { title: '仲介手数料の相場', match: [], desc: '価格帯別の相場を要約', linkTo: 'market', linkLabel: '⑥ 相場ガイドで詳しく' },
+      { title: '交渉・値引きはできる？', match: [], desc: '交渉の実態を要約', linkTo: 'nego', linkLabel: '⑦ 交渉・値引きで詳しく' },
+      { title: '上限（宅建業法）と法改正', match: [], desc: '法律で決まっている上限を要約', linkTo: 'legal', linkLabel: '⑧ 上限・法律で詳しく' },
+      { title: '金額別の仲介手数料', match: [], desc: '物件価格ごとの具体例を要約', linkTo: 'price', linkLabel: '⑨ 金額別・具体例で詳しく' },
+      { title: '消費税はかかる？', match: [], desc: '消費税の扱いを要約', linkTo: 'tax', linkLabel: '⑩ 消費税で詳しく' },
+      { title: '住宅ローンに組み込める？', match: [], desc: '体験談ベースの解説を要約', linkTo: 'loan', linkLabel: '⑪ 住宅ローンで詳しく' },
+      { title: 'いつ払う？支払いタイミング', match: ['いつ払う'], desc: '売買: 契約時50%+決済時50% / 賃貸: 契約時一括' },
+    ],
+    links: { cta: '① 計算ツール', parent: null, children: ['③〜⑪ 全子ページ'] }
+  },
+  {
+    id: 'realestate', num: '③', name: '不動産売買ガイド', url: '/media/brokerage/real-estate/',
+    group: '仲介手数料_不動産売買', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '不動産売買の仲介手数料とは', match: ['不動産', '不動産売買', '売買'], desc: '売買における仕組み、売主・買主どちらが払う？' },
+      { title: 'マンション購入・売却時の仲介手数料', match: ['マンション', '中古マンション', 'マンション売却', 'マンション購入', '分譲マンション'], desc: '新築: 売主直売なら不要 / 中古の計算例' },
+      { title: '中古住宅・建売の仲介手数料', match: ['戸建て', '建売', '中古'], desc: '一戸建ての注意点、建売は不要な場合も' },
+      { title: '土地売買の仲介手数料', match: ['土地', '土地売買'], desc: '更地と古家付きの違い' },
+      { title: '両手仲介・片手仲介・分かれとは', match: ['両手', '片手', '分かれ', '両手取り', '両手とは'], desc: '両手=両方から手数料、片手=一方のみ' },
+      { title: '売主・買主の負担', match: ['売主', '買主', '両方', '手付解除'], desc: '誰がいくら払うか' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['⑥ 相場', '⑫ 支払い'] }
+  },
+  {
+    id: 'rental', num: '④', name: '賃貸ガイド', url: '/media/brokerage/rental/',
+    group: '仲介手数料賃貸', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '賃貸の仲介手数料とは', match: ['賃貸', '不動産 賃貸'], desc: '家賃1ヶ月分が基本、借主 or 貸主' },
+      { title: '賃貸の仲介手数料の相場', match: ['相場', '平均', '家賃', '家賃より高い'], desc: '家賃1ヶ月分×1.1（消費税）が基本。家賃より高い場合の理由も解説' },
+      { title: '0.5ヶ月・1ヶ月・上限の法律', match: ['0.5ヶ月', '0.55ヶ月', '0.5か月', '1ヶ月', '1ヶ月分', '1ヶ月以上', '2ヶ月', '2ヶ月分', '上限', '共益費'], desc: '家賃1ヶ月分+消費税が法定上限、共益費は含むか？' },
+      { title: '賃貸で仲介手数料無料の物件', match: ['無料', 'なし', '安い', '0'], desc: 'なぜ無料にできるのか、注意点' },
+      { title: '賃貸の仲介手数料を交渉する方法', match: ['交渉', '値引き'], desc: '→ 詳しくは⑦交渉ページ' },
+      { title: 'アパート・駐車場の仲介手数料', match: ['アパート', '駐車場', '駐車場代'], desc: 'アパートの相場、駐車場は宅建業法適用外' },
+      { title: '賃貸と礼金の違い', match: ['礼金'], desc: '仲介手数料と礼金は別の費用' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['⑦ 交渉'] }
+  },
+  {
+    id: 'free', num: '⑤', name: '無料の仕組み', url: '/media/brokerage/free/',
+    group: '仲介手数料値引き', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料無料の仕組み（からくり）', match: ['無料', 'からくり', '0円', 'ゼロ', '0'], desc: '売主からの手数料で成立、両手取引の活用' },
+      { title: 'なぜ無料にできるのか', match: ['なぜ', '0円 なぜ'], desc: 'ビジネスモデルの解説' },
+      { title: '仲介手数料が安い不動産会社の選び方', match: ['安い', '格安', 'ランキング', '比較', '9800円'], desc: '無料 vs 半額 vs 通常の比較' },
+      { title: '仲介手数料無料のデメリット', match: ['デメリット', 'なし デメリット'], desc: 'サービスの質、囲い込みリスク' },
+      { title: '中古マンションで仲介手数料無料', match: ['中古マンション', '中古'], desc: '実例紹介' },
+      { title: '仲介手数料無料・格安のサイト', match: ['サイト', '不動産屋', '不動産'], desc: '主要サービス紹介' },
+      { title: '仲介手数料が不要なケース', match: ['不要', 'かからない', 'なしにする', 'なし'], desc: '売主直売、新築マンション等' },
+      { title: '仲介手数料の半額にする方法', match: ['半額', '割引', '値引き', '値下げ', '安くする', '抑える', '半分'], desc: '交渉以外の手段' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['④ 賃貸'] }
+  },
+  {
+    id: 'market', num: '⑥', name: '相場ガイド', url: '/media/brokerage/market-rate/',
+    group: '仲介手数料相場', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '不動産売買の仲介手数料相場（価格帯別早見表）', match: ['相場', '不動産', '不動産 相場'], desc: '1,000万〜1億円の一覧 → CTA: 計算ツール' },
+      { title: '仲介手数料はいくら？', match: ['いくら', 'いくらまで'], desc: '売買価格別の金額一覧' },
+      { title: '土地売買の仲介手数料相場', match: ['土地'], desc: '土地特有の注意点' },
+      { title: '中古マンション・戸建ての相場', match: ['中古マンション', '中古住宅', '戸建て'], desc: '物件種別ごとの相場' },
+      { title: '仲介手数料の平均・最低金額', match: ['平均', '最低金額', '目安'], desc: '市場の実態データ' },
+      { title: '売買の相場', match: ['売買'], desc: '売買価格帯別の相場一覧' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['⑪ 金額別'] }
+  },
+  {
+    id: 'nego', num: '⑦', name: '交渉・値引き', url: '/media/brokerage/negotiation/',
+    group: '仲介手数料_交渉ガイド', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料は交渉できる？値切れる？', match: ['交渉', '値引き交渉', '交渉の仕方', '値切る', '値切れる'], desc: '法律上は値引きOK、実態はほぼ満額' },
+      { title: '値切る客を不動産会社はどう見ている？', match: ['値切る客'], desc: '業界側の本音と、交渉で嫌われないコツ' },
+      { title: '交渉のベストタイミング', match: ['タイミング'], desc: '媒介契約の前が最適' },
+      { title: '交渉の言い方・例文', match: ['言い方', '例文', '値切り方'], desc: '具体的な交渉フレーズ' },
+      { title: '仲介手数料を安くする方法', match: ['安くする', '安くする方法', '抑える', 'かからない', '払いたくない'], desc: '交渉以外: 直売、無料会社 → ⑤無料' },
+      { title: '半額にする方法', match: ['半額'], desc: '現実的な方法' },
+      { title: '値引き・割引の実態', match: ['値引き', '値下げ', '割引'], desc: '実際にどこまで下がるか' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['⑤ 無料'] }
+  },
+  {
+    id: 'legal', num: '⑧', name: '上限・法律・法改正', url: '/media/brokerage/legal-limit/',
+    group: '仲介手数料上限', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料の上限は法律で決まっている', match: ['上限', '法律', '宅建業法', '宅建', '業法', '規定'], desc: '宅建業法46条の規定' },
+      { title: '売買の上限：速算式の仕組み', match: ['割合', '率', '料率', 'ルール', 'パーセント'], desc: '200万以下5%、200〜400万4%、400万超3%' },
+      { title: '2024年法改正（800万円以下の特例）', match: ['800万円以下', '改正', '改定', '変更', '法改正', '国土交通省', 'いつから'], desc: '800万円以下は上限30万円に変更' },
+      { title: '400万円以下の改正', match: ['400万円以下'], desc: '400万円以下の変更点' },
+      { title: '上限を超える請求は違法？', match: ['違法', '1ヶ月 違法', '1.1ヶ月', '両手 違法'], desc: '違反時の罰則・相談先' },
+      { title: '低廉な空き家の特例', match: ['空き家', '低廉な空き家', '特例'], desc: '空き家問題への対応策' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['④ 賃貸', '⑪ 金額別'] }
+  },
+  {
+    id: 'price', num: '⑨', name: '金額別・具体例', url: '/media/brokerage/price-examples/',
+    group: '仲介手数料_金額別', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料 早見表', match: ['800万円以下', '33万円', '30万円', '6万円'], desc: '主要価格帯の仲介手数料一覧' },
+      { title: '仲介手数料は高い？適正額の判断方法', match: ['高い', '高すぎる', '高い理由'], desc: '相場との比較で判断' },
+      { title: '仲介手数料は何パーセント？', match: ['何パーセント', '3パーセント', '4パーセント', '6パーセント', 'パーセント'], desc: '価格帯別の手数料率' },
+      { title: '具体的な計算例', match: ['0.5', '0.55', '1.1', '2', '3', '3.3', '4', '5', '6', '50', '55', '100', '50パーセント', '55パーセント', '100パーセント'], desc: '各パーセント・金額での計算結果' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: [] }
+  },
+  {
+    id: 'tax', num: '⑩', name: '消費税', url: '/media/brokerage/tax/',
+    group: '仲介手数料_消費税解説', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料に消費税はかかる？', match: ['消費税', '課税'], desc: '仲介手数料は課税対象' },
+      { title: '不動産取引の消費税', match: ['不動産'], desc: '土地は非課税、建物は課税' },
+      { title: '土地の仲介手数料と消費税', match: ['土地'], desc: '土地自体は非課税だが手数料には課税' },
+      { title: '仲介手数料の税込・税別', match: ['税込', '税', '税金', '税率'], desc: '表示方法と計算の注意点' },
+      { title: '仕入税額控除・非課税の扱い', match: ['仕入税額控除', '非課税', '非課税業者'], desc: '事業者向けの税務処理' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: [] }
+  },
+  {
+    id: 'loan', num: '⑪', name: '住宅ローンと仲介手数料', url: '/media/brokerage/housing-loan/',
+    group: '仲介手数料_住宅ローン', status: '新規', defaultStatus: 'レビュー中',
+    h2defs: [
+      { title: '仲介手数料は住宅ローンに組み込める？', match: ['住宅ローン', 'ローンに組み込む', 'ローン'], desc: '結論：原則NG。ただし諸費用ローンで対応可能' },
+      { title: '【体験談】実際にローンに組み込んだ流れ', match: [], desc: '筆者が実際に経験した手順・銀行とのやり取り・注意点' },
+      { title: '諸費用ローンとは？金利・審査の違い', match: [], desc: '住宅ローンとの金利差、審査基準の違い' },
+      { title: '組み込む場合のメリット・デメリット', match: [], desc: '手元資金を残せる vs 総支払額が増える' },
+      { title: 'ローンに組み込めない場合の支払い方法', match: [], desc: '現金一括、分割交渉、諸費用ローンの比較' },
+    ],
+    links: { cta: '① 計算ツール', parent: '② ピラー', children: ['③ 不動産売買'] }
+  },
+];
+
+// ─── データ読み込み ───
+let allRows = [];
+let currentPageId = 'pillar';
+
+// ─── ステータス管理 ───
+const STATUS_CYCLE = ['未着手', '執筆中', 'レビュー中', '公開済み'];
+const STATUS_CLASS = { '未着手': 'st-todo', '執筆中': 'st-writing', 'レビュー中': 'st-review', '公開済み': 'st-done' };
+const STATUS_COLOR = { '未着手': '#e2e8f0', '執筆中': '#3b82f6', 'レビュー中': '#f59e0b', '公開済み': '#059669' };
+
+function loadStatuses() {
+  try {
+    const s = JSON.parse(localStorage.getItem('cp_statuses') || '{}');
+    // defaultStatusが設定されているページで、まだlocalStorageに無いものをマージ
+    let updated = false;
+    PAGES.forEach(p => {
+      if (p.defaultStatus && !s[p.id]) {
+        s[p.id] = p.defaultStatus;
+        updated = true;
+      }
+    });
+    if (updated) localStorage.setItem('cp_statuses', JSON.stringify(s));
+    return s;
+  } catch { return {}; }
+}
+function saveStatuses(s) { localStorage.setItem('cp_statuses', JSON.stringify(s)); }
+
+function getStatus(pageId) {
+  const s = loadStatuses();
+  if (s[pageId]) return s[pageId];
+  const page = PAGES.find(p => p.id === pageId);
+  return (page && page.defaultStatus) || '未着手';
+}
+function cycleStatus(pageId) {
+  const s = loadStatuses();
+  const cur = s[pageId] || '未着手';
+  const idx = STATUS_CYCLE.indexOf(cur);
+  s[pageId] = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+  saveStatuses(s);
+  renderStatusDashboard();
+  renderSidebar();
+  renderPage(currentPageId);
+}
+
+function renderStatusDashboard() {
+  const statuses = loadStatuses();
+  const counts = { '未着手': 0, '執筆中': 0, 'レビュー中': 0, '公開済み': 0 };
+  PAGES.forEach(p => { counts[statuses[p.id] || '未着手']++; });
+  const total = PAGES.length;
+
+  let html = '<div class="sd-title">進捗ダッシュボード <span style="font-size:9px;color:#94a3b8;cursor:pointer;margin-left:auto" onclick="if(confirm(\'ステータスをリセットしますか？\')){localStorage.removeItem(\'cp_statuses\');renderStatusDashboard();renderSidebar();renderPage(currentPageId);}">リセット</span></div>';
+
+  // プログレスバー
+  html += '<div class="sd-progress">';
+  html += '<div class="seg seg-done" style="width:' + (counts['公開済み']/total*100) + '%"></div>';
+  html += '<div class="seg seg-review" style="width:' + (counts['レビュー中']/total*100) + '%"></div>';
+  html += '<div class="seg seg-writing" style="width:' + (counts['執筆中']/total*100) + '%"></div>';
+  html += '<div class="seg seg-todo" style="width:' + (counts['未着手']/total*100) + '%"></div>';
+  html += '</div>';
+
+  // 凡例
+  html += '<div class="sd-legend">';
+  html += '<span><span class="dot" style="background:#059669"></span>公開済み ' + counts['公開済み'] + '</span>';
+  html += '<span><span class="dot" style="background:#f59e0b"></span>レビュー ' + counts['レビュー中'] + '</span>';
+  html += '<span><span class="dot" style="background:#3b82f6"></span>執筆中 ' + counts['執筆中'] + '</span>';
+  html += '<span><span class="dot" style="background:#e2e8f0"></span>未着手 ' + counts['未着手'] + '</span>';
+  html += '</div>';
+
+  // ページ別ステータス表
+  html += '<div class="sd-table">';
+  PAGES.forEach(p => {
+    const st = statuses[p.id] || '未着手';
+    const cls = STATUS_CLASS[st];
+    html += '<div class="sd-row">';
+    html += '<span class="sd-num">' + p.num + '</span>';
+    html += '<span class="sd-name">' + esc(p.name) + '</span>';
+    html += '<span class="sd-badge ' + cls + '" onclick="cycleStatus(\'' + p.id + '\')">' + st + '</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  document.getElementById('statusDashboard').innerHTML = html;
+}
+
+async function loadData() {
+  const bar = document.getElementById('loadbar');
+  try {
+    const res = await fetch(encodeURIComponent('仲介手数料_判定済み.tsv') + '?t=' + Date.now());
+    const text = await res.text();
+    const lines = text.trim().split('\n').map(r => r.split('\t'));
+    const hdr = lines[0];
+    const cm = {};
+    hdr.forEach((h, i) => { cm[h.trim()] = i; });
+    const g = (r, n) => { const i = cm[n]; return i !== undefined && i < r.length ? (r[i]||'').trim() : ''; };
+
+    for (let i = 1; i < lines.length; i++) {
+      const r = lines[i];
+      if (r.length < 6) continue;
+      const hantei = g(r, '判定');
+      if (hantei === '削除') continue;
+      const cat = g(r, 'No') ? '仲介手数料' : '仲介手数料';
+      const kw = g(r, 'キーワード');
+      const vol = parseInt(g(r, '月間検索数')) || 0;
+      // サブKW: キーワードからカテゴリ名を除いた差分
+      const kwTokens = kw.split(/\s+/);
+      const catTokens = new Set('仲介手数料'.split(/\s+/));
+      const sub = kwTokens.filter(w => !catTokens.has(w));
+      const subKw = sub.length > 0 ? sub.join(' ') : '';
+
+      allRows.push({
+        kw, vol, subKw, hantei,
+        pageGroup: g(r, 'ページグループ'),
+        articleTitle: g(r, '想定ページタイトル'),
+        intent: g(r, '検索意図'),
+        need: g(r, '解決ニーズ'),
+        kd: g(r, 'SEO難易度'),
+      });
+    }
+    if (bar) bar.style.width = '100%';
+  } catch (e) {
+    document.getElementById('main').innerHTML = '<div class="empty">TSVファイルの読み込みに失敗しました</div>';
+    return;
+  }
+
+  renderStatusDashboard();
+  renderSidebar();
+  renderPage(currentPageId);
+  updateTopStats();
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ─── KWをH2に割り当て ───
+function assignKeywords(page) {
+  const rows = allRows.filter(r => r.pageGroup === page.group);
+  const h2s = page.h2defs.map(d => ({ ...d, keywords: [] }));
+  const unassigned = [];
+  const h1Keywords = [];
+
+  rows.forEach(r => {
+    // サブKWが空 = カテゴリ名そのもの = H1キーワード
+    if (!r.subKw) {
+      h1Keywords.push(r);
+      return;
+    }
+
+    let matched = false;
+    for (const h2 of h2s) {
+      for (const pat of h2.match) {
+        // サブKWがパターンを含むか、パターンがサブKWを含むか
+        if (r.subKw === pat || r.subKw.includes(pat) || pat.includes(r.subKw)) {
+          h2.keywords.push(r);
+          matched = true;
+          break;
+        }
+      }
+      if (matched) break;
+    }
+    if (!matched) {
+      // 部分一致: サブKWの最初のトークンでマッチ
+      const firstToken = r.subKw.split(/\s+/)[0];
+      for (const h2 of h2s) {
+        if (h2.match.some(p => p.includes(firstToken) || firstToken.includes(p))) {
+          h2.keywords.push(r);
+          matched = true;
+          break;
+        }
+      }
+    }
+    if (!matched) unassigned.push(r);
+  });
+
+  // 各H2内をvol降順
+  h2s.forEach(h => h.keywords.sort((a, b) => b.vol - a.vol));
+  h1Keywords.sort((a, b) => b.vol - a.vol);
+
+  const totalKw = rows.length;
+  const assignedKw = totalKw - unassigned.length;
+  const coverRate = totalKw > 0 ? Math.round(assignedKw / totalKw * 100) : 100;
+  const totalVol = rows.reduce((s, r) => s + r.vol, 0);
+
+  return { h2s, h1Keywords, unassigned, totalKw, assignedKw, coverRate, totalVol, rows };
+}
+
+// ─── サイドバー描画 ───
+function renderSidebar() {
+  let html = '';
+  let coverHtml = '<div class="label">カバー率サマリー</div>';
+
+  PAGES.forEach(p => {
+    const result = assignKeywords(p);
+    const coverCls = result.coverRate >= 95 ? 'ok' : result.coverRate >= 80 ? 'warn' : 'bad';
+    const coverIcon = result.coverRate >= 95 ? '✅' : result.coverRate >= 80 ? '⚠️' : '❌';
+    const active = p.id === currentPageId ? ' active' : '';
+
+    html += '<div class="page-item' + active + '" onclick="selectPage(\'' + p.id + '\')">';
+    const pSt = getStatus(p.id);
+    const pStCls = STATUS_CLASS[pSt];
+    html += '<div class="num">' + p.num + ' <span class="sd-badge ' + pStCls + '" style="font-size:8px;padding:0px 5px">' + pSt + '</span></div>';
+    html += '<div class="name">' + esc(p.name) + '</div>';
+    html += '<div class="meta"><span>' + result.totalKw + 'KW</span><span>' + result.totalVol.toLocaleString() + 'vol</span>';
+    html += '<span class="cover ' + coverCls + '">' + coverIcon + ' ' + result.coverRate + '%</span></div>';
+    html += '</div>';
+
+    coverHtml += '<div class="cover-row"><span class="pname">' + p.num + ' ' + esc(p.name) + '</span>';
+    coverHtml += '<span class="cover ' + coverCls + '">' + result.coverRate + '%</span></div>';
+  });
+
+  document.getElementById('pageList').innerHTML = html;
+  document.getElementById('coverSummary').innerHTML = coverHtml;
+}
+
+// ─── メイン描画 ───
+function renderPage(pageId) {
+  const page = PAGES.find(p => p.id === pageId);
+  if (!page) return;
+
+  const result = assignKeywords(page);
+  let html = '';
+
+  // ヘッダー
+  html += '<div class="page-header">';
+  const pageStatus = getStatus(pageId);
+  const stCls = STATUS_CLASS[pageStatus];
+  html += '<div class="num-label">' + page.num + ' <span class="sd-badge ' + stCls + '" onclick="cycleStatus(\'' + pageId + '\')" style="font-size:10px;vertical-align:middle">' + pageStatus + '</span></div>';
+  html += '<div class="title">' + esc(page.name) + '</div>';
+  html += '<a class="url" href="http://localhost:3002' + page.url + '" target="_blank">' + page.url + '</a>';
+  html += '<div class="page-meta">';
+  html += '<span>対象KW: <span class="val">' + result.totalKw + '</span></span>';
+  html += '<span>月間Vol: <span class="val">' + result.totalVol.toLocaleString() + '</span></span>';
+  html += '<span>カバー率: <span class="val">' + result.coverRate + '%</span></span>';
+  html += '</div></div>';
+
+  // H1
+  const h1Title = result.rows.length > 0 ? (result.rows[0].articleTitle || page.name) : page.name;
+  html += '<div class="h1-bar">';
+  html += '<div class="h1-label">H1</div>';
+  html += '<div class="h1-title">' + esc(h1Title) + '</div>';
+  if (result.h1Keywords.length > 0) {
+    html += '<div class="h1-kw">メインKW: ' + result.h1Keywords.map(r => esc(r.kw) + ' (' + r.vol.toLocaleString() + ')').join('　') + '</div>';
+  }
+  html += '</div>';
+
+  // リンクマップ（ピラーページの場合）
+  const hasLinks = page.h2defs.some(d => d.linkTo);
+  if (hasLinks) {
+    html += '<div class="link-map">';
+    html += '<div class="lm-title">🔗 リンク構造マップ — このページから各子ページへ</div>';
+    page.h2defs.forEach(d => {
+      if (d.linkTo) {
+        const dest = PAGES.find(p => p.id === d.linkTo);
+        if (dest) {
+          html += '<div class="lm-row">';
+          html += '<span class="lm-h2">H2: ' + esc(d.title) + '</span>';
+          html += '<span class="lm-arrow">→</span>';
+          html += '<span class="lm-dest" onclick="selectPage(\'' + dest.id + '\')">' + dest.num + ' ' + esc(dest.name) + '</span>';
+          html += '</div>';
+        }
+      }
+    });
+    html += '</div>';
+  }
+
+  // H2カード
+  result.h2s.forEach((h2, idx) => {
+    const h2Vol = h2.keywords.reduce((s, r) => s + r.vol, 0);
+    html += '<div class="h2-card">';
+    html += '<div class="h2-header">';
+    html += '<span class="h2-tag">H2</span>';
+    html += '<span class="h2-title">' + esc(h2.title) + '</span>';
+    if (h2.linkTo) {
+      const dest = PAGES.find(p => p.id === h2.linkTo);
+      if (dest) {
+        html += '<span class="h2-link-badge" onclick="selectPage(\'' + dest.id + '\')" style="cursor:pointer">→ ' + esc(h2.linkLabel || dest.name) + '</span>';
+      }
+    }
+    html += '<span class="h2-stats">' + h2.keywords.length + 'KW / ' + h2Vol.toLocaleString() + 'vol</span>';
+    html += '</div>';
+    html += '<div class="h2-body">';
+
+    if (h2.desc) {
+      html += '<div class="h2-desc">' + esc(h2.desc) + '</div>';
+    }
+
+    if (h2.keywords.length > 0) {
+      html += '<div class="kw-list">';
+      h2.keywords.forEach((r, ki) => {
+        const cls = ki === 0 ? ' main-kw' : '';
+        html += '<span class="kw-chip' + cls + '"><span class="kw-name">' + esc(r.subKw || r.kw) + '</span><span class="kw-vol">' + r.vol.toLocaleString() + '</span></span>';
+      });
+      html += '</div>';
+    } else if (h2.linkTo) {
+      const dest = PAGES.find(p => p.id === h2.linkTo);
+      const destResult = dest ? assignKeywords(dest) : null;
+      const destKwCount = destResult ? destResult.totalKw : '?';
+      const destVol = destResult ? destResult.totalVol.toLocaleString() : '?';
+      html += '<div style="font-size:11px;color:#059669;font-weight:600">📄 このH2は要約（200〜300字）→ キーワードは ' + (dest ? dest.num + ' ' + esc(dest.name) : '') + ' で管理（' + destKwCount + 'KW / ' + destVol + 'vol）</div>';
+    } else {
+      html += '<div style="font-size:11px;color:#94a3b8">（キーワード未割当 — どのH2に入れるか要検討）</div>';
+    }
+
+    html += '</div></div>';
+  });
+
+  // 未割当KW
+  if (result.unassigned.length > 0) {
+    html += '<div class="unassigned">';
+    html += '<div class="ua-title">⚠ 未割当キーワード（' + result.unassigned.length + '件）— どのH2に入れるか要検討</div>';
+    html += '<div class="kw-list">';
+    result.unassigned.sort((a, b) => b.vol - a.vol).forEach(r => {
+      html += '<span class="kw-chip"><span class="kw-name">' + esc(r.kw) + '</span><span class="kw-vol">' + r.vol.toLocaleString() + '</span></span>';
+    });
+    html += '</div></div>';
+  }
+
+  // 内部リンク設計
+  if (page.links) {
+    html += '<div class="internal-links">';
+    html += '<div class="il-title">🔗 内部リンク設計</div>';
+    if (page.links.parent) {
+      html += '<div class="il-item"><span class="il-dir">← パンくず:</span> ' + esc(page.links.parent) + ' に戻る</div>';
+    }
+    if (page.links.cta) {
+      html += '<div class="il-item"><span class="il-dir">→ CTA:</span> ' + esc(page.links.cta) + '</div>';
+    }
+    if (page.links.children && page.links.children.length > 0) {
+      html += '<div class="il-item"><span class="il-dir">→ 子ページ:</span> ' + page.links.children.map(c => esc(c)).join(', ') + '</div>';
+    }
+    html += '</div>';
+  }
+
+  // フッター
+  html += '<div class="page-footer">';
+  html += '<div class="footer-title">📊 このページのKW統計</div>';
+  html += '<div class="footer-stats">';
+  html += '<span>対象KW: <span class="val">' + result.totalKw + '</span></span>';
+  html += '<span>割当済: <span class="val">' + result.assignedKw + '</span></span>';
+  html += '<span>未割当: <span class="val" style="color:' + (result.unassigned.length > 0 ? '#dc2626' : '#059669') + '">' + result.unassigned.length + '</span></span>';
+  html += '<span>カバー率: <span class="val">' + result.coverRate + '%</span></span>';
+  html += '</div>';
+  html += '<a class="kw-link" href="index.html" target="_blank">🔗 キーワードマップで確認（ページグループ: ' + esc(page.group) + '）</a>';
+  html += '</div>';
+
+  document.getElementById('main').innerHTML = html;
+}
+
+function updateTopStats() {
+  let totalKw = 0, totalVol = 0, totalAssigned = 0;
+  PAGES.forEach(p => {
+    const r = assignKeywords(p);
+    totalKw += r.totalKw;
+    totalVol += r.totalVol;
+    totalAssigned += r.assignedKw;
+  });
+  const rate = totalKw > 0 ? Math.round(totalAssigned / totalKw * 100) : 100;
+  document.getElementById('topStats').textContent =
+    PAGES.length + 'ページ / ' + totalKw.toLocaleString() + 'KW / ' + totalVol.toLocaleString() + 'vol / カバー率: ' + rate + '%';
+}
+
+function selectPage(id) {
+  currentPageId = id;
+  renderSidebar();
+  renderPage(id);
+  document.getElementById('main').scrollTop = 0;
+}
+
+loadData();
+</script>
+</body>
+</html>

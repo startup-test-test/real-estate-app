@@ -221,7 +221,7 @@ async function loadAllFiles() {
   }
   if (status) status.textContent = 'SERPデータ読込完了';
 
-  computeMainKeywords();
+  computeSubKeywords();
   computeH2();
   computeUserTarget();
   render();
@@ -320,7 +320,6 @@ function render() {
       else if (sortKey === 'userTarget') { return sortAsc ? (a.userTarget||'').localeCompare(b.userTarget||'', 'ja') : (b.userTarget||'').localeCompare(a.userTarget||'', 'ja'); }
       else if (sortKey === 'hantei') { return sortAsc ? a.hantei.localeCompare(b.hantei, 'ja') : b.hantei.localeCompare(a.hantei, 'ja'); }
       else if (sortKey === 'category') { return sortAsc ? a.category.localeCompare(b.category, 'ja') : b.category.localeCompare(a.category, 'ja'); }
-      else if (sortKey === 'mainKw') { return sortAsc ? (a.mainKw||'').localeCompare(b.mainKw||'', 'ja') : (b.mainKw||'').localeCompare(a.mainKw||'', 'ja'); }
       else if (sortKey === 'subKw') { return sortAsc ? (a.subKw||'').localeCompare(b.subKw||'', 'ja') : (b.subKw||'').localeCompare(a.subKw||'', 'ja'); }
       else if (sortKey === 'pageGroup') { return sortAsc ? (a.pageGroup||'').localeCompare(b.pageGroup||'', 'ja') : (b.pageGroup||'').localeCompare(a.pageGroup||'', 'ja'); }
       else if (sortKey === 'kanten') { return sortAsc ? (a.kanten||'').localeCompare(b.kanten||'', 'ja') : (b.kanten||'').localeCompare(a.kanten||'', 'ja'); }
@@ -537,7 +536,7 @@ function render() {
   html += '<div class="table-wrap"><table><tr>';
   const mainHeaders = [
     {key:'category', label:'カテゴリ'}, {key:'kw', label:'キーワード'},
-    {key:'mainKw', label:'メインKW'}, {key:'subKw', label:'サブKW'},
+    {key:'subKw', label:'サブKW'},
     {key:'kd', label:'SEO難易度'}, {key:'vol', label:'月間検索数'},
     {key:'hantei', label:'判定'}, {key:'userTarget', label:'ユーザー対象'}, {key:'intent', label:'検索意図'},
     {key:'need', label:'解決ニーズ'},
@@ -577,8 +576,6 @@ function render() {
     html += '<td>' + catLabel + '</td>';
     // キーワード
     html += '<td>' + esc(r.kw) + '</td>';
-    // メインKW
-    html += '<td style="font-size:11px;white-space:nowrap">' + (r.mainKw ? esc(r.mainKw) : '<span style="color:#ccc">—</span>') + '</td>';
     // サブKW
     html += '<td style="font-size:11px">' + (r.subKw ? '<span style="color:#7c3aed;font-weight:600">' + esc(r.subKw) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>';
     // SEO難易度
@@ -676,61 +673,24 @@ function render() {
   document.getElementById('main').innerHTML = html;
 }
 
-// メインKW・サブKW算出
-function computeMainKeywords() {
-  // グループキーを決定: ページグループ → 想定ページタイトル → カテゴリ の優先順
-  function getGroupKey(r) {
-    if (r.pageGroup) return 'pg:' + r.pageGroup;
-    if (r.articleTitle) return 'at:' + r.articleTitle;
-    return 'cat:' + r.category;
-  }
-
-  // 非削除行をグループ化
-  const groups = {};
+// サブKW算出: キーワードからカテゴリ名を除いた差分
+function computeSubKeywords() {
   allRows.forEach(r => {
-    if (r.hantei === '削除') return;
-    const key = getGroupKey(r);
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(r);
-  });
-
-  // 各グループで最大volのキーワードをメインKWに
-  const mainKwMap = {};
-  Object.entries(groups).forEach(([key, rows]) => {
-    let best = rows[0];
-    rows.forEach(r => { if (r.vol > best.vol) best = r; });
-    mainKwMap[key] = best.kw;
-  });
-
-  // 各行にmainKw・subKwを設定
-  allRows.forEach(r => {
-    if (r.hantei === '削除') { r.mainKw = ''; r.subKw = ''; return; }
-    const key = getGroupKey(r);
-    r.mainKw = mainKwMap[key] || '';
-    if (!r.mainKw || r.kw === r.mainKw) { r.subKw = ''; return; }
-
-    // サブKW: キーワードの単語からメインKWの単語を除いた残り
+    if (r.hantei === '削除') { r.subKw = ''; return; }
     const kwTokens = r.kw.split(/\s+/);
-    const mainTokens = new Set(r.mainKw.split(/\s+/));
-    const sub = kwTokens.filter(w => !mainTokens.has(w));
+    const catTokens = new Set(r.category.split(/\s+/));
+    const sub = kwTokens.filter(w => !catTokens.has(w));
     r.subKw = sub.length > 0 ? sub.join(' ') : '';
   });
 }
 
-// h2算出: サブKWがあればそれをH2に、メインKW自身はタイトルとの差分をH2に
+// h2算出: キーワードのトークンのうち、記事タイトル(h1)に含まれない部分をH2候補にする
 function computeH2() {
   allRows.forEach(r => {
     r.h2 = '';
     if (r.hantei === '削除' || !r.articleTitle) return;
 
-    // サブKWがある場合 → メインKWとの差分トークンをそのままH2候補にする
-    // （タイトルに含まれていても、記事内でH2セクションとして扱うべき）
-    if (r.subKw) {
-      r.h2 = r.subKw;
-      return;
-    }
-
-    // メインKW自身（subKw空）→ タイトルに含まれないトークンをH2候補に
+    // タイトルに含まれないトークンをH2候補に
     const titleNorm = r.articleTitle.replace(/[？！｜・、。「」（）()％%]/g, ' ').toLowerCase();
     const kwTokens = r.kw.split(/\s+/);
     const notInTitle = kwTokens.filter(t => !titleNorm.includes(t.toLowerCase()));
