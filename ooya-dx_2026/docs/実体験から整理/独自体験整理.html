@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>独自体験整理｜7物件 × 15カテゴリ</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3340;
+    --text: #e2e4e9;
+    --text-dim: #8b8fa3;
+    --accent: #6c8cff;
+    --accent-dim: #4a62b3;
+    --green: #4ade80;
+    --green-dim: #166534;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --orange: #fb923c;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --cyan: #22d3ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 24px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    max-width: 1200px;
+  }
+
+  h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: var(--text-dim); font-size: 0.85rem; }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .save-status { font-size: 0.75rem; color: var(--text-dim); margin-right: 8px; }
+  .save-status.saved { color: var(--green); }
+
+  .btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { border-color: var(--accent-dim); background: var(--surface2); }
+
+  .btn-accent {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-accent:hover { background: var(--accent); color: var(--bg); }
+
+  .btn-danger {
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    cursor: pointer;
+  }
+
+  .btn-danger:hover { color: var(--red); }
+
+  /* Stats */
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+  }
+
+  .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.75rem; color: var(--text-dim); }
+
+  /* Grid layout */
+  .grid-container {
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+
+  .grid-table {
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  /* Sticky category column */
+  .grid-table th,
+  .grid-table td {
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .grid-table thead th {
+    background: var(--surface);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .grid-table .col-cat {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--surface);
+    min-width: 200px;
+    max-width: 200px;
+  }
+
+  .grid-table thead .col-cat {
+    z-index: 4;
+  }
+
+  /* Property header cell */
+  .prop-header-cell {
+    min-width: 300px;
+    max-width: 300px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .prop-header-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+
+  .p1 { background: #1e3a5f; color: #60a5fa; }
+  .p2 { background: #1a3329; color: #4ade80; }
+  .p3 { background: #3b2f1a; color: #fbbf24; }
+  .p4 { background: #2d1f3d; color: #a78bfa; }
+  .p5 { background: #3d1f2b; color: #f472b6; }
+  .p6 { background: #1a3333; color: #22d3ee; }
+  .p7 { background: #3d2b1f; color: #fb923c; }
+
+  .prop-header-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .prop-header-sub {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .prop-header-type {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+  }
+
+  .type-res { background: rgba(167,139,250,0.2); color: var(--purple); }
+  .type-inv { background: rgba(74,222,128,0.15); color: var(--green); }
+
+  .prop-header-pct {
+    margin-top: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* Category label */
+  .cat-cell {
+    padding: 12px 16px;
+    background: var(--surface);
+  }
+
+  .cat-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .cat-icon { font-size: 1rem; }
+
+  /* Content cell */
+  .content-cell {
+    padding: 10px 14px;
+    min-width: 300px;
+    max-width: 300px;
+    background: var(--bg);
+  }
+
+  .content-cell ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .content-cell li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .content-cell li::before {
+    content: '・';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .item-text {
+    flex: 1;
+    cursor: text;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .item-text:hover { background: var(--surface2); }
+
+  .item-text:focus {
+    outline: none;
+    background: var(--surface2);
+    box-shadow: 0 0 0 1px var(--accent-dim);
+  }
+
+  .add-item-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    margin-top: 4px;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+  }
+
+  .add-item-btn:hover {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+    background: rgba(108,140,255,0.05);
+  }
+
+  .empty-msg {
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+
+  .badge-filled { background: rgba(74,222,128,0.15); color: var(--green); }
+  .badge-empty { background: rgba(248,113,113,0.1); color: var(--text-dim); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 100;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast-success { background: var(--green-dim); border: 1px solid var(--green); }
+  .toast-info { background: var(--accent-dim); border: 1px solid var(--accent); }
+
+  /* Scroll hint */
+  .scroll-hint {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>独自体験整理</h1>
+    <p class="subtitle">7物件の購入実績 &times; 15カテゴリ（テキストをクリックして編集 / ＋で追加 / ✕で削除）</p>
+  </div>
+  <div class="header-actions">
+    <span class="save-status" id="saveStatus"></span>
+    <button class="btn btn-accent" onclick="saveToFile()">data.json に保存</button>
+    <button class="btn" onclick="importJSON()">JSON読込</button>
+    <button class="btn" onclick="resetData()">初期データに戻す</button>
+  </div>
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<p class="scroll-hint">← 横にスクロールして全物件を確認 →</p>
+
+<div class="grid-container">
+  <table class="grid-table" id="gridTable"></table>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept=".json" style="display:none;">
+
+<script>
+const STORAGE_KEY = 'experience_data_v1';
+const DATA_FILE = 'data.json';
+
+const categories = [
+  { key: 'purchase',    icon: '🏠', name: '①物件購入のプロセス' },
+  { key: 'finance',     icon: '🏦', name: '②融資・ローン' },
+  { key: 'renovation',  icon: '🔨', name: '③リフォーム' },
+  { key: 'vacancy',     icon: '👤', name: '④空室対策・客付け' },
+  { key: 'tax',         icon: '📋', name: '⑤税務・確定申告' },
+  { key: 'sale',        icon: '💰', name: '⑥売却' },
+  { key: 'study',       icon: '📚', name: '⑦勉強した事・書籍' },
+  { key: 'other',       icon: '💡', name: '⑧その他（成功・失敗）' },
+  { key: 'corporate',   icon: '🏢', name: '⑨法人・法人化' },
+  { key: 'cashflow',    icon: '📊', name: '⑩収支・キャッシュフロー' },
+  { key: 'management',  icon: '🔧', name: '⑪物件管理・運営' },
+  { key: 'area',        icon: '📍', name: '⑫エリア選定' },
+  { key: 'insurance',   icon: '🛡️', name: '⑬保険' },
+  { key: 'agent',       icon: '🤝', name: '⑭不動産会社との付き合い方' },
+  { key: 'duediligence',icon: '🔍', name: '⑮物件調査・DD' }
+];
+
+const defaultProperties = [
+  {
+    id: 1, year: '2019', title: '品川区 新築マンション', purpose: '自己居住',
+    subtitle: '住宅ローン（フラット35S）で購入',
+    data: {
+      purchase: ['持ち家を収支計算できるのか検証','持ち家の選定方法','持ち家 vs 賃貸の比較検討（KW: 持ち家 賃貸 どっち）','フリーランスが初めて家を買う。実際に買ったスペックを詳細に記載'],
+      finance: ['フリーランスでも住宅ローンが組めた（KW: フリーランス 住宅ローン）','10割融資のフルローンをフラット35Sで実現'],
+      renovation: ['リフォーム業者との打ち合わせプロセス'],
+      vacancy: ['客付けに困った時の対策','マイソクの作成と活用'],
+      tax: ['3000万円の特別控除を実際に使用'],
+      sale: ['売却時の仲介手数料を50%に交渉','専任媒介 vs 一般媒介の選択経験'],
+      study: ['「マンションは10年で売りなさい」を参考に読了','ファイナンシャルアカデミーでの学習を検討'],
+      other: ['住宅ローンの売却シミュレーションは需要があるか検証'],
+      corporate: [], cashflow: [], management: [], area: [], insurance: [], agent: [], duediligence: []
+    }
+  },
+  {
+    id: 2, year: '2023', title: '埼玉県東部 築古戸建', purpose: '収益物件',
+    subtitle: '初めての収益物件。現金で購入',
+    data: {
+      purchase: ['なぜ空き家を買ったのか','空き家を賃貸目的で購入','何件ぐらいの物件を見たか','購入の意思決定プロセス','土地の値段で購入（土地値物件の見極め）','買付申込。仲介手数料は400万円ベースで計算'],
+      finance: ['日本政策金融公庫から資金調達（初めての空き家投資）','実際に提出した資料あり','金融機関17社に断られた経験','250万円を5年間で借入。金利の詳細','融資承認後に埼玉県信用金庫の口座開設（融資入金用）'],
+      renovation: ['400万円のフルリフォーム','3ヶ月かけて完成','暮らしのマーケットで部分的に内装を整理'],
+      vacancy: ['ステージングを実施','ウラケンさんの書籍を参考に','マイソクを持って最寄駅を回って需要・家賃をヒアリング','敷金・礼金ゼロ、1ヶ月フリーレント設定','短期解約なし（24ヶ月で設定）','暮らしのマーケットで部分的に内装整理','テレビ出演依頼を受けてインタビューに回答'],
+      tax: ['減価償却費は15年間で計上。債務償還年数を長くする為'],
+      sale: [],
+      study: ['土地値物件の買い方の動画で学習','ウラケン不動産の戸建投資の内容を参考に','空き家再生に関する書籍を読了'],
+      other: [],
+      corporate: ['法人で実施のため経営者保証なし'],
+      cashflow: [], management: [], area: [], insurance: [], agent: [], duediligence: []
+    }
+  },
+  {
+    id: 3, year: '2023', title: '埼玉県東部 築古戸建', purpose: '収益物件',
+    subtitle: '現金で購入',
+    data: {
+      purchase: ['築古で土地値で出たため購入'],
+      finance: ['埼玉県信用金庫で保証協会融資（10年ローン）','さいたま市の制度を活用'],
+      renovation: [],
+      vacancy: ['すぐに客付けできた'],
+      tax: [], sale: [], study: [], other: [],
+      corporate: [], cashflow: [], management: [], area: [], insurance: [], agent: [], duediligence: []
+    }
+  },
+  {
+    id: 4, year: '2024', title: '越谷市 ファミリー区分マンション', purpose: '収益物件',
+    subtitle: 'リースバックにて購入',
+    data: {
+      purchase: ['リースバックにて購入','定期借家契約を設定'],
+      finance: ['埼玉県の信用金庫で15年のフルローン'],
+      renovation: [], vacancy: [], tax: [], sale: [], study: [], other: [],
+      corporate: [], cashflow: [], management: [], area: [], insurance: [], agent: [], duediligence: []
+    }
+  },
+  {
+    id: 5, year: '2024', title: '川越市 ファミリー区分マンション', purpose: '収益物件',
+    subtitle: 'フルローンで購入',
+    data: { purchase:[],finance:[],renovation:[],vacancy:[],tax:[],sale:[],study:[],other:[],corporate:[],cashflow:[],management:[],area:[],insurance:[],agent:[],duediligence:[] }
+  },
+  {
+    id: 6, year: '2024', title: 'さいたま市浦和区 戸建', purpose: '収益物件',
+    subtitle: 'フルローンで購入',
+    data: { purchase:[],finance:[],renovation:[],vacancy:[],tax:[],sale:[],study:[],other:[],corporate:[],cashflow:[],management:[],area:[],insurance:[],agent:[],duediligence:[] }
+  },
+  {
+    id: 7, year: '2025', title: 'さいたま市大宮区 フルリノベ戸建', purpose: '自己居住',
+    subtitle: '住宅ローンで購入',
+    data: { purchase:[],finance:[],renovation:[],vacancy:[],tax:[],sale:[],study:[],other:[],corporate:[],cashflow:[],management:[],area:[],insurance:[],agent:[],duediligence:[] }
+  }
+];
+
+// ===== DATA =====
+let properties = [];
+
+async function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { properties = JSON.parse(saved); showSaveStatus('保存済みデータから復元'); return; } catch(e) {}
+  }
+  try {
+    const res = await fetch(DATA_FILE);
+    if (res.ok) { properties = await res.json(); localStorage.setItem(STORAGE_KEY, JSON.stringify(properties)); showSaveStatus('data.json から読み込み'); return; }
+  } catch(e) {}
+  properties = JSON.parse(JSON.stringify(defaultProperties));
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
+  showSaveStatus('自動保存済み');
+}
+
+function showSaveStatus(msg) {
+  const el = document.getElementById('saveStatus');
+  el.textContent = msg;
+  el.classList.add('saved');
+  setTimeout(() => el.classList.remove('saved'), 3000);
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast toast-${type} show`;
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+async function saveToFile() {
+  const json = JSON.stringify(properties, null, 2);
+  if (window.showSaveFilePicker) {
+    try {
+      const h = await window.showSaveFilePicker({ suggestedName: 'data.json', types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] });
+      const w = await h.createWritable(); await w.write(json); await w.close();
+      showToast('data.json に保存しました'); return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'data.json'; a.click();
+  showToast('data.json をダウンロード');
+}
+
+function importJSON() { document.getElementById('fileInput').click(); }
+
+document.getElementById('fileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (Array.isArray(data) && data[0]?.data) { properties = data; saveData(); renderAll(); showToast('読み込み完了'); }
+      else showToast('無効なフォーマット', 'info');
+    } catch(err) { showToast('解析失敗', 'info'); }
+  };
+  reader.readAsText(file); e.target.value = '';
+});
+
+function resetData() {
+  if (!confirm('初期データに戻しますか？')) return;
+  properties = JSON.parse(JSON.stringify(defaultProperties));
+  saveData(); renderAll(); showToast('リセット完了');
+}
+
+// ===== EDIT =====
+function addItem(propId, catKey) {
+  const prop = properties.find(p => p.id === propId);
+  prop.data[catKey].push('（ここに体験を入力）');
+  saveData(); renderAll();
+  setTimeout(() => {
+    const cells = document.querySelectorAll(`.cell-p${propId}-${catKey} .item-text`);
+    const last = cells[cells.length - 1];
+    if (last) { last.focus(); const r = document.createRange(); r.selectNodeContents(last); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+  }, 50);
+}
+
+function deleteItem(propId, catKey, idx) {
+  properties.find(p => p.id === propId).data[catKey].splice(idx, 1);
+  saveData(); renderAll();
+}
+
+function updateItem(propId, catKey, idx, text) {
+  const prop = properties.find(p => p.id === propId);
+  if (text.trim() === '') prop.data[catKey].splice(idx, 1);
+  else prop.data[catKey][idx] = text.trim();
+  saveData(); renderStats();
+}
+
+// ===== RENDER =====
+function renderAll() {
+  renderStats();
+  renderGrid();
+}
+
+function renderStats() {
+  let filled = 0, all = 0, totalItems = 0;
+  properties.forEach(p => {
+    categories.forEach(c => {
+      all++;
+      if ((p.data[c.key]?.length || 0) > 0) filled++;
+      totalItems += p.data[c.key]?.length || 0;
+    });
+  });
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><div class="stat-value">${properties.length}</div><div class="stat-label">物件数</div></div>
+    <div class="stat"><div class="stat-value">${filled}/${all}</div><div class="stat-label">記入済みセル</div></div>
+    <div class="stat"><div class="stat-value">${Math.round(filled / all * 100)}%</div><div class="stat-label">充実度</div></div>
+    <div class="stat"><div class="stat-value">${totalItems}</div><div class="stat-label">体験項目数</div></div>
+  `;
+}
+
+function renderGrid() {
+  const table = document.getElementById('gridTable');
+
+  // Header row: カテゴリ | 物件1 | 物件2 | ...
+  let html = '<thead><tr><th class="col-cat" style="padding:12px 16px;text-align:left;">カテゴリ</th>';
+  properties.forEach(p => {
+    const pctFilled = categories.filter(c => (p.data[c.key]?.length || 0) > 0).length;
+    const pct = Math.round(pctFilled / categories.length * 100);
+    const pctColor = pct >= 75 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : pct > 0 ? 'var(--orange)' : 'var(--red)';
+    const typeClass = p.purpose === '自己居住' ? 'type-res' : 'type-inv';
+
+    html += `<th class="prop-header-cell">
+      <div class="prop-header-num p${p.id}">${p.id}</div><br>
+      <div class="prop-header-title">${p.title}</div>
+      <div class="prop-header-sub">${p.year}年 | ${p.subtitle}</div>
+      <span class="prop-header-type ${typeClass}">${p.purpose}</span>
+      <div class="prop-header-pct" style="color:${pctColor}">${pct}% (${pctFilled}/${categories.length})</div>
+    </th>`;
+  });
+  html += '</tr></thead>';
+
+  // Body rows: each category
+  html += '<tbody>';
+  categories.forEach(cat => {
+    html += `<tr>`;
+    html += `<td class="col-cat cat-cell"><div class="cat-label"><span class="cat-icon">${cat.icon}</span>${cat.name}</div></td>`;
+
+    properties.forEach(p => {
+      const items = p.data[cat.key] || [];
+      let cellHtml = `<div class="cell-p${p.id}-${cat.key}">`;
+
+      cellHtml += `<span class="badge ${items.length > 0 ? 'badge-filled' : 'badge-empty'}">${items.length > 0 ? items.length + '件' : '未記入'}</span>`;
+
+      if (items.length > 0) {
+        cellHtml += '<ul>' + items.map((item, idx) => `
+          <li>
+            <span class="item-text" contenteditable="true"
+              onblur="updateItem(${p.id},'${cat.key}',${idx},this.textContent)"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+            >${item}</span>
+            <button class="btn-danger" onclick="deleteItem(${p.id},'${cat.key}',${idx})" title="削除">✕</button>
+          </li>
+        `).join('') + '</ul>';
+      }
+
+      cellHtml += `<button class="add-item-btn" onclick="addItem(${p.id},'${cat.key}')">＋ 追加</button>`;
+      cellHtml += '</div>';
+
+      html += `<td class="content-cell">${cellHtml}</td>`;
+    });
+
+    html += '</tr>';
+  });
+  html += '</tbody>';
+
+  table.innerHTML = html;
+}
+
+// Init
+loadData().then(() => renderAll());
+</script>
+</body>
+</html>
