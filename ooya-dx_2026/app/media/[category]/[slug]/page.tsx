@@ -11,6 +11,7 @@ import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat';
 import { QuestionBox } from '@/components/media/QuestionBox';
 import { SummaryBox } from '@/components/media/SummaryBox';
 import { CTALink } from '@/components/media/CTALink';
+import { ExperienceTable } from '@/components/media/ExperienceTable';
 import Link from 'next/link';
 
 interface Props {
@@ -238,6 +239,7 @@ export default async function ArticlePage({ params }: Props) {
             QuestionBox,
             SummaryBox,
             CTALink,
+            ExperienceTable,
           };
 
           const mdxOptions = {
