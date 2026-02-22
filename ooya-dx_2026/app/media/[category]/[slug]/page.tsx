@@ -6,7 +6,6 @@ import { getArticleBySlug, getAllArticlePaths } from '@/lib/mdx';
 import { ContentPageLayout } from '@/components/tools/ContentPageLayout';
 import { TableOfContents } from '@/components/table-of-contents';
 import { SimulatorCTA } from '@/components/tools/SimulatorCTA';
-import { RelatedTools } from '@/components/tools/RelatedTools';
 import { ShareButtons } from '@/components/tools/ShareButtons';
 import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat';
 import { QuestionBox } from '@/components/media/QuestionBox';
@@ -195,8 +194,6 @@ export default async function ArticlePage({ params }: Props) {
               <SimulatorCTA />
             </div>
 
-            {/* 関連シミュレーター一覧 */}
-            <RelatedTools currentPath="" />
           </>
         }
       >
