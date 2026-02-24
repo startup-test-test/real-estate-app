@@ -12,6 +12,7 @@ import { QuestionBox } from '@/components/media/QuestionBox';
 import { SummaryBox } from '@/components/media/SummaryBox';
 import { CTALink } from '@/components/media/CTALink';
 import { ExperienceTable } from '@/components/media/ExperienceTable';
+import { ExperienceBox } from '@/components/media/ExperienceBox';
 import Link from 'next/link';
 
 interface Props {
@@ -240,6 +241,7 @@ export default async function ArticlePage({ params }: Props) {
             SummaryBox,
             CTALink,
             ExperienceTable,
+            ExperienceBox,
           };
 
           const mdxOptions = {
