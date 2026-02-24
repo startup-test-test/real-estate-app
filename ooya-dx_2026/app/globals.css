@@ -122,6 +122,24 @@
 .article-body h2::before {
   content: counter(h2-counter) ". ";
 }
+.article-body img {
+  max-width: 100%;
+  height: auto;
+}
+.article-body .table-caption {
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-align: left;
+  margin-bottom: 0;
+  margin-top: 1rem;
+}
+.article-body .table-caption + table {
+  margin-top: 0.5rem;
+}
+.article-body td strong,
+.article-body th strong {
+  font-size: 1.125rem;
+}
 
 @layer utilities {
   /* スクロールバー非表示（横スクロール用） */

@@ -201,11 +201,11 @@ export default async function ArticlePage({ params }: Props) {
       >
         {/* メインビジュアル */}
         {article.thumbnail ? (
-          <div className="h-[350px] bg-gray-100 mb-4 overflow-hidden">
+          <div className="bg-gray-100 mb-4">
             <img
               src={article.thumbnail}
               alt={article.title}
-              className="w-full h-full object-cover"
+              className="w-full h-auto"
             />
           </div>
         ) : (
@@ -267,7 +267,7 @@ export default async function ArticlePage({ params }: Props) {
               <TableOfContents content={bodyContent} />
 
               {/* 本文 */}
-              <div className="article-body prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-lg prose-h2:mt-14 prose-h2:mb-5 prose-h2:bg-primary-950 prose-h2:text-white prose-h2:px-5 prose-h2:py-3 prose-h3:text-base prose-h3:mt-8 prose-h3:mb-3 prose-h3:border-l-4 prose-h3:border-primary-950 prose-h3:pl-3 prose-h3:py-1 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50 [&_strong]:bg-[linear-gradient(transparent_60%,#fef08a_60%)] [&_a_strong]:bg-none">
+              <div className="article-body prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-h2:text-lg prose-h2:mt-14 prose-h2:mb-5 prose-h2:bg-primary-950 prose-h2:text-white prose-h2:px-5 prose-h2:py-3 prose-h3:text-base prose-h3:mt-8 prose-h3:mb-3 prose-h3:border-l-4 prose-h3:border-primary-950 prose-h3:pl-3 prose-h3:py-1 prose-p:text-base prose-p:leading-relaxed prose-p:my-4 prose-li:text-base [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-base [&_th]:bg-gray-100 [&_th]:border [&_th]:border-gray-300 [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-3 [&_tr:nth-child(even)]:bg-gray-50 [&_strong]:bg-[linear-gradient(transparent_60%,#fef08a_60%)] [&_a_strong]:bg-none">
                 <MDXRemote
                   source={bodyContent}
                   options={mdxOptions}
