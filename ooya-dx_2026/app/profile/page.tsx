@@ -48,7 +48,11 @@ export default function ProfilePage() {
         { label: '売却損益', value: '5,530万円で購入 → 8,100万円台で売却（手残り：約2,900万円）' },
       ],
       reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。4年間住んで5,530万円の物件を8,100万円台（購入価格の約147%）で売却。売却価格8,100万円台 − 残債約5,100万円 − 仲介手数料91万円 = 手残り約2,900万円。（2025年では購入価格から約200%にまで上昇しておりました。）この経験から不動産の構造を理解したく、勉強を開始しました。',
-      futurePlans: '不動産投資の初心者の勉強方法 / ファイナンシャルアカデミーに通う / 仲介手数料を50%にする / 居住用財産の3,000万円特別控除',
+      relatedArticles: [
+        { title: '【実録】仲介手数料の交渉はやめとけ！購入7回は3%、売却1回は1.5%', href: '/media/brokerage/negotiation/' },
+        { title: '【売買8回で500万円超】仲介手数料の計算方法・相場｜実体験で解説', href: '/media/brokerage/guide/' },
+      ],
+      futurePlans: '不動産投資の初心者の勉強方法 / ファイナンシャルアカデミーに通う / 居住用財産の3,000万円特別控除',
       image: '/images/profile/property-1.jpg',
     },
     {
@@ -135,7 +139,7 @@ export default function ProfilePage() {
       type: '築30年の戸建をフルローンで購入',
       area: 'さいたま市浦和区',
       building: '100㎡（4LDK＋S）',
-      finance: '埼玉縣信用金庫さん / 15年フルローン + 日本政策金融公庫さんリフォーム5年（100万円）',
+      finance: '埼玉県の信用金庫さん / 15年フルローン + 日本政策金融公庫さんリフォーム5年（100万円）',
       extraFields: [
         { label: '月額家賃', value: '155,000円' },
         { label: '利回り', value: '13.7%' },
@@ -153,9 +157,12 @@ export default function ProfilePage() {
       type: '築30年のフルリノベ戸建',
       area: 'さいたま市大宮区',
       building: '158㎡（5LDK＋S＋屋上付き）',
-      finance: '埼玉縣信用金庫さんから住宅ローンにてオーバーローンにて購入',
+      finance: '埼玉県の信用金庫さんから住宅ローンにてオーバーローンにて購入',
       extraFields: [],
       reason: '土地の実勢価格が購入金額に近く、このエリアでこの広さの戸建・庭付き・駐車場2台はめったに出ないため、投資家目線で資産価値を見極めて即買付を入れました。さいたま新都心駅に家族5人で、戸建賃貸で住んでおりましたが、今後を考え近辺で良い物件がないかなと1年程探しておりましたが、なかなか出なく、ある時にパッとSUUMOに掲載されて、土地実勢価格が購入金額に近しい事とこのエリアでこの広さの戸建と庭付き駐車場2台はなかった為、すぐに買付を入れました。その週で4名買付が入りましたが、なんとか無事に選ばれました。',
+      relatedArticles: [
+        { title: '【実録】仲介手数料237万円を含めて住宅ローン審査通りました', href: '/media/brokerage/housing-loan/' },
+      ],
       futurePlans: '不動産投資のメリット・デメリット',
       image: '/images/profile/property-7.jpg',
     },
@@ -342,6 +349,18 @@ export default function ProfilePage() {
                           </dl>
                           <p className="text-base text-gray-700 leading-relaxed"><strong>購入した理由</strong></p>
                           <p className="text-base text-gray-700 leading-relaxed mb-4">{property.reason}</p>
+                          {property.relatedArticles && property.relatedArticles.length > 0 && (
+                            <>
+                              <p className="text-base text-gray-700 leading-relaxed"><strong>こちらの物件での実体験</strong></p>
+                              <ul className="text-base text-gray-700 leading-relaxed mb-4 list-disc list-inside">
+                                {property.relatedArticles.map((article: { title: string; href: string }, i: number) => (
+                                  <li key={i}>
+                                    <Link href={article.href} className="text-primary-700 hover:underline">{article.title}</Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          )}
                           <div className="border-t border-gray-100 pt-4 mt-4">
                             <p className="text-sm text-gray-500 mb-1">今後執筆予定：</p>
                             <p className="text-sm text-gray-500">{property.futurePlans}</p>

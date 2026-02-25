@@ -60,10 +60,10 @@ export function ToolPageHeader({ title, toolPath, publishDate, lastUpdated, cate
         <Link href="/profile" className="flex items-center gap-1.5 hover:text-blue-600 transition-colors whitespace-nowrap">
           <img
             src="/images/profile/profile.jpg"
-            alt="東後 哲郎"
+            alt="Tetsuro Togo"
             className="w-5 h-5 rounded-full object-cover"
           />
-          <span>執筆者：東後 哲郎</span>
+          <span>執筆者：Tetsuro Togo</span>
         </Link>
         <Link href={displayCategoryHref} className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded hover:bg-primary-100 transition-colors">
           {displayCategory}

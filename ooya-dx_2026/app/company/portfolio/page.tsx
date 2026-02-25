@@ -80,12 +80,12 @@ export default function PortfolioPage() {
                 <div className="w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">
                   <img
                     src="/img/portfolio_profile.jpg"
-                    alt="東後哲郎"
+                    alt="Tetsuro Togo"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-700 mb-1">代表取締役 / 東後哲郎（とうごてつろう）</p>
+                  <p className="text-gray-700 mb-1">代表取締役 / Tetsuro Togo</p>
                   <p className="text-gray-600 mb-3">開発ディレクター（Webディレクター） / マーケッター / MA / デザイナー</p>
                   <Link
                     href="/profile"

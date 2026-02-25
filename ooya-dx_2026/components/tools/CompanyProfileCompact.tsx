@@ -86,13 +86,13 @@ export function CompanyProfileCompact() {
           <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
             <img
               src="/images/profile/profile.jpg"
-              alt="東後 哲郎"
+              alt="Tetsuro Togo"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-gray-900">東後 哲郎（とうご てつろう）</p>
-            <p className="text-xs text-gray-500 mt-1">株式会社StartupMarketing 代表取締役　1987年 宮崎生まれ</p>
+            <p className="font-medium text-gray-900">Tetsuro Togo</p>
+            <p className="text-xs text-gray-500 mt-1">株式会社StartupMarketing 代表取締役　1987年生まれ　埼玉県在住</p>
             <p className="text-sm text-gray-600 mt-2 leading-relaxed">
               不動産購入実績（都内〜埼玉7軒 / 総購入額1.7億円 / 家賃収入500万円）
             </p>
