@@ -1,9 +1,8 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { ContentPageLayout } from '@/components/tools/ContentPageLayout'
 import { BrokerageCalculatorCompact } from '@/components/calculators'
+import { CTACard } from '@/components/media/CTACard'
 
 // ページタイトル（パンくず・h1で共通使用）
 const PAGE_TITLE = '仲介手数料を自動計算【2026最新】不動産・800万円以下特例対応'
@@ -151,22 +150,12 @@ function BrokerageAdditionalContent() {
         </div>
       </section>
 
-      {/* 解説ページへのリンク */}
+      {/* 実体験の関連記事 */}
       <section className="mb-12">
-        <Link
-          href="/tools/brokerage/guide"
-          className="flex items-center justify-between p-4 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group border border-gray-200"
-        >
-          <div>
-            <p className="font-medium text-gray-900 group-hover:text-blue-700">
-              仲介手数料の仕組みを詳しく見る
-            </p>
-            <p className="text-sm text-gray-600">
-              計算方法・2024年法改正・支払いタイミングなど
-            </p>
-          </div>
-          <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 flex-shrink-0" />
-        </Link>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">仲介手数料の実体験レポート</h2>
+        <CTACard href="/media/brokerage/guide/" thumbnail="/images/media/thumbnails/brokerage/guide_mb.jpg" description="速算式3%＋6万円の意味、売買・賃貸の相場、宅建業法の上限、800万円以下の特例、消費税まで。売買8回の実体験に基づく完全ガイド。">【売買8回で500万円超】仲介手数料の計算方法・相場｜実体験で解説</CTACard>
+        <CTACard href="/media/brokerage/negotiation/" thumbnail="/images/media/thumbnails/brokerage/negotiation_mb.jpg" description="仲介手数料の交渉・値引きの実態を売買8回の実体験で解説。購入7回は全て上限の3%で交渉の余地なし。唯一の売却では大手3社とも最初から1.5%を提示。">【実録】仲介手数料の交渉はやめとけ！購入7回は3%、売却1回は1.5%</CTACard>
+        <CTACard href="/media/brokerage/housing-loan/" thumbnail="/images/media/thumbnails/brokerage/housing-loan_mb.jpg" description="仲介手数料237万円を含む諸費用をオーバーローンで住宅ローン審査に通した実録。物件価格6,900万円台、総借入7,500万円超の全内訳を公開。">【実録】仲介手数料237万円を含めて住宅ローン審査通りました</CTACard>
       </section>
     </>
   )

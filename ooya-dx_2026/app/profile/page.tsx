@@ -45,9 +45,9 @@ export default function ProfilePage() {
       building: '62平米',
       finance: '住宅ローンにてフラット35Sでフルローンで購入',
       extraFields: [
-        { label: '売却損益', value: '5,530万円で購入 → 8,130万円で売却（手残り：2,909万円）' },
+        { label: '売却損益', value: '5,530万円で購入 → 8,100万円台で売却（手残り：約2,900万円）' },
       ],
-      reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。4年間住んで5,530万円の物件を8,130万円（購入価格の約147%）で売却。売却価格8,130万円 − 残債5,130万円 − 仲介手数料91万円 = 手残り2,909万円。（2025年では購入価格から約200%にまで上昇しておりました。）この経験から不動産の構造を理解したく、勉強を開始しました。',
+      reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。4年間住んで5,530万円の物件を8,100万円台（購入価格の約147%）で売却。売却価格8,100万円台 − 残債約5,100万円 − 仲介手数料91万円 = 手残り約2,900万円。（2025年では購入価格から約200%にまで上昇しておりました。）この経験から不動産の構造を理解したく、勉強を開始しました。',
       futurePlans: '不動産投資の初心者の勉強方法 / ファイナンシャルアカデミーに通う / 仲介手数料を50%にする / 居住用財産の3,000万円特別控除',
       image: '/images/profile/property-1.jpg',
     },
@@ -220,10 +220,10 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl sm:text-lg text-gray-900 mb-1">
-                    東後 哲郎（とうご てつろう）
+                    Tetsuro Togo
                   </h2>
                   <p className="text-base text-gray-900 mb-1">
-                    <Link href="/company" className="text-blue-600 underline">株式会社StartupMarketing</Link> 代表取締役　1987年 宮崎生まれ
+                    <Link href="/company" className="text-blue-600 underline">株式会社StartupMarketing</Link> 代表取締役　1987年生まれ　埼玉県在住
                   </p>
                   <p className="text-base text-gray-900 mb-1">不動産購入実績（都内〜埼玉7軒 / 総購入額1.7億円 / 家賃収入500万円）</p>
                   <p className="text-base text-gray-900 mb-1">賃貸経営者向けのツール「<a href="https://ooya.tech/" className="text-blue-600 underline">大家DX</a>」の企画・開発者</p>

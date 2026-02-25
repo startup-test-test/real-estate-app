@@ -41,7 +41,7 @@ export default function BrokeragePage() {
         description="不動産売買の仲介手数料を瞬時に計算するツール。売買価格を入力するだけで税込金額がわかります。"
         toolPath="/tools/brokerage"
         datePublished="2026-01-15"
-        dateModified="2026-02-05"
+        dateModified="2026-02-25"
         featureList={[
           '2024年法改正（800万円特例）対応',
           '消費税自動計算',

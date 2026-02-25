@@ -17,13 +17,13 @@ const purchaseData = [
 ];
 
 const sellData = [
-  { year: '2023年', property: '都内 マンション', price: '8,100万円台', fee: '約104万円', formula: '8,100万×1.5%×1.1−30万', point: '3社相見積もりで全社1.5%。さらに30万円値引き' },
+  { year: '2023年', property: '都内 マンション', price: '8,100万円台', fee: '91万円', formula: '', point: '3社相見積もりで全社1.5%。さらに30万円値引き' },
 ];
 
 const rentalData = [
   { property: '埼玉県東部 戸建', rent: '7.5万円', fee: '8.25万円（1ヶ月分）', point: '大家として初めての客付け' },
   { property: '埼玉県東部 戸建', rent: '6.5万円', fee: '7.15万円（1ヶ月分）', point: '' },
-  { property: 'さいたま市内 戸建', rent: '確認中', fee: '確認中', point: '' },
+  { property: 'さいたま市内 戸建', rent: '15万円', fee: '16.5万円（1ヶ月分）', point: '' },
 ];
 
 export function ExperienceTable({ type }: ExperienceTableProps) {
@@ -37,9 +37,9 @@ export function ExperienceTable({ type }: ExperienceTableProps) {
 
       {showPurchase && (
         <>
-          {type !== 'purchase' && <p className="!text-base !font-bold text-gray-800 !mb-0">① 不動産を購入した時の仲介手数料</p>}
+          {type !== 'purchase' && <p className="!text-base !font-bold text-gray-800 !mb-0 break-words">① 不動産を購入した時の仲介手数料</p>}
           <div className="overflow-x-auto mb-4 -mt-5">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full min-w-[640px] border-collapse text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-sm">時期</th>
@@ -67,9 +67,9 @@ export function ExperienceTable({ type }: ExperienceTableProps) {
 
       {showSell && (
         <>
-          <p className="!text-base !font-bold text-gray-800 !mb-0 !mt-1">② 不動産を売却した時の仲介手数料</p>
+          <p className="!text-base !font-bold text-gray-800 !mb-0 !mt-1 break-words">② 不動産を売却した時の仲介手数料</p>
           <div className="overflow-x-auto mb-4 -mt-5">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full min-w-[640px] border-collapse text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-sm">時期</th>
@@ -98,10 +98,10 @@ export function ExperienceTable({ type }: ExperienceTableProps) {
       {showRental && (
         <>
           {type === 'both' && (
-            <p className="!text-base !font-bold text-gray-800 !mb-0 !mt-1">③ 賃貸の仲介手数料（入居者募集時）</p>
+            <p className="!text-base !font-bold text-gray-800 !mb-0 !mt-1 break-words">③ 賃貸の仲介手数料（入居者募集時）</p>
           )}
           <div className="overflow-x-auto -mb-4 -mt-5">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full min-w-[640px] border-collapse text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-3 py-2 text-left font-semibold text-sm">物件</th>

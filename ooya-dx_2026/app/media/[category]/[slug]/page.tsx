@@ -11,8 +11,10 @@ import { articleAuthorRef, articlePublisherRef } from '@/lib/eeat';
 import { QuestionBox } from '@/components/media/QuestionBox';
 import { SummaryBox } from '@/components/media/SummaryBox';
 import { CTALink } from '@/components/media/CTALink';
+import { CTACard } from '@/components/media/CTACard';
 import { ExperienceTable } from '@/components/media/ExperienceTable';
 import { ExperienceBox } from '@/components/media/ExperienceBox';
+import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer';
 import Link from 'next/link';
 
 interface Props {
@@ -191,11 +193,15 @@ export default async function ArticlePage({ params }: Props) {
         showDisclaimer={false}
         additionalContent={
           <>
+            {/* 免責事項 */}
+            <div className="mt-10">
+              <ToolDisclaimer />
+            </div>
+
             {/* CTA */}
             <div className="mt-16 pt-8 border-t border-gray-100">
               <SimulatorCTA />
             </div>
-
           </>
         }
       >
@@ -240,6 +246,7 @@ export default async function ArticlePage({ params }: Props) {
             QuestionBox,
             SummaryBox,
             CTALink,
+            CTACard,
             ExperienceTable,
             ExperienceBox,
           };
