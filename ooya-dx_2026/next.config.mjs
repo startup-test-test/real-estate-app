@@ -58,6 +58,14 @@ const nextConfig = {
         permanent: true,
       },
 
+      // ===== 仲介手数料 記事統合（2026/02/24）5記事→guide.mdxへ =====
+      { source: '/media/brokerage/real-estate', destination: '/media/brokerage/guide', permanent: true },
+      { source: '/media/brokerage/market-rate', destination: '/media/brokerage/guide', permanent: true },
+      { source: '/media/brokerage/price-examples', destination: '/media/brokerage/guide', permanent: true },
+      { source: '/media/brokerage/legal-limit', destination: '/media/brokerage/guide', permanent: true },
+      { source: '/media/brokerage/tax', destination: '/media/brokerage/guide', permanent: true },
+      { source: '/media/brokerage/rental', destination: '/media/brokerage/guide', permanent: true },
+
       // ===== 古いURL構造からのリダイレクト =====
       {
         source: '/media/category/base/:path*',
