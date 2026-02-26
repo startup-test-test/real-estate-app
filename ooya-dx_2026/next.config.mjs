@@ -58,6 +58,10 @@ const nextConfig = {
         permanent: true,
       },
 
+      // ===== 仲介手数料 tools配下整理（2026/02/26） =====
+      { source: '/tools/brokerage/guide', destination: '/media/brokerage/guide', permanent: true },
+      { source: '/tools/brokerage/standard', destination: '/tools/brokerage', permanent: true },
+
       // ===== 仲介手数料 記事統合（2026/02/24）5記事→guide.mdxへ =====
       { source: '/media/brokerage/real-estate', destination: '/media/brokerage/guide', permanent: true },
       { source: '/media/brokerage/market-rate', destination: '/media/brokerage/guide', permanent: true },

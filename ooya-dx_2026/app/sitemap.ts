@@ -65,17 +65,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  // ネストされたツールページ（自動検出対象外）
-  const nestedToolPages = [
-    { path: '/tools/brokerage/guide', priority: 0.8 },
-    { path: '/tools/brokerage/standard', priority: 0.8 },
-  ].map((page) => ({
-    url: `${BASE_URL}${page.path}`,
-    lastModified: getLastModDate('/tools/brokerage'),
-    changeFrequency: 'monthly' as const,
-    priority: page.priority,
-  }));
-
   // 静的ページ
   const staticPages = [
     {
@@ -172,5 +161,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...nestedToolPages, ...articlePages];
+  return [...staticPages, ...companyPages, ...mediaCategoryPages, ...toolPages, ...articlePages];
 }

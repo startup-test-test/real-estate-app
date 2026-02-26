@@ -197,7 +197,6 @@ export const otherPublicPages: NavigationItem[] = [
   { name: '料金プラン', href: '/company/pricing', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
   { name: 'お問い合わせ', href: '/company/contact', publishDate: '2026-01-15', lastUpdated: '2026-01-15' },
   { name: 'メディア', href: '/media', publishDate: '2026-01-15', lastUpdated: '2026-02-10' },
-  { name: '仲介手数料ガイド', href: '/tools/brokerage/guide', publishDate: '2026-02-04', lastUpdated: '2026-02-18' },
 ];
 
 // 全公開ページの日付情報を取得するヘルパー関数
