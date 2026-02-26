@@ -14,6 +14,7 @@ import { CTALink } from '@/components/media/CTALink';
 import { CTACard } from '@/components/media/CTACard';
 import { ExperienceTable } from '@/components/media/ExperienceTable';
 import { ExperienceBox } from '@/components/media/ExperienceBox';
+import { Marker } from '@/components/media/Marker';
 import { ToolDisclaimer } from '@/components/tools/ToolDisclaimer';
 import Link from 'next/link';
 
@@ -249,6 +250,7 @@ export default async function ArticlePage({ params }: Props) {
             CTACard,
             ExperienceTable,
             ExperienceBox,
+            Marker,
           };
 
           const mdxOptions = {
