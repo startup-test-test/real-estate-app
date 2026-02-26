@@ -28,6 +28,12 @@ const categoryMeta: Record<string, { title: string; description: string; publish
     publishDate: '2026-02-19',
     lastUpdated: '2026-02-19',
   },
+  financing: {
+    title: '不動産投資の融資',
+    description: '不動産投資の融資を実体験で解説。日本政策金融公庫のリフォームローン、信用金庫のフルローンなど、築古戸建・ボロ戸建投資家が実際に利用した融資方法を紹介。',
+    publishDate: '2026-02-26',
+    lastUpdated: '2026-02-26',
+  },
 };
 
 export async function generateStaticParams() {
