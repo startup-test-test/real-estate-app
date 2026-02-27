@@ -166,7 +166,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               </Link>
               <p className="text-gray-600 text-sm font-medium text-center">
-                賃貸経営シミュレーションなら<br />「大家DX」
+                不動産投資シミュレーションなら<br />「大家DX」
               </p>
             </div>
 

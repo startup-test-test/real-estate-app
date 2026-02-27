@@ -165,7 +165,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                           className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap"
                         >
                           <User className="w-4 h-4 mr-3 text-gray-400 flex-shrink-0" />
-                          賃貸経営シミュレーション
+                          不動産投資シミュレーション
                         </button>
                         <button
                           onClick={handleSignOut}
@@ -214,10 +214,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
           </li>
           <li className="flex items-center">
             <span className="mx-2">/</span>
-            <span className="text-gray-900">賃貸経営シミュレーター</span>
+            <a href="/tools" className="hover:text-gray-700">計算ツール</a>
+          </li>
+          <li className="flex items-center">
+            <span className="mx-2">/</span>
+            <span className="text-gray-900">不動産投資シミュレーション</span>
           </li>
         </ol>
       </nav>
+
+      {/* 公開日・更新日 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-1">
+        <div className="flex items-center gap-3 text-xs text-gray-900">
+          <span>公開日：2026年1月15日</span>
+          <span>更新日：2026年2月27日</span>
+        </div>
+      </div>
 
       {/* ヒーローセクション */}
       <section 
@@ -953,7 +965,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                 <div className="flex-1">
                   <p className="text-sm text-gray-500 mb-1">2025.10.01</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    賃貸経営シミュレーターをリリースしました。
+                    不動産投資シミュレーションをリリースしました。
                   </h3>
                 </div>
               </div>

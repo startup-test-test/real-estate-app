@@ -316,7 +316,7 @@ export default function ToolsPage() {
                 <div>
                   <p className="text-xs text-primary-600 font-semibold mb-1">総合シミュレーター</p>
                   <p className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-primary-700 transition-colors">
-                    賃貸経営シミュレーター
+                    不動産投資シミュレーション
                   </p>
                   <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
                     IRR・CCR・DSCR、35年キャッシュフロー一括計算

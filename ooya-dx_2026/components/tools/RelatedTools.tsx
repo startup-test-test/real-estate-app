@@ -84,7 +84,7 @@ export function RelatedTools({
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm mt-6">
       <h3 className="text-lg font-bold text-[#32373c] mb-4 pb-3 border-b border-gray-100">
-        関連する無料の賃貸経営シミュレーター
+        関連する無料の不動産投資シミュレーション
       </h3>
       <div className="space-y-4">
         {categoriesWithTools.map(({ category, tools }) => (

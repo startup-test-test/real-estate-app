@@ -722,14 +722,14 @@ const MyPage: React.FC = () => {
     }>;
   }> = [
     {
-      category: "賃貸経営シミュレーター",
+      category: "不動産投資シミュレーション",
       icon: Calculator,
       color: "bg-slate-700",
       description:
         "売却時ネットCF・キャッシュフロー推移・収益利回りをグラフと数値で診断",
       actions: [
         {
-          name: "賃貸経営シミュレーター",
+          name: "不動産投資シミュレーション",
           primary: true,
           path: "/tools/simulator",
         },
@@ -987,7 +987,7 @@ const MyPage: React.FC = () => {
                       className="hidden md:flex items-center px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800"
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      賃貸経営シミュレーターを開始する
+                      不動産投資シミュレーションを開始する
                     </button>
                   </div>
                 </div>

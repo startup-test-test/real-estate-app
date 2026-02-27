@@ -23,9 +23,9 @@ export interface NavigationSection {
   items: NavigationItem[];
 }
 
-// 賃貸経営シミュレーター
+// 不動産投資シミュレーション
 export const simulatorLinks: NavigationItem[] = [
-  { name: '賃貸経営シミュレーター', description: 'IRR、CCR、DSCR、キャッシュフロー一括計算', href: '/tools/simulator' },
+  { name: '不動産投資シミュレーション', description: 'IRR、CCR、DSCR、キャッシュフロー一括計算', href: '/tools/simulator' },
 ];
 
 // カテゴリ別計算ツール（投資ライフサイクル順）

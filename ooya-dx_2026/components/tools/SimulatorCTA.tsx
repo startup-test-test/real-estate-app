@@ -7,7 +7,7 @@ export function SimulatorCTA() {
         {/* テキストエリア */}
         <div className="pt-10 sm:pt-12 px-6 sm:px-8 pb-3 sm:pb-4 text-center">
           <h3 className="text-2xl sm:text-3xl font-bold text-[#32373c] mb-3">
-            賃貸経営シミュレーター
+            不動産投資シミュレーション
             <span className="ml-2 inline-block px-2 py-0.5 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full align-middle">
               無料
             </span>
@@ -23,7 +23,7 @@ export function SimulatorCTA() {
         <div className="px-6 sm:px-8 flex justify-center">
           <img
             src="/img/kakushin_img01.png"
-            alt="賃貸経営シミュレーター"
+            alt="不動産投資シミュレーション"
             className="w-4/5 h-auto rounded-lg"
           />
         </div>

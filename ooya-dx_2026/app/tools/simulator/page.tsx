@@ -55,7 +55,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 3,
-      name: '賃貸経営シミュレーター',
+      name: '不動産投資シミュレーション',
       item: `${BASE_URL}/tools/simulator`,
     },
   ],
@@ -67,7 +67,7 @@ export default function SimulatorLPPage() {
   return (
     <>
       <ToolStructuredData
-        name="賃貸経営シミュレーター"
+        name="不動産投資シミュレーション"
         description="不動産投資の収支を詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。"
         toolPath="/tools/simulator"
       />

@@ -9,7 +9,7 @@ import { Menu, X, ChevronDown, LogOut, User } from 'lucide-react';
 
 // 一般向けナビゲーションリンク
 const NAV_LINKS = [
-  { href: '/tools/simulator', label: '賃貸経営シミュレーター' },
+  { href: '/tools/simulator', label: '不動産投資シミュレーション' },
   { href: '/tools', label: '計算ツール' },
   { href: '/media', label: 'メディア' },
   { href: '/company', label: '会社概要' },
@@ -144,7 +144,7 @@ export function SharedHeader({ useMediaLogo = false, forceShow = false }: Shared
                         className="flex items-center w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap"
                       >
                         <User className="w-4 h-4 mr-3 text-gray-400 flex-shrink-0" />
-                        賃貸経営シミュレーション
+                        不動産投資シミュレーション
                       </button>
                       <button
                         onClick={handleSignOut}

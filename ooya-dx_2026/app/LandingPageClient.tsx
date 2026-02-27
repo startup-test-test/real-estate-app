@@ -30,14 +30,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
   const services = [
     {
       id: 'simulator',
-      title: '賃貸経営シミュレーター',
+      title: '不動産投資シミュレーション',
       description: 'IRR・CCR・DSCR、35年キャッシュフローをワンクリックで算出。\n物件購入の意思決定をデータで支援します。',
       href: '/tools/simulator',
       buttonText: 'シミュレーションをする（完全無料）',
       mockup: (
         <Image
           src="/img/kakushin_img01.png"
-          alt="賃貸経営シミュレーター"
+          alt="不動産投資シミュレーション"
           width={998}
           height={674}
           sizes="(max-width: 768px) 100vw, 581px"
@@ -124,7 +124,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
               <div className="hidden md:flex justify-center items-center">
                 <Image
                   src="/img/kakushin_img01.png"
-                  alt="賃貸経営シミュレーター"
+                  alt="不動産投資シミュレーション"
                   width={998}
                   height={674}
                   sizes="(max-width: 1024px) 448px, 576px"
@@ -346,7 +346,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles }) => {
                 <div className="flex-1">
                   <p className="text-sm text-gray-500 mb-1">2025.10.01</p>
                   <h3 className="text-gray-900 font-normal text-base">
-                    賃貸経営シミュレーターをリリースしました。
+                    不動産投資シミュレーションをリリースしました。
                   </h3>
                 </div>
               </div>
