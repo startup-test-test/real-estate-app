@@ -18,6 +18,7 @@ export interface ArticleMeta {
   category: string;
   thumbnail?: string;
   faq?: FAQItem[];
+  published?: boolean;
 }
 
 export interface Article extends ArticleMeta {
@@ -47,6 +48,11 @@ export function getAllArticles(): ArticleMeta[] {
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       const { data } = matter(fileContent);
 
+      // published: false の記事は除外（未指定はpublished扱い）
+      if (data.published === false) {
+        continue;
+      }
+
       articles.push({
         slug,
         categorySlug,
@@ -73,6 +79,11 @@ export function getArticleBySlug(categorySlug: string, slug: string): Article | 
 
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(fileContent);
+
+  // published: false の記事は非公開
+  if (data.published === false) {
+    return null;
+  }
 
   return {
     slug,
