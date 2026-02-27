@@ -48,8 +48,8 @@ export function getAllArticles(): ArticleMeta[] {
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       const { data } = matter(fileContent);
 
-      // published: false の記事は除外（未指定はpublished扱い）
-      if (data.published === false) {
+      // published: false の記事は本番では除外（開発環境では表示）
+      if (data.published === false && process.env.NODE_ENV !== 'development') {
         continue;
       }
 
@@ -80,8 +80,8 @@ export function getArticleBySlug(categorySlug: string, slug: string): Article | 
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(fileContent);
 
-  // published: false の記事は非公開
-  if (data.published === false) {
+  // published: false の記事は本番では非公開（開発環境では表示）
+  if (data.published === false && process.env.NODE_ENV !== 'development') {
     return null;
   }
 
