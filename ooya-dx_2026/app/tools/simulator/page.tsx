@@ -7,11 +7,11 @@ import { getAllArticles } from '@/lib/mdx';
 const BASE_URL = 'https://ooya.tech';
 
 export const metadata: Metadata = {
-  title: '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX',
-  description: '不動産投資の収支を無料で詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
+  title: '不動産投資シミュレーション【無料】ローン返済・収支・利回り一括計算｜大家DX',
+  description: '不動産投資の収支を無料で詳細シミュレーション。ローン返済額・IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
   openGraph: {
-    title: '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX',
-    description: '不動産投資の収支を無料で詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
+    title: '不動産投資シミュレーション【無料】ローン返済・収支・利回り一括計算｜大家DX',
+    description: '不動産投資の収支を無料で詳細シミュレーション。ローン返済額・IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
     url: `${BASE_URL}/tools/simulator`,
     siteName: '大家DX',
     type: 'website',
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '不動産投資シミュレーション【無料】収支・利回り・IRR一括計算｜大家DX',
-    description: '不動産投資の収支を無料で詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
+    title: '不動産投資シミュレーション【無料】ローン返済・収支・利回り一括計算｜大家DX',
+    description: '不動産投資の収支を無料で詳細シミュレーション。ローン返済額・IRR・CCR・DSCR・35年キャッシュフローを一括算出。現役大家が実際に銀行提出に使用しているプロ仕様の計算ロジック。結果の保存・比較機能も搭載し、あなたの投資判断を強力に支援します。',
     images: [`${BASE_URL}/img/kakushin_img01.png`],
   },
   alternates: {
@@ -68,7 +68,7 @@ export default function SimulatorLPPage() {
     <>
       <ToolStructuredData
         name="不動産投資シミュレーション"
-        description="不動産投資の収支を詳細シミュレーション。IRR・CCR・DSCR・35年キャッシュフローを一括算出。"
+        description="不動産投資の収支を詳細シミュレーション。ローン返済額・IRR・CCR・DSCR・35年キャッシュフローを一括算出。"
         toolPath="/tools/simulator"
       />
       <script

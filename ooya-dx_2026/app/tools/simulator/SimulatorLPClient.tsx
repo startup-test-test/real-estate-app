@@ -247,9 +247,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
             {/* 左側：メインコピー */}
             <div className="text-left">
               <h1 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6" style={{ lineHeight: '1.4' }}>
-                不動産投資のシミュレーション
+                不動産投資シミュレーション
                 <br />
-                35年分の収支を一括計算
+                ローン返済・収支・利回りを無料で一括計算
               </h1>
               <div className="text-base sm:text-xl md:text-2xl lg:text-3xl text-gray-900 mb-4 sm:mb-6">
                 <p className="mb-2 sm:mb-3 relative inline-block max-w-full">
@@ -868,6 +868,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ articles = [] }) => {
                 第三者への提供は行っておりません。
               </p>
             </div>
+
           </div>
         </div>
       </section>

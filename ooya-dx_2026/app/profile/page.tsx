@@ -44,10 +44,8 @@ export default function ProfilePage() {
       area: '東京都品川区',
       building: '62平米',
       finance: '住宅ローンにてフラット35Sでフルローンで購入',
-      extraFields: [
-        { label: '売却損益', value: '5,530万円で購入 → 8,100万円台で売却（手残り：約2,900万円）' },
-      ],
-      reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。4年間住んで5,530万円の物件を8,100万円台（購入価格の約147%）で売却。売却価格8,100万円台 − 残債約5,100万円 − 仲介手数料91万円 = 手残り約2,900万円。（2025年では購入価格から約200%にまで上昇しておりました。）この経験から不動産の構造を理解したく、勉強を開始しました。',
+      extraFields: [],
+      reason: '夫婦で初めて品川区の駅徒歩3分の新築の区分マンション（2LDK）を持ち家にて購入。双子の男の子が生まれて、家族の協力が必要になり、都内から埼玉県のさいたま新都心に引っ越しを決意しました。この経験から不動産の構造を理解したく、勉強を開始しました。',
       relatedArticles: [
         { title: '【実録】仲介手数料の交渉はやめとけ！購入7回は3%、売却1回は1.5%', href: '/media/brokerage/negotiation/' },
         { title: '【売買8回で500万円超】仲介手数料の計算方法・相場｜実体験で解説', href: '/media/brokerage/guide/' },
@@ -250,10 +248,6 @@ export default function ProfilePage() {
               <div className="mt-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">メディア出演</h3>
                 <ul className="space-y-1 text-base text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-0.5">●</span>
-                    <span><span className="text-gray-500">2024年1月：</span><a href="/img/akiya.jpg" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></span>
-                  </li>
                 </ul>
                 <h3 className="text-lg font-bold text-gray-900 mb-2 mt-4">保有資格</h3>
                 <ul className="space-y-1 text-base text-gray-700">
@@ -288,7 +282,6 @@ export default function ProfilePage() {
                   </thead>
                   <tbody>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 w-40 bg-gray-100 font-medium">総購入額</td><td className="py-3 px-4 text-gray-900 text-lg">約1.7億円<span className="text-sm text-gray-900 ml-2">（収益 約5,000万円 / 自己居住 約1.2億円）</span></td></tr>
-                    <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">自宅売却益</td><td className="py-3 px-4 text-gray-900 text-lg">2,909万円<span className="text-sm text-gray-900 ml-2">（居住用財産の売却）</span></td></tr>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">家賃収入</td><td className="py-3 px-4 text-gray-900 text-lg">500万円/年</td></tr>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">入居率</td><td className="py-3 px-4 text-gray-900 text-lg">100%<span className="text-sm text-gray-900 ml-2">（2026年2月時点）</span></td></tr>
                     <tr className="border-b border-gray-200"><td className="py-3 px-4 text-gray-900 bg-gray-100 font-medium">不動産購入開始</td><td className="py-3 px-4 text-gray-900 text-lg">2019年〜</td></tr>
@@ -514,10 +507,6 @@ export default function ProfilePage() {
                 <h3 className="text-lg font-bold text-gray-900 mb-3">メディア出演・執筆実績</h3>
                 <div className="bg-gray-50 rounded-xl p-5 sm:p-6">
                   <div className="space-y-4">
-                    <div className="text-base"><span className="text-gray-500 font-medium">2024年1月：</span><a href="/img/akiya.jpg" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">フジテレビ「イット！」にて、不動産賃貸業の空き家再生についてインタビュー</a></div>
-                    <div className="mt-2">
-                      <Image src="/img/akiya.jpg" alt="フジテレビ「イット！」出演時の様子" width={640} height={480} sizes="(max-width: 640px) 100vw, 384px" className="rounded-lg border border-gray-200 max-w-full sm:max-w-sm" />
-                    </div>
                     <div className="text-base"><span className="text-gray-500 font-medium">2020年5月：</span><a href="https://offers.jp/media/sidejob/workstyle/a_1862" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">株式会社overflow「フリーランスWebディレクターのキャリアと案件の進め方」</a></div>
                     <div className="text-base"><span className="text-gray-500 font-medium">2019年4月：</span><a href="https://www.shibuyamov.com/interviews/webyour-times.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">渋谷ヒカリエ Creative Lounge MOV インタビュー</a></div>
                   </div>
