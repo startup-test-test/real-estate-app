@@ -116,18 +116,15 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const host = req.headers.get('host') || '';
 
-  // メンテナンスモード
-  if (process.env.MAINTENANCE_MODE === "true") {
-    // 静的ファイルやAPIはスルー
-    if (!pathname.startsWith("/api/") && !pathname.startsWith("/_next/")) {
-      return new NextResponse(maintenanceHtml(), {
-        status: 503,
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          "Retry-After": "3600",
-        },
-      });
-    }
+  // メンテナンスモード（解除する時はこのブロックをコメントアウトしてください）
+  if (!pathname.startsWith("/api/") && !pathname.startsWith("/_next/")) {
+    return new NextResponse(maintenanceHtml(), {
+      status: 503,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Retry-After": "3600",
+      },
+    });
   }
 
   // www → non-www リダイレクト（SEO正規化）
