@@ -42,9 +42,93 @@ function checkBasicAuth(req: NextRequest): NextResponse | null {
   return null; // 認証成功
 }
 
+// メンテナンスページHTML
+function maintenanceHtml(): string {
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メンテナンス中 | 大家DX</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      background: #f8fafc;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .container {
+      text-align: center;
+      max-width: 520px;
+    }
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+    .date {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .note {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🔧</div>
+    <h1>ただいまメンテナンス中です</h1>
+    <p class="date">2026年4月8日（水）よりメンテナンスを実施中</p>
+    <p>サービス改善のため、一時的にメンテナンスを行っております。</p>
+    <p>ご不便をおかけし申し訳ございません。</p>
+    <p class="note">しばらくお待ちいただき、再度アクセスしてください。</p>
+  </div>
+</body>
+</html>`;
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const host = req.headers.get('host') || '';
+
+  // メンテナンスモード
+  if (process.env.MAINTENANCE_MODE === "true") {
+    // 静的ファイルやAPIはスルー
+    if (!pathname.startsWith("/api/") && !pathname.startsWith("/_next/")) {
+      return new NextResponse(maintenanceHtml(), {
+        status: 503,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Retry-After": "3600",
+        },
+      });
+    }
+  }
 
   // www → non-www リダイレクト（SEO正規化）
   if (host.startsWith('www.')) {
