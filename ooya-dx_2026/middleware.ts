@@ -116,16 +116,16 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const host = req.headers.get('host') || '';
 
-  // メンテナンスモード（解除する時はこのブロックをコメントアウトしてください）
-  if (!pathname.startsWith("/api/") && !pathname.startsWith("/_next/")) {
-    return new NextResponse(maintenanceHtml(), {
-      status: 503,
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        "Retry-After": "3600",
-      },
-    });
-  }
+  // メンテナンスモード（有効にする時はこのブロックのコメントを外してください）
+  // if (!pathname.startsWith("/api/") && !pathname.startsWith("/_next/")) {
+  //   return new NextResponse(maintenanceHtml(), {
+  //     status: 503,
+  //     headers: {
+  //       "Content-Type": "text/html; charset=utf-8",
+  //       "Retry-After": "3600",
+  //     },
+  //   });
+  // }
 
   // www → non-www リダイレクト（SEO正規化）
   if (host.startsWith('www.')) {
