@@ -236,7 +236,7 @@ export default function PrivacyPage() {
             <p className="text-gray-700">住所：〒330-9501</p>
             <p className="text-gray-700">埼玉県さいたま市大宮区桜木町二丁目３番地大宮マルイ７階</p>
             <p className="text-gray-700">株式会社StartupMarketing</p>
-            <p className="text-gray-700">代表者名：東後哲郎</p>
+            <p className="text-gray-700">代表者名：Tetsuro Togo</p>
             <p className="text-gray-700">個人情報取扱責任者：個人情報問い合わせ係</p>
             <p className="text-gray-700">お問合せ窓口：ooya.tech2025@gmail.com</p>
           </div>

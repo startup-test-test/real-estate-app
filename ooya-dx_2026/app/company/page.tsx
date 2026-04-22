@@ -20,7 +20,6 @@ export default function CompanyPage() {
     { label: '法人番号', value: '2010001212632（国税庁 法人番号公表サイト）', url: 'https://www.houjin-bangou.nta.go.jp/henkorireki-johoto.html?selHouzinNo=2010001212632' },
     { label: '会社ロゴ', value: '', isLogo: true },
     { label: '事業内容', value: '不動産テック事業（大家DX）、Web制作・Webコンサルティング、不動産業界向けシステム受託開発' },
-    { label: '代表者', value: '代表取締役 東後 哲郎（とうご てつろう）' },
     { label: '設立', value: '2020年9月29日（2016年に個人事業主を開始、2020年に法人化）' },
     { label: '資本金', value: '990万円' },
     { label: '顧問弁護士', value: 'スタートビズ法律事務所（代表弁護士: 宮岡 遼 / 第一東京弁護士会）', url: 'https://it-lawyer.jp/' },
@@ -235,12 +234,12 @@ export default function CompanyPage() {
                 <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                   <img
                     src="/images/profile/profile.jpg"
-                    alt="東後 哲郎"
+                    alt="Tetsuro Togo"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">東後 哲郎（とうご てつろう）</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Tetsuro Togo</h3>
                   <p className="text-sm text-gray-600 mb-1">
                     開発ディレクター / マーケッター / 不動産オーナー
                   </p>
